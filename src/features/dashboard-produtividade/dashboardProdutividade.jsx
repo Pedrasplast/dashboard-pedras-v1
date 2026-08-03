@@ -2,31 +2,31 @@ import React from 'react';
 import { Wrench } from 'lucide-react'; // Ou outro ícone de sua preferência
 import Sidebar from '@/components/layout/Sidebar';
 
-import './DashboardMateriaPrima.css';
+import './dashboardProdutividade.css';
 
-function DashboardMateriaPrima() {
+function DashboardProdutividade() {
   return (
-    <div className="materia-prima-layout">
+    <div className="produtividade-layout">
       
-      <main className="materia-prima-main">
-        <header className="materia-prima-header">
-          <span className="materia-prima-subtitle">
-            Controle de consumo
+      <main className="produtividade-main">
+        <header className="produtividade-header">
+          <span className="produtividade-subtitle">
+            Controle de produtividade
           </span>
 
           <h1>
-            Dashboard de Matéria-Prima
+            Dashboard de Produtividade
           </h1>
         </header>
 
-        <section className="materia-prima-content">
+        <section className="produtividade-content">
           <div className="construcao-card">
             <div className="construcao-icon-wrapper">
               <Wrench size={40} className="construcao-icon animate-pulse" />
             </div>
             <h2>Módulo em Desenvolvimento</h2>
             <p>
-              Estamos construindo esta seção para trazer os melhores indicadores de consumo de matéria-prima para você. Em breve estará disponível!
+              Estamos construindo esta seção para trazer os melhores indicadores de produtividade para você. Em breve estará disponível!
             </p>
           </div>
         </section>
@@ -35,4 +35,4 @@ function DashboardMateriaPrima() {
   );
 }
 
-export default DashboardMateriaPrima;
+export default DashboardProdutividade;

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
+import { Route as DashboardProdutividadeRouteImport } from './routes/dashboardProdutividade'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
@@ -36,6 +37,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const DashboardMateriaPrimaRoute = DashboardMateriaPrimaRouteImport.update({
   id: '/dashboard-materia-prima',
   path: '/dashboard-materia-prima',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
+  id: '/dashboardProdutividade',
+  path: '/dashboardProdutividade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImportarRoute = ImportarRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboardProdutividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboardProdutividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboardProdutividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
+  DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
   RelatoriosRoute: typeof RelatoriosRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-materia-prima'
       fullPath: '/dashboard-materia-prima'
       preLoaderRoute: typeof DashboardMateriaPrimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboardProdutividade': {
+      id: '/dashboardProdutividade'
+      path: '/dashboardProdutividade'
+      fullPath: '/dashboardProdutividade'
+      preLoaderRoute: typeof DashboardProdutividadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/importar': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
+  DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
   RelatoriosRoute: RelatoriosRoute,
