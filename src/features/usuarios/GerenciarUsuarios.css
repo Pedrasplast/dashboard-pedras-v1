@@ -1,0 +1,355 @@
+/* Layout Principal */
+.gerenciar-usuarios-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.admin-header-block { 
+  margin-bottom: 32px; 
+}
+
+.admin-header-block h2 { 
+  color: #0f172a; 
+  margin: 0 0 8px 0; 
+}
+
+.admin-header-block p { 
+  color: #64748b; 
+  font-size: 14px; 
+}
+
+/* Tabela Padrão (Desktop) */
+.table-responsive {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.usuarios-table th, 
+.usuarios-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.usuarios-table th {
+  background: #f8fafc;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+/* Badges de Status */
+.badge-role {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-role.admin { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.badge-role.operador { 
+  background: #f1f5f9; 
+  color: #475569; 
+}
+
+/* Botões de Ação */
+.btn-change-role {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.btn-change-role.adm {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-change-role.adm:hover { 
+  background: #1d4ed8; 
+}
+
+.btn-change-role.op {
+  background: white;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.btn-change-role.op:hover { 
+  background: #f8fafc; 
+  border-color: #94a3b8; 
+}
+
+/* Mensagens e Loading */
+.alert-message {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.alert-message.sucesso { 
+  background: #dcfce7; 
+  color: #166534; 
+}
+
+.alert-message.erro { 
+  background: #fee2e2; 
+  color: #991b1b; 
+}
+
+.close-alert { 
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  font-size: 18px; 
+}
+
+.btn-voltar-home {
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.btn-voltar-home:hover {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+
+/* --- RESPONSIVIDADE SEM BARRA DE ROLAGEM (TRANSFORMA EM CARDS NO CELULAR) --- */
+@media (max-width: 768px) {
+  .gerenciar-usuarios-container {
+    padding: 0 12px;
+    margin: 20px auto;
+  }
+
+  /* Oculta o cabeçalho e as bordas tradicionais da tabela */
+  .table-responsive {
+    background: transparent;
+    border: none;
+    overflow: visible;
+  }
+
+  .usuarios-table thead {
+    display: none; /* Some com o cabeçalho "E-mail, Perfil, Ações" */
+  }
+
+  .usuarios-table, 
+  .usuarios-table tbody, 
+  .usuarios-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* Cada linha vira um card flutuante bonito */
+  .usuarios-table tr {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Cada coluna vira uma linha dentro do card */
+  .usuarios-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: right !important;
+  }
+
+  .usuarios-table td:last-child {
+    border-bottom: none;
+    padding-top: 12px;
+    justify-content: flex-end; /* Joga o botão de ação para a direita ou tela toda */
+  }
+
+  /* Criação de rótulos automáticos para identificar os dados no celular */
+  .usuarios-table td:nth-child(1):before {
+    content: "E-mail:";
+    font-weight: 600;
+    color: #64748b;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .usuarios-table td:nth-child(2):before {
+    content: "Perfil:";
+    font-weight: 600;
+    color: #64748b;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .user-email-col {
+    word-break: break-all;
+    max-width: 60%;
+    text-align: left !important;
+  }
+
+  /* Botão ocupa espaço adequado no card */
+  .btn-change-role {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .btn-voltar-home {
+    width: 100%;
+  }
+}
+
+/* Classes utilitárias e de alinhamento */
+.col-centralizada {
+  text-align: center;
+}
+
+.tabela-vazia {
+  text-align: center;
+  padding: 24px;
+}
+
+/* Botão de Excluir da Tabela */
+.btn-delete-user {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-delete-user:hover {
+  background-color: #fecaca;
+}
+
+/* Overlay e Estrutura do Modal Customizado */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: scaleUp 0.2s ease-out;
+}
+
+.modal-icon-alert {
+  color: #d97706;
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-content h3 {
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  font-size: 18px;
+}
+
+.modal-content p {
+  margin: 0 0 20px 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-modal-cancelar {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-cancelar:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-modal-confirmar {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background-color: #dc2626;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-confirmar:hover {
+  background-color: #b91c1c;
+}
+
+/* Animações suaves para o modal */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

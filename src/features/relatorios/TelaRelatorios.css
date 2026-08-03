@@ -1,0 +1,126 @@
+.relatorios-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: inherit;
+}
+
+.relatorios-loading {
+    text-align: center;
+    margin-top: 60px;
+    color: #64748b;
+}
+
+.admin-header-block {
+    margin-bottom: 32px;
+}
+
+.admin-header-block h2 {
+    color: #0f172a;
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.admin-header-block p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.filtros-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-grupo {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filtro-grupo label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #64748b;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.filtro-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.filtro-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.registros-contador {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.registros-contador span {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+.acoes-botoes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-acao {
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-acao:active {
+    transform: scale(0.98);
+}
+
+.btn-pdf {
+    background: #2563eb;
+}
+
+.btn-pdf:hover {
+    background: #1d4ed8;
+}
+
+.btn-csv {
+    background: #10b981;
+}
+
+.btn-csv:hover {
+    background: #059669;
+}

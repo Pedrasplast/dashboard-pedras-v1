@@ -1,0 +1,129 @@
+/* Layout Geral */
+.importador-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.importador-card {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.importador-header h3 {
+  margin: 0 0 24px 0;
+  color: #0f172a;
+  font-size: 1.25rem;
+}
+
+/* Área de Upload (Drag and Drop) */
+.upload-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.upload-dropzone:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.upload-dropzone.drag-active {
+  border-color: #2563eb;
+  background: #dbeafe;
+}
+
+.upload-dropzone.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Status e Progresso */
+.status-container {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.progress-bar-fill {
+  height: 6px;
+  background: #2563eb;
+  border-radius: 3px;
+  margin-top: 12px;
+  transition: width 0.3s ease;
+}
+
+.back-importador-btn {
+  background-color: #ffffff;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.back-importador-btn:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+  color: #2d3748;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.back-importador-btn:active {
+  transform: translateY(1px);
+}
+
+.select-tabela {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.select-tabela label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.select-tabela select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.select-tabela select:focus {
+  border-color: #4a90e2;
+}
+
+.select-tabela select:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

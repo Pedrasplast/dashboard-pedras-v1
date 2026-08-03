@@ -1,0 +1,221 @@
+/* --- Estrutura Global --- */
+.home-screen {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+/* --- Banner --- */
+.welcome-banner {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: white;
+  padding: 40px;
+  border-radius: 16px;
+}
+
+/* --- Cards de Conteúdo --- */
+.info-card, 
+.auth-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* --- Guia de Ações --- */
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.guide-item:hover { 
+  background: #f8fafc; 
+  border-color: #cbd5e1; 
+}
+
+/* --- Perfil Logado (Card da Direita) --- */
+.profile-logged-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.avatar { 
+  font-size: 40px; 
+  margin-bottom: 10px; 
+}
+
+.email-text { 
+  color: #64748b; 
+  font-size: 0.9rem; 
+  margin: 5px 0 15px; 
+}
+
+.role-box {
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+}
+
+/* --- Botões de Ação --- */
+.btn-action-primary {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-logout-secundario {
+  margin-top: 10px;
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 8px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* --- Formulário de Login --- */
+.login-error-alert {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.form-group { 
+  margin-bottom: 15px; 
+  text-align: left; 
+}
+
+.form-group label { 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  color: #475569; 
+}
+
+.form-group input { 
+  width: 100%; 
+  padding: 10px; 
+  margin-top: 5px; 
+  border: 1px solid #cbd5e1; 
+  border-radius: 6px; 
+  box-sizing: border-box;
+}
+
+.btn-submit {
+  width: 100%; 
+  padding: 12px; 
+  background: #0f172a; 
+  color: white; 
+  border: none; 
+  border-radius: 6px; 
+  cursor: pointer;
+}
+
+/* --- Rodapé do Formulário de Login --- */
+.login-footer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.separator-text {
+  color: #64748b;
+  font-size: 0.8rem;
+  position: relative;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+.separator-text::before,
+.separator-text::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 0 10px;
+}
+
+.btn-link-cadastro {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: 0.2s;
+  padding: 5px;
+}
+
+.btn-link-cadastro:hover {
+  color: #1e3a8a;
+}
+
+.btn-voltar {
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btn-voltar:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Quando o usuário está logado,
+   a área de ações ocupa toda a largura */
+.home-grid.home-grid-logged {
+  grid-template-columns: 1fr;
+}
+
+.home-grid.home-grid-logged .info-card {
+  width: 100%;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 900px) {
+  .home-grid { 
+    grid-template-columns: 1fr; 
+  }
+}

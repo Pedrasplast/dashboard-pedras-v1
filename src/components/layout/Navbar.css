@@ -1,0 +1,758 @@
+/* =====================================================
+   CONFIGURAÇÃO GLOBAL DA NAVBAR FIXAa
+===================================================== */
+
+:root {
+  --navbar-height: 76px;
+ 
+}
+
+html {
+  scroll-padding-top: calc(var(--navbar-height) + 16px);
+}
+
+body {
+  padding-top: var(--navbar-height);
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   NAVBAR PRINCIPAL
+===================================================== */
+
+.main-navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 3000;
+
+  width: 100%;
+  height: var(--navbar-height);
+
+  box-sizing: border-box;
+
+  background:
+    rgba(255, 255, 255, 0.97);
+
+  border-bottom:
+    1px solid #e2e8f0;
+
+  box-shadow:
+    0 2px 12px
+    rgba(15, 23, 42, 0.06);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar-container {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 250px)
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+  gap: 24px;
+
+  width: 100%;
+  height: 100%;
+  min-height: var(--navbar-height);
+
+  margin: 0;
+  padding: 0 24px;
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: fit-content;
+  min-width: 0;
+  padding: 0;
+
+  background: transparent;
+
+  border: none;
+
+  cursor: pointer;
+}
+
+.navbar-brand:focus-visible {
+  outline: 3px solid
+    rgba(37, 99, 235, 0.2);
+
+  outline-offset: 6px;
+
+  border-radius: 8px;
+}
+
+.brand-logo-img {
+  display: block;
+
+  width: auto;
+  max-width: 170px;
+  height: 32px;
+
+  object-fit: contain;
+}
+
+
+/* =====================================================
+   NAVEGAÇÃO CENTRAL
+===================================================== */
+
+.navbar-navigation-wrapper {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.navbar-navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px 12px;
+  border-radius: 18px;
+
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  border: 1px solid #dbe3ee;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.navbar-navigation-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 0 18px;
+
+  border: 1px solid transparent;
+  border-radius: 14px;
+
+  background: transparent;
+  color: #64748b;
+
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition:
+    all 0.22s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.navbar-navigation-link svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.9;
+  transition: all 0.22s ease;
+}
+
+.navbar-navigation-link:hover {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #d6deea;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.navbar-navigation-link:hover svg {
+  color: #2563eb;
+  opacity: 1;
+}
+
+.navbar-navigation-link.active {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  color: #2563eb;
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 6px 16px rgba(37, 99, 235, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.navbar-navigation-link.active svg {
+  color: #2563eb;
+  opacity: 1;
+}
+
+.navbar-navigation-link:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 1100px) {
+  .navbar-navigation {
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 16px;
+  }
+
+  .navbar-navigation-link {
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 0.78rem;
+  }
+
+  .navbar-navigation-link svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+
+/* =====================================================
+   ÁREA DO USUÁRIO
+===================================================== */
+
+.navbar-auth-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  min-width: 0;
+}
+
+.navbar-user-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-user-area {
+  position: relative;
+}
+
+.navbar-user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 48px;
+  padding: 5px 9px 5px 5px;
+
+  color: #334155;
+  background: transparent;
+
+  border: 1px solid transparent;
+  border-radius: 11px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  text-align: left;
+
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.navbar-user-trigger:hover,
+.navbar-user-trigger.open {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.navbar-user-trigger:focus-visible {
+  outline: 3px solid
+    rgba(37, 99, 235, 0.2);
+
+  outline-offset: 2px;
+}
+
+
+/* =====================================================
+   AVATAR E INFORMAÇÕES
+===================================================== */
+
+.user-avatar,
+.user-menu-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1e3a8a,
+      #2563eb
+    );
+
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 10px;
+
+  font-size: 0.72rem;
+}
+
+.user-information {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  max-width: 140px;
+}
+
+.user-name {
+  overflow: hidden;
+
+  color: #1e293b;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-role {
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.1;
+
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-menu-arrow {
+  color: #94a3b8;
+
+  transition:
+    transform 0.18s ease;
+}
+
+.user-menu-arrow.open {
+  transform: rotate(180deg);
+}
+
+
+/* =====================================================
+   BOTÃO SAIR VISÍVEL
+===================================================== */
+
+.navbar-logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 42px;
+  padding: 0 14px;
+
+  color: #b91c1c;
+  background: #ffffff;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+
+  white-space: nowrap;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.navbar-logout-button:hover {
+  color: #991b1b;
+  background: #fef2f2;
+
+  border-color: #fca5a5;
+
+  box-shadow:
+    0 2px 6px
+    rgba(220, 38, 38, 0.1);
+}
+
+.navbar-logout-button:focus-visible {
+  outline: 3px solid
+    rgba(220, 38, 38, 0.18);
+
+  outline-offset: 2px;
+}
+
+
+/* =====================================================
+   MENU DO USUÁRIO
+===================================================== */
+
+.navbar-user-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 280px;
+  padding: 8px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+
+  box-shadow:
+    0 18px 45px
+    rgba(15, 23, 42, 0.16);
+
+  animation:
+    navbarMenuEnter
+    0.16s ease;
+}
+
+@keyframes navbarMenuEnter {
+  from {
+    opacity: 0;
+    transform:
+      translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0);
+  }
+}
+
+.user-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 10px;
+}
+
+.user-menu-avatar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 11px;
+
+  font-size: 0.75rem;
+}
+
+.user-menu-header > div {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.user-menu-header strong {
+  overflow: hidden;
+
+  color: #1e293b;
+
+  font-size: 0.83rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-header span {
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  color: #94a3b8;
+
+  font-size: 0.7rem;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-divider {
+  height: 1px;
+  margin: 6px 4px;
+
+  background: #e2e8f0;
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 41px;
+  padding: 0 11px;
+
+  color: #475569;
+  background: transparent;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  text-align: left;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.user-menu-item:hover {
+  color: #1e293b;
+  background: #f1f5f9;
+}
+
+
+/* =====================================================
+   BOTÃO LOGIN
+===================================================== */
+
+.btn-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 41px;
+  padding: 0 17px;
+
+  color: #ffffff;
+  background: #1d4ed8;
+
+  border: 1px solid #1d4ed8;
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+
+  box-shadow:
+    0 4px 10px
+    rgba(29, 78, 216, 0.18);
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+  .navbar-container {
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+
+    gap: 15px;
+
+    padding: 0 18px;
+  }
+
+  .navbar-navigation {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .navbar-navigation-link {
+    padding: 0 13px;
+
+    font-size: 0.76rem;
+  }
+
+  .user-information {
+    display: none;
+  }
+}
+
+
+/* =====================================================
+   CELULAR E TELAS MENORES
+===================================================== */
+
+@media (max-width: 800px) {
+  :root {
+    --navbar-height: 66px;
+  }
+
+  .main-navbar {
+    height: var(--navbar-height);
+  }
+
+  .navbar-container {
+    grid-template-columns:
+      1fr
+      auto;
+
+    height: 100%;
+    min-height: var(--navbar-height);
+
+    padding: 0 14px;
+  }
+
+  .navbar-brand {
+    grid-column: 1;
+  }
+
+  .navbar-auth-section {
+    grid-column: 2;
+  }
+
+  .navbar-navigation {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+
+    display: grid;
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+
+    width: auto;
+    max-width: none;
+    height: 66px;
+
+    margin: 0;
+    padding: 5px;
+
+    background:
+      rgba(255, 255, 255, 0.97);
+
+    border:
+      1px solid #dbe2ea;
+    border-radius: 16px;
+
+    box-shadow:
+      0 12px 34px
+      rgba(15, 23, 42, 0.18);
+  }
+
+  .navbar-navigation-link {
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+    min-height: 54px;
+    padding: 4px 2px;
+
+    border-radius: 11px;
+
+    font-size: 0.65rem;
+  }
+
+  .navbar-navigation-link.active {
+    color: #1d4ed8;
+    background: #eff6ff;
+
+    border-color: #dbeafe;
+
+    box-shadow: none;
+  }
+
+  .navbar-label-desktop {
+    display: none;
+  }
+
+  .navbar-label-mobile {
+    display: block;
+  }
+
+  body {
+    padding-bottom: 86px;
+  }
+}
+
+
+/* =====================================================
+   CELULARES PEQUENOS
+===================================================== */
+
+@media (max-width: 560px) {
+  .navbar-container {
+    padding: 0 10px;
+  }
+
+  .brand-logo-img {
+    max-width: 135px;
+    height: 27px;
+  }
+
+  .navbar-user-trigger {
+    padding: 4px;
+  }
+
+  .user-menu-arrow {
+    display: none;
+  }
+
+  .navbar-logout-button {
+    width: 40px;
+    min-height: 40px;
+    padding: 0;
+  }
+
+  .navbar-logout-button span {
+    display: none;
+  }
+
+  .navbar-user-menu {
+    position: fixed;
+    top: calc(var(--navbar-height) + 8px);
+    right: 10px;
+    left: 10px;
+
+    width: auto;
+  }
+
+  .navbar-navigation {
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+  }
+}
