@@ -13,7 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
-import { Route as DashboardProdutividadeRouteImport } from './routes/dashboardProdutividade'
+import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
@@ -40,8 +40,8 @@ const DashboardMateriaPrimaRoute = DashboardMateriaPrimaRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
-  id: '/dashboardProdutividade',
-  path: '/dashboardProdutividade',
+  id: '/dashboard-produtividade',
+  path: '/dashboard-produtividade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImportarRoute = ImportarRouteImport.update({
@@ -70,7 +70,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
-  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
+  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -81,7 +81,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
-  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
+  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -93,7 +93,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
-  '/dashboardProdutividade': typeof DashboardProdutividadeRoute
+  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/relatorios': typeof RelatoriosRoute
@@ -106,7 +106,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
-    | '/dashboardProdutividade'
+    | '/dashboard-produtividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -117,7 +117,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
-    | '/dashboardProdutividade'
+    | '/dashboard-produtividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -128,7 +128,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
-    | '/dashboardProdutividade'
+    | '/dashboard-produtividade'
     | '/importar'
     | '/login'
     | '/relatorios'
@@ -177,10 +177,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardMateriaPrimaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboardProdutividade': {
-      id: '/dashboardProdutividade'
-      path: '/dashboardProdutividade'
-      fullPath: '/dashboardProdutividade'
+    '/dashboard-produtividade': {
+      id: '/dashboard-produtividade'
+      path: '/dashboard-produtividade'
+      fullPath: '/dashboard-produtividade'
       preLoaderRoute: typeof DashboardProdutividadeRouteImport
       parentRoute: typeof rootRouteImport
     }
