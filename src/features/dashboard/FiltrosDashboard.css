@@ -1,4 +1,11 @@
-/* ÁREA DOS FILTROS */
+/* =====================================================
+   CONFIGURAÇÃO GERAL DOS FILTROS
+===================================================== */
+
+.filter-section,
+.filter-section * {
+  box-sizing: border-box;
+}
 
 .filter-section {
   width: 100%;
@@ -9,24 +16,32 @@
   gap: 10px;
 }
 
+/* =====================================================
+   CABEÇALHO DO PERÍODO
+===================================================== */
+
 .filter-section .filter-header-row {
   width: 100%;
-  margin-top: 2px;
+  min-width: 0;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+
+  margin-top: 2px;
 }
 
 .filter-section > label,
 .filter-section .filter-header-row > label {
   display: block;
+
   margin: 14px 0 0;
 
-  color: white;
+  color: #ffffff;
   font-size: 0.7rem;
   font-weight: 800;
+  line-height: 1.2;
   letter-spacing: 0.08em;
   text-align: left;
   text-transform: uppercase;
@@ -36,9 +51,13 @@
   margin: 0;
 }
 
-/* BOTÃO LIMPAR */
+/* =====================================================
+   BOTÃO LIMPAR
+===================================================== */
 
 .filter-section .clear-date-btn {
+  flex-shrink: 0;
+
   padding: 5px 8px;
 
   background: transparent;
@@ -46,8 +65,10 @@
   border-radius: 7px;
 
   color: #ef4444;
+  font-family: inherit;
   font-size: 0.67rem;
   font-weight: 800;
+  line-height: 1.2;
   letter-spacing: 0.03em;
 
   cursor: pointer;
@@ -59,15 +80,23 @@
 }
 
 .filter-section .clear-date-btn:hover {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #dc2626;
+  background: rgba(254, 242, 242, 0.12);
+  border-color: rgba(254, 202, 202, 0.35);
+  color: #f87171;
 }
 
-/* CAMPOS DO PERÍODO */
+.filter-section .clear-date-btn:focus-visible {
+  outline: 2px solid rgba(248, 113, 113, 0.45);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   CAMPOS DE DATA
+===================================================== */
 
 .filter-section .date-inputs-container {
   width: 100%;
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
@@ -76,28 +105,30 @@
 
 .calendar-field {
   position: relative;
+
   width: 100%;
   min-width: 0;
 }
 
 .calendar-trigger {
   width: 100%;
-  min-height: 50px;
+  min-width: 0;
+  min-height: 58px;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
 
-  padding: 9px 12px;
-  box-sizing: border-box;
+  padding: 10px 12px;
 
   background: #ffffff;
   border: 1px solid #dbe3ee;
   border-radius: 10px;
 
   color: #0f172a;
+  font-family: inherit;
   text-align: left;
 
   cursor: pointer;
@@ -115,6 +146,7 @@
 .calendar-trigger:hover:not(:disabled) {
   background: #f8fafc;
   border-color: #94a3b8;
+
   transform: translateY(-1px);
 }
 
@@ -123,13 +155,14 @@
   border-color: #3b82f6;
 
   box-shadow:
-    0 0 0 3px rgba(59, 130, 246, 0.14);
+    0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .calendar-trigger:disabled {
   background: #f8fafc;
   border-color: #e2e8f0;
   color: #94a3b8;
+
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -138,35 +171,45 @@
   color: #64748b;
   font-size: 0.64rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
   line-height: 1;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .calendar-trigger strong {
+  max-width: 100%;
+
+  overflow: hidden;
+
   color: #0f172a;
   font-size: 0.91rem;
   font-weight: 700;
   line-height: 1.25;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .calendar-trigger:disabled strong {
   color: #94a3b8;
 }
 
-/* POPOVER DO CALENDÁRIO */
+/* =====================================================
+   POPOVER DO CALENDÁRIO
+===================================================== */
 
 .calendar-popover {
   position: absolute;
   top: calc(100% + 10px);
+  right: 0;
   left: 0;
   z-index: 4000;
 
-  width: max-content;
-  max-width: min(350px, calc(100vw - 32px));
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 
-  padding: 14px;
-  box-sizing: border-box;
+  padding: 10px;
 
   background: #ffffff;
   border: 1px solid #dbe3ee;
@@ -175,6 +218,9 @@
   box-shadow:
     0 22px 55px rgba(15, 23, 42, 0.18),
     0 8px 18px rgba(15, 23, 42, 0.08);
+
+  overflow: visible;
+  isolation: isolate;
 
   animation: calendarioAbrir 0.16s ease-out;
 }
@@ -191,85 +237,203 @@
   }
 }
 
-/* DAYPICKER */
-
-/* DAYPICKER */
+/* =====================================================
+   DAYPICKER
+===================================================== */
 
 .calendar-popover .rdp-root {
   --rdp-accent-color: #2563eb;
   --rdp-accent-background-color: #dbeafe;
-  --rdp-day-height: 38px;
-  --rdp-day-width: 38px;
-  --rdp-day_button-height: 36px;
-  --rdp-day_button-width: 36px;
+
+  --rdp-day-height: 32px;
+  --rdp-day-width: 30px;
+
+  --rdp-day_button-height: 30px;
+  --rdp-day_button-width: 30px;
+
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
 
   margin: 0;
+
   color: #1e293b;
-  font-size: 0.84rem;
+  font-size: 0.8rem;
 }
 
 .calendar-popover .rdp-months {
-  justify-content: center;
+  display: block;
+
+  width: 100%;
+  min-width: 0;
 }
 
 .calendar-popover .rdp-month {
   width: 100%;
+  min-width: 0;
+}
+
+.calendar-popover .rdp-month_grid {
+  width: 100%;
+  min-width: 0;
+
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .calendar-popover .rdp-month_caption {
-  min-height: 42px;
-  padding: 0 40px;
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 38px;
 }
 
 .calendar-popover .rdp-caption_label {
+  min-width: 0;
+
   color: #0f172a;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
   text-transform: capitalize;
 }
 
+/* =====================================================
+   SETAS DO CALENDÁRIO
+===================================================== */
+
 .calendar-popover .rdp-nav {
+  position: absolute;
   top: 3px;
+  right: 0;
+  left: 0;
+  z-index: 5;
+
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  pointer-events: none;
 }
 
 .calendar-popover .rdp-button_previous,
 .calendar-popover .rdp-button_next {
-  width: 34px;
-  height: 34px;
+  position: static;
+
+  flex: 0 0 32px;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
+
   color: #475569;
-  transition: 0.2s ease;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.calendar-popover .rdp-button_previous:hover,
-.calendar-popover .rdp-button_next:hover {
+.calendar-popover
+  .rdp-button_previous:hover:not(:disabled),
+.calendar-popover
+  .rdp-button_next:hover:not(:disabled) {
   background: #eff6ff;
   border-color: #bfdbfe;
   color: #1d4ed8;
 }
 
+.calendar-popover .rdp-button_previous:focus-visible,
+.calendar-popover .rdp-button_next:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 1px;
+}
+
+.calendar-popover .rdp-button_previous:disabled,
+.calendar-popover .rdp-button_next:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.calendar-popover .rdp-chevron {
+  width: 16px;
+  height: 16px;
+}
+
+/* =====================================================
+   DIAS DA SEMANA
+===================================================== */
+
 .calendar-popover .rdp-weekday {
+  width: 14.285%;
+
+  padding: 5px 0;
+
   color: #94a3b8;
-  font-size: 0.68rem;
+  font-size: 0.61rem;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-align: center;
   text-transform: uppercase;
 }
 
+/* =====================================================
+   DIAS DO CALENDÁRIO
+===================================================== */
+
 .calendar-popover .rdp-day {
+  width: 14.285%;
+
   padding: 2px;
+
+  text-align: center;
 }
 
 .calendar-popover .rdp-day_button {
-  border: none;
-  border-radius: 10px;
+  width: 30px;
+  max-width: 100%;
+  height: 30px;
+
+  margin: 0 auto;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   background: transparent;
+  border: none;
+  border-radius: 9px;
+
   color: #334155;
-  font-size: 0.82rem;
+  font-family: inherit;
+  font-size: 0.76rem;
   font-weight: 600;
+  line-height: 1;
+
   cursor: pointer;
+
   transition:
     background-color 0.18s ease,
     color 0.18s ease,
@@ -277,60 +441,102 @@
     box-shadow 0.18s ease;
 }
 
-.calendar-popover .rdp-day_button:hover {
+.calendar-popover
+  .rdp-day_button:hover:not(:disabled) {
   background: #eff6ff;
   color: #1d4ed8;
+
   transform: scale(1.04);
 }
 
-.calendar-popover .rdp-selected .rdp-day_button {
-  background: #2563eb;
-  color: #ffffff;
-  font-weight: 800;
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+.calendar-popover
+  .rdp-day_button:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 1px;
 }
 
-.calendar-popover .rdp-today:not(.rdp-selected) .rdp-day_button {
-  border: 1px solid #93c5fd;
+/* =====================================================
+   DIA SELECIONADO
+===================================================== */
+
+.calendar-popover
+  .rdp-selected
+  .rdp-day_button {
+  background: #2563eb;
+  color: #ffffff;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+/* =====================================================
+   DIA ATUAL
+===================================================== */
+
+.calendar-popover
+  .rdp-today:not(.rdp-selected)
+  .rdp-day_button {
   background: #f8fbff;
+  border: 1px solid #93c5fd;
+
   color: #1d4ed8;
   font-weight: 800;
 }
 
-/* DIAS COM DADOS - visual novo, sem pontinhos */
-.calendar-popover .calendar-day-has-data .rdp-day_button {
+/* =====================================================
+   DIAS COM DADOS
+===================================================== */
+
+.calendar-popover
+  .calendar-day-has-data
+  .rdp-day_button {
   background: #f1f5f9;
+
   color: #0f172a;
   font-weight: 700;
 }
 
-.calendar-popover .calendar-day-has-data .rdp-day_button:hover {
+.calendar-popover
+  .calendar-day-has-data
+  .rdp-day_button:hover {
   background: #dbeafe;
   color: #1d4ed8;
 }
 
-/* remove os pontinhos */
-.calendar-popover .calendar-day-has-data .rdp-day_button::after {
+.calendar-popover
+  .calendar-day-has-data
+  .rdp-day_button::after {
   display: none;
   content: none;
 }
 
-/* dia selecionado continua com destaque principal */
-.calendar-popover .rdp-selected.calendar-day-has-data .rdp-day_button {
+.calendar-popover
+  .rdp-selected.calendar-day-has-data
+  .rdp-day_button {
   background: #2563eb;
   color: #ffffff;
 }
 
-/* DIAS SEM DADOS */
+/* =====================================================
+   DIAS SEM DADOS
+===================================================== */
+
 .calendar-popover .rdp-disabled {
   opacity: 1;
 }
 
-.calendar-popover .rdp-disabled .rdp-day_button {
+.calendar-popover
+  .rdp-disabled
+  .rdp-day_button {
   background: transparent;
+
   color: #cbd5e1;
+
   cursor: not-allowed;
   pointer-events: none;
+
   box-shadow: none;
   transform: none;
 }
@@ -339,23 +545,33 @@
   opacity: 0.22;
 }
 
-/* TEXTOS DO CALENDÁRIO */
+/* =====================================================
+   TEXTOS DO CALENDÁRIO
+===================================================== */
 
 .calendar-info {
   display: block;
+
+  width: 100%;
+
   margin-top: 10px;
   padding-top: 9px;
 
   border-top: 1px solid #f1f5f9;
 
   color: #64748b;
-  font-size: 0.68rem;
+  font-size: 0.63rem;
   line-height: 1.4;
   text-align: center;
+
+  overflow-wrap: anywhere;
 }
 
 .calendar-empty {
   display: block;
+
+  width: 100%;
+
   margin-top: 4px;
   padding: 8px 10px;
 
@@ -368,21 +584,24 @@
   line-height: 1.35;
 }
 
-/* SELECTS */
+/* =====================================================
+   SELECTS
+===================================================== */
 
 .filter-section select {
   width: 100%;
-  min-height: 44px;
+  min-width: 0;
+  min-height: 50px;
 
   padding: 10px 38px 10px 12px;
-  box-sizing: border-box;
 
   background-color: #ffffff;
   border: 1px solid #dbe3ee;
   border-radius: 10px;
 
   color: #1e293b;
-  font-size: 0.9rem;
+  font-family: inherit;
+  font-size: 0.88rem;
   font-weight: 500;
 
   outline: none;
@@ -396,10 +615,12 @@
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.2s ease;
+
+  appearance: auto;
 }
 
 .filter-section select:hover:not(:disabled) {
-  background: #f8fafc;
+  background-color: #f8fafc;
   border-color: #94a3b8;
 }
 
@@ -407,51 +628,64 @@
   border-color: #3b82f6;
 
   box-shadow:
-    0 0 0 3px rgba(59, 130, 246, 0.14);
+    0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .filter-section select:disabled {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  color: #a7b2c2;
+  background-color: #cbd5e1;
+  border-color: #cbd5e1;
+
+  color: #64748b;
 
   cursor: not-allowed;
   box-shadow: none;
+  opacity: 0.78;
 }
 
-/* CHECKBOXES */
+/* =====================================================
+   GRUPO DE CHECKBOXES
+===================================================== */
 
 .filter-section .checkbox-group {
   width: 100%;
-  max-height: 185px;
+  min-width: 0;
+  max-height: 190px;
 
   display: flex;
   flex-direction: column;
   gap: 6px;
 
-  padding: 4px 0;
+  padding: 2px 0;
 
+  overflow-x: hidden;
   overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(191, 219, 254, 0.45)
+    transparent;
 }
 
 .filter-section .checkbox-label {
   width: 100%;
+  min-width: 0;
+  min-height: 38px;
 
   display: flex;
   align-items: center;
   gap: 10px;
 
   margin: 0;
-  padding: 9px 10px;
-  box-sizing: border-box;
+  padding: 8px 9px;
 
   background: transparent;
   border: 1px solid transparent;
   border-radius: 9px;
 
-  color: #334155;
-  font-size: 0.88rem;
-  font-weight: 600;
+  color: #dbeafe;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.2;
   text-transform: none;
 
   cursor: pointer;
@@ -464,18 +698,25 @@
 }
 
 .filter-section .checkbox-label:hover {
-  background: #f8fafc;
-  border-color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(191, 219, 254, 0.16);
+
+  color: #ffffff;
+
   transform: translateX(2px);
 }
 
-.filter-section .checkbox-label:has(input:checked) {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+.filter-section
+  .checkbox-label:has(input:checked) {
+  background: rgba(37, 99, 235, 0.28);
+  border-color: rgba(147, 197, 253, 0.32);
+
+  color: #ffffff;
 }
 
-.filter-section .checkbox-label input[type="checkbox"] {
+.filter-section
+  .checkbox-label
+  input[type="checkbox"] {
   flex: 0 0 auto;
 
   width: 17px;
@@ -483,6 +724,7 @@
   margin: 0;
 
   accent-color: #2563eb;
+
   cursor: pointer;
 }
 
@@ -490,63 +732,314 @@
   flex: 1;
   min-width: 0;
 
+  color: inherit;
+
   overflow-wrap: anywhere;
 }
 
-/* SCROLLBAR */
+/* =====================================================
+   BARRA DE ROLAGEM DOS CHECKBOXES
+===================================================== */
 
-.filter-section .checkbox-group::-webkit-scrollbar {
+.filter-section
+  .checkbox-group::-webkit-scrollbar {
   width: 5px;
 }
 
-.filter-section .checkbox-group::-webkit-scrollbar-track {
+.filter-section
+  .checkbox-group::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.filter-section .checkbox-group::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+.filter-section
+  .checkbox-group::-webkit-scrollbar-thumb {
+  background: rgba(191, 219, 254, 0.4);
   border-radius: 999px;
 }
 
-/* RESPONSIVO */
+.filter-section
+  .checkbox-group::-webkit-scrollbar-thumb:hover {
+  background: rgba(191, 219, 254, 0.6);
+}
+
+/* =====================================================
+   NOTEBOOKS E TELAS INTERMEDIÁRIAS
+===================================================== */
+
+@media (max-width: 1200px) {
+  .calendar-trigger {
+    min-height: 56px;
+  }
+
+  .filter-section select {
+    min-height: 48px;
+  }
+}
+
+/* =====================================================
+   TABLETS
+===================================================== */
 
 @media (max-width: 1024px) {
+  .filter-section {
+    gap: 12px;
+  }
 
   .filter-section .date-inputs-container {
     display: grid;
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+  }
+
+  /*
+   * A Sidebar não possui overflow oculto nessa largura,
+   * permitindo um calendário um pouco mais largo.
+   */
+  .calendar-popover {
+    right: auto;
+    left: 0;
+
+    width: min(320px, calc(100vw - 32px));
+    max-width: none;
+
+    padding: 12px;
+  }
+
+  .calendar-field:last-child
+    .calendar-popover {
+    right: 0;
+    left: auto;
+  }
+
+  .calendar-popover .rdp-root {
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+  }
+
+  .calendar-popover .rdp-day_button {
+    width: 34px;
+    height: 34px;
+
+    font-size: 0.8rem;
+  }
+
+  .filter-section .checkbox-group {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    max-height: none;
+    gap: 8px;
+  }
+
+  .filter-section .checkbox-label:hover {
+    transform: none;
   }
 }
 
+/* =====================================================
+   CELULARES
+===================================================== */
+
 @media (max-width: 640px) {
+  .filter-section {
+    gap: 9px;
+  }
 
   .filter-section .date-inputs-container {
     display: flex;
     flex-direction: column;
+    gap: 9px;
+  }
+
+  .calendar-trigger {
+    min-height: 54px;
   }
 
   .calendar-popover {
     position: fixed;
     top: 50%;
+    right: auto;
     left: 50%;
+    z-index: 5000;
 
-    width: calc(100vw - 32px);
-    max-width: 350px;
+    width: min(340px, calc(100vw - 24px));
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+
+    padding: 12px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 
     transform: translate(-50%, -50%);
+  }
+
+  .calendar-field:last-child
+    .calendar-popover {
+    right: auto;
+    left: 50%;
   }
 
   @keyframes calendarioAbrir {
     from {
       opacity: 0;
+
       transform:
-        translate(-50%, calc(-50% - 8px));
+        translate(
+          -50%,
+          calc(-50% - 8px)
+        );
     }
 
     to {
       opacity: 1;
-      transform: translate(-50%, -50%);
+
+      transform:
+        translate(-50%, -50%);
     }
+  }
+
+  .calendar-popover .rdp-root {
+    --rdp-day-height: 38px;
+    --rdp-day-width: 38px;
+
+    --rdp-day_button-height: 36px;
+    --rdp-day_button-width: 36px;
+  }
+
+  .calendar-popover .rdp-day_button {
+    width: 36px;
+    height: 36px;
+
+    font-size: 0.82rem;
+  }
+
+  .filter-section select {
+    min-height: 48px;
+  }
+
+  .filter-section .checkbox-group {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .filter-section .checkbox-label {
+    min-height: 40px;
+  }
+}
+
+/* =====================================================
+   CELULARES PEQUENOS
+===================================================== */
+
+@media (max-width: 420px) {
+  .filter-section .filter-header-row {
+    gap: 6px;
+  }
+
+  .filter-section .clear-date-btn {
+    padding-right: 4px;
+    padding-left: 4px;
+
+    font-size: 0.62rem;
+  }
+
+  .calendar-popover {
+    width: calc(100vw - 16px);
+    padding: 9px;
+    border-radius: 12px;
+  }
+
+  .calendar-popover .rdp-root {
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+  }
+
+  .calendar-popover .rdp-day_button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .calendar-popover .rdp-month_caption {
+    padding: 0 36px;
+  }
+
+  .calendar-info {
+    font-size: 0.61rem;
+  }
+
+  .filter-section .checkbox-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+   TELAS MUITO PEQUENAS
+===================================================== */
+
+@media (max-width: 340px) {
+  .calendar-popover {
+    width: calc(100vw - 10px);
+    padding: 7px;
+  }
+
+  .calendar-popover .rdp-root {
+    --rdp-day-height: 32px;
+    --rdp-day-width: 32px;
+
+    --rdp-day_button-height: 30px;
+    --rdp-day_button-width: 30px;
+  }
+
+  .calendar-popover .rdp-day_button {
+    width: 30px;
+    height: 30px;
+
+    font-size: 0.75rem;
+  }
+
+  .calendar-popover .rdp-button_previous,
+  .calendar-popover .rdp-button_next {
+    width: 30px;
+    height: 30px;
+
+    flex-basis: 30px;
+  }
+}
+
+/* =====================================================
+   DISPOSITIVOS SEM HOVER
+===================================================== */
+
+@media (hover: none) {
+  .calendar-trigger:hover:not(:disabled),
+  .filter-section .checkbox-label:hover {
+    transform: none;
+  }
+}
+
+/* =====================================================
+   ACESSIBILIDADE
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-popover,
+  .calendar-trigger,
+  .filter-section select,
+  .filter-section .checkbox-label,
+  .calendar-popover .rdp-day_button {
+    animation: none;
+    transition: none;
   }
 }
