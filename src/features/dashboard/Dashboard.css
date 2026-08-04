@@ -37,6 +37,7 @@
 
 .main-content {
   min-width: 0;
+  margin-top: 24px;
 
   padding: 32px 40px;
   box-sizing: border-box;
@@ -49,6 +50,7 @@
   align-items: center;
   justify-content: space-between;
 
+  margin-top: 0;
   margin-bottom: 24px;
 }
 
@@ -107,6 +109,7 @@
 .kpi-card {
   position: relative;
 
+  min-width: 0;
   min-height: 118px;
 
   display: flex;
@@ -174,6 +177,106 @@
   font-weight: 800;
   line-height: 1.15;
   text-align: center;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   CARDS DE HORAS E INDICADOR DE DIAS
+===================================================== */
+
+.kpi-horas-trabalhadas {
+  position: relative;
+
+  min-width: 0;
+  min-height: 138px;
+
+  /*
+   * Reserva espaço na parte inferior para que
+   * a tag DIAS e o valor fiquem na mesma linha.
+   */
+  padding-bottom: 24px;
+}
+
+/*
+ * O valor utiliza somente a área disponível depois
+ * do espaço reservado para a tag DIAS.
+ */
+.kpi-horas-trabalhadas .valor-horas-trabalhadas {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  margin-top: 4px;
+  padding-right: 12px;
+  padding-left: 118px;
+  box-sizing: border-box;
+
+  color: var(--logo-azul-escuro);
+  font-size: clamp(1.08rem, 1.4vw, 1.48rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * A tag fica posicionada no início do card,
+ * alinhada horizontalmente com o valor das horas.
+ */
+.dias-trabalhados-indicador {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2;
+
+  width: 98px;
+  min-width: 98px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+
+  padding: 7px 9px;
+
+  background: #f1f5f9;
+  border: 1px solid #dbe5f0;
+  border-radius: 8px;
+
+  box-shadow:
+    0 2px 5px rgba(11, 31, 94, 0.04);
+}
+
+.dias-trabalhados-indicador small {
+  margin: 0;
+
+  color: #64748b;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.dias-trabalhados-indicador strong {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  color: var(--logo-azul-escuro);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: left;
+  white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
 }
@@ -269,8 +372,6 @@
     #eef3f8;
 }
 
-/* Chrome, Edge e Safari */
-
 .motivos-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -348,13 +449,9 @@
     0 8px 18px rgba(11, 31, 94, 0.08);
 }
 
-/* Faz os spans participarem do grid */
-
 .motivo-bar .label-row {
   display: contents;
 }
-
-/* Nome do motivo */
 
 .motivo-bar .label-row span:first-child {
   grid-column: 1;
@@ -371,8 +468,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* Valor do tempo */
 
 .motivo-bar .label-row span:last-child {
   grid-column: 3;
@@ -486,7 +581,7 @@
 }
 
 /* =====================================================
-   RESPONSIVIDADE
+   RESPONSIVIDADE — TELAS INTERMEDIÁRIAS
 ===================================================== */
 
 @media (max-width: 1200px) {
@@ -498,7 +593,27 @@
 
     gap: 12px;
   }
+
+  .dias-trabalhados-indicador {
+    left: 12px;
+
+    width: 88px;
+    min-width: 88px;
+
+    padding: 6px 7px;
+  }
+
+  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 100px;
+    padding-right: 4px;
+
+    font-size: 1.16rem;
+  }
 }
+
+/* =====================================================
+   RESPONSIVIDADE — TABLET
+===================================================== */
 
 @media (max-width: 1024px) {
   .dashboard-container {
@@ -507,6 +622,7 @@
 
   .main-content {
     padding: 24px;
+    margin-top: 24px;
   }
 
   .kpi-grid {
@@ -517,11 +633,27 @@
   .motivos-list {
     max-height: 500px;
   }
+
+  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 108px;
+
+    font-size: 1.3rem;
+  }
+
+  .dias-trabalhados-indicador {
+    width: 94px;
+    min-width: 94px;
+  }
 }
+
+/* =====================================================
+   RESPONSIVIDADE — CELULAR
+===================================================== */
 
 @media (max-width: 760px) {
   .main-content {
     padding: 18px;
+    margin-top: 20px;
   }
 
   .dashboard-header h1 {
@@ -558,7 +690,36 @@
 
     height: 9px;
   }
+
+  .kpi-horas-trabalhadas {
+    min-height: 132px;
+  }
+
+  .dias-trabalhados-indicador {
+    left: 12px;
+    bottom: 14px;
+
+    width: 86px;
+    min-width: 86px;
+
+    padding: 6px 7px;
+  }
+
+  .dias-trabalhados-indicador strong {
+    font-size: 0.76rem;
+  }
+
+  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 96px;
+    padding-right: 2px;
+
+    font-size: 1.12rem;
+  }
 }
+
+/* =====================================================
+   RESPONSIVIDADE — CELULARES PEQUENOS
+===================================================== */
 
 @media (max-width: 640px) {
   .kpi-grid {
@@ -569,62 +730,25 @@
     min-height: 108px;
   }
 
-  .motivos-list {
-    max-height: 430px;
+  .kpi-horas-trabalhadas {
+    min-height: 128px;
   }
-}
 
-/* =====================================================
-   DIAS TRABALHADOS DENTRO DO CARD DE HORAS
-===================================================== */
-
-.kpi-horas-trabalhadas {
-  position: relative;
-}
-
-.dias-trabalhados-indicador {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-
-  padding: 6px 9px;
-
-  background: #f1f5f9;
-  border: 1px solid #dbe5f0;
-  border-radius: 8px;
-}
-
-.dias-trabalhados-indicador small {
-  color: #64748b;
-  font-size: 0.58rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 0.06em;
-}
-
-.dias-trabalhados-indicador strong {
-  margin: 0;
-
-  color: var(--logo-azul-escuro, #0b1f5e);
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.1;
-
-  font-variant-numeric: tabular-nums;
-}
-
-.valor-horas-trabalhadas {
-  font-size: 1.48rem;
-}
-
-@media (max-width: 640px) {
   .dias-trabalhados-indicador {
     left: 12px;
-    bottom: 12px;
+    bottom: 13px;
+
+    width: 84px;
+    min-width: 84px;
+  }
+
+  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 94px;
+
+    font-size: 1.16rem;
+  }
+
+  .motivos-list {
+    max-height: 430px;
   }
 }
