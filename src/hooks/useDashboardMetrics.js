@@ -510,6 +510,30 @@ export const useDashboardMetrics = (
             horasTrabalhadasDec +
             horasParadasCartaoDec;
 
+        /*
+* Percentual das horas trabalhadas
+* sobre o total de horas.
+*/
+        const percentualHorasTrabalhadas =
+            horasTotaisDec > 0
+                ? (
+                    horasTrabalhadasDec /
+                    horasTotaisDec
+                ) * 100
+                : 0;
+
+        /*
+         * Percentual das horas paradas
+         * sobre o total de horas.
+         */
+        const percentualHorasParadas =
+            horasTotaisDec > 0
+                ? (
+                    horasParadasCartaoDec /
+                    horasTotaisDec
+                ) * 100
+                : 0;
+
         return {
             totalConforme,
 
@@ -607,6 +631,13 @@ export const useDashboardMetrics = (
                 ),
 
             horasTotaisDec,
+
+            /*
+             * Percentuais sobre o total.
+            */
+            percentualHorasTrabalhadas,
+
+            percentualHorasParadas,
 
             /*
              * Dias totais.

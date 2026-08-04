@@ -3,8 +3,14 @@ import React, {
     useState
 } from 'react';
 
-import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import { useCargaMaquina } from "@/lib/cargaMaquina";
+import {
+    useDashboardMetrics
+} from '@/hooks/useDashboardMetrics';
+
+import {
+    useCargaMaquina
+} from '@/lib/cargaMaquina';
+
 import FiltrosDashboard from './FiltrosDashboard';
 import Sidebar from '@/components/layout/Sidebar';
 
@@ -18,8 +24,6 @@ import {
 } from 'lucide-react';
 
 import './Dashboard.css';
-
-
 
 /*
  * Extrai a data no formato YYYY-MM-DD.
@@ -104,11 +108,17 @@ const ordenarValores = (valores) => {
     );
 };
 
+const formatarPercentual = (valor) => {
+    const numero = Number(valor);
+
+    return Math.round(
+        Number.isFinite(numero)
+            ? numero
+            : 0
+    ).toLocaleString('pt-BR');
+};
+
 export default function Dashboard() {
-    /*
-     * Registros de carga_maquina vindos do cache
-     * compartilhado, com paginação completa.
-     */
     const {
         dados: rawDados,
         loading,
@@ -126,10 +136,6 @@ export default function Dashboard() {
         dataFim: ''
     });
 
-
-    /*
-     * Tipos disponíveis.
-     */
     const tiposDisponiveis =
         useMemo(() => {
             return ordenarValores(
@@ -140,10 +146,6 @@ export default function Dashboard() {
             );
         }, [rawDados]);
 
-    /*
-     * Produtos disponíveis conforme
-     * a injetora selecionada.
-     */
     const produtosDisponiveis =
         useMemo(() => {
             const baseProdutos =
@@ -167,36 +169,24 @@ export default function Dashboard() {
             filtros.injetora
         ]);
 
-    /*
-     * Aplica somente:
-     *
-     * - injetora;
-     * - produto;
-     * - período.
-     *
-     * O Tipo NÃO é aplicado nesta base.
-     *
-     * Isso impede que Conforme, Danificadas,
-     * Qualidade e Hora Trabalhada fiquem zerados.
-     */
     const dadosFiltrados =
         useMemo(() => {
             return rawDados.filter(
                 (registro) => {
                     if (
                         filtros.injetora !==
-                        'Todos' &&
+                            'Todos' &&
                         registro.injetora !==
-                        filtros.injetora
+                            filtros.injetora
                     ) {
                         return false;
                     }
 
                     if (
                         filtros.cod_prod !==
-                        'Todos' &&
+                            'Todos' &&
                         registro.cod_prod !==
-                        filtros.cod_prod
+                            filtros.cod_prod
                     ) {
                         return false;
                     }
@@ -212,7 +202,7 @@ export default function Dashboard() {
                         if (
                             !dataRegistro ||
                             dataRegistro <
-                            filtros.dataInicio
+                                filtros.dataInicio
                         ) {
                             return false;
                         }
@@ -224,7 +214,7 @@ export default function Dashboard() {
                         if (
                             !dataRegistro ||
                             dataRegistro >
-                            filtros.dataFim
+                                filtros.dataFim
                         ) {
                             return false;
                         }
@@ -241,19 +231,41 @@ export default function Dashboard() {
             filtros.dataFim
         ]);
 
-    /*
-     * O Tipo é enviado separadamente.
-     *
-     * Ele será usado pelo hook somente para:
-     *
-     * - incluir sábado e domingo no cartão
-     *   Hora Parada quando Tipo 3 estiver ativo.
-     */
     const metrics =
         useDashboardMetrics(
             dadosFiltrados,
             filtros.tipo
         );
+
+    const horasTotaisDec =
+        Number(
+            metrics?.horasTotaisDec ||
+            0
+        );
+
+    const percentualHoraTrabalhada =
+        horasTotaisDec > 0
+            ? (
+                Number(
+                    metrics
+                        ?.horasTrabalhadasDec ||
+                    0
+                ) /
+                horasTotaisDec
+            ) * 100
+            : 0;
+
+    const percentualHoraParada =
+        horasTotaisDec > 0
+            ? (
+                Number(
+                    metrics
+                        ?.horasParadasDec ||
+                    0
+                ) /
+                horasTotaisDec
+            ) * 100
+            : 0;
 
     const maiorMotivo =
         metrics?.motivos?.[0]?.value ||
@@ -300,8 +312,7 @@ export default function Dashboard() {
                 <section className="kpi-grid">
                     <div className="kpi-card verde">
                         <CheckCircle2
-                            size={24}
-                            color="#16a34a"
+                            className="kpi-icon kpi-icon-conforme"
                         />
 
                         <span>
@@ -321,8 +332,7 @@ export default function Dashboard() {
 
                     <div className="kpi-card vermelho">
                         <XCircle
-                            size={20}
-                            color="#dc2626"
+                            className="kpi-icon kpi-icon-danificadas"
                         />
 
                         <span>
@@ -342,8 +352,7 @@ export default function Dashboard() {
 
                     <div className="kpi-card verde">
                         <Target
-                            size={20}
-                            color="#3b82f6"
+                            className="kpi-icon kpi-icon-qualidade"
                         />
 
                         <span>
@@ -366,21 +375,32 @@ export default function Dashboard() {
                             </small>
 
                             <strong>
-                                {metrics?.diasTrabalhados || '0.00'}
+                                {metrics
+                                    ?.diasTrabalhados ||
+                                    '0.00'}
                             </strong>
                         </div>
 
                         <Clock
-                            size={20}
-                            color="#6b7280"
+                            className="kpi-icon kpi-icon-horas"
                         />
 
                         <span>
                             HORA TRABALHADA
                         </span>
 
+                        <div className="percentual-horas-indicador percentual-horas-indicador-trabalhadas">
+                            {formatarPercentual(
+                                percentualHoraTrabalhada
+                            )}
+                            %
+                        </div>
+
                         <strong className="valor-horas-trabalhadas">
-                            {metrics?.horasTrabalhadas || '00:00'} hrs
+                            {metrics
+                                ?.horasTrabalhadas ||
+                                '00:00'}{' '}
+                            hrs
                         </strong>
                     </div>
 
@@ -391,18 +411,26 @@ export default function Dashboard() {
                             </small>
 
                             <strong>
-                                {metrics?.diasParados || '0d 00h'}
+                                {metrics
+                                    ?.diasParados ||
+                                    '0d 00h'}
                             </strong>
                         </div>
 
                         <PauseCircle
-                            size={20}
-                            color="#dc2626"
+                            className="kpi-icon kpi-icon-paradas"
                         />
 
                         <span>
                             HORA PARADA
                         </span>
+
+                        <div className="percentual-horas-indicador percentual-horas-indicador-paradas">
+                            {formatarPercentual(
+                                percentualHoraParada
+                            )}
+                            %
+                        </div>
 
                         <strong className="valor-horas-trabalhadas">
                             {metrics
@@ -419,13 +447,14 @@ export default function Dashboard() {
                             </small>
 
                             <strong>
-                                {metrics?.diasTotais || '0d 00h'}
+                                {metrics
+                                    ?.diasTotais ||
+                                    '0d 00h'}
                             </strong>
                         </div>
 
                         <Calculator
-                            size={20}
-                            color="#6b7280"
+                            className="kpi-icon kpi-icon-horas"
                         />
 
                         <span>
@@ -447,8 +476,8 @@ export default function Dashboard() {
                     </h3>
 
                     <div className="motivos-list">
-                        {(metrics?.motivos ||
-                            []).length === 0 ? (
+                        {(metrics?.motivos || [])
+                            .length === 0 ? (
                             <p className="sem-dados">
                                 Nenhum motivo de parada encontrado.
                             </p>
@@ -456,46 +485,39 @@ export default function Dashboard() {
                             (
                                 metrics?.motivos ||
                                 []
-                            ).map((item) => {
-                                const largura =
-                                    maiorMotivo > 0
-                                        ? Math.min(
-                                            100,
-                                            (
-                                                item.value /
-                                                maiorMotivo
-                                            ) * 100
-                                        )
-                                        : 0;
+                            ).map((item) => (
+                                <div
+                                    key={item.name}
+                                    className="motivo-bar"
+                                >
+                                    <div className="label-row">
+                                        <span>
+                                            {item.name}
+                                        </span>
 
-                                return (
-                                    <div
-                                        key={item.name}
-                                        className="motivo-bar"
-                                    >
-                                        <div className="label-row">
-                                            <span>
-                                                {item.name}
-                                            </span>
-
-                                            <span>
-                                                {
-                                                    item.formattedValue
-                                                }
-                                            </span>
-                                        </div>
-
-                                        <div className="progress-bg">
-                                            <div
-                                                className="progress-fill"
-                                                style={{
-                                                    width: `${largura}%`
-                                                }}
-                                            />
-                                        </div>
+                                        <span>
+                                            {
+                                                item.formattedValue
+                                            }
+                                        </span>
                                     </div>
-                                );
-                            })
+
+                                    <div className="progress-bg">
+                                        <progress
+                                            className="progress-indicador"
+                                            value={
+                                                item.value
+                                            }
+                                            max={
+                                                maiorMotivo >
+                                                0
+                                                    ? maiorMotivo
+                                                    : 1
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            ))
                         )}
                     </div>
                 </section>

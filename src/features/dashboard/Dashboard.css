@@ -19,7 +19,9 @@
 
 .dashboard-container {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns:
+    280px
+    minmax(0, 1fr);
 
   min-height: 100vh;
 
@@ -37,11 +39,11 @@
 
 .main-content {
   min-width: 0;
+
   margin-top: 24px;
-
   padding: 32px 40px;
-  box-sizing: border-box;
 
+  box-sizing: border-box;
   overflow-x: hidden;
 }
 
@@ -58,6 +60,7 @@
   margin: 0;
 
   color: var(--logo-azul-escuro);
+
   font-size: 1.75rem;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -67,11 +70,12 @@
   margin-bottom: 20px;
   padding: 12px 14px;
 
+  color: #b91c1c;
   background: #fef2f2;
+
   border: 1px solid #fecaca;
   border-radius: 10px;
 
-  color: #b91c1c;
   font-size: 0.86rem;
   font-weight: 600;
 }
@@ -87,9 +91,9 @@
   align-items: center;
   justify-content: center;
 
+  color: var(--logo-azul-escuro);
   background: #f8fafc;
 
-  color: var(--logo-azul-escuro);
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -100,7 +104,9 @@
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
   gap: 16px;
 
   margin-bottom: 28px;
@@ -116,9 +122,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   gap: 5px;
 
   padding: 20px;
+
   box-sizing: border-box;
 
   background:
@@ -133,7 +141,8 @@
   border-radius: 14px;
 
   box-shadow:
-    0 6px 18px rgba(11, 31, 94, 0.05);
+    0 6px 18px
+    rgba(11, 31, 94, 0.05);
 
   transition:
     transform 0.2s ease,
@@ -145,11 +154,13 @@
   transform: translateY(-2px);
 
   box-shadow:
-    0 12px 28px rgba(11, 31, 94, 0.1);
+    0 12px 28px
+    rgba(11, 31, 94, 0.1);
 }
 
 .kpi-card.verde {
-  border-left-color: var(--logo-verde-escuro);
+  border-left-color:
+    var(--logo-verde-escuro);
 }
 
 .kpi-card.vermelho {
@@ -157,11 +168,13 @@
 }
 
 .kpi-card.highlight {
-  border-left-color: var(--logo-azul-medio);
+  border-left-color:
+    var(--logo-azul-medio);
 }
 
 .kpi-card span {
   color: #64748b;
+
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -173,6 +186,7 @@
   margin-top: 4px;
 
   color: var(--logo-azul-escuro);
+
   font-size: 1.48rem;
   font-weight: 800;
   line-height: 1.15;
@@ -182,7 +196,43 @@
 }
 
 /* =====================================================
-   CARDS DE HORAS E INDICADOR DE DIAS
+   ÍCONES DOS CARDS
+===================================================== */
+
+.kpi-icon {
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  stroke-width: 2;
+}
+
+.kpi-icon-conforme {
+  width: 24px;
+  height: 24px;
+
+  color: #16a34a;
+}
+
+.kpi-icon-danificadas {
+  color: #dc2626;
+}
+
+.kpi-icon-qualidade {
+  color: #3b82f6;
+}
+
+.kpi-icon-horas {
+  color: #6b7280;
+}
+
+.kpi-icon-paradas {
+  color: #dc2626;
+}
+
+/* =====================================================
+   CARDS DE HORAS
 ===================================================== */
 
 .kpi-horas-trabalhadas {
@@ -191,30 +241,37 @@
   min-width: 0;
   min-height: 138px;
 
-  /*
-   * Reserva espaço na parte inferior para que
-   * a tag DIAS e o valor fiquem na mesma linha.
-   */
+  padding-top: 36px;
   padding-bottom: 24px;
 }
 
-/*
- * O valor utiliza somente a área disponível depois
- * do espaço reservado para a tag DIAS.
- */
-.kpi-horas-trabalhadas .valor-horas-trabalhadas {
+/* =====================================================
+   VALOR PRINCIPAL DAS HORAS
+===================================================== */
+
+.kpi-horas-trabalhadas
+  .valor-horas-trabalhadas {
   display: block;
 
   width: 100%;
   min-width: 0;
 
   margin-top: 4px;
+
   padding-right: 12px;
   padding-left: 118px;
+
   box-sizing: border-box;
 
   color: var(--logo-azul-escuro);
-  font-size: clamp(1.08rem, 1.4vw, 1.48rem);
+
+  font-size:
+    clamp(
+      1.08rem,
+      1.4vw,
+      1.48rem
+    );
+
   font-weight: 800;
   line-height: 1.15;
   text-align: center;
@@ -223,10 +280,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-/*
- * A tag fica posicionada no início do card,
- * alinhada horizontalmente com o valor das horas.
- */
+/* =====================================================
+   INDICADOR DE DIAS
+===================================================== */
+
 .dias-trabalhados-indicador {
   position: absolute;
   left: 16px;
@@ -235,28 +292,33 @@
 
   width: 98px;
   min-width: 98px;
-  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+
   gap: 2px;
 
   padding: 7px 9px;
 
+  box-sizing: border-box;
+
   background: #f1f5f9;
+
   border: 1px solid #dbe5f0;
   border-radius: 8px;
 
   box-shadow:
-    0 2px 5px rgba(11, 31, 94, 0.04);
+    0 2px 5px
+    rgba(11, 31, 94, 0.04);
 }
 
 .dias-trabalhados-indicador small {
   margin: 0;
 
   color: #64748b;
+
   font-size: 0.58rem;
   font-weight: 800;
   line-height: 1;
@@ -272,6 +334,7 @@
   padding: 0;
 
   color: var(--logo-azul-escuro);
+
   font-size: 0.82rem;
   font-weight: 800;
   line-height: 1.15;
@@ -279,6 +342,52 @@
   white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   PERCENTUAL DE HORAS
+===================================================== */
+
+.percentual-horas-indicador {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+
+  min-width: 72px;
+
+  margin: 0;
+  padding: 5px 8px;
+
+  box-sizing: border-box;
+
+  border-radius: 9px;
+
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+
+  box-shadow:
+    0 2px 6px
+    rgba(15, 23, 42, 0.05);
+}
+
+.percentual-horas-indicador-trabalhadas {
+  color: #15803d;
+  background: #ecfdf5;
+
+  border: 1px solid #bbf7d0;
+}
+
+.percentual-horas-indicador-paradas {
+  color: #b91c1c;
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
 }
 
 /* =====================================================
@@ -290,6 +399,7 @@
   min-width: 0;
 
   padding: 24px;
+
   box-sizing: border-box;
 
   background:
@@ -303,7 +413,8 @@
   border-radius: 16px;
 
   box-shadow:
-    0 10px 30px rgba(11, 31, 94, 0.06);
+    0 10px 30px
+    rgba(11, 31, 94, 0.06);
 
   overflow: hidden;
 }
@@ -315,6 +426,7 @@
   padding: 0 0 16px 16px;
 
   color: var(--logo-azul-escuro);
+
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.045em;
@@ -354,19 +466,22 @@
 
   display: flex;
   flex-direction: column;
+
   gap: 10px;
 
   margin-top: 18px;
   padding-right: 8px;
+
   box-sizing: border-box;
 
-  overflow-y: auto;
   overflow-x: hidden;
+  overflow-y: auto;
 
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
 
   scrollbar-width: thin;
+
   scrollbar-color:
     var(--logo-azul-medio)
     #eef3f8;
@@ -378,6 +493,7 @@
 
 .motivos-list::-webkit-scrollbar-track {
   background: #eef3f8;
+
   border-radius: 999px;
 }
 
@@ -408,6 +524,8 @@
 ===================================================== */
 
 .motivo-bar {
+  min-height: 58px;
+
   display: grid;
   grid-template-columns:
     minmax(190px, 280px)
@@ -415,11 +533,11 @@
     auto;
 
   align-items: center;
+
   gap: 16px;
 
-  min-height: 58px;
-
   padding: 11px 14px;
+
   box-sizing: border-box;
 
   background:
@@ -446,20 +564,24 @@
   transform: translateY(-1px);
 
   box-shadow:
-    0 8px 18px rgba(11, 31, 94, 0.08);
+    0 8px 18px
+    rgba(11, 31, 94, 0.08);
 }
 
 .motivo-bar .label-row {
   display: contents;
 }
 
-.motivo-bar .label-row span:first-child {
+.motivo-bar
+  .label-row
+  span:first-child {
   grid-column: 1;
   grid-row: 1;
 
   min-width: 0;
 
   color: #25334a;
+
   font-size: 0.86rem;
   font-weight: 700;
   line-height: 1.35;
@@ -469,7 +591,9 @@
   white-space: nowrap;
 }
 
-.motivo-bar .label-row span:last-child {
+.motivo-bar
+  .label-row
+  span:last-child {
   grid-column: 3;
   grid-row: 1;
 
@@ -477,11 +601,12 @@
 
   padding: 7px 11px;
 
+  color: var(--logo-azul-escuro);
   background: #ffffff;
+
   border: 1px solid #d7e2f0;
   border-radius: 8px;
 
-  color: var(--logo-azul-escuro);
   font-size: 0.8rem;
   font-weight: 800;
   line-height: 1;
@@ -491,11 +616,12 @@
   font-variant-numeric: tabular-nums;
 
   box-shadow:
-    0 1px 3px rgba(11, 31, 94, 0.05);
+    0 1px 3px
+    rgba(11, 31, 94, 0.05);
 }
 
 /* =====================================================
-   BARRA DE PROGRESSO
+   ÁREA DA BARRA DE PROGRESSO
 ===================================================== */
 
 .motivo-bar .progress-bg {
@@ -519,13 +645,48 @@
   overflow: hidden;
 
   box-shadow:
-    inset 0 1px 2px rgba(11, 31, 94, 0.07);
+    inset 0 1px 2px
+    rgba(11, 31, 94, 0.07);
 }
 
-.motivo-bar .progress-fill {
-  position: relative;
+/* =====================================================
+   ELEMENTO PROGRESS
+===================================================== */
 
+.progress-indicador {
+  width: 100%;
   height: 100%;
+
+  display: block;
+
+  margin: 0;
+  padding: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+
+  border: 0;
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+/* Chrome, Edge e Safari */
+
+.progress-indicador::-webkit-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      #e8eef6 0%,
+      #edf3f8 100%
+    );
+
+  border-radius: 999px;
+}
+
+.progress-indicador::-webkit-progress-value {
   min-width: 4px;
 
   background:
@@ -540,25 +701,31 @@
   border-radius: 999px;
 
   box-shadow:
-    0 3px 10px rgba(11, 31, 94, 0.22);
+    0 3px 10px
+    rgba(11, 31, 94, 0.22);
 
   transition: width 0.4s ease;
 }
 
-.motivo-bar .progress-fill::after {
-  content: "";
+/* Firefox */
 
-  position: absolute;
-  inset: 0;
+.progress-indicador::-moz-progress-bar {
+  min-width: 4px;
 
   background:
     linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.34),
-      rgba(255, 255, 255, 0)
+      90deg,
+      var(--logo-azul-escuro) 0%,
+      var(--logo-azul-medio) 38%,
+      var(--logo-azul-claro) 72%,
+      var(--logo-verde) 100%
     );
 
-  border-radius: inherit;
+  border-radius: 999px;
+
+  box-shadow:
+    0 3px 10px
+    rgba(11, 31, 94, 0.22);
 }
 
 /* =====================================================
@@ -567,14 +734,14 @@
 
 .sem-dados {
   margin: 0;
-
   padding: 28px 20px;
 
+  color: #64748b;
   background: #f8fafc;
+
   border: 1px dashed #cbd5e1;
   border-radius: 12px;
 
-  color: #64748b;
   font-size: 0.88rem;
   font-weight: 600;
   text-align: center;
@@ -603,11 +770,23 @@
     padding: 6px 7px;
   }
 
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-left: 100px;
+  .kpi-horas-trabalhadas
+    .valor-horas-trabalhadas {
     padding-right: 4px;
+    padding-left: 100px;
 
     font-size: 1.16rem;
+  }
+
+  .percentual-horas-indicador {
+    top: 12px;
+    right: 12px;
+
+    min-width: 66px;
+
+    padding: 5px 7px;
+
+    font-size: 1.25rem;
   }
 }
 
@@ -621,8 +800,8 @@
   }
 
   .main-content {
-    padding: 24px;
     margin-top: 30px;
+    padding: 24px;
   }
 
   .kpi-grid {
@@ -634,7 +813,8 @@
     max-height: 500px;
   }
 
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+  .kpi-horas-trabalhadas
+    .valor-horas-trabalhadas {
     padding-left: 108px;
 
     font-size: 1.3rem;
@@ -652,8 +832,8 @@
 
 @media (max-width: 760px) {
   .main-content {
-    padding: 18px;
     margin-top: 35px;
+    padding: 18px;
   }
 
   .dashboard-header h1 {
@@ -662,24 +842,32 @@
 
   .chart-container {
     padding: 20px 16px;
+
     border-radius: 13px;
   }
 
   .motivo-bar {
-    grid-template-columns: 1fr auto;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
     gap: 9px 12px;
 
     padding: 12px;
   }
 
-  .motivo-bar .label-row span:first-child {
+  .motivo-bar
+    .label-row
+    span:first-child {
     grid-column: 1;
     grid-row: 1;
 
     white-space: normal;
   }
 
-  .motivo-bar .label-row span:last-child {
+  .motivo-bar
+    .label-row
+    span:last-child {
     grid-column: 2;
     grid-row: 1;
   }
@@ -709,11 +897,21 @@
     font-size: 0.76rem;
   }
 
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-left: 96px;
+  .kpi-horas-trabalhadas
+    .valor-horas-trabalhadas {
     padding-right: 2px;
+    padding-left: 96px;
 
     font-size: 1.12rem;
+  }
+
+  .percentual-horas-indicador {
+    top: 12px;
+    right: 12px;
+
+    min-width: 62px;
+
+    font-size: 1.1rem;
   }
 }
 
@@ -742,10 +940,22 @@
     min-width: 84px;
   }
 
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+  .kpi-horas-trabalhadas
+    .valor-horas-trabalhadas {
     padding-left: 94px;
 
     font-size: 1.16rem;
+  }
+
+  .percentual-horas-indicador {
+    top: 11px;
+    right: 11px;
+
+    min-width: 60px;
+
+    padding: 5px 6px;
+
+    font-size: 1rem;
   }
 
   .motivos-list {
