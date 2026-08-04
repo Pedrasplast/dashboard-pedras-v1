@@ -1018,6 +1018,8 @@
   }
 }
 
+
+
 /* =====================================================
    DISPOSITIVOS SEM HOVER
 ===================================================== */
@@ -1041,5 +1043,134 @@
   .calendar-popover .rdp-day_button {
     animation: none;
     transition: none;
+  }
+}
+
+/* =====================================================
+   DESCRIÇÕES DO FILTRO TIPO
+===================================================== */
+
+.filter-section .tipo-checkbox-group {
+  width: 100%;
+}
+
+.filter-section .tipo-checkbox-label {
+  min-height: 44px;
+
+  align-items: center;
+
+  padding: 8px 9px;
+}
+
+.filter-section .tipo-label-conteudo {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-section .tipo-label-numero {
+  flex: 0 0 auto;
+
+  width: 24px;
+  height: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 0;
+
+  color: #ffffff;
+  background: rgba(96, 165, 250, 0.2);
+
+  border: 1px solid
+    rgba(147, 197, 253, 0.32);
+  border-radius: 6px;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.filter-section .tipo-label-descricao {
+  flex: 1;
+  min-width: 0;
+
+  color: #dbeafe;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.filter-section
+  .tipo-checkbox-label:has(
+    input:checked
+  )
+  .tipo-label-numero {
+  color: #0b1f5e;
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.filter-section
+  .tipo-checkbox-label:has(
+    input:checked
+  )
+  .tipo-label-descricao {
+  color: #ffffff;
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
+
+@media (max-width: 1024px) {
+  .filter-section .tipo-label-descricao {
+    font-size: 0.71rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .filter-section .tipo-checkbox-label {
+    min-height: 46px;
+  }
+
+  .filter-section .tipo-label-conteudo {
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .filter-section .tipo-label-numero {
+    width: 23px;
+    height: 23px;
+  }
+
+  .filter-section .tipo-label-descricao {
+    padding-top: 2px;
+
+    font-size: 0.69rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .filter-section .tipo-checkbox-label {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .filter-section .tipo-label-conteudo {
+    gap: 6px;
+  }
+
+  .filter-section .tipo-label-descricao {
+    font-size: 0.67rem;
   }
 }

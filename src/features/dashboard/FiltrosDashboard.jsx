@@ -10,6 +10,35 @@ import { ptBR } from '@daypicker/react/locale';
 import '@daypicker/react/style.css';
 import './FiltrosDashboard.css';
 
+/*
+ * Descrições apresentadas ao lado do número
+ * no filtro TIPO.
+ *
+ * O valor salvo no filtro continua sendo
+ * somente 1, 2 ou 3.
+ */
+const DESCRICOES_TIPO = {
+    '1': 'Paradas Planejadas',
+    '2': 'Paradas não Planejadas',
+    '3': 'Intervalos e Dias Sem Produção'
+};
+
+/*
+ * Retorna a descrição correspondente ao tipo.
+ *
+ * String(tipo).trim() permite funcionar tanto
+ * quando o banco retorna número quanto texto.
+ */
+const obterDescricaoTipo = (tipo) => {
+    const codigoTipo =
+        String(tipo).trim();
+
+    return (
+        DESCRICOES_TIPO[codigoTipo] ||
+        'Tipo sem descrição'
+    );
+};
+
 const formatarDataISO = (data) => {
     if (
         !(data instanceof Date) ||
@@ -787,12 +816,12 @@ export default function FiltrosDashboard({
                             TIPO
                         </label>
 
-                        <div className="checkbox-group">
+                        <div className="checkbox-group tipo-checkbox-group">
                             {tiposDisponiveis.map(
                                 (tipo) => (
                                     <label
                                         key={tipo}
-                                        className="checkbox-label"
+                                        className="checkbox-label tipo-checkbox-label"
                                     >
                                         <input
                                             type="checkbox"
@@ -809,9 +838,17 @@ export default function FiltrosDashboard({
                                             }
                                         />
 
-                                        <span>
-                                            {tipo}
-                                        </span>
+                                        <div className="tipo-label-conteudo">
+                                            <strong className="tipo-label-numero">
+                                                {tipo}
+                                            </strong>
+
+                                            <span className="tipo-label-descricao">
+                                                {obterDescricaoTipo(
+                                                    tipo
+                                                )}
+                                            </span>
+                                        </div>
                                     </label>
                                 )
                             )}
