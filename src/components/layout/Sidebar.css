@@ -5,6 +5,7 @@
 .sidebar {
   position: sticky;
   top: 76px;
+  border-radius: 15px;
 
   display: flex;
   flex-direction: column;
