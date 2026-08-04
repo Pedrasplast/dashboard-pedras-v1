@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wrench } from 'lucide-react';
 
-import './DashboardProdutividade.css';
+import './dashboardProdutividade.css';
 
 function DashboardProdutividade() {
   return (
