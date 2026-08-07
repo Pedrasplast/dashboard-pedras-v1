@@ -7,7 +7,7 @@
   max-width: 1500px;
   min-height: 100vh;
 
-  margin: 0 auto;
+  margin: 70PX auto;
   padding: 24px 28px 42px;
 
   background: #f6f8fb;
@@ -27,7 +27,7 @@
   margin-bottom: 16px;
 }
 
-.btn-voltar-home,
+
 .btn-voltar-relatorios {
   display: inline-flex;
   align-items: center;
@@ -61,7 +61,7 @@
     transform 0.16s ease;
 }
 
-.btn-voltar-home:hover,
+
 .btn-voltar-relatorios:hover {
   color: #1d4ed8;
 
@@ -75,7 +75,7 @@
   transform: translateY(-1px);
 }
 
-.btn-voltar-home svg,
+
 .btn-voltar-relatorios svg {
   width: 15px;
   height: 15px;
@@ -510,8 +510,12 @@
   max-width: 620px;
 
   display: grid;
+
   grid-template-columns:
-    repeat(2, minmax(180px, 280px));
+    repeat(
+      2,
+      minmax(180px, 280px)
+    );
 
   gap: 10px;
 }
@@ -621,6 +625,9 @@
 
 /* =========================================================
    SELECTS / INPUTS DOS FILTROS
+
+   ALTERAÇÃO:
+   campos não ocupam mais toda a largura da página
 ========================================================= */
 
 .relatorio-filtros-card select,
@@ -630,6 +637,32 @@
   font-size: 0.75rem;
 
   border-radius: 8px;
+}
+
+/*
+ * Mantém os selects em largura profissional.
+ * Não altera calendário nem filtro Tipo.
+ */
+
+.relatorio-filtros-card
+  .filter-section
+  > select {
+  width: 420px;
+  max-width: 100%;
+
+  justify-self: start;
+}
+
+/*
+ * Garante o mesmo tamanho inclusive quando
+ * o select estiver desabilitado.
+ */
+
+.relatorio-filtros-card
+  .filter-section
+  > select:disabled {
+  width: 420px;
+  max-width: 100%;
 }
 
 
@@ -937,6 +970,21 @@
         2,
         minmax(0, 260px)
       );
+  }
+
+  /*
+   * Em telas menores, os selects voltam
+   * a aproveitar a largura disponível.
+   */
+
+  .relatorio-filtros-card
+    .filter-section
+    > select,
+  .relatorio-filtros-card
+    .filter-section
+    > select:disabled {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
