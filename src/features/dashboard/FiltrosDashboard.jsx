@@ -1,26 +1,19 @@
-import React, {
-    useCallback,
-    useMemo,
-    useState
-} from 'react';
+import React, { useCallback, useMemo, useState } from "react";
 
-import { DayPicker } from '@daypicker/react';
-import { ptBR } from '@daypicker/react/locale';
+import { DayPicker } from "@daypicker/react";
+import { ptBR } from "@daypicker/react/locale";
 
-import '@daypicker/react/style.css';
-import './FiltrosDashboard.css';
+import "@daypicker/react/style.css";
+import "./FiltrosDashboard.css";
 
 /*
  * Descrições apresentadas ao lado do número
  * no filtro TIPO.
- *
- * O valor salvo no filtro continua sendo
- * somente 1, 2 ou 3.
  */
 const DESCRICOES_TIPO = {
-    '1': 'Paradas Planejadas',
-    '2': 'Paradas não Planejadas',
-    '3': 'Intervalos e Dias Sem Produção'
+  1: "Paradas Planejadas",
+  2: "Paradas não Planejadas",
+  3: "Intervalos e Dias Sem Produção",
 };
 
 /*
@@ -30,77 +23,49 @@ const DESCRICOES_TIPO = {
  * quando o banco retorna número quanto texto.
  */
 const obterDescricaoTipo = (tipo) => {
-    const codigoTipo =
-        String(tipo).trim();
+  const codigoTipo = String(tipo).trim();
 
-    return (
-        DESCRICOES_TIPO[codigoTipo] ||
-        'Tipo sem descrição'
-    );
+  return DESCRICOES_TIPO[codigoTipo] || "Tipo sem descrição";
 };
 
 const formatarDataISO = (data) => {
-    if (
-        !(data instanceof Date) ||
-        Number.isNaN(data.getTime())
-    ) {
-        return '';
-    }
+  if (!(data instanceof Date) || Number.isNaN(data.getTime())) {
+    return "";
+  }
 
-    const ano = data.getFullYear();
+  const ano = data.getFullYear();
 
-    const mes = String(
-        data.getMonth() + 1
-    ).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
 
-    const dia = String(
-        data.getDate()
-    ).padStart(2, '0');
+  const dia = String(data.getDate()).padStart(2, "0");
 
-    return `${ano}-${mes}-${dia}`;
+  return `${ano}-${mes}-${dia}`;
 };
 
 const converterISOParaData = (valorISO) => {
-    if (!valorISO) {
-        return undefined;
-    }
+  if (!valorISO) {
+    return undefined;
+  }
 
-    const correspondencia = String(
-        valorISO
-    ).match(
-        /^(\d{4})-(\d{2})-(\d{2})$/
-    );
+  const correspondencia = String(valorISO).match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
-    if (!correspondencia) {
-        return undefined;
-    }
+  if (!correspondencia) {
+    return undefined;
+  }
 
-    const ano = Number(
-        correspondencia[1]
-    );
+  const ano = Number(correspondencia[1]);
 
-    const mes =
-        Number(correspondencia[2]) - 1;
+  const mes = Number(correspondencia[2]) - 1;
 
-    const dia = Number(
-        correspondencia[3]
-    );
+  const dia = Number(correspondencia[3]);
 
-    const data = new Date(
-        ano,
-        mes,
-        dia
-    );
+  const data = new Date(ano, mes, dia);
 
-    if (
-        data.getFullYear() !== ano ||
-        data.getMonth() !== mes ||
-        data.getDate() !== dia
-    ) {
-        return undefined;
-    }
+  if (data.getFullYear() !== ano || data.getMonth() !== mes || data.getDate() !== dia) {
+    return undefined;
+  }
 
-    return data;
+  return data;
 };
 
 /*
@@ -110,751 +75,442 @@ const converterISOParaData = (valorISO) => {
  * diretamente o dia do registro no banco.
  */
 const extrairDataRegistro = (registro) => {
-    const valorData =
-        registro?.lista_de_data ||
-        registro?.inicio ||
-        registro?.inicio_dia ||
-        registro?.data ||
-        null;
+  const valorData =
+    registro?.lista_de_data || registro?.inicio || registro?.inicio_dia || registro?.data || null;
 
-    if (!valorData) {
-        return null;
-    }
+  if (!valorData) {
+    return null;
+  }
 
-    const textoData =
-        String(valorData).trim();
+  const textoData = String(valorData).trim();
 
-    /*
-     * Extrai diretamente YYYY-MM-DD.
-     * Isso evita mudança de data pelo fuso horário.
-     */
-    const correspondencia =
-        textoData.match(
-            /^(\d{4})-(\d{2})-(\d{2})/
-        );
+  /*
+   * Extrai diretamente YYYY-MM-DD.
+   * Isso evita mudança de data pelo fuso horário.
+   */
+  const correspondencia = textoData.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
-    if (correspondencia) {
-        const dataISO = [
-            correspondencia[1],
-            correspondencia[2],
-            correspondencia[3]
-        ].join('-');
+  if (correspondencia) {
+    const dataISO = [correspondencia[1], correspondencia[2], correspondencia[3]].join("-");
 
-        return converterISOParaData(
-            dataISO
-        )
-            ? dataISO
-            : null;
-    }
+    return converterISOParaData(dataISO) ? dataISO : null;
+  }
 
-    const data = new Date(
-        valorData
-    );
+  const data = new Date(valorData);
 
-    if (
-        Number.isNaN(
-            data.getTime()
-        )
-    ) {
-        return null;
-    }
+  if (Number.isNaN(data.getTime())) {
+    return null;
+  }
 
-    return formatarDataISO(data);
+  return formatarDataISO(data);
 };
 
 const formatarDataVisual = (valorISO) => {
-    const data =
-        converterISOParaData(
-            valorISO
-        );
+  const data = converterISOParaData(valorISO);
 
-    if (!data) {
-        return '';
-    }
+  if (!data) {
+    return "";
+  }
 
-    return data.toLocaleDateString(
-        'pt-BR'
-    );
+  return data.toLocaleDateString("pt-BR");
 };
 
 export default function FiltrosDashboard({
-    filtros,
-    setFiltros,
-    rawDados = [],
+  filtros,
+  setFiltros,
+  rawDados = [],
 
-    exibirPeriodo = true,
-    exibirInjetora = true,
-    exibirProduto = true,
-    exibirMp = true,
-    exibirTipo = true,
+  exibirPeriodo = true,
+  exibirInjetora = true,
+  exibirProduto = true,
+  exibirMp = true,
+  exibirTipo = true,
 
-    tiposDisponiveis = [],
-    produtosDisponiveis = [],
-    mpsDisponiveis = []
+  tiposDisponiveis = [],
+  produtosDisponiveis = [],
+  mpsDisponiveis = [],
 }) {
-    const [
-        calendarioAberto,
-        setCalendarioAberto
-    ] = useState(null);
+  const [calendarioAberto, setCalendarioAberto] = useState(null);
 
-    /*
-     * Conjunto contendo somente os dias
-     * que possuem registros no banco.
-     */
-    const datasComDados = useMemo(() => {
-        return new Set(
-            rawDados
-                .map(extrairDataRegistro)
-                .filter(Boolean)
-        );
-    }, [rawDados]);
+  /*
+   * Conjunto contendo somente os dias
+   * que possuem registros no banco.
+   */
+  const datasComDados = useMemo(() => {
+    return new Set(rawDados.map(extrairDataRegistro).filter(Boolean));
+  }, [rawDados]);
 
-    const datasOrdenadas = useMemo(() => {
-        return [
-            ...datasComDados
-        ].sort();
-    }, [datasComDados]);
+  const datasOrdenadas = useMemo(() => {
+    return [...datasComDados].sort();
+  }, [datasComDados]);
 
-    const primeiraDataDisponivel =
-        datasOrdenadas[0] || null;
+  const primeiraDataDisponivel = datasOrdenadas[0] || null;
 
-    const ultimaDataDisponivel =
-        datasOrdenadas[
-            datasOrdenadas.length - 1
-        ] || null;
+  const ultimaDataDisponivel = datasOrdenadas[datasOrdenadas.length - 1] || null;
 
-    const dataInicioSelecionada =
-        useMemo(() => {
-            return converterISOParaData(
-                filtros.dataInicio
-            );
-        }, [filtros.dataInicio]);
+  const dataInicioSelecionada = useMemo(() => {
+    return converterISOParaData(filtros.dataInicio);
+  }, [filtros.dataInicio]);
 
-    const dataFimSelecionada =
-        useMemo(() => {
-            return converterISOParaData(
-                filtros.dataFim
-            );
-        }, [filtros.dataFim]);
+  const dataFimSelecionada = useMemo(() => {
+    return converterISOParaData(filtros.dataFim);
+  }, [filtros.dataFim]);
 
-    const mesInicialCalendario =
-        useMemo(() => {
-            return (
-                dataInicioSelecionada ||
-                dataFimSelecionada ||
-                converterISOParaData(
-                    ultimaDataDisponivel
-                ) ||
-                new Date()
-            );
-        }, [
-            dataInicioSelecionada,
-            dataFimSelecionada,
-            ultimaDataDisponivel
-        ]);
-
-    const toggleTipo =
-        useCallback(
-            (tipo) => {
-                setFiltros(
-                    (anterior) => {
-                        const tiposAtuais =
-                            Array.isArray(
-                                anterior.tipo
-                            )
-                                ? anterior.tipo
-                                : [];
-
-                        const novosTipos =
-                            tiposAtuais.includes(
-                                tipo
-                            )
-                                ? tiposAtuais.filter(
-                                    (tipoAtual) =>
-                                        tipoAtual !== tipo
-                                )
-                                : [
-                                    ...tiposAtuais,
-                                    tipo
-                                ];
-
-                        return {
-                            ...anterior,
-                            tipo: novosTipos
-                        };
-                    }
-                );
-            },
-            [setFiltros]
-        );
-
-    const limparDatas =
-        useCallback(() => {
-            setFiltros(
-                (anterior) => ({
-                    ...anterior,
-                    dataInicio: '',
-                    dataFim: ''
-                })
-            );
-
-            setCalendarioAberto(null);
-        }, [setFiltros]);
-
-    /*
-     * Confirma se uma data realmente existe
-     * entre os registros carregados do banco.
-     */
-    const dataPossuiRegistro =
-        useCallback(
-            (data) => {
-                const dataISO =
-                    formatarDataISO(
-                        data
-                    );
-
-                return (
-                    dataISO !== '' &&
-                    datasComDados.has(
-                        dataISO
-                    )
-                );
-            },
-            [datasComDados]
-        );
-
-    /*
-     * Calendário inicial:
-     *
-     * - bloqueia dias sem dados;
-     * - bloqueia dias posteriores à data final.
-     */
-    const desabilitarDataInicio =
-        useCallback(
-            (data) => {
-                if (
-                    !dataPossuiRegistro(
-                        data
-                    )
-                ) {
-                    return true;
-                }
-
-                if (
-                    dataFimSelecionada &&
-                    data >
-                        dataFimSelecionada
-                ) {
-                    return true;
-                }
-
-                return false;
-            },
-            [
-                dataPossuiRegistro,
-                dataFimSelecionada
-            ]
-        );
-
-    /*
-     * Calendário final:
-     *
-     * - bloqueia dias sem dados;
-     * - bloqueia dias anteriores à data inicial.
-     */
-    const desabilitarDataFim =
-        useCallback(
-            (data) => {
-                if (
-                    !dataPossuiRegistro(
-                        data
-                    )
-                ) {
-                    return true;
-                }
-
-                if (
-                    dataInicioSelecionada &&
-                    data <
-                        dataInicioSelecionada
-                ) {
-                    return true;
-                }
-
-                return false;
-            },
-            [
-                dataPossuiRegistro,
-                dataInicioSelecionada
-            ]
-        );
-
-    /*
-     * A validação é feita novamente no clique.
-     * Assim, uma data sem registro nunca é salva,
-     * mesmo que haja algum problema visual.
-     */
-    const selecionarDataInicio =
-        useCallback(
-            (data) => {
-                if (
-                    !data ||
-                    !dataPossuiRegistro(data)
-                ) {
-                    return;
-                }
-
-                const novaDataInicio =
-                    formatarDataISO(
-                        data
-                    );
-
-                setFiltros(
-                    (anterior) => ({
-                        ...anterior,
-
-                        dataInicio:
-                            novaDataInicio,
-
-                        dataFim:
-                            anterior.dataFim &&
-                            anterior.dataFim <
-                                novaDataInicio
-                                ? ''
-                                : anterior.dataFim
-                    })
-                );
-
-                setCalendarioAberto(null);
-            },
-            [
-                dataPossuiRegistro,
-                setFiltros
-            ]
-        );
-
-    const selecionarDataFim =
-        useCallback(
-            (data) => {
-                if (
-                    !data ||
-                    !dataPossuiRegistro(data)
-                ) {
-                    return;
-                }
-
-                const novaDataFim =
-                    formatarDataISO(
-                        data
-                    );
-
-                if (
-                    filtros.dataInicio &&
-                    novaDataFim <
-                        filtros.dataInicio
-                ) {
-                    return;
-                }
-
-                setFiltros(
-                    (anterior) => ({
-                        ...anterior,
-                        dataFim:
-                            novaDataFim
-                    })
-                );
-
-                setCalendarioAberto(null);
-            },
-            [
-                dataPossuiRegistro,
-                filtros.dataInicio,
-                setFiltros
-            ]
-        );
-
-    const injetorasDisponiveis =
-        useMemo(() => {
-            return [
-                ...new Set(
-                    rawDados
-                        .map(
-                            (registro) =>
-                                registro.injetora
-                        )
-                        .filter(Boolean)
-                )
-            ].sort((a, b) =>
-                String(a).localeCompare(
-                    String(b),
-                    'pt-BR',
-                    {
-                        numeric: true,
-                        sensitivity:
-                            'base'
-                    }
-                )
-            );
-        }, [rawDados]);
-
+  const mesInicialCalendario = useMemo(() => {
     return (
-        <div className="filter-section">
-            {exibirPeriodo && (
-                <>
-                    <div className="filter-header-row">
-                        <label>
-                            PERÍODO
-                        </label>
-
-                        <button
-                            type="button"
-                            className="clear-date-btn"
-                            onClick={limparDatas}
-                        >
-                            ✕ LIMPAR
-                        </button>
-                    </div>
-
-                    <div className="date-inputs-container">
-                        <div className="calendar-field">
-                            <button
-                                type="button"
-                                className="calendar-trigger"
-                                disabled={
-                                    datasOrdenadas.length === 0
-                                }
-                                onClick={() =>
-                                    setCalendarioAberto(
-                                        (atual) =>
-                                            atual === 'inicio'
-                                                ? null
-                                                : 'inicio'
-                                    )
-                                }
-                            >
-                                <span>
-                                    Data inicial
-                                </span>
-
-                                <strong>
-                                    {filtros.dataInicio
-                                        ? formatarDataVisual(
-                                            filtros.dataInicio
-                                        )
-                                        : 'Selecionar'}
-                                </strong>
-                            </button>
-
-                            {calendarioAberto ===
-                                'inicio' && (
-                                <div className="calendar-popover">
-                                    <DayPicker
-                                        mode="single"
-                                        locale={ptBR}
-                                        selected={
-                                            dataInicioSelecionada
-                                        }
-                                        onSelect={
-                                            selecionarDataInicio
-                                        }
-                                        disabled={
-                                            desabilitarDataInicio
-                                        }
-                                        modifiers={{
-                                            comDados:
-                                                dataPossuiRegistro
-                                        }}
-                                        modifiersClassNames={{
-                                            comDados:
-                                                'calendar-day-has-data'
-                                        }}
-                                        defaultMonth={
-                                            mesInicialCalendario
-                                        }
-                                        startMonth={
-                                            converterISOParaData(
-                                                primeiraDataDisponivel
-                                            )
-                                        }
-                                        endMonth={
-                                            converterISOParaData(
-                                                ultimaDataDisponivel
-                                            )
-                                        }
-                                        showOutsideDays={
-                                            false
-                                        }
-                                    />
-
-                                    <small className="calendar-info">
-                                        Somente dias com dados podem ser selecionados.
-                                    </small>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="calendar-field">
-                            <button
-                                type="button"
-                                className="calendar-trigger"
-                                disabled={
-                                    datasOrdenadas.length === 0
-                                }
-                                onClick={() =>
-                                    setCalendarioAberto(
-                                        (atual) =>
-                                            atual === 'fim'
-                                                ? null
-                                                : 'fim'
-                                    )
-                                }
-                            >
-                                <span>
-                                    Data final
-                                </span>
-
-                                <strong>
-                                    {filtros.dataFim
-                                        ? formatarDataVisual(
-                                            filtros.dataFim
-                                        )
-                                        : 'Selecionar'}
-                                </strong>
-                            </button>
-
-                            {calendarioAberto ===
-                                'fim' && (
-                                <div className="calendar-popover">
-                                    <DayPicker
-                                        mode="single"
-                                        locale={ptBR}
-                                        selected={
-                                            dataFimSelecionada
-                                        }
-                                        onSelect={
-                                            selecionarDataFim
-                                        }
-                                        disabled={
-                                            desabilitarDataFim
-                                        }
-                                        modifiers={{
-                                            comDados:
-                                                dataPossuiRegistro
-                                        }}
-                                        modifiersClassNames={{
-                                            comDados:
-                                                'calendar-day-has-data'
-                                        }}
-                                        defaultMonth={
-                                            mesInicialCalendario
-                                        }
-                                        startMonth={
-                                            converterISOParaData(
-                                                primeiraDataDisponivel
-                                            )
-                                        }
-                                        endMonth={
-                                            converterISOParaData(
-                                                ultimaDataDisponivel
-                                            )
-                                        }
-                                        showOutsideDays={
-                                            false
-                                        }
-                                    />
-
-                                    <small className="calendar-info">
-                                        Somente dias com dados podem ser selecionados.
-                                    </small>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {datasOrdenadas.length ===
-                        0 && (
-                        <small className="calendar-empty">
-                            Nenhuma data encontrada na base.
-                        </small>
-                    )}
-                </>
-            )}
-
-            {exibirInjetora && (
-                <>
-                    <label>
-                        INJETORA
-                    </label>
-
-                    <select
-                        value={
-                            filtros.injetora ||
-                            'Todos'
-                        }
-                        onChange={(evento) =>
-                            setFiltros(
-                                (anterior) => ({
-                                    ...anterior,
-
-                                    injetora:
-                                        evento.target.value,
-
-                                    cod_prod:
-                                        'Todos'
-                                })
-                            )
-                        }
-                    >
-                        <option value="Todos">
-                            Todas
-                        </option>
-
-                        {injetorasDisponiveis.map(
-                            (injetora) => (
-                                <option
-                                    key={injetora}
-                                    value={injetora}
-                                >
-                                    {injetora}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </>
-            )}
-
-            {exibirProduto && (
-                <>
-                    <label>
-                        CÓD. PROD
-                    </label>
-
-                    <select
-                        value={
-                            filtros.cod_prod ||
-                            'Todos'
-                        }
-                        disabled={
-                            exibirInjetora &&
-                            filtros.injetora ===
-                                'Todos'
-                        }
-                        onChange={(evento) =>
-                            setFiltros(
-                                (anterior) => ({
-                                    ...anterior,
-
-                                    cod_prod:
-                                        evento.target.value
-                                })
-                            )
-                        }
-                    >
-                        <option value="Todos">
-                            Todos
-                        </option>
-
-                        {produtosDisponiveis.map(
-                            (produto) => (
-                                <option
-                                    key={produto}
-                                    value={produto}
-                                >
-                                    {produto}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </>
-            )}
-
-            {exibirMp && (
-                <>
-                    <label>
-                        MATÉRIA-PRIMA
-                    </label>
-
-                    <select
-                        value={
-                            filtros.mp ||
-                            'Todos'
-                        }
-                        onChange={(evento) =>
-                            setFiltros(
-                                (anterior) => ({
-                                    ...anterior,
-
-                                    mp:
-                                        evento.target.value
-                                })
-                            )
-                        }
-                    >
-                        <option value="Todos">
-                            Todas
-                        </option>
-
-                        {mpsDisponiveis.map(
-                            (mp) => (
-                                <option
-                                    key={mp}
-                                    value={mp}
-                                >
-                                    {mp}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </>
-            )}
-
-            {exibirTipo &&
-                tiposDisponiveis.length >
-                    0 && (
-                    <>
-                        <label>
-                            TIPO
-                        </label>
-
-                        <div className="checkbox-group tipo-checkbox-group">
-                            {tiposDisponiveis.map(
-                                (tipo) => (
-                                    <label
-                                        key={tipo}
-                                        className="checkbox-label tipo-checkbox-label"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={(
-                                                filtros.tipo ||
-                                                []
-                                            ).includes(
-                                                tipo
-                                            )}
-                                            onChange={() =>
-                                                toggleTipo(
-                                                    tipo
-                                                )
-                                            }
-                                        />
-
-                                        <div className="tipo-label-conteudo">
-                                            <strong className="tipo-label-numero">
-                                                {tipo}
-                                            </strong>
-
-                                            <span className="tipo-label-descricao">
-                                                {obterDescricaoTipo(
-                                                    tipo
-                                                )}
-                                            </span>
-                                        </div>
-                                    </label>
-                                )
-                            )}
-                        </div>
-                    </>
-                )}
-        </div>
+      dataInicioSelecionada ||
+      dataFimSelecionada ||
+      converterISOParaData(ultimaDataDisponivel) ||
+      new Date()
     );
+  }, [dataInicioSelecionada, dataFimSelecionada, ultimaDataDisponivel]);
+
+  const toggleTipo = useCallback(
+    (tipo) => {
+      setFiltros((anterior) => {
+        const tiposAtuais = Array.isArray(anterior.tipo) ? anterior.tipo : [];
+
+        const novosTipos = tiposAtuais.includes(tipo)
+          ? tiposAtuais.filter((tipoAtual) => tipoAtual !== tipo)
+          : [...tiposAtuais, tipo];
+
+        return {
+          ...anterior,
+          tipo: novosTipos,
+        };
+      });
+    },
+    [setFiltros],
+  );
+
+  const limparDatas = useCallback(() => {
+    setFiltros((anterior) => ({
+      ...anterior,
+      dataInicio: "",
+      dataFim: "",
+    }));
+
+    setCalendarioAberto(null);
+  }, [setFiltros]);
+
+  /*
+   * Confirma se uma data realmente existe
+   * entre os registros carregados do banco.
+   */
+  const dataPossuiRegistro = useCallback(
+    (data) => {
+      const dataISO = formatarDataISO(data);
+
+      return dataISO !== "" && datasComDados.has(dataISO);
+    },
+    [datasComDados],
+  );
+
+  /*
+   * Calendário inicial:
+   *
+   * - bloqueia dias sem dados;
+   * - bloqueia dias posteriores à data final.
+   */
+  const desabilitarDataInicio = useCallback(
+    (data) => {
+      if (!dataPossuiRegistro(data)) {
+        return true;
+      }
+
+      if (dataFimSelecionada && data > dataFimSelecionada) {
+        return true;
+      }
+
+      return false;
+    },
+    [dataPossuiRegistro, dataFimSelecionada],
+  );
+
+  /*
+   * Calendário final:
+   *
+   * - bloqueia dias sem dados;
+   * - bloqueia dias anteriores à data inicial.
+   */
+  const desabilitarDataFim = useCallback(
+    (data) => {
+      if (!dataPossuiRegistro(data)) {
+        return true;
+      }
+
+      if (dataInicioSelecionada && data < dataInicioSelecionada) {
+        return true;
+      }
+
+      return false;
+    },
+    [dataPossuiRegistro, dataInicioSelecionada],
+  );
+
+  /*
+   * A validação é feita novamente no clique.
+   * Assim, uma data sem registro nunca é salva,
+   * mesmo que haja algum problema visual.
+   */
+  const selecionarDataInicio = useCallback(
+    (data) => {
+      if (!data || !dataPossuiRegistro(data)) {
+        return;
+      }
+
+      const novaDataInicio = formatarDataISO(data);
+
+      setFiltros((anterior) => ({
+        ...anterior,
+
+        dataInicio: novaDataInicio,
+
+        dataFim: anterior.dataFim && anterior.dataFim < novaDataInicio ? "" : anterior.dataFim,
+      }));
+
+      setCalendarioAberto(null);
+    },
+    [dataPossuiRegistro, setFiltros],
+  );
+
+  const selecionarDataFim = useCallback(
+    (data) => {
+      if (!data || !dataPossuiRegistro(data)) {
+        return;
+      }
+
+      const novaDataFim = formatarDataISO(data);
+
+      if (filtros.dataInicio && novaDataFim < filtros.dataInicio) {
+        return;
+      }
+
+      setFiltros((anterior) => ({
+        ...anterior,
+        dataFim: novaDataFim,
+      }));
+
+      setCalendarioAberto(null);
+    },
+    [dataPossuiRegistro, filtros.dataInicio, setFiltros],
+  );
+
+  const injetorasDisponiveis = useMemo(() => {
+    return [...new Set(rawDados.map((registro) => registro.injetora).filter(Boolean))].sort(
+      (a, b) =>
+        String(a).localeCompare(String(b), "pt-BR", {
+          numeric: true,
+          sensitivity: "base",
+        }),
+    );
+  }, [rawDados]);
+
+  return (
+    <div className="filter-section">
+      {exibirPeriodo && (
+        <>
+          <div className="filter-header-row">
+            <label>PERÍODO</label>
+
+            <button type="button" className="clear-date-btn" onClick={limparDatas}>
+              ✕ LIMPAR
+            </button>
+          </div>
+
+          <div className="date-inputs-container">
+            <div className="calendar-field">
+              <button
+                type="button"
+                className="calendar-trigger"
+                disabled={datasOrdenadas.length === 0}
+                onClick={() =>
+                  setCalendarioAberto((atual) => (atual === "inicio" ? null : "inicio"))
+                }
+              >
+                <span>Data inicial</span>
+
+                <strong>
+                  {filtros.dataInicio ? formatarDataVisual(filtros.dataInicio) : "Selecionar"}
+                </strong>
+              </button>
+
+              {calendarioAberto === "inicio" && (
+                <div className="calendar-popover">
+                  <DayPicker
+                    mode="single"
+                    locale={ptBR}
+                    selected={dataInicioSelecionada}
+                    onSelect={selecionarDataInicio}
+                    disabled={desabilitarDataInicio}
+                    modifiers={{
+                      comDados: dataPossuiRegistro,
+                    }}
+                    modifiersClassNames={{
+                      comDados: "calendar-day-has-data",
+                    }}
+                    defaultMonth={mesInicialCalendario}
+                    startMonth={converterISOParaData(primeiraDataDisponivel)}
+                    endMonth={converterISOParaData(ultimaDataDisponivel)}
+                    showOutsideDays={false}
+                  />
+
+                  <small className="calendar-info">
+                    Somente dias com dados podem ser selecionados.
+                  </small>
+                </div>
+              )}
+            </div>
+
+            <div className="calendar-field">
+              <button
+                type="button"
+                className="calendar-trigger"
+                disabled={datasOrdenadas.length === 0}
+                onClick={() => setCalendarioAberto((atual) => (atual === "fim" ? null : "fim"))}
+              >
+                <span>Data final</span>
+
+                <strong>
+                  {filtros.dataFim ? formatarDataVisual(filtros.dataFim) : "Selecionar"}
+                </strong>
+              </button>
+
+              {calendarioAberto === "fim" && (
+                <div className="calendar-popover">
+                  <DayPicker
+                    mode="single"
+                    locale={ptBR}
+                    selected={dataFimSelecionada}
+                    onSelect={selecionarDataFim}
+                    disabled={desabilitarDataFim}
+                    modifiers={{
+                      comDados: dataPossuiRegistro,
+                    }}
+                    modifiersClassNames={{
+                      comDados: "calendar-day-has-data",
+                    }}
+                    defaultMonth={mesInicialCalendario}
+                    startMonth={converterISOParaData(primeiraDataDisponivel)}
+                    endMonth={converterISOParaData(ultimaDataDisponivel)}
+                    showOutsideDays={false}
+                  />
+
+                  <small className="calendar-info">
+                    Somente dias com dados podem ser selecionados.
+                  </small>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {datasOrdenadas.length === 0 && (
+            <small className="calendar-empty">Nenhuma data encontrada na base.</small>
+          )}
+        </>
+      )}
+
+      {exibirInjetora && (
+        <>
+          <label>INJETORA</label>
+
+          <select
+            value={filtros.injetora || "Todos"}
+            onChange={(evento) =>
+              setFiltros((anterior) => ({
+                ...anterior,
+
+                injetora: evento.target.value,
+
+                cod_prod: "Todos",
+              }))
+            }
+          >
+            <option value="Todos">Todas</option>
+
+            {injetorasDisponiveis.map((injetora) => (
+              <option key={injetora} value={injetora}>
+                {injetora}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+
+      {exibirProduto && (
+        <>
+          <label>CÓD. PROD</label>
+
+          <select
+            value={filtros.cod_prod || "Todos"}
+            disabled={exibirInjetora && filtros.injetora === "Todos"}
+            onChange={(evento) =>
+              setFiltros((anterior) => ({
+                ...anterior,
+
+                cod_prod: evento.target.value,
+              }))
+            }
+          >
+            <option value="Todos">Todos</option>
+
+            {produtosDisponiveis.map((produto) => (
+              <option key={produto} value={produto}>
+                {produto}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+
+      {exibirMp && (
+        <>
+          <label>MATÉRIA-PRIMA</label>
+
+          <select
+            value={filtros.mp || "Todos"}
+            onChange={(evento) =>
+              setFiltros((anterior) => ({
+                ...anterior,
+
+                mp: evento.target.value,
+              }))
+            }
+          >
+            <option value="Todos">Todas</option>
+
+            {mpsDisponiveis.map((mp) => (
+              <option key={mp} value={mp}>
+                {mp}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+
+      {exibirTipo && tiposDisponiveis.length > 0 && (
+        <>
+          <label>TIPO</label>
+
+          <div className="checkbox-group tipo-checkbox-group">
+            {tiposDisponiveis.map((tipo) => (
+              <label key={tipo} className="checkbox-label tipo-checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={(filtros.tipo || []).includes(tipo)}
+                  onChange={() => toggleTipo(tipo)}
+                />
+
+                <div className="tipo-label-conteudo">
+                  <strong className="tipo-label-numero">{tipo}</strong>
+
+                  <span className="tipo-label-descricao">{obterDescricaoTipo(tipo)}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
