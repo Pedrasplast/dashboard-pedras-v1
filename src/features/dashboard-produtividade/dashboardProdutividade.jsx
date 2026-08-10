@@ -21,9 +21,9 @@ import { calcularOeeCargaMaquina } from "./CalcularOee";
 
 import "./DashboardProdutividade.css";
 
-/* =====================================================
+/* =================================================
    FILTROS INICIAIS
-======================================================== */
+====================================================*/
 
 const criarFiltrosIniciais = () => ({
   dataInicio: "",
