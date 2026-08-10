@@ -17,6 +17,19 @@ const DESCRICOES_TIPO = {
 };
 
 /*
+ * Turnos disponíveis para filtro.
+ *
+ * A classificação real de cada registro
+ * será feita posteriormente no Dashboard,
+ * com base no horário da parada.
+ */
+const TURNOS_DISPONIVEIS = [
+  "TURNO I",
+  "TURNO II",
+  "TURNO III",
+];
+
+/*
  * Retorna a descrição correspondente ao tipo.
  *
  * String(tipo).trim() permite funcionar tanto
@@ -47,7 +60,9 @@ const converterISOParaData = (valorISO) => {
     return undefined;
   }
 
-  const correspondencia = String(valorISO).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const correspondencia = String(valorISO).match(
+    /^(\d{4})-(\d{2})-(\d{2})$/,
+  );
 
   if (!correspondencia) {
     return undefined;
@@ -61,7 +76,11 @@ const converterISOParaData = (valorISO) => {
 
   const data = new Date(ano, mes, dia);
 
-  if (data.getFullYear() !== ano || data.getMonth() !== mes || data.getDate() !== dia) {
+  if (
+    data.getFullYear() !== ano ||
+    data.getMonth() !== mes ||
+    data.getDate() !== dia
+  ) {
     return undefined;
   }
 
@@ -76,7 +95,11 @@ const converterISOParaData = (valorISO) => {
  */
 const extrairDataRegistro = (registro) => {
   const valorData =
-    registro?.lista_de_data || registro?.inicio || registro?.inicio_dia || registro?.data || null;
+    registro?.lista_de_data ||
+    registro?.inicio ||
+    registro?.inicio_dia ||
+    registro?.data ||
+    null;
 
   if (!valorData) {
     return null;
@@ -88,12 +111,20 @@ const extrairDataRegistro = (registro) => {
    * Extrai diretamente YYYY-MM-DD.
    * Isso evita mudança de data pelo fuso horário.
    */
-  const correspondencia = textoData.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const correspondencia = textoData.match(
+    /^(\d{4})-(\d{2})-(\d{2})/,
+  );
 
   if (correspondencia) {
-    const dataISO = [correspondencia[1], correspondencia[2], correspondencia[3]].join("-");
+    const dataISO = [
+      correspondencia[1],
+      correspondencia[2],
+      correspondencia[3],
+    ].join("-");
 
-    return converterISOParaData(dataISO) ? dataISO : null;
+    return converterISOParaData(dataISO)
+      ? dataISO
+      : null;
   }
 
   const data = new Date(valorData);
@@ -122,6 +153,7 @@ export default function FiltrosDashboard({
 
   exibirPeriodo = true,
   exibirInjetora = true,
+  exibirTurno = true,
   exibirProduto = true,
   exibirMp = true,
   exibirTipo = true,
@@ -130,49 +162,75 @@ export default function FiltrosDashboard({
   produtosDisponiveis = [],
   mpsDisponiveis = [],
 }) {
-  const [calendarioAberto, setCalendarioAberto] = useState(null);
+  const [calendarioAberto, setCalendarioAberto] =
+    useState(null);
 
   /*
    * Conjunto contendo somente os dias
    * que possuem registros no banco.
    */
   const datasComDados = useMemo(() => {
-    return new Set(rawDados.map(extrairDataRegistro).filter(Boolean));
+    return new Set(
+      rawDados
+        .map(extrairDataRegistro)
+        .filter(Boolean),
+    );
   }, [rawDados]);
 
   const datasOrdenadas = useMemo(() => {
     return [...datasComDados].sort();
   }, [datasComDados]);
 
-  const primeiraDataDisponivel = datasOrdenadas[0] || null;
+  const primeiraDataDisponivel =
+    datasOrdenadas[0] || null;
 
-  const ultimaDataDisponivel = datasOrdenadas[datasOrdenadas.length - 1] || null;
+  const ultimaDataDisponivel =
+    datasOrdenadas[
+      datasOrdenadas.length - 1
+    ] || null;
 
   const dataInicioSelecionada = useMemo(() => {
-    return converterISOParaData(filtros.dataInicio);
+    return converterISOParaData(
+      filtros.dataInicio,
+    );
   }, [filtros.dataInicio]);
 
   const dataFimSelecionada = useMemo(() => {
-    return converterISOParaData(filtros.dataFim);
+    return converterISOParaData(
+      filtros.dataFim,
+    );
   }, [filtros.dataFim]);
 
   const mesInicialCalendario = useMemo(() => {
     return (
       dataInicioSelecionada ||
       dataFimSelecionada ||
-      converterISOParaData(ultimaDataDisponivel) ||
+      converterISOParaData(
+        ultimaDataDisponivel,
+      ) ||
       new Date()
     );
-  }, [dataInicioSelecionada, dataFimSelecionada, ultimaDataDisponivel]);
+  }, [
+    dataInicioSelecionada,
+    dataFimSelecionada,
+    ultimaDataDisponivel,
+  ]);
 
   const toggleTipo = useCallback(
     (tipo) => {
       setFiltros((anterior) => {
-        const tiposAtuais = Array.isArray(anterior.tipo) ? anterior.tipo : [];
+        const tiposAtuais =
+          Array.isArray(anterior.tipo)
+            ? anterior.tipo
+            : [];
 
-        const novosTipos = tiposAtuais.includes(tipo)
-          ? tiposAtuais.filter((tipoAtual) => tipoAtual !== tipo)
-          : [...tiposAtuais, tipo];
+        const novosTipos =
+          tiposAtuais.includes(tipo)
+            ? tiposAtuais.filter(
+                (tipoAtual) =>
+                  tipoAtual !== tipo,
+              )
+            : [...tiposAtuais, tipo];
 
         return {
           ...anterior,
@@ -199,9 +257,13 @@ export default function FiltrosDashboard({
    */
   const dataPossuiRegistro = useCallback(
     (data) => {
-      const dataISO = formatarDataISO(data);
+      const dataISO =
+        formatarDataISO(data);
 
-      return dataISO !== "" && datasComDados.has(dataISO);
+      return (
+        dataISO !== "" &&
+        datasComDados.has(dataISO)
+      );
     },
     [datasComDados],
   );
@@ -218,13 +280,19 @@ export default function FiltrosDashboard({
         return true;
       }
 
-      if (dataFimSelecionada && data > dataFimSelecionada) {
+      if (
+        dataFimSelecionada &&
+        data > dataFimSelecionada
+      ) {
         return true;
       }
 
       return false;
     },
-    [dataPossuiRegistro, dataFimSelecionada],
+    [
+      dataPossuiRegistro,
+      dataFimSelecionada,
+    ],
   );
 
   /*
@@ -239,13 +307,19 @@ export default function FiltrosDashboard({
         return true;
       }
 
-      if (dataInicioSelecionada && data < dataInicioSelecionada) {
+      if (
+        dataInicioSelecionada &&
+        data < dataInicioSelecionada
+      ) {
         return true;
       }
 
       return false;
     },
-    [dataPossuiRegistro, dataInicioSelecionada],
+    [
+      dataPossuiRegistro,
+      dataInicioSelecionada,
+    ],
   );
 
   /*
@@ -255,34 +329,54 @@ export default function FiltrosDashboard({
    */
   const selecionarDataInicio = useCallback(
     (data) => {
-      if (!data || !dataPossuiRegistro(data)) {
+      if (
+        !data ||
+        !dataPossuiRegistro(data)
+      ) {
         return;
       }
 
-      const novaDataInicio = formatarDataISO(data);
+      const novaDataInicio =
+        formatarDataISO(data);
 
       setFiltros((anterior) => ({
         ...anterior,
 
         dataInicio: novaDataInicio,
 
-        dataFim: anterior.dataFim && anterior.dataFim < novaDataInicio ? "" : anterior.dataFim,
+        dataFim:
+          anterior.dataFim &&
+          anterior.dataFim <
+            novaDataInicio
+            ? ""
+            : anterior.dataFim,
       }));
 
       setCalendarioAberto(null);
     },
-    [dataPossuiRegistro, setFiltros],
+    [
+      dataPossuiRegistro,
+      setFiltros,
+    ],
   );
 
   const selecionarDataFim = useCallback(
     (data) => {
-      if (!data || !dataPossuiRegistro(data)) {
+      if (
+        !data ||
+        !dataPossuiRegistro(data)
+      ) {
         return;
       }
 
-      const novaDataFim = formatarDataISO(data);
+      const novaDataFim =
+        formatarDataISO(data);
 
-      if (filtros.dataInicio && novaDataFim < filtros.dataInicio) {
+      if (
+        filtros.dataInicio &&
+        novaDataFim <
+          filtros.dataInicio
+      ) {
         return;
       }
 
@@ -293,224 +387,455 @@ export default function FiltrosDashboard({
 
       setCalendarioAberto(null);
     },
-    [dataPossuiRegistro, filtros.dataInicio, setFiltros],
+    [
+      dataPossuiRegistro,
+      filtros.dataInicio,
+      setFiltros,
+    ],
   );
 
-  const injetorasDisponiveis = useMemo(() => {
-    return [...new Set(rawDados.map((registro) => registro.injetora).filter(Boolean))].sort(
-      (a, b) =>
-        String(a).localeCompare(String(b), "pt-BR", {
-          numeric: true,
-          sensitivity: "base",
-        }),
-    );
-  }, [rawDados]);
+  const injetorasDisponiveis =
+    useMemo(() => {
+      return [
+        ...new Set(
+          rawDados
+            .map(
+              (registro) =>
+                registro.injetora,
+            )
+            .filter(Boolean),
+        ),
+      ].sort((a, b) =>
+        String(a).localeCompare(
+          String(b),
+          "pt-BR",
+          {
+            numeric: true,
+            sensitivity: "base",
+          },
+        ),
+      );
+    }, [rawDados]);
 
   return (
     <div className="filter-section">
+
+      {/* =================================================
+          PERÍODO
+      ================================================= */}
+
       {exibirPeriodo && (
         <>
           <div className="filter-header-row">
             <label>PERÍODO</label>
 
-            <button type="button" className="clear-date-btn" onClick={limparDatas}>
+            <button
+              type="button"
+              className="clear-date-btn"
+              onClick={limparDatas}
+            >
               ✕ LIMPAR
             </button>
           </div>
 
           <div className="date-inputs-container">
+
+            {/* DATA INICIAL */}
+
             <div className="calendar-field">
               <button
                 type="button"
                 className="calendar-trigger"
-                disabled={datasOrdenadas.length === 0}
+                disabled={
+                  datasOrdenadas.length ===
+                  0
+                }
                 onClick={() =>
-                  setCalendarioAberto((atual) => (atual === "inicio" ? null : "inicio"))
+                  setCalendarioAberto(
+                    (atual) =>
+                      atual === "inicio"
+                        ? null
+                        : "inicio",
+                  )
                 }
               >
-                <span>Data inicial</span>
+                <span>
+                  Data inicial
+                </span>
 
                 <strong>
-                  {filtros.dataInicio ? formatarDataVisual(filtros.dataInicio) : "Selecionar"}
+                  {filtros.dataInicio
+                    ? formatarDataVisual(
+                        filtros.dataInicio,
+                      )
+                    : "Selecionar"}
                 </strong>
               </button>
 
-              {calendarioAberto === "inicio" && (
+              {calendarioAberto ===
+                "inicio" && (
                 <div className="calendar-popover">
                   <DayPicker
                     mode="single"
                     locale={ptBR}
-                    selected={dataInicioSelecionada}
-                    onSelect={selecionarDataInicio}
-                    disabled={desabilitarDataInicio}
+                    selected={
+                      dataInicioSelecionada
+                    }
+                    onSelect={
+                      selecionarDataInicio
+                    }
+                    disabled={
+                      desabilitarDataInicio
+                    }
                     modifiers={{
-                      comDados: dataPossuiRegistro,
+                      comDados:
+                        dataPossuiRegistro,
                     }}
                     modifiersClassNames={{
-                      comDados: "calendar-day-has-data",
+                      comDados:
+                        "calendar-day-has-data",
                     }}
-                    defaultMonth={mesInicialCalendario}
-                    startMonth={converterISOParaData(primeiraDataDisponivel)}
-                    endMonth={converterISOParaData(ultimaDataDisponivel)}
-                    showOutsideDays={false}
+                    defaultMonth={
+                      mesInicialCalendario
+                    }
+                    startMonth={converterISOParaData(
+                      primeiraDataDisponivel,
+                    )}
+                    endMonth={converterISOParaData(
+                      ultimaDataDisponivel,
+                    )}
+                    showOutsideDays={
+                      false
+                    }
                   />
 
                   <small className="calendar-info">
-                    Somente dias com dados podem ser selecionados.
+                    Somente dias com dados
+                    podem ser selecionados.
                   </small>
                 </div>
               )}
             </div>
 
+            {/* DATA FINAL */}
+
             <div className="calendar-field">
               <button
                 type="button"
                 className="calendar-trigger"
-                disabled={datasOrdenadas.length === 0}
-                onClick={() => setCalendarioAberto((atual) => (atual === "fim" ? null : "fim"))}
+                disabled={
+                  datasOrdenadas.length ===
+                  0
+                }
+                onClick={() =>
+                  setCalendarioAberto(
+                    (atual) =>
+                      atual === "fim"
+                        ? null
+                        : "fim",
+                  )
+                }
               >
-                <span>Data final</span>
+                <span>
+                  Data final
+                </span>
 
                 <strong>
-                  {filtros.dataFim ? formatarDataVisual(filtros.dataFim) : "Selecionar"}
+                  {filtros.dataFim
+                    ? formatarDataVisual(
+                        filtros.dataFim,
+                      )
+                    : "Selecionar"}
                 </strong>
               </button>
 
-              {calendarioAberto === "fim" && (
+              {calendarioAberto ===
+                "fim" && (
                 <div className="calendar-popover">
                   <DayPicker
                     mode="single"
                     locale={ptBR}
-                    selected={dataFimSelecionada}
-                    onSelect={selecionarDataFim}
-                    disabled={desabilitarDataFim}
+                    selected={
+                      dataFimSelecionada
+                    }
+                    onSelect={
+                      selecionarDataFim
+                    }
+                    disabled={
+                      desabilitarDataFim
+                    }
                     modifiers={{
-                      comDados: dataPossuiRegistro,
+                      comDados:
+                        dataPossuiRegistro,
                     }}
                     modifiersClassNames={{
-                      comDados: "calendar-day-has-data",
+                      comDados:
+                        "calendar-day-has-data",
                     }}
-                    defaultMonth={mesInicialCalendario}
-                    startMonth={converterISOParaData(primeiraDataDisponivel)}
-                    endMonth={converterISOParaData(ultimaDataDisponivel)}
-                    showOutsideDays={false}
+                    defaultMonth={
+                      mesInicialCalendario
+                    }
+                    startMonth={converterISOParaData(
+                      primeiraDataDisponivel,
+                    )}
+                    endMonth={converterISOParaData(
+                      ultimaDataDisponivel,
+                    )}
+                    showOutsideDays={
+                      false
+                    }
                   />
 
                   <small className="calendar-info">
-                    Somente dias com dados podem ser selecionados.
+                    Somente dias com dados
+                    podem ser selecionados.
                   </small>
                 </div>
               )}
             </div>
           </div>
 
-          {datasOrdenadas.length === 0 && (
-            <small className="calendar-empty">Nenhuma data encontrada na base.</small>
+          {datasOrdenadas.length ===
+            0 && (
+            <small className="calendar-empty">
+              Nenhuma data encontrada na
+              base.
+            </small>
           )}
         </>
       )}
+
+      {/* =================================================
+          INJETORA
+      ================================================= */}
 
       {exibirInjetora && (
         <>
           <label>INJETORA</label>
 
           <select
-            value={filtros.injetora || "Todos"}
+            value={
+              filtros.injetora ||
+              "Todos"
+            }
             onChange={(evento) =>
-              setFiltros((anterior) => ({
-                ...anterior,
+              setFiltros(
+                (anterior) => ({
+                  ...anterior,
 
-                injetora: evento.target.value,
+                  injetora:
+                    evento.target
+                      .value,
 
-                cod_prod: "Todos",
-              }))
+                  cod_prod:
+                    "Todos",
+                }),
+              )
             }
           >
-            <option value="Todos">Todas</option>
+            <option value="Todos">
+              Todas
+            </option>
 
-            {injetorasDisponiveis.map((injetora) => (
-              <option key={injetora} value={injetora}>
-                {injetora}
-              </option>
-            ))}
+            {injetorasDisponiveis.map(
+              (injetora) => (
+                <option
+                  key={injetora}
+                  value={injetora}
+                >
+                  {injetora}
+                </option>
+              ),
+            )}
           </select>
         </>
       )}
+
+      {/* =================================================
+          TURNO
+      ================================================= */}
+
+      {exibirTurno && (
+        <>
+          <label>TURNO</label>
+
+          <select
+            value={
+              filtros.turno ||
+              "Todos"
+            }
+            onChange={(evento) =>
+              setFiltros(
+                (anterior) => ({
+                  ...anterior,
+
+                  turno:
+                    evento.target
+                      .value,
+                }),
+              )
+            }
+          >
+            <option value="Todos">
+              Todos os turnos
+            </option>
+
+            {TURNOS_DISPONIVEIS.map(
+              (turno) => (
+                <option
+                  key={turno}
+                  value={turno}
+                >
+                  {turno}
+                </option>
+              ),
+            )}
+          </select>
+        </>
+      )}
+
+      {/* =================================================
+          PRODUTO
+      ================================================= */}
 
       {exibirProduto && (
         <>
           <label>CÓD. PROD</label>
 
           <select
-            value={filtros.cod_prod || "Todos"}
-            disabled={exibirInjetora && filtros.injetora === "Todos"}
+            value={
+              filtros.cod_prod ||
+              "Todos"
+            }
+            disabled={
+              exibirInjetora &&
+              filtros.injetora ===
+                "Todos"
+            }
             onChange={(evento) =>
-              setFiltros((anterior) => ({
-                ...anterior,
+              setFiltros(
+                (anterior) => ({
+                  ...anterior,
 
-                cod_prod: evento.target.value,
-              }))
+                  cod_prod:
+                    evento.target
+                      .value,
+                }),
+              )
             }
           >
-            <option value="Todos">Todos</option>
+            <option value="Todos">
+              Todos
+            </option>
 
-            {produtosDisponiveis.map((produto) => (
-              <option key={produto} value={produto}>
-                {produto}
-              </option>
-            ))}
+            {produtosDisponiveis.map(
+              (produto) => (
+                <option
+                  key={produto}
+                  value={produto}
+                >
+                  {produto}
+                </option>
+              ),
+            )}
           </select>
         </>
       )}
+
+      {/* =================================================
+          MATÉRIA-PRIMA
+      ================================================= */}
 
       {exibirMp && (
         <>
-          <label>MATÉRIA-PRIMA</label>
+          <label>
+            MATÉRIA-PRIMA
+          </label>
 
           <select
-            value={filtros.mp || "Todos"}
+            value={
+              filtros.mp ||
+              "Todos"
+            }
             onChange={(evento) =>
-              setFiltros((anterior) => ({
-                ...anterior,
+              setFiltros(
+                (anterior) => ({
+                  ...anterior,
 
-                mp: evento.target.value,
-              }))
+                  mp:
+                    evento.target
+                      .value,
+                }),
+              )
             }
           >
-            <option value="Todos">Todas</option>
+            <option value="Todos">
+              Todas
+            </option>
 
-            {mpsDisponiveis.map((mp) => (
-              <option key={mp} value={mp}>
-                {mp}
-              </option>
-            ))}
+            {mpsDisponiveis.map(
+              (mp) => (
+                <option
+                  key={mp}
+                  value={mp}
+                >
+                  {mp}
+                </option>
+              ),
+            )}
           </select>
         </>
       )}
 
-      {exibirTipo && tiposDisponiveis.length > 0 && (
-        <>
-          <label>TIPO</label>
+      {/* =================================================
+          TIPO
+      ================================================= */}
 
-          <div className="checkbox-group tipo-checkbox-group">
-            {tiposDisponiveis.map((tipo) => (
-              <label key={tipo} className="checkbox-label tipo-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={(filtros.tipo || []).includes(tipo)}
-                  onChange={() => toggleTipo(tipo)}
-                />
+      {exibirTipo &&
+        tiposDisponiveis.length >
+          0 && (
+          <>
+            <label>TIPO</label>
 
-                <div className="tipo-label-conteudo">
-                  <strong className="tipo-label-numero">{tipo}</strong>
+            <div className="checkbox-group tipo-checkbox-group">
+              {tiposDisponiveis.map(
+                (tipo) => (
+                  <label
+                    key={tipo}
+                    className="checkbox-label tipo-checkbox-label"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={(
+                        filtros.tipo ||
+                        []
+                      ).includes(
+                        tipo,
+                      )}
+                      onChange={() =>
+                        toggleTipo(
+                          tipo,
+                        )
+                      }
+                    />
 
-                  <span className="tipo-label-descricao">{obterDescricaoTipo(tipo)}</span>
-                </div>
-              </label>
-            ))}
-          </div>
-        </>
-      )}
+                    <div className="tipo-label-conteudo">
+                      <strong className="tipo-label-numero">
+                        {tipo}
+                      </strong>
+
+                      <span className="tipo-label-descricao">
+                        {obterDescricaoTipo(
+                          tipo,
+                        )}
+                      </span>
+                    </div>
+                  </label>
+                ),
+              )}
+            </div>
+          </>
+        )}
     </div>
   );
 }
