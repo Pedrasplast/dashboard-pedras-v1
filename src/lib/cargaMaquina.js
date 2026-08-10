@@ -329,7 +329,7 @@ async function buscarTodosOsRegistros() {
   return todosOsDados;
 }
 
-/* =========================================================
+/* ======================================================
    BUSCAR SOMENTE REGISTROS NOVOS
 
    Usa GTE para evitar perda caso vários registros tenham
