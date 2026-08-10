@@ -19,7 +19,7 @@ import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
 import { calcularOeeCargaMaquina } from "./CalcularOee";
 
-import "./DashboardProdutividade.css";
+import "./dashboardProdutividade.css";
 
 /* =================================================
    FILTROS INICIAIS
