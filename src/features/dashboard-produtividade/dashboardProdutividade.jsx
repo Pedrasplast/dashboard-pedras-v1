@@ -13,15 +13,11 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import {
-  useCargaMaquina,
-} from "@/lib/cargaMaquina";
+import {  useCargaMaquina, } from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
-import {
-  calcularOeeCargaMaquina,
-} from "./calcularOee";
+import { calcularOeeCargaMaquina } from "./CalcularOee";
 
 import "./DashboardProdutividade.css";
 
