@@ -1,11 +1,6 @@
-import {
-  formatarDataRelatorio,
-} from "../utils/Data";
+import { formatarDataRelatorio } from "../utils/Data";
 
-import {
-  converterNumero,
-  formatarNumero,
-} from "../utils/Numeros";
+import { converterNumero, formatarNumero } from "../utils/Numeros";
 
 /* =====================================================
    CADASTRO CENTRAL DAS COLUNAS DOS RELATÓRIOS
@@ -21,11 +16,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 22,
     larguraExcel: 14,
 
-    valor: (item) =>
-      formatarDataRelatorio(item),
+    valor: (item) => formatarDataRelatorio(item),
 
-    valorExcel: (item) =>
-      formatarDataRelatorio(item),
+    valorExcel: (item) => formatarDataRelatorio(item),
   },
 
   injetora: {
@@ -33,11 +26,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 32,
     larguraExcel: 36,
 
-    valor: (item) =>
-      item.injetora || "-",
+    valor: (item) => item.injetora || "-",
 
-    valorExcel: (item) =>
-      item.injetora || "",
+    valorExcel: (item) => item.injetora || "",
   },
 
   produto: {
@@ -45,15 +36,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 34,
     larguraExcel: 22,
 
-    valor: (item) =>
-      item.cod_prod ||
-      item.produto ||
-      "-",
+    valor: (item) => item.cod_prod || item.produto || "-",
 
-    valorExcel: (item) =>
-      item.cod_prod ||
-      item.produto ||
-      "",
+    valorExcel: (item) => item.cod_prod || item.produto || "",
   },
 
   mp: {
@@ -61,17 +46,10 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 38,
     larguraExcel: 24,
 
-    valor: (item) =>
-      item.mp ||
-      item.materia_prima ||
-      "-",
+    valor: (item) => item.mp || item.materia_prima || "-",
 
-    valorExcel: (item) =>
-      item.mp ||
-      item.materia_prima ||
-      "",
+    valorExcel: (item) => item.mp || item.materia_prima || "",
   },
-
 
   tipo: {
     titulo: "Tipo",
@@ -79,10 +57,7 @@ export const COLUNAS_RELATORIO = {
     larguraExcel: 18,
 
     valor: (item) => {
-      const tipo =
-        String(
-          item.tipo || "",
-        ).trim();
+      const tipo = String(item.tipo || "").trim();
 
       if (tipo === "1") {
         return "Planejada";
@@ -100,10 +75,7 @@ export const COLUNAS_RELATORIO = {
     },
 
     valorExcel: (item) => {
-      const tipo =
-        String(
-          item.tipo || "",
-        ).trim();
+      const tipo = String(item.tipo || "").trim();
 
       if (tipo === "1") {
         return "Planejada";
@@ -131,15 +103,9 @@ export const COLUNAS_RELATORIO = {
     larguraExcel: 18,
     formatoExcel: "#,##0",
 
-    valor: (item) =>
-      formatarNumero(
-        item.conforme,
-      ),
+    valor: (item) => formatarNumero(item.conforme),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.conforme,
-      ),
+    valorExcel: (item) => converterNumero(item.conforme),
   },
 
   danificada: {
@@ -148,15 +114,9 @@ export const COLUNAS_RELATORIO = {
     larguraExcel: 18,
     formatoExcel: "#,##0",
 
-    valor: (item) =>
-      formatarNumero(
-        item.danificada,
-      ),
+    valor: (item) => formatarNumero(item.danificada),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.danificada,
-      ),
+    valorExcel: (item) => converterNumero(item.danificada),
   },
 
   total_produzido: {
@@ -165,15 +125,46 @@ export const COLUNAS_RELATORIO = {
     larguraExcel: 18,
     formatoExcel: "#,##0",
 
-    valor: (item) =>
-      formatarNumero(
-        item.total_produzido,
-      ),
+    valor: (item) => formatarNumero(item.total_produzido),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.total_produzido,
-      ),
+    valorExcel: (item) => converterNumero(item.total_produzido),
+  },
+
+  /* ===================================================
+     PRODUTIVIDADE
+  =================================================== */
+
+  produtividade_hora: {
+    titulo: "UN/H",
+    larguraPdf: 24,
+    larguraExcel: 16,
+    formatoExcel: "#,##0",
+
+    valor: (item) => Math.round(converterNumero(item.produtividade_hora)).toLocaleString("pt-BR"),
+
+    valorExcel: (item) => Math.round(converterNumero(item.produtividade_hora)),
+  },
+
+  /* ===================================================
+     QUALIDADE
+  =================================================== */
+
+  qualidade: {
+    titulo: "Qualidade",
+    larguraPdf: 26,
+    larguraExcel: 16,
+    formatoExcel: "0.00%",
+
+    valor: (item) => {
+      const qualidade = converterNumero(item.qualidade);
+
+      return `${qualidade.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}%`;
+    },
+
+    valorExcel: (item) => converterNumero(item.qualidade) / 100,
   },
 
   peso: {
@@ -183,20 +174,12 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "#,##0.0000",
 
     valor: (item) =>
-      converterNumero(
-        item.peso,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits: 4,
-          maximumFractionDigits: 4,
-        },
-      ),
+      converterNumero(item.peso).toLocaleString("pt-BR", {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      }),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.peso,
-      ),
+    valorExcel: (item) => converterNumero(item.peso),
   },
 
   consumo_total: {
@@ -206,20 +189,12 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "#,##0.0000",
 
     valor: (item) =>
-      converterNumero(
-        item.consumo_total,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits: 4,
-          maximumFractionDigits: 4,
-        },
-      ),
+      converterNumero(item.consumo_total).toLocaleString("pt-BR", {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      }),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.consumo_total,
-      ),
+    valorExcel: (item) => converterNumero(item.consumo_total),
   },
 
   gasto_unidade: {
@@ -229,20 +204,12 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "0.000000",
 
     valor: (item) =>
-      converterNumero(
-        item.gasto_unidade,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits: 4,
-          maximumFractionDigits: 6,
-        },
-      ),
+      converterNumero(item.gasto_unidade).toLocaleString("pt-BR", {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 6,
+      }),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.gasto_unidade,
-      ),
+    valorExcel: (item) => converterNumero(item.gasto_unidade),
   },
 
   peso_total: {
@@ -252,54 +219,37 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "#,##0.0000",
 
     valor: (item) =>
-      converterNumero(
-        item.peso_total,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits: 4,
-          maximumFractionDigits: 4,
-        },
-      ),
+      converterNumero(item.peso_total).toLocaleString("pt-BR", {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+      }),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.peso_total,
-      ),
+    valorExcel: (item) => converterNumero(item.peso_total),
   },
 
   /* ===================================================
      PARADAS
   =================================================== */
 
-
   motivo: {
     titulo: "Motivo",
     larguraPdf: 70,
     larguraExcel: 42,
 
-    valor: (item) =>
-      item.motivo || "-",
+    valor: (item) => item.motivo || "-",
 
-    valorExcel: (item) =>
-      item.motivo || "",
+    valorExcel: (item) => item.motivo || "",
   },
 
-  
   justificativa: {
-  titulo: "Justificativa",
-  larguraPdf: 80,
-  larguraExcel: 50,
+    titulo: "Justificativa",
+    larguraPdf: 80,
+    larguraExcel: 50,
 
-  valor: (item) =>
-    item.justificativa ||
-    "Sem justificativa",
+    valor: (item) => item.justificativa || "Sem justificativa",
 
-  valorExcel: (item) =>
-    item.justificativa ||
-    "Sem justificativa",
-},
-
+    valorExcel: (item) => item.justificativa || "Sem justificativa",
+  },
 
   ocorrencias: {
     titulo: "Ocorrências",
@@ -308,19 +258,11 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "#,##0",
 
     valor: (item) =>
-      converterNumero(
-        item.ocorrencias,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          maximumFractionDigits: 0,
-        },
-      ),
+      converterNumero(item.ocorrencias).toLocaleString("pt-BR", {
+        maximumFractionDigits: 0,
+      }),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item.ocorrencias,
-      ),
+    valorExcel: (item) => converterNumero(item.ocorrencias),
   },
 
   tempo_total: {
@@ -328,13 +270,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 30,
     larguraExcel: 18,
 
-    valor: (item) =>
-      item.tempo_total ||
-      "00:00:00",
+    valor: (item) => item.tempo_total || "00:00:00",
 
-    valorExcel: (item) =>
-      item.tempo_total ||
-      "00:00:00",
+    valorExcel: (item) => item.tempo_total || "00:00:00",
   },
 
   tempo_medio: {
@@ -342,13 +280,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 30,
     larguraExcel: 18,
 
-    valor: (item) =>
-      item.tempo_medio ||
-      "00:00:00",
+    valor: (item) => item.tempo_medio || "00:00:00",
 
-    valorExcel: (item) =>
-      item.tempo_medio ||
-      "00:00:00",
+    valorExcel: (item) => item.tempo_medio || "00:00:00",
   },
 
   percentual_impacto: {
@@ -358,26 +292,12 @@ export const COLUNAS_RELATORIO = {
     formatoExcel: "0.00%",
 
     valor: (item) =>
-      `${converterNumero(
-        item.percentual_impacto,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        },
-      )}%`,
+      `${converterNumero(item.percentual_impacto).toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}%`,
 
-    /*
-     * No Excel:
-     *
-     * 35% precisa ser enviado como 0,35.
-     */
-
-    valorExcel: (item) =>
-      converterNumero(
-        item.percentual_impacto,
-      ) / 100,
+    valorExcel: (item) => converterNumero(item.percentual_impacto) / 100,
   },
 
   /* ===================================================
@@ -389,13 +309,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 25,
     larguraExcel: 16,
 
-    valor: (item) =>
-      item.duracao ||
-      "-",
+    valor: (item) => item.duracao || "-",
 
-    valorExcel: (item) =>
-      item.duracao ||
-      "",
+    valorExcel: (item) => item.duracao || "",
   },
 
   op: {
@@ -403,11 +319,9 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 25,
     larguraExcel: 18,
 
-    valor: (item) =>
-      item.op || "-",
+    valor: (item) => item.op || "-",
 
-    valorExcel: (item) =>
-      item.op || "",
+    valorExcel: (item) => item.op || "",
   },
 
   descricao: {
@@ -415,19 +329,10 @@ export const COLUNAS_RELATORIO = {
     larguraPdf: 48,
     larguraExcel: 48,
 
-    valor: (item) =>
-      item.descricao ||
-      item.justificativa ||
-      item.natureza ||
-      item.motivo ||
-      "-",
+    valor: (item) => item.descricao || item.justificativa || item.natureza || item.motivo || "-",
 
     valorExcel: (item) =>
-      item.descricao ||
-      item.justificativa ||
-      item.natureza ||
-      item.motivo ||
-      "",
+      item.descricao || item.justificativa || item.natureza || item.motivo || "",
   },
 };
 
@@ -435,27 +340,17 @@ export const COLUNAS_RELATORIO = {
    RETORNA AS COLUNAS CONFIGURADAS DE UM RELATÓRIO
 ===================================================== */
 
-export function obterColunasRelatorio(
-  relatorio,
-) {
-  if (
-    !relatorio ||
-    !Array.isArray(
-      relatorio.colunas,
-    )
-  ) {
+export function obterColunasRelatorio(relatorio) {
+  if (!relatorio || !Array.isArray(relatorio.colunas)) {
     return [];
   }
 
   return relatorio.colunas
     .map((chave) => {
-      const configuracao =
-        COLUNAS_RELATORIO[chave];
+      const configuracao = COLUNAS_RELATORIO[chave];
 
       if (!configuracao) {
-        console.warn(
-          `[Relatórios] Coluna "${chave}" não cadastrada.`,
-        );
+        console.warn(`[Relatórios] Coluna "${chave}" não cadastrada.`);
 
         return null;
       }

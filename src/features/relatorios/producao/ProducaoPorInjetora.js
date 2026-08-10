@@ -1,6 +1,12 @@
-import {  converterDuracaoParaSegundos,  formatarSegundosComoDuracao,} from "../utils/Duracao";
+import {
+  converterDuracaoParaSegundos,
+  formatarSegundosComoDuracao,
+} from "../utils/Duracao";
 
-import {  converterNumero,} from "../utils/Numeros";
+import {
+  converterNumero,
+} from "../utils/Numeros";
+
 
 /* =====================================================
    PRODUÇÃO POR INJETORA
@@ -13,12 +19,22 @@ export function agruparProducaoPorInjetora(dados) {
 
   const agrupado = new Map();
 
+
+  /* =====================================================
+     AGRUPAMENTO DOS DADOS
+  ===================================================== */
+
   dados.forEach((item) => {
     const injetora =
       String(
         item.injetora || "SEM INJETORA",
       ).trim() || "SEM INJETORA";
 
+
+    /*
+     * Cria o registro da injetora
+     * caso ainda não exista.
+     */
     if (!agrupado.has(injetora)) {
       agrupado.set(injetora, {
         injetora,
@@ -29,20 +45,37 @@ export function agruparProducaoPorInjetora(dados) {
 
         total_produzido: 0,
 
-        duracaoSegundos: 0,
-
-        duracao: "00:00:00",
       });
     }
+
 
     const registro =
       agrupado.get(injetora);
 
+
+    /* =================================================
+       CONFORME
+    ================================================= */
+
     const conforme =
-      converterNumero(item.conforme);
+      converterNumero(
+        item.conforme,
+      );
+
+
+    /* =================================================
+       DANIFICADA
+    ================================================= */
 
     const danificada =
-      converterNumero(item.danificada);
+      converterNumero(
+        item.danificada,
+      );
+
+
+    /* =================================================
+       ACUMULADORES
+    ================================================= */
 
     registro.conforme +=
       conforme;
@@ -52,24 +85,32 @@ export function agruparProducaoPorInjetora(dados) {
 
     registro.total_produzido +=
       conforme + danificada;
-
-    registro.duracaoSegundos +=
-      converterDuracaoParaSegundos(
-        item.duracao,
-      );
   });
+
+
+  /* =====================================================
+     RESULTADO FINAL POR INJETORA
+  ===================================================== */
 
   return Array.from(
     agrupado.values(),
   )
-    .map((item) => ({
-      ...item,
+    .map((item) => {
+  
+      const qualidade =
+        item.total_produzido > 0
+          ? (
+              item.conforme /
+              item.total_produzido
+            ) * 100
+          : 0;
 
-      duracao:
-        formatarSegundosComoDuracao(
-          item.duracaoSegundos,
-        ),
-    }))
+
+      return {
+        ...item,
+        qualidade,
+      };
+    })
     .sort((a, b) =>
       a.injetora.localeCompare(
         b.injetora,

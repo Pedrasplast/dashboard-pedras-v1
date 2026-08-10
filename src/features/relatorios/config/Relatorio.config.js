@@ -1,16 +1,10 @@
-import {
-  FiFileText,
-  FiBarChart2,
-  FiClock,
-  FiActivity,
-  FiAlertTriangle,
-} from "react-icons/fi";
+import { FiFileText, FiBarChart2, FiClock, FiActivity, FiAlertTriangle } from "react-icons/fi";
 
-import {  agruparProducaoPorInjetora,} from "../producao/ProducaoPorInjetora";
-import {  agruparProducaoPorProduto,} from "../producao/ProducaoPorProduto";
-import {  agruparProducaoPorMateriaPrima,} from "../producao/ProducaoPorMateriaPrima";
-import {  impactoParadasPorMotivo,} from "../paradas/ImpactoPorMotivo";
-import {  agruparMotivoJustificativa,} from "../paradas/MotivoJustificativa";
+import { agruparProducaoPorInjetora } from "../producao/ProducaoPorInjetora";
+import { agruparProducaoPorProduto } from "../producao/ProducaoPorProduto";
+import { agruparProducaoPorMateriaPrima } from "../producao/ProducaoPorMateriaPrima";
+import { impactoParadasPorMotivo } from "../paradas/ImpactoPorMotivo";
+import { agruparMotivoJustificativa } from "../paradas/MotivoJustificativa";
 
 /* =====================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -28,8 +22,31 @@ export const RELATORIOS = [
 
     titulo: "Produção por Injetora",
 
-    descricao:
-      "Resumo consolidado da produção por injetora no período selecionado.",
+    descricao: "Resumo consolidado da produção por injetora no período selecionado.",
+
+    icone: FiBarChart2,
+
+    filtros: {
+      periodo: true,
+      injetora: true,
+      produto: false,
+      mp: false,
+      tipo: false,
+    },
+
+    transformarDados: agruparProducaoPorInjetora,
+
+    colunas: ["injetora", "conforme", "danificada", "total_produzido", "qualidade"],
+  },
+
+  {
+    id: "producao-produto",
+
+    categoria: "Produção",
+
+    titulo: "Produção por Produto",
+
+    descricao: "Resumo consolidado da produção por produto e injetora no período selecionado.",
 
     icone: FiBarChart2,
 
@@ -41,49 +58,17 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    transformarDados:
-      agruparProducaoPorInjetora,
-
-    colunas: [
-      "injetora",
-      "conforme",
-      "danificada",
-      "total_produzido",
-      "duracao",
-    ],
-  },
-
-  {
-    id: "producao-produto",
-
-    categoria: "Produção",
-
-    titulo: "Produção por Produto",
-
-    descricao:
-      "Resumo consolidado por produto, injetora e matéria-prima no período selecionado.",
-
-    icone: FiActivity,
-
-    filtros: {
-      periodo: true,
-      injetora: true,
-      produto: true,
-      mp: true,
-      tipo: false,
-    },
-
-    transformarDados:
-      agruparProducaoPorProduto,
+    transformarDados: agruparProducaoPorProduto,
 
     colunas: [
       "produto",
       "injetora",
-      "mp",
       "conforme",
       "danificada",
       "total_produzido",
       "duracao",
+      "produtividade_hora",
+      "qualidade",
     ],
   },
 
@@ -92,11 +77,9 @@ export const RELATORIOS = [
 
     categoria: "Produção",
 
-    titulo:
-      "Consumo de Matéria-Prima por Produto",
+    titulo: "Consumo de Matéria-Prima por Produto",
 
-    descricao:
-      "Apresenta a produção total e o consumo de matéria-prima de cada produto.",
+    descricao: "Apresenta a produção total e o consumo de matéria-prima de cada produto.",
 
     icone: FiActivity,
 
@@ -108,8 +91,7 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    transformarDados:
-      agruparProducaoPorMateriaPrima,
+    transformarDados: agruparProducaoPorMateriaPrima,
 
     colunas: [
       "produto",
@@ -129,20 +111,16 @@ export const RELATORIOS = [
   =================================================== */
 
   {
-    id:
-      "impacto-paradas-motivo",
+    id: "impacto-paradas-motivo",
 
-    categoria:
-      "Paradas",
+    categoria: "Paradas",
 
-    titulo:
-      "Impacto das Paradas por Motivo",
+    titulo: "Impacto das Paradas por Motivo",
 
     descricao:
       "Ranking dos motivos de parada conforme o tempo total perdido no período selecionado.",
 
-    icone:
-      FiAlertTriangle,
+    icone: FiAlertTriangle,
 
     filtros: {
       periodo: true,
@@ -160,16 +138,9 @@ export const RELATORIOS = [
       tipo: true,
     },
 
-    transformarDados:
-      impactoParadasPorMotivo,
+    transformarDados: impactoParadasPorMotivo,
 
-    colunas: [
-      "motivo",
-      "ocorrencias",
-      "tempo_total",
-      "tempo_medio",
-      "percentual_impacto",
-    ],
+    colunas: ["motivo", "ocorrencias", "tempo_total", "tempo_medio", "percentual_impacto"],
   },
 
   {
@@ -179,8 +150,7 @@ export const RELATORIOS = [
 
     titulo: "Paradas Planejadas",
 
-    descricao:
-      "Lista os apontamentos classificados como parada planejada.",
+    descricao: "Lista os apontamentos classificados como parada planejada.",
 
     icone: FiClock,
 
@@ -192,35 +162,21 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    filtroFixo: (item) =>
-      String(
-        item.tipo || "",
-      ).trim() === "1",
+    filtroFixo: (item) => String(item.tipo || "").trim() === "1",
 
-    colunas: [
-      "data",
-      "injetora",
-      "descricao",
-      "duracao",
-      "op",
-    ],
+    colunas: ["data", "injetora", "descricao", "duracao", "op"],
   },
 
   {
-    id:
-      "paradas-nao-planejadas",
+    id: "paradas-nao-planejadas",
 
-    categoria:
-      "Paradas",
+    categoria: "Paradas",
 
-    titulo:
-      "Paradas Não Planejadas",
+    titulo: "Paradas Não Planejadas",
 
-    descricao:
-      "Lista os apontamentos classificados como parada não planejada.",
+    descricao: "Lista os apontamentos classificados como parada não planejada.",
 
-    icone:
-      FiAlertTriangle,
+    icone: FiAlertTriangle,
 
     filtros: {
       periodo: true,
@@ -230,35 +186,21 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    filtroFixo: (item) =>
-      String(
-        item.tipo || "",
-      ).trim() === "2",
+    filtroFixo: (item) => String(item.tipo || "").trim() === "2",
 
-    colunas: [
-      "data",
-      "injetora",
-      "descricao",
-      "duracao",
-      "op",
-    ],
+    colunas: ["data", "injetora", "descricao", "duracao", "op"],
   },
 
   {
-    id:
-      "paradas-fora-producao",
+    id: "paradas-fora-producao",
 
-    categoria:
-      "Paradas",
+    categoria: "Paradas",
 
-    titulo:
-      "Paradas Fora de Produção",
+    titulo: "Paradas Fora de Produção",
 
-    descricao:
-      "Lista os apontamentos classificados como fora de produção.",
+    descricao: "Lista os apontamentos classificados como fora de produção.",
 
-    icone:
-      FiClock,
+    icone: FiClock,
 
     filtros: {
       periodo: true,
@@ -268,58 +210,42 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    filtroFixo: (item) =>
-      String(
-        item.tipo || "",
-      ).trim() === "3",
+    filtroFixo: (item) => String(item.tipo || "").trim() === "3",
 
-    colunas: [
-      "data",
-      "injetora",
-      "descricao",
-      "duracao",
-      "op",
-    ],
-
-    
+    colunas: ["data", "injetora", "descricao", "duracao", "op"],
   },
 
   {
-  id:
-    "paradas-motivo-justificativa",
+    id: "paradas-motivo-justificativa",
 
-  categoria:
-    "Paradas",
+    categoria: "Paradas",
 
-  titulo:
-    "Motivos e Justificativas das Paradas",
+    titulo: "Motivos e Justificativas das Paradas",
 
-  descricao:
-    "Detalha os motivos de parada e suas justificativas, destacando as causas que mais impactam a produção.",
+    descricao:
+      "Detalha os motivos de parada e suas justificativas, destacando as causas que mais impactam a produção.",
 
-  icone:
-    FiAlertTriangle,
+    icone: FiAlertTriangle,
 
-  filtros: {
-    periodo: true,
-    injetora: true,
-    produto: false,
-    mp: false,
-    tipo: true,
+    filtros: {
+      periodo: true,
+      injetora: true,
+      produto: false,
+      mp: false,
+      tipo: true,
+    },
+
+    transformarDados: agruparMotivoJustificativa,
+
+    colunas: [
+      "motivo",
+      "justificativa",
+      "ocorrencias",
+      "tempo_total",
+      "tempo_medio",
+      "percentual_impacto",
+    ],
   },
-
-  transformarDados:
-    agruparMotivoJustificativa,
-
-  colunas: [
-    "motivo",
-    "justificativa",
-    "ocorrencias",
-    "tempo_total",
-    "tempo_medio",
-    "percentual_impacto",
-  ],
-},
 
   /* ===================================================
      QUALIDADE
@@ -330,14 +256,11 @@ export const RELATORIOS = [
 
     categoria: "Qualidade",
 
-    titulo:
-      "Conformes e Danificadas",
+    titulo: "Conformes e Danificadas",
 
-    descricao:
-      "Acompanha peças conformes e danificadas por máquina e produto.",
+    descricao: "Acompanha peças conformes e danificadas por máquina e produto.",
 
-    icone:
-      FiActivity,
+    icone: FiActivity,
 
     filtros: {
       periodo: true,
@@ -347,13 +270,7 @@ export const RELATORIOS = [
       tipo: false,
     },
 
-    colunas: [
-      "data",
-      "injetora",
-      "produto",
-      "conforme",
-      "danificada",
-    ],
+    colunas: ["data", "injetora", "produto", "conforme", "danificada"],
   },
 
   /* ===================================================
@@ -361,20 +278,15 @@ export const RELATORIOS = [
   =================================================== */
 
   {
-    id:
-      "relatorio-completo",
+    id: "relatorio-completo",
 
-    categoria:
-      "Geral",
+    categoria: "Geral",
 
-    titulo:
-      "Relatório Completo",
+    titulo: "Relatório Completo",
 
-    descricao:
-      "Relatório geral permitindo aplicar todos os filtros disponíveis.",
+    descricao: "Relatório geral permitindo aplicar todos os filtros disponíveis.",
 
-    icone:
-      FiFileText,
+    icone: FiFileText,
 
     filtros: {
       periodo: true,
@@ -384,15 +296,6 @@ export const RELATORIOS = [
       tipo: true,
     },
 
-    colunas: [
-      "data",
-      "injetora",
-      "produto",
-      "mp",
-      "tipo",
-      "conforme",
-      "danificada",
-      "duracao",
-    ],
+    colunas: ["data", "injetora", "produto", "mp", "tipo", "conforme", "danificada", "duracao"],
   },
 ];

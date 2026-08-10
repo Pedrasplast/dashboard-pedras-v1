@@ -1,8 +1,6 @@
 import jsPDF from "jspdf";
 
-import {
-  obterColunasRelatorio,
-} from "../config/Colunas.config";
+import {  obterColunasRelatorio,} from "../config/Colunas.config";
 
 /* =====================================================
    GERADOR DE PDF

@@ -1,14 +1,28 @@
-import {  converterDuracaoParaSegundos,  formatarSegundosComoDuracao,} from "../utils/Duracao";
+import {
+  converterDuracaoParaSegundos,
+  formatarSegundosComoDuracao,
+} from "../utils/Duracao";
 
-import {  converterNumero,} from "../utils/Numeros";
+import {
+  converterNumero,
+} from "../utils/Numeros";
 
 /* =====================================================
    PRODUÇÃO POR PRODUTO
 
    AGRUPA POR:
+
    - Produto
    - Injetora
-   - Matéria-Prima
+
+   INDICADORES:
+
+   - Conforme
+   - Danificada
+   - Total Produzido
+   - Duração
+   - Produtividade (UN/H)
+   - Qualidade (%)
 ===================================================== */
 
 export function agruparProducaoPorProduto(dados) {
@@ -18,39 +32,54 @@ export function agruparProducaoPorProduto(dados) {
 
   const agrupado = new Map();
 
+  /* =====================================================
+     AGRUPAMENTO
+  ===================================================== */
+
   dados.forEach((item) => {
+    /* =================================================
+       PRODUTO
+    ================================================= */
+
     const produto =
       String(
         item.cod_prod ||
-          item.produto ||
-          "SEM PRODUTO",
+        item.produto ||
+        "SEM PRODUTO",
       ).trim() || "SEM PRODUTO";
+
+    /* =================================================
+       INJETORA
+    ================================================= */
 
     const injetora =
       String(
         item.injetora ||
-          "SEM INJETORA",
+        "SEM INJETORA",
       ).trim() || "SEM INJETORA";
 
-    const mp =
-      String(
-        item.mp ||
-          item.materia_prima ||
-          "SEM MATÉRIA-PRIMA",
-      ).trim() || "SEM MATÉRIA-PRIMA";
+    /* =================================================
+       CHAVE
+
+       Agrupa somente:
+
+       PRODUTO + INJETORA
+    ================================================= */
 
     const chave =
-      `${produto}|||${injetora}|||${mp}`;
+      `${produto}|||${injetora}`;
+
+    /* =================================================
+       CRIA O GRUPO
+    ================================================= */
 
     if (!agrupado.has(chave)) {
       agrupado.set(chave, {
         produto,
+
         cod_prod: produto,
 
         injetora,
-
-        mp,
-        materia_prima: mp,
 
         conforme: 0,
 
@@ -61,17 +90,33 @@ export function agruparProducaoPorProduto(dados) {
         duracaoSegundos: 0,
 
         duracao: "00:00:00",
+
+        produtividade_hora: 0,
+
+        qualidade: 0,
       });
     }
 
     const registro =
       agrupado.get(chave);
 
+    /* =================================================
+       VALORES
+    ================================================= */
+
     const conforme =
-      converterNumero(item.conforme);
+      converterNumero(
+        item.conforme,
+      );
 
     const danificada =
-      converterNumero(item.danificada);
+      converterNumero(
+        item.danificada,
+      );
+
+    /* =================================================
+       SOMA PRODUÇÃO
+    ================================================= */
 
     registro.conforme +=
       conforme;
@@ -82,23 +127,86 @@ export function agruparProducaoPorProduto(dados) {
     registro.total_produzido +=
       conforme + danificada;
 
+    /* =================================================
+       SOMA DURAÇÃO
+    ================================================= */
+
     registro.duracaoSegundos +=
       converterDuracaoParaSegundos(
         item.duracao,
       );
   });
 
+  /* =====================================================
+     RESULTADO FINAL
+  ===================================================== */
+
   return Array.from(
     agrupado.values(),
   )
-    .map((item) => ({
-      ...item,
+    .map((item) => {
+      /* =================================================
+         HORAS DECIMAIS
 
-      duracao:
-        formatarSegundosComoDuracao(
-          item.duracaoSegundos,
-        ),
-    }))
+         Exemplo:
+
+         7200 segundos = 2 horas
+      ================================================= */
+
+      const horas =
+        item.duracaoSegundos > 0
+          ? item.duracaoSegundos / 3600
+          : 0;
+
+      /* =================================================
+         PRODUTIVIDADE
+
+         Total produzido
+         ----------------
+         Horas trabalhadas
+
+         Resultado = UN/H
+      ================================================= */
+
+      const produtividade_hora =
+        horas > 0
+          ? item.total_produzido / horas
+          : 0;
+
+      /* =================================================
+         QUALIDADE
+
+         Conforme
+         ---------------- × 100
+         Total Produzido
+      ================================================= */
+
+      const qualidade =
+        item.total_produzido > 0
+          ? (
+              item.conforme /
+              item.total_produzido
+            ) * 100
+          : 0;
+
+      return {
+        ...item,
+
+        duracao:
+          formatarSegundosComoDuracao(
+            item.duracaoSegundos,
+          ),
+
+        produtividade_hora,
+
+        qualidade,
+      };
+    })
+
+    /* =====================================================
+       ORDENAÇÃO
+    ===================================================== */
+
     .sort((a, b) => {
       const produto =
         a.produto.localeCompare(
@@ -114,22 +222,8 @@ export function agruparProducaoPorProduto(dados) {
         return produto;
       }
 
-      const injetora =
-        a.injetora.localeCompare(
-          b.injetora,
-          "pt-BR",
-          {
-            numeric: true,
-            sensitivity: "base",
-          },
-        );
-
-      if (injetora !== 0) {
-        return injetora;
-      }
-
-      return a.mp.localeCompare(
-        b.mp,
+      return a.injetora.localeCompare(
+        b.injetora,
         "pt-BR",
         {
           numeric: true,
