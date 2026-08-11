@@ -1,4 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import { DayPicker } from "@daypicker/react";
 import { ptBR } from "@daypicker/react/locale";
@@ -17,11 +21,7 @@ const DESCRICOES_TIPO = {
 };
 
 /*
- * Turnos disponíveis para filtro.
- *
- * A classificação real de cada registro
- * será feita posteriormente no Dashboard,
- * com base no horário da parada.
+ * Turnos disponíveis.
  */
 const TURNOS_DISPONIVEIS = [
   "TURNO I",
@@ -31,50 +31,76 @@ const TURNOS_DISPONIVEIS = [
 
 /*
  * Retorna a descrição correspondente ao tipo.
- *
- * String(tipo).trim() permite funcionar tanto
- * quando o banco retorna número quanto texto.
  */
 const obterDescricaoTipo = (tipo) => {
-  const codigoTipo = String(tipo).trim();
+  const codigoTipo =
+    String(tipo).trim();
 
-  return DESCRICOES_TIPO[codigoTipo] || "Tipo sem descrição";
+  return (
+    DESCRICOES_TIPO[codigoTipo] ||
+    "Tipo sem descrição"
+  );
 };
 
+/* =====================================================
+   DATA
+===================================================== */
+
 const formatarDataISO = (data) => {
-  if (!(data instanceof Date) || Number.isNaN(data.getTime())) {
+  if (
+    !(data instanceof Date) ||
+    Number.isNaN(data.getTime())
+  ) {
     return "";
   }
 
-  const ano = data.getFullYear();
+  const ano =
+    data.getFullYear();
 
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const mes =
+    String(
+      data.getMonth() + 1,
+    ).padStart(2, "0");
 
-  const dia = String(data.getDate()).padStart(2, "0");
+  const dia =
+    String(
+      data.getDate(),
+    ).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
 };
 
-const converterISOParaData = (valorISO) => {
+const converterISOParaData = (
+  valorISO,
+) => {
   if (!valorISO) {
     return undefined;
   }
 
-  const correspondencia = String(valorISO).match(
-    /^(\d{4})-(\d{2})-(\d{2})$/,
-  );
+  const correspondencia =
+    String(valorISO).match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+    );
 
   if (!correspondencia) {
     return undefined;
   }
 
-  const ano = Number(correspondencia[1]);
+  const ano =
+    Number(correspondencia[1]);
 
-  const mes = Number(correspondencia[2]) - 1;
+  const mes =
+    Number(correspondencia[2]) - 1;
 
-  const dia = Number(correspondencia[3]);
+  const dia =
+    Number(correspondencia[3]);
 
-  const data = new Date(ano, mes, dia);
+  const data =
+    new Date(
+      ano,
+      mes,
+      dia,
+    );
 
   if (
     data.getFullYear() !== ano ||
@@ -88,12 +114,11 @@ const converterISOParaData = (valorISO) => {
 };
 
 /*
- * Retorna somente a data oficial do registro.
- *
- * A prioridade é lista_de_data, pois ela representa
- * diretamente o dia do registro no banco.
+ * Retorna a data oficial do registro.
  */
-const extrairDataRegistro = (registro) => {
+const extrairDataRegistro = (
+  registro,
+) => {
   const valorData =
     registro?.lista_de_data ||
     registro?.inicio ||
@@ -105,15 +130,13 @@ const extrairDataRegistro = (registro) => {
     return null;
   }
 
-  const textoData = String(valorData).trim();
+  const textoData =
+    String(valorData).trim();
 
-  /*
-   * Extrai diretamente YYYY-MM-DD.
-   * Isso evita mudança de data pelo fuso horário.
-   */
-  const correspondencia = textoData.match(
-    /^(\d{4})-(\d{2})-(\d{2})/,
-  );
+  const correspondencia =
+    textoData.match(
+      /^(\d{4})-(\d{2})-(\d{2})/,
+    );
 
   if (correspondencia) {
     const dataISO = [
@@ -122,29 +145,49 @@ const extrairDataRegistro = (registro) => {
       correspondencia[3],
     ].join("-");
 
-    return converterISOParaData(dataISO)
+    return converterISOParaData(
+      dataISO,
+    )
       ? dataISO
       : null;
   }
 
-  const data = new Date(valorData);
+  const data =
+    new Date(valorData);
 
-  if (Number.isNaN(data.getTime())) {
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
     return null;
   }
 
-  return formatarDataISO(data);
+  return formatarDataISO(
+    data,
+  );
 };
 
-const formatarDataVisual = (valorISO) => {
-  const data = converterISOParaData(valorISO);
+const formatarDataVisual = (
+  valorISO,
+) => {
+  const data =
+    converterISOParaData(
+      valorISO,
+    );
 
   if (!data) {
     return "";
   }
 
-  return data.toLocaleDateString("pt-BR");
+  return data.toLocaleDateString(
+    "pt-BR",
+  );
 };
+
+/* =====================================================
+   COMPONENTE
+===================================================== */
 
 export default function FiltrosDashboard({
   filtros,
@@ -153,7 +196,7 @@ export default function FiltrosDashboard({
 
   exibirPeriodo = true,
   exibirInjetora = true,
-  exibirTurno = true,
+  exibirTurno = false,
   exibirProduto = true,
   exibirMp = true,
   exibirTipo = true,
@@ -161,238 +204,329 @@ export default function FiltrosDashboard({
   tiposDisponiveis = [],
   produtosDisponiveis = [],
   mpsDisponiveis = [],
-}) {
-  const [calendarioAberto, setCalendarioAberto] =
-    useState(null);
 
   /*
-   * Conjunto contendo somente os dias
-   * que possuem registros no banco.
+   * FALSE:
+   * mantém exatamente o layout usado
+   * no Dashboard de Produção.
+   *
+   * TRUE:
+   * usa a organização específica
+   * da tela de relatórios.
    */
-  const datasComDados = useMemo(() => {
-    return new Set(
-      rawDados
-        .map(extrairDataRegistro)
-        .filter(Boolean),
-    );
-  }, [rawDados]);
+  modoRelatorio = false,
+}) {
+  const [
+    calendarioAberto,
+    setCalendarioAberto,
+  ] = useState(null);
 
-  const datasOrdenadas = useMemo(() => {
-    return [...datasComDados].sort();
-  }, [datasComDados]);
+  /* =====================================================
+     DATAS DISPONÍVEIS
+  ===================================================== */
+
+  const datasComDados =
+    useMemo(() => {
+      return new Set(
+        rawDados
+          .map(extrairDataRegistro)
+          .filter(Boolean),
+      );
+    }, [rawDados]);
+
+  const datasOrdenadas =
+    useMemo(() => {
+      return [
+        ...datasComDados,
+      ].sort();
+    }, [datasComDados]);
 
   const primeiraDataDisponivel =
-    datasOrdenadas[0] || null;
+    datasOrdenadas[0] ||
+    null;
 
   const ultimaDataDisponivel =
     datasOrdenadas[
       datasOrdenadas.length - 1
     ] || null;
 
-  const dataInicioSelecionada = useMemo(() => {
-    return converterISOParaData(
-      filtros.dataInicio,
-    );
-  }, [filtros.dataInicio]);
-
-  const dataFimSelecionada = useMemo(() => {
-    return converterISOParaData(
-      filtros.dataFim,
-    );
-  }, [filtros.dataFim]);
-
-  const mesInicialCalendario = useMemo(() => {
-    return (
-      dataInicioSelecionada ||
-      dataFimSelecionada ||
-      converterISOParaData(
-        ultimaDataDisponivel,
-      ) ||
-      new Date()
-    );
-  }, [
-    dataInicioSelecionada,
-    dataFimSelecionada,
-    ultimaDataDisponivel,
-  ]);
-
-  const toggleTipo = useCallback(
-    (tipo) => {
-      setFiltros((anterior) => {
-        const tiposAtuais =
-          Array.isArray(anterior.tipo)
-            ? anterior.tipo
-            : [];
-
-        const novosTipos =
-          tiposAtuais.includes(tipo)
-            ? tiposAtuais.filter(
-                (tipoAtual) =>
-                  tipoAtual !== tipo,
-              )
-            : [...tiposAtuais, tipo];
-
-        return {
-          ...anterior,
-          tipo: novosTipos,
-        };
-      });
-    },
-    [setFiltros],
-  );
-
-  const limparDatas = useCallback(() => {
-    setFiltros((anterior) => ({
-      ...anterior,
-      dataInicio: "",
-      dataFim: "",
-    }));
-
-    setCalendarioAberto(null);
-  }, [setFiltros]);
-
-  /*
-   * Confirma se uma data realmente existe
-   * entre os registros carregados do banco.
-   */
-  const dataPossuiRegistro = useCallback(
-    (data) => {
-      const dataISO =
-        formatarDataISO(data);
-
-      return (
-        dataISO !== "" &&
-        datasComDados.has(dataISO)
+  const dataInicioSelecionada =
+    useMemo(() => {
+      return converterISOParaData(
+        filtros.dataInicio,
       );
-    },
-    [datasComDados],
-  );
-
-  /*
-   * Calendário inicial:
-   *
-   * - bloqueia dias sem dados;
-   * - bloqueia dias posteriores à data final.
-   */
-  const desabilitarDataInicio = useCallback(
-    (data) => {
-      if (!dataPossuiRegistro(data)) {
-        return true;
-      }
-
-      if (
-        dataFimSelecionada &&
-        data > dataFimSelecionada
-      ) {
-        return true;
-      }
-
-      return false;
-    },
-    [
-      dataPossuiRegistro,
-      dataFimSelecionada,
-    ],
-  );
-
-  /*
-   * Calendário final:
-   *
-   * - bloqueia dias sem dados;
-   * - bloqueia dias anteriores à data inicial.
-   */
-  const desabilitarDataFim = useCallback(
-    (data) => {
-      if (!dataPossuiRegistro(data)) {
-        return true;
-      }
-
-      if (
-        dataInicioSelecionada &&
-        data < dataInicioSelecionada
-      ) {
-        return true;
-      }
-
-      return false;
-    },
-    [
-      dataPossuiRegistro,
-      dataInicioSelecionada,
-    ],
-  );
-
-  /*
-   * A validação é feita novamente no clique.
-   * Assim, uma data sem registro nunca é salva,
-   * mesmo que haja algum problema visual.
-   */
-  const selecionarDataInicio = useCallback(
-    (data) => {
-      if (
-        !data ||
-        !dataPossuiRegistro(data)
-      ) {
-        return;
-      }
-
-      const novaDataInicio =
-        formatarDataISO(data);
-
-      setFiltros((anterior) => ({
-        ...anterior,
-
-        dataInicio: novaDataInicio,
-
-        dataFim:
-          anterior.dataFim &&
-          anterior.dataFim <
-            novaDataInicio
-            ? ""
-            : anterior.dataFim,
-      }));
-
-      setCalendarioAberto(null);
-    },
-    [
-      dataPossuiRegistro,
-      setFiltros,
-    ],
-  );
-
-  const selecionarDataFim = useCallback(
-    (data) => {
-      if (
-        !data ||
-        !dataPossuiRegistro(data)
-      ) {
-        return;
-      }
-
-      const novaDataFim =
-        formatarDataISO(data);
-
-      if (
-        filtros.dataInicio &&
-        novaDataFim <
-          filtros.dataInicio
-      ) {
-        return;
-      }
-
-      setFiltros((anterior) => ({
-        ...anterior,
-        dataFim: novaDataFim,
-      }));
-
-      setCalendarioAberto(null);
-    },
-    [
-      dataPossuiRegistro,
+    }, [
       filtros.dataInicio,
+    ]);
+
+  const dataFimSelecionada =
+    useMemo(() => {
+      return converterISOParaData(
+        filtros.dataFim,
+      );
+    }, [
+      filtros.dataFim,
+    ]);
+
+  const mesInicialCalendario =
+    useMemo(() => {
+      return (
+        dataInicioSelecionada ||
+        dataFimSelecionada ||
+        converterISOParaData(
+          ultimaDataDisponivel,
+        ) ||
+        new Date()
+      );
+    }, [
+      dataInicioSelecionada,
+      dataFimSelecionada,
+      ultimaDataDisponivel,
+    ]);
+
+  /* =====================================================
+     TIPO
+  ===================================================== */
+
+  const toggleTipo =
+    useCallback(
+      (tipo) => {
+        setFiltros(
+          (anterior) => {
+            const tiposAtuais =
+              Array.isArray(
+                anterior.tipo,
+              )
+                ? anterior.tipo
+                : [];
+
+            const novosTipos =
+              tiposAtuais.includes(
+                tipo,
+              )
+                ? tiposAtuais.filter(
+                    (
+                      tipoAtual,
+                    ) =>
+                      tipoAtual !==
+                      tipo,
+                  )
+                : [
+                    ...tiposAtuais,
+                    tipo,
+                  ];
+
+            return {
+              ...anterior,
+              tipo:
+                novosTipos,
+            };
+          },
+        );
+      },
+      [
+        setFiltros,
+      ],
+    );
+
+  /* =====================================================
+     LIMPAR DATAS
+  ===================================================== */
+
+  const limparDatas =
+    useCallback(() => {
+      setFiltros(
+        (anterior) => ({
+          ...anterior,
+
+          dataInicio:
+            "",
+
+          dataFim:
+            "",
+        }),
+      );
+
+      setCalendarioAberto(
+        null,
+      );
+    }, [
       setFiltros,
-    ],
-  );
+    ]);
+
+  /* =====================================================
+     VALIDA DATA
+  ===================================================== */
+
+  const dataPossuiRegistro =
+    useCallback(
+      (data) => {
+        const dataISO =
+          formatarDataISO(
+            data,
+          );
+
+        return (
+          dataISO !== "" &&
+          datasComDados.has(
+            dataISO,
+          )
+        );
+      },
+      [
+        datasComDados,
+      ],
+    );
+
+  const desabilitarDataInicio =
+    useCallback(
+      (data) => {
+        if (
+          !dataPossuiRegistro(
+            data,
+          )
+        ) {
+          return true;
+        }
+
+        if (
+          dataFimSelecionada &&
+          data >
+            dataFimSelecionada
+        ) {
+          return true;
+        }
+
+        return false;
+      },
+      [
+        dataPossuiRegistro,
+        dataFimSelecionada,
+      ],
+    );
+
+  const desabilitarDataFim =
+    useCallback(
+      (data) => {
+        if (
+          !dataPossuiRegistro(
+            data,
+          )
+        ) {
+          return true;
+        }
+
+        if (
+          dataInicioSelecionada &&
+          data <
+            dataInicioSelecionada
+        ) {
+          return true;
+        }
+
+        return false;
+      },
+      [
+        dataPossuiRegistro,
+        dataInicioSelecionada,
+      ],
+    );
+
+  /* =====================================================
+     SELEÇÃO DAS DATAS
+  ===================================================== */
+
+  const selecionarDataInicio =
+    useCallback(
+      (data) => {
+        if (
+          !data ||
+          !dataPossuiRegistro(
+            data,
+          )
+        ) {
+          return;
+        }
+
+        const novaDataInicio =
+          formatarDataISO(
+            data,
+          );
+
+        setFiltros(
+          (anterior) => ({
+            ...anterior,
+
+            dataInicio:
+              novaDataInicio,
+
+            dataFim:
+              anterior.dataFim &&
+              anterior.dataFim <
+                novaDataInicio
+                ? ""
+                : anterior.dataFim,
+          }),
+        );
+
+        setCalendarioAberto(
+          null,
+        );
+      },
+      [
+        dataPossuiRegistro,
+        setFiltros,
+      ],
+    );
+
+  const selecionarDataFim =
+    useCallback(
+      (data) => {
+        if (
+          !data ||
+          !dataPossuiRegistro(
+            data,
+          )
+        ) {
+          return;
+        }
+
+        const novaDataFim =
+          formatarDataISO(
+            data,
+          );
+
+        if (
+          filtros.dataInicio &&
+          novaDataFim <
+            filtros.dataInicio
+        ) {
+          return;
+        }
+
+        setFiltros(
+          (anterior) => ({
+            ...anterior,
+
+            dataFim:
+              novaDataFim,
+          }),
+        );
+
+        setCalendarioAberto(
+          null,
+        );
+      },
+      [
+        dataPossuiRegistro,
+        filtros.dataInicio,
+        setFiltros,
+      ],
+    );
+
+  /* =====================================================
+     INJETORAS
+  ===================================================== */
 
   const injetorasDisponiveis =
     useMemo(() => {
@@ -405,205 +539,285 @@ export default function FiltrosDashboard({
             )
             .filter(Boolean),
         ),
-      ].sort((a, b) =>
-        String(a).localeCompare(
-          String(b),
-          "pt-BR",
-          {
-            numeric: true,
-            sensitivity: "base",
-          },
-        ),
+      ].sort(
+        (a, b) =>
+          String(a).localeCompare(
+            String(b),
+            "pt-BR",
+            {
+              numeric: true,
+              sensitivity:
+                "base",
+            },
+          ),
       );
-    }, [rawDados]);
+    }, [
+      rawDados,
+    ]);
+
+  /* =====================================================
+     CAMPO DATA INICIAL
+  ===================================================== */
+
+  const campoDataInicial = (
+    <div className="calendar-field">
+      <button
+        type="button"
+        className="calendar-trigger"
+        disabled={
+          datasOrdenadas.length ===
+          0
+        }
+        onClick={() =>
+          setCalendarioAberto(
+            (atual) =>
+              atual === "inicio"
+                ? null
+                : "inicio",
+          )
+        }
+      >
+        <span>
+          Data inicial
+        </span>
+
+        <strong>
+          {filtros.dataInicio
+            ? formatarDataVisual(
+                filtros.dataInicio,
+              )
+            : "Selecionar"}
+        </strong>
+      </button>
+
+      {calendarioAberto ===
+        "inicio" && (
+        <div className="calendar-popover">
+          <DayPicker
+            mode="single"
+            locale={ptBR}
+            selected={
+              dataInicioSelecionada
+            }
+            onSelect={
+              selecionarDataInicio
+            }
+            disabled={
+              desabilitarDataInicio
+            }
+            modifiers={{
+              comDados:
+                dataPossuiRegistro,
+            }}
+            modifiersClassNames={{
+              comDados:
+                "calendar-day-has-data",
+            }}
+            defaultMonth={
+              mesInicialCalendario
+            }
+            startMonth={
+              converterISOParaData(
+                primeiraDataDisponivel,
+              )
+            }
+            endMonth={
+              converterISOParaData(
+                ultimaDataDisponivel,
+              )
+            }
+            showOutsideDays={
+              false
+            }
+          />
+
+          <small className="calendar-info">
+            Somente dias com dados
+            podem ser selecionados.
+          </small>
+        </div>
+      )}
+    </div>
+  );
+
+  /* =====================================================
+     CAMPO DATA FINAL
+  ===================================================== */
+
+  const campoDataFinal = (
+    <div className="calendar-field">
+      <button
+        type="button"
+        className="calendar-trigger"
+        disabled={
+          datasOrdenadas.length ===
+          0
+        }
+        onClick={() =>
+          setCalendarioAberto(
+            (atual) =>
+              atual === "fim"
+                ? null
+                : "fim",
+          )
+        }
+      >
+        <span>
+          Data final
+        </span>
+
+        <strong>
+          {filtros.dataFim
+            ? formatarDataVisual(
+                filtros.dataFim,
+              )
+            : "Selecionar"}
+        </strong>
+      </button>
+
+      {calendarioAberto ===
+        "fim" && (
+        <div className="calendar-popover">
+          <DayPicker
+            mode="single"
+            locale={ptBR}
+            selected={
+              dataFimSelecionada
+            }
+            onSelect={
+              selecionarDataFim
+            }
+            disabled={
+              desabilitarDataFim
+            }
+            modifiers={{
+              comDados:
+                dataPossuiRegistro,
+            }}
+            modifiersClassNames={{
+              comDados:
+                "calendar-day-has-data",
+            }}
+            defaultMonth={
+              mesInicialCalendario
+            }
+            startMonth={
+              converterISOParaData(
+                primeiraDataDisponivel,
+              )
+            }
+            endMonth={
+              converterISOParaData(
+                ultimaDataDisponivel,
+              )
+            }
+            showOutsideDays={
+              false
+            }
+          />
+
+          <small className="calendar-info">
+            Somente dias com dados
+            podem ser selecionados.
+          </small>
+        </div>
+      )}
+    </div>
+  );
+
+  /* =====================================================
+     TELA
+  ===================================================== */
 
   return (
     <div className="filter-section">
 
       {/* =================================================
-          PERÍODO
+          PERÍODO — RELATÓRIO
       ================================================= */}
 
-      {exibirPeriodo && (
-        <>
-          <div className="filter-header-row">
-            <label>PERÍODO</label>
+      {exibirPeriodo &&
+        modoRelatorio && (
+          <div className="periodo-relatorio-area">
 
-            <button
-              type="button"
-              className="clear-date-btn"
-              onClick={limparDatas}
-            >
-              ✕ LIMPAR
-            </button>
-          </div>
+            <label className="periodo-relatorio-label">
+              PERÍODO
+            </label>
 
-          <div className="date-inputs-container">
+            <div className="periodo-relatorio-linha">
 
-            {/* DATA INICIAL */}
+              <div className="date-inputs-container">
+                {campoDataInicial}
 
-            <div className="calendar-field">
+                {campoDataFinal}
+              </div>
+
               <button
                 type="button"
-                className="calendar-trigger"
-                disabled={
-                  datasOrdenadas.length ===
-                  0
+                className="clear-date-btn clear-date-btn-relatorio"
+                onClick={
+                  limparDatas
                 }
-                onClick={() =>
-                  setCalendarioAberto(
-                    (atual) =>
-                      atual === "inicio"
-                        ? null
-                        : "inicio",
-                  )
+                disabled={
+                  !filtros.dataInicio &&
+                  !filtros.dataFim
                 }
               >
-                <span>
-                  Data inicial
-                </span>
-
-                <strong>
-                  {filtros.dataInicio
-                    ? formatarDataVisual(
-                        filtros.dataInicio,
-                      )
-                    : "Selecionar"}
-                </strong>
+                ✕ LIMPAR
               </button>
 
-              {calendarioAberto ===
-                "inicio" && (
-                <div className="calendar-popover">
-                  <DayPicker
-                    mode="single"
-                    locale={ptBR}
-                    selected={
-                      dataInicioSelecionada
-                    }
-                    onSelect={
-                      selecionarDataInicio
-                    }
-                    disabled={
-                      desabilitarDataInicio
-                    }
-                    modifiers={{
-                      comDados:
-                        dataPossuiRegistro,
-                    }}
-                    modifiersClassNames={{
-                      comDados:
-                        "calendar-day-has-data",
-                    }}
-                    defaultMonth={
-                      mesInicialCalendario
-                    }
-                    startMonth={converterISOParaData(
-                      primeiraDataDisponivel,
-                    )}
-                    endMonth={converterISOParaData(
-                      ultimaDataDisponivel,
-                    )}
-                    showOutsideDays={
-                      false
-                    }
-                  />
-
-                  <small className="calendar-info">
-                    Somente dias com dados
-                    podem ser selecionados.
-                  </small>
-                </div>
-              )}
             </div>
 
-            {/* DATA FINAL */}
+            {datasOrdenadas.length ===
+              0 && (
+              <small className="calendar-empty">
+                Nenhuma data encontrada
+                na base.
+              </small>
+            )}
+          </div>
+        )}
 
-            <div className="calendar-field">
+      {/* =================================================
+          PERÍODO — DASHBOARD ORIGINAL
+
+          Mantém a estrutura antiga.
+      ================================================= */}
+
+      {exibirPeriodo &&
+        !modoRelatorio && (
+          <>
+            <div className="filter-header-row">
+              <label>
+                PERÍODO
+              </label>
+
               <button
                 type="button"
-                className="calendar-trigger"
-                disabled={
-                  datasOrdenadas.length ===
-                  0
-                }
-                onClick={() =>
-                  setCalendarioAberto(
-                    (atual) =>
-                      atual === "fim"
-                        ? null
-                        : "fim",
-                  )
+                className="clear-date-btn"
+                onClick={
+                  limparDatas
                 }
               >
-                <span>
-                  Data final
-                </span>
-
-                <strong>
-                  {filtros.dataFim
-                    ? formatarDataVisual(
-                        filtros.dataFim,
-                      )
-                    : "Selecionar"}
-                </strong>
+                ✕ LIMPAR
               </button>
-
-              {calendarioAberto ===
-                "fim" && (
-                <div className="calendar-popover">
-                  <DayPicker
-                    mode="single"
-                    locale={ptBR}
-                    selected={
-                      dataFimSelecionada
-                    }
-                    onSelect={
-                      selecionarDataFim
-                    }
-                    disabled={
-                      desabilitarDataFim
-                    }
-                    modifiers={{
-                      comDados:
-                        dataPossuiRegistro,
-                    }}
-                    modifiersClassNames={{
-                      comDados:
-                        "calendar-day-has-data",
-                    }}
-                    defaultMonth={
-                      mesInicialCalendario
-                    }
-                    startMonth={converterISOParaData(
-                      primeiraDataDisponivel,
-                    )}
-                    endMonth={converterISOParaData(
-                      ultimaDataDisponivel,
-                    )}
-                    showOutsideDays={
-                      false
-                    }
-                  />
-
-                  <small className="calendar-info">
-                    Somente dias com dados
-                    podem ser selecionados.
-                  </small>
-                </div>
-              )}
             </div>
-          </div>
 
-          {datasOrdenadas.length ===
-            0 && (
-            <small className="calendar-empty">
-              Nenhuma data encontrada na
-              base.
-            </small>
-          )}
-        </>
-      )}
+            <div className="date-inputs-container">
+              {campoDataInicial}
+
+              {campoDataFinal}
+            </div>
+
+            {datasOrdenadas.length ===
+              0 && (
+              <small className="calendar-empty">
+                Nenhuma data encontrada
+                na base.
+              </small>
+            )}
+          </>
+        )}
 
       {/* =================================================
           INJETORA
@@ -611,16 +825,22 @@ export default function FiltrosDashboard({
 
       {exibirInjetora && (
         <>
-          <label>INJETORA</label>
+          <label>
+            INJETORA
+          </label>
 
           <select
             value={
               filtros.injetora ||
               "Todos"
             }
-            onChange={(evento) =>
+            onChange={(
+              evento,
+            ) =>
               setFiltros(
-                (anterior) => ({
+                (
+                  anterior,
+                ) => ({
                   ...anterior,
 
                   injetora:
@@ -638,10 +858,16 @@ export default function FiltrosDashboard({
             </option>
 
             {injetorasDisponiveis.map(
-              (injetora) => (
+              (
+                injetora,
+              ) => (
                 <option
-                  key={injetora}
-                  value={injetora}
+                  key={
+                    injetora
+                  }
+                  value={
+                    injetora
+                  }
                 >
                   {injetora}
                 </option>
@@ -657,16 +883,22 @@ export default function FiltrosDashboard({
 
       {exibirTurno && (
         <>
-          <label>TURNO</label>
+          <label>
+            TURNO
+          </label>
 
           <select
             value={
               filtros.turno ||
               "Todos"
             }
-            onChange={(evento) =>
+            onChange={(
+              evento,
+            ) =>
               setFiltros(
-                (anterior) => ({
+                (
+                  anterior,
+                ) => ({
                   ...anterior,
 
                   turno:
@@ -681,10 +913,16 @@ export default function FiltrosDashboard({
             </option>
 
             {TURNOS_DISPONIVEIS.map(
-              (turno) => (
+              (
+                turno,
+              ) => (
                 <option
-                  key={turno}
-                  value={turno}
+                  key={
+                    turno
+                  }
+                  value={
+                    turno
+                  }
                 >
                   {turno}
                 </option>
@@ -700,7 +938,9 @@ export default function FiltrosDashboard({
 
       {exibirProduto && (
         <>
-          <label>CÓD. PROD</label>
+          <label>
+            CÓD. PROD
+          </label>
 
           <select
             value={
@@ -712,9 +952,13 @@ export default function FiltrosDashboard({
               filtros.injetora ===
                 "Todos"
             }
-            onChange={(evento) =>
+            onChange={(
+              evento,
+            ) =>
               setFiltros(
-                (anterior) => ({
+                (
+                  anterior,
+                ) => ({
                   ...anterior,
 
                   cod_prod:
@@ -729,10 +973,16 @@ export default function FiltrosDashboard({
             </option>
 
             {produtosDisponiveis.map(
-              (produto) => (
+              (
+                produto,
+              ) => (
                 <option
-                  key={produto}
-                  value={produto}
+                  key={
+                    produto
+                  }
+                  value={
+                    produto
+                  }
                 >
                   {produto}
                 </option>
@@ -757,9 +1007,13 @@ export default function FiltrosDashboard({
               filtros.mp ||
               "Todos"
             }
-            onChange={(evento) =>
+            onChange={(
+              evento,
+            ) =>
               setFiltros(
-                (anterior) => ({
+                (
+                  anterior,
+                ) => ({
                   ...anterior,
 
                   mp:
@@ -774,10 +1028,16 @@ export default function FiltrosDashboard({
             </option>
 
             {mpsDisponiveis.map(
-              (mp) => (
+              (
+                mp,
+              ) => (
                 <option
-                  key={mp}
-                  value={mp}
+                  key={
+                    mp
+                  }
+                  value={
+                    mp
+                  }
                 >
                   {mp}
                 </option>
@@ -795,13 +1055,19 @@ export default function FiltrosDashboard({
         tiposDisponiveis.length >
           0 && (
           <>
-            <label>TIPO</label>
+            <label>
+              TIPO
+            </label>
 
             <div className="checkbox-group tipo-checkbox-group">
               {tiposDisponiveis.map(
-                (tipo) => (
+                (
+                  tipo,
+                ) => (
                   <label
-                    key={tipo}
+                    key={
+                      tipo
+                    }
                     className="checkbox-label tipo-checkbox-label"
                   >
                     <input

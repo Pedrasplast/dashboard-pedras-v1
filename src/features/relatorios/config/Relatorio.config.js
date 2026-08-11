@@ -30,6 +30,7 @@ export const RELATORIOS = [
       periodo: true,
       injetora: true,
       produto: false,
+      turno: false,
       mp: false,
       tipo: false,
     },
@@ -54,6 +55,7 @@ export const RELATORIOS = [
       periodo: true,
       injetora: true,
       produto: true,
+      turno: false,
       mp: false,
       tipo: false,
     },
@@ -72,7 +74,7 @@ export const RELATORIOS = [
     ],
   },
 
-  {
+  /*{
     id: "producao-mp",
 
     categoria: "Produção",
@@ -87,6 +89,7 @@ export const RELATORIOS = [
       periodo: true,
       injetora: true,
       produto: true,
+      turno: false,
       mp: true,
       tipo: false,
     },
@@ -104,7 +107,7 @@ export const RELATORIOS = [
       "gasto_unidade",
       "peso_total",
     ],
-  },
+  },*/
 
   /* ===================================================
      PARADAS
@@ -126,15 +129,7 @@ export const RELATORIOS = [
       periodo: true,
       injetora: true,
       produto: false,
-      mp: false,
-
-      /*
-       * Permite selecionar:
-       *
-       * 1 Planejada
-       * 2 Não Planejada
-       * 3 Fora de Produção
-       */
+      mp: false,   
       tipo: true,
     },
 
@@ -143,7 +138,7 @@ export const RELATORIOS = [
     colunas: ["motivo", "ocorrencias", "tempo_total", "tempo_medio", "percentual_impacto"],
   },
 
-  {
+  /*{
     id: "paradas-planejadas",
 
     categoria: "Paradas",
@@ -213,7 +208,7 @@ export const RELATORIOS = [
     filtroFixo: (item) => String(item.tipo || "").trim() === "3",
 
     colunas: ["data", "injetora", "descricao", "duracao", "op"],
-  },
+  },*/
 
   {
     id: "paradas-motivo-justificativa",
@@ -251,7 +246,7 @@ export const RELATORIOS = [
      QUALIDADE
   =================================================== */
 
-  {
+  /*{
     id: "qualidade",
 
     categoria: "Qualidade",
@@ -271,13 +266,13 @@ export const RELATORIOS = [
     },
 
     colunas: ["data", "injetora", "produto", "conforme", "danificada"],
-  },
+  },*/
 
   /* ===================================================
      GERAL
   =================================================== */
 
-  {
+  /*{
     id: "relatorio-completo",
 
     categoria: "Geral",
@@ -297,5 +292,5 @@ export const RELATORIOS = [
     },
 
     colunas: ["data", "injetora", "produto", "mp", "tipo", "conforme", "danificada", "duracao"],
-  },
+  },*/
 ];

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "./supabaseClient";
 
+
 /* =========================================================
    CONFIGURAÇÕES
 ========================================================= */
@@ -13,237 +14,472 @@ const DB_VERSION = 1;
 const STORE_DADOS = "carga_maquina";
 const STORE_META = "meta";
 
-const META_ULTIMA_ATUALIZACAO = "carga_maquina_ultima_atualizacao";
+const META_ULTIMA_ATUALIZACAO =
+  "carga_maquina_ultima_atualizacao";
 
-export const chaveCargaMaquina = ["carga_maquina"];
+export const chaveCargaMaquina = [
+  "carga_maquina",
+];
+
+
+/* =========================================================
+   NORMALIZAR CÓDIGO DO PRODUTO
+
+   Usado exclusivamente para relacionar
+   carga_maquina com parametros_produto.
+
+   Exemplos:
+
+   11.01.0035 -> 11010035
+   4179       -> 4179
+   09122      -> 9122
+   9122.0     -> 9122
+   10469      -> 10469
+   REUSO3924  -> REUSO3924
+========================================================= */
+
+export function normalizarCodigoProduto(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined
+  ) {
+    return "";
+  }
+
+  let texto =
+    String(valor)
+      .trim()
+      .toUpperCase();
+
+  /*
+   * Caso o código tenha vindo como
+   * número decimal sem necessidade:
+   *
+   * 9122.0
+   * 9122,0
+   *
+   * converte para:
+   *
+   * 9122
+   */
+  if (
+    /^\d+[.,]0+$/.test(
+      texto,
+    )
+  ) {
+    texto =
+      texto.replace(
+        /[.,]0+$/,
+        "",
+      );
+  }
+
+  /*
+   * Remove pontos,
+   * espaços, barras,
+   * hífens etc.
+   */
+  const codigo =
+    texto.replace(
+      /[^A-Z0-9]/g,
+      "",
+    );
+
+  if (!codigo) {
+    return "";
+  }
+
+  /*
+   * Se for composto somente
+   * por números, remove zeros
+   * desnecessários à esquerda.
+   *
+   * 09122 -> 9122
+   */
+  if (
+    /^\d+$/.test(
+      codigo,
+    )
+  ) {
+    return codigo.replace(
+      /^0+(?=\d)/,
+      "",
+    );
+  }
+
+  return codigo;
+}
+
 
 /* =========================================================
    ABRIR INDEXEDDB
 ========================================================= */
 
 function abrirBancoLocal() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    request.onerror = () => {
-      reject(request.error);
-    };
-
-    request.onsuccess = () => {
-      resolve(request.result);
-    };
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      /* STORE DOS DADOS */
-
-      if (!db.objectStoreNames.contains(STORE_DADOS)) {
-        const store = db.createObjectStore(STORE_DADOS, {
-          keyPath: "id",
-        });
-
-        store.createIndex(
-          "criado_em",
-          "criado_em",
-          {
-            unique: false,
-          },
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION,
         );
-      }
 
-      /* STORE DE METADADOS */
+      request.onerror =
+        () => {
+          reject(
+            request.error,
+          );
+        };
 
-      if (!db.objectStoreNames.contains(STORE_META)) {
-        db.createObjectStore(STORE_META, {
-          keyPath: "chave",
-        });
-      }
-    };
-  });
+      request.onsuccess =
+        () => {
+          resolve(
+            request.result,
+          );
+        };
+
+      request.onupgradeneeded =
+        (
+          event,
+        ) => {
+          const db =
+            event.target.result;
+
+
+          /* STORE DOS DADOS */
+
+          if (
+            !db.objectStoreNames.contains(
+              STORE_DADOS,
+            )
+          ) {
+            const store =
+              db.createObjectStore(
+                STORE_DADOS,
+                {
+                  keyPath:
+                    "id",
+                },
+              );
+
+            store.createIndex(
+              "criado_em",
+              "criado_em",
+              {
+                unique:
+                  false,
+              },
+            );
+          }
+
+
+          /* STORE DE METADADOS */
+
+          if (
+            !db.objectStoreNames.contains(
+              STORE_META,
+            )
+          ) {
+            db.createObjectStore(
+              STORE_META,
+              {
+                keyPath:
+                  "chave",
+              },
+            );
+          }
+        };
+    },
+  );
 }
+
 
 /* =========================================================
    LER TODOS OS DADOS DO INDEXEDDB
 ========================================================= */
 
 async function lerDadosIndexedDB() {
-  const db = await abrirBancoLocal();
+  const db =
+    await abrirBancoLocal();
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readonly",
-    );
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const transaction =
+        db.transaction(
+          STORE_DADOS,
+          "readonly",
+        );
 
-    const store = transaction.objectStore(
-      STORE_DADOS,
-    );
+      const store =
+        transaction.objectStore(
+          STORE_DADOS,
+        );
 
-    const request = store.getAll();
+      const request =
+        store.getAll();
 
-    request.onsuccess = () => {
-      resolve(request.result || []);
-    };
+      request.onsuccess =
+        () => {
+          resolve(
+            request.result ||
+              [],
+          );
+        };
 
-    request.onerror = () => {
-      reject(request.error);
-    };
+      request.onerror =
+        () => {
+          reject(
+            request.error,
+          );
+        };
 
-    transaction.oncomplete = () => {
-      db.close();
-    };
-  });
+      transaction.oncomplete =
+        () => {
+          db.close();
+        };
+    },
+  );
 }
+
 
 /* =========================================================
    SALVAR / ATUALIZAR VÁRIOS REGISTROS
 ========================================================= */
 
-async function salvarDadosIndexedDB(dados) {
-  if (!Array.isArray(dados) || dados.length === 0) {
+async function salvarDadosIndexedDB(
+  dados,
+) {
+  if (
+    !Array.isArray(
+      dados,
+    ) ||
+    dados.length === 0
+  ) {
     return;
   }
 
-  const db = await abrirBancoLocal();
+  const db =
+    await abrirBancoLocal();
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readwrite",
-    );
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const transaction =
+        db.transaction(
+          STORE_DADOS,
+          "readwrite",
+        );
 
-    const store = transaction.objectStore(
-      STORE_DADOS,
-    );
+      const store =
+        transaction.objectStore(
+          STORE_DADOS,
+        );
 
-    dados.forEach((item) => {
-      if (
-        item &&
-        item.id !== undefined &&
-        item.id !== null
-      ) {
-        store.put(item);
-      }
-    });
+      dados.forEach(
+        (
+          item,
+        ) => {
+          if (
+            item &&
+            item.id !==
+              undefined &&
+            item.id !==
+              null
+          ) {
+            store.put(
+              item,
+            );
+          }
+        },
+      );
 
-    transaction.oncomplete = () => {
-      db.close();
+      transaction.oncomplete =
+        () => {
+          db.close();
 
-      resolve();
-    };
+          resolve();
+        };
 
-    transaction.onerror = () => {
-      reject(transaction.error);
-    };
+      transaction.onerror =
+        () => {
+          reject(
+            transaction.error,
+          );
+        };
 
-    transaction.onabort = () => {
-      reject(transaction.error);
-    };
-  });
+      transaction.onabort =
+        () => {
+          reject(
+            transaction.error,
+          );
+        };
+    },
+  );
 }
+
 
 /* =========================================================
    LIMPAR SOMENTE DADOS DA CARGA_MAQUINA
 ========================================================= */
 
 async function limparDadosIndexedDB() {
-  const db = await abrirBancoLocal();
+  const db =
+    await abrirBancoLocal();
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readwrite",
-    );
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const transaction =
+        db.transaction(
+          STORE_DADOS,
+          "readwrite",
+        );
 
-    const store = transaction.objectStore(
-      STORE_DADOS,
-    );
+      const store =
+        transaction.objectStore(
+          STORE_DADOS,
+        );
 
-    const request = store.clear();
+      const request =
+        store.clear();
 
-    request.onsuccess = () => {
-      resolve();
-    };
+      request.onsuccess =
+        () => {
+          resolve();
+        };
 
-    request.onerror = () => {
-      reject(request.error);
-    };
+      request.onerror =
+        () => {
+          reject(
+            request.error,
+          );
+        };
 
-    transaction.oncomplete = () => {
-      db.close();
-    };
-  });
+      transaction.oncomplete =
+        () => {
+          db.close();
+        };
+    },
+  );
 }
+
 
 /* =========================================================
    METADADOS
 ========================================================= */
 
-async function lerMeta(chave) {
-  const db = await abrirBancoLocal();
+async function lerMeta(
+  chave,
+) {
+  const db =
+    await abrirBancoLocal();
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_META,
-      "readonly",
-    );
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const transaction =
+        db.transaction(
+          STORE_META,
+          "readonly",
+        );
 
-    const store = transaction.objectStore(
-      STORE_META,
-    );
+      const store =
+        transaction.objectStore(
+          STORE_META,
+        );
 
-    const request = store.get(chave);
+      const request =
+        store.get(
+          chave,
+        );
 
-    request.onsuccess = () => {
-      resolve(request.result?.valor ?? null);
-    };
+      request.onsuccess =
+        () => {
+          resolve(
+            request.result
+              ?.valor ??
+              null,
+          );
+        };
 
-    request.onerror = () => {
-      reject(request.error);
-    };
+      request.onerror =
+        () => {
+          reject(
+            request.error,
+          );
+        };
 
-    transaction.oncomplete = () => {
-      db.close();
-    };
-  });
+      transaction.oncomplete =
+        () => {
+          db.close();
+        };
+    },
+  );
 }
 
-async function salvarMeta(chave, valor) {
-  const db = await abrirBancoLocal();
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_META,
-      "readwrite",
-    );
+async function salvarMeta(
+  chave,
+  valor,
+) {
+  const db =
+    await abrirBancoLocal();
 
-    const store = transaction.objectStore(
-      STORE_META,
-    );
+  return new Promise(
+    (
+      resolve,
+      reject,
+    ) => {
+      const transaction =
+        db.transaction(
+          STORE_META,
+          "readwrite",
+        );
 
-    store.put({
-      chave,
-      valor,
-    });
+      const store =
+        transaction.objectStore(
+          STORE_META,
+        );
 
-    transaction.oncomplete = () => {
-      db.close();
+      store.put({
+        chave,
+        valor,
+      });
 
-      resolve();
-    };
+      transaction.oncomplete =
+        () => {
+          db.close();
 
-    transaction.onerror = () => {
-      reject(transaction.error);
-    };
-  });
+          resolve();
+        };
+
+      transaction.onerror =
+        () => {
+          reject(
+            transaction.error,
+          );
+        };
+    },
+  );
 }
+
 
 /* =========================================================
    LIMPAR CACHE COMPLETO
-
-   Pode ser usado futuramente em um botão
-   "Atualizar tudo".
 ========================================================= */
 
 export async function limparCacheCargaMaquina() {
@@ -255,71 +491,120 @@ export async function limparCacheCargaMaquina() {
   );
 }
 
+
 /* =========================================================
    ÚLTIMA ATUALIZAÇÃO EXISTENTE NO BANCO
 ========================================================= */
 
 async function buscarUltimaAtualizacaoBanco() {
-  const { data, error } = await supabase
-    .from("carga_maquina")
-    .select("criado_em")
-    .not("criado_em", "is", null)
-    .order("criado_em", {
-      ascending: false,
-    })
-    .limit(1)
-    .maybeSingle();
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "carga_maquina",
+      )
+      .select(
+        "criado_em",
+      )
+      .not(
+        "criado_em",
+        "is",
+        null,
+      )
+      .order(
+        "criado_em",
+        {
+          ascending:
+            false,
+        },
+      )
+      .limit(1)
+      .maybeSingle();
 
-  if (error) {
+  if (
+    error
+  ) {
     throw error;
   }
 
-  return data?.criado_em || null;
+  return (
+    data?.criado_em ||
+    null
+  );
 }
+
 
 /* =========================================================
    BUSCAR TODOS OS REGISTROS DO SUPABASE
 ========================================================= */
 
 async function buscarTodosOsRegistros() {
-  const todosOsDados = [];
+  const todosOsDados =
+    [];
 
   let pagina = 0;
 
   for (;;) {
     const inicioPagina =
-      pagina * TAMANHO_PAGINA;
+      pagina *
+      TAMANHO_PAGINA;
 
     const fimPagina =
       inicioPagina +
       TAMANHO_PAGINA -
       1;
 
-    const { data, error } = await supabase
-      .from("carga_maquina")
-      .select("*")
-      .order("criado_em", {
-        ascending: true,
-      })
-      .order("id", {
-        ascending: true,
-      })
-      .range(
-        inicioPagina,
-        fimPagina,
-      );
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from(
+          "carga_maquina",
+        )
+        .select("*")
+        .order(
+          "criado_em",
+          {
+            ascending:
+              true,
+          },
+        )
+        .order(
+          "id",
+          {
+            ascending:
+              true,
+          },
+        )
+        .range(
+          inicioPagina,
+          fimPagina,
+        );
 
-    if (error) {
+    if (
+      error
+    ) {
       throw error;
     }
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
       break;
     }
 
-    todosOsDados.push(...data);
+    todosOsDados.push(
+      ...data,
+    );
 
-    if (data.length < TAMANHO_PAGINA) {
+    if (
+      data.length <
+      TAMANHO_PAGINA
+    ) {
       break;
     }
 
@@ -329,65 +614,90 @@ async function buscarTodosOsRegistros() {
   return todosOsDados;
 }
 
-/* ======================================================
+
+/* =========================================================
    BUSCAR SOMENTE REGISTROS NOVOS
-
-   Usa GTE para evitar perda caso vários registros tenham
-   exatamente o mesmo criado_em.
-
-   O IndexedDB faz PUT pelo id, então não duplica.
 ========================================================= */
 
 async function buscarNovosRegistros(
   ultimaAtualizacao,
 ) {
-  const novosDados = [];
+  const novosDados =
+    [];
 
   let pagina = 0;
 
   for (;;) {
     const inicioPagina =
-      pagina * TAMANHO_PAGINA;
+      pagina *
+      TAMANHO_PAGINA;
 
     const fimPagina =
       inicioPagina +
       TAMANHO_PAGINA -
       1;
 
-    let consulta = supabase
-      .from("carga_maquina")
-      .select("*")
-      .order("criado_em", {
-        ascending: true,
-      })
-      .order("id", {
-        ascending: true,
-      });
+    let consulta =
+      supabase
+        .from(
+          "carga_maquina",
+        )
+        .select("*")
+        .order(
+          "criado_em",
+          {
+            ascending:
+              true,
+          },
+        )
+        .order(
+          "id",
+          {
+            ascending:
+              true,
+          },
+        );
 
-    if (ultimaAtualizacao) {
-      consulta = consulta.gte(
-        "criado_em",
-        ultimaAtualizacao,
-      );
+    if (
+      ultimaAtualizacao
+    ) {
+      consulta =
+        consulta.gte(
+          "criado_em",
+          ultimaAtualizacao,
+        );
     }
 
-    const { data, error } =
+    const {
+      data,
+      error,
+    } =
       await consulta.range(
         inicioPagina,
         fimPagina,
       );
 
-    if (error) {
+    if (
+      error
+    ) {
       throw error;
     }
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
       break;
     }
 
-    novosDados.push(...data);
+    novosDados.push(
+      ...data,
+    );
 
-    if (data.length < TAMANHO_PAGINA) {
+    if (
+      data.length <
+      TAMANHO_PAGINA
+    ) {
       break;
     }
 
@@ -397,11 +707,13 @@ async function buscarNovosRegistros(
   return novosDados;
 }
 
+
 /* =========================================================
    SINCRONIZAÇÃO PRINCIPAL
 ========================================================= */
 
 export async function buscarCargaMaquina() {
+
   /* =====================================================
      1. LÊ O INDEXEDDB
   ===================================================== */
@@ -414,11 +726,15 @@ export async function buscarCargaMaquina() {
       META_ULTIMA_ATUALIZACAO,
     );
 
+
   /* =====================================================
      2. PRIMEIRA CARGA
   ===================================================== */
 
-  if (dadosCache.length === 0) {
+  if (
+    dadosCache.length ===
+    0
+  ) {
     console.log(
       "[Carga Máquina] IndexedDB vazio. Fazendo primeira carga completa...",
     );
@@ -445,6 +761,7 @@ export async function buscarCargaMaquina() {
     return todosOsDados;
   }
 
+
   /* =====================================================
      3. JÁ TEM CACHE
   ===================================================== */
@@ -455,6 +772,7 @@ export async function buscarCargaMaquina() {
 
   const ultimaAtualizacaoBanco =
     await buscarUltimaAtualizacaoBanco();
+
 
   /* =====================================================
      4. NÃO HOUVE ALTERAÇÃO
@@ -471,6 +789,7 @@ export async function buscarCargaMaquina() {
     return dadosCache;
   }
 
+
   /* =====================================================
      5. EXISTEM REGISTROS NOVOS
   ===================================================== */
@@ -484,7 +803,10 @@ export async function buscarCargaMaquina() {
       ultimaAtualizacaoCache,
     );
 
-  if (novosRegistros.length > 0) {
+  if (
+    novosRegistros.length >
+    0
+  ) {
     await salvarDadosIndexedDB(
       novosRegistros,
     );
@@ -494,6 +816,7 @@ export async function buscarCargaMaquina() {
     META_ULTIMA_ATUALIZACAO,
     ultimaAtualizacaoBanco,
   );
+
 
   /* =====================================================
      6. LÊ A BASE ATUALIZADA
@@ -509,73 +832,360 @@ export async function buscarCargaMaquina() {
   return dadosAtualizados;
 }
 
+
 /* =========================================================
-   CARREGAMENTO INICIAL DO INDEXEDDB
+   DESCRIÇÕES DOS PRODUTOS
 
-   Como IndexedDB é assíncrono, não usamos initialData
-   da mesma forma que no localStorage.
+   SOMENTE:
 
-   O React Query passa a manter o resultado em memória
-   enquanto o sistema estiver aberto.
+   carga_maquina.cod_prod
+            ↓
+   parametros_produto.cod_prod
+            ↓
+   parametros_produto.descricao
+========================================================= */
+
+/*
+ * Nova chave para garantir que nenhum
+ * cache da consulta anterior seja utilizado.
+ */
+export const chaveDescricoesProdutos = [
+  "descricoes_parametros_produto_v3",
+];
+
+
+/* =========================================================
+   BUSCAR DESCRIÇÕES EM PARAMETROS_PRODUTO
+========================================================= */
+
+async function buscarDescricoesProdutos() {
+  const registros =
+    [];
+
+  let pagina = 0;
+
+
+  for (;;) {
+    const inicioPagina =
+      pagina *
+      TAMANHO_PAGINA;
+
+    const fimPagina =
+      inicioPagina +
+      TAMANHO_PAGINA -
+      1;
+
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from(
+          "parametros_produto",
+        )
+        .select(
+          "cod_prod, descricao",
+        )
+        .range(
+          inicioPagina,
+          fimPagina,
+        );
+
+
+    if (
+      error
+    ) {
+      console.error(
+        "[Descrições Produtos] Erro ao consultar parametros_produto:",
+        error,
+      );
+
+      throw error;
+    }
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+      break;
+    }
+
+
+    registros.push(
+      ...data,
+    );
+
+
+    if (
+      data.length <
+      TAMANHO_PAGINA
+    ) {
+      break;
+    }
+
+
+    pagina += 1;
+  }
+
+
+  /* =====================================================
+     MONTA O MAPA DE DESCRIÇÕES
+  ===================================================== */
+
+  const descricoes =
+    {};
+
+
+  registros.forEach(
+    (
+      item,
+    ) => {
+
+      const codigoOriginal =
+        String(
+          item.cod_prod ??
+            "",
+        ).trim();
+
+
+      const codigoNormalizado =
+        normalizarCodigoProduto(
+          codigoOriginal,
+        );
+
+
+      const descricao =
+        String(
+          item.descricao ??
+            "",
+        ).trim();
+
+
+      if (
+        !codigoNormalizado ||
+        !descricao
+      ) {
+        return;
+      }
+
+
+      /*
+       * Chave principal:
+       * código normalizado.
+       */
+      descricoes[
+        codigoNormalizado
+      ] =
+        descricao;
+
+
+      /*
+       * Segurança:
+       * também mantém exatamente
+       * como veio do cadastro.
+       */
+      if (
+        codigoOriginal
+      ) {
+        descricoes[
+          codigoOriginal
+        ] =
+          descricao;
+      }
+
+
+      /*
+       * Segurança adicional:
+       * código original em maiúsculas.
+       */
+      const codigoOriginalMaiusculo =
+        codigoOriginal.toUpperCase();
+
+
+      if (
+        codigoOriginalMaiusculo
+      ) {
+        descricoes[
+          codigoOriginalMaiusculo
+        ] =
+          descricao;
+      }
+    },
+  );
+
+
+  console.log(
+    "[Descrições Produtos] parametros_produto carregado:",
+    registros.length,
+  );
+
+
+  console.log(
+    "[Descrições Produtos] códigos disponíveis:",
+    Object.keys(
+      descricoes,
+    ).length,
+  );
+
+
+  return descricoes;
+}
+
+
+/* =========================================================
+   HOOK DAS DESCRIÇÕES DOS PRODUTOS
+========================================================= */
+
+export function useDescricoesProdutos(
+  opcoes = {},
+) {
+  const consulta =
+    useQuery({
+      queryKey:
+        chaveDescricoesProdutos,
+
+      queryFn:
+        buscarDescricoesProdutos,
+
+
+      /*
+       * Durante a validação,
+       * consulta novamente ao abrir
+       * o relatório.
+       */
+      staleTime:
+        0,
+
+
+      gcTime:
+        30 *
+        60 *
+        1000,
+
+
+      refetchOnWindowFocus:
+        false,
+
+
+      refetchOnMount:
+        "always",
+
+
+      retry:
+        1,
+
+
+      ...opcoes,
+    });
+
+
+  return {
+    descricoesProdutos:
+      consulta.data ??
+      {},
+
+
+    loadingDescricoes:
+      consulta.isPending,
+
+
+    atualizandoDescricoes:
+      consulta.isFetching,
+
+
+    erroDescricoes:
+      consulta.error
+        ? consulta.error
+            .message ||
+          "Não foi possível carregar as descrições dos produtos."
+        : "",
+
+
+    recarregarDescricoes:
+      consulta.refetch,
+  };
+}
+
+
+/* =========================================================
+   HOOK PRINCIPAL DA CARGA MÁQUINA
 ========================================================= */
 
 export function useCargaMaquina(
   opcoes = {},
 ) {
-  const consulta = useQuery({
-    queryKey:
-      chaveCargaMaquina,
+  const consulta =
+    useQuery({
+      queryKey:
+        chaveCargaMaquina,
 
-    queryFn:
-      buscarCargaMaquina,
+      queryFn:
+        buscarCargaMaquina,
 
-    /*
-       Enquanto estiver navegando pelo sistema,
-       considera os dados válidos por 5 minutos.
-    */
-    staleTime:
-      5 * 60 * 1000,
 
-    /*
-       Mantém o cache do React Query em memória
-       durante 30 minutos.
-    */
-    gcTime:
-      30 * 60 * 1000,
+      /*
+       * Enquanto estiver navegando pelo sistema,
+       * considera os dados válidos por 5 minutos.
+       */
+      staleTime:
+        5 *
+        60 *
+        1000,
 
-    refetchOnWindowFocus:
-      false,
 
-    /*
-       Após F5 ele executa buscarCargaMaquina,
-       mas essa função primeiro lê IndexedDB.
+      /*
+       * Mantém o cache do React Query em memória
+       * durante 30 minutos.
+       */
+      gcTime:
+        30 *
+        60 *
+        1000,
 
-       Se criado_em não mudou, NÃO baixa
-       a tabela completa.
-    */
-    refetchOnMount:
-      true,
 
-    retry: 1,
+      refetchOnWindowFocus:
+        false,
 
-    ...opcoes,
-  });
+
+      /*
+       * Após F5 executa buscarCargaMaquina,
+       * mas primeiro consulta o IndexedDB.
+       */
+      refetchOnMount:
+        true,
+
+
+      retry:
+        1,
+
+
+      ...opcoes,
+    });
+
 
   return {
     dados:
-      consulta.data ?? [],
+      consulta.data ??
+      [],
+
 
     loading:
       consulta.isPending,
 
+
     atualizando:
       consulta.isFetching,
 
+
     erro:
       consulta.error
-        ? consulta.error.message ||
+        ? consulta.error
+            .message ||
           "Não foi possível carregar os dados de produção."
         : "",
+
 
     recarregar:
       consulta.refetch,

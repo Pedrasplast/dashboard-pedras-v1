@@ -1,6 +1,99 @@
 import jsPDF from "jspdf";
 
-import {  obterColunasRelatorio,} from "../config/Colunas.config";
+import {
+  obterColunasRelatorio,
+} from "../config/Colunas.config";
+
+
+/* =====================================================
+   COLUNAS PARA PDF
+
+   Produção por Produto:
+
+   Produto
+   Descrição do Produto
+   Injetora
+   ...
+===================================================== */
+
+function obterColunasPdf(
+  relatorio,
+) {
+  const colunas = [
+    ...obterColunasRelatorio(
+      relatorio,
+    ),
+  ];
+
+  if (
+    relatorio?.id !==
+    "producao-produto"
+  ) {
+    return colunas;
+  }
+
+  /*
+   * Evita duplicação caso futuramente
+   * a coluna também exista no config.
+   */
+  const jaExiste =
+    colunas.some(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "descricao_produto",
+    );
+
+  if (jaExiste) {
+    return colunas;
+  }
+
+  const indiceProduto =
+    colunas.findIndex(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "produto",
+    );
+
+  const colunaDescricao = {
+    chave:
+      "descricao_produto",
+
+    titulo:
+      "Descrição do Produto",
+
+    larguraPdf:
+      48,
+
+    valor:
+      (
+        item,
+      ) =>
+        item.descricao_produto ||
+        "-",
+  };
+
+  if (
+    indiceProduto !==
+    -1
+  ) {
+    colunas.splice(
+      indiceProduto + 1,
+      0,
+      colunaDescricao,
+    );
+  } else {
+    colunas.unshift(
+      colunaDescricao,
+    );
+  }
+
+  return colunas;
+}
+
 
 /* =====================================================
    GERADOR DE PDF
@@ -27,11 +120,14 @@ export function gerarPdfRelatorio({
   }
 
   const colunas =
-    obterColunasRelatorio(
+    obterColunasPdf(
       relatorio,
     );
 
-  if (colunas.length === 0) {
+  if (
+    colunas.length ===
+    0
+  ) {
     alert(
       "Nenhuma coluna configurada para este relatório.",
     );
@@ -39,15 +135,22 @@ export function gerarPdfRelatorio({
     return;
   }
 
+
   /* =====================================================
      DOCUMENTO
   ===================================================== */
 
-  const doc = new jsPDF({
-    orientation: "landscape",
-    unit: "mm",
-    format: "a4",
-  });
+  const doc =
+    new jsPDF({
+      orientation:
+        "landscape",
+
+      unit:
+        "mm",
+
+      format:
+        "a4",
+    });
 
   const pageWidth =
     doc.internal.pageSize.getWidth();
@@ -55,10 +158,17 @@ export function gerarPdfRelatorio({
   const pageHeight =
     doc.internal.pageSize.getHeight();
 
-  const margemEsquerda = 12;
-  const margemDireita = 12;
-  const margemSuperior = 12;
-  const margemInferior = 13;
+  const margemEsquerda =
+    12;
+
+  const margemDireita =
+    12;
+
+  const margemSuperior =
+    12;
+
+  const margemInferior =
+    13;
 
   const larguraDisponivel =
     pageWidth -
@@ -67,6 +177,7 @@ export function gerarPdfRelatorio({
 
   let y =
     margemSuperior;
+
 
   /* =====================================================
      TÍTULO
@@ -77,7 +188,9 @@ export function gerarPdfRelatorio({
     "bold",
   );
 
-  doc.setFontSize(16);
+  doc.setFontSize(
+    16,
+  );
 
   doc.setTextColor(
     15,
@@ -90,11 +203,15 @@ export function gerarPdfRelatorio({
       relatorio.titulo ||
         "",
     ).toUpperCase(),
+
     margemEsquerda,
+
     y,
   );
 
-  y += 6;
+  y +=
+    6;
+
 
   /* =====================================================
      DESCRIÇÃO
@@ -105,7 +222,9 @@ export function gerarPdfRelatorio({
     "normal",
   );
 
-  doc.setFontSize(9);
+  doc.setFontSize(
+    9,
+  );
 
   doc.setTextColor(
     100,
@@ -119,6 +238,7 @@ export function gerarPdfRelatorio({
         relatorio.descricao ||
           "",
       ),
+
       larguraDisponivel,
     );
 
@@ -131,14 +251,19 @@ export function gerarPdfRelatorio({
   y +=
     Math.max(
       4,
-      descricao.length * 4,
+
+      descricao.length *
+        4,
     );
+
 
   /* =====================================================
      DATA DE EMISSÃO
   ===================================================== */
 
-  doc.setFontSize(8.5);
+  doc.setFontSize(
+    8.5,
+  );
 
   doc.setTextColor(
     100,
@@ -152,15 +277,22 @@ export function gerarPdfRelatorio({
     )} às ${new Date().toLocaleTimeString(
       "pt-BR",
       {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour:
+          "2-digit",
+
+        minute:
+          "2-digit",
       },
     )}`,
+
     margemEsquerda,
+
     y,
   );
 
-  y += 8;
+  y +=
+    8;
+
 
   /* =====================================================
      PARÂMETROS
@@ -175,6 +307,7 @@ export function gerarPdfRelatorio({
   const parametrosQuebrados =
     doc.splitTextToSize(
       textoParametros,
+
       larguraDisponivel -
         10,
     );
@@ -182,10 +315,12 @@ export function gerarPdfRelatorio({
   const alturaParametros =
     Math.max(
       17,
+
       11 +
         parametrosQuebrados.length *
           3.5,
     );
+
 
   /* Fundo */
 
@@ -207,13 +342,20 @@ export function gerarPdfRelatorio({
 
   doc.roundedRect(
     margemEsquerda,
+
     y,
+
     larguraDisponivel,
+
     alturaParametros,
+
     2,
+
     2,
+
     "FD",
   );
+
 
   /* Título */
 
@@ -234,9 +376,14 @@ export function gerarPdfRelatorio({
 
   doc.text(
     "PARÂMETROS",
-    margemEsquerda + 4,
-    y + 5,
+
+    margemEsquerda +
+      4,
+
+    y +
+      5,
   );
+
 
   /* Conteúdo */
 
@@ -257,13 +404,18 @@ export function gerarPdfRelatorio({
 
   doc.text(
     parametrosQuebrados,
-    margemEsquerda + 4,
-    y + 10,
+
+    margemEsquerda +
+      4,
+
+    y +
+      10,
   );
 
   y +=
     alturaParametros +
     9;
+
 
   /* =====================================================
      POSICIONAMENTO DAS COLUNAS
@@ -280,6 +432,7 @@ export function gerarPdfRelatorio({
           coluna.larguraPdf ||
             20,
         ),
+
       0,
     );
 
@@ -295,7 +448,9 @@ export function gerarPdfRelatorio({
 
   const colunasPosicionadas =
     colunas.map(
-      (coluna) => {
+      (
+        coluna,
+      ) => {
         const largura =
           Number(
             coluna.larguraPdf ||
@@ -306,7 +461,8 @@ export function gerarPdfRelatorio({
         const resultado = {
           ...coluna,
 
-          x: xAtual,
+          x:
+            xAtual,
 
           largura,
         };
@@ -318,6 +474,7 @@ export function gerarPdfRelatorio({
       },
     );
 
+
   /* =====================================================
      DIMENSÕES DA TABELA
   ===================================================== */
@@ -328,21 +485,18 @@ export function gerarPdfRelatorio({
   const alturaLinha =
     8;
 
+
   /* =====================================================
      CABEÇALHO DA TABELA
   ===================================================== */
 
   const desenharCabecalhoTabela =
     () => {
-      /*
-       * Primeiro desenhamos TODAS as células.
-       *
-       * Isso evita o problema de setTextColor
-       * mudar a cor usada no próximo preenchimento.
-       */
 
       colunasPosicionadas.forEach(
-        (coluna) => {
+        (
+          coluna,
+        ) => {
           doc.setFillColor(
             30,
             41,
@@ -361,17 +515,18 @@ export function gerarPdfRelatorio({
 
           doc.rect(
             coluna.x,
+
             y,
+
             coluna.largura,
+
             alturaCabecalho,
+
             "FD",
           );
         },
       );
 
-      /*
-       * Depois colocamos os textos.
-       */
 
       doc.setFont(
         "helvetica",
@@ -389,7 +544,9 @@ export function gerarPdfRelatorio({
       );
 
       colunasPosicionadas.forEach(
-        (coluna) => {
+        (
+          coluna,
+        ) => {
           const titulo =
             String(
               coluna.titulo ||
@@ -399,8 +556,10 @@ export function gerarPdfRelatorio({
           const tituloQuebrado =
             doc.splitTextToSize(
               titulo,
+
               Math.max(
                 1,
+
                 coluna.largura -
                   4,
               ),
@@ -408,14 +567,30 @@ export function gerarPdfRelatorio({
 
           const primeiraLinha =
             String(
-              tituloQuebrado[0] ||
+              tituloQuebrado[
+                0
+              ] ||
                 "",
             );
 
+          /*
+           * TODOS OS CABEÇALHOS
+           * ALINHADOS À ESQUERDA
+           */
+
           doc.text(
             primeiraLinha,
-            coluna.x + 2,
-            y + 5.7,
+
+            coluna.x +
+              2,
+
+            y +
+              5.7,
+
+            {
+              align:
+                "left",
+            },
           );
         },
       );
@@ -424,11 +599,13 @@ export function gerarPdfRelatorio({
         alturaCabecalho;
     };
 
+
   /* =====================================================
      PRIMEIRO CABEÇALHO
   ===================================================== */
 
   desenharCabecalhoTabela();
+
 
   /* =====================================================
      LINHAS
@@ -439,6 +616,7 @@ export function gerarPdfRelatorio({
       item,
       index,
     ) => {
+
       /* ===============================================
          NOVA PÁGINA
       =============================================== */
@@ -457,18 +635,23 @@ export function gerarPdfRelatorio({
         desenharCabecalhoTabela();
       }
 
+
       /* ===============================================
          FUNDO DA LINHA
-
-         Primeiro desenhamos TODA a linha.
       =============================================== */
 
       const linhaPar =
-        index % 2 === 0;
+        index %
+          2 ===
+        0;
 
       colunasPosicionadas.forEach(
-        (coluna) => {
-          if (linhaPar) {
+        (
+          coluna,
+        ) => {
+          if (
+            linhaPar
+          ) {
             doc.setFillColor(
               248,
               250,
@@ -494,19 +677,21 @@ export function gerarPdfRelatorio({
 
           doc.rect(
             coluna.x,
+
             y,
+
             coluna.largura,
+
             alturaLinha,
+
             "FD",
           );
         },
       );
 
+
       /* ===============================================
          TEXTO
-
-         Só depois do fundo pronto,
-         desenhamos os valores.
       =============================================== */
 
       doc.setFont(
@@ -525,7 +710,9 @@ export function gerarPdfRelatorio({
       );
 
       colunasPosicionadas.forEach(
-        (coluna) => {
+        (
+          coluna,
+        ) => {
           const valor =
             typeof coluna.valor ===
             "function"
@@ -535,7 +722,8 @@ export function gerarPdfRelatorio({
               : "-";
 
           const texto =
-            valor === null ||
+            valor ===
+              null ||
             valor ===
               undefined
               ? "-"
@@ -546,8 +734,10 @@ export function gerarPdfRelatorio({
           const textoQuebrado =
             doc.splitTextToSize(
               texto,
+
               Math.max(
                 1,
+
                 coluna.largura -
                   4,
               ),
@@ -555,56 +745,35 @@ export function gerarPdfRelatorio({
 
           const textoFinal =
             String(
-              textoQuebrado[0] ||
+              textoQuebrado[
+                0
+              ] ||
                 "-",
             );
+
 
           /* ===========================================
              ALINHAMENTO
 
-             Campos numéricos ficam centralizados.
-             Texto permanece à esquerda.
+             TODOS OS CAMPOS,
+             TEXTOS E NÚMEROS,
+             FICAM ALINHADOS À ESQUERDA.
           =========================================== */
 
-          const camposCentralizados =
-            [
-              "ranking",
-              "ocorrencias",
-              "conforme",
-              "danificada",
-              "total_produzido",
-              "peso",
-              "consumo_total",
-              "gasto_unidade",
-              "peso_total",
-              "tempo_total",
-              "tempo_medio",
-              "percentual_impacto",
-            ];
+          doc.text(
+            textoFinal,
 
-          if (
-            camposCentralizados.includes(
-              coluna.chave,
-            )
-          ) {
-            doc.text(
-              textoFinal,
-              coluna.x +
-                coluna.largura /
-                  2,
-              y + 5.25,
-              {
-                align:
-                  "center",
-              },
-            );
-          } else {
-            doc.text(
-              textoFinal,
-              coluna.x + 2,
-              y + 5.25,
-            );
-          }
+            coluna.x +
+              2,
+
+            y +
+              5.25,
+
+            {
+              align:
+                "left",
+            },
+          );
         },
       );
 
@@ -613,11 +782,13 @@ export function gerarPdfRelatorio({
     },
   );
 
+
   /* =====================================================
      TOTAL DE REGISTROS
   ===================================================== */
 
-  y += 7;
+  y +=
+    7;
 
   if (
     y >
@@ -647,9 +818,12 @@ export function gerarPdfRelatorio({
 
   doc.text(
     `Total de registros: ${dados.length}`,
+
     margemEsquerda,
+
     y,
   );
+
 
   /* =====================================================
      NUMERAÇÃO DAS PÁGINAS
@@ -659,10 +833,14 @@ export function gerarPdfRelatorio({
     doc.getNumberOfPages();
 
   for (
-    let pagina = 1;
+    let pagina =
+      1;
+
     pagina <=
     totalPaginas;
-    pagina += 1
+
+    pagina +=
+      1
   ) {
     doc.setPage(
       pagina,
@@ -685,16 +863,20 @@ export function gerarPdfRelatorio({
 
     doc.text(
       `Página ${pagina} de ${totalPaginas}`,
+
       pageWidth -
         margemDireita,
+
       pageHeight -
         6,
+
       {
         align:
           "right",
       },
     );
   }
+
 
   /* =====================================================
      SALVA

@@ -1,7 +1,107 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-import {  obterColunasRelatorio,} from "../config/Colunas.config";
+import {
+  obterColunasRelatorio,
+} from "../config/Colunas.config";
+
+
+/* =====================================================
+   COLUNAS PARA EXPORTAÇÃO
+
+   Produção por Produto recebe apenas uma coluna extra:
+
+   Produto
+   Descrição do Produto
+   Injetora
+   ...
+===================================================== */
+
+function obterColunasExcel(
+  relatorio,
+) {
+  const colunas = [
+    ...obterColunasRelatorio(
+      relatorio,
+    ),
+  ];
+
+  if (
+    relatorio?.id !==
+    "producao-produto"
+  ) {
+    return colunas;
+  }
+
+  /*
+   * Evita duplicação caso futuramente
+   * a coluna seja adicionada no config.
+   */
+  const jaExiste =
+    colunas.some(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "descricao_produto",
+    );
+
+  if (jaExiste) {
+    return colunas;
+  }
+
+  const indiceProduto =
+    colunas.findIndex(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "produto",
+    );
+
+  const colunaDescricao = {
+    chave:
+      "descricao_produto",
+
+    titulo:
+      "Descrição do Produto",
+
+    larguraExcel:
+      38,
+
+    valor:
+      (
+        item,
+      ) =>
+        item.descricao_produto ||
+        "-",
+
+    valorExcel:
+      (
+        item,
+      ) =>
+        item.descricao_produto ||
+        "-",
+  };
+
+  if (
+    indiceProduto !==
+    -1
+  ) {
+    colunas.splice(
+      indiceProduto + 1,
+      0,
+      colunaDescricao,
+    );
+  } else {
+    colunas.unshift(
+      colunaDescricao,
+    );
+  }
+
+  return colunas;
+}
+
 
 /* =====================================================
    GERADOR DE EXCEL
@@ -28,12 +128,13 @@ export async function gerarExcelRelatorio({
 
   try {
     const colunas =
-      obterColunasRelatorio(
+      obterColunasExcel(
         relatorio,
       );
 
     if (
-      colunas.length === 0
+      colunas.length ===
+      0
     ) {
       alert(
         "Nenhuma coluna configurada para este relatório.",
@@ -67,18 +168,22 @@ export async function gerarExcelRelatorio({
         },
       );
 
+
     /* =================================================
        CABEÇALHOS
     ================================================= */
 
     const cabecalhos =
       colunas.map(
-        (coluna) =>
+        (
+          coluna,
+        ) =>
           String(
             coluna.titulo ||
               coluna.chave,
           ),
       );
+
 
     /* =================================================
        DADOS
@@ -86,9 +191,13 @@ export async function gerarExcelRelatorio({
 
     const linhas =
       dados.map(
-        (item) =>
+        (
+          item,
+        ) =>
           colunas.map(
-            (coluna) => {
+            (
+              coluna,
+            ) => {
               if (
                 typeof coluna.valorExcel ===
                 "function"
@@ -111,6 +220,7 @@ export async function gerarExcelRelatorio({
             },
           ),
       );
+
 
     /* =================================================
        TABELA ESTRUTURADA
@@ -142,7 +252,9 @@ export async function gerarExcelRelatorio({
 
       columns:
         cabecalhos.map(
-          (cabecalho) => ({
+          (
+            cabecalho,
+          ) => ({
             name:
               cabecalho,
 
@@ -155,13 +267,16 @@ export async function gerarExcelRelatorio({
         linhas,
     });
 
+
     /* =================================================
        LARGURAS
     ================================================= */
 
     worksheet.columns =
       colunas.map(
-        (coluna) => ({
+        (
+          coluna,
+        ) => ({
           width:
             Number(
               coluna.larguraExcel ||
@@ -169,6 +284,7 @@ export async function gerarExcelRelatorio({
             ),
         }),
       );
+
 
     /* =================================================
        FORMATOS NUMÉRICOS
@@ -190,28 +306,47 @@ export async function gerarExcelRelatorio({
       },
     );
 
+
     /* =================================================
        ALINHAMENTO
     ================================================= */
 
-    worksheet.eachRow(
+    /* =================================================
+   ALINHAMENTO
+
+   Todas as células ficam alinhadas à esquerda.
+================================================= */
+
+worksheet.eachRow(
+  (
+    row,
+    rowNumber,
+  ) => {
+    row.eachCell(
       (
-        row,
-        rowNumber,
+        cell,
       ) => {
-        row.alignment = {
+        cell.alignment = {
+          ...cell.alignment,
+
           vertical:
             "middle",
-        };
 
-        if (
-          rowNumber === 1
-        ) {
-          row.height =
-            24;
-        }
+          horizontal:
+            "left",
+        };
       },
     );
+
+    if (
+      rowNumber === 1
+    ) {
+      row.height =
+        24;
+    }
+  },
+);
+
 
     /* =================================================
        DOWNLOAD
@@ -230,7 +365,9 @@ export async function gerarExcelRelatorio({
 
     const blob =
       new Blob(
-        [buffer],
+        [
+          buffer,
+        ],
         {
           type:
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
