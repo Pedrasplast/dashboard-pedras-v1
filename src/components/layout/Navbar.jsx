@@ -99,6 +99,9 @@ function Navbar({
           label:
             "Início",
 
+          shortLabel:
+            "Início",
+
           path:
             "/",
 
@@ -108,6 +111,9 @@ function Navbar({
 
         {
           label:
+            "Produção",
+
+          shortLabel:
             "Produção",
 
           path:
@@ -120,6 +126,9 @@ function Navbar({
         {
           label:
             "Matéria-prima",
+
+          shortLabel:
+            "Matéria",
 
           path:
             "/dashboard-materia-prima",
@@ -144,6 +153,9 @@ function Navbar({
 
         {
           label:
+            "Relatórios",
+
+          shortLabel:
             "Relatórios",
 
           path:
@@ -344,20 +356,6 @@ function Navbar({
 
   /* =====================================================
      SINCRONIZAÇÃO GLOBAL DA ROTA
-
-     IMPORTANTE:
-
-     Antes, a Navbar só sabia que a rota havia mudado
-     quando o clique acontecia dentro dela.
-
-     Agora também detectamos navegação feita por:
-
-     - Home
-     - cards
-     - botões de outras páginas
-     - history.pushState
-     - history.replaceState
-     - voltar/avançar do navegador
   ===================================================== */
 
   useEffect(() => {
@@ -368,10 +366,6 @@ function Navbar({
       return undefined;
     }
 
-
-    /* ===============================================
-       SINCRONIZA CAMINHO
-    =============================================== */
 
     const syncCurrentPath =
       () => {
@@ -391,20 +385,12 @@ function Navbar({
       };
 
 
-    /* ===============================================
-       GUARDA FUNÇÕES ORIGINAIS DO HISTORY
-    =============================================== */
-
     const originalPushState =
       window.history.pushState;
 
     const originalReplaceState =
       window.history.replaceState;
 
-
-    /* ===============================================
-       EVENTO INTERNO PARA AVISAR A NAVBAR
-    =============================================== */
 
     const dispararEventoNavegacao =
       () => {
@@ -415,10 +401,6 @@ function Navbar({
         );
       };
 
-
-    /* ===============================================
-       INTERCEPTA pushState
-    =============================================== */
 
     const pushStateComEvento =
       function (
@@ -435,10 +417,6 @@ function Navbar({
         return resultado;
       };
 
-
-    /* ===============================================
-       INTERCEPTA replaceState
-    =============================================== */
 
     const replaceStateComEvento =
       function (
@@ -463,16 +441,8 @@ function Navbar({
       replaceStateComEvento;
 
 
-    /* ===============================================
-       SINCRONIZA AO CARREGAR
-    =============================================== */
-
     syncCurrentPath();
 
-
-    /* ===============================================
-       VOLTAR / AVANÇAR
-    =============================================== */
 
     window.addEventListener(
       "popstate",
@@ -480,19 +450,11 @@ function Navbar({
     );
 
 
-    /* ===============================================
-       NAVEGAÇÃO INTERNA
-    =============================================== */
-
     window.addEventListener(
       "app:navigation",
       syncCurrentPath,
     );
 
-
-    /* ===============================================
-       CLEANUP
-    =============================================== */
 
     return () => {
       window.removeEventListener(
@@ -506,11 +468,6 @@ function Navbar({
       );
 
 
-      /*
-       * Só restaura se ainda forem as funções
-       * que este componente instalou.
-       */
-
       if (
         window.history
           .pushState ===
@@ -519,6 +476,7 @@ function Navbar({
         window.history.pushState =
           originalPushState;
       }
+
 
       if (
         window.history
@@ -702,13 +660,11 @@ function Navbar({
                       {label}
                     </span>
 
-                    {shortLabel && (
-                      <span className="navbar-label-mobile">
-                        {
-                          shortLabel
-                        }
-                      </span>
-                    )}
+                    <span className="navbar-label-mobile">
+                      {
+                        shortLabel
+                      }
+                    </span>
                   </button>
                 );
               },

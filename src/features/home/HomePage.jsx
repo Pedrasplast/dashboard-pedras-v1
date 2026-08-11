@@ -284,17 +284,7 @@ function Home({
                 Selecione uma das opções
                 abaixo para continuar.
               </p>
-            </div>
-
-            {user && (
-              <div className="home-access-badge">
-                <span className="home-access-dot" />
-
-                {isAdmin
-                  ? "Acesso administrativo"
-                  : "Sessão ativa"}
-              </div>
-            )}
+            </div>           
           </div>
 
 
