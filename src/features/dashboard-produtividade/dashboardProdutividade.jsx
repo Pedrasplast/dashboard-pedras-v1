@@ -13,7 +13,9 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import {  useCargaMaquina, } from "@/lib/cargaMaquina";
+import {
+  useCargaMaquina,
+} from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
@@ -220,10 +222,12 @@ function IndicadorBarra({
 }
 
 /* =====================================================
-   DASHBOARD
+   DASHBOARD ORIGINAL
+
+   PRESERVADO PARA VALIDAÇÃO DAS MÉTRICAS
 ===================================================== */
 
-function DashboardProdutividade() {
+function DashboardProdutividadeEmValidacao() {
   const {
     dados,
     loading,
@@ -680,7 +684,7 @@ function DashboardProdutividade() {
   }
 
   /* =====================================================
-     RENDER
+     RENDER ORIGINAL
   ===================================================== */
 
   return (
@@ -1023,25 +1027,154 @@ function DashboardProdutividade() {
           <Gauge
             size={17}
           />
+        </section>
+      </main>
+    </div>
+  );
+}
 
-          <p>
-            <strong>
-              Performance estimada:
-            </strong>{" "}
+/* =====================================================
+   TELA TEMPORÁRIA
 
-            o cálculo utiliza como referência
-            os melhores ciclos históricos
-            encontrados na tabela{" "}
+   ESTA É A TELA QUE O SISTEMA EXIBE ATUALMENTE.
 
-            <code>
-              carga_maquina
-            </code>.
+   O DASHBOARD ORIGINAL CONTINUA PRESERVADO ACIMA
+   EM DashboardProdutividadeEmValidacao.
+===================================================== */
 
-            Quando houver ciclo padrão técnico
-            cadastrado por produto, podemos
-            substituir essa referência sem alterar
-            o restante do dashboard.
+function DashboardProdutividade() {
+  return (
+    <div className="produtividade-layout">
+      <main
+        className="produtividade-main"
+        style={{
+          minHeight:
+            "calc(100vh - 80px)",
+
+          display:
+            "flex",
+
+          alignItems:
+            "center",
+
+          justifyContent:
+            "center",
+
+          padding:
+            "40px 24px",
+        }}
+      >
+        <section
+          className="produtividade-card"
+          style={{
+            width:
+              "100%",
+
+            maxWidth:
+              "680px",
+
+            padding:
+              "56px 40px",
+
+            textAlign:
+              "center",
+          }}
+        >
+          <div
+            style={{
+              width:
+                "72px",
+
+              height:
+                "72px",
+
+              margin:
+                "0 auto 24px",
+
+              borderRadius:
+                "18px",
+
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
+
+              background:
+                "#fff7ed",
+
+              color:
+                "#ea580c",
+            }}
+          >
+            <AlertTriangle
+              size={34}
+            />
+          </div>
+
+          <span className="produtividade-subtitle">
+            Dashboard de OEE
+          </span>
+
+          <h1
+            style={{
+              marginTop:
+                "10px",
+
+              marginBottom:
+                "14px",
+            }}
+          >
+            Tela em construção
+          </h1>
+
+          <p
+            style={{
+              maxWidth:
+                "500px",
+
+              margin:
+                "0 auto",
+
+              lineHeight:
+                "1.7",
+            }}
+          >
+            Os indicadores e métricas de OEE
+            ainda estão em fase de validação.
+            Esta tela será disponibilizada
+            após a conclusão das validações.
           </p>
+
+          <div
+            style={{
+              marginTop:
+                "28px",
+
+              padding:
+                "14px 18px",
+
+              borderRadius:
+                "10px",
+
+              background:
+                "#f8fafc",
+
+              border:
+                "1px solid #e2e8f0",
+
+              fontSize:
+                "0.82rem",
+
+              color:
+                "#64748b",
+            }}
+          >
+            Disponibilidade • Performance • Qualidade • OEE
+          </div>
         </section>
       </main>
     </div>
