@@ -5,8 +5,11 @@
 .home-screen {
   width: 100%;
   max-width: 1240px;
-  margin: 0 auto;
+
+  margin: 20px auto 0;
+
   padding: 28px 24px 36px;
+
   box-sizing: border-box;
 }
 
@@ -1075,6 +1078,11 @@
   max-width: 820px
 ) {
   .home-screen {
+    margin:
+      14px
+      auto
+      0;
+
     padding:
       20px
       16px
@@ -1104,6 +1112,10 @@
 @media (
   max-width: 620px
 ) {
+  .home-screen {
+    margin-top: 12px;
+  }
+
   .home-hero {
     border-radius: 14px;
   }
