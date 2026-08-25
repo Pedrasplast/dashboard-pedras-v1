@@ -16,6 +16,7 @@ import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-ma
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 
@@ -54,6 +55,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidosRoute = PedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelatoriosRoute = RelatoriosRouteImport.update({
   id: '/relatorios',
   path: '/relatorios',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/dashboard-produtividade'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/dashboard-produtividade'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/dashboard-produtividade'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
+  PedidosRoute: typeof PedidosRoute
   RelatoriosRoute: typeof RelatoriosRoute
   UsuariosRoute: typeof UsuariosRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedidos': {
+      id: '/pedidos'
+      path: '/pedidos'
+      fullPath: '/pedidos'
+      preLoaderRoute: typeof PedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relatorios': {
       id: '/relatorios'
       path: '/relatorios'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
+  PedidosRoute: PedidosRoute,
   RelatoriosRoute: RelatoriosRoute,
   UsuariosRoute: UsuariosRoute,
 }

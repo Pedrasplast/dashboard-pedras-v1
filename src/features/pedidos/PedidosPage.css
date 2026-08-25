@@ -1,0 +1,836 @@
+/* =========================================================
+   PEDIDOS
+========================================================= */
+
+.pedidos-page {
+  width: 100%;
+  min-height: calc(100vh - 72px);
+
+  /*
+   * Espaço superior maior para não ficar
+   * escondido atrás da Navbar fixa.
+   */
+  padding: 92px 30px 30px;
+
+  background: #f6f8fb;
+}
+
+.pedidos-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   CABECALHO
+========================================================= */
+
+.pedidos-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 24px;
+}
+
+.pedidos-header h1 {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  color: #0f172a;
+}
+
+.pedidos-header p {
+  margin: 7px 0 0;
+
+  font-size: 14px;
+
+  color: #64748b;
+}
+
+.pedidos-header-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   ULTIMA ATUALIZACAO
+========================================================= */
+
+.pedidos-atualizacao {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 9px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  font-size: 12px;
+
+  color: #64748b;
+
+  white-space: nowrap;
+}
+
+.pedidos-atualizacao svg {
+  flex: 0 0 auto;
+
+  color: #64748b;
+}
+
+.pedidos-atualizacao strong {
+  color: #334155;
+}
+
+
+/* =========================================================
+   BOTAO ATUALIZAR
+========================================================= */
+
+.pedidos-btn-atualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.pedidos-btn-atualizar:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.pedidos-btn-atualizar:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.pedidos-btn-atualizar:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   INDICADORES
+========================================================= */
+
+.pedidos-resumo {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 14px;
+
+  margin-bottom: 18px;
+}
+
+.pedidos-card {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+  min-height: 92px;
+
+  padding: 18px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pedidos-card:hover {
+  border-color: #cbd5e1;
+
+  box-shadow:
+    0 2px 6px
+    rgba(15, 23, 42, 0.04);
+}
+
+.pedidos-card-icon {
+  width: 44px;
+  height: 44px;
+
+  flex: 0 0 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+.pedidos-card > div:last-child {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.pedidos-card-label {
+  font-size: 12px;
+
+  color: #64748b;
+}
+
+.pedidos-card strong {
+  overflow: hidden;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #0f172a;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.pedidos-filtros {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.pedidos-pesquisa {
+  min-width: 260px;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  height: 40px;
+
+  padding: 0 12px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #94a3b8;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pedidos-pesquisa:focus-within {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+.pedidos-pesquisa svg {
+  flex: 0 0 auto;
+}
+
+.pedidos-pesquisa input {
+  width: 100%;
+  min-width: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  font-size: 13px;
+
+  color: #0f172a;
+}
+
+.pedidos-pesquisa input::placeholder {
+  color: #94a3b8;
+}
+
+.pedidos-filtros select {
+  min-width: 180px;
+
+  height: 40px;
+
+  padding:
+    0
+    34px
+    0
+    11px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.pedidos-filtros select:focus {
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+.pedidos-btn-limpar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  height: 40px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.pedidos-btn-limpar:hover {
+  background: #f8fafc;
+
+  color: #334155;
+}
+
+
+/* =========================================================
+   CONTEUDO
+========================================================= */
+
+.pedidos-content {
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.pedidos-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 17px 19px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pedidos-content-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.pedidos-content-header p {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   BADGE DADOS OMIE
+========================================================= */
+
+.pedidos-demo {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 10px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+
+  background: #eff6ff;
+
+  color: #1d4ed8;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.pedidos-tabela-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.pedidos-tabela {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 12px;
+}
+
+.pedidos-tabela thead {
+  background: #f8fafc;
+}
+
+.pedidos-tabela th {
+  padding: 11px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #475569;
+
+  white-space: nowrap;
+}
+
+.pedidos-tabela td {
+  padding: 12px 13px;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  color: #475569;
+
+  vertical-align: middle;
+}
+
+.pedidos-tabela tbody tr {
+  transition:
+    background 0.15s ease;
+}
+
+.pedidos-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+.pedidos-tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   COLUNAS
+========================================================= */
+
+.pedidos-numero {
+  color: #2563eb;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.pedidos-cliente {
+  min-width: 180px;
+
+  font-weight: 600;
+
+  color: #334155;
+}
+
+.pedidos-produto {
+  min-width: 200px;
+  max-width: 320px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.pedidos-col-numero {
+  text-align: right !important;
+
+  white-space: nowrap;
+}
+
+.pedidos-col-valor {
+  text-align: right !important;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.pedidos-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 82px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* PEDIDO */
+
+.status-aberto {
+  background: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+
+/* SEPARACAO */
+
+.status-separacao {
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+
+/* LIBERADO */
+
+.status-liberado {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+/* OUTROS STATUS */
+
+.status-padrao {
+  background: #f1f5f9;
+
+  color: #475569;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO / CARREGAMENTO / ERRO
+========================================================= */
+
+.pedidos-empty {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 20px;
+
+  text-align: center;
+}
+
+.pedidos-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 15px;
+
+  border-radius: 14px;
+
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+.pedidos-empty h3 {
+  margin: 0;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.pedidos-empty p {
+  max-width: 520px;
+
+  margin: 7px 0 17px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  color: #64748b;
+}
+
+.pedidos-btn-limpar-vazio {
+  min-height: 38px;
+
+  padding: 0 14px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease;
+}
+
+.pedidos-btn-limpar-vazio:hover {
+  background: #f8fafc;
+}
+
+
+/* =========================================================
+   RODAPE
+========================================================= */
+
+.pedidos-rodape-info {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 12px;
+
+  font-size: 11px;
+
+  color: #94a3b8;
+}
+
+.pedidos-rodape-info svg {
+  flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   RESPONSIVO - DESKTOP MENOR
+========================================================= */
+
+@media (max-width: 1200px) {
+  .pedidos-resumo {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO - TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+  .pedidos-filtros {
+    flex-wrap: wrap;
+  }
+
+  .pedidos-pesquisa {
+    flex-basis: 100%;
+  }
+
+  .pedidos-filtros select {
+    flex: 1;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO - MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+  .pedidos-page {
+    /*
+     * Também mantém espaço para
+     * a Navbar no celular.
+     */
+    padding:
+      88px
+      14px
+      20px;
+  }
+
+  .pedidos-header {
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .pedidos-header h1 {
+    font-size: 26px;
+  }
+
+  .pedidos-header-actions {
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .pedidos-atualizacao {
+    justify-content: center;
+
+    width: 100%;
+  }
+
+  .pedidos-btn-atualizar {
+    width: 100%;
+  }
+
+  .pedidos-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .pedidos-filtros {
+    align-items: stretch;
+  }
+
+  .pedidos-pesquisa {
+    min-width: 100%;
+  }
+
+  .pedidos-filtros select {
+    width: 100%;
+  }
+
+  .pedidos-btn-limpar {
+    width: 100%;
+  }
+
+  .pedidos-content-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .pedidos-card {
+    min-height: 82px;
+
+    padding: 15px;
+  }
+}

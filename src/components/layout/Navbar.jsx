@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Boxes,
@@ -17,560 +11,307 @@ import {
   Upload,
   Users,
   FileText,
+  ShoppingCart,
 } from "lucide-react";
 
-import {
-  useNavigate,
-} from "@/lib/navegacao";
+import { useNavigate } from "@/lib/navegacao";
 
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 import "./Navbar.css";
-
 
 /* =====================================================
    NORMALIZA CAMINHO
 ===================================================== */
 
-function normalizarCaminho(
-  path,
-) {
-  const caminho =
-    String(
-      path || "/",
-    ).trim();
+function normalizarCaminho(path) {
+  const caminho = String(path || "/").trim();
 
-  if (
-    caminho === "/"
-  ) {
+  if (caminho === "/") {
     return "/";
   }
 
-  return caminho.replace(
-    /\/+$/,
-    "",
-  );
+  return caminho.replace(/\/+$/, "");
 }
-
 
 /* =====================================================
    NAVBAR
 ===================================================== */
 
-function Navbar({
-  user,
-  isAdmin,
-}) {
-  const navigate =
-    useNavigate();
+function Navbar({ user, isAdmin }) {
+  const navigate = useNavigate();
 
-  const menuRef =
-    useRef(null);
-
+  const menuRef = useRef(null);
 
   /* =====================================================
      ROTA ATUAL
   ===================================================== */
 
-  const [
-    currentPath,
-    setCurrentPath,
-  ] =
-    useState("/");
+  const [currentPath, setCurrentPath] = useState("/");
 
-
-  const [
-    userMenuOpen,
-    setUserMenuOpen,
-  ] =
-    useState(false);
-
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   /* =====================================================
      ITENS DA NAVEGAÇÃO
   ===================================================== */
 
-  const navigationItems =
-    useMemo(
-      () => [
-        {
-          label:
-            "Início",
+  const navigationItems = useMemo(
+    () => [
+      {
+        label: "Início",
 
-          shortLabel:
-            "Início",
+        shortLabel: "Início",
 
-          path:
-            "/",
+        path: "/",
 
-          icon:
-            Home,
-        },
+        icon: Home,
+      },
 
-        {
-          label:
-            "Produção",
+      {
+        label: "Produção",
 
-          shortLabel:
-            "Produção",
+        shortLabel: "Produção",
 
-          path:
-            "/dashboard",
+        path: "/dashboard",
 
-          icon:
-            Factory,
-        },
+        icon: Factory,
+      },
 
-        {
-          label:
-            "Matéria-prima",
+      {
+        label: "Matéria-prima",
 
-          shortLabel:
-            "Matéria",
+        shortLabel: "Matéria",
 
-          path:
-            "/dashboard-materia-prima",
+        path: "/dashboard-materia-prima",
 
-          icon:
-            Boxes,
-        },
+        icon: Boxes,
+      },
 
-        {
-          label:
-            "Produtividade",
+      {
+        label: "Produtividade",
 
-          shortLabel:
-            "Eficiência",
+        shortLabel: "Eficiência",
 
-          path:
-            "/dashboard-produtividade",
+        path: "/dashboard-produtividade",
 
-          icon:
-            Gauge,
-        },
+        icon: Gauge,
+      },
 
-        {
-          label:
-            "Relatórios",
+      {
+        label: "Relatórios",
 
-          shortLabel:
-            "Relatórios",
+        shortLabel: "Relatórios",
 
-          path:
-            "/relatorios",
+        path: "/relatorios",
 
-          icon:
-            FileText,
-        },
-      ],
-      [],
-    );
+        icon: FileText,
+      },
 
+      {
+        label: "Pedidos",
+
+        shortLabel: "Pedidos",
+
+        path: "/pedidos",
+
+        icon: ShoppingCart,
+      },
+    ],
+    [],
+  );
 
   /* =====================================================
      NOME DO USUÁRIO
   ===================================================== */
 
-  const userName =
-    useMemo(() => {
-      if (
-        !user?.email
-      ) {
-        return "";
-      }
+  const userName = useMemo(() => {
+    if (!user?.email) {
+      return "";
+    }
 
-      const emailName =
-        user.email.split(
-          "@",
-        )[0];
+    const emailName = user.email.split("@")[0];
 
-      return emailName
-        .replace(
-          /[._-]+/g,
-          " ",
-        )
-        .replace(
-          /\b\w/g,
-          (
-            letter,
-          ) =>
-            letter.toUpperCase(),
-        );
-    }, [
-      user,
-    ]);
-
+    return emailName.replace(/[._-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }, [user]);
 
   /* =====================================================
      INICIAIS
   ===================================================== */
 
-  const userInitials =
-    useMemo(() => {
-      if (
-        !userName
-      ) {
-        return "US";
-      }
+  const userInitials = useMemo(() => {
+    if (!userName) {
+      return "US";
+    }
 
-      const words =
-        userName
-          .trim()
-          .split(
-            /\s+/,
-          )
-          .filter(
-            Boolean,
-          );
+    const words = userName.trim().split(/\s+/).filter(Boolean);
 
-      if (
-        words.length ===
-        1
-      ) {
-        return words[0]
-          .slice(
-            0,
-            2,
-          )
-          .toUpperCase();
-      }
+    if (words.length === 1) {
+      return words[0].slice(0, 2).toUpperCase();
+    }
 
-      return (
-        words[0][0] +
-        words[
-          words.length -
-            1
-        ][0]
-      ).toUpperCase();
-    }, [
-      userName,
-    ]);
-
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  }, [userName]);
 
   /* =====================================================
      NAVEGAÇÃO INTERNA DA NAVBAR
   ===================================================== */
 
-  const goTo =
-    useCallback(
-      (
-        path,
-      ) => {
-        const caminho =
-          normalizarCaminho(
-            path,
-          );
+  const goTo = useCallback(
+    (path) => {
+      const caminho = normalizarCaminho(path);
 
-        setCurrentPath(
-          caminho,
-        );
+      setCurrentPath(caminho);
 
-        setUserMenuOpen(
-          false,
-        );
+      setUserMenuOpen(false);
 
-        navigate(
-          caminho,
-        );
-      },
-      [
-        navigate,
-      ],
-    );
-
+      navigate(caminho);
+    },
+    [navigate],
+  );
 
   /* =====================================================
      LOGOUT
   ===================================================== */
 
-  const handleLogout =
-    useCallback(
-      async () => {
-        setUserMenuOpen(
-          false,
-        );
+  const handleLogout = useCallback(async () => {
+    setUserMenuOpen(false);
 
-        if (
-          typeof window !==
-          "undefined"
-        ) {
-          window.localStorage.removeItem(
-            "expiracao_login",
-          );
-        }
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("expiracao_login");
+    }
 
-        try {
-          const {
-            error,
-          } =
-            await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
 
-          if (error) {
-            console.error(
-              "Erro ao encerrar a sessão:",
-              error,
-            );
-          }
-        } catch (
-          error
-        ) {
-          console.error(
-            "Erro inesperado ao encerrar a sessão:",
-            error,
-          );
-        } finally {
-          setCurrentPath(
-            "/",
-          );
+      if (error) {
+        console.error("Erro ao encerrar a sessão:", error);
+      }
+    } catch (error) {
+      console.error("Erro inesperado ao encerrar a sessão:", error);
+    } finally {
+      setCurrentPath("/");
 
-          navigate(
-            "/",
-          );
-        }
-      },
-      [
-        navigate,
-      ],
-    );
-
+      navigate("/");
+    }
+  }, [navigate]);
 
   /* =====================================================
      MENU DO USUÁRIO
   ===================================================== */
 
-  const toggleUserMenu =
-    useCallback(
-      () => {
-        setUserMenuOpen(
-          (
-            currentValue,
-          ) =>
-            !currentValue,
-        );
-      },
-      [],
-    );
-
+  const toggleUserMenu = useCallback(() => {
+    setUserMenuOpen((currentValue) => !currentValue);
+  }, []);
 
   /* =====================================================
      SINCRONIZAÇÃO GLOBAL DA ROTA
   ===================================================== */
 
   useEffect(() => {
-    if (
-      typeof window ===
-      "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return undefined;
     }
 
+    const syncCurrentPath = () => {
+      const caminho = normalizarCaminho(window.location.pathname || "/");
 
-    const syncCurrentPath =
-      () => {
-        const caminho =
-          normalizarCaminho(
-            window.location.pathname ||
-              "/",
-          );
+      setCurrentPath(caminho);
 
-        setCurrentPath(
-          caminho,
-        );
+      setUserMenuOpen(false);
+    };
 
-        setUserMenuOpen(
-          false,
-        );
-      };
+    const originalPushState = window.history.pushState;
 
+    const originalReplaceState = window.history.replaceState;
 
-    const originalPushState =
-      window.history.pushState;
+    const dispararEventoNavegacao = () => {
+      window.dispatchEvent(new Event("app:navigation"));
+    };
 
-    const originalReplaceState =
-      window.history.replaceState;
+    const pushStateComEvento = function (...args) {
+      const resultado = originalPushState.apply(this, args);
 
+      dispararEventoNavegacao();
 
-    const dispararEventoNavegacao =
-      () => {
-        window.dispatchEvent(
-          new Event(
-            "app:navigation",
-          ),
-        );
-      };
+      return resultado;
+    };
 
+    const replaceStateComEvento = function (...args) {
+      const resultado = originalReplaceState.apply(this, args);
 
-    const pushStateComEvento =
-      function (
-        ...args
-      ) {
-        const resultado =
-          originalPushState.apply(
-            this,
-            args,
-          );
+      dispararEventoNavegacao();
 
-        dispararEventoNavegacao();
+      return resultado;
+    };
 
-        return resultado;
-      };
+    window.history.pushState = pushStateComEvento;
 
-
-    const replaceStateComEvento =
-      function (
-        ...args
-      ) {
-        const resultado =
-          originalReplaceState.apply(
-            this,
-            args,
-          );
-
-        dispararEventoNavegacao();
-
-        return resultado;
-      };
-
-
-    window.history.pushState =
-      pushStateComEvento;
-
-    window.history.replaceState =
-      replaceStateComEvento;
-
+    window.history.replaceState = replaceStateComEvento;
 
     syncCurrentPath();
 
+    window.addEventListener("popstate", syncCurrentPath);
 
-    window.addEventListener(
-      "popstate",
-      syncCurrentPath,
-    );
-
-
-    window.addEventListener(
-      "app:navigation",
-      syncCurrentPath,
-    );
-
+    window.addEventListener("app:navigation", syncCurrentPath);
 
     return () => {
-      window.removeEventListener(
-        "popstate",
-        syncCurrentPath,
-      );
+      window.removeEventListener("popstate", syncCurrentPath);
 
-      window.removeEventListener(
-        "app:navigation",
-        syncCurrentPath,
-      );
+      window.removeEventListener("app:navigation", syncCurrentPath);
 
-
-      if (
-        window.history
-          .pushState ===
-        pushStateComEvento
-      ) {
-        window.history.pushState =
-          originalPushState;
+      if (window.history.pushState === pushStateComEvento) {
+        window.history.pushState = originalPushState;
       }
 
-
-      if (
-        window.history
-          .replaceState ===
-        replaceStateComEvento
-      ) {
-        window.history.replaceState =
-          originalReplaceState;
+      if (window.history.replaceState === replaceStateComEvento) {
+        window.history.replaceState = originalReplaceState;
       }
     };
   }, []);
-
 
   /* =====================================================
      FECHA MENU AO CLICAR FORA
   ===================================================== */
 
   useEffect(() => {
-    if (
-      typeof document ===
-      "undefined"
-    ) {
+    if (typeof document === "undefined") {
       return undefined;
     }
 
-    const closeMenuOutside =
-      (
-        event,
-      ) => {
-        if (
-          menuRef.current &&
-          !menuRef.current.contains(
-            event.target,
-          )
-        ) {
-          setUserMenuOpen(
-            false,
-          );
-        }
-      };
+    const closeMenuOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    };
 
-    document.addEventListener(
-      "mousedown",
-      closeMenuOutside,
-    );
+    document.addEventListener("mousedown", closeMenuOutside);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        closeMenuOutside,
-      );
+      document.removeEventListener("mousedown", closeMenuOutside);
     };
   }, []);
-
 
   /* =====================================================
      FECHA MENU COM ESC
   ===================================================== */
 
   useEffect(() => {
-    if (
-      typeof document ===
-      "undefined"
-    ) {
+    if (typeof document === "undefined") {
       return undefined;
     }
 
-    const closeMenuWithEscape =
-      (
-        event,
-      ) => {
-        if (
-          event.key ===
-          "Escape"
-        ) {
-          setUserMenuOpen(
-            false,
-          );
-        }
-      };
+    const closeMenuWithEscape = (event) => {
+      if (event.key === "Escape") {
+        setUserMenuOpen(false);
+      }
+    };
 
-    document.addEventListener(
-      "keydown",
-      closeMenuWithEscape,
-    );
+    document.addEventListener("keydown", closeMenuWithEscape);
 
     return () => {
-      document.removeEventListener(
-        "keydown",
-        closeMenuWithEscape,
-      );
+      document.removeEventListener("keydown", closeMenuWithEscape);
     };
   }, []);
-
 
   /* =====================================================
      RENDER
@@ -578,329 +319,150 @@ function Navbar({
 
   return (
     <header className="main-navbar">
-
       <div className="navbar-container">
-
         {/* LOGO */}
 
         <button
           type="button"
           className="navbar-brand"
-          onClick={
-            () =>
-              goTo(
-                "/",
-              )
-          }
+          onClick={() => goTo("/")}
           aria-label="Ir para o início"
         >
-          <img
-            src="/Logo_Pedrasplast.png"
-            alt="Pedrasplast"
-            className="brand-logo-img"
-          />
+          <img src="/Logo_Pedrasplast.png" alt="Pedrasplast" className="brand-logo-img" />
         </button>
-
 
         {/* NAVEGAÇÃO */}
 
         {user && (
-          <nav
-            className="navbar-navigation"
-            aria-label="Navegação principal"
-          >
-            {navigationItems.map(
-              ({
-                label,
-                shortLabel,
-                path,
-                icon:
-                  Icon,
-              }) => {
-                const active =
-                  currentPath ===
-                  normalizarCaminho(
-                    path,
-                  );
+          <nav className="navbar-navigation" aria-label="Navegação principal">
+            {navigationItems.map(({ label, shortLabel, path, icon: Icon }) => {
+              const active = currentPath === normalizarCaminho(path);
 
-                return (
-                  <button
-                    key={
-                      path
-                    }
-                    type="button"
-                    className={
-                      active
-                        ? "navbar-navigation-link active"
-                        : "navbar-navigation-link"
-                    }
-                    onClick={
-                      () =>
-                        goTo(
-                          path,
-                        )
-                    }
-                    aria-current={
-                      active
-                        ? "page"
-                        : undefined
-                    }
-                  >
-                    <Icon
-                      size={
-                        18
-                      }
-                      strokeWidth={
-                        2
-                      }
-                      aria-hidden="true"
-                    />
+              return (
+                <button
+                  key={path}
+                  type="button"
+                  className={active ? "navbar-navigation-link active" : "navbar-navigation-link"}
+                  onClick={() => goTo(path)}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon size={18} strokeWidth={2} aria-hidden="true" />
 
-                    <span className="navbar-label-desktop">
-                      {label}
-                    </span>
+                  <span className="navbar-label-desktop">{label}</span>
 
-                    <span className="navbar-label-mobile">
-                      {
-                        shortLabel
-                      }
-                    </span>
-                  </button>
-                );
-              },
-            )}
+                  <span className="navbar-label-mobile">{shortLabel}</span>
+                </button>
+              );
+            })}
           </nav>
         )}
-
 
         {/* USUÁRIO */}
 
         <div className="navbar-auth-section">
-
           {user ? (
             <div className="navbar-user-controls">
-
-              <div
-                ref={
-                  menuRef
-                }
-                className="navbar-user-area"
-              >
-
+              <div ref={menuRef} className="navbar-user-area">
                 <button
                   type="button"
-                  className={
-                    userMenuOpen
-                      ? "navbar-user-trigger open"
-                      : "navbar-user-trigger"
-                  }
-                  onClick={
-                    toggleUserMenu
-                  }
-                  aria-expanded={
-                    userMenuOpen
-                  }
+                  className={userMenuOpen ? "navbar-user-trigger open" : "navbar-user-trigger"}
+                  onClick={toggleUserMenu}
+                  aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   aria-label="Abrir menu do usuário"
                 >
-                  <span className="user-avatar">
-                    {
-                      userInitials
-                    }
-                  </span>
+                  <span className="user-avatar">{userInitials}</span>
 
                   <span className="user-information">
-                    <strong className="user-name">
-                      {
-                        userName
-                      }
-                    </strong>
+                    <strong className="user-name">{userName}</strong>
 
-                    <span className="user-role">
-                      {isAdmin
-                        ? "Administrador"
-                        : "Operador"}
-                    </span>
+                    <span className="user-role">{isAdmin ? "Administrador" : "Operador"}</span>
                   </span>
 
                   <ChevronDown
-                    size={
-                      17
-                    }
-                    strokeWidth={
-                      2
-                    }
-                    className={
-                      userMenuOpen
-                        ? "user-menu-arrow open"
-                        : "user-menu-arrow"
-                    }
+                    size={17}
+                    strokeWidth={2}
+                    className={userMenuOpen ? "user-menu-arrow open" : "user-menu-arrow"}
                     aria-hidden="true"
                   />
                 </button>
 
-
                 {/* MENU DO USUÁRIO */}
 
                 {userMenuOpen && (
-                  <div
-                    className="navbar-user-menu"
-                    role="menu"
-                  >
-
+                  <div className="navbar-user-menu" role="menu">
                     <div className="user-menu-header">
-                      <span className="user-menu-avatar">
-                        {
-                          userInitials
-                        }
-                      </span>
+                      <span className="user-menu-avatar">{userInitials}</span>
 
                       <div>
-                        <strong>
-                          {
-                            userName
-                          }
-                        </strong>
+                        <strong>{userName}</strong>
 
-                        <span>
-                          {
-                            user.email
-                          }
-                        </span>
+                        <span>{user.email}</span>
                       </div>
                     </div>
 
-
                     <div className="user-menu-divider" />
-
 
                     <button
                       type="button"
                       className="user-menu-item"
-                      onClick={
-                        () =>
-                          goTo(
-                            "/",
-                          )
-                      }
+                      onClick={() => goTo("/")}
                       role="menuitem"
                     >
-                      <Home
-                        size={
-                          17
-                        }
-                        aria-hidden="true"
-                      />
-
+                      <Home size={17} aria-hidden="true" />
                       Página inicial
                     </button>
-
 
                     {isAdmin && (
                       <>
                         <button
                           type="button"
                           className="user-menu-item"
-                          onClick={
-                            () =>
-                              goTo(
-                                "/importar",
-                              )
-                          }
+                          onClick={() => goTo("/importar")}
                           role="menuitem"
                         >
-                          <Upload
-                            size={
-                              17
-                            }
-                            aria-hidden="true"
-                          />
-
+                          <Upload size={17} aria-hidden="true" />
                           Importar dados
                         </button>
-
 
                         <button
                           type="button"
                           className="user-menu-item"
-                          onClick={
-                            () =>
-                              goTo(
-                                "/usuarios",
-                              )
-                          }
+                          onClick={() => goTo("/usuarios")}
                           role="menuitem"
                         >
-                          <Users
-                            size={
-                              17
-                            }
-                            aria-hidden="true"
-                          />
-
+                          <Users size={17} aria-hidden="true" />
                           Gerenciar usuários
                         </button>
                       </>
                     )}
-
                   </div>
                 )}
               </div>
-
 
               {/* LOGOUT */}
 
               <button
                 type="button"
                 className="navbar-logout-button"
-                onClick={
-                  handleLogout
-                }
+                onClick={handleLogout}
                 aria-label="Sair da conta"
               >
-                <LogOut
-                  size={
-                    17
-                  }
-                  strokeWidth={
-                    2
-                  }
-                  aria-hidden="true"
-                />
+                <LogOut size={17} strokeWidth={2} aria-hidden="true" />
 
-                <span>
-                  Sair
-                </span>
+                <span>Sair</span>
               </button>
-
             </div>
           ) : (
-            <button
-              type="button"
-              className="btn-login"
-              onClick={
-                () =>
-                  goTo(
-                    "/login",
-                  )
-              }
-            >
-              <LogIn
-                size={
-                  17
-                }
-                aria-hidden="true"
-              />
-
+            <button type="button" className="btn-login" onClick={() => goTo("/login")}>
+              <LogIn size={17} aria-hidden="true" />
               Entrar
             </button>
           )}
-
         </div>
       </div>
     </header>
   );
 }
-
 
 export default Navbar;
