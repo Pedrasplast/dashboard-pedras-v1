@@ -12,9 +12,20 @@
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
 
-  /* Sidebar e Motivos de Parada usam a mesma referência */
+  /* =================================================
+     POSICIONAMENTO DOS PAINEIS FIXOS
+     76px = altura da navbar
+     16px = respiro superior e inferior
+  ================================================= */
   --dashboard-sticky-top: 76px;
-  --dashboard-painel-altura: calc(100vh - var(--dashboard-sticky-top));
+  --dashboard-gap-painel: 16px;
+
+  --dashboard-painel-altura: calc(
+    100dvh
+    - var(--dashboard-sticky-top)
+    - var(--dashboard-gap-painel)
+    - var(--dashboard-gap-painel)
+  );
 }
 
 /* =====================================================
@@ -379,7 +390,11 @@
 
 .chart-container {
   position: sticky;
-  top: var(--dashboard-sticky-top);
+
+  top: calc(
+    var(--dashboard-sticky-top) +
+    var(--dashboard-gap-painel)
+  );
 
   align-self: start;
 
@@ -387,7 +402,7 @@
   min-width: 0;
 
   height: var(--dashboard-painel-altura);
-  min-height: var(--dashboard-painel-altura);
+  min-height: 0;
   max-height: var(--dashboard-painel-altura);
 
   display: flex;
@@ -397,7 +412,11 @@
 
   box-sizing: border-box;
 
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fbfdff 100%
+  );
 
   border: 1px solid #dbe6f3;
   border-radius: 16px;
