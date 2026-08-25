@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -22,6 +23,8 @@ import {
   supabase,
 } from "@/lib/supabaseClient";
 
+import Paginacao from "@/componentS/Paginacao/Paginacao";
+
 import {
   buscarPedidosOmie,
 } from "./omie.functions";
@@ -29,14 +32,18 @@ import {
 import "./PedidosPage.css";
 
 
-/*
- * A tela verifica o SUPABASE
- * a cada 60 segundos.
- *
- * Isso NÃO consulta o Omie.
- */
+/* =========================================================
+   CONFIGURACOES
+========================================================= */
+
 const INTERVALO_LEITURA_SUPABASE =
-  60 * 1000;
+  15 * 1000;
+
+const INTERVALO_RELOGIO =
+  1000;
+
+const PEDIDOS_POR_PAGINA =
+  8;
 
 
 /* =========================================================
@@ -50,9 +57,6 @@ function converterData(
     return null;
   }
 
-  /*
-   * Formato DD/MM/AAAA
-   */
   if (
     /^\d{2}\/\d{2}\/\d{4}$/.test(
       dataTexto,
@@ -78,12 +82,10 @@ function converterData(
     );
   }
 
-
   const data =
     new Date(
       dataTexto,
     );
-
 
   if (
     Number.isNaN(
@@ -93,7 +95,6 @@ function converterData(
     return null;
   }
 
-
   return data;
 }
 
@@ -101,7 +102,6 @@ function converterData(
 function obterHoje() {
   const agora =
     new Date();
-
 
   return new Date(
     agora.getFullYear(),
@@ -115,13 +115,61 @@ function obterHoje() {
 }
 
 
+function obterProximaAtualizacao(
+  dataAtual,
+) {
+  const agora =
+    dataAtual instanceof Date
+      ? dataAtual
+      : new Date();
+
+  const proxima =
+    new Date(
+      agora,
+    );
+
+  proxima.setSeconds(
+    0,
+    0,
+  );
+
+  const minutoAtual =
+    agora.getMinutes();
+
+  const proximoMinuto =
+    (
+      Math.floor(
+        minutoAtual / 15,
+      ) + 1
+    ) * 15;
+
+  if (
+    proximoMinuto >= 60
+  ) {
+    proxima.setHours(
+      proxima.getHours() + 1,
+      0,
+      0,
+      0,
+    );
+  } else {
+    proxima.setMinutes(
+      proximoMinuto,
+      0,
+      0,
+    );
+  }
+
+  return proxima;
+}
+
+
 function formatarData(
   dataTexto,
 ) {
   if (!dataTexto) {
     return "-";
   }
-
 
   if (
     /^\d{2}\/\d{2}\/\d{4}$/.test(
@@ -131,17 +179,14 @@ function formatarData(
     return dataTexto;
   }
 
-
   const data =
     converterData(
       dataTexto,
     );
 
-
   if (!data) {
     return "-";
   }
-
 
   return data.toLocaleDateString(
     "pt-BR",
@@ -156,14 +201,12 @@ function formatarHorario(
     return "-";
   }
 
-
   const data =
     dataTexto instanceof Date
       ? dataTexto
       : new Date(
           dataTexto,
         );
-
 
   if (
     Number.isNaN(
@@ -172,7 +215,6 @@ function formatarHorario(
   ) {
     return "-";
   }
-
 
   return data.toLocaleTimeString(
     "pt-BR",
@@ -194,12 +236,12 @@ function formatarDataHora(
     return "-";
   }
 
-
   const data =
-    new Date(
-      dataTexto,
-    );
-
+    dataTexto instanceof Date
+      ? dataTexto
+      : new Date(
+          dataTexto,
+        );
 
   if (
     Number.isNaN(
@@ -208,7 +250,6 @@ function formatarDataHora(
   ) {
     return "-";
   }
-
 
   return data.toLocaleString(
     "pt-BR",
@@ -233,6 +274,95 @@ function formatarDataHora(
 
 
 /* =========================================================
+   ATRASO
+========================================================= */
+
+function calcularDiasAtraso(
+  previsao,
+) {
+  const dataPrevisao =
+    converterData(
+      previsao,
+    );
+
+  if (
+    !dataPrevisao
+  ) {
+    return 0;
+  }
+
+  const hoje =
+    obterHoje();
+
+  dataPrevisao.setHours(
+    0,
+    0,
+    0,
+    0,
+  );
+
+  const diferencaMs =
+    hoje.getTime() -
+    dataPrevisao.getTime();
+
+  if (
+    diferencaMs <= 0
+  ) {
+    return 0;
+  }
+
+  return Math.floor(
+    diferencaMs /
+      (
+        1000 *
+        60 *
+        60 *
+        24
+      ),
+  );
+}
+
+
+function pedidoEstaAtrasado(
+  pedido,
+) {
+  const statusPedido =
+    String(
+      pedido?.status ??
+        "",
+    )
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(
+        /[\u0300-\u036f]/g,
+        "",
+      );
+
+  return (
+    statusPedido ===
+      "pedido" &&
+    calcularDiasAtraso(
+      pedido?.previsao,
+    ) > 0
+  );
+}
+
+
+function formatarTextoAtraso(
+  dias,
+) {
+  if (
+    dias === 1
+  ) {
+    return "1 dia em atraso";
+  }
+
+  return `${dias} dias em atraso`;
+}
+
+
+/* =========================================================
    NUMEROS
 ========================================================= */
 
@@ -244,7 +374,6 @@ function formatarNumero(
       valor,
     );
 
-
   if (
     !Number.isFinite(
       numero,
@@ -253,43 +382,11 @@ function formatarNumero(
     return "0";
   }
 
-
   return numero.toLocaleString(
     "pt-BR",
     {
       maximumFractionDigits:
         3,
-    },
-  );
-}
-
-
-function formatarMoeda(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
-    return "-";
-  }
-
-
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      style:
-        "currency",
-
-      currency:
-        "BRL",
     },
   );
 }
@@ -313,7 +410,6 @@ function obterClasseStatus(
         "",
       );
 
-
   if (
     texto.includes(
       "separa",
@@ -322,7 +418,6 @@ function obterClasseStatus(
     return "status-separacao";
   }
 
-
   if (
     texto.includes(
       "liber",
@@ -330,7 +425,6 @@ function obterClasseStatus(
   ) {
     return "status-liberado";
   }
-
 
   if (
     texto === "pedido" ||
@@ -341,13 +435,12 @@ function obterClasseStatus(
     return "status-aberto";
   }
 
-
   return "status-padrao";
 }
 
 
 /* =========================================================
-   IDENTIFICAR PEDIDO UNICO
+   IDENTIFICADOR UNICO DO PEDIDO
 ========================================================= */
 
 function obterChavePedido(
@@ -362,10 +455,49 @@ function obterChavePedido(
 
 
 /* =========================================================
-   COMPONENTE PRINCIPAL
+   COMPONENTE
 ========================================================= */
 
 export default function PedidosPage() {
+  /* =======================================================
+     RELOGIO
+  ======================================================= */
+
+  const [
+    agora,
+    setAgora,
+  ] =
+    useState(
+      () => new Date(),
+    );
+
+
+  useEffect(
+    () => {
+      const intervalo =
+        window.setInterval(
+          () => {
+            setAgora(
+              new Date(),
+            );
+          },
+          INTERVALO_RELOGIO,
+        );
+
+      return () => {
+        window.clearInterval(
+          intervalo,
+        );
+      };
+    },
+    [],
+  );
+
+
+  /* =======================================================
+     FILTROS
+  ======================================================= */
+
   const [
     pesquisa,
     setPesquisa,
@@ -387,35 +519,25 @@ export default function PedidosPage() {
     setStatus,
   ] =
     useState(
-      "todos",
-    );
-
-
-  const [
-    sincronizandoOmie,
-    setSincronizandoOmie,
-  ] =
-    useState(
-      false,
-    );
-
-
-  const [
-    erroSincronizacao,
-    setErroSincronizacao,
-  ] =
-    useState(
-      "",
+      "Pedido",
     );
 
 
   /* =======================================================
-     CONSULTAR PEDIDOS SALVOS NO SUPABASE
+     PAGINACAO
+  ======================================================= */
 
-     buscarPedidosOmie lê somente as tabelas
-     armazenadas no Supabase.
+  const [
+    paginaAtual,
+    setPaginaAtual,
+  ] =
+    useState(
+      1,
+    );
 
-     NÃO consulta o Omie.
+
+  /* =======================================================
+     CONSULTA SUPABASE
   ======================================================= */
 
   const {
@@ -428,14 +550,11 @@ export default function PedidosPage() {
     isLoading,
 
     isFetching,
-
-    refetch,
   } =
     useQuery({
       queryKey: [
         "pedidos-supabase-abertos",
       ],
-
 
       queryFn:
         async () => {
@@ -450,7 +569,6 @@ export default function PedidosPage() {
               .auth
               .getSession();
 
-
           if (
             sessaoErro
           ) {
@@ -459,12 +577,10 @@ export default function PedidosPage() {
             );
           }
 
-
           const accessToken =
             sessaoData
               ?.session
               ?.access_token;
-
 
           if (
             !accessToken
@@ -474,7 +590,6 @@ export default function PedidosPage() {
             );
           }
 
-
           return await buscarPedidosOmie({
             data: {
               accessToken,
@@ -482,46 +597,29 @@ export default function PedidosPage() {
           });
         },
 
-
-      /*
-       * Apenas consulta o Supabase.
-       */
       refetchInterval:
         INTERVALO_LEITURA_SUPABASE,
 
-
-      /*
-       * Não continua consultando
-       * com navegador em segundo plano.
-       */
       refetchIntervalInBackground:
         false,
 
-
-      /*
-       * Consulta o Supabase
-       * ao entrar na tela.
-       */
       refetchOnMount:
         true,
 
-
-      /*
-       * Verifica novamente
-       * ao retornar para a aba.
-       */
       refetchOnWindowFocus:
         true,
 
-
       staleTime:
-        30 * 1000,
-
+        10 * 1000,
 
       retry:
         1,
     });
 
+
+  /* =======================================================
+     PEDIDOS
+  ======================================================= */
 
   const pedidos =
     Array.isArray(
@@ -533,7 +631,23 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     VENDEDORES DISPONIVEIS
+     PROXIMA ATUALIZACAO
+  ======================================================= */
+
+  const proximaAtualizacao =
+    useMemo(
+      () =>
+        obterProximaAtualizacao(
+          agora,
+        ),
+      [
+        agora,
+      ],
+    );
+
+
+  /* =======================================================
+     VENDEDORES
   ======================================================= */
 
   const vendedores =
@@ -543,11 +657,15 @@ export default function PedidosPage() {
           ...new Set(
             pedidos
               .map(
-                (pedido) =>
+                (
+                  pedido,
+                ) =>
                   pedido.vendedor,
               )
               .filter(
-                (nome) =>
+                (
+                  nome,
+                ) =>
                   nome &&
                   nome !== "-",
               ),
@@ -580,7 +698,9 @@ export default function PedidosPage() {
           ...new Set(
             pedidos
               .map(
-                (pedido) =>
+                (
+                  pedido,
+                ) =>
                   pedido.status,
               )
               .filter(
@@ -605,7 +725,7 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     FILTROS
+     FILTRAR
   ======================================================= */
 
   const pedidosFiltrados =
@@ -616,9 +736,10 @@ export default function PedidosPage() {
             .trim()
             .toLowerCase();
 
-
         return pedidos.filter(
-          (pedido) => {
+          (
+            pedido,
+          ) => {
             const correspondePesquisa =
               !termo ||
               String(
@@ -654,20 +775,17 @@ export default function PedidosPage() {
                   termo,
                 );
 
-
             const correspondeVendedor =
               vendedor ===
                 "todos" ||
               pedido.vendedor ===
                 vendedor;
 
-
             const correspondeStatus =
               status ===
                 "todos" ||
               pedido.status ===
                 status;
-
 
             return (
               correspondePesquisa &&
@@ -688,9 +806,6 @@ export default function PedidosPage() {
 
   /* =======================================================
      PEDIDOS UNICOS
-
-     Um pedido pode possuir vários itens.
-     Ele deve contar somente uma vez nos cards.
   ======================================================= */
 
   const pedidosUnicos =
@@ -698,7 +813,6 @@ export default function PedidosPage() {
       () => {
         const mapa =
           new Map();
-
 
         for (
           const pedido
@@ -708,7 +822,6 @@ export default function PedidosPage() {
             obterChavePedido(
               pedido,
             );
-
 
           if (
             !mapa.has(
@@ -722,13 +835,175 @@ export default function PedidosPage() {
           }
         }
 
-
         return [
           ...mapa.values(),
         ];
       },
       [
         pedidosFiltrados,
+      ],
+    );
+
+
+  /* =======================================================
+     TOTAL DE PAGINAS
+  ======================================================= */
+
+  const totalPaginas =
+    Math.max(
+      1,
+      Math.ceil(
+        pedidosUnicos.length /
+          PEDIDOS_POR_PAGINA,
+      ),
+    );
+
+
+  useEffect(
+    () => {
+      if (
+        paginaAtual >
+        totalPaginas
+      ) {
+        setPaginaAtual(
+          totalPaginas,
+        );
+      }
+    },
+    [
+      paginaAtual,
+      totalPaginas,
+    ],
+  );
+
+
+  /* =======================================================
+     PEDIDOS UNICOS DA PAGINA
+  ======================================================= */
+
+  const pedidosUnicosDaPagina =
+    useMemo(
+      () => {
+        const inicio =
+          (
+            paginaAtual - 1
+          ) *
+          PEDIDOS_POR_PAGINA;
+
+        const fim =
+          inicio +
+          PEDIDOS_POR_PAGINA;
+
+        return pedidosUnicos.slice(
+          inicio,
+          fim,
+        );
+      },
+      [
+        pedidosUnicos,
+        paginaAtual,
+      ],
+    );
+
+
+  /* =======================================================
+     CHAVES DOS PEDIDOS DA PAGINA
+  ======================================================= */
+
+  const chavesPedidosDaPagina =
+    useMemo(
+      () => {
+        return new Set(
+          pedidosUnicosDaPagina.map(
+            (
+              pedido,
+            ) =>
+              obterChavePedido(
+                pedido,
+              ),
+          ),
+        );
+      },
+      [
+        pedidosUnicosDaPagina,
+      ],
+    );
+
+
+  /* =======================================================
+     TODAS AS LINHAS DOS PEDIDOS DA PAGINA
+  ======================================================= */
+
+  const pedidosPaginados =
+    useMemo(
+      () => {
+        return pedidosFiltrados.filter(
+          (
+            pedido,
+          ) =>
+            chavesPedidosDaPagina.has(
+              obterChavePedido(
+                pedido,
+              ),
+            ),
+        );
+      },
+      [
+        pedidosFiltrados,
+        chavesPedidosDaPagina,
+      ],
+    );
+
+
+  /* =======================================================
+     AGRUPAR ITENS POR PEDIDO
+  ======================================================= */
+
+  const pedidosAgrupados =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+        for (
+          const pedido
+          of pedidosPaginados
+        ) {
+          const chave =
+            obterChavePedido(
+              pedido,
+            );
+
+          if (
+            !mapa.has(
+              chave,
+            )
+          ) {
+            mapa.set(
+              chave,
+              {
+                chave,
+                itens: [],
+              },
+            );
+          }
+
+          mapa
+            .get(
+              chave,
+            )
+            .itens
+            .push(
+              pedido,
+            );
+        }
+
+        return [
+          ...mapa.values(),
+        ];
+      },
+      [
+        pedidosPaginados,
       ],
     );
 
@@ -750,7 +1025,6 @@ export default function PedidosPage() {
                 pedido.quantidade,
               );
 
-
             if (
               !Number.isFinite(
                 quantidade,
@@ -758,7 +1032,6 @@ export default function PedidosPage() {
             ) {
               return total;
             }
-
 
             return (
               total +
@@ -784,14 +1057,14 @@ export default function PedidosPage() {
         const hoje =
           obterHoje();
 
-
         return pedidosUnicos.filter(
-          (pedido) => {
+          (
+            pedido,
+          ) => {
             const previsao =
               converterData(
                 pedido.previsao,
               );
-
 
             if (
               !previsao
@@ -799,14 +1072,12 @@ export default function PedidosPage() {
               return false;
             }
 
-
             previsao.setHours(
               0,
               0,
               0,
               0,
             );
-
 
             return (
               previsao <
@@ -822,7 +1093,7 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     ENTREGAS PROXIMOS 7 DIAS
+     PROXIMOS 7 DIAS
   ======================================================= */
 
   const entregasProximos7Dias =
@@ -831,26 +1102,24 @@ export default function PedidosPage() {
         const hoje =
           obterHoje();
 
-
         const limite =
           new Date(
             hoje,
           );
-
 
         limite.setDate(
           limite.getDate() +
             7,
         );
 
-
         return pedidosUnicos.filter(
-          (pedido) => {
+          (
+            pedido,
+          ) => {
             const previsao =
               converterData(
                 pedido.previsao,
               );
-
 
             if (
               !previsao
@@ -858,14 +1127,12 @@ export default function PedidosPage() {
               return false;
             }
 
-
             previsao.setHours(
               0,
               0,
               0,
               0,
             );
-
 
             return (
               previsao >=
@@ -883,192 +1150,45 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     ATUALIZAR AGORA
-
-     Agora o botão chama diretamente
-     a EDGE FUNCTION do Supabase.
-
-     DASHBOARD
-        ↓
-     EDGE FUNCTION
-        ↓
-     OMIE
-        ↓
-     SUPABASE
-        ↓
-     RECARREGA A TELA
-
-     Nenhuma chave secreta fica no navegador.
+     ALTERAR FILTROS
   ======================================================= */
 
-  async function atualizarAgora() {
-    if (
-      sincronizandoOmie
-    ) {
-      return;
-    }
-
-
-    setErroSincronizacao(
-      "",
+  function alterarPesquisa(
+    valor,
+  ) {
+    setPesquisa(
+      valor,
     );
 
+    setPaginaAtual(
+      1,
+    );
+  }
 
-    setSincronizandoOmie(
-      true,
+
+  function alterarVendedor(
+    valor,
+  ) {
+    setVendedor(
+      valor,
     );
 
-
-    try {
-      /*
-       * Confirma que o usuário ainda
-       * possui uma sessão válida.
-       */
-      const {
-        data:
-          sessaoData,
-
-        error:
-          sessaoErro,
-      } =
-        await supabase
-          .auth
-          .getSession();
+    setPaginaAtual(
+      1,
+    );
+  }
 
 
-      if (
-        sessaoErro
-      ) {
-        throw new Error(
-          "Não foi possível validar sua sessão.",
-        );
-      }
+  function alterarStatus(
+    valor,
+  ) {
+    setStatus(
+      valor,
+    );
 
-
-      if (
-        !sessaoData
-          ?.session
-          ?.access_token
-      ) {
-        throw new Error(
-          "Sua sessão expirou. Entre novamente no sistema.",
-        );
-      }
-
-
-      /*
-       * Chama diretamente a Edge Function.
-       *
-       * OMIE_APP_KEY e OMIE_APP_SECRET
-       * ficam apenas nos Secrets do Supabase.
-       */
-      const {
-        data,
-        error,
-      } =
-        await supabase
-          .functions
-          .invoke(
-            "sincronizar-pedidos-omie",
-            {
-              body: {},
-            },
-          );
-
-
-      /*
-       * Erro HTTP / chamada da Edge Function.
-       */
-      if (
-        error
-      ) {
-        console.error(
-          "Erro retornado pela Edge Function:",
-          error,
-        );
-
-
-        throw new Error(
-          error.message ||
-          "Não foi possível executar a sincronização.",
-        );
-      }
-
-
-      /*
-       * A Edge Function respondeu,
-       * mas informou falha na sincronização.
-       */
-      if (
-        !data?.sucesso
-      ) {
-        console.error(
-          "Falha retornada pela sincronização:",
-          data,
-        );
-
-
-        const etapa =
-          data?.etapa
-            ? ` (${data.etapa})`
-            : "";
-
-
-        throw new Error(
-          `${
-            data?.erro ||
-            "A sincronização com o Omie não foi concluída."
-          }${etapa}`,
-        );
-      }
-
-
-      console.log(
-        "Sincronização concluída:",
-        data,
-      );
-
-
-      /*
-       * Omie -> Supabase terminou.
-       *
-       * Agora recarregamos somente
-       * os dados armazenados no Supabase.
-       */
-      await refetch();
-
-    } catch (
-      erro
-    ) {
-      console.error(
-        "Erro ao sincronizar pedidos:",
-        erro,
-      );
-
-
-      setErroSincronizacao(
-        erro instanceof Error
-          ? erro.message
-          : "Não foi possível sincronizar os pedidos com o Omie.",
-      );
-
-
-      /*
-       * Mesmo se ocorrer erro,
-       * verifica se a Edge Function
-       * chegou a atualizar algum status.
-       */
-      try {
-        await refetch();
-      } catch {
-        // Mantém o erro principal.
-      }
-
-    } finally {
-      setSincronizandoOmie(
-        false,
-      );
-    }
+    setPaginaAtual(
+      1,
+    );
   }
 
 
@@ -1086,7 +1206,11 @@ export default function PedidosPage() {
     );
 
     setStatus(
-      "todos",
+      "Pedido",
+    );
+
+    setPaginaAtual(
+      1,
     );
   }
 
@@ -1098,7 +1222,7 @@ export default function PedidosPage() {
     vendedor !==
       "todos" ||
     status !==
-      "todos";
+      "Pedido";
 
 
   /* =======================================================
@@ -1123,8 +1247,7 @@ export default function PedidosPage() {
             </h1>
 
             <p>
-              Acompanhamento dos pedidos de venda
-              em aberto.
+              Acompanhamento dos pedidos de venda em aberto.
             </p>
 
           </div>
@@ -1132,64 +1255,69 @@ export default function PedidosPage() {
 
           <div className="pedidos-header-actions">
 
-            {/* ULTIMA ATUALIZACAO */}
-
             <div
               className="pedidos-atualizacao"
               title={
                 respostaPedidos
                   ?.atualizadoEm
-                  ? `Última sincronização: ${formatarDataHora(
-                      respostaPedidos
-                        .atualizadoEm,
-                    )}`
-                  : "Ainda não houve sincronização"
+                  ? (
+                      `Última sincronização: ${formatarDataHora(
+                        respostaPedidos
+                          .atualizadoEm,
+                      )} | Próxima execução automática: ${formatarDataHora(
+                        proximaAtualizacao,
+                      )}`
+                    )
+                  : (
+                      `Aguardando primeira sincronização. Próxima execução automática: ${formatarDataHora(
+                        proximaAtualizacao,
+                      )}`
+                    )
               }
             >
 
               <Clock3
-                size={15}
+                size={18}
               />
 
-              <span>
 
-                Última atualização:
-                {" "}
+              <div className="pedidos-atualizacao-textos">
 
-                <strong>
-                  {formatarHorario(
-                    respostaPedidos
-                      ?.atualizadoEm,
-                  )}
-                </strong>
+                <span className="pedidos-atualizacao-titulo">
+                  Atualização automática
+                </span>
 
-              </span>
+
+                <span className="pedidos-atualizacao-horarios">
+
+                  Última:{" "}
+
+                  <strong>
+                    {formatarHorario(
+                      respostaPedidos
+                        ?.atualizadoEm,
+                    )}
+                  </strong>
+
+
+                  <span className="pedidos-atualizacao-separador">
+                    |
+                  </span>
+
+
+                  Próxima:{" "}
+
+                  <strong>
+                    {formatarHorario(
+                      proximaAtualizacao,
+                    )}
+                  </strong>
+
+                </span>
+
+              </div>
 
             </div>
-
-
-            {/* BOTAO SINCRONIZAR */}
-
-            <button
-              type="button"
-              className="pedidos-btn-atualizar"
-              onClick={
-                atualizarAgora
-              }
-              disabled={
-                sincronizandoOmie
-              }
-            >
-
-              <RefreshCw
-                size={17}
-              />
-
-              {sincronizandoOmie
-                ? "Sincronizando..."
-                : "Atualizar agora"}
-
-            </button>
 
           </div>
 
@@ -1197,56 +1325,10 @@ export default function PedidosPage() {
 
 
         {/* =================================================
-            ERRO DA SINCRONIZACAO
-        ================================================= */}
-
-        {erroSincronizacao && (
-
-          <div
-            style={{
-              marginBottom:
-                "18px",
-
-              padding:
-                "12px 14px",
-
-              border:
-                "1px solid #fecaca",
-
-              borderRadius:
-                "8px",
-
-              background:
-                "#fef2f2",
-
-              color:
-                "#b91c1c",
-
-              fontSize:
-                "13px",
-            }}
-          >
-
-            <strong>
-              Falha na sincronização:
-            </strong>
-
-            {" "}
-
-            {erroSincronizacao}
-
-          </div>
-
-        )}
-
-
-        {/* =================================================
-            INDICADORES
+            CARDS
         ================================================= */}
 
         <section className="pedidos-resumo">
-
-          {/* PEDIDOS EM ABERTO */}
 
           <article className="pedidos-card">
 
@@ -1276,8 +1358,6 @@ export default function PedidosPage() {
           </article>
 
 
-          {/* ATRASADOS */}
-
           <article className="pedidos-card">
 
             <div className="pedidos-card-icon">
@@ -1305,8 +1385,6 @@ export default function PedidosPage() {
 
           </article>
 
-
-          {/* QUANTIDADE */}
 
           <article className="pedidos-card">
 
@@ -1338,8 +1416,6 @@ export default function PedidosPage() {
           </article>
 
 
-          {/* PROXIMOS 7 DIAS */}
-
           <article className="pedidos-card">
 
             <div className="pedidos-card-icon">
@@ -1354,7 +1430,7 @@ export default function PedidosPage() {
             <div>
 
               <span className="pedidos-card-label">
-                Entregas próximos 7 dias
+                Faturamentos próximos 7 dias
               </span>
 
               <strong>
@@ -1391,7 +1467,7 @@ export default function PedidosPage() {
                 (
                   evento,
                 ) =>
-                  setPesquisa(
+                  alterarPesquisa(
                     evento
                       .target
                       .value,
@@ -1403,8 +1479,6 @@ export default function PedidosPage() {
           </div>
 
 
-          {/* VENDEDOR */}
-
           <select
             value={
               vendedor
@@ -1413,7 +1487,7 @@ export default function PedidosPage() {
               (
                 evento,
               ) =>
-                setVendedor(
+                alterarVendedor(
                   evento
                     .target
                     .value,
@@ -1447,8 +1521,6 @@ export default function PedidosPage() {
           </select>
 
 
-          {/* STATUS */}
-
           <select
             value={
               status
@@ -1457,7 +1529,7 @@ export default function PedidosPage() {
               (
                 evento,
               ) =>
-                setStatus(
+                alterarStatus(
                   evento
                     .target
                     .value,
@@ -1465,28 +1537,40 @@ export default function PedidosPage() {
             }
           >
 
+            <option value="Pedido">
+              Pedido
+            </option>
+
             <option value="todos">
               Todos os status
             </option>
 
-            {statusDisponiveis.map(
-              (
-                nomeStatus,
-              ) => (
+            {statusDisponiveis
+              .filter(
+                (
+                  nomeStatus,
+                ) =>
+                  nomeStatus !==
+                  "Pedido",
+              )
+              .map(
+                (
+                  nomeStatus,
+                ) => (
 
-                <option
-                  key={
-                    nomeStatus
-                  }
-                  value={
-                    nomeStatus
-                  }
-                >
-                  {nomeStatus}
-                </option>
+                  <option
+                    key={
+                      nomeStatus
+                    }
+                    value={
+                      nomeStatus
+                    }
+                  >
+                    {nomeStatus}
+                  </option>
 
-              ),
-            )}
+                ),
+              )}
 
           </select>
 
@@ -1533,13 +1617,11 @@ export default function PedidosPage() {
                 {isLoading
                   ? "Carregando pedidos..."
                   : `${pedidosUnicos.length} pedido${
-                      pedidosUnicos.length !==
-                      1
+                      pedidosUnicos.length !== 1
                         ? "s"
                         : ""
                     } encontrado${
-                      pedidosUnicos.length !==
-                      1
+                      pedidosUnicos.length !== 1
                         ? "s"
                         : ""
                     }`}
@@ -1561,7 +1643,7 @@ export default function PedidosPage() {
 
 
           {/* =================================================
-              ERRO AO LER SUPABASE
+              ERRO
           ================================================= */}
 
           {erroConsulta && (
@@ -1576,11 +1658,9 @@ export default function PedidosPage() {
 
               </div>
 
-
               <h3>
                 Não foi possível carregar os pedidos
               </h3>
-
 
               <p>
                 {erroConsulta.message ||
@@ -1593,7 +1673,7 @@ export default function PedidosPage() {
 
 
           {/* =================================================
-              CARREGAMENTO
+              CARREGANDO
           ================================================= */}
 
           {!erroConsulta &&
@@ -1609,15 +1689,12 @@ export default function PedidosPage() {
 
                 </div>
 
-
                 <h3>
                   Carregando pedidos
                 </h3>
 
-
                 <p>
-                  Consultando os pedidos armazenados
-                  no sistema.
+                  Consultando os pedidos armazenados no sistema.
                 </p>
 
               </div>
@@ -1633,194 +1710,373 @@ export default function PedidosPage() {
             !isLoading &&
             pedidosFiltrados.length >
               0 && (
+              <>
 
-              <div className="pedidos-tabela-wrapper">
+                <div className="pedidos-tabela-wrapper">
 
-                <table className="pedidos-tabela">
+                  <table className="pedidos-tabela">
 
-                  <thead>
+                    <thead>
 
-                    <tr>
+                      <tr>
 
-                      <th>
-                        Pedido
-                      </th>
+                        <th>
+                          Pedido
+                        </th>
 
-                      <th>
-                        Cliente
-                      </th>
+                        <th>
+                          Cliente
+                        </th>
 
-                      <th>
-                        Data
-                      </th>
+                        <th>
+                          Data
+                        </th>
 
-                      <th>
-                        Previsão
-                      </th>
+                        <th className="pedidos-col-previsao">
+                          Previsão faturamento
+                        </th>
 
-                      <th>
-                        Código
-                      </th>
+                        <th>
+                          Código
+                        </th>
 
-                      <th>
-                        Produto
-                      </th>
+                        <th className="pedidos-col-produto">
+                          Produto
+                        </th>
 
-                      <th className="pedidos-col-numero">
-                        Quantidade
-                      </th>
+                        <th className="pedidos-col-numero">
+                          Quantidade
+                        </th>
 
-                      <th>
-                        Un.
-                      </th>
+                        <th>
+                          Un.
+                        </th>
 
-                      <th>
-                        Vendedor
-                      </th>
+                        <th>
+                          Vendedor
+                        </th>
 
-                      <th className="pedidos-col-valor">
-                        Valor
-                      </th>
+                        <th>
+                          Status
+                        </th>
 
-                      <th>
-                        Status
-                      </th>
+                      </tr>
 
-                    </tr>
-
-                  </thead>
+                    </thead>
 
 
-                  <tbody>
+                    <tbody>
 
-                    {pedidosFiltrados.map(
-                      (
-                        pedido,
-                      ) => (
+                      {pedidosAgrupados.flatMap(
+                        (
+                          grupo,
+                        ) => {
 
-                        <tr
-                          key={
-                            pedido.id
-                          }
-                        >
+                          const quantidadeItens =
+                            grupo.itens.length;
 
-                          <td>
+                          return grupo.itens.map(
+                            (
+                              pedido,
+                              indiceItem,
+                            ) => {
 
-                            <strong className="pedidos-numero">
-                              #
-                              {
-                                pedido.pedido
-                              }
-                            </strong>
+                              const primeiroItem =
+                                indiceItem ===
+                                0;
 
-                          </td>
+                              const diasAtraso =
+                                calcularDiasAtraso(
+                                  pedido.previsao,
+                                );
 
+                              const atrasado =
+                                pedidoEstaAtrasado(
+                                  pedido,
+                                );
 
-                          <td>
+                              return (
 
-                            <div className="pedidos-cliente">
-                              {
-                                pedido.cliente
-                              }
-                            </div>
+                                <tr
+                                  key={
+                                    pedido.id
+                                  }
+                                  className={
+                                    `${
+                                      primeiroItem
+                                        ? "pedidos-inicio-grupo"
+                                        : "pedidos-item-continuacao"
+                                    }${
+                                      atrasado
+                                        ? " pedido-linha-atrasada"
+                                        : ""
+                                    }`
+                                  }
+                                >
 
-                          </td>
+                                  {/* PEDIDO */}
 
+                                  {primeiroItem && (
 
-                          <td>
-                            {formatarData(
-                              pedido.data,
-                            )}
-                          </td>
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className={`pedidos-celula-agrupada pedidos-celula-pedido${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                    >
 
+                                      <div className="pedidos-pedido-agrupado">
 
-                          <td>
-                            {formatarData(
-                              pedido.previsao,
-                            )}
-                          </td>
+                                        <strong className="pedidos-numero">
+                                          {
+                                            pedido.pedido
+                                          }
+                                        </strong>
 
+                                        {quantidadeItens >
+                                          1 && (
 
-                          <td>
-                            {pedido.codigoProduto ||
-                              "-"}
-                          </td>
+                                          <span className="pedidos-itens-badge">
+                                            {quantidadeItens} itens
+                                          </span>
 
+                                        )}
 
-                          <td>
+                                      </div>
 
-                            <div className="pedidos-produto">
-                              {
-                                pedido.produto
-                              }
-                            </div>
+                                    </td>
 
-                          </td>
-
-
-                          <td className="pedidos-col-numero">
-
-                            {formatarNumero(
-                              pedido.quantidade,
-                            )}
-
-                          </td>
-
-
-                          <td>
-                            {pedido.unidade ||
-                              "-"}
-                          </td>
-
-
-                          <td>
-                            {
-                              pedido.vendedor
-                            }
-                          </td>
+                                  )}
 
 
-                          <td className="pedidos-col-valor">
+                                  {/* CLIENTE */}
 
-                            {formatarMoeda(
-                              pedido.valor,
-                            )}
+                                  {primeiroItem && (
 
-                          </td>
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                    >
+
+                                      <div className="pedidos-cliente">
+                                        {
+                                          pedido.cliente
+                                        }
+                                      </div>
+
+                                    </td>
+
+                                  )}
 
 
-                          <td>
+                                  {/* DATA */}
 
-                            <span
-                              className={
-                                `pedidos-status ${obterClasseStatus(
-                                  pedido.status,
-                                )}`
-                              }
-                            >
-                              {
-                                pedido.status
-                              }
-                            </span>
+                                  {primeiroItem && (
 
-                          </td>
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                    >
 
-                        </tr>
+                                      {formatarData(
+                                        pedido.data,
+                                      )}
 
-                      ),
-                    )}
+                                    </td>
 
-                  </tbody>
+                                  )}
 
-                </table>
 
-              </div>
+                                  {/* PREVISAO FATURAMENTO */}
 
+                                  {primeiroItem && (
+
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className={`pedidos-celula-agrupada pedidos-col-previsao${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                    >
+
+                                      <div className="pedidos-previsao-wrapper">
+
+                                        <span className="pedidos-previsao-data">
+
+                                          {formatarData(
+                                            pedido.previsao,
+                                          )}
+
+                                        </span>
+
+
+                                        {atrasado && (
+
+                                          <span className="pedidos-tag-atraso">
+
+                                            <AlertTriangle
+                                              size={11}
+                                            />
+
+                                            {formatarTextoAtraso(
+                                              diasAtraso,
+                                            )}
+
+                                          </span>
+
+                                        )}
+
+                                      </div>
+
+                                    </td>
+
+                                  )}
+
+
+                                  {/* CODIGO */}
+
+                                  <td>
+
+                                    <span className="pedidos-codigo-produto">
+                                      {pedido.codigoProduto ||
+                                        "-"}
+                                    </span>
+
+                                  </td>
+
+
+                                  {/* PRODUTO */}
+
+                                  <td className="pedidos-col-produto">
+
+                                    <div className="pedidos-produto">
+
+                                      {!primeiroItem && (
+
+                                        <span className="pedidos-item-indicador">
+                                          ↳
+                                        </span>
+
+                                      )}
+
+                                      <span>
+                                        {
+                                          pedido.produto
+                                        }
+                                      </span>
+
+                                    </div>
+
+                                  </td>
+
+
+                                  {/* QUANTIDADE */}
+
+                                  <td className="pedidos-col-numero">
+
+                                    {formatarNumero(
+                                      pedido.quantidade,
+                                    )}
+
+                                  </td>
+
+
+                                  {/* UNIDADE */}
+
+                                  <td>
+                                    {pedido.unidade ||
+                                      "-"}
+                                  </td>
+
+
+                                  {/* VENDEDOR */}
+
+                                  {primeiroItem && (
+
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                    >
+
+                                      <div className="pedidos-vendedor">
+                                        {
+                                          pedido.vendedor
+                                        }
+                                      </div>
+
+                                    </td>
+
+                                  )}
+
+
+                                  {/* STATUS */}
+
+                                  {primeiroItem && (
+
+                                    <td
+                                      rowSpan={
+                                        quantidadeItens
+                                      }
+                                      className="pedidos-celula-agrupada"
+                                    >
+
+                                      <span
+                                        className={
+                                          `pedidos-status ${obterClasseStatus(
+                                            pedido.status,
+                                          )}`
+                                        }
+                                      >
+                                        {
+                                          pedido.status
+                                        }
+                                      </span>
+
+                                    </td>
+
+                                  )}
+
+                                </tr>
+
+                              );
+                            },
+                          );
+                        },
+                      )}
+
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+
+                <Paginacao
+                  paginaAtual={
+                    paginaAtual
+                  }
+                  totalItens={
+                    pedidosUnicos.length
+                  }
+                  itensPorPagina={
+                    PEDIDOS_POR_PAGINA
+                  }
+                  onChangePagina={
+                    setPaginaAtual
+                  }
+                />
+
+              </>
             )}
 
 
           {/* =================================================
-              NENHUM PEDIDO
+              VAZIO
           ================================================= */}
 
           {!erroConsulta &&
@@ -1838,19 +2094,17 @@ export default function PedidosPage() {
 
                 </div>
 
-
                 <h3>
                   Nenhum pedido encontrado
                 </h3>
-
 
                 <p>
 
                   {possuiFiltro
                     ? "Não existem pedidos que correspondam aos filtros selecionados."
                     : respostaPedidos?.atualizadoEm
-                      ? "Nenhum pedido em aberto foi encontrado."
-                      : "Ainda não existem pedidos sincronizados. Clique em Atualizar agora para realizar a primeira sincronização."}
+                      ? "Nenhum pedido com status Pedido foi encontrado."
+                      : "Ainda não existem pedidos sincronizados. Aguardando a primeira sincronização automática."}
 
                 </p>
 
@@ -1876,19 +2130,14 @@ export default function PedidosPage() {
         </section>
 
 
-        {/* =================================================
-            RODAPE
-        ================================================= */}
-
         <div className="pedidos-rodape-info">
 
           <Clock3
             size={14}
           />
 
-          A tela utiliza os pedidos armazenados no sistema.
-          A sincronização automática com o Omie será realizada
-          a cada 15 minutos.
+          Os pedidos são sincronizados automaticamente
+          com o Omie.
 
         </div>
 
