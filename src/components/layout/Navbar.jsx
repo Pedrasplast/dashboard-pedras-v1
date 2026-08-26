@@ -77,7 +77,7 @@ function Navbar({ user, isAdmin }) {
         icon: Factory,
       },
 
-      {
+      /*{
         label: "Matéria-prima",
 
         shortLabel: "Matéria",
@@ -85,7 +85,7 @@ function Navbar({ user, isAdmin }) {
         path: "/dashboard-materia-prima",
 
         icon: Boxes,
-      },
+      },*/
 
       {
         label: "Produtividade",
@@ -95,6 +95,16 @@ function Navbar({ user, isAdmin }) {
         path: "/dashboard-produtividade",
 
         icon: Gauge,
+      },
+
+       {
+        label: "Pedidos",
+
+        shortLabel: "Pedidos",
+
+        path: "/pedidos",
+
+        icon: ShoppingCart,
       },
 
       {
@@ -107,15 +117,7 @@ function Navbar({ user, isAdmin }) {
         icon: FileText,
       },
 
-      {
-        label: "Pedidos",
-
-        shortLabel: "Pedidos",
-
-        path: "/pedidos",
-
-        icon: ShoppingCart,
-      },
+     
     ],
     [],
   );

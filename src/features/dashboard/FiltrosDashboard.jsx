@@ -10,6 +10,7 @@ import { ptBR } from "@daypicker/react/locale";
 import "@daypicker/react/style.css";
 import "./FiltrosDashboard.css";
 
+
 /*
  * Descrições apresentadas ao lado do número
  * no filtro TIPO.
@@ -20,6 +21,7 @@ const DESCRICOES_TIPO = {
   3: "Intervalos e Dias Sem Produção",
 };
 
+
 /*
  * Turnos disponíveis.
  */
@@ -28,6 +30,7 @@ const TURNOS_DISPONIVEIS = [
   "TURNO II",
   "TURNO III",
 ];
+
 
 /*
  * Retorna a descrição correspondente ao tipo.
@@ -41,6 +44,7 @@ const obterDescricaoTipo = (tipo) => {
     "Tipo sem descrição"
   );
 };
+
 
 /* =====================================================
    DATA
@@ -69,6 +73,7 @@ const formatarDataISO = (data) => {
 
   return `${ano}-${mes}-${dia}`;
 };
+
 
 const converterISOParaData = (
   valorISO,
@@ -112,6 +117,7 @@ const converterISOParaData = (
 
   return data;
 };
+
 
 /*
  * Retorna a data oficial do registro.
@@ -168,6 +174,7 @@ const extrairDataRegistro = (
   );
 };
 
+
 const formatarDataVisual = (
   valorISO,
 ) => {
@@ -184,6 +191,7 @@ const formatarDataVisual = (
     "pt-BR",
   );
 };
+
 
 /* =====================================================
    COMPONENTE
@@ -221,6 +229,7 @@ export default function FiltrosDashboard({
     setCalendarioAberto,
   ] = useState(null);
 
+
   /* =====================================================
      DATAS DISPONÍVEIS
   ===================================================== */
@@ -234,6 +243,7 @@ export default function FiltrosDashboard({
       );
     }, [rawDados]);
 
+
   const datasOrdenadas =
     useMemo(() => {
       return [
@@ -241,14 +251,17 @@ export default function FiltrosDashboard({
       ].sort();
     }, [datasComDados]);
 
+
   const primeiraDataDisponivel =
     datasOrdenadas[0] ||
     null;
+
 
   const ultimaDataDisponivel =
     datasOrdenadas[
       datasOrdenadas.length - 1
     ] || null;
+
 
   const dataInicioSelecionada =
     useMemo(() => {
@@ -259,6 +272,7 @@ export default function FiltrosDashboard({
       filtros.dataInicio,
     ]);
 
+
   const dataFimSelecionada =
     useMemo(() => {
       return converterISOParaData(
@@ -267,6 +281,7 @@ export default function FiltrosDashboard({
     }, [
       filtros.dataFim,
     ]);
+
 
   const mesInicialCalendario =
     useMemo(() => {
@@ -283,6 +298,7 @@ export default function FiltrosDashboard({
       dataFimSelecionada,
       ultimaDataDisponivel,
     ]);
+
 
   /* =====================================================
      TIPO
@@ -318,6 +334,7 @@ export default function FiltrosDashboard({
 
             return {
               ...anterior,
+
               tipo:
                 novosTipos,
             };
@@ -329,8 +346,11 @@ export default function FiltrosDashboard({
       ],
     );
 
+
   /* =====================================================
-     LIMPAR DATAS
+     LIMPAR SOMENTE AS DATAS
+
+     Usado no modo RELATÓRIO.
   ===================================================== */
 
   const limparDatas =
@@ -339,11 +359,9 @@ export default function FiltrosDashboard({
         (anterior) => ({
           ...anterior,
 
-          dataInicio:
-            "",
+          dataInicio: "",
 
-          dataFim:
-            "",
+          dataFim: "",
         }),
       );
 
@@ -353,6 +371,117 @@ export default function FiltrosDashboard({
     }, [
       setFiltros,
     ]);
+
+
+  /* =====================================================
+     LIMPAR TODOS OS FILTROS
+
+     Usado no DASHBOARD principal.
+  ===================================================== */
+
+  const limparTodosFiltros =
+    useCallback(() => {
+      setFiltros(
+        (anterior) => ({
+          ...anterior,
+
+          /*
+           * Período
+           */
+          dataInicio: "",
+          dataFim: "",
+
+          /*
+           * Injetora
+           */
+          injetora: "Todos",
+
+          /*
+           * Turno
+           */
+          turno: "Todos",
+
+          /*
+           * Produto
+           */
+          cod_prod: "Todos",
+
+          /*
+           * Matéria-prima
+           */
+          mp: "Todos",
+
+          /*
+           * Tipos de parada
+           */
+          tipo: [],
+        }),
+      );
+
+      /*
+       * Fecha qualquer calendário
+       * que esteja aberto.
+       */
+      setCalendarioAberto(
+        null,
+      );
+    }, [
+      setFiltros,
+    ]);
+
+
+  /* =====================================================
+     VERIFICA SE EXISTE ALGUM FILTRO ATIVO
+  ===================================================== */
+
+  const possuiFiltroAtivo =
+    useMemo(() => {
+      const possuiTipo =
+        Array.isArray(
+          filtros.tipo,
+        ) &&
+        filtros.tipo.length > 0;
+
+      return Boolean(
+        filtros.dataInicio ||
+        filtros.dataFim ||
+
+        (
+          filtros.injetora &&
+          filtros.injetora !==
+            "Todos"
+        ) ||
+
+        (
+          filtros.turno &&
+          filtros.turno !==
+            "Todos"
+        ) ||
+
+        (
+          filtros.cod_prod &&
+          filtros.cod_prod !==
+            "Todos"
+        ) ||
+
+        (
+          filtros.mp &&
+          filtros.mp !==
+            "Todos"
+        ) ||
+
+        possuiTipo,
+      );
+    }, [
+      filtros.dataInicio,
+      filtros.dataFim,
+      filtros.injetora,
+      filtros.turno,
+      filtros.cod_prod,
+      filtros.mp,
+      filtros.tipo,
+    ]);
+
 
   /* =====================================================
      VALIDA DATA
@@ -377,6 +506,7 @@ export default function FiltrosDashboard({
         datasComDados,
       ],
     );
+
 
   const desabilitarDataInicio =
     useCallback(
@@ -405,6 +535,7 @@ export default function FiltrosDashboard({
       ],
     );
 
+
   const desabilitarDataFim =
     useCallback(
       (data) => {
@@ -431,6 +562,7 @@ export default function FiltrosDashboard({
         dataInicioSelecionada,
       ],
     );
+
 
   /* =====================================================
      SELEÇÃO DAS DATAS
@@ -479,6 +611,7 @@ export default function FiltrosDashboard({
       ],
     );
 
+
   const selecionarDataFim =
     useCallback(
       (data) => {
@@ -524,6 +657,7 @@ export default function FiltrosDashboard({
       ],
     );
 
+
   /* =====================================================
      INJETORAS
   ===================================================== */
@@ -555,12 +689,14 @@ export default function FiltrosDashboard({
       rawDados,
     ]);
 
+
   /* =====================================================
      CAMPO DATA INICIAL
   ===================================================== */
 
   const campoDataInicial = (
     <div className="calendar-field">
+
       <button
         type="button"
         className="calendar-trigger"
@@ -590,9 +726,11 @@ export default function FiltrosDashboard({
         </strong>
       </button>
 
+
       {calendarioAberto ===
         "inicio" && (
         <div className="calendar-popover">
+
           <DayPicker
             mode="single"
             locale={ptBR}
@@ -635,10 +773,13 @@ export default function FiltrosDashboard({
             Somente dias com dados
             podem ser selecionados.
           </small>
+
         </div>
       )}
+
     </div>
   );
+
 
   /* =====================================================
      CAMPO DATA FINAL
@@ -646,6 +787,7 @@ export default function FiltrosDashboard({
 
   const campoDataFinal = (
     <div className="calendar-field">
+
       <button
         type="button"
         className="calendar-trigger"
@@ -675,9 +817,11 @@ export default function FiltrosDashboard({
         </strong>
       </button>
 
+
       {calendarioAberto ===
         "fim" && (
         <div className="calendar-popover">
+
           <DayPicker
             mode="single"
             locale={ptBR}
@@ -720,10 +864,13 @@ export default function FiltrosDashboard({
             Somente dias com dados
             podem ser selecionados.
           </small>
+
         </div>
       )}
+
     </div>
   );
+
 
   /* =====================================================
      TELA
@@ -732,8 +879,12 @@ export default function FiltrosDashboard({
   return (
     <div className="filter-section">
 
+
       {/* =================================================
           PERÍODO — RELATÓRIO
+
+          Aqui continua limpando SOMENTE
+          a data inicial e final.
       ================================================= */}
 
       {exibirPeriodo &&
@@ -747,10 +898,13 @@ export default function FiltrosDashboard({
             <div className="periodo-relatorio-linha">
 
               <div className="date-inputs-container">
+
                 {campoDataInicial}
 
                 {campoDataFinal}
+
               </div>
+
 
               <button
                 type="button"
@@ -768,6 +922,7 @@ export default function FiltrosDashboard({
 
             </div>
 
+
             {datasOrdenadas.length ===
               0 && (
               <small className="calendar-empty">
@@ -775,39 +930,55 @@ export default function FiltrosDashboard({
                 na base.
               </small>
             )}
+
           </div>
         )}
+
 
       {/* =================================================
           PERÍODO — DASHBOARD ORIGINAL
 
-          Mantém a estrutura antiga.
+          AGORA:
+          o botão LIMPAR remove TODOS
+          os filtros do Dashboard.
       ================================================= */}
 
       {exibirPeriodo &&
         !modoRelatorio && (
           <>
+
             <div className="filter-header-row">
+
               <label>
                 PERÍODO
               </label>
+
 
               <button
                 type="button"
                 className="clear-date-btn"
                 onClick={
-                  limparDatas
+                  limparTodosFiltros
                 }
+                disabled={
+                  !possuiFiltroAtivo
+                }
+                title="Limpar todos os filtros"
               >
                 ✕ LIMPAR
               </button>
+
             </div>
 
+
             <div className="date-inputs-container">
+
               {campoDataInicial}
 
               {campoDataFinal}
+
             </div>
+
 
             {datasOrdenadas.length ===
               0 && (
@@ -816,8 +987,10 @@ export default function FiltrosDashboard({
                 na base.
               </small>
             )}
+
           </>
         )}
+
 
       {/* =================================================
           INJETORA
@@ -825,9 +998,11 @@ export default function FiltrosDashboard({
 
       {exibirInjetora && (
         <>
+
           <label>
             INJETORA
           </label>
+
 
           <select
             value={
@@ -847,15 +1022,21 @@ export default function FiltrosDashboard({
                     evento.target
                       .value,
 
+                  /*
+                   * Ao trocar a injetora,
+                   * volta o produto para Todos.
+                   */
                   cod_prod:
                     "Todos",
                 }),
               )
             }
           >
+
             <option value="Todos">
               Todas
             </option>
+
 
             {injetorasDisponiveis.map(
               (
@@ -873,9 +1054,12 @@ export default function FiltrosDashboard({
                 </option>
               ),
             )}
+
           </select>
+
         </>
       )}
+
 
       {/* =================================================
           TURNO
@@ -883,9 +1067,11 @@ export default function FiltrosDashboard({
 
       {exibirTurno && (
         <>
+
           <label>
             TURNO
           </label>
+
 
           <select
             value={
@@ -908,9 +1094,11 @@ export default function FiltrosDashboard({
               )
             }
           >
+
             <option value="Todos">
               Todos os turnos
             </option>
+
 
             {TURNOS_DISPONIVEIS.map(
               (
@@ -928,9 +1116,12 @@ export default function FiltrosDashboard({
                 </option>
               ),
             )}
+
           </select>
+
         </>
       )}
+
 
       {/* =================================================
           PRODUTO
@@ -938,9 +1129,11 @@ export default function FiltrosDashboard({
 
       {exibirProduto && (
         <>
+
           <label>
             CÓD. PROD
           </label>
+
 
           <select
             value={
@@ -968,9 +1161,11 @@ export default function FiltrosDashboard({
               )
             }
           >
+
             <option value="Todos">
               Todos
             </option>
+
 
             {produtosDisponiveis.map(
               (
@@ -988,9 +1183,12 @@ export default function FiltrosDashboard({
                 </option>
               ),
             )}
+
           </select>
+
         </>
       )}
+
 
       {/* =================================================
           MATÉRIA-PRIMA
@@ -998,9 +1196,11 @@ export default function FiltrosDashboard({
 
       {exibirMp && (
         <>
+
           <label>
             MATÉRIA-PRIMA
           </label>
+
 
           <select
             value={
@@ -1023,9 +1223,11 @@ export default function FiltrosDashboard({
               )
             }
           >
+
             <option value="Todos">
               Todas
             </option>
+
 
             {mpsDisponiveis.map(
               (
@@ -1043,9 +1245,12 @@ export default function FiltrosDashboard({
                 </option>
               ),
             )}
+
           </select>
+
         </>
       )}
+
 
       {/* =================================================
           TIPO
@@ -1055,11 +1260,14 @@ export default function FiltrosDashboard({
         tiposDisponiveis.length >
           0 && (
           <>
+
             <label>
               TIPO
             </label>
 
+
             <div className="checkbox-group tipo-checkbox-group">
+
               {tiposDisponiveis.map(
                 (
                   tipo,
@@ -1070,6 +1278,7 @@ export default function FiltrosDashboard({
                     }
                     className="checkbox-label tipo-checkbox-label"
                   >
+
                     <input
                       type="checkbox"
                       checked={(
@@ -1085,23 +1294,31 @@ export default function FiltrosDashboard({
                       }
                     />
 
+
                     <div className="tipo-label-conteudo">
+
                       <strong className="tipo-label-numero">
                         {tipo}
                       </strong>
+
 
                       <span className="tipo-label-descricao">
                         {obterDescricaoTipo(
                           tipo,
                         )}
                       </span>
+
                     </div>
+
                   </label>
                 ),
               )}
+
             </div>
+
           </>
         )}
+
     </div>
   );
 }
