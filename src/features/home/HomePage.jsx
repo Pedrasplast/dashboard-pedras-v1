@@ -80,7 +80,7 @@ function Home({
             error,
           } =
             await supabase.auth.signInWithPassword({
-              email,
+              email: email.trim().toLowerCase(),
               password,
             });
 
@@ -165,21 +165,7 @@ function Home({
         navigate,
       ],
     );
-
-  const goToCadastro =
-    useCallback(
-      () => {
-        navigate(
-          "/cadastro",
-        );
-      },
-      [
-        navigate,
-      ],
-    );
-
-
-  /* =====================================================
+/* =====================================================
      RENDER
   ===================================================== */
 
@@ -462,6 +448,7 @@ function Home({
                 handleLogin
               }
               className="login-form"
+              autoComplete="off"
             >
               <div className="form-group">
                 <label
@@ -484,8 +471,11 @@ function Home({
                       event.target.value,
                     )
                   }
-                  autoComplete="email"
+                  autoComplete="username"
                   required
+                  disabled={
+                    loadingLogin
+                  }
                 />
               </div>
 
@@ -510,8 +500,12 @@ function Home({
                       event.target.value,
                     )
                   }
-                  autoComplete="current-password"
+                  autoComplete="off"
+                  name="senha-acesso-sistema"
                   required
+                  disabled={
+                    loadingLogin
+                  }
                 />
               </div>
 
@@ -527,22 +521,6 @@ function Home({
                   : "Entrar"}
               </button>
             </form>
-
-            <div className="login-footer-actions">
-              <span className="separator-text">
-                ou
-              </span>
-
-              <button
-                type="button"
-                className="btn-link-cadastro"
-                onClick={
-                  goToCadastro
-                }
-              >
-                Criar nova conta
-              </button>
-            </div>
           </aside>
         )}
       </div>

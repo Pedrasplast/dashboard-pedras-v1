@@ -14,6 +14,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
+import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PedidosRouteImport } from './routes/pedidos'
@@ -43,6 +44,11 @@ const DashboardMateriaPrimaRoute = DashboardMateriaPrimaRouteImport.update({
 const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
   id: '/dashboard-produtividade',
   path: '/dashboard-produtividade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
+  id: '/definir-senha',
+  path: '/definir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImportarRoute = ImportarRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
+  DefinirSenhaRoute: typeof DefinirSenhaRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
   PedidosRoute: typeof PedidosRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-produtividade'
       fullPath: '/dashboard-produtividade'
       preLoaderRoute: typeof DashboardProdutividadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/definir-senha': {
+      id: '/definir-senha'
+      path: '/definir-senha'
+      fullPath: '/definir-senha'
+      preLoaderRoute: typeof DefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/importar': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
+  DefinirSenhaRoute: DefinirSenhaRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
   PedidosRoute: PedidosRoute,
