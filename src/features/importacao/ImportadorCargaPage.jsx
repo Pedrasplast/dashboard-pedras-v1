@@ -705,6 +705,39 @@ export default function ImportadorCarga() {
                   `Lendo a aba "${nomeAbaEncontrada}" e formatando os dados...`
                 );
 
+                /*
+                 * Cacheia os aliases de cabeçalho uma única vez por
+                 * conjunto. Em arquivos grandes, evita normalizar as
+                 * mesmas descrições dezenas de milhares de vezes.
+                 */
+                const cacheAliasesCabecalho =
+                  new Map();
+
+                const obterAliasesNormalizados =
+                  (chavesPossiveis) => {
+                    const chaveCache =
+                      chavesPossiveis.join('\u0000');
+
+                    if (
+                      !cacheAliasesCabecalho.has(
+                        chaveCache
+                      )
+                    ) {
+                      cacheAliasesCabecalho.set(
+                        chaveCache,
+                        new Set(
+                          chavesPossiveis.map(
+                            normalizarCabecalho
+                          )
+                        )
+                      );
+                    }
+
+                    return cacheAliasesCabecalho.get(
+                      chaveCache
+                    );
+                  };
+
                 const dadosFormatados =
                   rows.map(
                     (
@@ -714,30 +747,41 @@ export default function ImportadorCarga() {
                       const linhaExcel =
                         indice + 2;
 
+                      /*
+                       * Normaliza as chaves da linha somente uma vez.
+                       * A ordem original é mantida para preservar a
+                       * mesma prioridade que Object.keys(...).find().
+                       */
+                      const chavesDaLinha =
+                        Object.keys(linha).map(
+                          (chave) => ({
+                            chave,
+                            normalizada:
+                              normalizarCabecalho(
+                                chave
+                              )
+                          })
+                        );
+
                       const getVal = (
                         chavesPossiveis
                       ) => {
-                        const chavesNormalizadas =
-                          chavesPossiveis.map(
-                            normalizarCabecalho
+                        const aliases =
+                          obterAliasesNormalizados(
+                            chavesPossiveis
                           );
 
-                        const chaveEncontrada =
-                          Object.keys(
-                            linha
-                          ).find(
-                            (chave) =>
-                              chavesNormalizadas.includes(
-                                normalizarCabecalho(
-                                  chave
-                                )
+                        const itemEncontrado =
+                          chavesDaLinha.find(
+                            (item) =>
+                              aliases.has(
+                                item.normalizada
                               )
                           );
 
-                        return chaveEncontrada !==
-                          undefined
+                        return itemEncontrado
                           ? linha[
-                              chaveEncontrada
+                              itemEncontrado.chave
                             ]
                           : '';
                       };

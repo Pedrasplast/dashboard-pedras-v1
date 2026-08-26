@@ -1,0 +1,58 @@
+/* =========================================================
+   FILTROS COMPARTILHADOS
+
+   Este arquivo define somente um estilo base seguro.
+   Cada tela pode continuar usando suas classes próprias
+   para preservar o layout existente.
+========================================================= */
+
+.filtros-compartilhados {
+  width: 100%;
+  min-width: 0;
+}
+
+
+.filtros-compartilhados-limpar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 36px;
+
+  padding: 0 12px;
+
+  color: #475569;
+  background: #ffffff;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+
+.filtros-compartilhados-limpar:hover {
+  color: #b91c1c;
+  background: #fff7f7;
+  border-color: #fecaca;
+}
+
+
+.filtros-compartilhados-limpar:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(59, 130, 246, 0.12);
+}

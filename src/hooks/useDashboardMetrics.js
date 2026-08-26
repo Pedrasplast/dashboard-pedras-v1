@@ -1,34 +1,7 @@
 import { useMemo } from 'react';
 
-/*
- * Converte valores numéricos do banco com segurança.
- * Aceita número e texto com vírgula decimal.
- */
-const converterNumero = (valor) => {
-    if (
-        valor === null ||
-        valor === undefined ||
-        valor === ''
-    ) {
-        return 0;
-    }
-
-    if (typeof valor === 'number') {
-        return Number.isFinite(valor)
-            ? valor
-            : 0;
-    }
-
-    const numero = Number.parseFloat(
-        String(valor)
-            .trim()
-            .replace(',', '.')
-    );
-
-    return Number.isFinite(numero)
-        ? numero
-        : 0;
-};
+import { converterNumeroDecimal as converterNumero } from '@/lib/numeros';
+import { normalizarTexto as normalizarTextoBase } from '@/lib/texto';
 
 /*
  * Converte HH:MM:SS, HH:MM ou horas decimais
@@ -240,17 +213,8 @@ const formatarDiasEHoras = (
 /*
  * Normaliza textos para comparação.
  */
-const normalizarTexto = (valor) => {
-    return String(valor ?? '')
-        .trim()
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(
-            /[\u0300-\u036f]/g,
-            ''
-        )
-        .replace(/\s+/g, ' ');
-};
+const normalizarTexto = (valor) =>
+    normalizarTextoBase(valor, { compactarEspacos: true });
 
 /*
  * Normaliza os valores de tipo.

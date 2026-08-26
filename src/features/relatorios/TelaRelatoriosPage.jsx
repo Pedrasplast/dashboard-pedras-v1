@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 
 import { FiArrowLeft, FiChevronRight, FiDownload, FiEye, FiFileText, FiX } from "react-icons/fi";
 
-import { useQuery } from "@tanstack/react-query";
 
 import {
   useCargaMaquina,
@@ -10,9 +9,9 @@ import {
   normalizarCodigoProduto,
 } from "@/lib/cargaMaquina";
 
-import { supabase } from "@/lib/supabaseClient";
-
-import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
+import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
+import { valoresUnicos } from "@/lib/colecoes";
+import { normalizarTexto } from "@/lib/texto";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
@@ -20,15 +19,33 @@ import { RELATORIOS } from "./config/Relatorio.config";
 
 import { obterDataDoRegistro } from "./utils/Data";
 
+import {
+  COLUNAS_NUMERICAS,
+  TITULOS_COLUNAS_VISUALIZACAO,
+  criarTituloAutomatico,
+  obterValorVisualizacao,
+} from "./utils/Visualizacao";
+
 import { obterDataPedidoRelatorio } from "./pedidos/PedidosRelatorios";
 
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
 
-import { gerarPdfRelatorio } from "./exportacao/GerarPDF";
-
-import { gerarExcelRelatorio } from "./exportacao/GerarExcel";
 
 import "./TelaRelatorios.css";
+
+const RELATORIOS_POR_CATEGORIA = new Map();
+
+for (const relatorio of RELATORIOS) {
+  if (!RELATORIOS_POR_CATEGORIA.has(relatorio.categoria)) {
+    RELATORIOS_POR_CATEGORIA.set(relatorio.categoria, []);
+  }
+
+  RELATORIOS_POR_CATEGORIA.get(relatorio.categoria).push(relatorio);
+}
+
+const CATEGORIAS_RELATORIOS = Object.freeze([
+  ...RELATORIOS_POR_CATEGORIA.keys(),
+]);
 
 /* =========================================================
    FILTROS INICIAIS
@@ -52,384 +69,6 @@ const criarFiltrosIniciais = (fonteDados = "producao") => ({
 
   vendedor: "todos",
 });
-
-/* =========================================================
-   NORMALIZAR TEXTO
-========================================================= */
-
-const normalizarTexto = (valor) =>
-  String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-
-/* =========================================================
-   NOMES DAS COLUNAS
-========================================================= */
-
-const TITULOS_COLUNAS_VISUALIZACAO = {
-  data: "Data",
-
-  injetora: "Injetora",
-
-  produto: "Produto",
-
-  descricao_produto: "Descrição do Produto",
-
-  mp: "Matéria-Prima",
-
-  tipo: "Tipo",
-
-  conforme: "Conforme",
-
-  danificada: "Danificada",
-
-  total_produzido: "Total Produzido",
-
-  duracao: "Duração",
-
-  produtividade_hora: "UN/H",
-
-  qualidade: "Qualidade",
-
-  motivo: "Motivo",
-
-  justificativa: "Justificativa",
-
-  ocorrencias: "Ocorrências",
-
-  tempo_total: "Tempo Total",
-
-  tempo_medio: "Tempo Médio",
-
-  percentual_impacto: "Percentual Impacto",
-
-  op: "OP",
-
-  descricao: "Descrição",
-
-  quantidade_mp: "Qtd. MP",
-
-  peso_unitario: "Peso Unitário",
-
-  consumo_total: "Consumo Total",
-
-  gasto_unidade: "Gasto por Unidade",
-
-  /* PEDIDOS */
-
-  pedido: "Pedido",
-
-  cliente: "Cliente",
-
-  data_pedido: "Data do Pedido",
-
-  previsao: "Previsão Faturamento",
-
-  dias_atraso: "Dias em Atraso",
-
-  codigo_produto: "Código",
-
-  produto_pedido: "Produto",
-
-  quantidade: "Quantidade",
-
-  unidade: "Un.",
-
-  vendedor: "Vendedor",
-
-  status: "Status",
-
-  pedidos: "Pedidos",
-
-  pedidos_atendidos: "Pedidos Atendidos",
-};
-
-/* =========================================================
-   COLUNAS NUMÉRICAS
-========================================================= */
-
-const COLUNAS_NUMERICAS = new Set([
-  "conforme",
-  "danificada",
-  "total_produzido",
-  "produtividade_hora",
-  "qualidade",
-
-  "ocorrencias",
-  "percentual_impacto",
-
-  "quantidade_mp",
-  "peso_unitario",
-  "consumo_total",
-  "gasto_unidade",
-
-  "dias_atraso",
-  "quantidade",
-  "pedidos",
-]);
-
-/* =========================================================
-   NÚMERO
-========================================================= */
-
-const converterNumeroVisualizacao = (valor) => {
-  if (valor === null || valor === undefined || valor === "") {
-    return 0;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
-  let texto = String(valor).trim().replace(/\s/g, "");
-
-  if (texto.includes(",") && texto.includes(".")) {
-    texto = texto.replace(/\./g, "").replace(",", ".");
-  } else {
-    texto = texto.replace(",", ".");
-  }
-
-  const numero = Number(texto);
-
-  return Number.isFinite(numero) ? numero : 0;
-};
-
-/* =========================================================
-   DATA
-========================================================= */
-
-const formatarDataVisualizacao = (valor) => {
-  if (!valor) {
-    return "-";
-  }
-
-  const texto = String(valor).trim();
-
-  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-
-  if (iso) {
-    return `${iso[3]}/` + `${iso[2]}/` + `${iso[1]}`;
-  }
-
-  return texto;
-};
-
-/* =========================================================
-   TEMPO
-========================================================= */
-
-const formatarTempoComMilhar = (valor) => {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  const texto = String(valor).trim();
-
-  const partes = texto.split(":");
-
-  if (partes.length < 2) {
-    return texto;
-  }
-
-  const horas = Number(partes[0]);
-
-  if (!Number.isFinite(horas)) {
-    return texto;
-  }
-
-  return [
-    horas.toLocaleString("pt-BR", {
-      maximumFractionDigits: 0,
-    }),
-
-    ...partes.slice(1),
-  ].join(":");
-};
-
-/* =========================================================
-   TÍTULO AUTOMÁTICO
-========================================================= */
-
-const criarTituloAutomatico = (chave) =>
-  String(chave || "")
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letra) => letra.toUpperCase());
-
-/* =========================================================
-   VALOR DA CÉLULA
-========================================================= */
-
-const obterValorVisualizacao = (item, chave) => {
-  switch (chave) {
-    /* =================================================
-         DATAS
-      ================================================= */
-
-    case "data":
-      return formatarDataVisualizacao(item.inicio_dia || item.inicio || item.data);
-
-    case "data_pedido":
-      return formatarDataVisualizacao(item.data_pedido);
-
-    case "previsao":
-      return formatarDataVisualizacao(item.previsao);
-
-    /* =================================================
-         PRODUÇÃO
-      ================================================= */
-
-    case "injetora":
-      return item.injetora || "-";
-
-    case "produto":
-      return item.cod_prod || item.produto || "-";
-
-    case "descricao_produto":
-      return item.descricao_produto || "-";
-
-    case "mp":
-      return item.mp || item.materia_prima || "-";
-
-    case "tipo":
-      return item.tipo || "-";
-
-    case "conforme":
-    case "danificada":
-    case "total_produzido":
-      return converterNumeroVisualizacao(item[chave]).toLocaleString("pt-BR", {
-        maximumFractionDigits: 2,
-      });
-
-    case "duracao":
-      return formatarTempoComMilhar(item.duracao || item.tempo);
-
-    case "produtividade_hora":
-      return Math.round(converterNumeroVisualizacao(item.produtividade_hora)).toLocaleString(
-        "pt-BR",
-      );
-
-    case "qualidade":
-      return `${converterNumeroVisualizacao(item.qualidade).toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-
-        maximumFractionDigits: 2,
-      })}%`;
-
-    /* =================================================
-         PARADAS
-      ================================================= */
-
-    case "motivo":
-      return item.motivo || item.descricao || "-";
-
-    case "justificativa":
-      return item.justificativa || "-";
-
-    case "ocorrencias":
-      return converterNumeroVisualizacao(item.ocorrencias).toLocaleString("pt-BR", {
-        maximumFractionDigits: 0,
-      });
-
-    case "tempo_total":
-    case "tempo_medio":
-      return formatarTempoComMilhar(item[chave]);
-
-    case "percentual_impacto":
-      return `${converterNumeroVisualizacao(item.percentual_impacto).toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-
-        maximumFractionDigits: 2,
-      })}%`;
-
-    case "op":
-      return item.op || "-";
-
-    case "descricao":
-      return item.descricao || item.justificativa || item.natureza || item.motivo || "-";
-
-    /* =================================================
-         MATÉRIA-PRIMA
-      ================================================= */
-
-    case "quantidade_mp":
-      return converterNumeroVisualizacao(item.quantidade_mp).toLocaleString("pt-BR", {
-        maximumFractionDigits: 2,
-      });
-
-    case "peso_unitario":
-      return converterNumeroVisualizacao(item.peso_unitario).toLocaleString("pt-BR", {
-        minimumFractionDigits: 4,
-
-        maximumFractionDigits: 4,
-      });
-
-    case "consumo_total":
-      return converterNumeroVisualizacao(item.consumo_total).toLocaleString("pt-BR", {
-        minimumFractionDigits: 4,
-
-        maximumFractionDigits: 4,
-      });
-
-    case "gasto_unidade":
-      return converterNumeroVisualizacao(item.gasto_unidade).toLocaleString("pt-BR", {
-        minimumFractionDigits: 4,
-
-        maximumFractionDigits: 6,
-      });
-
-    /* =================================================
-         PEDIDOS
-      ================================================= */
-
-    case "pedido":
-      return item.pedido || "-";
-
-    case "cliente":
-      return item.cliente || "-";
-
-    case "dias_atraso":
-      return converterNumeroVisualizacao(item.dias_atraso).toLocaleString("pt-BR", {
-        maximumFractionDigits: 0,
-      });
-
-    case "codigo_produto":
-      return item.codigo_produto || item.codigoProduto || "-";
-
-    case "produto_pedido":
-      return item.produto_pedido || item.produto || "-";
-
-    case "quantidade":
-      return converterNumeroVisualizacao(item.quantidade).toLocaleString("pt-BR", {
-        maximumFractionDigits: 3,
-      });
-
-    case "pedidos":
-      return converterNumeroVisualizacao(item.pedidos).toLocaleString("pt-BR", {
-        maximumFractionDigits: 0,
-      });
-
-    case "unidade":
-      return item.unidade || "-";
-
-    case "vendedor":
-      return item.vendedor || "-";
-
-    case "status":
-      return item.status || "-";
-
-    default: {
-      const valor = item?.[chave];
-
-      if (valor === null || valor === undefined || valor === "") {
-        return "-";
-      }
-
-      return String(valor);
-    }
-  }
-};
 
 /* =========================================================
    COMPONENTE PRINCIPAL
@@ -477,57 +116,19 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   /* =====================================================
      PEDIDOS
 
-     NÃO CONSULTA O OMIE DIRETAMENTE.
-
-     buscarPedidosOmie lê os dados sincronizados
-     existentes no Supabase.
+     A consulta é compartilhada com a tela de Pedidos por
+     meio da mesma chave do React Query. Isso evita uma nova
+     leitura desnecessária ao navegar entre as telas.
   ===================================================== */
 
   const {
-    data: respostaPedidos,
-
+    pedidos: pedidosBrutos,
     error: erroPedidos,
-
     isLoading: carregandoPedidos,
-  } = useQuery({
-    queryKey: ["pedidos-supabase-relatorios"],
-
+  } = usePedidosSupabase({
     enabled: fonteEhPedidos,
-
-    queryFn: async () => {
-      const {
-        data: sessaoData,
-
-        error: sessaoErro,
-      } = await supabase.auth.getSession();
-
-      if (sessaoErro) {
-        throw new Error("Não foi possível validar sua sessão.");
-      }
-
-      const accessToken = sessaoData?.session?.access_token;
-
-      if (!accessToken) {
-        throw new Error("Sua sessão expirou. Entre novamente no sistema.");
-      }
-
-      return await buscarPedidosOmie({
-        data: {
-          accessToken,
-        },
-      });
-    },
-
     staleTime: 30 * 1000,
-
-    refetchOnMount: true,
-
-    refetchOnWindowFocus: true,
-
-    retry: 1,
   });
-
-  const pedidosBrutos = Array.isArray(respostaPedidos?.pedidos) ? respostaPedidos.pedidos : [];
 
   /* =====================================================
      FONTE ATUAL
@@ -557,7 +158,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      CATEGORIAS
   ===================================================== */
 
-  const categorias = useMemo(() => [...new Set(RELATORIOS.map((item) => item.categoria))], []);
+  const categorias = CATEGORIAS_RELATORIOS;
 
   /* =====================================================
      COLUNAS
@@ -606,7 +207,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       );
     }
 
-    return [...new Set(lista.map((item) => item.cod_prod || item.produto))].filter(Boolean);
+    return valoresUnicos(
+      lista.map((item) => item.cod_prod || item.produto),
+    );
   }, [dadosBrutos, filtros.injetora, fonteEhPedidos]);
 
   /* =====================================================
@@ -618,7 +221,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    return [...new Set(dadosBrutos.map((item) => item.mp || item.materia_prima))].filter(Boolean);
+    return valoresUnicos(
+      dadosBrutos.map((item) => item.mp || item.materia_prima),
+    );
   }, [dadosBrutos, fonteEhPedidos]);
 
   /* =====================================================
@@ -949,7 +554,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      PDF
   ===================================================== */
 
-  const handleGerarPDF = () => {
+  const handleGerarPDF = async () => {
+    const { gerarPdfRelatorio } = await import(
+      "./exportacao/GerarPDF"
+    );
+
     gerarPdfRelatorio({
       relatorio: relatorioSelecionado,
 
@@ -964,6 +573,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const handleGerarExcel = async () => {
+    const { gerarExcelRelatorio } = await import(
+      "./exportacao/GerarExcel"
+    );
+
     await gerarExcelRelatorio({
       relatorio: relatorioSelecionado,
 
@@ -1033,7 +646,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       {!relatorioSelecionado && (
         <div className="relatorios-lista">
           {categorias.map((categoria) => {
-            const relatoriosCategoria = RELATORIOS.filter((item) => item.categoria === categoria);
+            const relatoriosCategoria =
+              RELATORIOS_POR_CATEGORIA.get(categoria) || [];
 
             return (
               <section key={categoria} className="relatorios-categoria">

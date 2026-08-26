@@ -1,106 +1,7 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-import {
-  obterColunasRelatorio,
-} from "../config/Colunas.config";
-
-
-/* =====================================================
-   COLUNAS PARA EXPORTAÇÃO
-
-   Produção por Produto recebe apenas uma coluna extra:
-
-   Produto
-   Descrição do Produto
-   Injetora
-   ...
-===================================================== */
-
-function obterColunasExcel(
-  relatorio,
-) {
-  const colunas = [
-    ...obterColunasRelatorio(
-      relatorio,
-    ),
-  ];
-
-  if (
-    relatorio?.id !==
-    "producao-produto"
-  ) {
-    return colunas;
-  }
-
-  /*
-   * Evita duplicação caso futuramente
-   * a coluna seja adicionada no config.
-   */
-  const jaExiste =
-    colunas.some(
-      (
-        coluna,
-      ) =>
-        coluna.chave ===
-        "descricao_produto",
-    );
-
-  if (jaExiste) {
-    return colunas;
-  }
-
-  const indiceProduto =
-    colunas.findIndex(
-      (
-        coluna,
-      ) =>
-        coluna.chave ===
-        "produto",
-    );
-
-  const colunaDescricao = {
-    chave:
-      "descricao_produto",
-
-    titulo:
-      "Descrição do Produto",
-
-    larguraExcel:
-      38,
-
-    valor:
-      (
-        item,
-      ) =>
-        item.descricao_produto ||
-        "-",
-
-    valorExcel:
-      (
-        item,
-      ) =>
-        item.descricao_produto ||
-        "-",
-  };
-
-  if (
-    indiceProduto !==
-    -1
-  ) {
-    colunas.splice(
-      indiceProduto + 1,
-      0,
-      colunaDescricao,
-    );
-  } else {
-    colunas.unshift(
-      colunaDescricao,
-    );
-  }
-
-  return colunas;
-}
+import { obterColunasExportacao } from "./ColunasExportacao";
 
 
 /* =====================================================
@@ -128,8 +29,9 @@ export async function gerarExcelRelatorio({
 
   try {
     const colunas =
-      obterColunasExcel(
+      obterColunasExportacao(
         relatorio,
+        "excel",
       );
 
     if (

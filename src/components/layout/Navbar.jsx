@@ -1,179 +1,87 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import {
-  Boxes,
   ChevronDown,
   Factory,
+  FileText,
   Gauge,
   Home,
   LogIn,
   LogOut,
+  ShoppingCart,
   Upload,
   Users,
-  FileText,
-  ShoppingCart,
 } from "lucide-react";
 
 import { useNavigate } from "@/lib/navegacao";
-
 import { supabase } from "@/lib/supabaseClient";
 
 import "./Navbar.css";
 
-/* =====================================================
-   NORMALIZA CAMINHO
-===================================================== */
+const NAVIGATION_ITEMS = Object.freeze([
+  { label: "Início", shortLabel: "Início", path: "/", icon: Home },
+  { label: "Produção", shortLabel: "Produção", path: "/dashboard", icon: Factory },
+  {
+    label: "Produtividade",
+    shortLabel: "Eficiência",
+    path: "/dashboard-produtividade",
+    icon: Gauge,
+  },
+  { label: "Pedidos", shortLabel: "Pedidos", path: "/pedidos", icon: ShoppingCart },
+  { label: "Relatórios", shortLabel: "Relatórios", path: "/relatorios", icon: FileText },
+]);
 
 function normalizarCaminho(path) {
   const caminho = String(path || "/").trim();
-
-  if (caminho === "/") {
-    return "/";
-  }
-
-  return caminho.replace(/\/+$/, "");
+  return caminho === "/" ? "/" : caminho.replace(/\/+$/, "");
 }
 
-/* =====================================================
-   NAVBAR
-===================================================== */
+function obterNomeUsuario(email) {
+  if (!email) {
+    return "";
+  }
+
+  return email
+    .split("@")[0]
+    .replace(/[._-]+/g, " ")
+    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+}
+
+function obterIniciais(nome) {
+  if (!nome) {
+    return "US";
+  }
+
+  const palavras = nome.trim().split(/\s+/).filter(Boolean);
+  if (palavras.length === 1) {
+    return palavras[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
+}
 
 function Navbar({ user, isAdmin }) {
   const navigate = useNavigate();
-
   const menuRef = useRef(null);
-
-  /* =====================================================
-     ROTA ATUAL
-  ===================================================== */
-
-  const [currentPath, setCurrentPath] = useState("/");
-
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  /* =====================================================
-     ITENS DA NAVEGAÇÃO
-  ===================================================== */
+  // Usa o estado oficial do TanStack Router. Evita interceptar history.pushState
+  // globalmente e mantém a aba ativa sincronizada com qualquer navegação do app.
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const currentPath = useMemo(() => normalizarCaminho(pathname), [pathname]);
 
-  const navigationItems = useMemo(
-    () => [
-      {
-        label: "Início",
-
-        shortLabel: "Início",
-
-        path: "/",
-
-        icon: Home,
-      },
-
-      {
-        label: "Produção",
-
-        shortLabel: "Produção",
-
-        path: "/dashboard",
-
-        icon: Factory,
-      },
-
-      /*{
-        label: "Matéria-prima",
-
-        shortLabel: "Matéria",
-
-        path: "/dashboard-materia-prima",
-
-        icon: Boxes,
-      },*/
-
-      {
-        label: "Produtividade",
-
-        shortLabel: "Eficiência",
-
-        path: "/dashboard-produtividade",
-
-        icon: Gauge,
-      },
-
-       {
-        label: "Pedidos",
-
-        shortLabel: "Pedidos",
-
-        path: "/pedidos",
-
-        icon: ShoppingCart,
-      },
-
-      {
-        label: "Relatórios",
-
-        shortLabel: "Relatórios",
-
-        path: "/relatorios",
-
-        icon: FileText,
-      },
-
-     
-    ],
-    [],
-  );
-
-  /* =====================================================
-     NOME DO USUÁRIO
-  ===================================================== */
-
-  const userName = useMemo(() => {
-    if (!user?.email) {
-      return "";
-    }
-
-    const emailName = user.email.split("@")[0];
-
-    return emailName.replace(/[._-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-  }, [user]);
-
-  /* =====================================================
-     INICIAIS
-  ===================================================== */
-
-  const userInitials = useMemo(() => {
-    if (!userName) {
-      return "US";
-    }
-
-    const words = userName.trim().split(/\s+/).filter(Boolean);
-
-    if (words.length === 1) {
-      return words[0].slice(0, 2).toUpperCase();
-    }
-
-    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-  }, [userName]);
-
-  /* =====================================================
-     NAVEGAÇÃO INTERNA DA NAVBAR
-  ===================================================== */
+  const userName = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
+  const userInitials = useMemo(() => obterIniciais(userName), [userName]);
 
   const goTo = useCallback(
     (path) => {
-      const caminho = normalizarCaminho(path);
-
-      setCurrentPath(caminho);
-
       setUserMenuOpen(false);
-
-      navigate(caminho);
+      navigate(normalizarCaminho(path));
     },
     [navigate],
   );
-
-  /* =====================================================
-     LOGOUT
-  ===================================================== */
 
   const handleLogout = useCallback(async () => {
     setUserMenuOpen(false);
@@ -184,146 +92,50 @@ function Navbar({ user, isAdmin }) {
 
     try {
       const { error } = await supabase.auth.signOut();
-
       if (error) {
         console.error("Erro ao encerrar a sessão:", error);
       }
     } catch (error) {
       console.error("Erro inesperado ao encerrar a sessão:", error);
     } finally {
-      setCurrentPath("/");
-
       navigate("/");
     }
   }, [navigate]);
 
-  /* =====================================================
-     MENU DO USUÁRIO
-  ===================================================== */
-
   const toggleUserMenu = useCallback(() => {
-    setUserMenuOpen((currentValue) => !currentValue);
+    setUserMenuOpen((aberto) => !aberto);
   }, []);
 
-  /* =====================================================
-     SINCRONIZAÇÃO GLOBAL DA ROTA
-  ===================================================== */
-
+  // Os listeners existem somente enquanto o menu está aberto.
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (!userMenuOpen || typeof document === "undefined") {
       return undefined;
     }
 
-    const syncCurrentPath = () => {
-      const caminho = normalizarCaminho(window.location.pathname || "/");
-
-      setCurrentPath(caminho);
-
-      setUserMenuOpen(false);
-    };
-
-    const originalPushState = window.history.pushState;
-
-    const originalReplaceState = window.history.replaceState;
-
-    const dispararEventoNavegacao = () => {
-      window.dispatchEvent(new Event("app:navigation"));
-    };
-
-    const pushStateComEvento = function (...args) {
-      const resultado = originalPushState.apply(this, args);
-
-      dispararEventoNavegacao();
-
-      return resultado;
-    };
-
-    const replaceStateComEvento = function (...args) {
-      const resultado = originalReplaceState.apply(this, args);
-
-      dispararEventoNavegacao();
-
-      return resultado;
-    };
-
-    window.history.pushState = pushStateComEvento;
-
-    window.history.replaceState = replaceStateComEvento;
-
-    syncCurrentPath();
-
-    window.addEventListener("popstate", syncCurrentPath);
-
-    window.addEventListener("app:navigation", syncCurrentPath);
-
-    return () => {
-      window.removeEventListener("popstate", syncCurrentPath);
-
-      window.removeEventListener("app:navigation", syncCurrentPath);
-
-      if (window.history.pushState === pushStateComEvento) {
-        window.history.pushState = originalPushState;
-      }
-
-      if (window.history.replaceState === replaceStateComEvento) {
-        window.history.replaceState = originalReplaceState;
-      }
-    };
-  }, []);
-
-  /* =====================================================
-     FECHA MENU AO CLICAR FORA
-  ===================================================== */
-
-  useEffect(() => {
-    if (typeof document === "undefined") {
-      return undefined;
-    }
-
-    const closeMenuOutside = (event) => {
+    const fecharAoClicarFora = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setUserMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", closeMenuOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", closeMenuOutside);
-    };
-  }, []);
-
-  /* =====================================================
-     FECHA MENU COM ESC
-  ===================================================== */
-
-  useEffect(() => {
-    if (typeof document === "undefined") {
-      return undefined;
-    }
-
-    const closeMenuWithEscape = (event) => {
+    const fecharComEscape = (event) => {
       if (event.key === "Escape") {
         setUserMenuOpen(false);
       }
     };
 
-    document.addEventListener("keydown", closeMenuWithEscape);
+    document.addEventListener("mousedown", fecharAoClicarFora);
+    document.addEventListener("keydown", fecharComEscape);
 
     return () => {
-      document.removeEventListener("keydown", closeMenuWithEscape);
+      document.removeEventListener("mousedown", fecharAoClicarFora);
+      document.removeEventListener("keydown", fecharComEscape);
     };
-  }, []);
-
-  /* =====================================================
-     RENDER
-  ===================================================== */
+  }, [userMenuOpen]);
 
   return (
     <header className="main-navbar">
       <div className="navbar-container">
-        {/* LOGO */}
-
         <button
           type="button"
           className="navbar-brand"
@@ -333,11 +145,9 @@ function Navbar({ user, isAdmin }) {
           <img src="/Logo_Pedrasplast.png" alt="Pedrasplast" className="brand-logo-img" />
         </button>
 
-        {/* NAVEGAÇÃO */}
-
         {user && (
           <nav className="navbar-navigation" aria-label="Navegação principal">
-            {navigationItems.map(({ label, shortLabel, path, icon: Icon }) => {
+            {NAVIGATION_ITEMS.map(({ label, shortLabel, path, icon: Icon }) => {
               const active = currentPath === normalizarCaminho(path);
 
               return (
@@ -349,17 +159,13 @@ function Navbar({ user, isAdmin }) {
                   aria-current={active ? "page" : undefined}
                 >
                   <Icon size={18} strokeWidth={2} aria-hidden="true" />
-
                   <span className="navbar-label-desktop">{label}</span>
-
                   <span className="navbar-label-mobile">{shortLabel}</span>
                 </button>
               );
             })}
           </nav>
         )}
-
-        {/* USUÁRIO */}
 
         <div className="navbar-auth-section">
           {user ? (
@@ -377,7 +183,6 @@ function Navbar({ user, isAdmin }) {
 
                   <span className="user-information">
                     <strong className="user-name">{userName}</strong>
-
                     <span className="user-role">{isAdmin ? "Administrador" : "Operador"}</span>
                   </span>
 
@@ -389,16 +194,12 @@ function Navbar({ user, isAdmin }) {
                   />
                 </button>
 
-                {/* MENU DO USUÁRIO */}
-
                 {userMenuOpen && (
                   <div className="navbar-user-menu" role="menu">
                     <div className="user-menu-header">
                       <span className="user-menu-avatar">{userInitials}</span>
-
                       <div>
                         <strong>{userName}</strong>
-
                         <span>{user.email}</span>
                       </div>
                     </div>
@@ -442,8 +243,6 @@ function Navbar({ user, isAdmin }) {
                 )}
               </div>
 
-              {/* LOGOUT */}
-
               <button
                 type="button"
                 className="navbar-logout-button"
@@ -451,7 +250,6 @@ function Navbar({ user, isAdmin }) {
                 aria-label="Sair da conta"
               >
                 <LogOut size={17} strokeWidth={2} aria-hidden="true" />
-
                 <span>Sair</span>
               </button>
             </div>
@@ -467,4 +265,4 @@ function Navbar({ user, isAdmin }) {
   );
 }
 
-export default Navbar;
+export default memo(Navbar);

@@ -1,3 +1,8 @@
+import {
+  obterDataRegistroOee as obterDataRegistro,
+  registroEhParadaOee as registroEhParada,
+} from "./oee.utils.js";
+
 /* =====================================================
    OEE - CARGA MAQUINA
 
@@ -76,10 +81,10 @@ const SEGUNDOS_PROGRAMADOS_DIA_UTIL =
  * enquanto não forem adicionados aqui.
  */
 
-const FINAIS_DE_SEMANA_PROGRAMADOS = [
+const FINAIS_DE_SEMANA_PROGRAMADOS = new Set([
   // "2026-08-08",
   // "2026-08-15",
-];
+]);
 
 
 /* =====================================================
@@ -288,42 +293,6 @@ export function formatarSegundos(
 
 
 /* =====================================================
-   DATA DO REGISTRO
-===================================================== */
-
-function obterDataRegistro(item) {
-  const valor =
-    item?.lista_de_data ||
-    item?.inicio ||
-    item?.inicio_dia ||
-    item?.data ||
-    null;
-
-  if (!valor) {
-    return "";
-  }
-
-  const texto =
-    String(valor).trim();
-
-  const correspondencia =
-    texto.match(
-      /^(\d{4})-(\d{2})-(\d{2})/,
-    );
-
-  if (!correspondencia) {
-    return "";
-  }
-
-  return [
-    correspondencia[1],
-    correspondencia[2],
-    correspondencia[3],
-  ].join("-");
-}
-
-
-/* =====================================================
    DATA ISO PARA DATE
 ===================================================== */
 
@@ -452,7 +421,7 @@ function diaEhProgramado(data) {
     );
 
   return (
-    FINAIS_DE_SEMANA_PROGRAMADOS.includes(
+    FINAIS_DE_SEMANA_PROGRAMADOS.has(
       dataISO,
     )
   );
@@ -584,61 +553,41 @@ function calcularTempoProgramado(
 ===================================================== */
 
 function obterPeriodoDosDados(dados) {
-  if (
-    !Array.isArray(dados) ||
-    dados.length === 0
-  ) {
+  if (!Array.isArray(dados) || dados.length === 0) {
     return {
       dataInicio: "",
       dataFim: "",
     };
   }
 
-  const datas =
-    dados
-      .map(
-        obterDataRegistro,
-      )
-      .filter(Boolean)
-      .sort();
+  let dataInicio = "";
+  let dataFim = "";
 
-  if (
-    datas.length === 0
-  ) {
-    return {
-      dataInicio: "",
-      dataFim: "",
-    };
+  /*
+   * A versão anterior criava uma lista com todas as datas
+   * e fazia sort(). Como YYYY-MM-DD ordena lexicalmente,
+   * basta descobrir mínimo e máximo em uma única passagem.
+   */
+  for (const item of dados) {
+    const data = obterDataRegistro(item);
+
+    if (!data) {
+      continue;
+    }
+
+    if (!dataInicio || data < dataInicio) {
+      dataInicio = data;
+    }
+
+    if (!dataFim || data > dataFim) {
+      dataFim = data;
+    }
   }
 
   return {
-    dataInicio:
-      datas[0],
-
-    dataFim:
-      datas[
-        datas.length - 1
-      ],
+    dataInicio,
+    dataFim,
   };
-}
-
-
-/* =====================================================
-   IDENTIFICA PARADA
-===================================================== */
-
-function registroEhParada(item) {
-  const tipo =
-    String(
-      item?.tipo ??
-        "",
-    ).trim();
-
-  return (
-    tipo === "1" ||
-    tipo === "2" ||
-    tipo === "3"
-  );
 }
 
 

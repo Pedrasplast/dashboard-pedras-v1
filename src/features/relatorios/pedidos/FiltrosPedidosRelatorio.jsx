@@ -1,579 +1,198 @@
-import {
-  useMemo,
-} from "react";
+import { memo, useMemo } from "react";
+import { FiFilter, FiX } from "react-icons/fi";
 
-import {
-  FiFilter,
-  FiX,
-} from "react-icons/fi";
+import CampoFiltro from "@/components/filtros/CampoFiltro";
+import Filtros from "@/components/filtros/Filtros";
+import { compararPtBR, valoresUnicosOrdenados } from "@/lib/colecoes";
 
 import "./FiltrosPedidosRelatorio.css";
 
+const VALORES_PADRAO_FILTROS_PEDIDOS = Object.freeze({
+  dataInicio: "",
+  dataFim: "",
+  injetora: "Todos",
+  cod_prod: "Todos",
+  mp: "Todos",
+  tipo: [],
+  status: "Pedido",
+  cliente: "todos",
+  vendedor: "todos",
+});
 
-/* =========================================================
-   FILTROS LIMPOS
-========================================================= */
-
-function obterFiltrosLimpos(relatorio) {
-  return {
-    dataInicio: "",
-    dataFim: "",
-
-    injetora: "Todos",
-
-    cod_prod: "Todos",
-
-    mp: "Todos",
-
-    tipo: [],
-
-    status:
-      relatorio?.filtros?.status
-        ? "Pedido"
-        : "todos",
-
-    cliente: "todos",
-
-    vendedor: "todos",
-  };
+function obterCodigoProduto(item) {
+  return String(
+    item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "",
+  ).trim();
 }
 
+function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio }) {
+  const clientes = useMemo(
+    () =>
+      valoresUnicosOrdenados(pedidos.map((item) => item?.cliente), {
+        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+      }),
+    [pedidos],
+  );
 
-/* =========================================================
-   COMPONENTE
-========================================================= */
+  const vendedores = useMemo(
+    () =>
+      valoresUnicosOrdenados(pedidos.map((item) => item?.vendedor), {
+        filtrar: (valor) => Boolean(valor && valor !== "-"),
+        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+      }),
+    [pedidos],
+  );
 
-export default function FiltrosPedidosRelatorio({
-  filtros,
-  setFiltros,
-  pedidos = [],
-  relatorio,
-}) {
+  const produtos = useMemo(() => {
+    const mapa = new Map();
 
+    for (const item of pedidos) {
+      const codigo = obterCodigoProduto(item);
+      if (!codigo || mapa.has(codigo)) {
+        continue;
+      }
 
-  /* =====================================================
-     CLIENTES
-  ===================================================== */
+      mapa.set(codigo, {
+        codigo,
+        descricao: item?.produto ?? item?.descricao_produto ?? "",
+      });
+    }
 
-  const clientes =
-    useMemo(
-      () => [
-        ...new Set(
-          pedidos
-            .map(
-              (item) =>
-                item?.cliente,
-            )
-            .filter(Boolean),
-        ),
-      ].sort(
-        (a, b) =>
-          String(a).localeCompare(
-            String(b),
-            "pt-BR",
-          ),
-      ),
-      [pedidos],
+    return [...mapa.values()].sort((a, b) =>
+      compararPtBR(a.codigo, b.codigo, { numeric: true }),
     );
+  }, [pedidos]);
 
-
-  /* =====================================================
-     VENDEDORES
-  ===================================================== */
-
-  const vendedores =
-    useMemo(
-      () => [
-        ...new Set(
-          pedidos
-            .map(
-              (item) =>
-                item?.vendedor,
-            )
-            .filter(
-              (valor) =>
-                valor &&
-                valor !== "-",
-            ),
-        ),
-      ].sort(
-        (a, b) =>
-          String(a).localeCompare(
-            String(b),
-            "pt-BR",
-          ),
-      ),
-      [pedidos],
-    );
-
-
-  /* =====================================================
-     PRODUTOS
-  ===================================================== */
-
-  const produtos =
-    useMemo(
-      () => {
-
-        const mapa =
-          new Map();
-
-
-        for (
-          const item of pedidos
-        ) {
-
-          const codigo =
-            String(
-              item?.codigoProduto ??
-                item?.codigo_produto ??
-                item?.codigo ??
-                "",
-            ).trim();
-
-
-          if (!codigo) {
-            continue;
-          }
-
-
-          if (
-            !mapa.has(codigo)
-          ) {
-
-            mapa.set(
-              codigo,
-              {
-                codigo,
-
-                descricao:
-                  item?.produto ??
-                  item?.descricao_produto ??
-                  "",
-              },
-            );
-          }
-        }
-
-
-        return [
-          ...mapa.values(),
-        ].sort(
-          (a, b) =>
-            String(
-              a.codigo,
-            ).localeCompare(
-              String(
-                b.codigo,
-              ),
-              "pt-BR",
-              {
-                numeric: true,
-              },
-            ),
-        );
-      },
-      [pedidos],
-    );
-
-
-  /* =====================================================
-     STATUS
-  ===================================================== */
-
-  const statusDisponiveis =
-    useMemo(
-      () => [
-        ...new Set(
-          pedidos
-            .map(
-              (item) =>
-                item?.status,
-            )
-            .filter(Boolean),
-        ),
-      ].sort(
-        (a, b) =>
-          String(a).localeCompare(
-            String(b),
-            "pt-BR",
-          ),
-      ),
-      [pedidos],
-    );
-
-
-  /* =====================================================
-     ALTERAR FILTRO
-  ===================================================== */
-
-  const alterar =
-    (
-      campo,
-      valor,
-    ) => {
-
-      setFiltros(
-        (anteriores) => ({
-          ...anteriores,
-
-          [campo]:
-            valor,
-        }),
-      );
-    };
-
-
-  /* =====================================================
-     VERIFICAR FILTROS ATIVOS
-  ===================================================== */
-
-  const possuiFiltro =
-    Boolean(
-      filtros?.dataInicio,
-    ) ||
-    Boolean(
-      filtros?.dataFim,
-    ) ||
-    (
-      filtros?.cliente &&
-      filtros.cliente !== "todos"
-    ) ||
-    (
-      filtros?.vendedor &&
-      filtros.vendedor !== "todos"
-    ) ||
-    (
-      filtros?.cod_prod &&
-      filtros.cod_prod !== "Todos"
-    ) ||
-    (
-      relatorio?.filtros?.status &&
-      filtros?.status &&
-      filtros.status !== "Pedido"
-    );
-
+  const statusDisponiveis = useMemo(
+    () =>
+      valoresUnicosOrdenados(pedidos.map((item) => item?.status), {
+        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+      }),
+    [pedidos],
+  );
 
   return (
-    <div className="rel-pedidos-filtros">
-
-
-      <div className="rel-pedidos-filtros-titulo">
-
-        <FiFilter />
-
-        <span>
-          Filtros dos pedidos
-        </span>
-
-      </div>
-
-
-      <div className="rel-pedidos-filtros-grid">
-
-
-        {/* =================================================
-            PERÍODO
-        ================================================= */}
-
-        {relatorio?.filtros?.periodo && (
-          <>
-
-            <label className="rel-pedidos-campo">
-
-              <span>
-                Previsão de faturamento — de
-              </span>
-
-              <input
-                type="date"
-                value={
-                  filtros?.dataInicio ||
-                  ""
-                }
-                onChange={
-                  (evento) =>
-                    alterar(
-                      "dataInicio",
-                      evento.target.value,
-                    )
-                }
-              />
-
-            </label>
-
-
-            <label className="rel-pedidos-campo">
-
-              <span>
-                Previsão de faturamento — até
-              </span>
-
-              <input
-                type="date"
-                value={
-                  filtros?.dataFim ||
-                  ""
-                }
-                onChange={
-                  (evento) =>
-                    alterar(
-                      "dataFim",
-                      evento.target.value,
-                    )
-                }
-              />
-
-            </label>
-
-          </>
-        )}
-
-
-        {/* =================================================
-            CLIENTE
-        ================================================= */}
-
-        {relatorio?.filtros?.cliente && (
-
-          <label className="rel-pedidos-campo">
-
-            <span>
-              Cliente
-            </span>
-
-            <select
-              value={
-                filtros?.cliente ||
-                "todos"
-              }
-              onChange={
-                (evento) =>
-                  alterar(
-                    "cliente",
-                    evento.target.value,
-                  )
-              }
-            >
-
-              <option value="todos">
-                Todos os clientes
-              </option>
-
-              {clientes.map(
-                (cliente) => (
-
-                  <option
-                    key={cliente}
-                    value={cliente}
-                  >
-                    {cliente}
-                  </option>
-
-                ),
-              )}
-
-            </select>
-
-          </label>
-        )}
-
-
-        {/* =================================================
-            VENDEDOR
-        ================================================= */}
-
-        {relatorio?.filtros?.vendedor && (
-
-          <label className="rel-pedidos-campo">
-
-            <span>
-              Vendedor
-            </span>
-
-            <select
-              value={
-                filtros?.vendedor ||
-                "todos"
-              }
-              onChange={
-                (evento) =>
-                  alterar(
-                    "vendedor",
-                    evento.target.value,
-                  )
-              }
-            >
-
-              <option value="todos">
-                Todos os vendedores
-              </option>
-
-              {vendedores.map(
-                (vendedor) => (
-
-                  <option
-                    key={vendedor}
-                    value={vendedor}
-                  >
-                    {vendedor}
-                  </option>
-
-                ),
-              )}
-
-            </select>
-
-          </label>
-        )}
-
-
-        {/* =================================================
-            PRODUTO
-        ================================================= */}
-
-        {relatorio?.filtros?.produto && (
-
-          <label className="rel-pedidos-campo rel-pedidos-campo-produto">
-
-            <span>
-              Código do produto
-            </span>
-
-            <select
-              value={
-                filtros?.cod_prod ||
-                "Todos"
-              }
-              onChange={
-                (evento) =>
-                  alterar(
-                    "cod_prod",
-                    evento.target.value,
-                  )
-              }
-            >
-
-              <option value="Todos">
-                Todos os produtos
-              </option>
-
-              {produtos.map(
-                (produto) => (
-
-                  <option
-                    key={
-                      produto.codigo
-                    }
-                    value={
-                      produto.codigo
-                    }
-                  >
-
-                    {produto.codigo}
-
-                    {produto.descricao
-                      ? ` — ${produto.descricao}`
-                      : ""}
-
-                  </option>
-
-                ),
-              )}
-
-            </select>
-
-          </label>
-        )}
-
-
-        {/* =================================================
-            STATUS
-        ================================================= */}
-
-        {relatorio?.filtros?.status && (
-
-          <label className="rel-pedidos-campo">
-
-            <span>
-              Status
-            </span>
-
-            <select
-              value={
-                filtros?.status ||
-                "Pedido"
-              }
-              onChange={
-                (evento) =>
-                  alterar(
-                    "status",
-                    evento.target.value,
-                  )
-              }
-            >
-
-              <option value="Pedido">
-                Pedido
-              </option>
-
-              <option value="todos">
-                Todos os status
-              </option>
-
-              {statusDisponiveis
-                .filter(
-                  (status) =>
-                    status !== "Pedido",
-                )
-                .map(
-                  (status) => (
-
-                    <option
-                      key={status}
-                      value={status}
-                    >
-                      {status}
-                    </option>
-
-                  ),
-                )}
-
-            </select>
-
-          </label>
-        )}
-
-      </div>
-
-
-      {/* =================================================
-          LIMPAR FILTROS
-      ================================================= */}
-
-      {possuiFiltro && (
-
+    <Filtros
+      filtros={filtros}
+      setFiltros={setFiltros}
+      valoresPadrao={VALORES_PADRAO_FILTROS_PEDIDOS}
+      className="rel-pedidos-filtros"
+      mostrarBotaoLimpar
+      renderBotaoLimpar={({ limpar }) => (
         <button
           type="button"
           className="rel-pedidos-limpar"
-          onClick={
-            () =>
-              setFiltros(
-                obterFiltrosLimpos(
-                  relatorio,
-                ),
-              )
-          }
+          onClick={limpar}
+          title="Limpar todos os filtros"
         >
-
           <FiX />
-
           Limpar filtros
-
         </button>
-
       )}
+    >
+      {({ alterar }) => (
+        <>
+          <div className="rel-pedidos-filtros-titulo">
+            <FiFilter />
+            <span>Filtros dos pedidos</span>
+          </div>
 
-    </div>
+          <div className="rel-pedidos-filtros-grid">
+            {relatorio?.filtros?.periodo && (
+              <>
+                <CampoFiltro titulo="Previsão de faturamento — de" className="rel-pedidos-campo">
+                  <input
+                    type="date"
+                    value={filtros?.dataInicio || ""}
+                    onChange={(evento) => alterar("dataInicio", evento.target.value)}
+                  />
+                </CampoFiltro>
+
+                <CampoFiltro titulo="Previsão de faturamento — até" className="rel-pedidos-campo">
+                  <input
+                    type="date"
+                    value={filtros?.dataFim || ""}
+                    onChange={(evento) => alterar("dataFim", evento.target.value)}
+                  />
+                </CampoFiltro>
+              </>
+            )}
+
+            {relatorio?.filtros?.cliente && (
+              <CampoFiltro titulo="Cliente" className="rel-pedidos-campo">
+                <select
+                  value={filtros?.cliente || "todos"}
+                  onChange={(evento) => alterar("cliente", evento.target.value)}
+                >
+                  <option value="todos">Todos os clientes</option>
+                  {clientes.map((cliente) => (
+                    <option key={cliente} value={cliente}>
+                      {cliente}
+                    </option>
+                  ))}
+                </select>
+              </CampoFiltro>
+            )}
+
+            {relatorio?.filtros?.vendedor && (
+              <CampoFiltro titulo="Vendedor" className="rel-pedidos-campo">
+                <select
+                  value={filtros?.vendedor || "todos"}
+                  onChange={(evento) => alterar("vendedor", evento.target.value)}
+                >
+                  <option value="todos">Todos os vendedores</option>
+                  {vendedores.map((nomeVendedor) => (
+                    <option key={nomeVendedor} value={nomeVendedor}>
+                      {nomeVendedor}
+                    </option>
+                  ))}
+                </select>
+              </CampoFiltro>
+            )}
+
+            {relatorio?.filtros?.produto && (
+              <CampoFiltro
+                titulo="Código do produto"
+                className="rel-pedidos-campo rel-pedidos-campo-produto"
+              >
+                <select
+                  value={filtros?.cod_prod || "Todos"}
+                  onChange={(evento) => alterar("cod_prod", evento.target.value)}
+                >
+                  <option value="Todos">Todos os produtos</option>
+                  {produtos.map((produto) => (
+                    <option key={produto.codigo} value={produto.codigo}>
+                      {produto.codigo}
+                      {produto.descricao ? ` — ${produto.descricao}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </CampoFiltro>
+            )}
+
+            {relatorio?.filtros?.status && (
+              <CampoFiltro titulo="Status" className="rel-pedidos-campo">
+                <select
+                  value={filtros?.status || "Pedido"}
+                  onChange={(evento) => alterar("status", evento.target.value)}
+                >
+                  <option value="Pedido">Pedido</option>
+                  <option value="todos">Todos os status</option>
+                  {statusDisponiveis
+                    .filter((status) => status !== "Pedido")
+                    .map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                </select>
+              </CampoFiltro>
+            )}
+          </div>
+        </>
+      )}
+    </Filtros>
   );
 }
+
+export default memo(FiltrosPedidosRelatorio);

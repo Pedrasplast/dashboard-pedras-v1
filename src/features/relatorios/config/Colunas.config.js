@@ -1,78 +1,16 @@
+import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
+
 /* =========================================================
    CONFIGURAÇÃO CENTRAL DAS COLUNAS
 ========================================================= */
 
 
 /* =========================================================
-   NÚMERO
+   NÚMERO / FORMATAÇÃO
 ========================================================= */
 
-function converterNumero(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
-    return 0;
-  }
-
-  if (
-    typeof valor === "number"
-  ) {
-    return Number.isFinite(valor)
-      ? valor
-      : 0;
-  }
-
-  let texto =
-    String(valor)
-      .trim()
-      .replace(/\s/g, "");
-
-
-  if (
-    texto.includes(",") &&
-    texto.includes(".")
-  ) {
-    texto =
-      texto
-        .replace(/\./g, "")
-        .replace(",", ".");
-  } else {
-    texto =
-      texto.replace(",", ".");
-  }
-
-
-  const numero =
-    Number(texto);
-
-
-  return Number.isFinite(numero)
-    ? numero
-    : 0;
-}
-
-
-/* =========================================================
-   FORMATAÇÃO NUMÉRICA
-========================================================= */
-
-function formatarNumero(
-  valor,
-  casas = 2,
-) {
-  return converterNumero(
-    valor,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      maximumFractionDigits:
-        casas,
-    },
-  );
-}
-
+const converterNumero = converterNumeroFlexivel;
+const formatarNumero = formatarNumeroFlexivel;
 
 /* =========================================================
    DATA

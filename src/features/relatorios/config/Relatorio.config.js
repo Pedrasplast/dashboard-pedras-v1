@@ -6,13 +6,21 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 
-import { agruparProducaoPorInjetora } from "../producao/ProducaoPorInjetora";
+import {
+  agruparProducaoPorInjetora,
+} from "../producao/ProducaoPorInjetora";
 
-import { agruparProducaoPorProduto } from "../producao/ProducaoPorProduto";
+import {
+  agruparProducaoPorProduto,
+} from "../producao/ProducaoPorProduto";
 
-import { impactoParadasPorMotivo } from "../paradas/ImpactoPorMotivo";
+import {
+  impactoParadasPorMotivo,
+} from "../paradas/ImpactoPorMotivo";
 
-import { agruparMotivoJustificativa } from "../paradas/MotivoJustificativa";
+import {
+  agruparMotivoJustificativa,
+} from "../paradas/MotivoJustificativa";
 
 import {
   prepararPedidosDetalhados,
@@ -20,6 +28,7 @@ import {
   agruparPedidosPorCodigoProduto,
   agruparPedidosPorDataProduto,
 } from "../pedidos/PedidosRelatorios";
+
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -30,6 +39,7 @@ import {
 ========================================================= */
 
 export const RELATORIOS = [
+
   /* =====================================================
      PRODUÇÃO
   ===================================================== */
@@ -41,7 +51,8 @@ export const RELATORIOS = [
 
     titulo: "Produção por Injetora",
 
-    descricao: "Resumo consolidado da produção por injetora no período selecionado.",
+    descricao:
+      "Resumo consolidado da produção por injetora no período selecionado.",
 
     icone: FiBarChart2,
 
@@ -60,10 +71,18 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados: agruparProducaoPorInjetora,
+    transformarDados:
+      agruparProducaoPorInjetora,
 
-    colunas: ["injetora", "conforme", "danificada", "total_produzido", "qualidade"],
+    colunas: [
+      "injetora",
+      "conforme",
+      "danificada",
+      "total_produzido",
+      "qualidade",
+    ],
   },
+
 
   {
     id: "producao-produto",
@@ -72,7 +91,8 @@ export const RELATORIOS = [
 
     titulo: "Produção por Produto",
 
-    descricao: "Resumo consolidado da produção por produto e injetora no período selecionado.",
+    descricao:
+      "Resumo consolidado da produção por produto e injetora no período selecionado.",
 
     icone: FiBarChart2,
 
@@ -91,7 +111,8 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados: agruparProducaoPorProduto,
+    transformarDados:
+      agruparProducaoPorProduto,
 
     colunas: [
       "produto",
@@ -104,6 +125,7 @@ export const RELATORIOS = [
       "qualidade",
     ],
   },
+
 
   /* =====================================================
      PARADAS
@@ -136,10 +158,18 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados: impactoParadasPorMotivo,
+    transformarDados:
+      impactoParadasPorMotivo,
 
-    colunas: ["motivo", "ocorrencias", "tempo_total", "tempo_medio", "percentual_impacto"],
+    colunas: [
+      "motivo",
+      "ocorrencias",
+      "tempo_total",
+      "tempo_medio",
+      "percentual_impacto",
+    ],
   },
+
 
   {
     id: "paradas-motivo-justificativa",
@@ -168,7 +198,8 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados: agruparMotivoJustificativa,
+    transformarDados:
+      agruparMotivoJustificativa,
 
     colunas: [
       "motivo",
@@ -179,6 +210,7 @@ export const RELATORIOS = [
       "percentual_impacto",
     ],
   },
+
 
   /* =====================================================
      PEDIDOS
@@ -191,7 +223,8 @@ export const RELATORIOS = [
 
     titulo: "Pedidos em Aberto",
 
-    descricao: "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
+    descricao:
+      "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
 
     icone: FiShoppingCart,
 
@@ -211,7 +244,8 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados: prepararPedidosDetalhados,
+    transformarDados:
+      prepararPedidosDetalhados,
 
     colunas: [
       "pedido",
@@ -226,6 +260,7 @@ export const RELATORIOS = [
       "status",
     ],
   },
+
 
   {
     id: "pedidos-atrasados",
@@ -261,7 +296,8 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados: prepararPedidosAtrasados,
+    transformarDados:
+      prepararPedidosAtrasados,
 
     colunas: [
       "pedido",
@@ -276,6 +312,7 @@ export const RELATORIOS = [
     ],
   },
 
+
   {
     id: "pedidos-produto-codigo",
 
@@ -283,7 +320,8 @@ export const RELATORIOS = [
 
     titulo: "Quantidade de Produtos por Código",
 
-    descricao: "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
+    descricao:
+      "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
 
     icone: FiPackage,
 
@@ -303,17 +341,19 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados: agruparPedidosPorCodigoProduto,
+    transformarDados:
+      agruparPedidosPorCodigoProduto,
 
-    colunas: [
-      "codigo_produto",
-      "produto_pedido",
-      "unidade",
-      "quantidade",
-      "pedidos",
-      "pedidos_atendidos",
-    ],
+   colunas: [
+  "codigo_produto",
+  "produto_pedido",
+  "unidade",
+  "quantidade",
+  "pedidos",
+  "pedidos_atendidos",
+],
   },
+
 
   {
     id: "pedidos-produto-data",
@@ -343,8 +383,16 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados: agruparPedidosPorDataProduto,
+    transformarDados:
+      agruparPedidosPorDataProduto,
 
-    colunas: ["previsao", "codigo_produto", "produto_pedido", "unidade", "quantidade", "pedidos"],
+    colunas: [
+      "previsao",
+      "codigo_produto",
+      "produto_pedido",
+      "unidade",
+      "quantidade",
+      "pedidos",
+    ],
   },
 ];

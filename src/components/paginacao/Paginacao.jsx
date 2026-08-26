@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -74,7 +76,7 @@ function criarPaginas(
 }
 
 
-export default function Paginacao({
+function Paginacao({
   paginaAtual = 1,
   totalItens = 0,
   itensPorPagina = 10,
@@ -317,3 +319,5 @@ export default function Paginacao({
     </div>
   );
 }
+
+export default memo(Paginacao);
