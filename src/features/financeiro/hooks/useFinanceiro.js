@@ -3,6 +3,7 @@ import {
 } from "@tanstack/react-query";
 
 import {
+  buscarAnosFinanceiro,
   buscarDetalhesFinanceiro,
   buscarResumoFinanceiro,
   buscarStatusSincronizacaoFinanceiro,
@@ -10,7 +11,7 @@ import {
 
 
 /* =========================================================
-   CONFIGURAÇÕES DE CACHE
+   CACHE
 ========================================================= */
 
 const TRINTA_MINUTOS =
@@ -21,12 +22,17 @@ const UMA_HORA =
 
 
 /* =========================================================
-   CHAVES DO REACT QUERY
+   QUERY KEYS
 ========================================================= */
 
 export const financeiroQueryKeys = {
   todos: [
     "financeiro",
+  ],
+
+  anos: [
+    "financeiro",
+    "anos",
   ],
 
   resumo: (
@@ -76,6 +82,7 @@ function normalizarResumo(
     return [];
   }
 
+
   return registros.map(
     (registro) => ({
       ...registro,
@@ -122,6 +129,7 @@ function normalizarDetalhes(
   ) {
     return [];
   }
+
 
   return registros.map(
     (registro) => ({
@@ -190,6 +198,38 @@ function normalizarDetalhes(
 
 
 /* =========================================================
+   ANOS DISPONÍVEIS
+
+   Busca somente os anos que possuem dados no banco.
+========================================================= */
+
+export function useFinanceiroAnos() {
+  return useQuery({
+    queryKey:
+      financeiroQueryKeys.anos,
+
+    queryFn:
+      buscarAnosFinanceiro,
+
+    staleTime:
+      TRINTA_MINUTOS,
+
+    gcTime:
+      UMA_HORA,
+
+    refetchOnWindowFocus:
+      false,
+
+    refetchOnReconnect:
+      true,
+
+    retry:
+      1,
+  });
+}
+
+
+/* =========================================================
    RESUMO FINANCEIRO
 ========================================================= */
 
@@ -198,14 +238,11 @@ export function useFinanceiroResumo(
   mes,
 ) {
   const anoNumero =
-    Number(
-      ano,
-    );
+    Number(ano);
 
   const mesNumero =
-    Number(
-      mes,
-    );
+    Number(mes);
+
 
   const periodoValido =
     Number.isInteger(
@@ -218,6 +255,7 @@ export function useFinanceiroResumo(
     ) &&
     mesNumero >= 1 &&
     mesNumero <= 12;
+
 
   return useQuery({
     queryKey:
@@ -232,6 +270,7 @@ export function useFinanceiroResumo(
           anoNumero,
           mesNumero,
         );
+
 
       return normalizarResumo(
         registros,
@@ -270,20 +309,17 @@ export function useFinanceiroDetalhes({
   habilitado = true,
 }) {
   const anoNumero =
-    Number(
-      ano,
-    );
+    Number(ano);
 
   const mesNumero =
-    Number(
-      mes,
-    );
+    Number(mes);
 
   const codigo =
     String(
       codigoCategoria ??
         "",
     ).trim();
+
 
   const podeConsultar =
     habilitado &&
@@ -300,6 +336,7 @@ export function useFinanceiroDetalhes({
     Boolean(
       codigo,
     );
+
 
   return useQuery({
     queryKey:
@@ -321,6 +358,7 @@ export function useFinanceiroDetalhes({
           codigoCategoria:
             codigo,
         });
+
 
       return normalizarDetalhes(
         registros,

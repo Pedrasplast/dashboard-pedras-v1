@@ -58,7 +58,17 @@ function identificarTipo(registro) {
 
 
 /* =========================================================
-   CALCULAR VARIAÇÃO
+   VARIAÇÃO NORMAL
+
+   Usada para:
+
+   RECEITAS
+   SALDO
+
+   Quanto maior o realizado em relação ao previsto,
+   melhor.
+
+   Realizado - Previsto
 ========================================================= */
 
 export function calcularVariacao(
@@ -101,35 +111,71 @@ export function calcularVariacao(
 
 
 /* =========================================================
-   CRIAR RESUMO
+   VARIAÇÃO DE DESPESA
+
+   Para despesa a lógica é invertida.
+
+   Se gastar MAIS que o previsto:
+   resultado NEGATIVO.
+
+   Se gastar MENOS que o previsto:
+   resultado POSITIVO.
+
+   Previsto - Realizado
 ========================================================= */
 
-function criarResumo(
+export function calcularVariacaoDespesa(
   previsto,
   realizado,
 ) {
-  return calcularVariacao(
-    previsto,
-    realizado,
-  );
+  const valorPrevisto =
+    numeroSeguro(previsto);
+
+  const valorRealizado =
+    numeroSeguro(realizado);
+
+
+  const variacao =
+    valorPrevisto -
+    valorRealizado;
+
+
+  const percentual =
+    valorPrevisto !== 0
+      ? (
+          variacao /
+          Math.abs(valorPrevisto)
+        ) * 100
+      : null;
+
+
+  return {
+    previsto:
+      valorPrevisto,
+
+    realizado:
+      valorRealizado,
+
+    variacao,
+
+    percentual,
+  };
 }
 
 
 /* =========================================================
    PROCESSAR FINANCEIRO
 
-   O Omie trabalha com estrutura hierárquica:
+   Regras:
 
-   1
-   1.01
-   1.01.01
+   RECEITA
+   realizado > previsto = VERDE
 
-   Portanto:
+   DESPESA
+   realizado > previsto = VERMELHO
 
-   - não somamos níveis diferentes;
-   - Receita total vem do código 1;
-   - Despesa total vem do código 2;
-   - identificamos categorias que possuem filhos.
+   SALDO
+   realizado > previsto = VERDE
 ========================================================= */
 
 export function processarFinanceiro(
@@ -142,16 +188,21 @@ export function processarFinanceiro(
 
 
   const linhas = [];
-
   const receitas = [];
-
   const despesas = [];
-
   const outros = [];
 
 
   /* =======================================================
-     IDENTIFICAR CATEGORIAS AGRUPADORAS
+     IDENTIFICAR AGRUPADORES
+
+     Exemplos:
+
+     1
+     1.01
+     1.01.01
+
+     1 e 1.01 possuem filhos.
   ======================================================= */
 
   const codigosAgrupadores =
@@ -205,7 +256,7 @@ export function processarFinanceiro(
 
 
   /* =======================================================
-     LINHAS RAIZ
+     CATEGORIAS RAIZ
   ======================================================= */
 
   let receitaRaiz =
@@ -234,14 +285,26 @@ export function processarFinanceiro(
       ).trim();
 
 
-    const valores =
-      calcularVariacao(
-        registro
-          ?.valor_previsto,
+    /*
+     * IMPORTANTE:
+     *
+     * Receita:
+     * Realizado - Previsto
+     *
+     * Despesa:
+     * Previsto - Realizado
+     */
 
-        registro
-          ?.valor_realizado,
-      );
+    const valores =
+      tipo === "Despesa"
+        ? calcularVariacaoDespesa(
+            registro?.valor_previsto,
+            registro?.valor_realizado,
+          )
+        : calcularVariacao(
+            registro?.valor_previsto,
+            registro?.valor_realizado,
+          );
 
 
     const linha = {
@@ -274,19 +337,17 @@ export function processarFinanceiro(
 
 
     /* =====================================================
-       SEPARAÇÃO POR TIPO
+       SEPARAR POR TIPO
     ===================================================== */
 
     if (
-      tipo ===
-      "Receita"
+      tipo === "Receita"
     ) {
       receitas.push(
         linha,
       );
     } else if (
-      tipo ===
-      "Despesa"
+      tipo === "Despesa"
     ) {
       despesas.push(
         linha,
@@ -299,12 +360,11 @@ export function processarFinanceiro(
 
 
     /* =====================================================
-       TOTAL RAIZ DE RECEITAS
+       RECEITA RAIZ
     ===================================================== */
 
     if (
-      codigo ===
-      "1"
+      codigo === "1"
     ) {
       receitaRaiz =
         linha;
@@ -312,12 +372,11 @@ export function processarFinanceiro(
 
 
     /* =====================================================
-       TOTAL RAIZ DE DESPESAS
+       DESPESA RAIZ
     ===================================================== */
 
     if (
-      codigo ===
-      "2"
+      codigo === "2"
     ) {
       despesaRaiz =
         linha;
@@ -326,15 +385,13 @@ export function processarFinanceiro(
 
 
   /* =======================================================
-     RECEITAS
+     RESUMO DE RECEITAS
 
-     Usamos somente a categoria raiz:
-
-     1 = RECEITAS
+     Realizado - Previsto
   ======================================================= */
 
   const receitasResumo =
-    criarResumo(
+    calcularVariacao(
       receitaRaiz
         ?.valor_previsto ??
         0,
@@ -346,15 +403,13 @@ export function processarFinanceiro(
 
 
   /* =======================================================
-     DESPESAS
+     RESUMO DE DESPESAS
 
-     Usamos somente:
-
-     2 = DESPESAS
+     Previsto - Realizado
   ======================================================= */
 
   const despesasResumo =
-    criarResumo(
+    calcularVariacaoDespesa(
       despesaRaiz
         ?.valor_previsto ??
         0,
@@ -381,8 +436,15 @@ export function processarFinanceiro(
     despesasResumo.realizado;
 
 
+  /*
+   * Para saldo:
+   *
+   * saldo realizado maior que previsto
+   * = positivo / verde
+   */
+
   const saldoResumo =
-    criarResumo(
+    calcularVariacao(
       saldoPrevisto,
       saldoRealizado,
     );
