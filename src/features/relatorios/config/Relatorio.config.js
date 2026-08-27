@@ -349,7 +349,6 @@ export const RELATORIOS = [
   "produto_pedido",
   "unidade",
   "quantidade",
-  "pedidos",
   "pedidos_atendidos",
 ],
   },
@@ -393,6 +392,9 @@ export const RELATORIOS = [
       "unidade",
       "quantidade",
       "pedidos",
+      
+      
+      
     ],
   },
 ];

@@ -11,6 +11,7 @@ import { useRouterState } from "@tanstack/react-router";
 
 import {
   ChevronDown,
+  DollarSign,
   Factory,
   FileText,
   Gauge,
@@ -61,6 +62,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: "/pedidos",
     icon: ShoppingCart,
     permissao: "pedidos",
+  },
+  {
+    label: "Financeiro",
+    shortLabel: "Financeiro",
+    path: "/financeiro",
+    icon: DollarSign,
+    permissao: "financeiro",
   },
   {
     label: "Relatórios",

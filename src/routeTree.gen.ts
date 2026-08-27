@@ -15,6 +15,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
+import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PedidosRouteImport } from './routes/pedidos'
@@ -51,6 +52,11 @@ const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
   path: '/definir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FinanceiroRoute = FinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImportarRoute = ImportarRouteImport.update({
   id: '/importar',
   path: '/importar',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/financeiro': typeof FinanceiroRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/financeiro': typeof FinanceiroRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/financeiro': typeof FinanceiroRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/pedidos': typeof PedidosRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/financeiro'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/financeiro'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/financeiro'
     | '/importar'
     | '/login'
     | '/pedidos'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
+  FinanceiroRoute: typeof FinanceiroRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
   PedidosRoute: typeof PedidosRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/financeiro': {
+      id: '/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/importar': {
       id: '/importar'
       path: '/importar'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
+  FinanceiroRoute: FinanceiroRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
   PedidosRoute: PedidosRoute,
