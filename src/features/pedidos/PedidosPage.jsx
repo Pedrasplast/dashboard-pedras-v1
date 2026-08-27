@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   AlertTriangle,
@@ -11,46 +15,550 @@ import {
   X,
 } from "lucide-react";
 
-import Paginacao from "@/components/paginacao/Paginacao";
-import Filtros, { possuiFiltrosAtivos } from "@/components/filtros/Filtros";
-import { valoresUnicosOrdenados } from "@/lib/colecoes";
-
-import AtualizacaoAutomatica from "./components/AtualizacaoAutomatica";
 import {
-  agruparItensPorPedido,
-  calcularDiasAtraso,
-  converterData,
-  formatarData,
-  formatarNumeroPedido as formatarNumero,
-  formatarTextoAtraso,
-  obterClasseStatus,
-  obterHoje,
-  pedidoEstaAtrasado,
-} from "./pedidos.utils";
-import { usePedidosSupabase } from "./usePedidosSupabase";
+  useQuery,
+} from "@tanstack/react-query";
+
+import {
+  supabase,
+} from "@/lib/supabaseClient";
+
+import Paginacao from "@/components/paginacao/Paginacao";
+
+import {
+  buscarPedidosOmie,
+} from "./omie.functions";
 
 import "./PedidosPage.css";
 
-const INTERVALO_LEITURA_SUPABASE = 15 * 1000;
-const PEDIDOS_POR_PAGINA = 8;
-const FILTROS_INICIAIS_PEDIDOS = Object.freeze({
-  pesquisa: "",
-  vendedor: "todos",
-  status: "Pedido",
-});
 
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
+const INTERVALO_LEITURA_SUPABASE =
+  15 * 1000;
+
+const INTERVALO_RELOGIO =
+  1000;
+
+const PEDIDOS_POR_PAGINA =
+  8;
+
+
+/* =========================================================
+   TEXTO
+========================================================= */
+
+function normalizarTexto(
+  valor,
+) {
+  return String(
+    valor ?? "",
+  )
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    );
+}
+
+
+/* =========================================================
+   DATAS
+========================================================= */
+
+function converterData(
+  dataTexto,
+) {
+  if (!dataTexto) {
+    return null;
+  }
+
+  if (
+    /^\d{2}\/\d{2}\/\d{4}$/.test(
+      dataTexto,
+    )
+  ) {
+    const [
+      dia,
+      mes,
+      ano,
+    ] =
+      dataTexto
+        .split("/")
+        .map(Number);
+
+    return new Date(
+      ano,
+      mes - 1,
+      dia,
+      0,
+      0,
+      0,
+      0,
+    );
+  }
+
+  const data =
+    new Date(
+      dataTexto,
+    );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return null;
+  }
+
+  return data;
+}
+
+
+function obterHoje() {
+  const agora =
+    new Date();
+
+  return new Date(
+    agora.getFullYear(),
+    agora.getMonth(),
+    agora.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+}
+
+
+function obterProximaAtualizacao(
+  dataAtual,
+) {
+  const agora =
+    dataAtual instanceof Date
+      ? dataAtual
+      : new Date();
+
+  const proxima =
+    new Date(
+      agora,
+    );
+
+  proxima.setSeconds(
+    0,
+    0,
+  );
+
+  const minutoAtual =
+    agora.getMinutes();
+
+  const proximoMinuto =
+    (
+      Math.floor(
+        minutoAtual / 15,
+      ) + 1
+    ) * 15;
+
+  if (
+    proximoMinuto >= 60
+  ) {
+    proxima.setHours(
+      proxima.getHours() + 1,
+      0,
+      0,
+      0,
+    );
+  } else {
+    proxima.setMinutes(
+      proximoMinuto,
+      0,
+      0,
+    );
+  }
+
+  return proxima;
+}
+
+
+function formatarData(
+  dataTexto,
+) {
+  if (!dataTexto) {
+    return "-";
+  }
+
+  if (
+    /^\d{2}\/\d{2}\/\d{4}$/.test(
+      dataTexto,
+    )
+  ) {
+    return dataTexto;
+  }
+
+  const data =
+    converterData(
+      dataTexto,
+    );
+
+  if (!data) {
+    return "-";
+  }
+
+  return data.toLocaleDateString(
+    "pt-BR",
+  );
+}
+
+
+function formatarHorario(
+  dataTexto,
+) {
+  if (!dataTexto) {
+    return "-";
+  }
+
+  const data =
+    dataTexto instanceof Date
+      ? dataTexto
+      : new Date(
+          dataTexto,
+        );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleTimeString(
+    "pt-BR",
+    {
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+function formatarDataHora(
+  dataTexto,
+) {
+  if (!dataTexto) {
+    return "-";
+  }
+
+  const data =
+    dataTexto instanceof Date
+      ? dataTexto
+      : new Date(
+          dataTexto,
+        );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleString(
+    "pt-BR",
+    {
+      day:
+        "2-digit",
+
+      month:
+        "2-digit",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+/* =========================================================
+   ATRASO
+========================================================= */
+
+function calcularDiasAtraso(
+  previsao,
+) {
+  const dataPrevisao =
+    converterData(
+      previsao,
+    );
+
+  if (!dataPrevisao) {
+    return 0;
+  }
+
+  const hoje =
+    obterHoje();
+
+  dataPrevisao.setHours(
+    0,
+    0,
+    0,
+    0,
+  );
+
+  const diferencaMs =
+    hoje.getTime() -
+    dataPrevisao.getTime();
+
+  if (
+    diferencaMs <= 0
+  ) {
+    return 0;
+  }
+
+  return Math.floor(
+    diferencaMs /
+      (
+        1000 *
+        60 *
+        60 *
+        24
+      ),
+  );
+}
+
+
+function pedidoEstaAtrasado(
+  pedido,
+) {
+  /*
+   * Somente pedido operacional
+   * com status "Pedido"
+   * pode ser considerado atraso.
+   *
+   * Cancelado nunca entra.
+   */
+  return (
+    normalizarTexto(
+      pedido?.status,
+    ) === "pedido" &&
+    calcularDiasAtraso(
+      pedido?.previsao,
+    ) > 0
+  );
+}
+
+
+function formatarTextoAtraso(
+  dias,
+) {
+  if (
+    dias === 1
+  ) {
+    return "1 dia em atraso";
+  }
+
+  return `${dias} dias em atraso`;
+}
+
+
+/* =========================================================
+   NÚMEROS
+========================================================= */
+
+function formatarNumero(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0";
+  }
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      maximumFractionDigits:
+        3,
+    },
+  );
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function pedidoEhCancelado(
+  pedido,
+) {
+  return (
+    normalizarTexto(
+      pedido?.status,
+    ) ===
+    "cancelado"
+  );
+}
+
+
+function obterClasseStatus(
+  status,
+) {
+  const texto =
+    normalizarTexto(
+      status,
+    );
+
+  if (
+    texto.includes(
+      "cancel",
+    )
+  ) {
+    return "status-cancelado";
+  }
+
+  if (
+    texto.includes(
+      "separa",
+    )
+  ) {
+    return "status-separacao";
+  }
+
+  if (
+    texto.includes(
+      "liber",
+    )
+  ) {
+    return "status-liberado";
+  }
+
+  if (
+    texto === "pedido" ||
+    texto.includes(
+      "aberto",
+    )
+  ) {
+    return "status-aberto";
+  }
+
+  return "status-padrao";
+}
+
+
+/* =========================================================
+   IDENTIFICADOR ÚNICO DO PEDIDO
+========================================================= */
+
+function obterChavePedido(
+  pedido,
+) {
+  return String(
+    pedido?.codigoPedido ||
+      pedido?.codigo_pedido ||
+      pedido?.pedido ||
+      pedido?.numero_pedido ||
+      pedido?.id ||
+      "",
+  );
+}
+
+
+/* =========================================================
+   COMPONENTE
+========================================================= */
 
 export default function PedidosPage() {
+  /* =======================================================
+     RELÓGIO
+  ======================================================= */
+
+  const [
+    agora,
+    setAgora,
+  ] =
+    useState(
+      () => new Date(),
+    );
+
+
+  useEffect(
+    () => {
+      const intervalo =
+        window.setInterval(
+          () => {
+            setAgora(
+              new Date(),
+            );
+          },
+          INTERVALO_RELOGIO,
+        );
+
+      return () => {
+        window.clearInterval(
+          intervalo,
+        );
+      };
+    },
+    [],
+  );
+
+
   /* =======================================================
      FILTROS
   ======================================================= */
 
-  const [filtros, setFiltros] = useState(() => ({ ...FILTROS_INICIAIS_PEDIDOS }));
-  const { pesquisa, vendedor, status } = filtros;
+  const [
+    pesquisa,
+    setPesquisa,
+  ] =
+    useState("");
+
+
+  const [
+    vendedor,
+    setVendedor,
+  ] =
+    useState(
+      "todos",
+    );
+
+
+  /*
+   * A tela continua abrindo
+   * somente em pedidos operacionais.
+   */
+  const [
+    status,
+    setStatus,
+  ] =
+    useState(
+      "Pedido",
+    );
 
 
   /* =======================================================
-     PAGINACAO
+     PAGINAÇÃO
   ======================================================= */
 
   const [
@@ -63,86 +571,239 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     ESTADO DOS FILTROS
-  ======================================================= */
-
-  const possuiFiltro =
-    possuiFiltrosAtivos(
-      filtros,
-      FILTROS_INICIAIS_PEDIDOS,
-    );
-
-
-  function limparFiltros() {
-    setFiltros({
-      ...FILTROS_INICIAIS_PEDIDOS,
-    });
-
-    setPaginaAtual(1);
-  }
-
-
-  /* =======================================================
      CONSULTA SUPABASE
   ======================================================= */
 
   const {
-    data: respostaPedidos,
-    pedidos,
-    error: erroConsulta,
+    data:
+      respostaPedidos,
+
+    error:
+      erroConsulta,
+
     isLoading,
+
     isFetching,
-  } = usePedidosSupabase({
-    refetchInterval: INTERVALO_LEITURA_SUPABASE,
-    refetchIntervalInBackground: false,
-    staleTime: 10 * 1000,
-  });
+  } =
+    useQuery({
+      /*
+       * Mudamos o nome porque agora
+       * a consulta pode conter também
+       * pedidos cancelados.
+       */
+      queryKey: [
+        "pedidos-supabase",
+      ],
+
+      queryFn:
+        async () => {
+          const {
+            data:
+              sessaoData,
+
+            error:
+              sessaoErro,
+          } =
+            await supabase
+              .auth
+              .getSession();
+
+          if (
+            sessaoErro
+          ) {
+            throw new Error(
+              "Não foi possível validar sua sessão.",
+            );
+          }
+
+          const accessToken =
+            sessaoData
+              ?.session
+              ?.access_token;
+
+          if (
+            !accessToken
+          ) {
+            throw new Error(
+              "Sua sessão expirou. Entre novamente no sistema.",
+            );
+          }
+
+          return await buscarPedidosOmie({
+            data: {
+              accessToken,
+            },
+          });
+        },
+
+      /*
+       * A tela apenas relê
+       * o que já está no Supabase.
+       *
+       * Não consulta o Omie diretamente.
+       */
+      refetchInterval:
+        INTERVALO_LEITURA_SUPABASE,
+
+      refetchIntervalInBackground:
+        false,
+
+      refetchOnMount:
+        true,
+
+      refetchOnWindowFocus:
+        true,
+
+      staleTime:
+        10 * 1000,
+
+      retry:
+        1,
+    });
+
+
+  /* =======================================================
+     PEDIDOS
+  ======================================================= */
+
+  const pedidos =
+    Array.isArray(
+      respostaPedidos
+        ?.pedidos,
+    )
+      ? respostaPedidos.pedidos
+      : [];
+
+
+  /* =======================================================
+     PRÓXIMA ATUALIZAÇÃO
+  ======================================================= */
+
+  const proximaAtualizacao =
+    useMemo(
+      () =>
+        obterProximaAtualizacao(
+          agora,
+        ),
+      [
+        agora,
+      ],
+    );
 
 
   /* =======================================================
      VENDEDORES
   ======================================================= */
 
-  const vendedores = useMemo(
-    () =>
-      valoresUnicosOrdenados(
-        pedidos.map((pedido) => pedido.vendedor),
-        {
-          filtrar: (nome) => Boolean(nome && nome !== "-"),
-          comparar: (a, b) => String(a).localeCompare(String(b), "pt-BR"),
-        },
-      ),
-    [pedidos],
-  );
+  const vendedores =
+    useMemo(
+      () => {
+        return [
+          ...new Set(
+            pedidos
+              .map(
+                (
+                  pedido,
+                ) =>
+                  pedido.vendedor,
+              )
+              .filter(
+                (
+                  nome,
+                ) =>
+                  nome &&
+                  nome !== "-",
+              ),
+          ),
+        ].sort(
+          (
+            a,
+            b,
+          ) =>
+            a.localeCompare(
+              b,
+              "pt-BR",
+            ),
+        );
+      },
+      [
+        pedidos,
+      ],
+    );
 
 
   /* =======================================================
-     STATUS DISPONIVEIS
+     STATUS DISPONÍVEIS
   ======================================================= */
 
-  const statusDisponiveis = useMemo(
-    () =>
-      valoresUnicosOrdenados(
-        pedidos.map((pedido) => pedido.status),
-        {
-          comparar: (a, b) => String(a).localeCompare(String(b), "pt-BR"),
-        },
-      ),
-    [pedidos],
-  );
+  const statusDisponiveis =
+    useMemo(
+      () => {
+        return [
+          ...new Set(
+            pedidos
+              .map(
+                (
+                  pedido,
+                ) =>
+                  pedido.status,
+              )
+              .filter(
+                Boolean,
+              ),
+          ),
+        ].sort(
+          (
+            a,
+            b,
+          ) =>
+            String(
+              a,
+            ).localeCompare(
+              String(
+                b,
+              ),
+              "pt-BR",
+            ),
+        );
+      },
+      [
+        pedidos,
+      ],
+    );
 
 
   /* =======================================================
-     FILTRAR
+     CANCELADOS
+  ======================================================= */
+
+  const visualizandoCancelados =
+    useMemo(
+      () =>
+        normalizarTexto(
+          status,
+        ) ===
+        "cancelado",
+      [
+        status,
+      ],
+    );
+
+
+  /* =======================================================
+     FILTRAR TABELA
+
+     Aqui cancelados podem aparecer,
+     pois é a área de consulta.
   ======================================================= */
 
   const pedidosFiltrados =
     useMemo(
       () => {
         const termo =
-          pesquisa
-            .trim()
-            .toLowerCase();
+          normalizarTexto(
+            pesquisa,
+          );
 
         return pedidos.filter(
           (
@@ -150,50 +811,43 @@ export default function PedidosPage() {
           ) => {
             const correspondePesquisa =
               !termo ||
-              String(
-                pedido.pedido ??
-                  "",
-              )
-                .toLowerCase()
-                .includes(
-                  termo,
-                ) ||
-              String(
-                pedido.cliente ??
-                  "",
-              )
-                .toLowerCase()
-                .includes(
-                  termo,
-                ) ||
-              String(
-                pedido.produto ??
-                  "",
-              )
-                .toLowerCase()
-                .includes(
-                  termo,
-                ) ||
-              String(
-                pedido.codigoProduto ??
-                  "",
-              )
-                .toLowerCase()
-                .includes(
-                  termo,
-                );
+              normalizarTexto(
+                pedido?.pedido,
+              ).includes(
+                termo,
+              ) ||
+              normalizarTexto(
+                pedido?.cliente,
+              ).includes(
+                termo,
+              ) ||
+              normalizarTexto(
+                pedido?.produto,
+              ).includes(
+                termo,
+              ) ||
+              normalizarTexto(
+                pedido
+                  ?.codigoProduto,
+              ).includes(
+                termo,
+              );
 
             const correspondeVendedor =
               vendedor ===
                 "todos" ||
-              pedido.vendedor ===
+              pedido?.vendedor ===
                 vendedor;
 
             const correspondeStatus =
               status ===
                 "todos" ||
-              pedido.status ===
-                status;
+              normalizarTexto(
+                pedido?.status,
+              ) ===
+                normalizarTexto(
+                  status,
+                );
 
             return (
               correspondePesquisa &&
@@ -213,84 +867,294 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     AGRUPAMENTO DOS PEDIDOS
-
-     A base é agrupada uma única vez. Antes a tela:
-     1) descobria pedidos únicos;
-     2) criava um Set com as chaves da página;
-     3) percorria novamente todas as linhas;
-     4) agrupava novamente os itens.
-
-     O resultado visual e a ordem permanecem os mesmos,
-     mas evitamos passagens extras sobre a lista.
+     PEDIDOS ÚNICOS DA TABELA
   ======================================================= */
 
-  const todosPedidosAgrupados = useMemo(
-    () => agruparItensPorPedido(pedidosFiltrados),
-    [pedidosFiltrados],
-  );
+  const pedidosUnicos =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
 
+        for (
+          const pedido
+          of pedidosFiltrados
+        ) {
+          const chave =
+            obterChavePedido(
+              pedido,
+            );
 
-  const pedidosUnicos = useMemo(
-    () =>
-      todosPedidosAgrupados
-        .map((grupo) => grupo.itens[0])
-        .filter(Boolean),
-    [todosPedidosAgrupados],
-  );
+          if (
+            chave &&
+            !mapa.has(
+              chave,
+            )
+          ) {
+            mapa.set(
+              chave,
+              pedido,
+            );
+          }
+        }
 
-
-  /* =======================================================
-     TOTAL DE PAGINAS
-  ======================================================= */
-
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(
-      todosPedidosAgrupados.length /
-        PEDIDOS_POR_PAGINA,
-    ),
-  );
-
-
-  useEffect(() => {
-    if (paginaAtual > totalPaginas) {
-      setPaginaAtual(totalPaginas);
-    }
-  }, [paginaAtual, totalPaginas]);
-
-
-  /* =======================================================
-     GRUPOS DA PAGINA ATUAL
-  ======================================================= */
-
-  const pedidosAgrupados = useMemo(() => {
-    const inicio =
-      (paginaAtual - 1) *
-      PEDIDOS_POR_PAGINA;
-
-    return todosPedidosAgrupados.slice(
-      inicio,
-      inicio + PEDIDOS_POR_PAGINA,
+        return [
+          ...mapa.values(),
+        ];
+      },
+      [
+        pedidosFiltrados,
+      ],
     );
-  }, [todosPedidosAgrupados, paginaAtual]);
 
 
   /* =======================================================
-     QUANTIDADE TOTAL
+     DADOS OPERACIONAIS
+
+     IMPORTANTE:
+
+     Cancelados são removidos daqui.
+
+     Portanto não entram em:
+     - cards
+     - atrasados
+     - quantidade
+     - próximos 7 dias
+  ======================================================= */
+
+  const pedidosOperacionaisFiltrados =
+    useMemo(
+      () =>
+        pedidosFiltrados.filter(
+          (
+            pedido,
+          ) =>
+            !pedidoEhCancelado(
+              pedido,
+            ),
+        ),
+      [
+        pedidosFiltrados,
+      ],
+    );
+
+
+  const pedidosOperacionaisUnicos =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+        for (
+          const pedido
+          of pedidosOperacionaisFiltrados
+        ) {
+          const chave =
+            obterChavePedido(
+              pedido,
+            );
+
+          if (
+            chave &&
+            !mapa.has(
+              chave,
+            )
+          ) {
+            mapa.set(
+              chave,
+              pedido,
+            );
+          }
+        }
+
+        return [
+          ...mapa.values(),
+        ];
+      },
+      [
+        pedidosOperacionaisFiltrados,
+      ],
+    );
+
+
+  /* =======================================================
+     TOTAL DE PÁGINAS
+  ======================================================= */
+
+  const totalPaginas =
+    Math.max(
+      1,
+      Math.ceil(
+        pedidosUnicos.length /
+          PEDIDOS_POR_PAGINA,
+      ),
+    );
+
+
+  useEffect(
+    () => {
+      if (
+        paginaAtual >
+        totalPaginas
+      ) {
+        setPaginaAtual(
+          totalPaginas,
+        );
+      }
+    },
+    [
+      paginaAtual,
+      totalPaginas,
+    ],
+  );
+
+
+  /* =======================================================
+     PEDIDOS ÚNICOS DA PÁGINA
+  ======================================================= */
+
+  const pedidosUnicosDaPagina =
+    useMemo(
+      () => {
+        const inicio =
+          (
+            paginaAtual - 1
+          ) *
+          PEDIDOS_POR_PAGINA;
+
+        const fim =
+          inicio +
+          PEDIDOS_POR_PAGINA;
+
+        return pedidosUnicos.slice(
+          inicio,
+          fim,
+        );
+      },
+      [
+        pedidosUnicos,
+        paginaAtual,
+      ],
+    );
+
+
+  /* =======================================================
+     CHAVES DA PÁGINA
+  ======================================================= */
+
+  const chavesPedidosDaPagina =
+    useMemo(
+      () => {
+        return new Set(
+          pedidosUnicosDaPagina.map(
+            (
+              pedido,
+            ) =>
+              obterChavePedido(
+                pedido,
+              ),
+          ),
+        );
+      },
+      [
+        pedidosUnicosDaPagina,
+      ],
+    );
+
+
+  /* =======================================================
+     LINHAS DA PÁGINA
+  ======================================================= */
+
+  const pedidosPaginados =
+    useMemo(
+      () => {
+        return pedidosFiltrados.filter(
+          (
+            pedido,
+          ) =>
+            chavesPedidosDaPagina.has(
+              obterChavePedido(
+                pedido,
+              ),
+            ),
+        );
+      },
+      [
+        pedidosFiltrados,
+        chavesPedidosDaPagina,
+      ],
+    );
+
+
+  /* =======================================================
+     AGRUPAR ITENS
+  ======================================================= */
+
+  const pedidosAgrupados =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+        for (
+          const pedido
+          of pedidosPaginados
+        ) {
+          const chave =
+            obterChavePedido(
+              pedido,
+            );
+
+          if (
+            !mapa.has(
+              chave,
+            )
+          ) {
+            mapa.set(
+              chave,
+              {
+                chave,
+                itens: [],
+              },
+            );
+          }
+
+          mapa
+            .get(
+              chave,
+            )
+            .itens
+            .push(
+              pedido,
+            );
+        }
+
+        return [
+          ...mapa.values(),
+        ];
+      },
+      [
+        pedidosPaginados,
+      ],
+    );
+
+
+  /* =======================================================
+     QUANTIDADE TOTAL OPERACIONAL
   ======================================================= */
 
   const quantidadeTotal =
     useMemo(
       () => {
-        return pedidosFiltrados.reduce(
+        return pedidosOperacionaisFiltrados.reduce(
           (
             total,
             pedido,
           ) => {
             const quantidade =
               Number(
-                pedido.quantidade,
+                pedido?.quantidade,
               );
 
             if (
@@ -310,58 +1174,40 @@ export default function PedidosPage() {
         );
       },
       [
-        pedidosFiltrados,
+        pedidosOperacionaisFiltrados,
       ],
     );
 
 
   /* =======================================================
      PEDIDOS ATRASADOS
+
+     Cancelados não entram.
+     Apenas status Pedido entra.
   ======================================================= */
 
   const pedidosAtrasados =
     useMemo(
       () => {
-        const hoje =
-          obterHoje();
-
-        return pedidosUnicos.filter(
+        return pedidosOperacionaisUnicos.filter(
           (
             pedido,
-          ) => {
-            const previsao =
-              converterData(
-                pedido.previsao,
-              );
-
-            if (
-              !previsao
-            ) {
-              return false;
-            }
-
-            previsao.setHours(
-              0,
-              0,
-              0,
-              0,
-            );
-
-            return (
-              previsao <
-              hoje
-            );
-          },
+          ) =>
+            pedidoEstaAtrasado(
+              pedido,
+            ),
         ).length;
       },
       [
-        pedidosUnicos,
+        pedidosOperacionaisUnicos,
       ],
     );
 
 
   /* =======================================================
-     PROXIMOS 7 DIAS
+     PRÓXIMOS 7 DIAS
+
+     Somente status Pedido.
   ======================================================= */
 
   const entregasProximos7Dias =
@@ -380,18 +1226,25 @@ export default function PedidosPage() {
             7,
         );
 
-        return pedidosUnicos.filter(
+        return pedidosOperacionaisUnicos.filter(
           (
             pedido,
           ) => {
+            if (
+              normalizarTexto(
+                pedido?.status,
+              ) !==
+              "pedido"
+            ) {
+              return false;
+            }
+
             const previsao =
               converterData(
-                pedido.previsao,
+                pedido?.previsao,
               );
 
-            if (
-              !previsao
-            ) {
+            if (!previsao) {
               return false;
             }
 
@@ -412,7 +1265,120 @@ export default function PedidosPage() {
         ).length;
       },
       [
-        pedidosUnicos,
+        pedidosOperacionaisUnicos,
+      ],
+    );
+
+
+  /* =======================================================
+     ALTERAR FILTROS
+  ======================================================= */
+
+  function alterarPesquisa(
+    valor,
+  ) {
+    setPesquisa(
+      valor,
+    );
+
+    setPaginaAtual(
+      1,
+    );
+  }
+
+
+  function alterarVendedor(
+    valor,
+  ) {
+    setVendedor(
+      valor,
+    );
+
+    setPaginaAtual(
+      1,
+    );
+  }
+
+
+  function alterarStatus(
+    valor,
+  ) {
+    setStatus(
+      valor,
+    );
+
+    setPaginaAtual(
+      1,
+    );
+  }
+
+
+  /* =======================================================
+     LIMPAR FILTROS
+  ======================================================= */
+
+  function limparFiltros() {
+    setPesquisa(
+      "",
+    );
+
+    setVendedor(
+      "todos",
+    );
+
+    setStatus(
+      "Pedido",
+    );
+
+    setPaginaAtual(
+      1,
+    );
+  }
+
+
+  const possuiFiltro =
+    Boolean(
+      pesquisa,
+    ) ||
+    vendedor !==
+      "todos" ||
+    status !==
+      "Pedido";
+
+
+  /* =======================================================
+     TÍTULO DA LISTA
+  ======================================================= */
+
+  const tituloLista =
+    useMemo(
+      () => {
+        if (
+          visualizandoCancelados
+        ) {
+          return "Pedidos cancelados";
+        }
+
+        if (
+          status ===
+          "todos"
+        ) {
+          return "Todos os pedidos";
+        }
+
+        if (
+          status &&
+          status !==
+          "Pedido"
+        ) {
+          return `Pedidos - ${status}`;
+        }
+
+        return "Pedidos em aberto";
+      },
+      [
+        status,
+        visualizandoCancelados,
       ],
     );
 
@@ -427,7 +1393,7 @@ export default function PedidosPage() {
       <div className="pedidos-container">
 
         {/* =================================================
-            CABECALHO
+            CABEÇALHO
         ================================================= */}
 
         <section className="pedidos-header">
@@ -439,7 +1405,8 @@ export default function PedidosPage() {
             </h1>
 
             <p>
-              Acompanhamento dos pedidos de venda em aberto.
+              Acompanhamento dos pedidos de venda
+              e consulta dos pedidos cancelados.
             </p>
 
           </div>
@@ -447,9 +1414,69 @@ export default function PedidosPage() {
 
           <div className="pedidos-header-actions">
 
-            <AtualizacaoAutomatica
-              atualizadoEm={respostaPedidos?.atualizadoEm}
-            />
+            <div
+              className="pedidos-atualizacao"
+              title={
+                respostaPedidos
+                  ?.atualizadoEm
+                  ? (
+                      `Última sincronização: ${formatarDataHora(
+                        respostaPedidos
+                          .atualizadoEm,
+                      )} | Próxima execução automática: ${formatarDataHora(
+                        proximaAtualizacao,
+                      )}`
+                    )
+                  : (
+                      `Aguardando primeira sincronização. Próxima execução automática: ${formatarDataHora(
+                        proximaAtualizacao,
+                      )}`
+                    )
+              }
+            >
+
+              <Clock3
+                size={18}
+              />
+
+
+              <div className="pedidos-atualizacao-textos">
+
+                <span className="pedidos-atualizacao-titulo">
+                  Atualização automática
+                </span>
+
+
+                <span className="pedidos-atualizacao-horarios">
+
+                  Última:{" "}
+
+                  <strong>
+                    {formatarHorario(
+                      respostaPedidos
+                        ?.atualizadoEm,
+                    )}
+                  </strong>
+
+
+                  <span className="pedidos-atualizacao-separador">
+                    |
+                  </span>
+
+
+                  Próxima:{" "}
+
+                  <strong>
+                    {formatarHorario(
+                      proximaAtualizacao,
+                    )}
+                  </strong>
+
+                </span>
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -457,201 +1484,353 @@ export default function PedidosPage() {
 
 
         {/* =================================================
-            CARDS
+            CARDS OPERACIONAIS
+
+            Não aparecem quando
+            Cancelado estiver selecionado.
         ================================================= */}
 
-        <section className="pedidos-resumo">
+        {!visualizandoCancelados && (
 
-          <article className="pedidos-card">
+          <section className="pedidos-resumo">
 
-            <div className="pedidos-card-icon">
+            <article className="pedidos-card">
 
-              <ShoppingCart
-                size={22}
-              />
+              <div className="pedidos-card-icon">
 
-            </div>
+                <ShoppingCart
+                  size={22}
+                />
 
-
-            <div>
-
-              <span className="pedidos-card-label">
-                Pedidos em aberto
-              </span>
-
-              <strong>
-                {isLoading
-                  ? "-"
-                  : pedidosUnicos.length}
-              </strong>
-
-            </div>
-
-          </article>
+              </div>
 
 
-          <article className="pedidos-card">
+              <div>
 
-            <div className="pedidos-card-icon">
+                <span className="pedidos-card-label">
+                  Pedidos em aberto
+                </span>
 
-              <AlertTriangle
-                size={22}
-              />
+                <strong>
+                  {isLoading
+                    ? "-"
+                    : pedidosOperacionaisUnicos.length}
+                </strong>
 
-            </div>
+              </div>
 
-
-            <div>
-
-              <span className="pedidos-card-label">
-                Pedidos atrasados
-              </span>
-
-              <strong>
-                {isLoading
-                  ? "-"
-                  : pedidosAtrasados}
-              </strong>
-
-            </div>
-
-          </article>
+            </article>
 
 
-          <article className="pedidos-card">
+            <article className="pedidos-card">
 
-            <div className="pedidos-card-icon">
+              <div className="pedidos-card-icon">
 
-              <PackageSearch
-                size={22}
-              />
+                <AlertTriangle
+                  size={22}
+                />
 
-            </div>
-
-
-            <div>
-
-              <span className="pedidos-card-label">
-                Quantidade total
-              </span>
-
-              <strong>
-                {isLoading
-                  ? "-"
-                  : formatarNumero(
-                      quantidadeTotal,
-                    )}
-              </strong>
-
-            </div>
-
-          </article>
+              </div>
 
 
-          <article className="pedidos-card">
+              <div>
 
-            <div className="pedidos-card-icon">
+                <span className="pedidos-card-label">
+                  Pedidos atrasados
+                </span>
 
-              <CalendarClock
-                size={22}
-              />
+                <strong>
+                  {isLoading
+                    ? "-"
+                    : pedidosAtrasados}
+                </strong>
 
-            </div>
+              </div>
+
+            </article>
 
 
-            <div>
+            <article className="pedidos-card">
 
-              <span className="pedidos-card-label">
-                Faturamentos próximos 7 dias
-              </span>
+              <div className="pedidos-card-icon">
 
-              <strong>
-                {isLoading
-                  ? "-"
-                  : entregasProximos7Dias}
-              </strong>
+                <PackageSearch
+                  size={22}
+                />
 
-            </div>
+              </div>
 
-          </article>
 
-        </section>
+              <div>
+
+                <span className="pedidos-card-label">
+                  Quantidade total
+                </span>
+
+                <strong>
+                  {isLoading
+                    ? "-"
+                    : formatarNumero(
+                        quantidadeTotal,
+                      )}
+                </strong>
+
+              </div>
+
+            </article>
+
+
+            <article className="pedidos-card">
+
+              <div className="pedidos-card-icon">
+
+                <CalendarClock
+                  size={22}
+                />
+
+              </div>
+
+
+              <div>
+
+                <span className="pedidos-card-label">
+                  Faturamentos próximos 7 dias
+                </span>
+
+                <strong>
+                  {isLoading
+                    ? "-"
+                    : entregasProximos7Dias}
+                </strong>
+
+              </div>
+
+            </article>
+
+          </section>
+
+        )}
 
 
         {/* =================================================
             FILTROS
         ================================================= */}
 
-        <Filtros
-          as="section"
-          className="pedidos-filtros"
-          filtros={filtros}
-          setFiltros={setFiltros}
-          valoresPadrao={FILTROS_INICIAIS_PEDIDOS}
-          onDepoisAlterar={() => setPaginaAtual(1)}
-          onDepoisLimpar={() => setPaginaAtual(1)}
-        >
-          {({ alterar, limpar, possuiFiltroAtivo }) => (
-            <>
-              <div className="pedidos-pesquisa">
-                <Search size={18} />
-                <input
-                  type="text"
-                  value={pesquisa}
-                  onChange={(evento) => alterar("pesquisa", evento.target.value)}
-                  placeholder="Buscar pedido, cliente, código ou produto..."
-                />
-              </div>
+        <section className="pedidos-filtros">
 
-              <select
-                value={vendedor}
-                onChange={(evento) => alterar("vendedor", evento.target.value)}
-              >
-                <option value="todos">Todos os vendedores</option>
-                {vendedores.map((nome) => (
-                  <option key={nome} value={nome}>
-                    {nome}
+          <div className="pedidos-pesquisa">
+
+            <Search
+              size={18}
+            />
+
+            <input
+              type="text"
+              value={
+                pesquisa
+              }
+              onChange={
+                (
+                  evento,
+                ) =>
+                  alterarPesquisa(
+                    evento
+                      .target
+                      .value,
+                  )
+              }
+              placeholder="Buscar pedido, cliente, código ou produto..."
+            />
+
+          </div>
+
+
+          <select
+            value={
+              vendedor
+            }
+            onChange={
+              (
+                evento,
+              ) =>
+                alterarVendedor(
+                  evento
+                    .target
+                    .value,
+                )
+            }
+          >
+
+            <option value="todos">
+              Todos os vendedores
+            </option>
+
+            {vendedores.map(
+              (
+                nome,
+              ) => (
+
+                <option
+                  key={
+                    nome
+                  }
+                  value={
+                    nome
+                  }
+                >
+                  {nome}
+                </option>
+
+              ),
+            )}
+
+          </select>
+
+
+          <select
+            value={
+              status
+            }
+            onChange={
+              (
+                evento,
+              ) =>
+                alterarStatus(
+                  evento
+                    .target
+                    .value,
+                )
+            }
+          >
+
+            <option value="Pedido">
+              Pedido
+            </option>            
+
+
+            <option value="todos">
+              Todos os status
+            </option>
+
+            <option value="Cancelado">
+              Cancelados
+            </option>
+
+
+            {statusDisponiveis
+              .filter(
+                (
+                  nomeStatus,
+                ) => {
+                  const statusNormalizado =
+                    normalizarTexto(
+                      nomeStatus,
+                    );
+
+                  return (
+                    statusNormalizado !==
+                      "pedido" &&
+                    statusNormalizado !==
+                      "cancelado"
+                  );
+                },
+              )
+              .map(
+                (
+                  nomeStatus,
+                ) => (
+
+                  <option
+                    key={
+                      nomeStatus
+                    }
+                    value={
+                      nomeStatus
+                    }
+                  >
+                    {nomeStatus}
                   </option>
-                ))}
-              </select>
 
-              <select
-                value={status}
-                onChange={(evento) => alterar("status", evento.target.value)}
-              >
-                <option value="Pedido">Pedido</option>
-                <option value="todos">Todos os status</option>
-                {statusDisponiveis
-                  .filter((nomeStatus) => nomeStatus !== "Pedido")
-                  .map((nomeStatus) => (
-                    <option key={nomeStatus} value={nomeStatus}>
-                      {nomeStatus}
-                    </option>
-                  ))}
-              </select>
-
-              {possuiFiltroAtivo && (
-                <button type="button" className="pedidos-btn-limpar" onClick={limpar}>
-                  <X size={16} />
-                  Limpar
-                </button>
+                ),
               )}
-            </>
+
+          </select>
+
+
+          {possuiFiltro && (
+
+            <button
+              type="button"
+              className="pedidos-btn-limpar"
+              onClick={
+                limparFiltros
+              }
+            >
+
+              <X
+                size={16}
+              />
+
+              Limpar
+
+            </button>
+
           )}
-        </Filtros>
+
+        </section>
+
 
         {/* =================================================
-            CONTEUDO
+            AVISO DE CANCELADOS
         ================================================= */}
 
-        <section className="pedidos-content">
+        {visualizandoCancelados && (
+
+          <div className="pedidos-consulta-cancelados">
+
+            <AlertTriangle
+              size={19}
+            />
+
+
+            <div>
+
+              <strong>
+                Consulta de pedidos cancelados
+              </strong>
+
+
+              <span>
+                Estes pedidos são exibidos somente
+                para consulta e não participam dos
+                indicadores operacionais.
+              </span>
+
+            </div>
+
+          </div>
+
+        )}
+
+
+        {/* =================================================
+            CONTEÚDO
+        ================================================= */}
+
+        <section
+          className={`pedidos-content${
+            visualizandoCancelados
+              ? " pedidos-content-cancelados"
+              : ""
+          }`}
+        >
 
           <div className="pedidos-content-header">
 
             <div>
 
               <h2>
-                Pedidos em aberto
+                {tituloLista}
               </h2>
 
               <p>
@@ -677,8 +1856,16 @@ export default function PedidosPage() {
             </div>
 
 
-            <span className="pedidos-demo">
-              Dados do Omie
+            <span
+              className={
+                visualizandoCancelados
+                  ? "pedidos-demo pedidos-demo-cancelado"
+                  : "pedidos-demo"
+              }
+            >
+              {visualizandoCancelados
+                ? "Somente consulta"
+                : "Dados do Omie"}
             </span>
 
           </div>
@@ -813,7 +2000,6 @@ export default function PedidosPage() {
                         (
                           grupo,
                         ) => {
-
                           const quantidadeItens =
                             grupo.itens.length;
 
@@ -822,10 +2008,14 @@ export default function PedidosPage() {
                               pedido,
                               indiceItem,
                             ) => {
-
                               const primeiroItem =
                                 indiceItem ===
                                 0;
+
+                              const cancelado =
+                                pedidoEhCancelado(
+                                  pedido,
+                                );
 
                               const diasAtraso =
                                 calcularDiasAtraso(
@@ -833,8 +2023,29 @@ export default function PedidosPage() {
                                 );
 
                               const atrasado =
+                                !cancelado &&
                                 pedidoEstaAtrasado(
                                   pedido,
+                                );
+
+                              const classesLinha = [
+                                primeiroItem
+                                  ? "pedidos-inicio-grupo"
+                                  : "pedidos-item-continuacao",
+
+                                atrasado
+                                  ? "pedido-linha-atrasada"
+                                  : "",
+
+                                cancelado
+                                  ? "pedido-linha-cancelada"
+                                  : "",
+                              ]
+                                .filter(
+                                  Boolean,
+                                )
+                                .join(
+                                  " ",
                                 );
 
                               return (
@@ -844,15 +2055,7 @@ export default function PedidosPage() {
                                     pedido.id
                                   }
                                   className={
-                                    `${
-                                      primeiroItem
-                                        ? "pedidos-inicio-grupo"
-                                        : "pedidos-item-continuacao"
-                                    }${
-                                      atrasado
-                                        ? " pedido-linha-atrasada"
-                                        : ""
-                                    }`
+                                    classesLinha
                                   }
                                 >
 
@@ -864,7 +2067,15 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className={`pedidos-celula-agrupada pedidos-celula-pedido${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                      className={`pedidos-celula-agrupada pedidos-celula-pedido${
+                                        atrasado
+                                          ? " pedido-celula-atrasada"
+                                          : ""
+                                      }${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       <div className="pedidos-pedido-agrupado">
@@ -899,7 +2110,15 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                      className={`pedidos-celula-agrupada${
+                                        atrasado
+                                          ? " pedido-celula-atrasada"
+                                          : ""
+                                      }${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       <div className="pedidos-cliente">
@@ -921,7 +2140,15 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                      className={`pedidos-celula-agrupada${
+                                        atrasado
+                                          ? " pedido-celula-atrasada"
+                                          : ""
+                                      }${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       {formatarData(
@@ -933,7 +2160,7 @@ export default function PedidosPage() {
                                   )}
 
 
-                                  {/* PREVISAO FATURAMENTO */}
+                                  {/* PREVISÃO */}
 
                                   {primeiroItem && (
 
@@ -941,7 +2168,15 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className={`pedidos-celula-agrupada pedidos-col-previsao${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                      className={`pedidos-celula-agrupada pedidos-col-previsao${
+                                        atrasado
+                                          ? " pedido-celula-atrasada"
+                                          : ""
+                                      }${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       <div className="pedidos-previsao-wrapper">
@@ -978,7 +2213,7 @@ export default function PedidosPage() {
                                   )}
 
 
-                                  {/* CODIGO */}
+                                  {/* CÓDIGO */}
 
                                   <td>
 
@@ -1042,7 +2277,15 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className={`pedidos-celula-agrupada${atrasado ? " pedido-celula-atrasada" : ""}`}
+                                      className={`pedidos-celula-agrupada${
+                                        atrasado
+                                          ? " pedido-celula-atrasada"
+                                          : ""
+                                      }${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       <div className="pedidos-vendedor">
@@ -1064,7 +2307,11 @@ export default function PedidosPage() {
                                       rowSpan={
                                         quantidadeItens
                                       }
-                                      className="pedidos-celula-agrupada"
+                                      className={`pedidos-celula-agrupada${
+                                        cancelado
+                                          ? " pedido-celula-cancelada"
+                                          : ""
+                                      }`}
                                     >
 
                                       <span
@@ -1136,22 +2383,31 @@ export default function PedidosPage() {
 
                 </div>
 
+
                 <h3>
-                  Nenhum pedido encontrado
+
+                  {visualizandoCancelados
+                    ? "Nenhum pedido cancelado encontrado"
+                    : "Nenhum pedido encontrado"}
+
                 </h3>
+
 
                 <p>
 
-                  {possuiFiltro
-                    ? "Não existem pedidos que correspondam aos filtros selecionados."
-                    : respostaPedidos?.atualizadoEm
-                      ? "Nenhum pedido com status Pedido foi encontrado."
-                      : "Ainda não existem pedidos sincronizados. Aguardando a primeira sincronização automática."}
+                  {visualizandoCancelados
+                    ? "Os pedidos cancelados passarão a aparecer nesta consulta à medida que forem cancelados no Omie daqui para a frente."
+                    : possuiFiltro
+                      ? "Não existem pedidos que correspondam aos filtros selecionados."
+                      : respostaPedidos?.atualizadoEm
+                        ? "Nenhum pedido com status Pedido foi encontrado."
+                        : "Ainda não existem pedidos sincronizados. Aguardando a primeira sincronização automática."}
 
                 </p>
 
 
-                {possuiFiltro && (
+                {possuiFiltro &&
+                  !visualizandoCancelados && (
 
                   <button
                     type="button"
@@ -1171,6 +2427,10 @@ export default function PedidosPage() {
 
         </section>
 
+
+        {/* =================================================
+            RODAPÉ
+        ================================================= */}
 
         <div className="pedidos-rodape-info">
 
