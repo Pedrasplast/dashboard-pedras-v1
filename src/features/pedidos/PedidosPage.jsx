@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 
-import Paginacao from "@/components/Paginacao/Paginacao";
+import Paginacao from "@/components/paginacao/Paginacao";
 import Filtros, { possuiFiltrosAtivos } from "@/components/filtros/Filtros";
 import { valoresUnicosOrdenados } from "@/lib/colecoes";
 
