@@ -1,35 +1,30 @@
-import {
-  createFileRoute,
-} from "@tanstack/react-router";
-
-import PedidosPage from "@/features/pedidos/PedidosPage";
+import { createFileRoute } from "@tanstack/react-router";
 
 import RotaProtegida from "@/components/layout/RotaProtegida";
+import PedidosPage from "@/features/pedidos/PedidosPage";
 
-export const Route =
-  createFileRoute("/pedidos")({
-    ssr: false,
+export const Route = createFileRoute("/pedidos")({
+  ssr: false,
 
-    head: () => ({
-      meta: [
-        {
-          title:
-            "Pedidos | Pedrasplast",
-        },
-        {
-          name: "description",
-          content:
-            "Acompanhamento dos pedidos de venda em aberto integrados ao Omie.",
-        },
-      ],
-    }),
+  head: () => ({
+    meta: [
+      {
+        title: "Pedidos | Pedrasplast",
+      },
+      {
+        name: "description",
+        content:
+          "Acompanhamento dos pedidos comerciais da Pedrasplast.",
+      },
+    ],
+  }),
 
-    component: RotaPedidos,
-  });
+  component: PedidosRoute,
+});
 
-function RotaPedidos() {
+function PedidosRoute() {
   return (
-    <RotaProtegida>
+    <RotaProtegida permissao="pedidos">
       <PedidosPage />
     </RotaProtegida>
   );

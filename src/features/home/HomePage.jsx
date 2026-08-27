@@ -1,17 +1,33 @@
 import React, {
   useCallback,
+  useMemo,
   useState,
 } from "react";
 
 import {
-  ArrowRight,
-  BarChart3,
+  AlertTriangle,
+  CalendarClock,
+  CheckCircle2,
+  Clock3,
   Factory,
-  Gauge,
   LockKeyhole,
+  ShieldCheck,
+  ShoppingCart,
   UploadCloud,
   UsersRound,
 } from "lucide-react";
+
+import {
+  useQuery,
+} from "@tanstack/react-query";
+
+import {
+  usePermissoes,
+} from "@/hooks/usePermissoes";
+
+import {
+  useCargaMaquina,
+} from "@/lib/cargaMaquina";
 
 import {
   useNavigate,
@@ -21,8 +37,463 @@ import {
   supabase,
 } from "@/lib/supabaseClient";
 
+import {
+  buscarPedidosOmie,
+} from "@/features/pedidos/omie.functions";
+
 import "./Home.css";
 
+
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
+const INTERVALO_RESUMO_PEDIDOS =
+  15 * 60 * 1000;
+
+
+/* =========================================================
+   USUÁRIO
+========================================================= */
+
+function obterNomeUsuario(email) {
+  if (!email) {
+    return "Usuário";
+  }
+
+  return email
+    .split("@")[0]
+    .replace(/[._-]+/g, " ")
+    .replace(
+      /\b\w/g,
+      (letra) =>
+        letra.toUpperCase(),
+    );
+}
+
+
+/* =========================================================
+   TEXTO
+========================================================= */
+
+function normalizarTexto(valor) {
+  return String(
+    valor ?? "",
+  )
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    );
+}
+
+
+/* =========================================================
+   NÚMEROS
+========================================================= */
+
+function converterNumero(valor) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return 0;
+  }
+
+  if (
+    typeof valor === "number"
+  ) {
+    return Number.isFinite(valor)
+      ? valor
+      : 0;
+  }
+
+  let texto =
+    String(valor)
+      .trim()
+      .replace(/\s/g, "");
+
+  if (
+    texto.includes(",") &&
+    texto.includes(".")
+  ) {
+    texto =
+      texto
+        .replace(/\./g, "")
+        .replace(",", ".");
+  } else {
+    texto =
+      texto.replace(",", ".");
+  }
+
+  const numero =
+    Number(texto);
+
+  return Number.isFinite(numero)
+    ? numero
+    : 0;
+}
+
+
+function formatarNumero(valor) {
+  return converterNumero(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      maximumFractionDigits: 0,
+    },
+  );
+}
+
+
+function formatarPercentual(valor) {
+  if (
+    !Number.isFinite(valor)
+  ) {
+    return "0,0%";
+  }
+
+  return `${valor.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    },
+  )}%`;
+}
+
+
+/* =========================================================
+   TEMPO
+========================================================= */
+
+function converterTempoParaHoras(tempo) {
+  if (
+    tempo === null ||
+    tempo === undefined ||
+    tempo === ""
+  ) {
+    return 0;
+  }
+
+  if (
+    typeof tempo === "number"
+  ) {
+    return Number.isFinite(tempo)
+      ? Math.max(
+          0,
+          tempo,
+        )
+      : 0;
+  }
+
+  const texto =
+    String(tempo)
+      .trim();
+
+  if (!texto) {
+    return 0;
+  }
+
+  /*
+   * Aceita:
+   *
+   * 08:30
+   * 08:30:15
+   * 125:30:00
+   */
+  const correspondencia =
+    texto.match(
+      /^(\d+):(\d{1,2})(?::(\d{1,2}))?$/,
+    );
+
+  if (correspondencia) {
+    const horas =
+      Number(
+        correspondencia[1],
+      );
+
+    const minutos =
+      Number(
+        correspondencia[2],
+      );
+
+    const segundos =
+      Number(
+        correspondencia[3] || 0,
+      );
+
+    if (
+      minutos >= 60 ||
+      segundos >= 60
+    ) {
+      return 0;
+    }
+
+    return (
+      horas +
+      minutos / 60 +
+      segundos / 3600
+    );
+  }
+
+  /*
+   * Também aceita decimal.
+   *
+   * Exemplo:
+   * 2,5 = 2h30
+   */
+  const numero =
+    Number.parseFloat(
+      texto.replace(
+        ",",
+        ".",
+      ),
+    );
+
+  return Number.isFinite(numero)
+    ? Math.max(
+        0,
+        numero,
+      )
+    : 0;
+}
+
+
+function formatarHoras(totalHoras) {
+  if (
+    !Number.isFinite(
+      totalHoras,
+    ) ||
+    totalHoras <= 0
+  ) {
+    return "00:00";
+  }
+
+  const minutosTotais =
+    Math.round(
+      totalHoras * 60,
+    );
+
+  const horas =
+    Math.floor(
+      minutosTotais / 60,
+    );
+
+  const minutos =
+    minutosTotais % 60;
+
+  /*
+   * Também aplica formatação
+   * de milhar às horas.
+   *
+   * Exemplo:
+   * 3458h30 -> 3.458:30
+   */
+  const horasFormatadas =
+    horas.toLocaleString(
+      "pt-BR",
+      {
+        maximumFractionDigits: 0,
+      },
+    );
+
+  return `${horasFormatadas}:${String(
+    minutos,
+  ).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+
+/* =========================================================
+   DATAS DOS PEDIDOS
+========================================================= */
+
+function converterData(dataTexto) {
+  if (!dataTexto) {
+    return null;
+  }
+
+  if (
+    /^\d{2}\/\d{2}\/\d{4}$/.test(
+      dataTexto,
+    )
+  ) {
+    const [
+      dia,
+      mes,
+      ano,
+    ] =
+      dataTexto
+        .split("/")
+        .map(Number);
+
+    return new Date(
+      ano,
+      mes - 1,
+      dia,
+      0,
+      0,
+      0,
+      0,
+    );
+  }
+
+  const data =
+    new Date(
+      dataTexto,
+    );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return null;
+  }
+
+  return data;
+}
+
+
+function obterHoje() {
+  const agora =
+    new Date();
+
+  return new Date(
+    agora.getFullYear(),
+    agora.getMonth(),
+    agora.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+}
+
+
+function formatarHorario(dataTexto) {
+  if (!dataTexto) {
+    return "-";
+  }
+
+  const data =
+    new Date(
+      dataTexto,
+    );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleTimeString(
+    "pt-BR",
+    {
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+function formatarDataHora(dataTexto) {
+  if (!dataTexto) {
+    return "Ainda não atualizado";
+  }
+
+  const data =
+    new Date(
+      dataTexto,
+    );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "Ainda não atualizado";
+  }
+
+  return data.toLocaleString(
+    "pt-BR",
+    {
+      day:
+        "2-digit",
+
+      month:
+        "2-digit",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+/* =========================================================
+   PRODUÇÃO
+========================================================= */
+
+function registroEhParadaValida(
+  registro,
+) {
+  const tipo =
+    String(
+      registro?.tipo ?? "",
+    ).trim();
+
+  /*
+   * SOMENTE:
+   * Tipo 1
+   * Tipo 2
+   *
+   * Tipo 3 fica totalmente fora.
+   */
+  return (
+    tipo === "1" ||
+    tipo === "2"
+  );
+}
+
+
+/* =========================================================
+   PEDIDOS
+========================================================= */
+
+function obterChavePedido(pedido) {
+  return String(
+    pedido?.codigoPedido ||
+    pedido?.codigo_pedido ||
+    pedido?.pedido ||
+    pedido?.numero_pedido ||
+    pedido?.id ||
+    "",
+  );
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
 
 function Home({
   user,
@@ -30,6 +501,17 @@ function Home({
 }) {
   const navigate =
     useNavigate();
+
+  const {
+    podeAcessarTela,
+    loadingPermissoes,
+  } =
+    usePermissoes();
+
+
+  /* =====================================================
+     LOGIN
+  ===================================================== */
 
   const [
     email,
@@ -56,15 +538,9 @@ function Home({
     useState("");
 
 
-  /* =====================================================
-     LOGIN
-  ===================================================== */
-
   const handleLogin =
     useCallback(
-      async (
-        event,
-      ) => {
+      async (event) => {
         event.preventDefault();
 
         setLoadingLogin(
@@ -79,16 +555,21 @@ function Home({
           const {
             error,
           } =
-            await supabase.auth.signInWithPassword({
-              email: email.trim().toLowerCase(),
-              password,
-            });
+            await supabase.auth
+              .signInWithPassword({
+                email:
+                  email
+                    .trim()
+                    .toLowerCase(),
+
+                password,
+              });
 
           if (error) {
             setLoginError(
               error.message ===
                 "Invalid login credentials"
-                ? "Credenciais inválidas. Verifique seu e-mail e senha."
+                ? "E-mail ou senha incorretos."
                 : error.message,
             );
 
@@ -102,16 +583,18 @@ function Home({
           setPassword(
             "",
           );
-        } catch (
-          error
-        ) {
+        } catch (error) {
           console.error(
-            "Erro inesperado durante o login:",
+            "Erro ao realizar login:",
             error,
           );
 
           setLoginError(
             "Não foi possível realizar o login. Tente novamente.",
+          );
+
+          setPassword(
+            "",
           );
         } finally {
           setLoadingLogin(
@@ -127,340 +610,615 @@ function Home({
 
 
   /* =====================================================
-     NAVEGAÇÃO
+     PERFIL
   ===================================================== */
 
-  const goToDashboard =
-    useCallback(
-      () => {
-        navigate(
-          "/dashboard",
-        );
-      },
+  const nomeUsuario =
+    useMemo(
+      () =>
+        obterNomeUsuario(
+          user?.email,
+        ),
       [
-        navigate,
+        user?.email,
       ],
     );
 
-  const goToImportar =
-    useCallback(
-      () => {
-        navigate(
-          "/importar",
-        );
-      },
-      [
-        navigate,
-      ],
-    );
 
-  const goToUsuarios =
-    useCallback(
-      () => {
-        navigate(
-          "/usuarios",
-        );
-      },
-      [
-        navigate,
-      ],
-    );
-/* =====================================================
-     RENDER
+  const perfilUsuario =
+    isAdmin
+      ? "Administrador"
+      : "Operador";
+
+
+  /* =====================================================
+     PERMISSÕES
   ===================================================== */
 
-  return (
-    <div className="home-screen">
-
-      {/* =================================================
-          HERO
-      ================================================= */}
-
-      <section className="home-hero">
-        <div className="home-hero-content">
-          <div className="home-hero-badge">
-            <Factory
-              size={15}
-            />
-
-            <span>
-              Gestão Industrial
-            </span>
-          </div>
-
-          <h1>
-            Painel de Produção
-          </h1>
-
-          <p>
-            Acompanhe produtividade,
-            eficiência operacional,
-            produção e ocorrências das
-            injetoras em um único ambiente.
-          </p>
-
-          <div className="home-hero-tags">
-            <span>
-              Produção
-            </span>
-
-            <span>
-              Paradas
-            </span>
-
-            <span>
-              Eficiência
-            </span>
-          </div>
-        </div>
-
-        <div className="home-hero-visual">
-          <div className="home-hero-icon">
-            <Gauge
-              size={48}
-            />
-          </div>
-
-          <div>
-            <span className="home-hero-visual-label">
-              Gestão integrada
-            </span>
-
-            <strong>
-              Produção em foco
-            </strong>
-
-            <p>
-              Informações organizadas
-              para apoiar a operação.
-            </p>
-          </div>
-        </div>
-      </section>
+  const podeVerPedidos =
+    Boolean(
+      user &&
+      (
+        isAdmin ||
+        (
+          !loadingPermissoes &&
+          podeAcessarTela(
+            "pedidos",
+          )
+        )
+      ),
+    );
 
 
-      {/* =================================================
-          CONTEÚDO
-      ================================================= */}
+  const podeImportar =
+    Boolean(
+      user &&
+      (
+        isAdmin ||
+        (
+          !loadingPermissoes &&
+          podeAcessarTela(
+            "importar",
+          )
+        )
+      ),
+    );
 
-      <div
-        className={
-          user
-            ? "home-grid home-grid-logged"
-            : "home-grid"
+
+  const podeGerenciarUsuarios =
+    Boolean(
+      user &&
+      isAdmin,
+    );
+
+
+  const possuiAcoesAdministrativas =
+    podeImportar ||
+    podeGerenciarUsuarios;
+
+
+  /* =====================================================
+     PRODUÇÃO
+     BASE COMPLETA IMPORTADA
+  ===================================================== */
+
+  const {
+    dados:
+      dadosProducao,
+
+    loading:
+      carregandoProducao,
+
+    erro:
+      erroProducao,
+  } =
+    useCargaMaquina({
+      enabled:
+        Boolean(user),
+    });
+
+
+  /* =====================================================
+     RESUMO DA PRODUÇÃO
+  ===================================================== */
+
+  const resumoProducao =
+    useMemo(
+      () => {
+        const registros =
+          Array.isArray(
+            dadosProducao,
+          )
+            ? dadosProducao
+            : [];
+
+        let horasTrabalhadas = 0;
+        let horasParadas = 0;
+        let paradas = 0;
+
+
+        for (
+          const registro
+          of registros
+        ) {
+          const status =
+            normalizarTexto(
+              registro?.status,
+            );
+
+          const duracao =
+            converterTempoParaHoras(
+              registro?.duracao,
+            );
+
+
+          /* =============================================
+             HORAS TRABALHADAS
+
+             Somente:
+             status = Produzindo
+          ============================================= */
+
+          if (
+            status ===
+            "produzindo"
+          ) {
+            horasTrabalhadas +=
+              duracao;
+          }
+
+
+          /* =============================================
+             HORAS PARADAS E REGISTROS DE PARADA
+
+             Somente:
+             Tipo 1
+             Tipo 2
+
+             Tipo 3 NÃO entra.
+          ============================================= */
+
+          if (
+            registroEhParadaValida(
+              registro,
+            )
+          ) {
+            horasParadas +=
+              duracao;
+
+            paradas += 1;
+          }
         }
-      >
 
-        {/* =================================================
-            ACESSO RÁPIDO
-        ================================================= */}
 
-        <section className="home-actions-card">
-          <div className="home-section-header">
-            <div>
-              <span className="home-section-eyebrow">
-                Acesso rápido
+        /* =============================================
+           % HORAS TRABALHADAS
+
+           trabalhadas
+           ----------------------- x 100
+           trabalhadas + paradas
+
+           Tipo 3 não participa.
+        ============================================= */
+
+        const horasConsideradas =
+          horasTrabalhadas +
+          horasParadas;
+
+
+        const percentualTrabalhado =
+          horasConsideradas > 0
+            ? (
+                horasTrabalhadas /
+                horasConsideradas
+              ) * 100
+            : 0;
+
+
+        return {
+          horasTrabalhadas,
+          horasParadas,
+          percentualTrabalhado,
+          paradas,
+        };
+      },
+      [
+        dadosProducao,
+      ],
+    );
+
+
+  /* =====================================================
+     PEDIDOS
+  ===================================================== */
+
+  const {
+    data:
+      respostaPedidos,
+
+    error:
+      erroPedidos,
+
+    isLoading:
+      carregandoPedidos,
+  } =
+    useQuery({
+      queryKey: [
+        "home-resumo-pedidos",
+      ],
+
+      enabled:
+        podeVerPedidos,
+
+      queryFn:
+        async () => {
+          const {
+            data:
+              sessaoData,
+
+            error:
+              sessaoErro,
+          } =
+            await supabase.auth
+              .getSession();
+
+          if (
+            sessaoErro
+          ) {
+            throw new Error(
+              "Não foi possível validar sua sessão.",
+            );
+          }
+
+          const accessToken =
+            sessaoData
+              ?.session
+              ?.access_token;
+
+          if (!accessToken) {
+            throw new Error(
+              "Sua sessão expirou.",
+            );
+          }
+
+          return await buscarPedidosOmie({
+            data: {
+              accessToken,
+            },
+          });
+        },
+
+
+      /*
+       * Atualização automática
+       * a cada 15 minutos.
+       */
+      refetchInterval:
+        INTERVALO_RESUMO_PEDIDOS,
+
+      refetchIntervalInBackground:
+        false,
+
+      refetchOnMount:
+        true,
+
+      refetchOnWindowFocus:
+        false,
+
+      staleTime:
+        INTERVALO_RESUMO_PEDIDOS,
+
+      retry:
+        1,
+    });
+
+
+  const pedidos =
+    useMemo(
+      () =>
+        Array.isArray(
+          respostaPedidos?.pedidos,
+        )
+          ? respostaPedidos.pedidos
+          : [],
+      [
+        respostaPedidos,
+      ],
+    );
+
+
+  const pedidosEmAberto =
+    useMemo(
+      () =>
+        pedidos.filter(
+          (pedido) =>
+            normalizarTexto(
+              pedido?.status,
+            ) ===
+            "pedido",
+        ),
+      [
+        pedidos,
+      ],
+    );
+
+
+  const pedidosUnicos =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+        for (
+          const pedido
+          of pedidosEmAberto
+        ) {
+          const chave =
+            obterChavePedido(
+              pedido,
+            );
+
+          if (
+            chave &&
+            !mapa.has(
+              chave,
+            )
+          ) {
+            mapa.set(
+              chave,
+              pedido,
+            );
+          }
+        }
+
+        return [
+          ...mapa.values(),
+        ];
+      },
+      [
+        pedidosEmAberto,
+      ],
+    );
+
+
+  const pedidosAtrasados =
+    useMemo(
+      () => {
+        const hoje =
+          obterHoje();
+
+        return pedidosUnicos.filter(
+          (pedido) => {
+            const previsao =
+              converterData(
+                pedido?.previsao,
+              );
+
+            if (!previsao) {
+              return false;
+            }
+
+            previsao.setHours(
+              0,
+              0,
+              0,
+              0,
+            );
+
+            return (
+              previsao <
+              hoje
+            );
+          },
+        ).length;
+      },
+      [
+        pedidosUnicos,
+      ],
+    );
+
+
+  const proximosSeteDias =
+    useMemo(
+      () => {
+        const hoje =
+          obterHoje();
+
+        const limite =
+          new Date(
+            hoje,
+          );
+
+        limite.setDate(
+          limite.getDate() +
+          7,
+        );
+
+        return pedidosUnicos.filter(
+          (pedido) => {
+            const previsao =
+              converterData(
+                pedido?.previsao,
+              );
+
+            if (!previsao) {
+              return false;
+            }
+
+            previsao.setHours(
+              0,
+              0,
+              0,
+              0,
+            );
+
+            return (
+              previsao >= hoje &&
+              previsao <= limite
+            );
+          },
+        ).length;
+      },
+      [
+        pedidosUnicos,
+      ],
+    );
+
+
+  /* =====================================================
+     HOME PÚBLICA
+  ===================================================== */
+
+  if (!user) {
+    return (
+      <main className="home-page">
+
+        <div className="home-public-layout">
+
+          <section className="home-public-hero">
+
+            <div className="home-brand-badge">
+
+              <Factory
+                size={16}
+              />
+
+              Gestão Industrial
+
+            </div>
+
+
+            <div className="home-public-title">
+
+              <span>
+                PEDRASPLAST
               </span>
 
-              <h2>
-                O que você deseja fazer?
-              </h2>
+              <h1>
+                Gestão da produção
+                em um único ambiente.
+              </h1>
 
               <p>
-                Selecione uma das opções
-                abaixo para continuar.
+                Centralize informações,
+                acompanhe indicadores
+                e tenha uma visão clara
+                da operação industrial.
               </p>
-            </div>           
-          </div>
+
+            </div>
 
 
-          <div className="home-actions-grid">
+            <div className="home-benefits">
 
-            {/* DASHBOARD */}
+              <div className="home-benefit">
 
-            <button
-              type="button"
-              className="home-action-item home-action-primary"
-              onClick={
-                goToDashboard
-              }
-            >
-              <div className="home-action-top">
-                <div className="home-action-icon">
-                  <BarChart3
-                    size={25}
-                  />
-                </div>
-
-                <ArrowRight
-                  className="home-action-arrow"
+                <CheckCircle2
                   size={20}
                 />
+
+                <div>
+
+                  <strong>
+                    Produção e produtividade
+                  </strong>
+
+                  <span>
+                    Informações organizadas
+                    para acompanhamento
+                    da operação.
+                  </span>
+
+                </div>
+
               </div>
 
-              <div className="home-action-content">
-                <h3>
-                  Visualizar Dashboard
-                </h3>
 
-                <p>
-                  Consulte gráficos,
-                  produção, tempos de
-                  atividade e análises
-                  de paradas.
-                </p>
+              <div className="home-benefit">
+
+                <CheckCircle2
+                  size={20}
+                />
+
+                <div>
+
+                  <strong>
+                    Pedidos e prazos
+                  </strong>
+
+                  <span>
+                    Acompanhe pedidos,
+                    previsões e atrasos
+                    em um único ambiente.
+                  </span>
+
+                </div>
+
               </div>
 
-              <span className="home-action-link">
-                Acessar dashboard
-              </span>
-            </button>
 
+              <div className="home-benefit">
 
-            {/* IMPORTAÇÃO */}
+                <CheckCircle2
+                  size={20}
+                />
 
-            {user &&
-              isAdmin && (
-                <button
-                  type="button"
-                  className="home-action-item"
-                  onClick={
-                    goToImportar
-                  }
-                >
-                  <div className="home-action-top">
-                    <div className="home-action-icon">
-                      <UploadCloud
-                        size={25}
-                      />
-                    </div>
+                <div>
 
-                    <ArrowRight
-                      className="home-action-arrow"
-                      size={20}
-                    />
-                  </div>
+                  <strong>
+                    Acesso controlado
+                  </strong>
 
-                  <div className="home-action-content">
-                    <h3>
-                      Importar Carga Máquina
-                    </h3>
-
-                    <p>
-                      Realize o envio em
-                      massa das planilhas
-                      de programação das
-                      injetoras.
-                    </p>
-                  </div>
-
-                  <span className="home-action-link">
-                    Importar dados
+                  <span>
+                    Cada colaborador acessa
+                    somente os recursos
+                    autorizados.
                   </span>
-                </button>
-              )}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </section>
 
 
-            {/* USUÁRIOS */}
+          <section className="home-login-card">
 
-            {user &&
-              isAdmin && (
-                <button
-                  type="button"
-                  className="home-action-item"
-                  onClick={
-                    goToUsuarios
-                  }
-                >
-                  <div className="home-action-top">
-                    <div className="home-action-icon">
-                      <UsersRound
-                        size={25}
-                      />
-                    </div>
+            <div className="home-login-icon">
 
-                    <ArrowRight
-                      className="home-action-arrow"
-                      size={20}
-                    />
-                  </div>
-
-                  <div className="home-action-content">
-                    <h3>
-                      Gerenciar Usuários
-                    </h3>
-
-                    <p>
-                      Controle permissões,
-                      níveis de acesso e
-                      perfis dos
-                      colaboradores.
-                    </p>
-                  </div>
-
-                  <span className="home-action-link">
-                    Gerenciar acessos
-                  </span>
-                </button>
-              )}
-
-          </div>
-        </section>
-
-
-        {/* =================================================
-            LOGIN
-        ================================================= */}
-
-        {!user && (
-          <aside className="home-auth-card">
-            <div className="home-auth-icon">
               <LockKeyhole
                 size={25}
               />
+
             </div>
 
-            <div className="home-auth-header">
+
+            <div className="home-login-header">
+
               <span>
                 Área restrita
               </span>
 
               <h2>
-                Acesso ao Sistema
+                Acessar o sistema
               </h2>
 
               <p>
-                Entre com suas
-                credenciais para
-                acessar os recursos
-                disponíveis.
+                Entre com suas credenciais
+                para continuar.
               </p>
+
             </div>
 
+
             {loginError && (
-              <div className="login-error-alert">
+              <div className="home-login-error">
                 {loginError}
               </div>
             )}
 
+
             <form
+              className="home-login-form"
               onSubmit={
                 handleLogin
               }
-              className="login-form"
               autoComplete="off"
             >
-              <div className="form-group">
+
+              <div className="home-login-field">
+
                 <label
-                  htmlFor="login-email"
+                  htmlFor="home-email"
                 >
                   E-mail
                 </label>
 
                 <input
-                  id="login-email"
+                  id="home-email"
                   type="email"
-                  placeholder="nome@empresa.com"
                   value={
                     email
                   }
@@ -471,25 +1229,28 @@ function Home({
                       event.target.value,
                     )
                   }
+                  placeholder="nome@empresa.com"
                   autoComplete="username"
-                  required
                   disabled={
                     loadingLogin
                   }
+                  required
                 />
+
               </div>
 
-              <div className="form-group">
+
+              <div className="home-login-field">
+
                 <label
-                  htmlFor="login-password"
+                  htmlFor="home-password"
                 >
                   Senha
                 </label>
 
                 <input
-                  id="login-password"
+                  id="home-password"
                   type="password"
-                  placeholder="••••••••"
                   value={
                     password
                   }
@@ -500,55 +1261,865 @@ function Home({
                       event.target.value,
                     )
                   }
+                  placeholder="Digite sua senha"
                   autoComplete="off"
-                  name="senha-acesso-sistema"
-                  required
+                  name="senha-acesso-home"
                   disabled={
                     loadingLogin
                   }
+                  required
                 />
+
               </div>
+
 
               <button
                 type="submit"
-                className="btn-submit"
+                className="home-login-button"
                 disabled={
                   loadingLogin
                 }
               >
                 {loadingLogin
                   ? "Autenticando..."
-                  : "Entrar"}
+                  : "Entrar no sistema"}
               </button>
+
             </form>
-          </aside>
+
+
+            <div className="home-login-security">
+
+              <ShieldCheck
+                size={15}
+              />
+
+              Acesso protegido por usuário.
+
+            </div>
+
+          </section>
+
+        </div>
+
+      </main>
+    );
+  }
+
+
+  /* =====================================================
+     HOME LOGADA
+  ===================================================== */
+
+  return (
+    <main className="home-page">
+
+      <div className="home-dashboard">
+
+
+        {/* ===============================================
+            BOAS-VINDAS
+        =============================================== */}
+
+        <section className="home-welcome">
+
+          <div className="home-welcome-main">
+
+            <div className="home-welcome-icon">
+
+              <Factory
+                size={28}
+              />
+
+            </div>
+
+
+            <div>
+
+              <span className="home-welcome-label">
+                Painel Pedrasplast
+              </span>
+
+              <h1>
+                Olá, {nomeUsuario}
+              </h1>
+
+              <p>
+                Aqui estão as principais
+                informações da operação.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="home-profile-badge">
+
+            <ShieldCheck
+              size={17}
+            />
+
+            <div>
+
+              <span>
+                Perfil
+              </span>
+
+              <strong>
+                {perfilUsuario}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* ===============================================
+            PRODUÇÃO
+        =============================================== */}
+
+        <section className="home-production-section">
+
+          <div className="home-section-heading">
+
+            <div>
+
+              <span>
+                RESUMO DA PRODUÇÃO
+              </span>
+
+              <h2>
+                Produção acumulada
+              </h2>
+
+              <p>
+                Indicadores gerais considerando
+                todos os dados importados
+                no sistema.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          {erroProducao ? (
+
+            <div className="home-summary-error">
+
+              <AlertTriangle
+                size={20}
+              />
+
+              <div>
+
+                <strong>
+                  Não foi possível carregar
+                  os dados da produção.
+                </strong>
+
+                <span>
+                  Consulte o Dashboard
+                  para verificar os dados.
+                </span>
+
+              </div>
+
+            </div>
+
+          ) : (
+
+            <div className="home-summary-grid">
+
+
+              {/* HORAS TRABALHADAS */}
+
+              <article className="home-summary-card">
+
+                <div className="home-summary-icon">
+
+                  <Clock3
+                    size={22}
+                  />
+
+                </div>
+
+
+                <div className="home-summary-info">
+
+                  <span>
+                    HORAS TRABALHADAS
+                  </span>
+
+                  <strong className="home-summary-duration">
+                    {carregandoProducao
+                      ? "-"
+                      : formatarHoras(
+                          resumoProducao
+                            .horasTrabalhadas,
+                        )}
+                  </strong>
+
+                  <p>
+                    Total acumulado
+                    de horas em produção.
+                  </p>
+
+                </div>
+
+              </article>
+
+
+              {/* HORAS PARADAS */}
+
+              <article
+                className={
+                  resumoProducao
+                    .horasParadas > 0
+                    ? "home-summary-card home-summary-card-warning"
+                    : "home-summary-card"
+                }
+              >
+
+                <div
+                  className={
+                    resumoProducao
+                      .horasParadas > 0
+                      ? "home-summary-icon home-summary-icon-warning"
+                      : "home-summary-icon"
+                  }
+                >
+
+                  <AlertTriangle
+                    size={22}
+                  />
+
+                </div>
+
+
+                <div className="home-summary-info">
+
+                  <span>
+                    HORAS PARADAS
+                  </span>
+
+                  <strong className="home-summary-duration">
+                    {carregandoProducao
+                      ? "-"
+                      : formatarHoras(
+                          resumoProducao
+                            .horasParadas,
+                        )}
+                  </strong>
+
+                  <p>
+                    Paradas acumuladas
+                    dos Tipos 1 e 2.
+                  </p>
+
+                </div>
+
+              </article>
+
+
+              {/* % HORAS TRABALHADAS */}
+
+              <article className="home-summary-card">
+
+                <div className="home-summary-icon home-summary-icon-success">
+
+                  <CheckCircle2
+                    size={22}
+                  />
+
+                </div>
+
+
+                <div className="home-summary-info">
+
+                  <span>
+                    % HORAS TRABALHADAS
+                  </span>
+
+                  <strong>
+                    {carregandoProducao
+                      ? "-"
+                      : formatarPercentual(
+                          resumoProducao
+                            .percentualTrabalhado,
+                        )}
+                  </strong>
+
+                  <p>
+                    Percentual do tempo
+                    considerado em produção.
+                  </p>
+
+                </div>
+
+              </article>
+
+
+              {/* REGISTROS DE PARADA */}
+
+              <article
+                className={
+                  resumoProducao
+                    .paradas > 0
+                    ? "home-summary-card home-summary-card-warning"
+                    : "home-summary-card"
+                }
+              >
+
+                <div
+                  className={
+                    resumoProducao
+                      .paradas > 0
+                      ? "home-summary-icon home-summary-icon-warning"
+                      : "home-summary-icon"
+                  }
+                >
+
+                  <Clock3
+                    size={22}
+                  />
+
+                </div>
+
+
+                <div className="home-summary-info">
+
+                  <span>
+                    REGISTROS DE PARADA
+                  </span>
+
+                  <strong>
+                    {carregandoProducao
+                      ? "-"
+                      : formatarNumero(
+                          resumoProducao
+                            .paradas,
+                        )}
+                  </strong>
+
+                  <p>
+                    Ocorrências acumuladas
+                    dos Tipos 1 e 2.
+                  </p>
+
+                </div>
+
+              </article>
+
+            </div>
+          )}
+
+        </section>
+
+
+        {/* ===============================================
+            PEDIDOS
+            SOMENTE COM PERMISSÃO
+        =============================================== */}
+
+        {podeVerPedidos && (
+          <>
+            <section className="home-summary-section">
+
+              <div className="home-section-heading">
+
+                <div>
+
+                  <span>
+                    PEDIDOS
+                  </span>
+
+                  <h2>
+                    Resumo comercial
+                  </h2>
+
+                  <p>
+                    Atualização automática
+                    a cada 15 minutos.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              {erroPedidos ? (
+
+                <div className="home-summary-error">
+
+                  <AlertTriangle
+                    size={20}
+                  />
+
+                  <div>
+
+                    <strong>
+                      Não foi possível carregar
+                      o resumo dos pedidos.
+                    </strong>
+
+                    <span>
+                      Uma nova tentativa será
+                      realizada automaticamente.
+                    </span>
+
+                  </div>
+
+                </div>
+
+              ) : (
+
+                <div className="home-summary-grid">
+
+
+                  {/* PEDIDOS EM ABERTO */}
+
+                  <article className="home-summary-card">
+
+                    <div className="home-summary-icon">
+
+                      <ShoppingCart
+                        size={22}
+                      />
+
+                    </div>
+
+
+                    <div className="home-summary-info">
+
+                      <span>
+                        PEDIDOS EM ABERTO
+                      </span>
+
+                      <strong>
+                        {carregandoPedidos
+                          ? "-"
+                          : formatarNumero(
+                              pedidosUnicos.length,
+                            )}
+                      </strong>
+
+                      <p>
+                        Pedidos comerciais
+                        em acompanhamento.
+                      </p>
+
+                    </div>
+
+                  </article>
+
+
+                  {/* PEDIDOS ATRASADOS */}
+
+                  <article
+                    className={
+                      pedidosAtrasados > 0
+                        ? "home-summary-card home-summary-card-warning"
+                        : "home-summary-card"
+                    }
+                  >
+
+                    <div
+                      className={
+                        pedidosAtrasados > 0
+                          ? "home-summary-icon home-summary-icon-warning"
+                          : "home-summary-icon"
+                      }
+                    >
+
+                      <AlertTriangle
+                        size={22}
+                      />
+
+                    </div>
+
+
+                    <div className="home-summary-info">
+
+                      <span>
+                        PEDIDOS ATRASADOS
+                      </span>
+
+                      <strong>
+                        {carregandoPedidos
+                          ? "-"
+                          : formatarNumero(
+                              pedidosAtrasados,
+                            )}
+                      </strong>
+
+                      <p>
+                        {pedidosAtrasados > 0
+                          ? "Pedidos que precisam de atenção."
+                          : "Nenhum atraso identificado."}
+                      </p>
+
+                    </div>
+
+                  </article>
+
+
+                  {/* PRÓXIMOS 7 DIAS */}
+
+                  <article className="home-summary-card">
+
+                    <div className="home-summary-icon">
+
+                      <CalendarClock
+                        size={22}
+                      />
+
+                    </div>
+
+
+                    <div className="home-summary-info">
+
+                      <span>
+                        PRÓXIMOS 7 DIAS
+                      </span>
+
+                      <strong>
+                        {carregandoPedidos
+                          ? "-"
+                          : formatarNumero(
+                              proximosSeteDias,
+                            )}
+                      </strong>
+
+                      <p>
+                        Pedidos previstos
+                        para faturamento.
+                      </p>
+
+                    </div>
+
+                  </article>
+
+
+                  {/* ÚLTIMA ATUALIZAÇÃO */}
+
+                  <article className="home-summary-card">
+
+                    <div className="home-summary-icon">
+
+                      <Clock3
+                        size={22}
+                      />
+
+                    </div>
+
+
+                    <div className="home-summary-info">
+
+                      <span>
+                        ÚLTIMA ATUALIZAÇÃO
+                      </span>
+
+                      <strong className="home-summary-time">
+                        {carregandoPedidos
+                          ? "-"
+                          : formatarHorario(
+                              respostaPedidos
+                                ?.atualizadoEm,
+                            )}
+                      </strong>
+
+                      <p>
+                        {formatarDataHora(
+                          respostaPedidos
+                            ?.atualizadoEm,
+                        )}
+                      </p>
+
+                    </div>
+
+                  </article>
+
+                </div>
+              )}
+
+            </section>
+
+
+            {/* ATENÇÕES DOS PEDIDOS */}
+
+            {!carregandoPedidos &&
+              !erroPedidos && (
+                <section className="home-alerts-section">
+
+                  <div className="home-section-heading">
+
+                    <div>
+
+                      <span>
+                        ATENÇÕES
+                      </span>
+
+                      <h2>
+                        Pedidos que merecem atenção
+                      </h2>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="home-alerts-card">
+
+                    {pedidosAtrasados > 0 ? (
+
+                      <div className="home-alert-item home-alert-warning">
+
+                        <div className="home-alert-icon">
+
+                          <AlertTriangle
+                            size={19}
+                          />
+
+                        </div>
+
+
+                        <div>
+
+                          <strong>
+                            {formatarNumero(
+                              pedidosAtrasados,
+                            )} pedido
+                            {pedidosAtrasados !== 1
+                              ? "s"
+                              : ""} em atraso
+                          </strong>
+
+                          <p>
+                            Consulte Pedidos
+                            para verificar
+                            os prazos vencidos.
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    ) : (
+
+                      <div className="home-alert-item home-alert-success">
+
+                        <div className="home-alert-icon">
+
+                          <CheckCircle2
+                            size={19}
+                          />
+
+                        </div>
+
+
+                        <div>
+
+                          <strong>
+                            Nenhum pedido em atraso
+                          </strong>
+
+                          <p>
+                            Não foram identificados
+                            pedidos vencidos
+                            no momento.
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    )}
+
+
+                    <div className="home-alert-divider" />
+
+
+                    <div className="home-alert-item home-alert-info">
+
+                      <div className="home-alert-icon">
+
+                        <CalendarClock
+                          size={19}
+                        />
+
+                      </div>
+
+
+                      <div>
+
+                        <strong>
+                          {formatarNumero(
+                            proximosSeteDias,
+                          )} faturamento
+                          {proximosSeteDias !== 1
+                            ? "s"
+                            : ""} nos próximos 7 dias
+                        </strong>
+
+                        <p>
+                          Pedidos previstos
+                          para faturamento
+                          durante a próxima semana.
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </section>
+              )}
+          </>
         )}
+
+
+        {/* ===============================================
+            ADMINISTRAÇÃO
+        =============================================== */}
+
+        {possuiAcoesAdministrativas && (
+          <section className="home-admin-section">
+
+            <div className="home-section-heading">
+
+              <div>
+
+                <span>
+                  ADMINISTRAÇÃO
+                </span>
+
+                <h2>
+                  Ferramentas administrativas
+                </h2>
+
+                <p>
+                  Recursos adicionais
+                  disponíveis para seu perfil.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div className="home-admin-actions">
+
+              {podeImportar && (
+                <button
+                  type="button"
+                  className="home-admin-action"
+                  onClick={() =>
+                    navigate(
+                      "/importar",
+                    )
+                  }
+                >
+
+                  <div className="home-admin-action-icon">
+
+                    <UploadCloud
+                      size={21}
+                    />
+
+                  </div>
+
+
+                  <div>
+
+                    <strong>
+                      Importar dados
+                    </strong>
+
+                    <span>
+                      Importação da programação
+                      e dados operacionais.
+                    </span>
+
+                  </div>
+
+                </button>
+              )}
+
+
+              {podeGerenciarUsuarios && (
+                <button
+                  type="button"
+                  className="home-admin-action"
+                  onClick={() =>
+                    navigate(
+                      "/usuarios",
+                    )
+                  }
+                >
+
+                  <div className="home-admin-action-icon">
+
+                    <UsersRound
+                      size={21}
+                    />
+
+                  </div>
+
+
+                  <div>
+
+                    <strong>
+                      Gerenciar usuários
+                    </strong>
+
+                    <span>
+                      Usuários, perfis
+                      e permissões de acesso.
+                    </span>
+
+                  </div>
+
+                </button>
+              )}
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* ===============================================
+            RODAPÉ
+        =============================================== */}
+
+        <footer className="home-system-footer">
+
+          <div>
+
+            <Factory
+              size={15}
+            />
+
+            <strong>
+              Pedrasplast
+            </strong>
+
+          </div>
+
+          <span>
+            Gestão e acompanhamento operacional
+          </span>
+
+        </footer>
+
       </div>
 
-
-      {/* =================================================
-          RODAPÉ
-      ================================================= */}
-
-      <footer className="home-footer">
-        <Factory
-          size={14}
-        />
-
-        <span>
-          Painel de Produção
-        </span>
-
-        <span className="home-footer-separator">
-          •
-        </span>
-
-        <span>
-          Gestão e acompanhamento
-          operacional
-        </span>
-      </footer>
-    </div>
+    </main>
   );
 }
 

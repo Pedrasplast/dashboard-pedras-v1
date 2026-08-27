@@ -1,27 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
-import GerenciarUsuariosPage from "@/features/usuarios/GerenciarUsuariosPage";
+
 import RotaProtegida from "@/components/layout/RotaProtegida";
+import GerenciarUsuariosPage from "@/features/usuarios/GerenciarUsuariosPage";
 
 export const Route = createFileRoute("/usuarios")({
   ssr: false,
+
   head: () => ({
     meta: [
-      { title: "Gerenciar Usuários | Pedrasplast" },
+      {
+        title:
+          "Gerenciar Usuários | Pedrasplast",
+      },
       {
         name: "description",
-        content: "Controle permissões, níveis de acesso e perfis dos colaboradores do painel.",
-      },
-      { property: "og:title", content: "Gerenciar Usuários | Pedrasplast" },
-      {
-        property: "og:description",
-        content: "Administração de perfis e permissões do painel de produção.",
+        content:
+          "Gerenciamento de usuários e permissões do sistema Pedrasplast.",
       },
     ],
   }),
-  component: RotaUsuarios,
+
+  component: UsuariosRoute,
 });
 
-function RotaUsuarios() {
+function UsuariosRoute() {
   return (
     <RotaProtegida exigirAdmin>
       <GerenciarUsuariosPage />

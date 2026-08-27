@@ -1,30 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import TelaRelatoriosPage from "@/features/relatorios/TelaRelatoriosPage";
+
 import RotaProtegida from "@/components/layout/RotaProtegida";
+import TelaRelatoriosPage from "@/features/relatorios/TelaRelatoriosPage";
 
 export const Route = createFileRoute("/relatorios")({
   ssr: false,
+
   head: () => ({
     meta: [
-      { title: "Relatórios de Produção | Pedrasplast" },
+      {
+        title: "Relatórios | Pedrasplast",
+      },
       {
         name: "description",
         content:
-          "Gere relatórios de produção filtrados por período, injetora e produto em PDF ou Excel.",
-      },
-      { property: "og:title", content: "Relatórios de Produção | Pedrasplast" },
-      {
-        property: "og:description",
-        content: "Exportação de relatórios detalhados de carga máquina.",
+          "Relatórios e análises operacionais da Pedrasplast.",
       },
     ],
   }),
-  component: RotaRelatorios,
+
+  component: RelatoriosRoute,
 });
 
-function RotaRelatorios() {
+function RelatoriosRoute() {
   return (
-    <RotaProtegida>
+    <RotaProtegida permissao="relatorios">
       <TelaRelatoriosPage />
     </RotaProtegida>
   );

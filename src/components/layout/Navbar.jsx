@@ -1,5 +1,14 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import { useRouterState } from "@tanstack/react-router";
+
 import {
   ChevronDown,
   Factory,
@@ -13,28 +22,70 @@ import {
   Users,
 } from "lucide-react";
 
+import { usePermissoes } from "@/hooks/usePermissoes";
 import { useNavigate } from "@/lib/navegacao";
 import { supabase } from "@/lib/supabaseClient";
 
 import "./Navbar.css";
 
+
+/* =========================================================
+   ITENS DE NAVEGAÇÃO
+========================================================= */
+
 const NAVIGATION_ITEMS = Object.freeze([
-  { label: "Início", shortLabel: "Início", path: "/", icon: Home },
-  { label: "Produção", shortLabel: "Produção", path: "/dashboard", icon: Factory },
+  {
+    label: "Início",
+    shortLabel: "Início",
+    path: "/",
+    icon: Home,
+    permissao: null,
+  },
+  {
+    label: "Produção",
+    shortLabel: "Produção",
+    path: "/dashboard",
+    icon: Factory,
+    permissao: "dashboard",
+  },
   {
     label: "Produtividade",
     shortLabel: "Eficiência",
     path: "/dashboard-produtividade",
     icon: Gauge,
+    permissao: "dashboard_produtividade",
   },
-  { label: "Pedidos", shortLabel: "Pedidos", path: "/pedidos", icon: ShoppingCart },
-  { label: "Relatórios", shortLabel: "Relatórios", path: "/relatorios", icon: FileText },
+  {
+    label: "Pedidos",
+    shortLabel: "Pedidos",
+    path: "/pedidos",
+    icon: ShoppingCart,
+    permissao: "pedidos",
+  },
+  {
+    label: "Relatórios",
+    shortLabel: "Relatórios",
+    path: "/relatorios",
+    icon: FileText,
+    permissao: "relatorios",
+  },
 ]);
 
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
 function normalizarCaminho(path) {
-  const caminho = String(path || "/").trim();
-  return caminho === "/" ? "/" : caminho.replace(/\/+$/, "");
+  const caminho = String(
+    path || "/"
+  ).trim();
+
+  return caminho === "/"
+    ? "/"
+    : caminho.replace(/\/+$/, "");
 }
+
 
 function obterNomeUsuario(email) {
   if (!email) {
@@ -44,221 +95,625 @@ function obterNomeUsuario(email) {
   return email
     .split("@")[0]
     .replace(/[._-]+/g, " ")
-    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+    .replace(
+      /\b\w/g,
+      (letra) =>
+        letra.toUpperCase()
+    );
 }
+
 
 function obterIniciais(nome) {
   if (!nome) {
     return "US";
   }
 
-  const palavras = nome.trim().split(/\s+/).filter(Boolean);
+  const palavras = nome
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
   if (palavras.length === 1) {
-    return palavras[0].slice(0, 2).toUpperCase();
+    return palavras[0]
+      .slice(0, 2)
+      .toUpperCase();
   }
 
-  return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
+  return `${palavras[0][0]}${palavras.at(-1)[0]}`
+    .toUpperCase();
 }
 
-function Navbar({ user, isAdmin }) {
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+function Navbar({
+  user,
+  isAdmin,
+}) {
   const navigate = useNavigate();
+
   const menuRef = useRef(null);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Usa o estado oficial do TanStack Router. Evita interceptar history.pushState
-  // globalmente e mantém a aba ativa sincronizada com qualquer navegação do app.
+  const [
+    userMenuOpen,
+    setUserMenuOpen,
+  ] = useState(false);
+
+
+  /* =======================================================
+     PERMISSÕES
+  ======================================================= */
+
+  const {
+    podeAcessarTela,
+    loadingPermissoes,
+  } = usePermissoes();
+
+
+  /* =======================================================
+     ROTA ATUAL
+  ======================================================= */
+
   const pathname = useRouterState({
-    select: (state) => state.location.pathname,
+    select: (state) =>
+      state.location.pathname,
   });
-  const currentPath = useMemo(() => normalizarCaminho(pathname), [pathname]);
 
-  const userName = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
-  const userInitials = useMemo(() => obterIniciais(userName), [userName]);
+  const currentPath = useMemo(
+    () =>
+      normalizarCaminho(
+        pathname
+      ),
+    [pathname]
+  );
+
+
+  /* =======================================================
+     USUÁRIO
+  ======================================================= */
+
+  const userName = useMemo(
+    () =>
+      obterNomeUsuario(
+        user?.email
+      ),
+    [user?.email]
+  );
+
+  const userInitials = useMemo(
+    () =>
+      obterIniciais(
+        userName
+      ),
+    [userName]
+  );
+
+
+  /* =======================================================
+     ITENS VISÍVEIS
+  ======================================================= */
+
+  const navigationItemsVisiveis =
+    useMemo(() => {
+      if (!user) {
+        return [];
+      }
+
+      /*
+       * ADMIN vê todos os itens.
+       */
+      if (isAdmin) {
+        return NAVIGATION_ITEMS;
+      }
+
+      /*
+       * Enquanto as permissões do OPERADOR
+       * carregam, exibimos apenas Início.
+       *
+       * Isso evita que telas sem permissão
+       * apareçam rapidamente na Navbar.
+       */
+      if (loadingPermissoes) {
+        return NAVIGATION_ITEMS.filter(
+          (item) =>
+            !item.permissao
+        );
+      }
+
+      return NAVIGATION_ITEMS.filter(
+        (item) => {
+          /*
+           * Itens sem chave de permissão,
+           * como Início, sempre aparecem.
+           */
+          if (!item.permissao) {
+            return true;
+          }
+
+          return podeAcessarTela(
+            item.permissao
+          );
+        }
+      );
+    }, [
+      user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
+    ]);
+
+
+  /* =======================================================
+     IMPORTAÇÃO
+  ======================================================= */
+
+  const podeImportar = useMemo(
+    () => {
+      if (!user) {
+        return false;
+      }
+
+      if (isAdmin) {
+        return true;
+      }
+
+      if (loadingPermissoes) {
+        return false;
+      }
+
+      return podeAcessarTela(
+        "importar"
+      );
+    },
+    [
+      user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
+    ]
+  );
+
+
+  /* =======================================================
+     NAVEGAÇÃO
+  ======================================================= */
 
   const goTo = useCallback(
     (path) => {
       setUserMenuOpen(false);
-      navigate(normalizarCaminho(path));
+
+      navigate(
+        normalizarCaminho(
+          path
+        )
+      );
     },
-    [navigate],
+    [navigate]
   );
 
-  const handleLogout = useCallback(async () => {
-    setUserMenuOpen(false);
 
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("expiracao_login");
-    }
+  /* =======================================================
+     LOGOUT
+  ======================================================= */
 
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Erro ao encerrar a sessão:", error);
-      }
-    } catch (error) {
-      console.error("Erro inesperado ao encerrar a sessão:", error);
-    } finally {
-      navigate("/");
-    }
-  }, [navigate]);
+  const handleLogout =
+    useCallback(
+      async () => {
+        setUserMenuOpen(false);
 
-  const toggleUserMenu = useCallback(() => {
-    setUserMenuOpen((aberto) => !aberto);
-  }, []);
+        if (
+          typeof window !==
+          "undefined"
+        ) {
+          window.localStorage
+            .removeItem(
+              "expiracao_login"
+            );
+        }
 
-  // Os listeners existem somente enquanto o menu está aberto.
+        try {
+          const {
+            error,
+          } =
+            await supabase.auth
+              .signOut();
+
+          if (error) {
+            console.error(
+              "Erro ao encerrar a sessão:",
+              error
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Erro inesperado ao encerrar a sessão:",
+            error
+          );
+        } finally {
+          navigate("/");
+        }
+      },
+      [navigate]
+    );
+
+
+  /* =======================================================
+     MENU DO USUÁRIO
+  ======================================================= */
+
+  const toggleUserMenu =
+    useCallback(() => {
+      setUserMenuOpen(
+        (aberto) =>
+          !aberto
+      );
+    }, []);
+
+
+  /* =======================================================
+     FECHAR MENU
+  ======================================================= */
+
   useEffect(() => {
-    if (!userMenuOpen || typeof document === "undefined") {
+    if (
+      !userMenuOpen ||
+      typeof document ===
+        "undefined"
+    ) {
       return undefined;
     }
 
-    const fecharAoClicarFora = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
-      }
-    };
+    const fecharAoClicarFora =
+      (event) => {
+        if (
+          menuRef.current &&
+          !menuRef.current.contains(
+            event.target
+          )
+        ) {
+          setUserMenuOpen(
+            false
+          );
+        }
+      };
 
-    const fecharComEscape = (event) => {
-      if (event.key === "Escape") {
-        setUserMenuOpen(false);
-      }
-    };
+    const fecharComEscape =
+      (event) => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
+          setUserMenuOpen(
+            false
+          );
+        }
+      };
 
-    document.addEventListener("mousedown", fecharAoClicarFora);
-    document.addEventListener("keydown", fecharComEscape);
+    document.addEventListener(
+      "mousedown",
+      fecharAoClicarFora
+    );
+
+    document.addEventListener(
+      "keydown",
+      fecharComEscape
+    );
 
     return () => {
-      document.removeEventListener("mousedown", fecharAoClicarFora);
-      document.removeEventListener("keydown", fecharComEscape);
+      document.removeEventListener(
+        "mousedown",
+        fecharAoClicarFora
+      );
+
+      document.removeEventListener(
+        "keydown",
+        fecharComEscape
+      );
     };
   }, [userMenuOpen]);
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <header className="main-navbar">
       <div className="navbar-container">
+
+        {/* ===============================================
+            LOGO
+        =============================================== */}
+
         <button
           type="button"
           className="navbar-brand"
-          onClick={() => goTo("/")}
+          onClick={() =>
+            goTo("/")
+          }
           aria-label="Ir para o início"
         >
-          <img src="/Logo_Pedrasplast.png" alt="Pedrasplast" className="brand-logo-img" />
+          <img
+            src="/Logo_Pedrasplast.png"
+            alt="Pedrasplast"
+            className="brand-logo-img"
+          />
         </button>
 
-        {user && (
-          <nav className="navbar-navigation" aria-label="Navegação principal">
-            {NAVIGATION_ITEMS.map(({ label, shortLabel, path, icon: Icon }) => {
-              const active = currentPath === normalizarCaminho(path);
 
-              return (
-                <button
-                  key={path}
-                  type="button"
-                  className={active ? "navbar-navigation-link active" : "navbar-navigation-link"}
-                  onClick={() => goTo(path)}
-                  aria-current={active ? "page" : undefined}
-                >
-                  <Icon size={18} strokeWidth={2} aria-hidden="true" />
-                  <span className="navbar-label-desktop">{label}</span>
-                  <span className="navbar-label-mobile">{shortLabel}</span>
-                </button>
-              );
-            })}
+        {/* ===============================================
+            NAVEGAÇÃO PRINCIPAL
+        =============================================== */}
+
+        {user && (
+          <nav
+            className="navbar-navigation"
+            aria-label="Navegação principal"
+          >
+            {navigationItemsVisiveis.map(
+              ({
+                label,
+                shortLabel,
+                path,
+                icon: Icon,
+              }) => {
+                const active =
+                  currentPath ===
+                  normalizarCaminho(
+                    path
+                  );
+
+                return (
+                  <button
+                    key={path}
+                    type="button"
+                    className={
+                      active
+                        ? "navbar-navigation-link active"
+                        : "navbar-navigation-link"
+                    }
+                    onClick={() =>
+                      goTo(path)
+                    }
+                    aria-current={
+                      active
+                        ? "page"
+                        : undefined
+                    }
+                  >
+                    <Icon
+                      size={18}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+
+                    <span className="navbar-label-desktop">
+                      {label}
+                    </span>
+
+                    <span className="navbar-label-mobile">
+                      {shortLabel}
+                    </span>
+                  </button>
+                );
+              }
+            )}
           </nav>
         )}
 
+
+        {/* ===============================================
+            AUTENTICAÇÃO
+        =============================================== */}
+
         <div className="navbar-auth-section">
+
           {user ? (
             <div className="navbar-user-controls">
-              <div ref={menuRef} className="navbar-user-area">
+
+              {/* =========================================
+                  ÁREA DO USUÁRIO
+              ========================================= */}
+
+              <div
+                ref={menuRef}
+                className="navbar-user-area"
+              >
                 <button
                   type="button"
-                  className={userMenuOpen ? "navbar-user-trigger open" : "navbar-user-trigger"}
-                  onClick={toggleUserMenu}
-                  aria-expanded={userMenuOpen}
+                  className={
+                    userMenuOpen
+                      ? "navbar-user-trigger open"
+                      : "navbar-user-trigger"
+                  }
+                  onClick={
+                    toggleUserMenu
+                  }
+                  aria-expanded={
+                    userMenuOpen
+                  }
                   aria-haspopup="menu"
                   aria-label="Abrir menu do usuário"
                 >
-                  <span className="user-avatar">{userInitials}</span>
+                  <span className="user-avatar">
+                    {userInitials}
+                  </span>
 
                   <span className="user-information">
-                    <strong className="user-name">{userName}</strong>
-                    <span className="user-role">{isAdmin ? "Administrador" : "Operador"}</span>
+                    <strong className="user-name">
+                      {userName}
+                    </strong>
+
+                    <span className="user-role">
+                      {isAdmin
+                        ? "Administrador"
+                        : "Operador"}
+                    </span>
                   </span>
 
                   <ChevronDown
                     size={17}
                     strokeWidth={2}
-                    className={userMenuOpen ? "user-menu-arrow open" : "user-menu-arrow"}
+                    className={
+                      userMenuOpen
+                        ? "user-menu-arrow open"
+                        : "user-menu-arrow"
+                    }
                     aria-hidden="true"
                   />
                 </button>
 
+
+                {/* =======================================
+                    MENU SUSPENSO
+                ======================================= */}
+
                 {userMenuOpen && (
-                  <div className="navbar-user-menu" role="menu">
+                  <div
+                    className="navbar-user-menu"
+                    role="menu"
+                  >
+
+                    {/* USUÁRIO */}
+
                     <div className="user-menu-header">
-                      <span className="user-menu-avatar">{userInitials}</span>
+                      <span className="user-menu-avatar">
+                        {userInitials}
+                      </span>
+
                       <div>
-                        <strong>{userName}</strong>
-                        <span>{user.email}</span>
+                        <strong>
+                          {userName}
+                        </strong>
+
+                        <span>
+                          {user.email}
+                        </span>
                       </div>
                     </div>
 
+
                     <div className="user-menu-divider" />
+
+
+                    {/* INÍCIO */}
 
                     <button
                       type="button"
                       className="user-menu-item"
-                      onClick={() => goTo("/")}
+                      onClick={() =>
+                        goTo("/")
+                      }
                       role="menuitem"
                     >
-                      <Home size={17} aria-hidden="true" />
+                      <Home
+                        size={17}
+                        aria-hidden="true"
+                      />
+
                       Página inicial
                     </button>
 
-                    {isAdmin && (
-                      <>
-                        <button
-                          type="button"
-                          className="user-menu-item"
-                          onClick={() => goTo("/importar")}
-                          role="menuitem"
-                        >
-                          <Upload size={17} aria-hidden="true" />
-                          Importar dados
-                        </button>
 
-                        <button
-                          type="button"
-                          className="user-menu-item"
-                          onClick={() => goTo("/usuarios")}
-                          role="menuitem"
-                        >
-                          <Users size={17} aria-hidden="true" />
-                          Gerenciar usuários
-                        </button>
-                      </>
+                    {/* IMPORTAR */}
+
+                    {podeImportar && (
+                      <button
+                        type="button"
+                        className="user-menu-item"
+                        onClick={() =>
+                          goTo(
+                            "/importar"
+                          )
+                        }
+                        role="menuitem"
+                      >
+                        <Upload
+                          size={17}
+                          aria-hidden="true"
+                        />
+
+                        Importar dados
+                      </button>
                     )}
+
+
+                    {/* GERENCIAR USUÁRIOS */}
+
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        className="user-menu-item"
+                        onClick={() =>
+                          goTo(
+                            "/usuarios"
+                          )
+                        }
+                        role="menuitem"
+                      >
+                        <Users
+                          size={17}
+                          aria-hidden="true"
+                        />
+
+                        Gerenciar usuários
+                      </button>
+                    )}
+
                   </div>
                 )}
               </div>
 
+
+              {/* =========================================
+                  SAIR
+              ========================================= */}
+
               <button
                 type="button"
                 className="navbar-logout-button"
-                onClick={handleLogout}
+                onClick={
+                  handleLogout
+                }
                 aria-label="Sair da conta"
               >
-                <LogOut size={17} strokeWidth={2} aria-hidden="true" />
-                <span>Sair</span>
+                <LogOut
+                  size={17}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+
+                <span>
+                  Sair
+                </span>
               </button>
+
             </div>
           ) : (
-            <button type="button" className="btn-login" onClick={() => goTo("/login")}>
-              <LogIn size={17} aria-hidden="true" />
+
+            /* ===========================================
+               LOGIN
+            =========================================== */
+
+            <button
+              type="button"
+              className="btn-login"
+              onClick={() =>
+                goTo("/login")
+              }
+            >
+              <LogIn
+                size={17}
+                aria-hidden="true"
+              />
+
               Entrar
             </button>
+
           )}
+
         </div>
       </div>
     </header>
