@@ -1558,3 +1558,69 @@ strong {
     padding: 4px 6px;
   }
 }
+
+/* =========================================================
+   STATUS CANCELADO
+========================================================= */
+
+.status-cancelado {
+  background: #fef2f2;
+
+  color: #b91c1c;
+
+  border: 1px solid #fecaca;
+}
+
+
+/* =========================================================
+   CONSULTA DE CANCELADOS
+========================================================= */
+
+.pedidos-consulta-cancelados {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  margin-bottom: 16px;
+
+  padding: 13px 15px;
+
+  background: #fff7f7;
+
+  border: 1px solid #fecaca;
+  border-left: 4px solid #dc2626;
+
+  border-radius: 9px;
+
+  color: #b91c1c;
+}
+
+
+.pedidos-consulta-cancelados > svg {
+  flex: 0 0 auto;
+
+  margin-top: 1px;
+}
+
+
+.pedidos-consulta-cancelados > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+
+.pedidos-consulta-cancelados strong {
+  color: #991b1b;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+.pedidos-consulta-cancelados span {
+  color: #b45353;
+
+  font-size: 11px;
+  line-height: 1.45;
+}
