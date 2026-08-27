@@ -1,4 +1,5 @@
-import React, {
+import {
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -6,591 +7,431 @@ import React, {
   useState,
 } from "react";
 
+import { useRouterState } from "@tanstack/react-router";
+
 import {
-  Boxes,
   ChevronDown,
   Factory,
+  FileText,
   Gauge,
   Home,
   LogIn,
   LogOut,
+  ShoppingCart,
   Upload,
   Users,
-  FileText,
 } from "lucide-react";
 
-import {
-  useNavigate,
-} from "@/lib/navegacao";
-
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { usePermissoes } from "@/hooks/usePermissoes";
+import { useNavigate } from "@/lib/navegacao";
+import { supabase } from "@/lib/supabaseClient";
 
 import "./Navbar.css";
 
 
-/* =====================================================
-   NORMALIZA CAMINHO
-===================================================== */
+/* =========================================================
+   ITENS DE NAVEGAÇÃO
+========================================================= */
 
-function normalizarCaminho(
-  path,
-) {
-  const caminho =
-    String(
-      path || "/",
-    ).trim();
+const NAVIGATION_ITEMS = Object.freeze([
+  {
+    label: "Início",
+    shortLabel: "Início",
+    path: "/",
+    icon: Home,
+    permissao: null,
+  },
+  {
+    label: "Produção",
+    shortLabel: "Produção",
+    path: "/dashboard",
+    icon: Factory,
+    permissao: "dashboard",
+  },
+  {
+    label: "Produtividade",
+    shortLabel: "Eficiência",
+    path: "/dashboard-produtividade",
+    icon: Gauge,
+    permissao: "dashboard_produtividade",
+  },
+  {
+    label: "Pedidos",
+    shortLabel: "Pedidos",
+    path: "/pedidos",
+    icon: ShoppingCart,
+    permissao: "pedidos",
+  },
+  {
+    label: "Relatórios",
+    shortLabel: "Relatórios",
+    path: "/relatorios",
+    icon: FileText,
+    permissao: "relatorios",
+  },
+]);
 
-  if (
-    caminho === "/"
-  ) {
-    return "/";
-  }
 
-  return caminho.replace(
-    /\/+$/,
-    "",
-  );
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function normalizarCaminho(path) {
+  const caminho = String(
+    path || "/"
+  ).trim();
+
+  return caminho === "/"
+    ? "/"
+    : caminho.replace(/\/+$/, "");
 }
 
 
-/* =====================================================
+function obterNomeUsuario(email) {
+  if (!email) {
+    return "";
+  }
+
+  return email
+    .split("@")[0]
+    .replace(/[._-]+/g, " ")
+    .replace(
+      /\b\w/g,
+      (letra) =>
+        letra.toUpperCase()
+    );
+}
+
+
+function obterIniciais(nome) {
+  if (!nome) {
+    return "US";
+  }
+
+  const palavras = nome
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (palavras.length === 1) {
+    return palavras[0]
+      .slice(0, 2)
+      .toUpperCase();
+  }
+
+  return `${palavras[0][0]}${palavras.at(-1)[0]}`
+    .toUpperCase();
+}
+
+
+/* =========================================================
    NAVBAR
-===================================================== */
+========================================================= */
 
 function Navbar({
   user,
   isAdmin,
 }) {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  const menuRef =
-    useRef(null);
-
-
-  /* =====================================================
-     ROTA ATUAL
-  ===================================================== */
-
-  const [
-    currentPath,
-    setCurrentPath,
-  ] =
-    useState("/");
-
+  const menuRef = useRef(null);
 
   const [
     userMenuOpen,
     setUserMenuOpen,
-  ] =
-    useState(false);
+  ] = useState(false);
 
 
-  /* =====================================================
-     ITENS DA NAVEGAÇÃO
-  ===================================================== */
+  /* =======================================================
+     PERMISSÕES
+  ======================================================= */
 
-  const navigationItems =
-    useMemo(
-      () => [
-        {
-          label:
-            "Início",
-
-          shortLabel:
-            "Início",
-
-          path:
-            "/",
-
-          icon:
-            Home,
-        },
-
-        {
-          label:
-            "Produção",
-
-          shortLabel:
-            "Produção",
-
-          path:
-            "/dashboard",
-
-          icon:
-            Factory,
-        },
-
-        {
-          label:
-            "Matéria-prima",
-
-          shortLabel:
-            "Matéria",
-
-          path:
-            "/dashboard-materia-prima",
-
-          icon:
-            Boxes,
-        },
-
-        {
-          label:
-            "Produtividade",
-
-          shortLabel:
-            "Eficiência",
-
-          path:
-            "/dashboard-produtividade",
-
-          icon:
-            Gauge,
-        },
-
-        {
-          label:
-            "Relatórios",
-
-          shortLabel:
-            "Relatórios",
-
-          path:
-            "/relatorios",
-
-          icon:
-            FileText,
-        },
-      ],
-      [],
-    );
+  const {
+    podeAcessarTela,
+    loadingPermissoes,
+  } = usePermissoes();
 
 
-  /* =====================================================
-     NOME DO USUÁRIO
-  ===================================================== */
+  /* =======================================================
+     ROTA ATUAL
+  ======================================================= */
 
-  const userName =
+  const pathname = useRouterState({
+    select: (state) =>
+      state.location.pathname,
+  });
+
+  const currentPath = useMemo(
+    () =>
+      normalizarCaminho(
+        pathname
+      ),
+    [pathname]
+  );
+
+
+  /* =======================================================
+     USUÁRIO
+  ======================================================= */
+
+  const userName = useMemo(
+    () =>
+      obterNomeUsuario(
+        user?.email
+      ),
+    [user?.email]
+  );
+
+  const userInitials = useMemo(
+    () =>
+      obterIniciais(
+        userName
+      ),
+    [userName]
+  );
+
+
+  /* =======================================================
+     ITENS VISÍVEIS
+  ======================================================= */
+
+  const navigationItemsVisiveis =
     useMemo(() => {
-      if (
-        !user?.email
-      ) {
-        return "";
+      if (!user) {
+        return [];
       }
 
-      const emailName =
-        user.email.split(
-          "@",
-        )[0];
+      /*
+       * ADMIN vê todos os itens.
+       */
+      if (isAdmin) {
+        return NAVIGATION_ITEMS;
+      }
 
-      return emailName
-        .replace(
-          /[._-]+/g,
-          " ",
-        )
-        .replace(
-          /\b\w/g,
-          (
-            letter,
-          ) =>
-            letter.toUpperCase(),
+      /*
+       * Enquanto as permissões do OPERADOR
+       * carregam, exibimos apenas Início.
+       *
+       * Isso evita que telas sem permissão
+       * apareçam rapidamente na Navbar.
+       */
+      if (loadingPermissoes) {
+        return NAVIGATION_ITEMS.filter(
+          (item) =>
+            !item.permissao
         );
+      }
+
+      return NAVIGATION_ITEMS.filter(
+        (item) => {
+          /*
+           * Itens sem chave de permissão,
+           * como Início, sempre aparecem.
+           */
+          if (!item.permissao) {
+            return true;
+          }
+
+          return podeAcessarTela(
+            item.permissao
+          );
+        }
+      );
     }, [
       user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
     ]);
 
 
-  /* =====================================================
-     INICIAIS
-  ===================================================== */
+  /* =======================================================
+     IMPORTAÇÃO
+  ======================================================= */
 
-  const userInitials =
-    useMemo(() => {
-      if (
-        !userName
-      ) {
-        return "US";
+  const podeImportar = useMemo(
+    () => {
+      if (!user) {
+        return false;
       }
 
-      const words =
-        userName
-          .trim()
-          .split(
-            /\s+/,
-          )
-          .filter(
-            Boolean,
-          );
-
-      if (
-        words.length ===
-        1
-      ) {
-        return words[0]
-          .slice(
-            0,
-            2,
-          )
-          .toUpperCase();
+      if (isAdmin) {
+        return true;
       }
 
-      return (
-        words[0][0] +
-        words[
-          words.length -
-            1
-        ][0]
-      ).toUpperCase();
-    }, [
-      userName,
-    ]);
+      if (loadingPermissoes) {
+        return false;
+      }
+
+      return podeAcessarTela(
+        "importar"
+      );
+    },
+    [
+      user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
+    ]
+  );
 
 
-  /* =====================================================
-     NAVEGAÇÃO INTERNA DA NAVBAR
-  ===================================================== */
+  /* =======================================================
+     NAVEGAÇÃO
+  ======================================================= */
 
-  const goTo =
-    useCallback(
-      (
-        path,
-      ) => {
-        const caminho =
-          normalizarCaminho(
-            path,
-          );
+  const goTo = useCallback(
+    (path) => {
+      setUserMenuOpen(false);
 
-        setCurrentPath(
-          caminho,
-        );
-
-        setUserMenuOpen(
-          false,
-        );
-
-        navigate(
-          caminho,
-        );
-      },
-      [
-        navigate,
-      ],
-    );
+      navigate(
+        normalizarCaminho(
+          path
+        )
+      );
+    },
+    [navigate]
+  );
 
 
-  /* =====================================================
+  /* =======================================================
      LOGOUT
-  ===================================================== */
+  ======================================================= */
 
   const handleLogout =
     useCallback(
       async () => {
-        setUserMenuOpen(
-          false,
-        );
+        setUserMenuOpen(false);
 
         if (
           typeof window !==
           "undefined"
         ) {
-          window.localStorage.removeItem(
-            "expiracao_login",
-          );
+          window.localStorage
+            .removeItem(
+              "expiracao_login"
+            );
         }
 
         try {
           const {
             error,
           } =
-            await supabase.auth.signOut();
+            await supabase.auth
+              .signOut();
 
           if (error) {
             console.error(
               "Erro ao encerrar a sessão:",
-              error,
+              error
             );
           }
-        } catch (
-          error
-        ) {
+        } catch (error) {
           console.error(
             "Erro inesperado ao encerrar a sessão:",
-            error,
+            error
           );
         } finally {
-          setCurrentPath(
-            "/",
-          );
-
-          navigate(
-            "/",
-          );
+          navigate("/");
         }
       },
-      [
-        navigate,
-      ],
+      [navigate]
     );
 
 
-  /* =====================================================
+  /* =======================================================
      MENU DO USUÁRIO
-  ===================================================== */
+  ======================================================= */
 
   const toggleUserMenu =
-    useCallback(
-      () => {
-        setUserMenuOpen(
-          (
-            currentValue,
-          ) =>
-            !currentValue,
-        );
-      },
-      [],
-    );
+    useCallback(() => {
+      setUserMenuOpen(
+        (aberto) =>
+          !aberto
+      );
+    }, []);
 
 
-  /* =====================================================
-     SINCRONIZAÇÃO GLOBAL DA ROTA
-  ===================================================== */
+  /* =======================================================
+     FECHAR MENU
+  ======================================================= */
 
   useEffect(() => {
     if (
-      typeof window ===
-      "undefined"
-    ) {
-      return undefined;
-    }
-
-
-    const syncCurrentPath =
-      () => {
-        const caminho =
-          normalizarCaminho(
-            window.location.pathname ||
-              "/",
-          );
-
-        setCurrentPath(
-          caminho,
-        );
-
-        setUserMenuOpen(
-          false,
-        );
-      };
-
-
-    const originalPushState =
-      window.history.pushState;
-
-    const originalReplaceState =
-      window.history.replaceState;
-
-
-    const dispararEventoNavegacao =
-      () => {
-        window.dispatchEvent(
-          new Event(
-            "app:navigation",
-          ),
-        );
-      };
-
-
-    const pushStateComEvento =
-      function (
-        ...args
-      ) {
-        const resultado =
-          originalPushState.apply(
-            this,
-            args,
-          );
-
-        dispararEventoNavegacao();
-
-        return resultado;
-      };
-
-
-    const replaceStateComEvento =
-      function (
-        ...args
-      ) {
-        const resultado =
-          originalReplaceState.apply(
-            this,
-            args,
-          );
-
-        dispararEventoNavegacao();
-
-        return resultado;
-      };
-
-
-    window.history.pushState =
-      pushStateComEvento;
-
-    window.history.replaceState =
-      replaceStateComEvento;
-
-
-    syncCurrentPath();
-
-
-    window.addEventListener(
-      "popstate",
-      syncCurrentPath,
-    );
-
-
-    window.addEventListener(
-      "app:navigation",
-      syncCurrentPath,
-    );
-
-
-    return () => {
-      window.removeEventListener(
-        "popstate",
-        syncCurrentPath,
-      );
-
-      window.removeEventListener(
-        "app:navigation",
-        syncCurrentPath,
-      );
-
-
-      if (
-        window.history
-          .pushState ===
-        pushStateComEvento
-      ) {
-        window.history.pushState =
-          originalPushState;
-      }
-
-
-      if (
-        window.history
-          .replaceState ===
-        replaceStateComEvento
-      ) {
-        window.history.replaceState =
-          originalReplaceState;
-      }
-    };
-  }, []);
-
-
-  /* =====================================================
-     FECHA MENU AO CLICAR FORA
-  ===================================================== */
-
-  useEffect(() => {
-    if (
+      !userMenuOpen ||
       typeof document ===
-      "undefined"
+        "undefined"
     ) {
       return undefined;
     }
 
-    const closeMenuOutside =
-      (
-        event,
-      ) => {
+    const fecharAoClicarFora =
+      (event) => {
         if (
           menuRef.current &&
           !menuRef.current.contains(
-            event.target,
+            event.target
           )
         ) {
           setUserMenuOpen(
-            false,
+            false
+          );
+        }
+      };
+
+    const fecharComEscape =
+      (event) => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
+          setUserMenuOpen(
+            false
           );
         }
       };
 
     document.addEventListener(
       "mousedown",
-      closeMenuOutside,
+      fecharAoClicarFora
+    );
+
+    document.addEventListener(
+      "keydown",
+      fecharComEscape
     );
 
     return () => {
       document.removeEventListener(
         "mousedown",
-        closeMenuOutside,
+        fecharAoClicarFora
       );
-    };
-  }, []);
 
-
-  /* =====================================================
-     FECHA MENU COM ESC
-  ===================================================== */
-
-  useEffect(() => {
-    if (
-      typeof document ===
-      "undefined"
-    ) {
-      return undefined;
-    }
-
-    const closeMenuWithEscape =
-      (
-        event,
-      ) => {
-        if (
-          event.key ===
-          "Escape"
-        ) {
-          setUserMenuOpen(
-            false,
-          );
-        }
-      };
-
-    document.addEventListener(
-      "keydown",
-      closeMenuWithEscape,
-    );
-
-    return () => {
       document.removeEventListener(
         "keydown",
-        closeMenuWithEscape,
+        fecharComEscape
       );
     };
-  }, []);
+  }, [userMenuOpen]);
 
 
-  /* =====================================================
+  /* =======================================================
      RENDER
-  ===================================================== */
+  ======================================================= */
 
   return (
     <header className="main-navbar">
-
       <div className="navbar-container">
 
-        {/* LOGO */}
+        {/* ===============================================
+            LOGO
+        =============================================== */}
 
         <button
           type="button"
           className="navbar-brand"
-          onClick={
-            () =>
-              goTo(
-                "/",
-              )
+          onClick={() =>
+            goTo("/")
           }
           aria-label="Ir para o início"
         >
@@ -602,43 +443,39 @@ function Navbar({
         </button>
 
 
-        {/* NAVEGAÇÃO */}
+        {/* ===============================================
+            NAVEGAÇÃO PRINCIPAL
+        =============================================== */}
 
         {user && (
           <nav
             className="navbar-navigation"
             aria-label="Navegação principal"
           >
-            {navigationItems.map(
+            {navigationItemsVisiveis.map(
               ({
                 label,
                 shortLabel,
                 path,
-                icon:
-                  Icon,
+                icon: Icon,
               }) => {
                 const active =
                   currentPath ===
                   normalizarCaminho(
-                    path,
+                    path
                   );
 
                 return (
                   <button
-                    key={
-                      path
-                    }
+                    key={path}
                     type="button"
                     className={
                       active
                         ? "navbar-navigation-link active"
                         : "navbar-navigation-link"
                     }
-                    onClick={
-                      () =>
-                        goTo(
-                          path,
-                        )
+                    onClick={() =>
+                      goTo(path)
                     }
                     aria-current={
                       active
@@ -647,12 +484,8 @@ function Navbar({
                     }
                   >
                     <Icon
-                      size={
-                        18
-                      }
-                      strokeWidth={
-                        2
-                      }
+                      size={18}
+                      strokeWidth={2}
                       aria-hidden="true"
                     />
 
@@ -661,32 +494,33 @@ function Navbar({
                     </span>
 
                     <span className="navbar-label-mobile">
-                      {
-                        shortLabel
-                      }
+                      {shortLabel}
                     </span>
                   </button>
                 );
-              },
+              }
             )}
           </nav>
         )}
 
 
-        {/* USUÁRIO */}
+        {/* ===============================================
+            AUTENTICAÇÃO
+        =============================================== */}
 
         <div className="navbar-auth-section">
 
           {user ? (
             <div className="navbar-user-controls">
 
+              {/* =========================================
+                  ÁREA DO USUÁRIO
+              ========================================= */}
+
               <div
-                ref={
-                  menuRef
-                }
+                ref={menuRef}
                 className="navbar-user-area"
               >
-
                 <button
                   type="button"
                   className={
@@ -704,16 +538,12 @@ function Navbar({
                   aria-label="Abrir menu do usuário"
                 >
                   <span className="user-avatar">
-                    {
-                      userInitials
-                    }
+                    {userInitials}
                   </span>
 
                   <span className="user-information">
                     <strong className="user-name">
-                      {
-                        userName
-                      }
+                      {userName}
                     </strong>
 
                     <span className="user-role">
@@ -724,12 +554,8 @@ function Navbar({
                   </span>
 
                   <ChevronDown
-                    size={
-                      17
-                    }
-                    strokeWidth={
-                      2
-                    }
+                    size={17}
+                    strokeWidth={2}
                     className={
                       userMenuOpen
                         ? "user-menu-arrow open"
@@ -740,7 +566,9 @@ function Navbar({
                 </button>
 
 
-                {/* MENU DO USUÁRIO */}
+                {/* =======================================
+                    MENU SUSPENSO
+                ======================================= */}
 
                 {userMenuOpen && (
                   <div
@@ -748,24 +576,20 @@ function Navbar({
                     role="menu"
                   >
 
+                    {/* USUÁRIO */}
+
                     <div className="user-menu-header">
                       <span className="user-menu-avatar">
-                        {
-                          userInitials
-                        }
+                        {userInitials}
                       </span>
 
                       <div>
                         <strong>
-                          {
-                            userName
-                          }
+                          {userName}
                         </strong>
 
                         <span>
-                          {
-                            user.email
-                          }
+                          {user.email}
                         </span>
                       </div>
                     </div>
@@ -774,21 +598,18 @@ function Navbar({
                     <div className="user-menu-divider" />
 
 
+                    {/* INÍCIO */}
+
                     <button
                       type="button"
                       className="user-menu-item"
-                      onClick={
-                        () =>
-                          goTo(
-                            "/",
-                          )
+                      onClick={() =>
+                        goTo("/")
                       }
                       role="menuitem"
                     >
                       <Home
-                        size={
-                          17
-                        }
+                        size={17}
                         aria-hidden="true"
                       />
 
@@ -796,51 +617,49 @@ function Navbar({
                     </button>
 
 
+                    {/* IMPORTAR */}
+
+                    {podeImportar && (
+                      <button
+                        type="button"
+                        className="user-menu-item"
+                        onClick={() =>
+                          goTo(
+                            "/importar"
+                          )
+                        }
+                        role="menuitem"
+                      >
+                        <Upload
+                          size={17}
+                          aria-hidden="true"
+                        />
+
+                        Importar dados
+                      </button>
+                    )}
+
+
+                    {/* GERENCIAR USUÁRIOS */}
+
                     {isAdmin && (
-                      <>
-                        <button
-                          type="button"
-                          className="user-menu-item"
-                          onClick={
-                            () =>
-                              goTo(
-                                "/importar",
-                              )
-                          }
-                          role="menuitem"
-                        >
-                          <Upload
-                            size={
-                              17
-                            }
-                            aria-hidden="true"
-                          />
+                      <button
+                        type="button"
+                        className="user-menu-item"
+                        onClick={() =>
+                          goTo(
+                            "/usuarios"
+                          )
+                        }
+                        role="menuitem"
+                      >
+                        <Users
+                          size={17}
+                          aria-hidden="true"
+                        />
 
-                          Importar dados
-                        </button>
-
-
-                        <button
-                          type="button"
-                          className="user-menu-item"
-                          onClick={
-                            () =>
-                              goTo(
-                                "/usuarios",
-                              )
-                          }
-                          role="menuitem"
-                        >
-                          <Users
-                            size={
-                              17
-                            }
-                            aria-hidden="true"
-                          />
-
-                          Gerenciar usuários
-                        </button>
-                      </>
+                        Gerenciar usuários
+                      </button>
                     )}
 
                   </div>
@@ -848,7 +667,9 @@ function Navbar({
               </div>
 
 
-              {/* LOGOUT */}
+              {/* =========================================
+                  SAIR
+              ========================================= */}
 
               <button
                 type="button"
@@ -859,12 +680,8 @@ function Navbar({
                 aria-label="Sair da conta"
               >
                 <LogOut
-                  size={
-                    17
-                  }
-                  strokeWidth={
-                    2
-                  }
+                  size={17}
+                  strokeWidth={2}
                   aria-hidden="true"
                 />
 
@@ -875,25 +692,26 @@ function Navbar({
 
             </div>
           ) : (
+
+            /* ===========================================
+               LOGIN
+            =========================================== */
+
             <button
               type="button"
               className="btn-login"
-              onClick={
-                () =>
-                  goTo(
-                    "/login",
-                  )
+              onClick={() =>
+                goTo("/login")
               }
             >
               <LogIn
-                size={
-                  17
-                }
+                size={17}
                 aria-hidden="true"
               />
 
               Entrar
             </button>
+
           )}
 
         </div>
@@ -902,5 +720,4 @@ function Navbar({
   );
 }
 
-
-export default Navbar;
+export default memo(Navbar);

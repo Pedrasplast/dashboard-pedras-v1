@@ -1,20 +1,36 @@
+import React, { useEffect } from "react";
+
 import { createFileRoute } from "@tanstack/react-router";
-import CadastroPage from "@/features/auth/CadastroPage";
+
+import { useNavigate } from "@/lib/navegacao";
 
 export const Route = createFileRoute("/cadastro")({
+  ssr: false,
+
   head: () => ({
     meta: [
-      { title: "Criar conta | Painel Pedrasplast" },
+      {
+        title: "Cadastro indisponível | Pedrasplast",
+      },
       {
         name: "description",
-        content: "Crie sua conta de operador para acompanhar a produção das injetoras.",
-      },
-      { property: "og:title", content: "Criar conta | Painel Pedrasplast" },
-      {
-        property: "og:description",
-        content: "Cadastro de novos usuários do painel de produção Pedrasplast.",
+        content:
+          "O cadastro de usuários é realizado exclusivamente pelo administrador.",
       },
     ],
   }),
-  component: CadastroPage,
+
+  component: CadastroDesativado,
 });
+
+function CadastroDesativado() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/login", {
+      replace: true,
+    });
+  }, [navigate]);
+
+  return null;
+}

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Wrench } from 'lucide-react'; // Ou outro ícone de sua preferência
-import Sidebar from '@/components/layout/Sidebar';
-
+import { Wrench } from 'lucide-react';
 import './DashboardMateriaPrima.css';
 
 function DashboardMateriaPrima() {

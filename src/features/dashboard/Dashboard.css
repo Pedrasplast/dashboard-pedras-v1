@@ -11,6 +11,21 @@
 
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
+
+  /* =================================================
+     POSICIONAMENTO DOS PAINEIS FIXOS
+     76px = altura da navbar
+     16px = respiro superior e inferior
+  ================================================= */
+  --dashboard-sticky-top: 76px;
+  --dashboard-gap-painel: 16px;
+
+  --dashboard-painel-altura: calc(
+    100dvh
+    - var(--dashboard-sticky-top)
+    - var(--dashboard-gap-painel)
+    - var(--dashboard-gap-painel)
+  );
 }
 
 /* =====================================================
@@ -22,6 +37,8 @@
   grid-template-columns:
     280px
     minmax(0, 1fr);
+
+  align-items: start;
 
   min-height: 100vh;
 
@@ -43,7 +60,7 @@
   padding: 32px 40px;
 
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .dashboard-header {
@@ -372,14 +389,34 @@
 ===================================================== */
 
 .chart-container {
+  position: sticky;
+
+  top: calc(
+    var(--dashboard-sticky-top) +
+    var(--dashboard-gap-painel)
+  );
+
+  align-self: start;
+
   width: 100%;
   min-width: 0;
+
+  height: var(--dashboard-painel-altura);
+  min-height: 0;
+  max-height: var(--dashboard-painel-altura);
+
+  display: flex;
+  flex-direction: column;
 
   padding: 24px;
 
   box-sizing: border-box;
 
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fbfdff 100%
+  );
 
   border: 1px solid #dbe6f3;
   border-radius: 16px;
@@ -431,7 +468,11 @@
 
 .motivos-list {
   width: 100%;
-  max-height: 560px;
+  min-width: 0;
+
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
 
   display: flex;
   flex-direction: column;
@@ -728,6 +769,16 @@
     grid-template-columns: 1fr;
   }
 
+  .chart-container {
+    position: static;
+    top: auto;
+    align-self: auto;
+
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
   .main-content {
     margin-top: 30px;
     padding: 24px;
@@ -738,6 +789,8 @@
   }
 
   .motivos-list {
+    flex: none;
+    min-height: 0;
     max-height: 500px;
   }
 
@@ -880,7 +933,7 @@
   }
 
   .motivos-list {
+    flex: none;
     max-height: 430px;
   }
 }
-

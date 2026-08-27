@@ -1,0 +1,159 @@
+.definir-senha-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.definir-senha-card {
+  width: min(440px, 100%);
+  padding: 32px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+
+.definir-senha-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  color: #2563eb;
+  background: #eff6ff;
+  border-radius: 14px;
+  font-size: 22px;
+}
+
+.definir-senha-icon.sucesso {
+  color: #15803d;
+  background: #ecfdf5;
+}
+
+.definir-senha-icon.erro {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.definir-senha-card h1 {
+  margin: 0 0 9px;
+  color: #0f172a;
+  font-size: 1.45rem;
+  text-align: center;
+}
+
+.definir-senha-card > p {
+  margin: 0 0 22px;
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.definir-senha-texto-secundario {
+  margin-top: -12px !important;
+}
+
+.definir-senha-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.definir-senha-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.definir-senha-campo label {
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.definir-senha-campo input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.86rem;
+}
+
+.definir-senha-campo input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.definir-senha-erro {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.definir-senha-regras {
+  color: #64748b;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.definir-senha-btn,
+.definir-senha-btn-secundario {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.definir-senha-btn {
+  color: #ffffff;
+  background: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.definir-senha-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.definir-senha-btn-secundario {
+  width: 100%;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.definir-senha-carregando {
+  color: #475569;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .definir-senha-card {
+    padding: 25px 20px;
+  }
+}

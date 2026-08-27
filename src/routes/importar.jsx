@@ -1,30 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ImportadorCargaPage from "@/features/importacao/ImportadorCargaPage";
+
 import RotaProtegida from "@/components/layout/RotaProtegida";
+import ImportadorCargaPage from "@/features/importacao/ImportadorCargaPage";
 
 export const Route = createFileRoute("/importar")({
   ssr: false,
+
   head: () => ({
     meta: [
-      { title: "Importar Carga Máquina | Pedrasplast" },
+      {
+        title: "Importar Carga | Pedrasplast",
+      },
       {
         name: "description",
         content:
-          "Importe planilhas de programação das injetoras e valide os registros antes de enviar.",
-      },
-      { property: "og:title", content: "Importar Carga Máquina | Pedrasplast" },
-      {
-        property: "og:description",
-        content: "Envio em massa de planilhas de carga máquina.",
+          "Importação da carga de máquinas para o sistema Pedrasplast.",
       },
     ],
   }),
-  component: RotaImportar,
+
+  component: ImportarRoute,
 });
 
-function RotaImportar() {
+function ImportarRoute() {
   return (
-    <RotaProtegida exigirAdmin>
+    <RotaProtegida permissao="importar">
       <ImportadorCargaPage />
     </RotaProtegida>
   );

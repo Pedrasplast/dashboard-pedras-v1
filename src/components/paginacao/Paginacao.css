@@ -1,0 +1,374 @@
+/* =========================================================
+   PAGINACAO
+========================================================= */
+
+.paginacao,
+.paginacao * {
+  box-sizing: border-box;
+}
+
+.paginacao {
+  width: 100%;
+
+  min-height: 62px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding:
+    12px
+    16px;
+
+  border-top:
+    1px solid
+    #e2e8f0;
+
+  background:
+    #ffffff;
+}
+
+
+/* =========================================================
+   INFORMACAO
+========================================================= */
+
+.paginacao-info {
+  font-size: 11px;
+  line-height: 1.4;
+
+  color: #64748b;
+
+  white-space: nowrap;
+}
+
+.paginacao-info strong {
+  font-weight: 700;
+
+  color: #334155;
+}
+
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+.paginacao-controles {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.paginacao-paginas {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+/* =========================================================
+   BOTOES
+========================================================= */
+
+.paginacao-botao {
+  height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    7px;
+
+  background:
+    #ffffff;
+
+  color:
+    #475569;
+
+  font-size:
+    11px;
+
+  font-weight:
+    600;
+
+  cursor:
+    pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.paginacao-botao:hover:not(:disabled) {
+  border-color:
+    #cbd5e1;
+
+  background:
+    #f8fafc;
+
+  color:
+    #0f172a;
+}
+
+.paginacao-botao:focus-visible {
+  outline:
+    none;
+
+  border-color:
+    #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.1
+    );
+}
+
+.paginacao-botao:disabled {
+  opacity:
+    0.45;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* =========================================================
+   NUMERO
+========================================================= */
+
+.paginacao-numero {
+  min-width:
+    34px;
+
+  padding:
+    0 9px;
+}
+
+.paginacao-numero.ativa {
+  border-color:
+    #2563eb;
+
+  background:
+    #2563eb;
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 1px 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.18
+    );
+}
+
+.paginacao-numero.ativa:hover {
+  border-color:
+    #2563eb;
+
+  background:
+    #2563eb;
+
+  color:
+    #ffffff;
+}
+
+
+/* =========================================================
+   ANTERIOR / PROXIMA
+========================================================= */
+
+.paginacao-navegacao {
+  gap:
+    5px;
+
+  padding:
+    0 10px;
+}
+
+
+/* =========================================================
+   RETICENCIAS
+========================================================= */
+
+.paginacao-reticencias {
+  min-width:
+    22px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  color:
+    #94a3b8;
+
+  font-size:
+    12px;
+
+  user-select:
+    none;
+}
+
+
+/* =========================================================
+   RESPONSIVO - TABLET
+========================================================= */
+
+@media (
+  max-width: 800px
+) {
+
+  .paginacao {
+    flex-direction:
+      column;
+
+    align-items:
+      stretch;
+
+    gap:
+      11px;
+
+    padding:
+      12px;
+  }
+
+  .paginacao-info {
+    text-align:
+      center;
+  }
+
+  .paginacao-controles {
+    justify-content:
+      center;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO - MOBILE
+========================================================= */
+
+@media (
+  max-width: 600px
+) {
+
+  .paginacao {
+    padding:
+      11px
+      9px;
+  }
+
+  .paginacao-controles {
+    width:
+      100%;
+
+    justify-content:
+      space-between;
+
+    gap:
+      5px;
+  }
+
+  .paginacao-paginas {
+    gap:
+      3px;
+  }
+
+  .paginacao-numero {
+    min-width:
+      31px;
+
+    height:
+      32px;
+
+    padding:
+      0 7px;
+  }
+
+  .paginacao-navegacao {
+    width:
+      34px;
+
+    min-width:
+      34px;
+
+    height:
+      32px;
+
+    padding:
+      0;
+  }
+
+  /*
+   * No celular mostramos
+   * apenas as setas.
+   */
+  .paginacao-navegacao span {
+    display:
+      none;
+  }
+}
+
+
+/* =========================================================
+   MOBILE PEQUENO
+========================================================= */
+
+@media (
+  max-width: 420px
+) {
+
+  .paginacao-info {
+    font-size:
+      10px;
+  }
+
+  .paginacao-numero {
+    min-width:
+      29px;
+
+    height:
+      30px;
+
+    font-size:
+      10px;
+  }
+
+  .paginacao-navegacao {
+    width:
+      31px;
+
+    min-width:
+      31px;
+
+    height:
+      30px;
+  }
+
+  .paginacao-reticencias {
+    min-width:
+      16px;
+  }
+}

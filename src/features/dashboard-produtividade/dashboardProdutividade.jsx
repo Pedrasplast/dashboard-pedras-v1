@@ -1,4 +1,5 @@
-import React, {
+import {
+  memo,
   useMemo,
   useState,
 } from "react";
@@ -20,6 +21,14 @@ import {
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
 import { calcularOeeCargaMaquina } from "./CalcularOee";
+import {
+  filtrarDadosBaseOee,
+  filtrarDadosCalculoOee,
+  filtrarHistoricoPerformanceOee,
+  obterMateriasPrimasDisponiveisOee,
+  obterProdutosDisponiveisOee,
+  obterTiposDisponiveisOee,
+} from "./oee.utils";
 
 import "./dashboardProdutividade.css";
 
@@ -39,68 +48,6 @@ const criarFiltrosIniciais = () => ({
 
   tipo: [],
 });
-
-/* =====================================================
-   DATA DO REGISTRO
-===================================================== */
-
-function obterDataRegistro(item) {
-  const valor =
-    item?.lista_de_data ||
-    item?.inicio ||
-    item?.inicio_dia ||
-    item?.data ||
-    null;
-
-  if (!valor) {
-    return "";
-  }
-
-  const texto =
-    String(valor).trim();
-
-  const correspondencia =
-    texto.match(
-      /^(\d{4})-(\d{2})-(\d{2})/,
-    );
-
-  if (!correspondencia) {
-    return "";
-  }
-
-  return [
-    correspondencia[1],
-    correspondencia[2],
-    correspondencia[3],
-  ].join("-");
-}
-
-/* =====================================================
-   NORMALIZA VALOR
-===================================================== */
-
-function normalizarValor(valor) {
-  return String(
-    valor ?? "",
-  ).trim();
-}
-
-/* =====================================================
-   IDENTIFICA PARADA
-===================================================== */
-
-function registroEhParada(item) {
-  const tipo =
-    normalizarValor(
-      item?.tipo,
-    );
-
-  return (
-    tipo === "1" ||
-    tipo === "2" ||
-    tipo === "3"
-  );
-}
 
 /* =====================================================
    FORMATAÇÕES
@@ -135,7 +82,7 @@ function formatarNumero(valor) {
    COMPONENTE KPI
 ===================================================== */
 
-function KpiCard({
+const KpiCard = memo(function KpiCard({
   titulo,
   valor,
   descricao,
@@ -176,13 +123,13 @@ function KpiCard({
       </span>
     </article>
   );
-}
+});
 
 /* =====================================================
    BARRA DE INDICADOR
 ===================================================== */
 
-function IndicadorBarra({
+const IndicadorBarra = memo(function IndicadorBarra({
   titulo,
   valor,
 }) {
@@ -219,7 +166,7 @@ function IndicadorBarra({
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================
    DASHBOARD ORIGINAL
@@ -247,365 +194,65 @@ function DashboardProdutividadeEmValidacao() {
      TIPOS DISPONÍVEIS
   ===================================================== */
 
-  const tiposDisponiveis =
-    useMemo(() => {
-      if (
-        !Array.isArray(dados)
-      ) {
-        return [];
-      }
-
-      return [
-        ...new Set(
-          dados
-            .map(
-              (item) =>
-                normalizarValor(
-                  item.tipo,
-                ),
-            )
-            .filter(
-              (tipo) =>
-                [
-                  "1",
-                  "2",
-                  "3",
-                ].includes(
-                  tipo,
-                ),
-            ),
-        ),
-      ].sort(
-        (a, b) =>
-          Number(a) -
-          Number(b),
-      );
-    }, [dados]);
+  const tiposDisponiveis = useMemo(
+    () => obterTiposDisponiveisOee(dados),
+    [dados],
+  );
 
   /* =====================================================
      PRODUTOS DISPONÍVEIS
 
-     REGRA:
-
-     - Só mostra produtos se uma injetora estiver selecionada
-     - Só mostra produtos que tenham registro naquela injetora
-     - Se houver período, também respeita o período
+     Mantém a regra original:
+     - exige injetora selecionada;
+     - respeita o período;
+     - lista somente produtos daquela injetora.
   ===================================================== */
 
-  const produtosDisponiveis =
-    useMemo(() => {
-      if (
-        !Array.isArray(dados)
-      ) {
-        return [];
-      }
-
-      if (
-        !filtros.injetora ||
-        filtros.injetora ===
-          "Todos"
-      ) {
-        return [];
-      }
-
-      const injetoraSelecionada =
-        normalizarValor(
-          filtros.injetora,
-        ).toLocaleUpperCase(
-          "pt-BR",
-        );
-
-      const produtos =
-        dados
-          .filter(
-            (item) => {
-              const injetoraRegistro =
-                normalizarValor(
-                  item.injetora,
-                ).toLocaleUpperCase(
-                  "pt-BR",
-                );
-
-              if (
-                injetoraRegistro !==
-                injetoraSelecionada
-              ) {
-                return false;
-              }
-
-              const dataRegistro =
-                obterDataRegistro(
-                  item,
-                );
-
-              if (
-                filtros.dataInicio &&
-                (
-                  !dataRegistro ||
-                  dataRegistro <
-                    filtros.dataInicio
-                )
-              ) {
-                return false;
-              }
-
-              if (
-                filtros.dataFim &&
-                (
-                  !dataRegistro ||
-                  dataRegistro >
-                    filtros.dataFim
-                )
-              ) {
-                return false;
-              }
-
-              const produto =
-                normalizarValor(
-                  item.cod_prod,
-                );
-
-              if (!produto) {
-                return false;
-              }
-
-              return true;
-            },
-          )
-          .map(
-            (item) =>
-              normalizarValor(
-                item.cod_prod,
-              ),
-          );
-
-      return [
-        ...new Set(
-          produtos,
-        ),
-      ].sort(
-        (a, b) =>
-          a.localeCompare(
-            b,
-            "pt-BR",
-            {
-              numeric: true,
-              sensitivity:
-                "base",
-            },
-          ),
-      );
-    }, [
-      dados,
-      filtros.injetora,
-      filtros.dataInicio,
-      filtros.dataFim,
-    ]);
+  const produtosDisponiveis = useMemo(
+    () => obterProdutosDisponiveisOee(dados, filtros),
+    [dados, filtros.injetora, filtros.dataInicio, filtros.dataFim],
+  );
 
   /* =====================================================
      MATÉRIAS-PRIMAS
   ===================================================== */
 
-  const mpsDisponiveis =
-    useMemo(() => {
-      if (
-        !Array.isArray(dados)
-      ) {
-        return [];
-      }
-
-      return [
-        ...new Set(
-          dados
-            .map(
-              (item) =>
-                normalizarValor(
-                  item.mp,
-                ),
-            )
-            .filter(Boolean),
-        ),
-      ].sort(
-        (a, b) =>
-          String(a).localeCompare(
-            String(b),
-            "pt-BR",
-            {
-              sensitivity:
-                "base",
-            },
-          ),
-      );
-    }, [dados]);
+  const mpsDisponiveis = useMemo(
+    () => obterMateriasPrimasDisponiveisOee(dados),
+    [dados],
+  );
 
   /* =====================================================
      BASE OPERACIONAL DO OEE
 
-     FILTRA:
-     - período
-     - injetora
-
-     NÃO filtra produto.
+     Filtra período e injetora, sem filtrar produto.
   ===================================================== */
 
-  const dadosBaseOee =
-    useMemo(() => {
-      if (
-        !Array.isArray(dados)
-      ) {
-        return [];
-      }
-
-      return dados.filter(
-        (item) => {
-          /* DATA */
-
-          const data =
-            obterDataRegistro(
-              item,
-            );
-
-          if (
-            filtros.dataInicio &&
-            (
-              !data ||
-              data <
-                filtros.dataInicio
-            )
-          ) {
-            return false;
-          }
-
-          if (
-            filtros.dataFim &&
-            (
-              !data ||
-              data >
-                filtros.dataFim
-            )
-          ) {
-            return false;
-          }
-
-          /* INJETORA */
-
-          if (
-            filtros.injetora &&
-            filtros.injetora !==
-              "Todos" &&
-            normalizarValor(
-              item.injetora,
-            ) !==
-              normalizarValor(
-                filtros.injetora,
-              )
-          ) {
-            return false;
-          }
-
-          return true;
-        },
-      );
-    }, [
-      dados,
-      filtros.dataInicio,
-      filtros.dataFim,
-      filtros.injetora,
-    ]);
+  const dadosBaseOee = useMemo(
+    () => filtrarDadosBaseOee(dados, filtros),
+    [dados, filtros.dataInicio, filtros.dataFim, filtros.injetora],
+  );
 
   /* =====================================================
      BASE FINAL PARA CÁLCULO DO OEE
 
-     PRODUTO = TODOS:
-     usa toda a base.
-
-     PRODUTO selecionado:
-     - mantém paradas
-     - filtra apenas produção pelo produto
+     Com produto selecionado, mantém paradas e filtra
+     somente os registros de produção pelo produto.
   ===================================================== */
 
-  const dadosCalculoOee =
-    useMemo(() => {
-      if (
-        !Array.isArray(
-          dadosBaseOee,
-        )
-      ) {
-        return [];
-      }
-
-      if (
-        !filtros.cod_prod ||
-        filtros.cod_prod ===
-          "Todos"
-      ) {
-        return dadosBaseOee;
-      }
-
-      const produtoSelecionado =
-        normalizarValor(
-          filtros.cod_prod,
-        );
-
-      return dadosBaseOee.filter(
-        (item) => {
-          if (
-            registroEhParada(
-              item,
-            )
-          ) {
-            return true;
-          }
-
-          return (
-            normalizarValor(
-              item.cod_prod,
-            ) ===
-            produtoSelecionado
-          );
-        },
-      );
-    }, [
-      dadosBaseOee,
-      filtros.cod_prod,
-    ]);
+  const dadosCalculoOee = useMemo(
+    () => filtrarDadosCalculoOee(dadosBaseOee, filtros.cod_prod),
+    [dadosBaseOee, filtros.cod_prod],
+  );
 
   /* =====================================================
      HISTÓRICO PARA PERFORMANCE
-
-     Se houver injetora selecionada:
-     usa histórico daquela injetora.
   ===================================================== */
 
-  const dadosHistoricosPerformance =
-    useMemo(() => {
-      if (
-        !Array.isArray(dados)
-      ) {
-        return [];
-      }
-
-      if (
-        !filtros.injetora ||
-        filtros.injetora ===
-          "Todos"
-      ) {
-        return dados;
-      }
-
-      return dados.filter(
-        (item) =>
-          normalizarValor(
-            item.injetora,
-          ) ===
-          normalizarValor(
-            filtros.injetora,
-          ),
-      );
-    }, [
-      dados,
-      filtros.injetora,
-    ]);
+  const dadosHistoricosPerformance = useMemo(
+    () => filtrarHistoricoPerformanceOee(dados, filtros.injetora),
+    [dados, filtros.injetora],
+  );
 
   /* =====================================================
      CALCULA OEE

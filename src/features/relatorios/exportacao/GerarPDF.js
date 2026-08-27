@@ -1,98 +1,6 @@
 import jsPDF from "jspdf";
 
-import {
-  obterColunasRelatorio,
-} from "../config/Colunas.config";
-
-
-/* =====================================================
-   COLUNAS PARA PDF
-
-   Produção por Produto:
-
-   Produto
-   Descrição do Produto
-   Injetora
-   ...
-===================================================== */
-
-function obterColunasPdf(
-  relatorio,
-) {
-  const colunas = [
-    ...obterColunasRelatorio(
-      relatorio,
-    ),
-  ];
-
-  if (
-    relatorio?.id !==
-    "producao-produto"
-  ) {
-    return colunas;
-  }
-
-  /*
-   * Evita duplicação caso futuramente
-   * a coluna também exista no config.
-   */
-  const jaExiste =
-    colunas.some(
-      (
-        coluna,
-      ) =>
-        coluna.chave ===
-        "descricao_produto",
-    );
-
-  if (jaExiste) {
-    return colunas;
-  }
-
-  const indiceProduto =
-    colunas.findIndex(
-      (
-        coluna,
-      ) =>
-        coluna.chave ===
-        "produto",
-    );
-
-  const colunaDescricao = {
-    chave:
-      "descricao_produto",
-
-    titulo:
-      "Descrição do Produto",
-
-    larguraPdf:
-      48,
-
-    valor:
-      (
-        item,
-      ) =>
-        item.descricao_produto ||
-        "-",
-  };
-
-  if (
-    indiceProduto !==
-    -1
-  ) {
-    colunas.splice(
-      indiceProduto + 1,
-      0,
-      colunaDescricao,
-    );
-  } else {
-    colunas.unshift(
-      colunaDescricao,
-    );
-  }
-
-  return colunas;
-}
+import { obterColunasExportacao } from "./ColunasExportacao";
 
 
 /* =====================================================
@@ -120,8 +28,9 @@ export function gerarPdfRelatorio({
   }
 
   const colunas =
-    obterColunasPdf(
+    obterColunasExportacao(
       relatorio,
+      "pdf",
     );
 
   if (

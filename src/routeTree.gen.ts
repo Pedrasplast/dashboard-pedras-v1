@@ -14,8 +14,10 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
+import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 
@@ -44,6 +46,11 @@ const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
   path: '/dashboard-produtividade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
+  id: '/definir-senha',
+  path: '/definir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImportarRoute = ImportarRouteImport.update({
   id: '/importar',
   path: '/importar',
@@ -52,6 +59,11 @@ const ImportarRoute = ImportarRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidosRoute = PedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RelatoriosRoute = RelatoriosRouteImport.update({
@@ -71,8 +83,10 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -82,8 +96,10 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -94,8 +110,10 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
+  '/definir-senha': typeof DefinirSenhaRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -107,8 +125,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
@@ -118,8 +138,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   id:
@@ -129,8 +151,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-produtividade'
+    | '/definir-senha'
     | '/importar'
     | '/login'
+    | '/pedidos'
     | '/relatorios'
     | '/usuarios'
   fileRoutesById: FileRoutesById
@@ -141,8 +165,10 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
+  DefinirSenhaRoute: typeof DefinirSenhaRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
+  PedidosRoute: typeof PedidosRoute
   RelatoriosRoute: typeof RelatoriosRoute
   UsuariosRoute: typeof UsuariosRoute
 }
@@ -184,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProdutividadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/definir-senha': {
+      id: '/definir-senha'
+      path: '/definir-senha'
+      fullPath: '/definir-senha'
+      preLoaderRoute: typeof DefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/importar': {
       id: '/importar'
       path: '/importar'
@@ -196,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedidos': {
+      id: '/pedidos'
+      path: '/pedidos'
+      fullPath: '/pedidos'
+      preLoaderRoute: typeof PedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/relatorios': {
@@ -221,8 +261,10 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
+  DefinirSenhaRoute: DefinirSenhaRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
+  PedidosRoute: PedidosRoute,
   RelatoriosRoute: RelatoriosRoute,
   UsuariosRoute: UsuariosRoute,
 }

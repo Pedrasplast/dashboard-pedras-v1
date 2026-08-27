@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "./supabaseClient";
+import { logDesenvolvimento } from "./logger";
 
 
 /* =========================================================
@@ -16,6 +17,9 @@ const STORE_META = "meta";
 
 const META_ULTIMA_ATUALIZACAO =
   "carga_maquina_ultima_atualizacao";
+
+const DADOS_VAZIOS = Object.freeze([]);
+const DESCRICOES_VAZIAS = Object.freeze({});
 
 export const chaveCargaMaquina = [
   "carga_maquina",
@@ -718,13 +722,13 @@ export async function buscarCargaMaquina() {
      1. LÊ O INDEXEDDB
   ===================================================== */
 
-  const dadosCache =
-    await lerDadosIndexedDB();
-
-  const ultimaAtualizacaoCache =
-    await lerMeta(
-      META_ULTIMA_ATUALIZACAO,
-    );
+  const [
+    dadosCache,
+    ultimaAtualizacaoCache,
+  ] = await Promise.all([
+    lerDadosIndexedDB(),
+    lerMeta(META_ULTIMA_ATUALIZACAO),
+  ]);
 
 
   /* =====================================================
@@ -735,7 +739,7 @@ export async function buscarCargaMaquina() {
     dadosCache.length ===
     0
   ) {
-    console.log(
+    logDesenvolvimento(
       "[Carga Máquina] IndexedDB vazio. Fazendo primeira carga completa...",
     );
 
@@ -754,7 +758,7 @@ export async function buscarCargaMaquina() {
       ultimaAtualizacaoBanco,
     );
 
-    console.log(
+    logDesenvolvimento(
       `[Carga Máquina] Primeira carga concluída: ${todosOsDados.length} registros.`,
     );
 
@@ -766,7 +770,7 @@ export async function buscarCargaMaquina() {
      3. JÁ TEM CACHE
   ===================================================== */
 
-  console.log(
+  logDesenvolvimento(
     `[Carga Máquina] IndexedDB encontrado: ${dadosCache.length} registros.`,
   );
 
@@ -782,7 +786,7 @@ export async function buscarCargaMaquina() {
     ultimaAtualizacaoBanco ===
     ultimaAtualizacaoCache
   ) {
-    console.log(
+    logDesenvolvimento(
       "[Carga Máquina] Banco sem novos registros. Usando IndexedDB.",
     );
 
@@ -794,7 +798,7 @@ export async function buscarCargaMaquina() {
      5. EXISTEM REGISTROS NOVOS
   ===================================================== */
 
-  console.log(
+  logDesenvolvimento(
     "[Carga Máquina] Novos registros detectados. Sincronizando...",
   );
 
@@ -825,7 +829,7 @@ export async function buscarCargaMaquina() {
   const dadosAtualizados =
     await lerDadosIndexedDB();
 
-  console.log(
+  logDesenvolvimento(
     `[Carga Máquina] Sincronização concluída. ${dadosAtualizados.length} registros disponíveis.`,
   );
 
@@ -1016,13 +1020,13 @@ async function buscarDescricoesProdutos() {
   );
 
 
-  console.log(
+  logDesenvolvimento(
     "[Descrições Produtos] parametros_produto carregado:",
     registros.length,
   );
 
 
-  console.log(
+  logDesenvolvimento(
     "[Descrições Produtos] códigos disponíveis:",
     Object.keys(
       descricoes,
@@ -1084,7 +1088,7 @@ export function useDescricoesProdutos(
   return {
     descricoesProdutos:
       consulta.data ??
-      {},
+      DESCRICOES_VAZIAS,
 
 
     loadingDescricoes:
@@ -1168,7 +1172,7 @@ export function useCargaMaquina(
   return {
     dados:
       consulta.data ??
-      [],
+      DADOS_VAZIOS,
 
 
     loading:

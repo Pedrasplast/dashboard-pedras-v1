@@ -1,28 +1,125 @@
 import { useEffect } from "react";
+
 import { useAuthContext } from "@/lib/auth-context";
 import { useNavigate } from "@/lib/navegacao";
+import { usePermissoes } from "@/hooks/usePermissoes";
 
 /*
  * Portão de acesso das telas internas.
  *
- * Reproduz o comportamento original (redirecionar quando
- * não autenticado ou sem permissão) sem duplicar consultas
- * de sessão em cada tela.
+ * Regras:
+ *
+ * - Sem login:
+ *   envia para /login.
+ *
+ * - ADMIN:
+ *   acesso total automático.
+ *
+ * - OPERADOR:
+ *   precisa possuir a permissão
+ *   correspondente à tela.
+ *
+ * - exigirAdmin:
+ *   continua reservado para telas
+ *   exclusivamente administrativas,
+ *   como Gerenciar Usuários.
  */
-export default function RotaProtegida({ children, exigirAdmin = false }) {
-  const { user, isAdmin, loadingAuth, loadingPerfil } = useAuthContext();
+export default function RotaProtegida({
+  children,
+  exigirAdmin = false,
+  permissao = null,
+}) {
+  const {
+    user,
+    isAdmin,
+    loadingAuth,
+    loadingPerfil,
+  } = useAuthContext();
+
+  const {
+    podeAcessarTela,
+    loadingPermissoes,
+  } = usePermissoes();
+
   const navigate = useNavigate();
 
-  const carregando = loadingAuth || (exigirAdmin && loadingPerfil);
-  const semAcesso = !carregando && (!user || (exigirAdmin && !isAdmin));
+  const precisaCarregarPermissoes =
+    Boolean(
+      user &&
+      !isAdmin &&
+      !exigirAdmin &&
+      permissao
+    );
+
+  const carregando =
+    loadingAuth ||
+    loadingPerfil ||
+    (
+      precisaCarregarPermissoes &&
+      loadingPermissoes
+    );
+
+  const semLogin =
+    !carregando &&
+    !user;
+
+  const semAcessoAdmin =
+    !carregando &&
+    Boolean(
+      user &&
+      exigirAdmin &&
+      !isAdmin
+    );
+
+  const semPermissaoTela =
+    !carregando &&
+    Boolean(
+      user &&
+      !isAdmin &&
+      !exigirAdmin &&
+      permissao &&
+      !podeAcessarTela(permissao)
+    );
+
+  const semAcesso =
+    semLogin ||
+    semAcessoAdmin ||
+    semPermissaoTela;
 
   useEffect(() => {
-    if (!semAcesso) return;
-    navigate(!user ? "/login" : "/", { replace: true });
-  }, [semAcesso, user, navigate]);
+    if (!semAcesso) {
+      return;
+    }
+
+    if (!user) {
+      navigate(
+        "/login",
+        {
+          replace: true,
+        }
+      );
+
+      return;
+    }
+
+    navigate(
+      "/",
+      {
+        replace: true,
+      }
+    );
+  }, [
+    semAcesso,
+    user,
+    navigate,
+  ]);
 
   if (carregando) {
-    return <div className="estado-carregando">Carregando...</div>;
+    return (
+      <div className="estado-carregando">
+        Carregando...
+      </div>
+    );
   }
 
   if (semAcesso) {
