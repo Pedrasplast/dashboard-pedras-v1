@@ -26,6 +26,10 @@ import {
 } from "@/hooks/usePermissoes";
 
 import {
+  useDashboardMetrics,
+} from "@/hooks/useDashboardMetrics";
+
+import {
   useCargaMaquina,
 } from "@/lib/cargaMaquina";
 
@@ -52,6 +56,20 @@ const INTERVALO_RESUMO_PEDIDOS =
   15 * 60 * 1000;
 
 
+/*
+ * A Home não seleciona Tipo 3.
+ *
+ * Portanto:
+ *
+ * Final de Semana
+ * Feriado sem expediente
+ * Turno Reduzido
+ *
+ * não entram em Hora Parada.
+ */
+const TIPOS_PRODUCAO_HOME = [];
+
+
 /* =========================================================
    USUÁRIO
 ========================================================= */
@@ -63,7 +81,10 @@ function obterNomeUsuario(email) {
 
   return email
     .split("@")[0]
-    .replace(/[._-]+/g, " ")
+    .replace(
+      /[._-]+/g,
+      " ",
+    )
     .replace(
       /\b\w/g,
       (letra) =>
@@ -103,36 +124,62 @@ function converterNumero(valor) {
     return 0;
   }
 
+
   if (
-    typeof valor === "number"
+    typeof valor ===
+    "number"
   ) {
-    return Number.isFinite(valor)
+    return Number.isFinite(
+      valor,
+    )
       ? valor
       : 0;
   }
 
+
   let texto =
     String(valor)
       .trim()
-      .replace(/\s/g, "");
+      .replace(
+        /\s/g,
+        "",
+      );
+
 
   if (
-    texto.includes(",") &&
-    texto.includes(".")
+    texto.includes(
+      ",",
+    ) &&
+    texto.includes(
+      ".",
+    )
   ) {
     texto =
       texto
-        .replace(/\./g, "")
-        .replace(",", ".");
+        .replace(
+          /\./g,
+          "",
+        )
+        .replace(
+          ",",
+          ".",
+        );
   } else {
     texto =
-      texto.replace(",", ".");
+      texto.replace(
+        ",",
+        ".",
+      );
   }
+
 
   const numero =
     Number(texto);
 
-  return Number.isFinite(numero)
+
+  return Number.isFinite(
+    numero,
+  )
     ? numero
     : 0;
 }
@@ -151,13 +198,20 @@ function formatarNumero(valor) {
 
 
 function formatarPercentual(valor) {
+  const numero =
+    Number(valor);
+
+
   if (
-    !Number.isFinite(valor)
+    !Number.isFinite(
+      numero,
+    )
   ) {
     return "0,0%";
   }
 
-  return `${valor.toLocaleString(
+
+  return `${numero.toLocaleString(
     "pt-BR",
     {
       minimumFractionDigits: 1,
@@ -168,157 +222,16 @@ function formatarPercentual(valor) {
 
 
 /* =========================================================
-   TEMPO
-========================================================= */
-
-function converterTempoParaHoras(tempo) {
-  if (
-    tempo === null ||
-    tempo === undefined ||
-    tempo === ""
-  ) {
-    return 0;
-  }
-
-  if (
-    typeof tempo === "number"
-  ) {
-    return Number.isFinite(tempo)
-      ? Math.max(
-          0,
-          tempo,
-        )
-      : 0;
-  }
-
-  const texto =
-    String(tempo)
-      .trim();
-
-  if (!texto) {
-    return 0;
-  }
-
-  /*
-   * Aceita:
-   *
-   * 08:30
-   * 08:30:15
-   * 125:30:00
-   */
-  const correspondencia =
-    texto.match(
-      /^(\d+):(\d{1,2})(?::(\d{1,2}))?$/,
-    );
-
-  if (correspondencia) {
-    const horas =
-      Number(
-        correspondencia[1],
-      );
-
-    const minutos =
-      Number(
-        correspondencia[2],
-      );
-
-    const segundos =
-      Number(
-        correspondencia[3] || 0,
-      );
-
-    if (
-      minutos >= 60 ||
-      segundos >= 60
-    ) {
-      return 0;
-    }
-
-    return (
-      horas +
-      minutos / 60 +
-      segundos / 3600
-    );
-  }
-
-  /*
-   * Também aceita decimal.
-   *
-   * Exemplo:
-   * 2,5 = 2h30
-   */
-  const numero =
-    Number.parseFloat(
-      texto.replace(
-        ",",
-        ".",
-      ),
-    );
-
-  return Number.isFinite(numero)
-    ? Math.max(
-        0,
-        numero,
-      )
-    : 0;
-}
-
-
-function formatarHoras(totalHoras) {
-  if (
-    !Number.isFinite(
-      totalHoras,
-    ) ||
-    totalHoras <= 0
-  ) {
-    return "00:00";
-  }
-
-  const minutosTotais =
-    Math.round(
-      totalHoras * 60,
-    );
-
-  const horas =
-    Math.floor(
-      minutosTotais / 60,
-    );
-
-  const minutos =
-    minutosTotais % 60;
-
-  /*
-   * Também aplica formatação
-   * de milhar às horas.
-   *
-   * Exemplo:
-   * 3458h30 -> 3.458:30
-   */
-  const horasFormatadas =
-    horas.toLocaleString(
-      "pt-BR",
-      {
-        maximumFractionDigits: 0,
-      },
-    );
-
-  return `${horasFormatadas}:${String(
-    minutos,
-  ).padStart(
-    2,
-    "0",
-  )}`;
-}
-
-
-/* =========================================================
    DATAS DOS PEDIDOS
 ========================================================= */
 
-function converterData(dataTexto) {
+function converterData(
+  dataTexto,
+) {
   if (!dataTexto) {
     return null;
   }
+
 
   if (
     /^\d{2}\/\d{2}\/\d{4}$/.test(
@@ -334,6 +247,7 @@ function converterData(dataTexto) {
         .split("/")
         .map(Number);
 
+
     return new Date(
       ano,
       mes - 1,
@@ -345,10 +259,12 @@ function converterData(dataTexto) {
     );
   }
 
+
   const data =
     new Date(
       dataTexto,
     );
+
 
   if (
     Number.isNaN(
@@ -358,6 +274,7 @@ function converterData(dataTexto) {
     return null;
   }
 
+
   return data;
 }
 
@@ -365,6 +282,7 @@ function converterData(dataTexto) {
 function obterHoje() {
   const agora =
     new Date();
+
 
   return new Date(
     agora.getFullYear(),
@@ -378,15 +296,19 @@ function obterHoje() {
 }
 
 
-function formatarHorario(dataTexto) {
+function formatarHorario(
+  dataTexto,
+) {
   if (!dataTexto) {
     return "-";
   }
+
 
   const data =
     new Date(
       dataTexto,
     );
+
 
   if (
     Number.isNaN(
@@ -395,6 +317,7 @@ function formatarHorario(dataTexto) {
   ) {
     return "-";
   }
+
 
   return data.toLocaleTimeString(
     "pt-BR",
@@ -409,15 +332,19 @@ function formatarHorario(dataTexto) {
 }
 
 
-function formatarDataHora(dataTexto) {
+function formatarDataHora(
+  dataTexto,
+) {
   if (!dataTexto) {
     return "Ainda não atualizado";
   }
+
 
   const data =
     new Date(
       dataTexto,
     );
+
 
   if (
     Number.isNaN(
@@ -426,6 +353,7 @@ function formatarDataHora(dataTexto) {
   ) {
     return "Ainda não atualizado";
   }
+
 
   return data.toLocaleString(
     "pt-BR",
@@ -450,36 +378,12 @@ function formatarDataHora(dataTexto) {
 
 
 /* =========================================================
-   PRODUÇÃO
-========================================================= */
-
-function registroEhParadaValida(
-  registro,
-) {
-  const tipo =
-    String(
-      registro?.tipo ?? "",
-    ).trim();
-
-  /*
-   * SOMENTE:
-   * Tipo 1
-   * Tipo 2
-   *
-   * Tipo 3 fica totalmente fora.
-   */
-  return (
-    tipo === "1" ||
-    tipo === "2"
-  );
-}
-
-
-/* =========================================================
    PEDIDOS
 ========================================================= */
 
-function obterChavePedido(pedido) {
+function obterChavePedido(
+  pedido,
+) {
   return String(
     pedido?.codigoPedido ||
     pedido?.codigo_pedido ||
@@ -502,6 +406,7 @@ function Home({
   const navigate =
     useNavigate();
 
+
   const {
     podeAcessarTela,
     loadingPermissoes,
@@ -519,17 +424,20 @@ function Home({
   ] =
     useState("");
 
+
   const [
     password,
     setPassword,
   ] =
     useState("");
 
+
   const [
     loadingLogin,
     setLoadingLogin,
   ] =
     useState(false);
+
 
   const [
     loginError,
@@ -543,6 +451,7 @@ function Home({
       async (event) => {
         event.preventDefault();
 
+
         setLoadingLogin(
           true,
         );
@@ -551,11 +460,13 @@ function Home({
           "",
         );
 
+
         try {
           const {
             error,
           } =
-            await supabase.auth
+            await supabase
+              .auth
               .signInWithPassword({
                 email:
                   email
@@ -565,6 +476,7 @@ function Home({
                 password,
               });
 
+
           if (error) {
             setLoginError(
               error.message ===
@@ -573,12 +485,14 @@ function Home({
                 : error.message,
             );
 
+
             setPassword(
               "",
             );
 
             return;
           }
+
 
           setPassword(
             "",
@@ -589,9 +503,11 @@ function Home({
             error,
           );
 
+
           setLoginError(
             "Não foi possível realizar o login. Tente novamente.",
           );
+
 
           setPassword(
             "",
@@ -679,7 +595,6 @@ function Home({
 
   /* =====================================================
      PRODUÇÃO
-     BASE COMPLETA IMPORTADA
   ===================================================== */
 
   const {
@@ -699,112 +614,21 @@ function Home({
 
 
   /* =====================================================
-     RESUMO DA PRODUÇÃO
+     MÉTRICAS DE PRODUÇÃO
+
+     IMPORTANTE:
+
+     É EXATAMENTE O MESMO HOOK
+     USADO PELO DASHBOARD.
+
+     Não existe mais cálculo
+     de horas dentro da Home.
   ===================================================== */
 
-  const resumoProducao =
-    useMemo(
-      () => {
-        const registros =
-          Array.isArray(
-            dadosProducao,
-          )
-            ? dadosProducao
-            : [];
-
-        let horasTrabalhadas = 0;
-        let horasParadas = 0;
-        let paradas = 0;
-
-
-        for (
-          const registro
-          of registros
-        ) {
-          const status =
-            normalizarTexto(
-              registro?.status,
-            );
-
-          const duracao =
-            converterTempoParaHoras(
-              registro?.duracao,
-            );
-
-
-          /* =============================================
-             HORAS TRABALHADAS
-
-             Somente:
-             status = Produzindo
-          ============================================= */
-
-          if (
-            status ===
-            "produzindo"
-          ) {
-            horasTrabalhadas +=
-              duracao;
-          }
-
-
-          /* =============================================
-             HORAS PARADAS E REGISTROS DE PARADA
-
-             Somente:
-             Tipo 1
-             Tipo 2
-
-             Tipo 3 NÃO entra.
-          ============================================= */
-
-          if (
-            registroEhParadaValida(
-              registro,
-            )
-          ) {
-            horasParadas +=
-              duracao;
-
-            paradas += 1;
-          }
-        }
-
-
-        /* =============================================
-           % HORAS TRABALHADAS
-
-           trabalhadas
-           ----------------------- x 100
-           trabalhadas + paradas
-
-           Tipo 3 não participa.
-        ============================================= */
-
-        const horasConsideradas =
-          horasTrabalhadas +
-          horasParadas;
-
-
-        const percentualTrabalhado =
-          horasConsideradas > 0
-            ? (
-                horasTrabalhadas /
-                horasConsideradas
-              ) * 100
-            : 0;
-
-
-        return {
-          horasTrabalhadas,
-          horasParadas,
-          percentualTrabalhado,
-          paradas,
-        };
-      },
-      [
-        dadosProducao,
-      ],
+  const metricasProducao =
+    useDashboardMetrics(
+      dadosProducao,
+      TIPOS_PRODUCAO_HOME,
     );
 
 
@@ -827,8 +651,10 @@ function Home({
         "home-resumo-pedidos",
       ],
 
+
       enabled:
         podeVerPedidos,
+
 
       queryFn:
         async () => {
@@ -839,8 +665,10 @@ function Home({
             error:
               sessaoErro,
           } =
-            await supabase.auth
+            await supabase
+              .auth
               .getSession();
+
 
           if (
             sessaoErro
@@ -850,16 +678,19 @@ function Home({
             );
           }
 
+
           const accessToken =
             sessaoData
               ?.session
               ?.access_token;
+
 
           if (!accessToken) {
             throw new Error(
               "Sua sessão expirou.",
             );
           }
+
 
           return await buscarPedidosOmie({
             data: {
@@ -869,24 +700,25 @@ function Home({
         },
 
 
-      /*
-       * Atualização automática
-       * a cada 15 minutos.
-       */
       refetchInterval:
         INTERVALO_RESUMO_PEDIDOS,
+
 
       refetchIntervalInBackground:
         false,
 
+
       refetchOnMount:
         true,
+
 
       refetchOnWindowFocus:
         false,
 
+
       staleTime:
         INTERVALO_RESUMO_PEDIDOS,
+
 
       retry:
         1,
@@ -907,6 +739,10 @@ function Home({
     );
 
 
+  /* =====================================================
+     PEDIDOS EM ABERTO
+  ===================================================== */
+
   const pedidosEmAberto =
     useMemo(
       () =>
@@ -923,11 +759,16 @@ function Home({
     );
 
 
+  /* =====================================================
+     PEDIDOS ÚNICOS
+  ===================================================== */
+
   const pedidosUnicos =
     useMemo(
       () => {
         const mapa =
           new Map();
+
 
         for (
           const pedido
@@ -937,6 +778,7 @@ function Home({
             obterChavePedido(
               pedido,
             );
+
 
           if (
             chave &&
@@ -951,6 +793,7 @@ function Home({
           }
         }
 
+
         return [
           ...mapa.values(),
         ];
@@ -961,11 +804,16 @@ function Home({
     );
 
 
+  /* =====================================================
+     PEDIDOS ATRASADOS
+  ===================================================== */
+
   const pedidosAtrasados =
     useMemo(
       () => {
         const hoje =
           obterHoje();
+
 
         return pedidosUnicos.filter(
           (pedido) => {
@@ -974,9 +822,11 @@ function Home({
                 pedido?.previsao,
               );
 
+
             if (!previsao) {
               return false;
             }
+
 
             previsao.setHours(
               0,
@@ -984,6 +834,7 @@ function Home({
               0,
               0,
             );
+
 
             return (
               previsao <
@@ -998,21 +849,28 @@ function Home({
     );
 
 
+  /* =====================================================
+     PRÓXIMOS 7 DIAS
+  ===================================================== */
+
   const proximosSeteDias =
     useMemo(
       () => {
         const hoje =
           obterHoje();
 
+
         const limite =
           new Date(
             hoje,
           );
 
+
         limite.setDate(
           limite.getDate() +
           7,
         );
+
 
         return pedidosUnicos.filter(
           (pedido) => {
@@ -1021,9 +879,11 @@ function Home({
                 pedido?.previsao,
               );
 
+
             if (!previsao) {
               return false;
             }
+
 
             previsao.setHours(
               0,
@@ -1031,6 +891,7 @@ function Home({
               0,
               0,
             );
+
 
             return (
               previsao >= hoje &&
@@ -1074,10 +935,12 @@ function Home({
                 PEDRASPLAST
               </span>
 
+
               <h1>
                 Gestão da produção
                 em um único ambiente.
               </h1>
+
 
               <p>
                 Centralize informações,
@@ -1097,11 +960,13 @@ function Home({
                   size={20}
                 />
 
+
                 <div>
 
                   <strong>
                     Produção e produtividade
                   </strong>
+
 
                   <span>
                     Informações organizadas
@@ -1120,11 +985,13 @@ function Home({
                   size={20}
                 />
 
+
                 <div>
 
                   <strong>
                     Pedidos e prazos
                   </strong>
+
 
                   <span>
                     Acompanhe pedidos,
@@ -1143,11 +1010,13 @@ function Home({
                   size={20}
                 />
 
+
                 <div>
 
                   <strong>
                     Acesso controlado
                   </strong>
+
 
                   <span>
                     Cada colaborador acessa
@@ -1181,9 +1050,11 @@ function Home({
                 Área restrita
               </span>
 
+
               <h2>
                 Acessar o sistema
               </h2>
+
 
               <p>
                 Entre com suas credenciais
@@ -1215,6 +1086,7 @@ function Home({
                 >
                   E-mail
                 </label>
+
 
                 <input
                   id="home-email"
@@ -1248,6 +1120,7 @@ function Home({
                   Senha
                 </label>
 
+
                 <input
                   id="home-password"
                   type="password"
@@ -1280,9 +1153,11 @@ function Home({
                   loadingLogin
                 }
               >
+
                 {loadingLogin
                   ? "Autenticando..."
                   : "Entrar no sistema"}
+
               </button>
 
             </form>
@@ -1318,7 +1193,7 @@ function Home({
 
 
         {/* ===============================================
-            BOAS-VINDAS
+            CABEÇALHO
         =============================================== */}
 
         <section className="home-welcome">
@@ -1340,9 +1215,11 @@ function Home({
                 Painel Pedrasplast
               </span>
 
+
               <h1>
                 Olá, {nomeUsuario}
               </h1>
+
 
               <p>
                 Aqui estão as principais
@@ -1360,11 +1237,13 @@ function Home({
               size={17}
             />
 
+
             <div>
 
               <span>
                 Perfil
               </span>
+
 
               <strong>
                 {perfilUsuario}
@@ -1391,9 +1270,11 @@ function Home({
                 RESUMO DA PRODUÇÃO
               </span>
 
+
               <h2>
                 Produção acumulada
               </h2>
+
 
               <p>
                 Indicadores gerais considerando
@@ -1414,12 +1295,14 @@ function Home({
                 size={20}
               />
 
+
               <div>
 
                 <strong>
                   Não foi possível carregar
                   os dados da produção.
                 </strong>
+
 
                 <span>
                   Consulte o Dashboard
@@ -1435,7 +1318,9 @@ function Home({
             <div className="home-summary-grid">
 
 
-              {/* HORAS TRABALHADAS */}
+              {/* =============================================
+                  HORAS TRABALHADAS
+              ============================================= */}
 
               <article className="home-summary-card">
 
@@ -1454,14 +1339,16 @@ function Home({
                     HORAS TRABALHADAS
                   </span>
 
+
                   <strong className="home-summary-duration">
+
                     {carregandoProducao
                       ? "-"
-                      : formatarHoras(
-                          resumoProducao
-                            .horasTrabalhadas,
-                        )}
+                      : metricasProducao
+                          .horasTrabalhadas}
+
                   </strong>
+
 
                   <p>
                     Total acumulado
@@ -1473,12 +1360,17 @@ function Home({
               </article>
 
 
-              {/* HORAS PARADAS */}
+              {/* =============================================
+                  HORAS PARADAS
+              ============================================= */}
 
               <article
                 className={
-                  resumoProducao
-                    .horasParadas > 0
+                  Number(
+                    metricasProducao
+                      ?.horasParadasDec ||
+                    0,
+                  ) > 0
                     ? "home-summary-card home-summary-card-warning"
                     : "home-summary-card"
                 }
@@ -1486,8 +1378,11 @@ function Home({
 
                 <div
                   className={
-                    resumoProducao
-                      .horasParadas > 0
+                    Number(
+                      metricasProducao
+                        ?.horasParadasDec ||
+                      0,
+                    ) > 0
                       ? "home-summary-icon home-summary-icon-warning"
                       : "home-summary-icon"
                   }
@@ -1506,18 +1401,20 @@ function Home({
                     HORAS PARADAS
                   </span>
 
+
                   <strong className="home-summary-duration">
+
                     {carregandoProducao
                       ? "-"
-                      : formatarHoras(
-                          resumoProducao
-                            .horasParadas,
-                        )}
+                      : metricasProducao
+                          .horasParadas}
+
                   </strong>
 
+
                   <p>
-                    Paradas acumuladas
-                    dos Tipos 1 e 2.
+                    Horas de indisponibilidade
+                    sem considerar Tipo 3.
                   </p>
 
                 </div>
@@ -1525,7 +1422,9 @@ function Home({
               </article>
 
 
-              {/* % HORAS TRABALHADAS */}
+              {/* =============================================
+                  % HORAS TRABALHADAS
+              ============================================= */}
 
               <article className="home-summary-card">
 
@@ -1544,14 +1443,18 @@ function Home({
                     % HORAS TRABALHADAS
                   </span>
 
+
                   <strong>
+
                     {carregandoProducao
                       ? "-"
                       : formatarPercentual(
-                          resumoProducao
-                            .percentualTrabalhado,
+                          metricasProducao
+                            .percentualHorasTrabalhadas,
                         )}
+
                   </strong>
+
 
                   <p>
                     Percentual do tempo
@@ -1563,12 +1466,17 @@ function Home({
               </article>
 
 
-              {/* REGISTROS DE PARADA */}
+              {/* =============================================
+                  REGISTROS DE PARADA
+              ============================================= */}
 
               <article
                 className={
-                  resumoProducao
-                    .paradas > 0
+                  Number(
+                    metricasProducao
+                      ?.registrosParada ||
+                    0,
+                  ) > 0
                     ? "home-summary-card home-summary-card-warning"
                     : "home-summary-card"
                 }
@@ -1576,8 +1484,11 @@ function Home({
 
                 <div
                   className={
-                    resumoProducao
-                      .paradas > 0
+                    Number(
+                      metricasProducao
+                        ?.registrosParada ||
+                      0,
+                    ) > 0
                       ? "home-summary-icon home-summary-icon-warning"
                       : "home-summary-icon"
                   }
@@ -1596,18 +1507,22 @@ function Home({
                     REGISTROS DE PARADA
                   </span>
 
+
                   <strong>
+
                     {carregandoProducao
                       ? "-"
                       : formatarNumero(
-                          resumoProducao
-                            .paradas,
+                          metricasProducao
+                            .registrosParada,
                         )}
+
                   </strong>
 
+
                   <p>
-                    Ocorrências acumuladas
-                    dos Tipos 1 e 2.
+                    Ocorrências de indisponibilidade
+                    sem considerar Tipo 3.
                   </p>
 
                 </div>
@@ -1622,11 +1537,11 @@ function Home({
 
         {/* ===============================================
             PEDIDOS
-            SOMENTE COM PERMISSÃO
         =============================================== */}
 
         {podeVerPedidos && (
           <>
+
             <section className="home-summary-section">
 
               <div className="home-section-heading">
@@ -1637,9 +1552,11 @@ function Home({
                     PEDIDOS
                   </span>
 
+
                   <h2>
                     Resumo comercial
                   </h2>
+
 
                   <p>
                     Atualização automática
@@ -1659,12 +1576,14 @@ function Home({
                     size={20}
                   />
 
+
                   <div>
 
                     <strong>
                       Não foi possível carregar
                       o resumo dos pedidos.
                     </strong>
+
 
                     <span>
                       Uma nova tentativa será
@@ -1699,13 +1618,17 @@ function Home({
                         PEDIDOS EM ABERTO
                       </span>
 
+
                       <strong>
+
                         {carregandoPedidos
                           ? "-"
                           : formatarNumero(
                               pedidosUnicos.length,
                             )}
+
                       </strong>
+
 
                       <p>
                         Pedidos comerciais
@@ -1748,18 +1671,24 @@ function Home({
                         PEDIDOS ATRASADOS
                       </span>
 
+
                       <strong>
+
                         {carregandoPedidos
                           ? "-"
                           : formatarNumero(
                               pedidosAtrasados,
                             )}
+
                       </strong>
 
+
                       <p>
+
                         {pedidosAtrasados > 0
                           ? "Pedidos que precisam de atenção."
                           : "Nenhum atraso identificado."}
+
                       </p>
 
                     </div>
@@ -1786,13 +1715,17 @@ function Home({
                         PRÓXIMOS 7 DIAS
                       </span>
 
+
                       <strong>
+
                         {carregandoPedidos
                           ? "-"
                           : formatarNumero(
                               proximosSeteDias,
                             )}
+
                       </strong>
+
 
                       <p>
                         Pedidos previstos
@@ -1823,20 +1756,26 @@ function Home({
                         ÚLTIMA ATUALIZAÇÃO
                       </span>
 
+
                       <strong className="home-summary-time">
+
                         {carregandoPedidos
                           ? "-"
                           : formatarHorario(
                               respostaPedidos
                                 ?.atualizadoEm,
                             )}
+
                       </strong>
 
+
                       <p>
+
                         {formatarDataHora(
                           respostaPedidos
                             ?.atualizadoEm,
                         )}
+
                       </p>
 
                     </div>
@@ -1849,10 +1788,13 @@ function Home({
             </section>
 
 
-            {/* ATENÇÕES DOS PEDIDOS */}
+            {/* =============================================
+                ATENÇÕES
+            ============================================= */}
 
             {!carregandoPedidos &&
               !erroPedidos && (
+
                 <section className="home-alerts-section">
 
                   <div className="home-section-heading">
@@ -1862,6 +1804,7 @@ function Home({
                       <span>
                         ATENÇÕES
                       </span>
+
 
                       <h2>
                         Pedidos que merecem atenção
@@ -1873,6 +1816,7 @@ function Home({
 
 
                   <div className="home-alerts-card">
+
 
                     {pedidosAtrasados > 0 ? (
 
@@ -1890,13 +1834,16 @@ function Home({
                         <div>
 
                           <strong>
+
                             {formatarNumero(
                               pedidosAtrasados,
                             )} pedido
                             {pedidosAtrasados !== 1
                               ? "s"
                               : ""} em atraso
+
                           </strong>
+
 
                           <p>
                             Consulte Pedidos
@@ -1926,6 +1873,7 @@ function Home({
                           <strong>
                             Nenhum pedido em atraso
                           </strong>
+
 
                           <p>
                             Não foram identificados
@@ -1957,13 +1905,16 @@ function Home({
                       <div>
 
                         <strong>
+
                           {formatarNumero(
                             proximosSeteDias,
                           )} faturamento
                           {proximosSeteDias !== 1
                             ? "s"
                             : ""} nos próximos 7 dias
+
                         </strong>
+
 
                         <p>
                           Pedidos previstos
@@ -1978,7 +1929,9 @@ function Home({
                   </div>
 
                 </section>
+
               )}
+
           </>
         )}
 
@@ -1988,6 +1941,7 @@ function Home({
         =============================================== */}
 
         {possuiAcoesAdministrativas && (
+
           <section className="home-admin-section">
 
             <div className="home-section-heading">
@@ -1998,9 +1952,11 @@ function Home({
                   ADMINISTRAÇÃO
                 </span>
 
+
                 <h2>
                   Ferramentas administrativas
                 </h2>
+
 
                 <p>
                   Recursos adicionais
@@ -2014,7 +1970,9 @@ function Home({
 
             <div className="home-admin-actions">
 
+
               {podeImportar && (
+
                 <button
                   type="button"
                   className="home-admin-action"
@@ -2040,6 +1998,7 @@ function Home({
                       Importar dados
                     </strong>
 
+
                     <span>
                       Importação da programação
                       e dados operacionais.
@@ -2048,10 +2007,12 @@ function Home({
                   </div>
 
                 </button>
+
               )}
 
 
               {podeGerenciarUsuarios && (
+
                 <button
                   type="button"
                   className="home-admin-action"
@@ -2077,6 +2038,7 @@ function Home({
                       Gerenciar usuários
                     </strong>
 
+
                     <span>
                       Usuários, perfis
                       e permissões de acesso.
@@ -2085,11 +2047,13 @@ function Home({
                   </div>
 
                 </button>
+
               )}
 
             </div>
 
           </section>
+
         )}
 
 
@@ -2105,11 +2069,13 @@ function Home({
               size={15}
             />
 
+
             <strong>
               Pedrasplast
             </strong>
 
           </div>
+
 
           <span>
             Gestão e acompanhamento operacional
