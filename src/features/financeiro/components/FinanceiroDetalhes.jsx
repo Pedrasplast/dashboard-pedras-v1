@@ -1,7 +1,19 @@
 import {
   memo,
   useMemo,
+  useState,
 } from "react";
+
+import {
+  BarChart3,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  DollarSign,
+  Layers3,
+  Search,
+  X,
+} from "lucide-react";
 
 import {
   useFinanceiroDetalhes,
@@ -14,187 +26,232 @@ import {
 
 
 /* =========================================================
-   RESUMO DOS LANÇAMENTOS
-
-   Fazemos uma única passagem pelos detalhes carregados.
+   COMPONENTE / STATUS
 ========================================================= */
 
-function calcularResumoDetalhes(
-  registros,
-) {
-  let totalRealizado =
-    0;
-
-  let totalARealizar =
-    0;
-
-  let totalGeral =
-    0;
-
-
-  for (
-    const registro
-    of registros
-  ) {
-    const valor =
-      Number(
-        registro
-          ?.valor_componente ??
-          0,
-      );
-
-
-    totalGeral +=
-      valor;
-
-
-    if (
-      registro
-        ?.componente ===
-      "realizado"
-    ) {
-      totalRealizado +=
-        valor;
-
-      continue;
-    }
-
-
-    if (
-      registro
-        ?.componente ===
-      "a_realizar"
-    ) {
-      totalARealizar +=
-        valor;
-    }
-  }
-
-
-  return {
-    totalRealizado,
-    totalARealizar,
-    totalGeral,
-    quantidade:
-      registros.length,
-  };
-}
-
-
-/* =========================================================
-   TEXTO DO COMPONENTE
-========================================================= */
-
-function nomeComponente(
-  componente,
-) {
-  if (
-    componente ===
-    "realizado"
-  ) {
+function nomeComponente(componente) {
+  if (componente === "realizado") {
     return "Realizado";
   }
 
-
-  if (
-    componente ===
-    "a_realizar"
-  ) {
+  if (componente === "a_realizar") {
     return "A realizar";
   }
-
 
   return "-";
 }
 
 
 /* =========================================================
-   LINHA DO DETALHAMENTO
+   TEXTO PARA BUSCA
 ========================================================= */
 
-const LinhaDetalhe =
-  memo(
-    function LinhaDetalhe({
-      registro,
-    }) {
-      return (
-        <tr>
+function normalizarTexto(valor) {
+  return String(valor ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    );
+}
 
-          <td>
-            {formatarData(
+
+/* =========================================================
+   RESUMO DOS LANÇAMENTOS
+========================================================= */
+
+function calcularResumoDetalhes(registros) {
+  let totalRealizado = 0;
+  let totalARealizar = 0;
+
+  let quantidadeRealizado = 0;
+  let quantidadeARealizar = 0;
+
+  for (const registro of registros) {
+    const valor = Number(
+      registro?.valor_componente ?? 0,
+    );
+
+    if (
+      registro?.componente ===
+      "realizado"
+    ) {
+      totalRealizado += valor;
+      quantidadeRealizado += 1;
+
+      continue;
+    }
+
+    if (
+      registro?.componente ===
+      "a_realizar"
+    ) {
+      totalARealizar += valor;
+      quantidadeARealizar += 1;
+    }
+  }
+
+  return {
+    totalRealizado,
+    totalARealizar,
+
+    totalGeral:
+      totalRealizado +
+      totalARealizar,
+
+    quantidade:
+      registros.length,
+
+    quantidadeRealizado,
+    quantidadeARealizar,
+  };
+}
+
+
+/* =========================================================
+   LINHA DA TABELA
+========================================================= */
+
+const LinhaDetalhe = memo(
+  function LinhaDetalhe({
+    registro,
+  }) {
+    const componente =
+      registro?.componente;
+
+    return (
+      <tr>
+        <td className="financeiro-detalhes-data">
+          {formatarData(
+            registro?.data_referencia,
+          )}
+        </td>
+
+        <td className="financeiro-detalhes-cliente">
+          <span
+            title={
               registro
-                ?.data_referencia,
-            )}
-          </td>
-
-
-          <td>
+                ?.cliente_fornecedor ||
+              ""
+            }
+          >
             {
               registro
                 ?.cliente_fornecedor ||
               "-"
             }
-          </td>
+          </span>
+        </td>
 
+        <td>
+          {
+            registro
+              ?.numero_documento ||
+            "-"
+          }
+        </td>
 
-          <td>
-            {
-              registro
-                ?.numero_documento ||
-              "-"
-            }
-          </td>
+        <td>
+          {
+            registro
+              ?.numero_pedido ||
+            "-"
+          }
+        </td>
 
+        <td>
+          <span
+            className={[
+              "financeiro-detalhes-badge",
 
-          <td>
-            {
-              registro
-                ?.numero_pedido ||
-              "-"
-            }
-          </td>
-
-
-          <td>
+              componente ===
+              "realizado"
+                ? "financeiro-detalhes-badge-realizado"
+                : "financeiro-detalhes-badge-a-realizar",
+            ].join(" ")}
+          >
             {nomeComponente(
-              registro
-                ?.componente,
+              componente,
             )}
-          </td>
+          </span>
+        </td>
 
+        <td>
+          {
+            registro?.status ||
+            "-"
+          }
+        </td>
 
-          <td>
-            {
-              registro
-                ?.status ||
-              "-"
-            }
-          </td>
+        <td className="financeiro-detalhes-numero">
+          {formatarMoeda(
+            registro
+              ?.valor_documento,
+          )}
+        </td>
 
-
-          <td className="financeiro-detalhes-numero">
-            {formatarMoeda(
-              registro
-                ?.valor_documento,
-            )}
-          </td>
-
-
-          <td className="financeiro-detalhes-numero">
-            {formatarMoeda(
-              registro
-                ?.valor_componente,
-            )}
-          </td>
-
-        </tr>
-      );
-    },
-  );
+        <td className="financeiro-detalhes-numero financeiro-detalhes-valor-principal">
+          {formatarMoeda(
+            registro
+              ?.valor_componente,
+          )}
+        </td>
+      </tr>
+    );
+  },
+);
 
 
 /* =========================================================
-   COMPONENTE
+   CARD DE INDICADOR
+========================================================= */
+
+function IndicadorDetalhe({
+  titulo,
+  valor,
+  subtitulo,
+  icone: Icone,
+  variante = "neutro",
+}) {
+  return (
+    <div
+      className={[
+        "financeiro-detalhes-indicador",
+        `financeiro-detalhes-indicador-${variante}`,
+      ].join(" ")}
+    >
+      <div className="financeiro-detalhes-indicador-icone">
+        <Icone
+          size={20}
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="financeiro-detalhes-indicador-conteudo">
+        <span>
+          {titulo}
+        </span>
+
+        <strong>
+          {valor}
+        </strong>
+
+        {subtitulo && (
+          <small>
+            {subtitulo}
+          </small>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+/* =========================================================
+   COMPONENTE PRINCIPAL
 ========================================================= */
 
 function FinanceiroDetalhes({
@@ -204,11 +261,26 @@ function FinanceiroDetalhes({
   categoria,
   aoFechar,
 }) {
+  const [
+    busca,
+    definirBusca,
+  ] = useState("");
+
+  const [
+    filtroComponente,
+    definirFiltroComponente,
+  ] = useState("todos");
+
+
   const codigoCategoria =
     categoria
       ?.codigo_categoria ??
     "";
 
+
+  /* =======================================================
+     QUERY
+  ======================================================= */
 
   const {
     data:
@@ -228,9 +300,7 @@ function FinanceiroDetalhes({
   } =
     useFinanceiroDetalhes({
       ano,
-
       mes,
-
       codigoCategoria,
 
       habilitado:
@@ -243,8 +313,6 @@ function FinanceiroDetalhes({
 
   /* =======================================================
      RESUMO
-
-     Só recalcula quando a lista de detalhes mudar.
   ======================================================= */
 
   const resumo =
@@ -253,10 +321,106 @@ function FinanceiroDetalhes({
         calcularResumoDetalhes(
           detalhes,
         ),
+      [detalhes],
+    );
+
+
+  /* =======================================================
+     FILTROS
+  ======================================================= */
+
+  const detalhesFiltrados =
+    useMemo(
+      () => {
+        const textoBusca =
+          normalizarTexto(
+            busca,
+          );
+
+        const resultado =
+          [];
+
+        for (
+          const registro
+          of detalhes
+        ) {
+          if (
+            filtroComponente !==
+              "todos" &&
+            registro
+              ?.componente !==
+              filtroComponente
+          ) {
+            continue;
+          }
+
+          if (!textoBusca) {
+            resultado.push(
+              registro,
+            );
+
+            continue;
+          }
+
+          const conteudo =
+            normalizarTexto(
+              [
+                registro
+                  ?.cliente_fornecedor,
+
+                registro
+                  ?.numero_documento,
+
+                registro
+                  ?.numero_pedido,
+
+                registro
+                  ?.status,
+
+                registro
+                  ?.codigo_titulo_omie,
+
+                nomeComponente(
+                  registro
+                    ?.componente,
+                ),
+              ].join(" "),
+            );
+
+          if (
+            conteudo.includes(
+              textoBusca,
+            )
+          ) {
+            resultado.push(
+              registro,
+            );
+          }
+        }
+
+        return resultado;
+      },
       [
         detalhes,
+        busca,
+        filtroComponente,
       ],
     );
+
+
+  /* =======================================================
+     FECHAR
+  ======================================================= */
+
+  function fecharPainel() {
+    definirBusca("");
+
+    definirFiltroComponente(
+      "todos",
+    );
+
+    aoFechar();
+  }
 
 
   if (
@@ -270,38 +434,29 @@ function FinanceiroDetalhes({
   return (
     <div className="financeiro-detalhes-overlay">
 
-      {/* ===================================================
-          ÁREA EXTERNA
-
-          Clique fora fecha o painel.
-      =================================================== */}
+      {/* FUNDO */}
 
       <button
         type="button"
         className="financeiro-detalhes-fundo"
         aria-label="Fechar detalhes"
         onClick={
-          aoFechar
+          fecharPainel
         }
       />
 
 
-      {/* ===================================================
-          PAINEL
-      =================================================== */}
+      {/* PAINEL */}
 
-      <aside
-        className="financeiro-detalhes-painel"
-        aria-label="Detalhamento financeiro"
-      >
+      <aside className="financeiro-detalhes-painel">
 
         {/* =================================================
             CABEÇALHO
         ================================================= */}
 
-        <div className="financeiro-detalhes-cabecalho">
+        <header className="financeiro-detalhes-cabecalho">
 
-          <div>
+          <div className="financeiro-detalhes-identificacao">
 
             <span className="financeiro-detalhes-codigo">
               {
@@ -317,6 +472,27 @@ function FinanceiroDetalhes({
               }
             </h2>
 
+            <div className="financeiro-detalhes-periodo">
+
+              <CalendarDays
+                size={15}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+
+              <span>
+                {String(
+                  mes,
+                ).padStart(
+                  2,
+                  "0",
+                )}
+                /
+                {ano}
+              </span>
+
+            </div>
+
           </div>
 
 
@@ -325,116 +501,255 @@ function FinanceiroDetalhes({
             className="financeiro-detalhes-fechar"
             aria-label="Fechar"
             onClick={
-              aoFechar
+              fecharPainel
             }
           >
-            ×
+            <X
+              size={19}
+              aria-hidden="true"
+            />
           </button>
 
-        </div>
+        </header>
 
 
         {/* =================================================
-            VALORES DA CATEGORIA
+            INDICADORES PRINCIPAIS
         ================================================= */}
 
-        <div className="financeiro-detalhes-categoria-resumo">
+        <section className="financeiro-detalhes-principais">
 
-          <div>
+          <IndicadorDetalhe
+            titulo="Previsto"
+            valor={formatarMoeda(
+              categoria
+                .valor_previsto,
+            )}
+            icone={
+              DollarSign
+            }
+            variante="previsto"
+          />
 
-            <span>
-              Previsto
-            </span>
+          <IndicadorDetalhe
+            titulo="Realizado / a realizar"
+            valor={formatarMoeda(
+              categoria
+                .valor_realizado,
+            )}
+            icone={
+              BarChart3
+            }
+            variante="total"
+          />
 
-            <strong>
-              {formatarMoeda(
-                categoria
-                  .valor_previsto,
-              )}
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>
-              Realizado / a realizar
-            </span>
-
-            <strong>
-              {formatarMoeda(
-                categoria
-                  .valor_realizado,
-              )}
-            </strong>
-
-          </div>
-
-        </div>
+        </section>
 
 
         {/* =================================================
-            RESUMO DOS TÍTULOS
+            COMPOSIÇÃO
         ================================================= */}
 
         {!carregando &&
           !erro && (
-            <div className="financeiro-detalhes-resumo">
+            <section className="financeiro-detalhes-resumo">
 
-              <div>
+              <IndicadorDetalhe
+                titulo="Realizado"
+                valor={formatarMoeda(
+                  resumo
+                    .totalRealizado,
+                )}
+                subtitulo={`${
+                  resumo
+                    .quantidadeRealizado
+                } ${
+                  resumo
+                    .quantidadeRealizado ===
+                  1
+                    ? "lançamento"
+                    : "lançamentos"
+                }`}
+                icone={
+                  CheckCircle2
+                }
+                variante="realizado"
+              />
 
-                <span>
-                  Realizado
-                </span>
+              <IndicadorDetalhe
+                titulo="A realizar"
+                valor={formatarMoeda(
+                  resumo
+                    .totalARealizar,
+                )}
+                subtitulo={`${
+                  resumo
+                    .quantidadeARealizar
+                } ${
+                  resumo
+                    .quantidadeARealizar ===
+                  1
+                    ? "lançamento"
+                    : "lançamentos"
+                }`}
+                icone={
+                  Clock3
+                }
+                variante="a-realizar"
+              />
 
-                <strong>
-                  {formatarMoeda(
-                    resumo
-                      .totalRealizado,
-                  )}
-                </strong>
+              <IndicadorDetalhe
+                titulo="Total da composição"
+                valor={formatarMoeda(
+                  resumo
+                    .totalGeral,
+                )}
+                subtitulo={`${
+                  resumo
+                    .quantidade
+                } ${
+                  resumo
+                    .quantidade ===
+                  1
+                    ? "registro"
+                    : "registros"
+                }`}
+                icone={
+                  Layers3
+                }
+                variante="composicao"
+              />
 
-              </div>
+            </section>
+          )}
 
 
-              <div>
+        {/* =================================================
+            FILTROS
+        ================================================= */}
 
-                <span>
-                  A realizar
-                </span>
+        {!carregando &&
+          !erro &&
+          detalhes.length >
+            0 && (
+            <div className="financeiro-detalhes-filtros">
 
-                <strong>
-                  {formatarMoeda(
-                    resumo
-                      .totalARealizar,
-                  )}
-                </strong>
+              <div className="financeiro-detalhes-busca">
 
-              </div>
+                <Search
+                  size={17}
+                  aria-hidden="true"
+                />
 
-
-              <div>
-
-                <span>
-                  Lançamentos
-                </span>
-
-                <strong>
-                  {
-                    resumo
-                      .quantidade
+                <input
+                  type="text"
+                  value={
+                    busca
                   }
-                </strong>
+                  placeholder="Buscar cliente, documento, pedido ou status..."
+                  onChange={(evento) =>
+                    definirBusca(
+                      evento
+                        .target
+                        .value,
+                    )
+                  }
+                />
+
+                {busca && (
+                  <button
+                    type="button"
+                    aria-label="Limpar busca"
+                    onClick={() =>
+                      definirBusca(
+                        "",
+                      )
+                    }
+                  >
+                    <X
+                      size={15}
+                      aria-hidden="true"
+                    />
+                  </button>
+                )}
 
               </div>
+
+
+              <div className="financeiro-detalhes-filtro-componente">
+
+                <button
+                  type="button"
+                  className={
+                    filtroComponente ===
+                    "todos"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    definirFiltroComponente(
+                      "todos",
+                    )
+                  }
+                >
+                  Todos
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    filtroComponente ===
+                    "realizado"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    definirFiltroComponente(
+                      "realizado",
+                    )
+                  }
+                >
+                  Realizado
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    filtroComponente ===
+                    "a_realizar"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    definirFiltroComponente(
+                      "a_realizar",
+                    )
+                  }
+                >
+                  A realizar
+                </button>
+
+              </div>
+
+
+              <span className="financeiro-detalhes-resultado-contagem">
+                {
+                  detalhesFiltrados
+                    .length
+                }{" "}
+                de{" "}
+                {
+                  detalhes
+                    .length
+                }
+              </span>
 
             </div>
           )}
 
 
         {/* =================================================
-            CARREGAMENTO
+            STATUS
         ================================================= */}
 
         {carregando && (
@@ -443,25 +758,13 @@ function FinanceiroDetalhes({
           </div>
         )}
 
-
-        {/* =================================================
-            ERRO
-        ================================================= */}
-
         {erro && (
           <div className="financeiro-detalhes-status financeiro-detalhes-erro">
-
             {detalheErro
               ?.message ||
               "Não foi possível carregar os lançamentos."}
-
           </div>
         )}
-
-
-        {/* =================================================
-            SEM REGISTROS
-        ================================================= */}
 
         {!carregando &&
           !erro &&
@@ -472,6 +775,18 @@ function FinanceiroDetalhes({
             </div>
           )}
 
+        {!carregando &&
+          !erro &&
+          detalhes.length >
+            0 &&
+          detalhesFiltrados
+              .length ===
+            0 && (
+            <div className="financeiro-detalhes-status">
+              Nenhum lançamento corresponde aos filtros informados.
+            </div>
+          )}
+
 
         {/* =================================================
             TABELA
@@ -479,23 +794,21 @@ function FinanceiroDetalhes({
 
         {!carregando &&
           !erro &&
-          detalhes.length >
+          detalhesFiltrados
+              .length >
             0 && (
             <div className="financeiro-detalhes-tabela-container">
 
               {atualizando && (
                 <div className="financeiro-detalhes-atualizando">
-                  Atualizando...
+                  Atualizando dados...
                 </div>
               )}
-
 
               <table className="financeiro-detalhes-tabela">
 
                 <thead>
-
                   <tr>
-
                     <th>
                       Data
                     </th>
@@ -525,20 +838,14 @@ function FinanceiroDetalhes({
                     </th>
 
                     <th className="financeiro-detalhes-numero">
-                      Valor
+                      Valor composição
                     </th>
-
                   </tr>
-
                 </thead>
 
-
                 <tbody>
-
-                  {detalhes.map(
-                    (
-                      registro,
-                    ) => (
+                  {detalhesFiltrados.map(
+                    (registro) => (
                       <LinhaDetalhe
                         key={
                           registro.id
@@ -549,7 +856,6 @@ function FinanceiroDetalhes({
                       />
                     ),
                   )}
-
                 </tbody>
 
               </table>
@@ -563,10 +869,6 @@ function FinanceiroDetalhes({
   );
 }
 
-
-/* =========================================================
-   MEMO
-========================================================= */
 
 export default memo(
   FinanceiroDetalhes,

@@ -7,6 +7,8 @@ import {
 
 import "./FinanceiroPage.css";
 
+import FinanceiroStatusSincronizacao from "./components/FinanceiroStatusSincronizacao";
+
 import FinanceiroDetalhes from "./components/FinanceiroDetalhes";
 import FinanceiroFiltros from "./components/FinanceiroFiltros";
 import FinanceiroResumo from "./components/FinanceiroResumo";
@@ -19,7 +21,6 @@ import {
 } from "./hooks/useFinanceiro";
 
 import {
-  formatarDataHora,
   mesesFinanceiro,
   processarFinanceiro,
 } from "./utils/financeiro.utils";
@@ -340,18 +341,6 @@ export default function FinanceiroPage() {
     );
 
 
-  /* =======================================================
-     ÚLTIMA ATUALIZAÇÃO
-  ======================================================= */
-
-  const ultimaAtualizacao =
-    sincronizacao
-      ?.ultima_sincronizacao ??
-    sincronizacao
-      ?.atualizado_em ??
-    null;
-
-
   return (
     <main className="financeiro-page">
 
@@ -374,25 +363,14 @@ export default function FinanceiroPage() {
         </div>
 
 
-        <div className="financeiro-atualizacao">
-
-          {carregandoSincronizacao ? (
-            <span>
-              Consultando atualização...
-            </span>
-          ) : (
-            <span>
-              Última atualização:{" "}
-
-              <strong>
-                {formatarDataHora(
-                  ultimaAtualizacao,
-                )}
-              </strong>
-            </span>
-          )}
-
-        </div>
+        <FinanceiroStatusSincronizacao
+          sincronizacao={
+            sincronizacao
+          }
+          carregando={
+            carregandoSincronizacao
+          }
+        />
 
       </header>
 
