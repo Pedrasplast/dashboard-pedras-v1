@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -344,13 +345,6 @@ function calcularDiasAtraso(
 function pedidoEstaAtrasado(
   pedido,
 ) {
-  /*
-   * Somente pedido operacional
-   * com status "Pedido"
-   * pode ser considerado atraso.
-   *
-   * Cancelado nunca entra.
-   */
   return (
     normalizarTexto(
       pedido?.status,
@@ -485,6 +479,38 @@ function obterChavePedido(
 
 
 /* =========================================================
+   CÓDIGO OMIE DO PEDIDO
+
+   Usado para relacionar a linha da tabela
+   com a notificação gravada no Supabase.
+========================================================= */
+
+function obterCodigoPedidoOmie(
+  pedido,
+) {
+  const codigo =
+    Number(
+      pedido?.codigoPedidoOmie ??
+      pedido?.codigoPedido ??
+      pedido?.codigo_pedido_omie ??
+      pedido?.codigo_pedido ??
+      null,
+    );
+
+  if (
+    !Number.isFinite(
+      codigo,
+    ) ||
+    codigo <= 0
+  ) {
+    return null;
+  }
+
+  return codigo;
+}
+
+
+/* =========================================================
    COMPONENTE
 ========================================================= */
 
@@ -544,10 +570,6 @@ export default function PedidosPage() {
     );
 
 
-  /*
-   * A tela continua abrindo
-   * somente em pedidos operacionais.
-   */
   const [
     status,
     setStatus,
@@ -571,7 +593,7 @@ export default function PedidosPage() {
 
 
   /* =======================================================
-     CONSULTA SUPABASE
+     CONSULTA DOS PEDIDOS
   ======================================================= */
 
   const {
@@ -584,13 +606,11 @@ export default function PedidosPage() {
     isLoading,
 
     isFetching,
+
+    refetch:
+      refetchPedidos,
   } =
     useQuery({
-      /*
-       * Mudamos o nome porque agora
-       * a consulta pode conter também
-       * pedidos cancelados.
-       */
       queryKey: [
         "pedidos-supabase",
       ],
@@ -636,12 +656,6 @@ export default function PedidosPage() {
           });
         },
 
-      /*
-       * A tela apenas relê
-       * o que já está no Supabase.
-       *
-       * Não consulta o Omie diretamente.
-       */
       refetchInterval:
         INTERVALO_LEITURA_SUPABASE,
 
@@ -660,6 +674,270 @@ export default function PedidosPage() {
       retry:
         1,
     });
+
+
+  /* =======================================================
+     NOTIFICAÇÕES NÃO LIDAS
+  ======================================================= */
+
+  const {
+    data:
+      notificacoesNovas = [],
+
+    refetch:
+      refetchNotificacoes,
+  } =
+    useQuery({
+      queryKey: [
+        "pedidos-notificacoes-nao-lidas",
+      ],
+
+      queryFn:
+        async () => {
+          const {
+            data,
+            error,
+          } =
+            await supabase.rpc(
+              "listar_notificacoes_pedidos_nao_lidas",
+              {
+                p_limite:
+                  100,
+              },
+            );
+
+          if (error) {
+            throw error;
+          }
+
+          return Array.isArray(
+            data,
+          )
+            ? data
+            : [];
+        },
+
+      refetchInterval:
+        30 * 1000,
+
+      refetchIntervalInBackground:
+        false,
+
+      refetchOnMount:
+        true,
+
+      refetchOnWindowFocus:
+        true,
+
+      staleTime:
+        10 * 1000,
+
+      retry:
+        1,
+    });
+
+
+  /* =======================================================
+     MAPA DOS PEDIDOS NOVOS
+  ======================================================= */
+
+  const pedidosNovos =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+        for (
+          const notificacao
+          of notificacoesNovas
+        ) {
+          const codigo =
+            Number(
+              notificacao
+                ?.codigo_pedido_omie,
+            );
+
+          if (
+            Number.isFinite(
+              codigo,
+            ) &&
+            codigo > 0
+          ) {
+            mapa.set(
+              codigo,
+              notificacao,
+            );
+          }
+        }
+
+        return mapa;
+      },
+      [
+        notificacoesNovas,
+      ],
+    );
+
+
+  /* =======================================================
+     REALTIME DE NOVOS PEDIDOS
+
+     Se entrar um novo pedido enquanto a tela
+     estiver aberta, atualizamos a lista e
+     as notificações automaticamente.
+  ======================================================= */
+
+  useEffect(
+    () => {
+      const canal =
+        supabase
+          .channel(
+            "pedidos-page-notificacoes",
+          )
+          .on(
+            "postgres_changes",
+            {
+              event:
+                "INSERT",
+
+              schema:
+                "public",
+
+              table:
+                "pedidos_notificacoes",
+            },
+            (
+              payload,
+            ) => {
+              if (
+                payload?.new
+                  ?.notificar !==
+                true
+              ) {
+                return;
+              }
+
+              refetchNotificacoes();
+
+              refetchPedidos();
+            },
+          )
+          .subscribe();
+
+
+      return () => {
+        supabase.removeChannel(
+          canal,
+        );
+      };
+    },
+    [
+      refetchNotificacoes,
+      refetchPedidos,
+    ],
+  );
+
+
+  /* =======================================================
+     MARCAR PEDIDO COMO VISUALIZADO
+
+     Não abre modal.
+     Não muda de página.
+
+     O clique somente registra que
+     ESTE usuário visualizou o pedido.
+  ======================================================= */
+
+  const marcarPedidoComoVisualizado =
+    useCallback(
+      async (
+        pedido,
+      ) => {
+        const codigoPedido =
+          obterCodigoPedidoOmie(
+            pedido,
+          );
+
+
+        if (
+          !codigoPedido
+        ) {
+          return;
+        }
+
+
+        /*
+         * Se não estiver marcado como novo
+         * para este usuário, não precisamos
+         * fazer chamada ao banco.
+         */
+        if (
+          !pedidosNovos.has(
+            codigoPedido,
+          )
+        ) {
+          return;
+        }
+
+
+        try {
+          const {
+            data,
+            error,
+          } =
+            await supabase.rpc(
+              "marcar_pedido_como_visualizado",
+              {
+                p_codigo_pedido_omie:
+                  codigoPedido,
+              },
+            );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (
+            data !== true
+          ) {
+            console.warn(
+              "O pedido não pôde ser marcado como visualizado.",
+            );
+
+            return;
+          }
+
+
+          /*
+           * Atualiza os badges da própria
+           * tela imediatamente.
+           */
+          await refetchNotificacoes();
+
+
+          /*
+           * A Navbar escuta este evento
+           * para atualizar o contador [1].
+           */
+          window.dispatchEvent(
+            new CustomEvent(
+              "pedidos-notificacoes-atualizadas",
+            ),
+          );
+
+        } catch (error) {
+          console.error(
+            "Erro ao marcar pedido como visualizado:",
+            error,
+          );
+        }
+      },
+      [
+        pedidosNovos,
+        refetchNotificacoes,
+      ],
+    );
 
 
   /* =======================================================
@@ -792,9 +1070,6 @@ export default function PedidosPage() {
 
   /* =======================================================
      FILTRAR TABELA
-
-     Aqui cancelados podem aparecer,
-     pois é a área de consulta.
   ======================================================= */
 
   const pedidosFiltrados =
@@ -911,15 +1186,7 @@ export default function PedidosPage() {
   /* =======================================================
      DADOS OPERACIONAIS
 
-     IMPORTANTE:
-
-     Cancelados são removidos daqui.
-
-     Portanto não entram em:
-     - cards
-     - atrasados
-     - quantidade
-     - próximos 7 dias
+     Cancelados não entram nos indicadores.
   ======================================================= */
 
   const pedidosOperacionaisFiltrados =
@@ -1181,9 +1448,6 @@ export default function PedidosPage() {
 
   /* =======================================================
      PEDIDOS ATRASADOS
-
-     Cancelados não entram.
-     Apenas status Pedido entra.
   ======================================================= */
 
   const pedidosAtrasados =
@@ -1206,8 +1470,6 @@ export default function PedidosPage() {
 
   /* =======================================================
      PRÓXIMOS 7 DIAS
-
-     Somente status Pedido.
   ======================================================= */
 
   const entregasProximos7Dias =
@@ -1484,10 +1746,7 @@ export default function PedidosPage() {
 
 
         {/* =================================================
-            CARDS OPERACIONAIS
-
-            Não aparecem quando
-            Cancelado estiver selecionado.
+            CARDS
         ================================================= */}
 
         {!visualizandoCancelados && (
@@ -1705,8 +1964,7 @@ export default function PedidosPage() {
 
             <option value="Pedido">
               Pedido
-            </option>            
-
+            </option>
 
             <option value="todos">
               Todos os status
@@ -2003,6 +2261,26 @@ export default function PedidosPage() {
                           const quantidadeItens =
                             grupo.itens.length;
 
+
+                          const primeiroPedidoGrupo =
+                            grupo.itens[0];
+
+
+                          const codigoPedidoOmie =
+                            obterCodigoPedidoOmie(
+                              primeiroPedidoGrupo,
+                            );
+
+
+                          const pedidoNovo =
+                            Boolean(
+                              codigoPedidoOmie &&
+                              pedidosNovos.has(
+                                codigoPedidoOmie,
+                              ),
+                            );
+
+
                           return grupo.itens.map(
                             (
                               pedido,
@@ -2028,6 +2306,7 @@ export default function PedidosPage() {
                                   pedido,
                                 );
 
+
                               const classesLinha = [
                                 primeiroItem
                                   ? "pedidos-inicio-grupo"
@@ -2040,6 +2319,10 @@ export default function PedidosPage() {
                                 cancelado
                                   ? "pedido-linha-cancelada"
                                   : "",
+
+                                pedidoNovo
+                                  ? "pedido-linha-nova"
+                                  : "",
                               ]
                                 .filter(
                                   Boolean,
@@ -2047,6 +2330,7 @@ export default function PedidosPage() {
                                 .join(
                                   " ",
                                 );
+
 
                               return (
 
@@ -2056,6 +2340,19 @@ export default function PedidosPage() {
                                   }
                                   className={
                                     classesLinha
+                                  }
+                                  onClick={
+                                    pedidoNovo
+                                      ? () =>
+                                          marcarPedidoComoVisualizado(
+                                            pedido,
+                                          )
+                                      : undefined
+                                  }
+                                  title={
+                                    pedidoNovo
+                                      ? "Novo pedido. Clique para marcar como visualizado."
+                                      : undefined
                                   }
                                 >
 
@@ -2075,6 +2372,10 @@ export default function PedidosPage() {
                                         cancelado
                                           ? " pedido-celula-cancelada"
                                           : ""
+                                      }${
+                                        pedidoNovo
+                                          ? " pedido-celula-nova"
+                                          : ""
                                       }`}
                                     >
 
@@ -2085,6 +2386,16 @@ export default function PedidosPage() {
                                             pedido.pedido
                                           }
                                         </strong>
+
+
+                                        {pedidoNovo && (
+
+                                          <span className="pedido-novo-badge">
+                                            NOVO
+                                          </span>
+
+                                        )}
+
 
                                         {quantidadeItens >
                                           1 && (

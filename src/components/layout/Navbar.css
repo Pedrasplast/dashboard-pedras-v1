@@ -1108,6 +1108,316 @@ body {
     );
 }
 
+/* =========================================================
+   PEDIDOS - CONTADOR DE NOVOS
+========================================================= */
+
+.navbar-navigation-icon {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.navbar-pedidos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 19px;
+  height: 19px;
+
+  margin-left: 2px;
+
+  padding: 0 5px;
+
+  border: 2px solid #ffffff;
+
+  border-radius: 999px;
+
+  background: #dc2626;
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  font-variant-numeric: tabular-nums;
+
+  box-shadow:
+    0 1px 4px
+    rgba(220, 38, 38, 0.28);
+}
+
+
+.navbar-pedidos-badge-mobile {
+  display: none;
+}
+
+
+/* =========================================================
+   ALERTA - NOVO PEDIDO
+========================================================= */
+
+.novo-pedido-alerta {
+  position: fixed;
+
+  top: 76px;
+  right: 20px;
+
+  z-index: 20000;
+
+  display: flex;
+  align-items: flex-start;
+
+  width: min(
+    390px,
+    calc(100vw - 32px)
+  );
+
+  border: 1px solid
+    rgba(37, 99, 235, 0.20);
+
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 16px 40px
+    rgba(15, 23, 42, 0.18);
+
+  overflow: hidden;
+
+  animation:
+    novo-pedido-entrar
+    0.22s ease-out;
+}
+
+
+/* =========================================================
+   CONTEÚDO DO ALERTA
+========================================================= */
+
+.novo-pedido-alerta-conteudo {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 12px 10px 12px 12px;
+
+  border: 0;
+
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+.novo-pedido-alerta-conteudo:hover {
+  background: #f8fbff;
+}
+
+
+/* =========================================================
+   ÍCONE DO ALERTA
+========================================================= */
+
+.novo-pedido-alerta-icone {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* =========================================================
+   TEXTOS DO ALERTA
+========================================================= */
+
+.novo-pedido-alerta-textos {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+
+.novo-pedido-alerta-textos > strong {
+  color: #0f172a;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  line-height: 1.2;
+}
+
+
+.novo-pedido-alerta-textos > span {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  line-height: 1.35;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+
+.novo-pedido-alerta-textos > span b {
+  color: #2563eb;
+
+  font-weight: 750;
+}
+
+
+.novo-pedido-alerta-textos > small {
+  margin-top: 1px;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   FECHAR ALERTA
+========================================================= */
+
+.novo-pedido-alerta-fechar {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  margin: 8px 8px 0 0;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+
+.novo-pedido-alerta-fechar:hover {
+  background: #f1f5f9;
+
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+@keyframes novo-pedido-entrar {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-8px)
+      translateX(8px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      translateX(0);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .navbar-pedidos-badge {
+    display: none;
+  }
+
+
+  .navbar-pedidos-badge-mobile {
+    position: absolute;
+
+    top: -8px;
+    right: -10px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 17px;
+    height: 17px;
+
+    padding: 0 4px;
+
+    border: 2px solid #ffffff;
+
+    border-radius: 999px;
+
+    background: #dc2626;
+
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1;
+  }
+
+
+  .novo-pedido-alerta {
+    top: 68px;
+
+    right: 12px;
+    left: 12px;
+
+    width: auto;
+  }
+}
 
 /* =====================================================
    TABLET

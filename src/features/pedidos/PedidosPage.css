@@ -16,6 +16,11 @@
   --danger-dark: #b91c1c;
   --danger-soft: #fef2f2;
 
+  --warning: #f97316;
+  --warning-dark: #c2410c;
+  --warning-soft: #fff7ed;
+  --warning-hover: #ffedd5;
+
   --success: #059669;
   --success-soft: #ecfdf5;
 
@@ -1500,7 +1505,6 @@ strong {
 
 /* =========================================================
    DESTAQUE DE PEDIDOS EM ATRASO
-   Adicione ao final do PedidosPage.css
 ========================================================= */
 
 .pedidos-previsao-wrapper {
@@ -1623,4 +1627,81 @@ strong {
 
   font-size: 11px;
   line-height: 1.45;
+}
+
+/* =========================================================
+   NOVOS PEDIDOS
+========================================================= */
+
+.pedido-linha-nova {
+  cursor: pointer;
+}
+
+/*
+   O destaque de pedido novo usa laranja para não
+   competir visualmente com o azul do número do pedido.
+
+   Atrasados e cancelados continuam com prioridade
+   visual e mantêm suas próprias cores.
+*/
+
+.pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada)
+> td {
+  background: var(--warning-soft);
+}
+
+.pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover
+> td {
+  background: var(--warning-hover);
+}
+
+
+/* =========================================================
+   CÉLULA PRINCIPAL DO NOVO PEDIDO
+========================================================= */
+
+.pedido-celula-nova {
+  box-shadow:
+    inset 4px 0 0
+    var(--warning);
+}
+
+
+/* =========================================================
+   BADGE NOVO
+========================================================= */
+
+.pedido-novo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 21px;
+
+  padding:
+    3px
+    8px;
+
+  border:
+    1px solid
+    var(--warning);
+
+  border-radius: 999px;
+
+  background: var(--warning);
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.06em;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 6px
+    rgba(249, 115, 22, 0.28);
 }
