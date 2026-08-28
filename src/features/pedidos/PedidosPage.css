@@ -25,7 +25,8 @@
   --success-soft: #ecfdf5;
 
   --purple: #7c3aed;
-  --purple-soft: #f5f3ff;
+  --purple-soft: #faf5ff;
+  --purple-hover: #f3e8ff;
 
   --page-bg: #f4f7fb;
 
@@ -1630,20 +1631,26 @@ strong {
 }
 
 /* =========================================================
-   NOVOS PEDIDOS
+   SINALIZAÇÃO DE PEDIDOS
 ========================================================= */
 
-.pedido-linha-nova {
+/*
+   NOVO     = laranja
+   ALTERADO = roxo
+
+   Pedidos atrasados e cancelados mantêm prioridade
+   visual sobre estas sinalizações.
+*/
+
+.pedido-linha-nova,
+.pedido-linha-alterada {
   cursor: pointer;
 }
 
-/*
-   O destaque de pedido novo usa laranja para não
-   competir visualmente com o azul do número do pedido.
 
-   Atrasados e cancelados continuam com prioridade
-   visual e mantêm suas próprias cores.
-*/
+/* =========================================================
+   PEDIDO NOVO
+========================================================= */
 
 .pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada)
 > td {
@@ -1655,21 +1662,11 @@ strong {
   background: var(--warning-hover);
 }
 
-
-/* =========================================================
-   CÉLULA PRINCIPAL DO NOVO PEDIDO
-========================================================= */
-
 .pedido-celula-nova {
   box-shadow:
     inset 4px 0 0
     var(--warning);
 }
-
-
-/* =========================================================
-   BADGE NOVO
-========================================================= */
 
 .pedido-novo-badge {
   display: inline-flex;
@@ -1704,4 +1701,83 @@ strong {
   box-shadow:
     0 2px 6px
     rgba(249, 115, 22, 0.28);
+}
+
+
+/* =========================================================
+   PEDIDO ALTERADO
+========================================================= */
+
+.pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada)
+> td {
+  background: var(--purple-soft);
+}
+
+.pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover
+> td {
+  background: var(--purple-hover);
+}
+
+/*
+   O JSX atual adiciona esta classe diretamente
+   à célula principal do pedido alterado.
+*/
+.pedido-celula-alterada {
+  box-shadow:
+    inset 4px 0 0
+    var(--purple);
+}
+
+.pedido-alterado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 21px;
+
+  padding:
+    3px
+    8px;
+
+  border:
+    1px solid
+    var(--purple);
+
+  border-radius: 999px;
+
+  background: var(--purple);
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.06em;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 6px
+    rgba(124, 58, 237, 0.25);
+}
+
+
+/* =========================================================
+   MOBILE - BADGES
+========================================================= */
+
+@media (max-width: 750px) {
+
+  .pedido-novo-badge,
+  .pedido-alterado-badge {
+    min-height: 19px;
+
+    padding:
+      3px
+      7px;
+
+    font-size: 8px;
+  }
 }

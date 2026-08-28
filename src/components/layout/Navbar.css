@@ -1108,316 +1108,6 @@ body {
     );
 }
 
-/* =========================================================
-   PEDIDOS - CONTADOR DE NOVOS
-========================================================= */
-
-.navbar-navigation-icon {
-  position: relative;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.navbar-pedidos-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-width: 19px;
-  height: 19px;
-
-  margin-left: 2px;
-
-  padding: 0 5px;
-
-  border: 2px solid #ffffff;
-
-  border-radius: 999px;
-
-  background: #dc2626;
-
-  color: #ffffff;
-
-  font-size: 10px;
-  font-weight: 800;
-
-  line-height: 1;
-
-  font-variant-numeric: tabular-nums;
-
-  box-shadow:
-    0 1px 4px
-    rgba(220, 38, 38, 0.28);
-}
-
-
-.navbar-pedidos-badge-mobile {
-  display: none;
-}
-
-
-/* =========================================================
-   ALERTA - NOVO PEDIDO
-========================================================= */
-
-.novo-pedido-alerta {
-  position: fixed;
-
-  top: 76px;
-  right: 20px;
-
-  z-index: 20000;
-
-  display: flex;
-  align-items: flex-start;
-
-  width: min(
-    390px,
-    calc(100vw - 32px)
-  );
-
-  border: 1px solid
-    rgba(37, 99, 235, 0.20);
-
-  border-radius: 13px;
-
-  background: #ffffff;
-
-  box-shadow:
-    0 16px 40px
-    rgba(15, 23, 42, 0.18);
-
-  overflow: hidden;
-
-  animation:
-    novo-pedido-entrar
-    0.22s ease-out;
-}
-
-
-/* =========================================================
-   CONTEÚDO DO ALERTA
-========================================================= */
-
-.novo-pedido-alerta-conteudo {
-  display: flex;
-  align-items: flex-start;
-
-  gap: 11px;
-
-  flex: 1;
-
-  min-width: 0;
-
-  padding: 12px 10px 12px 12px;
-
-  border: 0;
-
-  background: transparent;
-
-  text-align: left;
-
-  cursor: pointer;
-}
-
-
-.novo-pedido-alerta-conteudo:hover {
-  background: #f8fbff;
-}
-
-
-/* =========================================================
-   ÍCONE DO ALERTA
-========================================================= */
-
-.novo-pedido-alerta-icone {
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 38px;
-  height: 38px;
-
-  border-radius: 10px;
-
-  background: #eff6ff;
-
-  color: #2563eb;
-}
-
-
-/* =========================================================
-   TEXTOS DO ALERTA
-========================================================= */
-
-.novo-pedido-alerta-textos {
-  display: flex;
-  flex-direction: column;
-
-  gap: 3px;
-
-  min-width: 0;
-}
-
-
-.novo-pedido-alerta-textos > strong {
-  color: #0f172a;
-
-  font-size: 13px;
-  font-weight: 750;
-
-  line-height: 1.2;
-}
-
-
-.novo-pedido-alerta-textos > span {
-  overflow: hidden;
-
-  color: #334155;
-
-  font-size: 12px;
-  font-weight: 500;
-
-  line-height: 1.35;
-
-  white-space: nowrap;
-
-  text-overflow: ellipsis;
-}
-
-
-.novo-pedido-alerta-textos > span b {
-  color: #2563eb;
-
-  font-weight: 750;
-}
-
-
-.novo-pedido-alerta-textos > small {
-  margin-top: 1px;
-
-  color: #94a3b8;
-
-  font-size: 10px;
-}
-
-
-/* =========================================================
-   FECHAR ALERTA
-========================================================= */
-
-.novo-pedido-alerta-fechar {
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 30px;
-  height: 30px;
-
-  margin: 8px 8px 0 0;
-
-  padding: 0;
-
-  border: 0;
-
-  border-radius: 7px;
-
-  background: transparent;
-
-  color: #64748b;
-
-  cursor: pointer;
-}
-
-
-.novo-pedido-alerta-fechar:hover {
-  background: #f1f5f9;
-
-  color: #0f172a;
-}
-
-
-/* =========================================================
-   ANIMAÇÃO
-========================================================= */
-
-@keyframes novo-pedido-entrar {
-
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(-8px)
-      translateX(8px);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      translateX(0);
-  }
-}
-
-
-/* =========================================================
-   RESPONSIVO
-========================================================= */
-
-@media (max-width: 768px) {
-
-  .navbar-pedidos-badge {
-    display: none;
-  }
-
-
-  .navbar-pedidos-badge-mobile {
-    position: absolute;
-
-    top: -8px;
-    right: -10px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 17px;
-    height: 17px;
-
-    padding: 0 4px;
-
-    border: 2px solid #ffffff;
-
-    border-radius: 999px;
-
-    background: #dc2626;
-
-    color: #ffffff;
-
-    font-size: 9px;
-    font-weight: 800;
-
-    line-height: 1;
-  }
-
-
-  .novo-pedido-alerta {
-    top: 68px;
-
-    right: 12px;
-    left: 12px;
-
-    width: auto;
-  }
-}
 
 /* =====================================================
    TABLET
@@ -1946,4 +1636,772 @@ body {
     letter-spacing:
       -0.01em;
   }
+}
+
+/* =========================================================
+   NAVBAR - MÓDULOS
+   COLE ESTE BLOCO NO FINAL DO Navbar.css ATUAL
+========================================================= */
+
+
+/* =========================================================
+   DESKTOP - DROPDOWNS
+========================================================= */
+
+.navbar-navigation-modulos {
+  overflow: visible !important;
+}
+
+
+.navbar-modulo {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+
+.navbar-modulo-trigger {
+  gap: 6px;
+}
+
+
+.navbar-modulo-chevron {
+  flex: 0 0 auto;
+
+  transition:
+    transform 0.16s ease;
+}
+
+
+.navbar-modulo-chevron.open {
+  transform:
+    rotate(180deg);
+}
+
+
+.navbar-pedidos-badge-modulo {
+  position: static !important;
+
+  flex: 0 0 auto;
+}
+
+
+.navbar-modulo-dropdown {
+  position: absolute;
+
+  top: calc(100% + 9px);
+  left: 0;
+
+  z-index: 3000;
+
+  min-width: 225px;
+
+  padding: 7px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 18px 42px
+    rgba(15, 23, 42, 0.16);
+}
+
+
+.navbar-modulo-dropdown-item {
+  width: 100%;
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 0 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+.navbar-modulo-dropdown-item:hover {
+  background: #f8fafc;
+
+  color: #0f172a;
+}
+
+
+.navbar-modulo-dropdown-item.active {
+  background: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+
+.navbar-modulo-dropdown-icon {
+  width: 30px;
+  height: 30px;
+
+  flex: 0 0 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #f8fafc;
+
+  color: #64748b;
+}
+
+
+.navbar-modulo-dropdown-item.active
+.navbar-modulo-dropdown-icon {
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+
+.navbar-modulo-dropdown-text {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   HAMBÚRGUER
+========================================================= */
+
+.navbar-hamburger {
+  position: relative;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  cursor: pointer;
+}
+
+
+.navbar-hamburger-badge {
+  position: absolute;
+
+  top: -5px;
+  right: -5px;
+
+  min-width: 19px;
+  height: 19px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 5px;
+
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+
+  background: #f97316;
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 850;
+}
+
+
+.navbar-mobile-overlay,
+.navbar-mobile-drawer {
+  display: none;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+  /*
+   * Remove a navegação inferior do Navbar.css antigo.
+   */
+
+  .main-navbar
+  .navbar-navigation {
+    display: none !important;
+
+    position: static !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+
+  body {
+    padding-bottom: 0 !important;
+  }
+
+
+  .main-navbar
+  .navbar-container {
+    grid-template-columns:
+      1fr
+      auto !important;
+
+    gap: 10px !important;
+  }
+
+
+  .main-navbar
+  .navbar-hamburger {
+    display: inline-flex !important;
+  }
+
+
+  .main-navbar
+  .navbar-user-controls {
+    display: none !important;
+  }
+
+
+  .main-navbar
+  .navbar-auth-section {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+
+
+  /* =======================================================
+     OVERLAY
+  ======================================================= */
+
+  .navbar-mobile-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 3900;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+
+    border: 0;
+
+    background:
+      rgba(15, 23, 42, 0.46);
+  }
+
+
+  /* =======================================================
+     DRAWER
+  ======================================================= */
+
+  .navbar-mobile-drawer {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 4000;
+
+    width:
+      min(
+        88vw,
+        370px
+      );
+
+    height: 100vh;
+    height: 100dvh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    box-shadow:
+      -18px 0 48px
+      rgba(15, 23, 42, 0.2);
+  }
+
+
+  .navbar-mobile-header {
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    padding: 12px 15px;
+
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+
+  .navbar-mobile-header > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+
+  .navbar-mobile-eyebrow {
+    color: #94a3b8;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+  }
+
+
+  .navbar-mobile-header strong {
+    color: #0f172a;
+
+    font-size: 18px;
+  }
+
+
+  .navbar-mobile-close {
+    width: 39px;
+    height: 39px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #475569;
+  }
+
+
+  /* =======================================================
+     USUÁRIO
+  ======================================================= */
+
+  .navbar-mobile-user {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    margin: 12px 12px 4px;
+
+    padding: 11px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+
+    background: #f8fafc;
+  }
+
+
+  .navbar-mobile-avatar {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #1d4ed8;
+
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+
+  .navbar-mobile-user > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+
+  .navbar-mobile-user strong {
+    overflow: hidden;
+
+    color: #0f172a;
+
+    font-size: 13px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+  }
+
+
+  .navbar-mobile-user span:not(.navbar-mobile-avatar) {
+    color: #64748b;
+
+    font-size: 10px;
+  }
+
+
+  /* =======================================================
+     MENU
+  ======================================================= */
+
+  .navbar-mobile-nav {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding: 8px 12px 14px;
+  }
+
+
+  .navbar-mobile-link,
+  .navbar-mobile-group-trigger {
+    width: 100%;
+    min-height: 47px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 5px 9px;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #475569;
+
+    font: inherit;
+
+    text-align: left;
+  }
+
+
+  .navbar-mobile-link.active,
+  .navbar-mobile-group-trigger.active {
+    border-color: #dbeafe;
+
+    background: #eff6ff;
+
+    color: #1d4ed8;
+  }
+
+
+  .navbar-mobile-link-icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+  }
+
+
+  .navbar-mobile-link.active
+  .navbar-mobile-link-icon,
+  .navbar-mobile-group-trigger.active
+  .navbar-mobile-link-icon {
+    background: #dbeafe;
+
+    color: #2563eb;
+  }
+
+
+  .navbar-mobile-link-label {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+
+  .navbar-mobile-chevron {
+    flex: 0 0 auto;
+
+    color: #94a3b8;
+
+    transition:
+      transform 0.16s ease;
+  }
+
+
+  .navbar-mobile-chevron.open {
+    transform:
+      rotate(180deg);
+  }
+
+
+  .navbar-mobile-count {
+    min-width: 22px;
+    height: 22px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 6px;
+
+    border-radius: 999px;
+
+    background: #fff7ed;
+
+    color: #c2410c;
+
+    font-size: 9px;
+    font-weight: 850;
+  }
+
+
+  /* =======================================================
+     SUBMENU
+  ======================================================= */
+
+  .navbar-mobile-submenu {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    margin: 2px 0 5px 25px;
+
+    padding: 3px 0 3px 14px;
+
+    border-left: 1px solid #dbe2ea;
+  }
+
+
+  .navbar-mobile-submenu-item {
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 6px 10px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+
+    text-align: left;
+  }
+
+
+  .navbar-mobile-submenu-item.active {
+    background: #eff6ff;
+
+    color: #1d4ed8;
+  }
+
+
+  .navbar-mobile-submenu-item > span:first-of-type {
+    flex: 1;
+  }
+
+
+  /* =======================================================
+     ADMINISTRAÇÃO
+  ======================================================= */
+
+  .navbar-mobile-admin {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding: 12px;
+
+    border-top: 1px solid #e2e8f0;
+
+    background: #fcfdff;
+  }
+
+
+  .navbar-mobile-section-label {
+    padding: 0 7px 5px;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+
+    text-transform: uppercase;
+  }
+
+
+  .navbar-mobile-admin-link {
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 10px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #475569;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+
+    text-align: left;
+  }
+
+
+  /* =======================================================
+     SAIR
+  ======================================================= */
+
+  .navbar-mobile-footer {
+    padding:
+      10px
+      12px
+      calc(
+        10px +
+        env(safe-area-inset-bottom)
+      );
+
+    border-top: 1px solid #e2e8f0;
+  }
+
+
+  .navbar-mobile-logout {
+    width: 100%;
+    min-height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+
+    background: #fffafa;
+
+    color: #b91c1c;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+
+@media (max-width: 420px) {
+
+  .navbar-mobile-drawer {
+    width:
+      min(
+        94vw,
+        360px
+      );
+  }
+}
+
+/* =========================================================
+   CONTADOR DE PEDIDOS - VERMELHO
+========================================================= */
+
+.navbar-pedidos-badge,
+.navbar-pedidos-badge-modulo,
+.navbar-mobile-count,
+.navbar-hamburger-badge {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
 }

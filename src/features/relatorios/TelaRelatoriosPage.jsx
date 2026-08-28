@@ -95,7 +95,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     [relatorioSelecionadoId],
   );
 
-  const fonteEhPedidos = relatorioSelecionado?.fonteDados === "pedidos";
+  const fonteEhPedidos =
+    relatorioSelecionado?.fonteDados === "pedidos";
+
+  const relatorioEhCustom =
+    relatorioSelecionado?.tipoRelatorio === "custom" ||
+    relatorioSelecionado?.fonteDados === "custom";
+
+  const ComponenteCustomizado =
+    relatorioEhCustom
+      ? relatorioSelecionado?.componenteCustomizado
+      : null;
 
   /* =====================================================
      PRODUÇÃO
@@ -108,7 +118,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     loading: carregandoProducao,
   } = useCargaMaquina({
-    enabled: !temDadosExternos && !fonteEhPedidos,
+    enabled:
+      Boolean(relatorioSelecionado) &&
+      !temDadosExternos &&
+      !fonteEhPedidos &&
+      !relatorioEhCustom,
   });
 
   const dadosProducaoBrutos = temDadosExternos ? dadosExternos : dadosProducao;
@@ -134,24 +148,32 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      FONTE ATUAL
   ===================================================== */
 
-  const dadosBrutos = fonteEhPedidos
-    ? pedidosBrutos
-    : Array.isArray(dadosProducaoBrutos)
-      ? dadosProducaoBrutos
-      : [];
+  const dadosBrutos =
+    relatorioEhCustom
+      ? []
+      : fonteEhPedidos
+        ? pedidosBrutos
+        : Array.isArray(dadosProducaoBrutos)
+          ? dadosProducaoBrutos
+          : [];
 
-  const loading = fonteEhPedidos
-    ? carregandoPedidos
-    : relatorioSelecionado
-      ? carregandoProducao
-      : false;
+  const loading =
+    relatorioEhCustom
+      ? false
+      : fonteEhPedidos
+        ? carregandoPedidos
+        : relatorioSelecionado
+          ? carregandoProducao
+          : false;
 
   /* =====================================================
      DESCRIÇÕES PRODUTOS DA PRODUÇÃO
   ===================================================== */
 
   const { descricoesProdutos } = useDescricoesProdutos({
-    enabled: relatorioSelecionadoId === "producao-produto",
+    enabled:
+      !relatorioEhCustom &&
+      relatorioSelecionadoId === "producao-produto",
   });
 
   /* =====================================================
@@ -165,7 +187,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const colunasVisualizacao = useMemo(() => {
-    if (!relatorioSelecionado || !Array.isArray(relatorioSelecionado.colunas)) {
+    if (
+      relatorioEhCustom ||
+      !relatorioSelecionado ||
+      !Array.isArray(relatorioSelecionado.colunas)
+    ) {
       return [];
     }
 
@@ -188,14 +214,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       numerica: COLUNAS_NUMERICAS.has(chave),
     }));
-  }, [relatorioSelecionado]);
+  }, [relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      PRODUTOS DA PRODUÇÃO
   ===================================================== */
 
   const produtosDisponiveis = useMemo(() => {
-    if (fonteEhPedidos) {
+    if (fonteEhPedidos || relatorioEhCustom) {
       return [];
     }
 
@@ -210,28 +236,28 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     return valoresUnicos(
       lista.map((item) => item.cod_prod || item.produto),
     );
-  }, [dadosBrutos, filtros.injetora, fonteEhPedidos]);
+  }, [dadosBrutos, filtros.injetora, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      MATÉRIAS-PRIMAS
   ===================================================== */
 
   const mpsDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || !Array.isArray(dadosBrutos)) {
+    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
       return [];
     }
 
     return valoresUnicos(
       dadosBrutos.map((item) => item.mp || item.materia_prima),
     );
-  }, [dadosBrutos, fonteEhPedidos]);
+  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      TIPOS
   ===================================================== */
 
   const tiposDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || !Array.isArray(dadosBrutos)) {
+    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
       return [];
     }
 
@@ -242,14 +268,18 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           .filter((tipo) => ["1", "2", "3"].includes(tipo)),
       ),
     ].sort((a, b) => Number(a) - Number(b));
-  }, [dadosBrutos, fonteEhPedidos]);
+  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      FILTRAGEM
   ===================================================== */
 
   const dadosFiltrados = useMemo(() => {
-    if (!Array.isArray(dadosBrutos) || !relatorioSelecionado) {
+    if (
+      relatorioEhCustom ||
+      !Array.isArray(dadosBrutos) ||
+      !relatorioSelecionado
+    ) {
       return [];
     }
 
@@ -418,14 +448,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       return true;
     });
-  }, [dadosBrutos, filtros, fonteEhPedidos, relatorioSelecionado]);
+  }, [dadosBrutos, filtros, fonteEhPedidos, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      TRANSFORMAR DADOS
   ===================================================== */
 
   const dadosRelatorio = useMemo(() => {
-    if (!relatorioSelecionado) {
+    if (!relatorioSelecionado || relatorioEhCustom) {
       return [];
     }
 
@@ -434,13 +464,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     }
 
     return dadosFiltrados;
-  }, [dadosFiltrados, relatorioSelecionado]);
+  }, [dadosFiltrados, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      DESCRIÇÃO DO PRODUTO
   ===================================================== */
 
   const dadosRelatorioFinal = useMemo(() => {
+    if (relatorioEhCustom) {
+      return [];
+    }
+
     if (relatorioSelecionado?.id !== "producao-produto") {
       return dadosRelatorio;
     }
@@ -462,7 +496,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         descricao_produto: descricao,
       };
     });
-  }, [dadosRelatorio, descricoesProdutos, relatorioSelecionado]);
+  }, [dadosRelatorio, descricoesProdutos, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      SELECIONAR RELATÓRIO
@@ -495,6 +529,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const montarTextoFiltros = () => {
+    if (relatorioEhCustom) {
+      return "Filtros internos do relatório";
+    }
+
     const lista = [];
 
     /* PEDIDOS */
@@ -555,6 +593,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const handleGerarPDF = async () => {
+    if (relatorioEhCustom) {
+      return;
+    }
+
     const { gerarPdfRelatorio } = await import(
       "./exportacao/GerarPDF"
     );
@@ -573,6 +615,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const handleGerarExcel = async () => {
+    if (relatorioEhCustom) {
+      return;
+    }
+
     const { gerarExcelRelatorio } = await import(
       "./exportacao/GerarExcel"
     );
@@ -633,7 +679,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
             <h1>Relatórios</h1>
 
             <p>
-              Consulte produção, paradas e pedidos utilizando dados já sincronizados no sistema.
+              Consulte produção, paradas, pedidos e financeiro utilizando dados já sincronizados no sistema.
             </p>
           </div>
         </div>
@@ -701,6 +747,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               CABEÇALHO
           =============================================== */}
 
+          {!relatorioEhCustom && (
           <div className="relatorio-selecionado-header">
             <div className="relatorio-selecionado-icone">
               {React.createElement(relatorioSelecionado.icone)}
@@ -716,6 +763,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               <p>{relatorioSelecionado.descricao}</p>
             </div>
           </div>
+          )}
+
+          {/* ===============================================
+              RELATÓRIO CUSTOMIZADO
+          =============================================== */}
+
+          {relatorioEhCustom && ComponenteCustomizado && (
+            <ComponenteCustomizado
+              relatorio={relatorioSelecionado}
+            />
+          )}
 
           {/* ===============================================
               ERRO PEDIDOS
@@ -731,6 +789,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               AÇÕES
           =============================================== */}
 
+          {!relatorioEhCustom && (
+          <>
           <div className="relatorio-acoes">
             <button
               type="button"
@@ -943,6 +1003,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                 <span>Visualização atualizada conforme os filtros</span>
               </div>
             </section>
+          )}
+          </>
           )}
         </div>
       )}
