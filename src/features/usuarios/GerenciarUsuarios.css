@@ -1387,3 +1387,158 @@
     width: 100%;
   }
 }
+
+/* =========================================================
+   PERMISSÕES POR MÓDULO
+   COLE NO FINAL DO GerenciarUsuarios.css
+========================================================= */
+
+.permissoes-modulos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.permissao-modulo-card {
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.permissao-modulo-card.ativo {
+  border-color: #bfdbfe;
+}
+
+.permissao-modulo-card.parcial {
+  border-color: #fed7aa;
+}
+
+.permissao-modulo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.permissao-modulo-card.ativo .permissao-modulo-header {
+  background: #f8fbff;
+}
+
+.permissao-modulo-card.parcial .permissao-modulo-header {
+  background: #fffaf5;
+}
+
+.permissao-modulo-titulo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.permissao-modulo-titulo strong {
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.permissao-modulo-titulo span {
+  color: #64748b;
+  font-size: 0.67rem;
+  font-weight: 500;
+}
+
+.permissao-modulo-acoes {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.permissao-modulo-contador {
+  min-width: 34px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.permissao-modulo-card.ativo
+.permissao-modulo-contador {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.permissao-modulo-card.parcial
+.permissao-modulo-contador {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.btn-modulo-liberar,
+.btn-modulo-bloquear {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.btn-modulo-liberar {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.btn-modulo-bloquear {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+}
+
+.permissao-modulo-telas {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  gap: 8px;
+  padding: 10px;
+}
+
+.item-permissao-modulo {
+  margin: 0 !important;
+}
+
+.bloco-relatorios-dentro-modulo {
+  margin: 0 10px 10px;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 760px) {
+  .permissao-modulo-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .permissao-modulo-acoes {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .permissao-modulo-telas {
+    grid-template-columns: 1fr;
+  }
+}

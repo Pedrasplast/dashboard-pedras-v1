@@ -1,0 +1,232 @@
+/* =========================================================
+   PREVISTO X REALIZADO
+   Complemento do padrão visual de TelaRelatorios.css
+========================================================= */
+
+.financeiro-relatorio-filtros {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(160px, 220px)
+    );
+
+  gap: 10px;
+
+  align-items: end;
+}
+
+
+.financeiro-relatorio-filtros label {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.financeiro-relatorio-filtros label > span {
+  color: #64748b;
+
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+
+.financeiro-relatorio-filtros select {
+  width: 100%;
+  min-height: 39px;
+
+  padding:
+    0
+    10px;
+
+  color: #334155;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.75rem;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+
+.financeiro-relatorio-filtros select:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+
+.financeiro-relatorio-loading {
+  min-height: 220px;
+}
+
+
+@media (max-width: 900px) {
+
+  .financeiro-relatorio-filtros {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+
+@media (max-width: 640px) {
+
+  .financeiro-relatorio-filtros {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* =========================================================
+   GRUPOS RECEITAS / DESPESAS
+========================================================= */
+
+.financeiro-relatorio-grupos {
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+
+  padding: 18px 20px 22px;
+}
+
+
+.financeiro-relatorio-grupo {
+  min-width: 0;
+}
+
+
+.financeiro-relatorio-grupo-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 8px;
+  padding: 11px 14px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #2563eb;
+  border-radius: 8px;
+}
+
+
+.financeiro-relatorio-grupo-titulo div {
+  min-width: 0;
+}
+
+
+.financeiro-relatorio-grupo-titulo span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #94a3b8;
+
+  font-size: 0.6rem;
+  font-weight: 800;
+
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+}
+
+
+.financeiro-relatorio-grupo-titulo h4 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 0.82rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+
+.financeiro-relatorio-grupo-titulo strong {
+  flex: 0 0 auto;
+
+  color: #64748b;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+
+.financeiro-relatorio-grupo-receitas
+.financeiro-relatorio-grupo-titulo {
+  border-left-color: #059669;
+}
+
+
+.financeiro-relatorio-grupo-despesas
+.financeiro-relatorio-grupo-titulo {
+  border-left-color: #dc2626;
+}
+
+
+.financeiro-relatorio-grupo
+.relatorio-visualizacao-tabela-wrapper {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  overflow: auto;
+}
+
+
+@media (max-width: 640px) {
+
+  .financeiro-relatorio-grupos {
+    padding: 14px;
+  }
+
+
+  .financeiro-relatorio-grupo-titulo {
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 6px;
+  }
+}
+
+
+/* =========================================================
+   LINHA CABEÇALHO FINANCEIRO
+   Código 1 = RECEITAS
+   Código 2 = DESPESAS
+========================================================= */
+
+.financeiro-linha-cabecalho-grupo td {
+  font-weight: 800;
+
+  background: #f1f5f9 !important;
+
+  border-top: 2px solid #cbd5e1;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+
+.financeiro-linha-cabecalho-grupo td:first-child {
+  color: #0f172a;
+}

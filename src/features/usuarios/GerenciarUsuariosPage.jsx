@@ -21,6 +21,70 @@ import { supabase } from "@/lib/supabaseClient";
 
 import "./GerenciarUsuarios.css";
 
+
+/* =========================================================
+   MÓDULOS DE PERMISSÃO
+
+   A organização acompanha a nova Navbar.
+   "usuarios" não aparece aqui porque Gerenciar usuários
+   continua sendo exclusivo de administradores.
+========================================================= */
+
+const MODULOS_PERMISSOES = Object.freeze([
+  {
+    id: "producao",
+    nome: "Produção",
+    descricao:
+      "Dashboards e indicadores do processo produtivo.",
+    chaves: [
+      "dashboard",
+      "dashboard_produtividade",
+      "dashboard_materia_prima",
+    ],
+  },
+
+  {
+    id: "pedidos",
+    nome: "Pedidos",
+    descricao:
+      "Consulta e acompanhamento dos pedidos.",
+    chaves: [
+      "pedidos",
+    ],
+  },
+
+  {
+    id: "financeiro",
+    nome: "Financeiro",
+    descricao:
+      "Painéis e análises financeiras.",
+    chaves: [
+      "financeiro",
+      "financeiro_evolucao_mensal",
+    ],
+  },
+
+  {
+    id: "relatorios",
+    nome: "Relatórios",
+    descricao:
+      "Central de relatórios e permissões específicas.",
+    chaves: [
+      "relatorios",
+    ],
+  },
+
+  {
+    id: "administracao",
+    nome: "Administração",
+    descricao:
+      "Funções administrativas disponíveis para operadores.",
+    chaves: [
+      "importar",
+    ],
+  },
+]);
+
 function GerenciarUsuarios() {
   const navigate = useNavigate();
 
@@ -586,23 +650,155 @@ function GerenciarUsuarios() {
     }, []);
 
   /* =========================================================
+     TELAS GERENCIÁVEIS
+  ========================================================= */
+
+  const telasGerenciaveis =
+    useMemo(
+      () =>
+        telas.filter(
+          (tela) =>
+            tela.chave !==
+            "usuarios"
+        ),
+      [
+        telas,
+      ]
+    );
+
+  /* =========================================================
+     TELAS AGRUPADAS POR MÓDULO
+  ========================================================= */
+
+  const telasPorModulo =
+    useMemo(
+      () =>
+        MODULOS_PERMISSOES
+          .map(
+            (modulo) => {
+              const itens =
+                modulo.chaves
+                  .map(
+                    (chave) =>
+                      telasGerenciaveis.find(
+                        (tela) =>
+                          tela.chave ===
+                          chave
+                      )
+                  )
+                  .filter(Boolean);
+
+              return {
+                ...modulo,
+                telas: itens,
+              };
+            }
+          )
+          .filter(
+            (modulo) =>
+              modulo.telas.length >
+              0
+          ),
+      [
+        telasGerenciaveis,
+      ]
+    );
+
+  /* =========================================================
+     STATUS DO MÓDULO
+  ========================================================= */
+
+  const obterStatusModulo =
+    useCallback(
+      (modulo) => {
+        const total =
+          modulo.telas.length;
+
+        const permitidas =
+          modulo.telas.filter(
+            (tela) =>
+              Boolean(
+                permissoesTemporarias[
+                  String(tela.id)
+                ]
+              )
+          ).length;
+
+        return {
+          total,
+          permitidas,
+
+          completo:
+            total > 0 &&
+            permitidas === total,
+
+          parcial:
+            permitidas > 0 &&
+            permitidas < total,
+        };
+      },
+      [
+        permissoesTemporarias,
+      ]
+    );
+
+  /* =========================================================
+     LIBERAR / BLOQUEAR UM MÓDULO
+  ========================================================= */
+
+  const definirPermissaoModulo =
+    useCallback(
+      (
+        modulo,
+        permitido
+      ) => {
+        setPermissoesTemporarias(
+          (prev) => {
+            const proximo = {
+              ...prev,
+            };
+
+            for (
+              const tela of
+              modulo.telas
+            ) {
+              proximo[
+                String(tela.id)
+              ] = permitido;
+            }
+
+            return proximo;
+          }
+        );
+      },
+      []
+    );
+
+  /* =========================================================
      LIBERAR TODAS AS TELAS
   ========================================================= */
 
   const marcarTodasTelas =
     useCallback(() => {
-      const novasPermissoes = {};
-
-      for (const tela of telas) {
-        novasPermissoes[
-          String(tela.id)
-        ] = true;
-      }
-
       setPermissoesTemporarias(
-        novasPermissoes
+        (prev) => {
+          const novasPermissoes = {
+            ...prev,
+          };
+
+          for (
+            const tela of
+            telasGerenciaveis
+          ) {
+            novasPermissoes[
+              String(tela.id)
+            ] = true;
+          }
+
+          return novasPermissoes;
+        }
       );
-    }, [telas]);
+    }, [telasGerenciaveis]);
 
   /* =========================================================
      BLOQUEAR TODAS AS TELAS
@@ -610,18 +806,25 @@ function GerenciarUsuarios() {
 
   const desmarcarTodasTelas =
     useCallback(() => {
-      const novasPermissoes = {};
-
-      for (const tela of telas) {
-        novasPermissoes[
-          String(tela.id)
-        ] = false;
-      }
-
       setPermissoesTemporarias(
-        novasPermissoes
+        (prev) => {
+          const novasPermissoes = {
+            ...prev,
+          };
+
+          for (
+            const tela of
+            telasGerenciaveis
+          ) {
+            novasPermissoes[
+              String(tela.id)
+            ] = false;
+          }
+
+          return novasPermissoes;
+        }
       );
-    }, [telas]);
+    }, [telasGerenciaveis]);
 
   /* =========================================================
      LIBERAR TODOS OS RELATÓRIOS
@@ -932,7 +1135,7 @@ function GerenciarUsuarios() {
             usuarioId
           ] || {};
 
-        return telas.filter(
+        return telasGerenciaveis.filter(
           (tela) =>
             permissoes[
               String(tela.id)
@@ -941,7 +1144,7 @@ function GerenciarUsuarios() {
       },
       [
         permissoesPorUsuario,
-        telas,
+        telasGerenciaveis,
       ]
     );
 
@@ -1050,14 +1253,14 @@ function GerenciarUsuarios() {
                     <FiSettings />
 
                     <span>
-                      Configurar telas
+                      Configurar acessos
                     </span>
 
                     <span className="contador-permissoes">
                       {
                         totalPermitido
                       }
-                      /{telas.length}
+                      /{telasGerenciaveis.length}
                     </span>
                   </button>
                 )}
@@ -1111,7 +1314,7 @@ function GerenciarUsuarios() {
       );
     }, [
       usuarios,
-      telas,
+      telasGerenciaveis,
       contarPermissoes,
       abrirPermissoes,
       alterarRegra,
@@ -1155,7 +1358,7 @@ function GerenciarUsuarios() {
 
           <p>
             Altere os níveis de acesso e
-            escolha quais telas e
+            escolha quais módulos, telas e
             relatórios cada colaborador
             poderá acessar.
           </p>
@@ -1197,7 +1400,7 @@ function GerenciarUsuarios() {
                 </th>
 
                 <th className="col-centralizada">
-                  Telas Liberadas
+                  Acessos Liberados
                 </th>
 
                 <th className="col-centralizada">
@@ -1391,163 +1594,244 @@ function GerenciarUsuarios() {
 
             <div className="lista-permissoes">
               <div className="titulo-grupo-permissoes">
-                Telas do sistema
+                Acesso por módulo
               </div>
 
-              {telas.map((tela) => {
-                const marcado =
-                  Boolean(
-                    permissoesTemporarias[
-                      String(tela.id)
-                    ]
-                  );
+              <div className="permissoes-modulos-lista">
+                {telasPorModulo.map(
+                  (modulo) => {
+                    const status =
+                      obterStatusModulo(
+                        modulo
+                      );
 
-                return (
-                  <label
-                    key={tela.id}
-                    className={`item-permissao ${
-                      marcado
-                        ? "ativo"
-                        : ""
-                    }`}
-                  >
-                    <div className="item-permissao-info">
-                      <strong>
-                        {tela.nome}
-                      </strong>
-
-                      <span>
-                        {tela.rota}
-                      </span>
-                    </div>
-
-                    <input
-                      type="checkbox"
-                      checked={marcado}
-                      onChange={() =>
-                        alterarPermissaoTemporaria(
-                          tela.id
-                        )
-                      }
-                    />
-                  </label>
-                );
-              })}
-
-              {/* =================================================
-                  RELATÓRIOS INTERNOS
-              ================================================= */}
-
-              {relatoriosLiberados && (
-                <div className="bloco-permissoes-relatorios">
-                  <div className="cabecalho-permissoes-relatorios">
-                    <div>
-                      <div className="titulo-relatorios-permissoes">
-                        <FiFileText />
-
-                        Relatórios permitidos
-                      </div>
-
-                      <p>
-                        Escolha quais
-                        relatórios este
-                        usuário poderá
-                        visualizar.
-                      </p>
-                    </div>
-
-                    <div className="acoes-relatorios-permissoes">
-                      <button
-                        type="button"
-                        onClick={
-                          marcarTodosRelatorios
-                        }
+                    return (
+                      <section
+                        key={modulo.id}
+                        className={`permissao-modulo-card ${
+                          status.completo
+                            ? "ativo"
+                            : status.parcial
+                              ? "parcial"
+                              : ""
+                        }`}
                       >
-                        Liberar todos
-                      </button>
+                        <div className="permissao-modulo-header">
+                          <div className="permissao-modulo-titulo">
+                            <strong>
+                              {modulo.nome}
+                            </strong>
 
-                      <button
-                        type="button"
-                        onClick={
-                          desmarcarTodosRelatorios
-                        }
-                      >
-                        Bloquear todos
-                      </button>
-                    </div>
-                  </div>
+                            <span>
+                              {
+                                modulo.descricao
+                              }
+                            </span>
+                          </div>
 
-                  {Object.entries(
-                    relatoriosPorCategoria
-                  ).map(
-                    ([
-                      categoria,
-                      itens,
-                    ]) => (
-                      <div
-                        key={
-                          categoria
-                        }
-                        className="grupo-relatorios-permissoes"
-                      >
-                        <div className="categoria-relatorios-permissoes">
-                          {
-                            categoria
-                          }
+                          <div className="permissao-modulo-acoes">
+                            <span className="permissao-modulo-contador">
+                              {
+                                status.permitidas
+                              }
+                              /
+                              {
+                                status.total
+                              }
+                            </span>
+
+                            <button
+                              type="button"
+                              className={
+                                status.completo
+                                  ? "btn-modulo-bloquear"
+                                  : "btn-modulo-liberar"
+                              }
+                              onClick={() =>
+                                definirPermissaoModulo(
+                                  modulo,
+                                  !status.completo
+                                )
+                              }
+                            >
+                              {status.completo
+                                ? "Bloquear módulo"
+                                : "Liberar módulo"}
+                            </button>
+                          </div>
                         </div>
 
-                        {itens.map(
-                          (
-                            relatorio
-                          ) => {
-                            const marcado =
-                              Boolean(
-                                permissoesRelatoriosTemporarias[
-                                  String(
-                                    relatorio.id
-                                  )
-                                ]
-                              );
+                        <div className="permissao-modulo-telas">
+                          {modulo.telas.map(
+                            (tela) => {
+                              const marcado =
+                                Boolean(
+                                  permissoesTemporarias[
+                                    String(
+                                      tela.id
+                                    )
+                                  ]
+                                );
 
-                            return (
-                              <label
-                                key={
-                                  relatorio.id
-                                }
-                                className={`item-permissao item-permissao-relatorio ${
-                                  marcado
-                                    ? "ativo"
-                                    : ""
-                                }`}
-                              >
-                                <div className="item-permissao-info">
-                                  <strong>
-                                    {
-                                      relatorio.nome
+                              return (
+                                <label
+                                  key={
+                                    tela.id
+                                  }
+                                  className={`item-permissao item-permissao-modulo ${
+                                    marcado
+                                      ? "ativo"
+                                      : ""
+                                  }`}
+                                >
+                                  <div className="item-permissao-info">
+                                    <strong>
+                                      {
+                                        tela.nome
+                                      }
+                                    </strong>
+
+                                    <span>
+                                      {
+                                        tela.rota
+                                      }
+                                    </span>
+                                  </div>
+
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      marcado
                                     }
-                                  </strong>
+                                    onChange={() =>
+                                      alterarPermissaoTemporaria(
+                                        tela.id
+                                      )
+                                    }
+                                  />
+                                </label>
+                              );
+                            }
+                          )}
+                        </div>
+
+                        {modulo.id ===
+                          "relatorios" &&
+                          relatoriosLiberados && (
+                            <div className="bloco-permissoes-relatorios bloco-relatorios-dentro-modulo">
+                              <div className="cabecalho-permissoes-relatorios">
+                                <div>
+                                  <div className="titulo-relatorios-permissoes">
+                                    <FiFileText />
+
+                                    Relatórios permitidos
+                                  </div>
+
+                                  <p>
+                                    Escolha quais
+                                    relatórios este
+                                    usuário poderá
+                                    visualizar.
+                                  </p>
                                 </div>
 
-                                <input
-                                  type="checkbox"
-                                  checked={
-                                    marcado
-                                  }
-                                  onChange={() =>
-                                    alterarPermissaoRelatorio(
-                                      relatorio.id
-                                    )
-                                  }
-                                />
-                              </label>
-                            );
-                          }
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
+                                <div className="acoes-relatorios-permissoes">
+                                  <button
+                                    type="button"
+                                    onClick={
+                                      marcarTodosRelatorios
+                                    }
+                                  >
+                                    Liberar todos
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={
+                                      desmarcarTodosRelatorios
+                                    }
+                                  >
+                                    Bloquear todos
+                                  </button>
+                                </div>
+                              </div>
+
+                              {Object.entries(
+                                relatoriosPorCategoria
+                              ).map(
+                                ([
+                                  categoria,
+                                  itens,
+                                ]) => (
+                                  <div
+                                    key={
+                                      categoria
+                                    }
+                                    className="grupo-relatorios-permissoes"
+                                  >
+                                    <div className="categoria-relatorios-permissoes">
+                                      {
+                                        categoria
+                                      }
+                                    </div>
+
+                                    {itens.map(
+                                      (
+                                        relatorio
+                                      ) => {
+                                        const marcado =
+                                          Boolean(
+                                            permissoesRelatoriosTemporarias[
+                                              String(
+                                                relatorio.id
+                                              )
+                                            ]
+                                          );
+
+                                        return (
+                                          <label
+                                            key={
+                                              relatorio.id
+                                            }
+                                            className={`item-permissao item-permissao-relatorio ${
+                                              marcado
+                                                ? "ativo"
+                                                : ""
+                                            }`}
+                                          >
+                                            <div className="item-permissao-info">
+                                              <strong>
+                                                {
+                                                  relatorio.nome
+                                                }
+                                              </strong>
+                                            </div>
+
+                                            <input
+                                              type="checkbox"
+                                              checked={
+                                                marcado
+                                              }
+                                              onChange={() =>
+                                                alterarPermissaoRelatorio(
+                                                  relatorio.id
+                                                )
+                                              }
+                                            />
+                                          </label>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
+                      </section>
+                    );
+                  }
+                )}
+              </div>
             </div>
 
             <div className="modal-actions">

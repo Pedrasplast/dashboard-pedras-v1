@@ -1,4 +1,8 @@
-import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
+import {
+  converterNumeroFlexivel,
+  formatarNumeroFlexivel,
+} from "@/lib/numeros";
+
 
 /* =========================================================
    CONFIGURAÇÃO CENTRAL DAS COLUNAS
@@ -9,8 +13,55 @@ import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
    NÚMERO / FORMATAÇÃO
 ========================================================= */
 
-const converterNumero = converterNumeroFlexivel;
-const formatarNumero = formatarNumeroFlexivel;
+const converterNumero =
+  converterNumeroFlexivel;
+
+const formatarNumero =
+  formatarNumeroFlexivel;
+
+
+/* =========================================================
+   MOEDA / PERCENTUAL FINANCEIRO
+========================================================= */
+
+function formatarMoeda(valor) {
+  return converterNumero(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  );
+}
+
+
+function formatarPercentualFinanceiro(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "-";
+  }
+
+
+  return `${converterNumero(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  )}%`;
+}
+
 
 /* =========================================================
    DATA
@@ -21,8 +72,11 @@ function formatarData(valor) {
     return "-";
   }
 
+
   const texto =
-    String(valor).trim();
+    String(
+      valor,
+    ).trim();
 
 
   const iso =
@@ -63,9 +117,12 @@ function formatarData(valor) {
    TÍTULO AUTOMÁTICO
 ========================================================= */
 
-function criarTituloAutomatico(chave) {
+function criarTituloAutomatico(
+  chave,
+) {
   return String(
-    chave || "",
+    chave ||
+      "",
   )
     .replace(
       /_/g,
@@ -91,39 +148,48 @@ export const COLUNAS_RELATORIO = {
   ===================================================== */
 
   data: {
-    titulo: "Data",
+    titulo:
+      "Data",
 
-    larguraPdf: 22,
+    larguraPdf:
+      22,
 
-    valor: (item) =>
-      formatarData(
-        item.inicio_dia ||
-          item.inicio ||
-          item.data,
-      ),
+    valor:
+      (item) =>
+        formatarData(
+          item.inicio_dia ||
+            item.inicio ||
+            item.data,
+        ),
   },
 
 
   injetora: {
-    titulo: "Injetora",
+    titulo:
+      "Injetora",
 
-    larguraPdf: 32,
+    larguraPdf:
+      32,
 
-    valor: (item) =>
-      item.injetora ||
-      "-",
+    valor:
+      (item) =>
+        item.injetora ||
+        "-",
   },
 
 
   produto: {
-    titulo: "Produto",
+    titulo:
+      "Produto",
 
-    larguraPdf: 30,
+    larguraPdf:
+      30,
 
-    valor: (item) =>
-      item.cod_prod ||
-      item.produto ||
-      "-",
+    valor:
+      (item) =>
+        item.cod_prod ||
+        item.produto ||
+        "-",
   },
 
 
@@ -131,11 +197,13 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Descrição do Produto",
 
-    larguraPdf: 48,
+    larguraPdf:
+      48,
 
-    valor: (item) =>
-      item.descricao_produto ||
-      "-",
+    valor:
+      (item) =>
+        item.descricao_produto ||
+        "-",
   },
 
 
@@ -143,49 +211,60 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Matéria-Prima",
 
-    larguraPdf: 38,
+    larguraPdf:
+      38,
 
-    valor: (item) =>
-      item.mp ||
-      item.materia_prima ||
-      "-",
+    valor:
+      (item) =>
+        item.mp ||
+        item.materia_prima ||
+        "-",
   },
 
 
   tipo: {
-    titulo: "Tipo",
+    titulo:
+      "Tipo",
 
-    larguraPdf: 20,
+    larguraPdf:
+      20,
 
-    valor: (item) =>
-      item.tipo ||
-      "-",
+    valor:
+      (item) =>
+        item.tipo ||
+        "-",
   },
 
 
   conforme: {
-    titulo: "Conforme",
+    titulo:
+      "Conforme",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      formatarNumero(
-        item.conforme,
-        2,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.conforme,
+          2,
+        ),
   },
 
 
   danificada: {
-    titulo: "Danificada",
+    titulo:
+      "Danificada",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      formatarNumero(
-        item.danificada,
-        2,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.danificada,
+          2,
+        ),
   },
 
 
@@ -193,177 +272,215 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Total Produzido",
 
-    larguraPdf: 28,
+    larguraPdf:
+      28,
 
-    valor: (item) =>
-      formatarNumero(
-        item.total_produzido,
-        2,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.total_produzido,
+          2,
+        ),
   },
 
 
   duracao: {
-    titulo: "Duração",
+    titulo:
+      "Duração",
 
-    larguraPdf: 25,
+    larguraPdf:
+      25,
 
-    valor: (item) =>
-      item.duracao ||
-      item.tempo ||
-      "-",
+    valor:
+      (item) =>
+        item.duracao ||
+        item.tempo ||
+        "-",
   },
 
 
   produtividade_hora: {
-    titulo: "UN/H",
+    titulo:
+      "UN/H",
 
-    larguraPdf: 22,
+    larguraPdf:
+      22,
 
-    valor: (item) =>
-      formatarNumero(
-        item.produtividade_hora,
-        0,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.produtividade_hora,
+          0,
+        ),
   },
 
 
   qualidade: {
-    titulo: "Qualidade",
+    titulo:
+      "Qualidade",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      `${converterNumero(
-        item.qualidade,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits:
-            2,
+    valor:
+      (item) =>
+        `${converterNumero(
+          item.qualidade,
+        ).toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits:
+              2,
 
-          maximumFractionDigits:
-            2,
-        },
-      )}%`,
+            maximumFractionDigits:
+              2,
+          },
+        )}%`,
   },
 
 
   op: {
-    titulo: "OP",
+    titulo:
+      "OP",
 
-    larguraPdf: 25,
+    larguraPdf:
+      25,
 
-    valor: (item) =>
-      item.op ||
-      "-",
+    valor:
+      (item) =>
+        item.op ||
+        "-",
   },
 
 
   descricao: {
-    titulo: "Descrição",
+    titulo:
+      "Descrição",
 
-    larguraPdf: 48,
+    larguraPdf:
+      48,
 
-    valor: (item) =>
-      item.descricao ||
-      item.justificativa ||
-      item.natureza ||
-      item.motivo ||
-      "-",
+    valor:
+      (item) =>
+        item.descricao ||
+        item.justificativa ||
+        item.natureza ||
+        item.motivo ||
+        "-",
   },
-  
+
+
   pedidos_atendidos: {
-  titulo:
-    "Pedidos Atendidos",
+    titulo:
+      "Pedidos Atendidos",
 
-  larguraPdf: 48,
+    larguraPdf:
+      48,
 
-  valor:
-    (item) =>
-      item.pedidos_atendidos ||
-      "-",
-},
+    valor:
+      (item) =>
+        item.pedidos_atendidos ||
+        "-",
+  },
+
 
   /* =====================================================
      PARADAS
   ===================================================== */
 
   motivo: {
-    titulo: "Motivo",
+    titulo:
+      "Motivo",
 
-    larguraPdf: 48,
+    larguraPdf:
+      48,
 
-    valor: (item) =>
-      item.motivo ||
-      "-",
+    valor:
+      (item) =>
+        item.motivo ||
+        "-",
   },
 
 
   justificativa: {
-    titulo: "Justificativa",
+    titulo:
+      "Justificativa",
 
-    larguraPdf: 58,
+    larguraPdf:
+      58,
 
-    valor: (item) =>
-      item.justificativa ||
-      "-",
+    valor:
+      (item) =>
+        item.justificativa ||
+        "-",
   },
 
 
   ocorrencias: {
-    titulo: "Ocorrências",
+    titulo:
+      "Ocorrências",
 
-    larguraPdf: 25,
+    larguraPdf:
+      25,
 
-    valor: (item) =>
-      formatarNumero(
-        item.ocorrencias,
-        0,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.ocorrencias,
+          0,
+        ),
   },
 
 
   tempo_total: {
-    titulo: "Tempo Total",
+    titulo:
+      "Tempo Total",
 
-    larguraPdf: 27,
+    larguraPdf:
+      27,
 
-    valor: (item) =>
-      item.tempo_total ||
-      "-",
+    valor:
+      (item) =>
+        item.tempo_total ||
+        "-",
   },
 
 
   tempo_medio: {
-    titulo: "Tempo Médio",
+    titulo:
+      "Tempo Médio",
 
-    larguraPdf: 27,
+    larguraPdf:
+      27,
 
-    valor: (item) =>
-      item.tempo_medio ||
-      "-",
+    valor:
+      (item) =>
+        item.tempo_medio ||
+        "-",
   },
 
 
   percentual_impacto: {
-    titulo: "Impacto",
+    titulo:
+      "Impacto",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      `${converterNumero(
-        item.percentual_impacto,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits:
-            2,
+    valor:
+      (item) =>
+        `${converterNumero(
+          item.percentual_impacto,
+        ).toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits:
+              2,
 
-          maximumFractionDigits:
-            2,
-        },
-      )}%`,
+            maximumFractionDigits:
+              2,
+          },
+        )}%`,
   },
 
 
@@ -372,15 +489,18 @@ export const COLUNAS_RELATORIO = {
   ===================================================== */
 
   quantidade_mp: {
-    titulo: "Qtd. MP",
+    titulo:
+      "Qtd. MP",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      formatarNumero(
-        item.quantidade_mp,
-        2,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.quantidade_mp,
+          2,
+        ),
   },
 
 
@@ -388,21 +508,23 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Peso Unitário",
 
-    larguraPdf: 28,
+    larguraPdf:
+      28,
 
-    valor: (item) =>
-      converterNumero(
-        item.peso_unitario,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits:
-            4,
+    valor:
+      (item) =>
+        converterNumero(
+          item.peso_unitario,
+        ).toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits:
+              4,
 
-          maximumFractionDigits:
-            4,
-        },
-      ),
+            maximumFractionDigits:
+              4,
+          },
+        ),
   },
 
 
@@ -410,21 +532,23 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Consumo Total",
 
-    larguraPdf: 30,
+    larguraPdf:
+      30,
 
-    valor: (item) =>
-      converterNumero(
-        item.consumo_total,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits:
-            4,
+    valor:
+      (item) =>
+        converterNumero(
+          item.consumo_total,
+        ).toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits:
+              4,
 
-          maximumFractionDigits:
-            4,
-        },
-      ),
+            maximumFractionDigits:
+              4,
+          },
+        ),
   },
 
 
@@ -432,21 +556,23 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Gasto por Unidade",
 
-    larguraPdf: 34,
+    larguraPdf:
+      34,
 
-    valor: (item) =>
-      converterNumero(
-        item.gasto_unidade,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          minimumFractionDigits:
-            4,
+    valor:
+      (item) =>
+        converterNumero(
+          item.gasto_unidade,
+        ).toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits:
+              4,
 
-          maximumFractionDigits:
-            6,
-        },
-      ),
+            maximumFractionDigits:
+              6,
+          },
+        ),
   },
 
 
@@ -455,24 +581,30 @@ export const COLUNAS_RELATORIO = {
   ===================================================== */
 
   pedido: {
-    titulo: "Pedido",
+    titulo:
+      "Pedido",
 
-    larguraPdf: 22,
+    larguraPdf:
+      22,
 
-    valor: (item) =>
-      item.pedido ||
-      "-",
+    valor:
+      (item) =>
+        item.pedido ||
+        "-",
   },
 
 
   cliente: {
-    titulo: "Cliente",
+    titulo:
+      "Cliente",
 
-    larguraPdf: 42,
+    larguraPdf:
+      42,
 
-    valor: (item) =>
-      item.cliente ||
-      "-",
+    valor:
+      (item) =>
+        item.cliente ||
+        "-",
   },
 
 
@@ -480,12 +612,14 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Data do Pedido",
 
-    larguraPdf: 25,
+    larguraPdf:
+      25,
 
-    valor: (item) =>
-      formatarData(
-        item.data_pedido,
-      ),
+    valor:
+      (item) =>
+        formatarData(
+          item.data_pedido,
+        ),
   },
 
 
@@ -493,12 +627,14 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Previsão Faturamento",
 
-    larguraPdf: 29,
+    larguraPdf:
+      29,
 
-    valor: (item) =>
-      formatarData(
-        item.previsao,
-      ),
+    valor:
+      (item) =>
+        formatarData(
+          item.previsao,
+        ),
   },
 
 
@@ -506,96 +642,363 @@ export const COLUNAS_RELATORIO = {
     titulo:
       "Dias em Atraso",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      formatarNumero(
-        item.dias_atraso,
-        0,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.dias_atraso,
+          0,
+        ),
   },
 
 
   codigo_produto: {
-    titulo: "Código",
+    titulo:
+      "Código",
 
-    larguraPdf: 28,
+    larguraPdf:
+      28,
 
-    valor: (item) =>
-      item.codigo_produto ||
-      item.codigoProduto ||
-      "-",
+    valor:
+      (item) =>
+        item.codigo_produto ||
+        item.codigoProduto ||
+        "-",
   },
 
 
   produto_pedido: {
-    titulo: "Produto",
+    titulo:
+      "Produto",
 
-    larguraPdf: 62,
+    larguraPdf:
+      62,
 
-    valor: (item) =>
-      item.produto_pedido ||
-      item.produto ||
-      "-",
+    valor:
+      (item) =>
+        item.produto_pedido ||
+        item.produto ||
+        "-",
   },
 
 
   quantidade: {
-    titulo: "Quantidade",
+    titulo:
+      "Quantidade",
 
-    larguraPdf: 25,
+    larguraPdf:
+      25,
 
-    valor: (item) =>
-      formatarNumero(
-        item.quantidade,
-        3,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.quantidade,
+          3,
+        ),
   },
 
 
   unidade: {
-    titulo: "Un.",
+    titulo:
+      "Un.",
 
-    larguraPdf: 16,
+    larguraPdf:
+      16,
 
-    valor: (item) =>
-      item.unidade ||
-      "-",
+    valor:
+      (item) =>
+        item.unidade ||
+        "-",
   },
 
 
   vendedor: {
-    titulo: "Vendedor",
+    titulo:
+      "Vendedor",
 
-    larguraPdf: 32,
+    larguraPdf:
+      32,
 
-    valor: (item) =>
-      item.vendedor ||
-      "-",
+    valor:
+      (item) =>
+        item.vendedor ||
+        "-",
   },
 
 
   status: {
-    titulo: "Status",
+    titulo:
+      "Status",
 
-    larguraPdf: 24,
+    larguraPdf:
+      24,
 
-    valor: (item) =>
-      item.status ||
-      "-",
+    valor:
+      (item) =>
+        item.status ||
+        "-",
   },
 
 
   pedidos: {
-    titulo: "Pedidos",
+    titulo:
+      "Pedidos",
 
-    larguraPdf: 20,
+    larguraPdf:
+      20,
 
-    valor: (item) =>
-      formatarNumero(
-        item.pedidos,
-        0,
-      ),
+    valor:
+      (item) =>
+        formatarNumero(
+          item.pedidos,
+          0,
+        ),
+  },
+
+
+  /* =====================================================
+     FINANCEIRO - PREVISTO X REALIZADO
+  ===================================================== */
+
+  codigo_categoria: {
+    titulo:
+      "Código",
+
+    larguraPdf:
+      24,
+
+    valor:
+      (item) =>
+        item.codigo_categoria ||
+        "-",
+  },
+
+
+  categoria_financeira: {
+    titulo:
+      "Categoria",
+
+    larguraPdf:
+      66,
+
+    valor:
+      (item) =>
+        item.categoria ||
+        "-",
+  },
+
+
+  tipo_financeiro: {
+    titulo:
+      "Tipo",
+
+    larguraPdf:
+      24,
+
+    valor:
+      (item) =>
+        item.tipo ||
+        "-",
+  },
+
+
+  valor_previsto: {
+    titulo:
+      "Previsto",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.valor_previsto,
+        ),
+  },
+
+
+  valor_realizado: {
+    titulo:
+      "Realizado",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.valor_realizado,
+        ),
+  },
+
+
+  variacao: {
+    titulo:
+      "Variação",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.variacao,
+        ),
+  },
+
+
+  variacao_percentual: {
+    titulo:
+      "Variação %",
+
+    larguraPdf:
+      27,
+
+    valor:
+      (item) =>
+        formatarPercentualFinanceiro(
+          item.variacao_percentual,
+        ),
+  },
+
+
+  /* =====================================================
+     FINANCEIRO - EVOLUÇÃO MENSAL
+  ===================================================== */
+
+  mes_financeiro: {
+    titulo:
+      "Mês",
+
+    larguraPdf:
+      26,
+
+    valor:
+      (item) =>
+        item.mes_nome ||
+        "-",
+  },
+
+
+  receita_prevista: {
+    titulo:
+      "Receita Prevista",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.receita_prevista,
+        ),
+  },
+
+
+  receita_realizada: {
+    titulo:
+      "Receita Realizada",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.receita_realizada,
+        ),
+  },
+
+
+  despesa_prevista: {
+    titulo:
+      "Despesa Prevista",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.despesa_prevista,
+        ),
+  },
+
+
+  despesa_realizada: {
+    titulo:
+      "Despesa Realizada",
+
+    larguraPdf:
+      34,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.despesa_realizada,
+        ),
+  },
+
+
+  resultado_previsto: {
+    titulo:
+      "Resultado Previsto",
+
+    larguraPdf:
+      35,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.resultado_previsto,
+        ),
+  },
+
+
+  resultado_realizado: {
+    titulo:
+      "Resultado Realizado",
+
+    larguraPdf:
+      35,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.resultado_realizado,
+        ),
+  },
+
+
+  variacao_resultado: {
+    titulo:
+      "Variação Resultado",
+
+    larguraPdf:
+      35,
+
+    valor:
+      (item) =>
+        formatarMoeda(
+          item.variacao_resultado,
+        ),
+  },
+
+
+  variacao_resultado_percentual: {
+    titulo:
+      "Variação %",
+
+    larguraPdf:
+      27,
+
+    valor:
+      (item) =>
+        formatarPercentualFinanceiro(
+          item.variacao_resultado_percentual,
+        ),
   },
 };
 
@@ -604,7 +1007,9 @@ export const COLUNAS_RELATORIO = {
    OBTER COLUNAS
 ========================================================= */
 
-export function obterColunasRelatorio(relatorio) {
+export function obterColunasRelatorio(
+  relatorio,
+) {
   if (
     !relatorio ||
     !Array.isArray(
@@ -652,7 +1057,9 @@ export function obterColunasRelatorio(relatorio) {
             (item) => {
 
               const valor =
-                item?.[chave];
+                item?.[
+                  chave
+                ];
 
 
               if (

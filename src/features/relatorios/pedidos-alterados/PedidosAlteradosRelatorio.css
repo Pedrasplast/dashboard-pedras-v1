@@ -1,0 +1,585 @@
+/* =========================================================
+   PEDIDOS ALTERADOS
+   Complemento visual do padrão de TelaRelatorios.css
+========================================================= */
+
+
+/* =========================================================
+   FILTROS ESPECÍFICOS
+========================================================= */
+
+.pedidos-alterados-filtros {
+  display: grid;
+
+  grid-template-columns:
+    180px
+    180px
+    minmax(300px, 1fr);
+
+  gap: 10px;
+
+  align-items: end;
+}
+
+
+.pedidos-alterados-campo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.pedidos-alterados-campo > span {
+  color: #64748b;
+
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+
+.pedidos-alterados-campo > input {
+  width: 100%;
+  min-height: 39px;
+
+  padding:
+    0
+    11px;
+
+  color: #334155;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.75rem;
+
+  outline: none;
+}
+
+
+.pedidos-alterados-campo > input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+.pedidos-alterados-pesquisa {
+  min-height: 39px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding:
+    0
+    11px;
+
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+
+.pedidos-alterados-pesquisa:focus-within {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+.pedidos-alterados-pesquisa > svg {
+  flex: 0 0 auto;
+
+  color: #94a3b8;
+}
+
+
+.pedidos-alterados-pesquisa input {
+  width: 100%;
+  min-width: 0;
+  min-height: auto;
+
+  padding: 0;
+
+  color: #334155;
+  background: transparent;
+
+  border: 0;
+  outline: 0;
+
+  font-family: inherit;
+  font-size: 0.75rem;
+}
+
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.pedidos-alterados-tabela-wrapper {
+  max-height: none;
+}
+
+
+.pedidos-alterados-tabela {
+  min-width: 1080px;
+}
+
+
+.pedidos-alterados-numero {
+  color: #2563eb;
+
+  font-weight: 800;
+}
+
+
+.pedidos-alterados-contador {
+  min-width: 27px;
+  min-height: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    2px
+    7px;
+
+  color: #475569;
+  background: #f8fafc;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+
+.pedidos-alterados-campos {
+  max-width: 380px;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+
+.pedidos-alterados-campos > span {
+  display: inline-flex;
+
+  padding:
+    3px
+    6px;
+
+  color: #475569;
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+
+  font-size: 0.59rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   BOTÃO VER
+========================================================= */
+
+.pedidos-alterados-ver {
+  min-height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding:
+    0
+    9px;
+
+  color: #2563eb;
+  background: #ffffff;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+
+.pedidos-alterados-ver:hover {
+  background: #eff6ff;
+
+  border-color: #bfdbfe;
+}
+
+
+/* =========================================================
+   HISTÓRICO EXPANDIDO
+========================================================= */
+
+.pedidos-alterados-historico-linha > td {
+  padding: 0 !important;
+
+  background: #f8fafc !important;
+}
+
+
+.pedidos-alterados-historico {
+  padding:
+    16px
+    18px
+    18px;
+
+  border-top: 1px solid #e8edf3;
+}
+
+
+.pedidos-alterados-historico-titulo {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 12px;
+}
+
+
+.pedidos-alterados-historico-titulo > svg {
+  color: #2563eb;
+}
+
+
+.pedidos-alterados-historico-titulo > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.pedidos-alterados-historico-titulo strong {
+  color: #1e293b;
+
+  font-size: 0.75rem;
+}
+
+
+.pedidos-alterados-historico-titulo span {
+  color: #94a3b8;
+
+  font-size: 0.63rem;
+}
+
+
+.pedidos-alterados-ocorrencias {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+
+.pedidos-alterados-ocorrencia {
+  padding: 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #2563eb;
+  border-radius: 8px;
+}
+
+
+.pedidos-alterados-ocorrencia-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 9px;
+}
+
+
+.pedidos-alterados-ocorrencia-topo strong {
+  color: #1e293b;
+
+  font-size: 0.7rem;
+}
+
+
+.pedidos-alterados-ocorrencia-topo span {
+  color: #94a3b8;
+
+  font-size: 0.63rem;
+}
+
+
+.pedidos-alterados-mudancas {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.pedidos-alterados-mudanca {
+  padding: 9px;
+
+  background: #f8fafc;
+
+  border: 1px solid #edf1f5;
+  border-radius: 7px;
+}
+
+
+.pedidos-alterados-mudanca > strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #334155;
+
+  font-size: 0.66rem;
+}
+
+
+.pedidos-alterados-antes-depois {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.pedidos-alterados-antes-depois > span:not(.pedidos-alterados-seta) {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.pedidos-alterados-antes-depois small {
+  color: #94a3b8;
+
+  font-size: 0.55rem;
+
+  text-transform: uppercase;
+}
+
+
+.pedidos-alterados-antes-depois b {
+  overflow-wrap: anywhere;
+
+  color: #475569;
+
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+
+.pedidos-alterados-antes-depois
+> span:last-child
+b {
+  color: #1d4ed8;
+}
+
+
+.pedidos-alterados-seta {
+  color: #94a3b8;
+}
+
+
+.pedidos-alterados-sem-detalhe {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   PAGINAÇÃO
+========================================================= */
+
+.pedidos-alterados-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 12px;
+}
+
+
+.pedidos-alterados-paginacao button {
+  min-height: 34px;
+
+  padding:
+    0
+    11px;
+
+  color: #475569;
+  background: #ffffff;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.pedidos-alterados-paginacao button:hover:not(:disabled) {
+  color: #1d4ed8;
+  background: #eff6ff;
+
+  border-color: #bfdbfe;
+}
+
+
+.pedidos-alterados-paginacao button:disabled {
+  opacity: 0.45;
+
+  cursor: default;
+}
+
+
+.pedidos-alterados-paginacao span {
+  color: #64748b;
+
+  font-size: 0.66rem;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.pedidos-alterados-loading {
+  min-height: 220px;
+}
+
+
+.pedidos-alterados-vazio {
+  min-height: 220px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe7f1;
+  border-radius: 12px;
+}
+
+
+.pedidos-alterados-erro {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+@keyframes pedidos-alterados-spin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+.pedidos-alterados-girando {
+  animation:
+    pedidos-alterados-spin
+    0.8s
+    linear
+    infinite;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .pedidos-alterados-filtros {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .pedidos-alterados-pesquisa-campo {
+    grid-column:
+      1 / -1;
+  }
+
+
+  .pedidos-alterados-mudancas {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+@media (max-width: 640px) {
+
+  .pedidos-alterados-filtros {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .pedidos-alterados-pesquisa-campo {
+    grid-column:
+      auto;
+  }
+
+
+  .pedidos-alterados-paginacao {
+    justify-content:
+      space-between;
+  }
+}
