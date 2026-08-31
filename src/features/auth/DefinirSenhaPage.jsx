@@ -43,6 +43,12 @@ export default function DefinirSenhaPage() {
 
     async function verificarSessao() {
       try {
+        /*
+         * =====================================================
+         * 1. VERIFICA SE JÁ EXISTE SESSÃO
+         * =====================================================
+         */
+
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -55,19 +61,87 @@ export default function DefinirSenhaPage() {
           return;
         }
 
+        /*
+         * =====================================================
+         * 2. LINK CURTO DE PRIMEIRO ACESSO
+         *
+         * Exemplo:
+         *
+         * /definir-senha?t=TOKEN
+         *
+         * =====================================================
+         */
+
+        const parametros =
+          new URLSearchParams(
+            window.location.search
+          );
+
+        const tokenHash =
+          parametros.get("t");
+
+        if (tokenHash) {
+          const {
+            data,
+            error,
+          } =
+            await supabase.auth.verifyOtp({
+              token_hash: tokenHash,
+              type: "invite",
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          if (!ativo) return;
+
+          /*
+           * Remove o token da barra de endereço
+           * depois que ele já foi validado.
+           */
+
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+
+          if (data?.session?.user) {
+            setSessaoValida(true);
+            setCarregandoSessao(false);
+            return;
+          }
+        }
+
+        /*
+         * =====================================================
+         * 3. COMPATIBILIDADE COM LINKS ANTIGOS
+         *
+         * Mantemos o comportamento anterior para que convites
+         * já gerados pelo Supabase continuem funcionando.
+         * =====================================================
+         */
+
         timer = window.setTimeout(
           async () => {
             if (!ativo) return;
 
             const {
-              data: { session: sessaoFinal },
-            } = await supabase.auth.getSession();
+              data: {
+                session: sessaoFinal,
+              },
+            } =
+              await supabase.auth.getSession();
 
             if (!ativo) return;
 
             setSessaoValida(
-              Boolean(sessaoFinal?.user)
+              Boolean(
+                sessaoFinal?.user
+              )
             );
+
             setCarregandoSessao(false);
           },
           2500
@@ -100,22 +174,27 @@ export default function DefinirSenhaPage() {
 
   async function definirSenha(event) {
     event.preventDefault();
+
     setMensagemErro("");
 
     if (!senha) {
-      setMensagemErro("Informe sua nova senha.");
+      setMensagemErro(
+        "Informe sua nova senha."
+      );
       return;
     }
 
-    if (senha.length < 8) {
+    if (senha.length < 6) {
       setMensagemErro(
-        "A senha deve possuir pelo menos 8 caracteres."
+        "A senha deve possuir pelo menos 6 caracteres."
       );
       return;
     }
 
     if (!confirmarSenha) {
-      setMensagemErro("Confirme sua nova senha.");
+      setMensagemErro(
+        "Confirme sua nova senha."
+      );
       return;
     }
 
@@ -182,7 +261,9 @@ export default function DefinirSenhaPage() {
             <FiAlertTriangle />
           </div>
 
-          <h1>Link inválido ou expirado</h1>
+          <h1>
+            Link inválido ou expirado
+          </h1>
 
           <p>
             Este link de primeiro acesso não é mais válido.
@@ -216,7 +297,9 @@ export default function DefinirSenhaPage() {
             <FiCheckCircle />
           </div>
 
-          <h1>Senha definida!</h1>
+          <h1>
+            Senha definida!
+          </h1>
 
           <p>
             Seu acesso foi configurado com sucesso.
@@ -237,7 +320,9 @@ export default function DefinirSenhaPage() {
           <FiLock />
         </div>
 
-        <h1>Defina sua senha</h1>
+        <h1>
+          Defina sua senha
+        </h1>
 
         <p>
           Este é o seu primeiro acesso. Crie uma senha
@@ -258,9 +343,11 @@ export default function DefinirSenhaPage() {
               type="password"
               value={senha}
               onChange={(event) =>
-                setSenha(event.target.value)
+                setSenha(
+                  event.target.value
+                )
               }
-              placeholder="Mínimo de 8 caracteres"
+              placeholder="Mínimo de 6 caracteres"
               autoComplete="new-password"
               disabled={salvando}
               autoFocus
@@ -290,12 +377,15 @@ export default function DefinirSenhaPage() {
           {mensagemErro && (
             <div className="definir-senha-erro">
               <FiAlertTriangle />
-              <span>{mensagemErro}</span>
+
+              <span>
+                {mensagemErro}
+              </span>
             </div>
           )}
 
           <div className="definir-senha-regras">
-            A senha deve possuir pelo menos 8 caracteres.
+            A senha deve possuir pelo menos 6 caracteres.
           </div>
 
           <button
