@@ -1123,7 +1123,7 @@ function Home({
                 size={16}
               />
 
-              Gestão Integrada
+              Plataforma de Gestão
 
             </div>
 
@@ -1131,13 +1131,14 @@ function Home({
             <div className="home-public-title">
 
               <span>
-                GESTÃO INTEGRADA PEDRASPLAST
+                PEDRASPLAST
               </span>
 
 
               <h1>
-                Gestão integrada
-                em um único ambiente.
+                Produção, pedidos
+                e financeiro em um
+                único ambiente.
               </h1>
 
 
@@ -1339,7 +1340,7 @@ function Home({
                     )
                   }
                   placeholder="Digite sua senha"
-                  autoComplete="off"
+                   autoComplete="new-password"
                   name="senha-acesso-home"
                   disabled={
                     loadingLogin
@@ -1524,8 +1525,6 @@ function Home({
             <div className="home-summary-grid">
 
 
-              {/* HORAS TRABALHADAS */}
-
               <article className="home-summary-card">
 
                 <div className="home-summary-icon">
@@ -1563,8 +1562,6 @@ function Home({
 
               </article>
 
-
-              {/* HORAS PARADAS */}
 
               <article
                 className={
@@ -1624,8 +1621,6 @@ function Home({
               </article>
 
 
-              {/* % HORAS TRABALHADAS */}
-
               <article className="home-summary-card">
 
                 <div className="home-summary-icon home-summary-icon-success">
@@ -1665,8 +1660,6 @@ function Home({
 
               </article>
 
-
-              {/* REGISTROS DE PARADA */}
 
               <article
                 className={
@@ -1796,8 +1789,6 @@ function Home({
               <div className="home-summary-grid">
 
 
-                {/* RECEITAS */}
-
                 <article className="home-summary-card">
 
                   <div className="home-summary-icon home-summary-icon-success">
@@ -1843,8 +1834,6 @@ function Home({
 
                 </article>
 
-
-                {/* DESPESAS */}
 
                 <article className="home-summary-card">
 
@@ -1893,8 +1882,6 @@ function Home({
 
                 </article>
 
-
-                {/* SALDO */}
 
                 <article className="home-summary-card">
 
@@ -1953,8 +1940,6 @@ function Home({
 
                 </article>
 
-
-                {/* MARGEM */}
 
                 <article className="home-summary-card">
 
@@ -2087,8 +2072,6 @@ function Home({
                 <div className="home-summary-grid">
 
 
-                  {/* PEDIDOS EM ABERTO */}
-
                   <article className="home-summary-card">
 
                     <div className="home-summary-icon">
@@ -2127,8 +2110,6 @@ function Home({
 
                   </article>
 
-
-                  {/* PEDIDOS ATRASADOS */}
 
                   <article
                     className={
@@ -2184,8 +2165,6 @@ function Home({
                   </article>
 
 
-                  {/* PRÓXIMOS 7 DIAS */}
-
                   <article className="home-summary-card">
 
                     <div className="home-summary-icon">
@@ -2224,8 +2203,6 @@ function Home({
 
                   </article>
 
-
-                  {/* ÚLTIMA ATUALIZAÇÃO */}
 
                   <article className="home-summary-card">
 
@@ -2275,10 +2252,6 @@ function Home({
 
             </section>
 
-
-            {/* =============================================
-                ATENÇÕES
-            ============================================= */}
 
             {!carregandoPedidos &&
               !erroPedidos && (

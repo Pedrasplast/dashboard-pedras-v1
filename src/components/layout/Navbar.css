@@ -444,9 +444,6 @@ body {
 
 /* =====================================================
    LABELS
-
-   Desktop mostra label normal.
-   Mobile mostra shortLabel.
 ===================================================== */
 
 .navbar-label-desktop {
@@ -1179,9 +1176,6 @@ body {
 
 /* =====================================================
    CELULAR E TELAS MENORES
-
-   IMPORTANTE:
-   SÃO 5 ITENS NA NAVBAR.
 ===================================================== */
 
 @media (
@@ -1228,10 +1222,6 @@ body {
       2;
   }
 
-
-  /* =================================================
-     BARRA INFERIOR
-  ================================================= */
 
   .navbar-navigation {
     position:
@@ -1323,10 +1313,6 @@ body {
   }
 
 
-  /* =================================================
-     ITEM MOBILE
-  ================================================= */
-
   .navbar-navigation-link {
     display:
       flex;
@@ -1406,10 +1392,6 @@ body {
       none;
   }
 
-
-  /* =================================================
-     LABELS MOBILE
-  ================================================= */
 
   .navbar-label-desktop {
     display:
@@ -1638,150 +1620,212 @@ body {
   }
 }
 
+
 /* =========================================================
    NAVBAR - MÓDULOS
-   COLE ESTE BLOCO NO FINAL DO Navbar.css ATUAL
-========================================================= */
-
-
-/* =========================================================
-   DESKTOP - DROPDOWNS
 ========================================================= */
 
 .navbar-navigation-modulos {
-  overflow: visible !important;
+  overflow:
+    visible !important;
 }
 
 
 .navbar-modulo {
-  position: relative;
+  position:
+    relative;
 
-  display: flex;
-  align-items: center;
+  display:
+    flex;
+
+  align-items:
+    center;
 }
 
 
 .navbar-modulo-trigger {
-  gap: 6px;
+  gap:
+    6px;
 }
 
 
 .navbar-modulo-chevron {
-  flex: 0 0 auto;
+  flex:
+    0 0 auto;
 
   transition:
-    transform 0.16s ease;
+    transform
+    0.16s
+    ease;
 }
 
 
 .navbar-modulo-chevron.open {
   transform:
-    rotate(180deg);
-}
-
-
-.navbar-pedidos-badge-modulo {
-  position: static !important;
-
-  flex: 0 0 auto;
+    rotate(
+      180deg
+    );
 }
 
 
 .navbar-modulo-dropdown {
-  position: absolute;
+  position:
+    absolute;
 
-  top: calc(100% + 9px);
-  left: 0;
+  top:
+    calc(
+      100% +
+      9px
+    );
 
-  z-index: 3000;
+  left:
+    0;
 
-  min-width: 225px;
+  z-index:
+    3000;
 
-  padding: 7px;
+  min-width:
+    225px;
 
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  padding:
+    7px;
 
-  background: #ffffff;
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    10px;
+
+  background:
+    #ffffff;
 
   box-shadow:
-    0 18px 42px
-    rgba(15, 23, 42, 0.16);
+    0
+    18px
+    42px
+    rgba(
+      15,
+      23,
+      42,
+      0.16
+    );
 }
 
 
 .navbar-modulo-dropdown-item {
-  width: 100%;
-  min-height: 42px;
+  width:
+    100%;
 
-  display: flex;
-  align-items: center;
+  min-height:
+    42px;
 
-  gap: 9px;
+  display:
+    flex;
 
-  padding: 0 10px;
+  align-items:
+    center;
 
-  border: 0;
-  border-radius: 8px;
+  gap:
+    9px;
 
-  background: transparent;
+  padding:
+    0
+    10px;
 
-  color: #475569;
+  border:
+    0;
 
-  font: inherit;
-  font-size: 12px;
-  font-weight: 650;
+  border-radius:
+    8px;
 
-  text-align: left;
+  background:
+    transparent;
 
-  cursor: pointer;
+  color:
+    #475569;
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  font-weight:
+    650;
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
 }
 
 
 .navbar-modulo-dropdown-item:hover {
-  background: #f8fafc;
+  background:
+    #f8fafc;
 
-  color: #0f172a;
+  color:
+    #0f172a;
 }
 
 
 .navbar-modulo-dropdown-item.active {
-  background: #eff6ff;
+  background:
+    #eff6ff;
 
-  color: #1d4ed8;
+  color:
+    #1d4ed8;
 }
 
 
 .navbar-modulo-dropdown-icon {
-  width: 30px;
-  height: 30px;
+  width:
+    30px;
 
-  flex: 0 0 30px;
+  height:
+    30px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  flex:
+    0 0 30px;
 
-  border-radius: 7px;
+  display:
+    inline-flex;
 
-  background: #f8fafc;
+  align-items:
+    center;
 
-  color: #64748b;
+  justify-content:
+    center;
+
+  border-radius:
+    7px;
+
+  background:
+    #f8fafc;
+
+  color:
+    #64748b;
 }
 
 
 .navbar-modulo-dropdown-item.active
 .navbar-modulo-dropdown-icon {
-  background: #dbeafe;
+  background:
+    #dbeafe;
 
-  color: #2563eb;
+  color:
+    #2563eb;
 }
 
 
 .navbar-modulo-dropdown-text {
-  flex: 1;
+  flex:
+    1;
 
-  min-width: 0;
+  min-width:
+    0;
 }
 
 
@@ -1790,59 +1834,61 @@ body {
 ========================================================= */
 
 .navbar-hamburger {
-  position: relative;
+  position:
+    relative;
 
-  display: none;
+  display:
+    none;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
 
-  width: 42px;
-  height: 42px;
+  justify-content:
+    center;
 
-  padding: 0;
+  width:
+    42px;
 
-  border: 1px solid #dbe2ea;
-  border-radius: 9px;
+  height:
+    42px;
 
-  background: #ffffff;
+  padding:
+    0;
 
-  color: #334155;
+  border:
+    1px solid
+    #dbe2ea;
 
-  cursor: pointer;
+  border-radius:
+    9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #334155;
+
+  cursor:
+    pointer;
 }
 
 
 .navbar-hamburger-badge {
-  position: absolute;
+  position:
+    absolute;
 
-  top: -5px;
-  right: -5px;
+  top:
+    -5px;
 
-  min-width: 19px;
-  height: 19px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 5px;
-
-  border: 2px solid #ffffff;
-  border-radius: 999px;
-
-  background: #f97316;
-
-  color: #ffffff;
-
-  font-size: 9px;
-  font-weight: 850;
+  right:
+    -5px;
 }
 
 
 .navbar-mobile-overlay,
 .navbar-mobile-drawer {
-  display: none;
+  display:
+    none;
 }
 
 
@@ -1850,28 +1896,36 @@ body {
    MOBILE
 ========================================================= */
 
-@media (max-width: 800px) {
-
-  /*
-   * Remove a navegação inferior do Navbar.css antigo.
-   */
+@media (
+  max-width:
+    800px
+) {
 
   .main-navbar
   .navbar-navigation {
-    display: none !important;
+    display:
+      none !important;
 
-    position: static !important;
+    position:
+      static !important;
 
-    width: auto !important;
-    height: auto !important;
+    width:
+      auto !important;
 
-    padding: 0 !important;
-    margin: 0 !important;
+    height:
+      auto !important;
+
+    padding:
+      0 !important;
+
+    margin:
+      0 !important;
   }
 
 
   body {
-    padding-bottom: 0 !important;
+    padding-bottom:
+      0 !important;
   }
 
 
@@ -1881,68 +1935,88 @@ body {
       1fr
       auto !important;
 
-    gap: 10px !important;
+    gap:
+      10px !important;
   }
 
 
   .main-navbar
   .navbar-hamburger {
-    display: inline-flex !important;
+    display:
+      inline-flex !important;
   }
 
 
   .main-navbar
   .navbar-user-controls {
-    display: none !important;
+    display:
+      none !important;
   }
 
 
   .main-navbar
   .navbar-auth-section {
-    display: flex !important;
+    display:
+      flex !important;
 
-    align-items: center !important;
-    justify-content: flex-end !important;
+    align-items:
+      center !important;
+
+    justify-content:
+      flex-end !important;
   }
 
-
-  /* =======================================================
-     OVERLAY
-  ======================================================= */
 
   .navbar-mobile-overlay {
-    position: fixed;
+    position:
+      fixed;
 
-    inset: 0;
+    inset:
+      0;
 
-    z-index: 3900;
+    z-index:
+      3900;
 
-    display: block;
+    display:
+      block;
 
-    width: 100%;
-    height: 100%;
+    width:
+      100%;
 
-    padding: 0;
+    height:
+      100%;
 
-    border: 0;
+    padding:
+      0;
+
+    border:
+      0;
 
     background:
-      rgba(15, 23, 42, 0.46);
+      rgba(
+        15,
+        23,
+        42,
+        0.46
+      );
   }
 
 
-  /* =======================================================
-     DRAWER
-  ======================================================= */
-
   .navbar-mobile-drawer {
-    position: fixed;
+    position:
+      fixed;
 
-    top: 0;
-    right: 0;
-    bottom: 0;
+    top:
+      0;
 
-    z-index: 4000;
+    right:
+      0;
+
+    bottom:
+      0;
+
+    z-index:
+      4000;
 
     width:
       min(
@@ -1950,223 +2024,350 @@ body {
         370px
       );
 
-    height: 100vh;
-    height: 100dvh;
+    height:
+      100vh;
 
-    display: flex;
+    height:
+      100dvh;
 
-    flex-direction: column;
+    display:
+      flex;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+    flex-direction:
+      column;
 
-    background: #ffffff;
+    overflow-x:
+      hidden;
+
+    overflow-y:
+      auto;
+
+    background:
+      #ffffff;
 
     box-shadow:
-      -18px 0 48px
-      rgba(15, 23, 42, 0.2);
+      -18px
+      0
+      48px
+      rgba(
+        15,
+        23,
+        42,
+        0.2
+      );
   }
 
 
   .navbar-mobile-header {
-    min-height: 68px;
+    min-height:
+      68px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display:
+      flex;
 
-    gap: 14px;
+    align-items:
+      center;
 
-    padding: 12px 15px;
+    justify-content:
+      space-between;
 
-    border-bottom: 1px solid #e2e8f0;
+    gap:
+      14px;
+
+    padding:
+      12px
+      15px;
+
+    border-bottom:
+      1px solid
+      #e2e8f0;
   }
 
 
   .navbar-mobile-header > div {
-    display: flex;
-    flex-direction: column;
+    display:
+      flex;
 
-    gap: 2px;
+    flex-direction:
+      column;
+
+    gap:
+      2px;
   }
 
 
   .navbar-mobile-eyebrow {
-    color: #94a3b8;
+    color:
+      #94a3b8;
 
-    font-size: 9px;
-    font-weight: 800;
+    font-size:
+      9px;
 
-    letter-spacing: 0.08em;
+    font-weight:
+      800;
 
-    text-transform: uppercase;
+    letter-spacing:
+      0.08em;
+
+    text-transform:
+      uppercase;
   }
 
 
   .navbar-mobile-header strong {
-    color: #0f172a;
+    color:
+      #0f172a;
 
-    font-size: 18px;
+    font-size:
+      18px;
   }
 
 
   .navbar-mobile-close {
-    width: 39px;
-    height: 39px;
+    width:
+      39px;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    height:
+      39px;
 
-    padding: 0;
+    display:
+      inline-flex;
 
-    border: 1px solid #e2e8f0;
-    border-radius: 9px;
+    align-items:
+      center;
 
-    background: #ffffff;
+    justify-content:
+      center;
 
-    color: #475569;
+    padding:
+      0;
+
+    border:
+      1px solid
+      #e2e8f0;
+
+    border-radius:
+      9px;
+
+    background:
+      #ffffff;
+
+    color:
+      #475569;
   }
 
 
-  /* =======================================================
-     USUÁRIO
-  ======================================================= */
-
   .navbar-mobile-user {
-    display: flex;
-    align-items: center;
+    display:
+      flex;
 
-    gap: 11px;
+    align-items:
+      center;
 
-    margin: 12px 12px 4px;
+    gap:
+      11px;
 
-    padding: 11px 12px;
+    margin:
+      12px
+      12px
+      4px;
 
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    padding:
+      11px
+      12px;
 
-    background: #f8fafc;
+    border:
+      1px solid
+      #e2e8f0;
+
+    border-radius:
+      10px;
+
+    background:
+      #f8fafc;
   }
 
 
   .navbar-mobile-avatar {
-    width: 38px;
-    height: 38px;
+    width:
+      38px;
 
-    flex: 0 0 38px;
+    height:
+      38px;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    flex:
+      0 0 38px;
 
-    border-radius: 50%;
+    display:
+      inline-flex;
 
-    background: #dbeafe;
+    align-items:
+      center;
 
-    color: #1d4ed8;
+    justify-content:
+      center;
 
-    font-size: 12px;
-    font-weight: 800;
+    border-radius:
+      50%;
+
+    background:
+      #dbeafe;
+
+    color:
+      #1d4ed8;
+
+    font-size:
+      12px;
+
+    font-weight:
+      800;
   }
 
 
   .navbar-mobile-user > div {
-    min-width: 0;
+    min-width:
+      0;
 
-    display: flex;
-    flex-direction: column;
+    display:
+      flex;
 
-    gap: 2px;
+    flex-direction:
+      column;
+
+    gap:
+      2px;
   }
 
 
   .navbar-mobile-user strong {
-    overflow: hidden;
+    overflow:
+      hidden;
 
-    color: #0f172a;
+    color:
+      #0f172a;
 
-    font-size: 13px;
+    font-size:
+      13px;
 
-    text-overflow: ellipsis;
+    text-overflow:
+      ellipsis;
 
-    white-space: nowrap;
+    white-space:
+      nowrap;
   }
 
 
   .navbar-mobile-user span:not(.navbar-mobile-avatar) {
-    color: #64748b;
+    color:
+      #64748b;
 
-    font-size: 10px;
+    font-size:
+      10px;
   }
 
 
-  /* =======================================================
-     MENU
-  ======================================================= */
-
   .navbar-mobile-nav {
-    flex: 1;
+    flex:
+      1;
 
-    display: flex;
-    flex-direction: column;
+    display:
+      flex;
 
-    gap: 4px;
+    flex-direction:
+      column;
 
-    padding: 8px 12px 14px;
+    gap:
+      4px;
+
+    padding:
+      8px
+      12px
+      14px;
   }
 
 
   .navbar-mobile-link,
   .navbar-mobile-group-trigger {
-    width: 100%;
-    min-height: 47px;
+    width:
+      100%;
 
-    display: flex;
-    align-items: center;
+    min-height:
+      47px;
 
-    gap: 10px;
+    display:
+      flex;
 
-    padding: 5px 9px;
+    align-items:
+      center;
 
-    border: 1px solid transparent;
-    border-radius: 9px;
+    gap:
+      10px;
 
-    background: transparent;
+    padding:
+      5px
+      9px;
 
-    color: #475569;
+    border:
+      1px solid
+      transparent;
 
-    font: inherit;
+    border-radius:
+      9px;
 
-    text-align: left;
+    background:
+      transparent;
+
+    color:
+      #475569;
+
+    font:
+      inherit;
+
+    text-align:
+      left;
   }
 
 
   .navbar-mobile-link.active,
   .navbar-mobile-group-trigger.active {
-    border-color: #dbeafe;
+    border-color:
+      #dbeafe;
 
-    background: #eff6ff;
+    background:
+      #eff6ff;
 
-    color: #1d4ed8;
+    color:
+      #1d4ed8;
   }
 
 
   .navbar-mobile-link-icon {
-    width: 34px;
-    height: 34px;
+    width:
+      34px;
 
-    flex: 0 0 34px;
+    height:
+      34px;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    flex:
+      0 0 34px;
 
-    border-radius: 8px;
+    display:
+      inline-flex;
 
-    background: #f1f5f9;
+    align-items:
+      center;
 
-    color: #64748b;
+    justify-content:
+      center;
+
+    border-radius:
+      8px;
+
+    background:
+      #f1f5f9;
+
+    color:
+      #64748b;
   }
 
 
@@ -2174,176 +2375,230 @@ body {
   .navbar-mobile-link-icon,
   .navbar-mobile-group-trigger.active
   .navbar-mobile-link-icon {
-    background: #dbeafe;
+    background:
+      #dbeafe;
 
-    color: #2563eb;
+    color:
+      #2563eb;
   }
 
 
   .navbar-mobile-link-label {
-    flex: 1;
+    flex:
+      1;
 
-    min-width: 0;
+    min-width:
+      0;
 
-    font-size: 13px;
-    font-weight: 700;
+    font-size:
+      13px;
+
+    font-weight:
+      700;
   }
 
 
   .navbar-mobile-chevron {
-    flex: 0 0 auto;
+    flex:
+      0 0 auto;
 
-    color: #94a3b8;
+    color:
+      #94a3b8;
 
     transition:
-      transform 0.16s ease;
+      transform
+      0.16s
+      ease;
   }
 
 
   .navbar-mobile-chevron.open {
     transform:
-      rotate(180deg);
+      rotate(
+        180deg
+      );
   }
 
-
-  .navbar-mobile-count {
-    min-width: 22px;
-    height: 22px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0 6px;
-
-    border-radius: 999px;
-
-    background: #fff7ed;
-
-    color: #c2410c;
-
-    font-size: 9px;
-    font-weight: 850;
-  }
-
-
-  /* =======================================================
-     SUBMENU
-  ======================================================= */
 
   .navbar-mobile-submenu {
-    display: flex;
-    flex-direction: column;
+    display:
+      flex;
 
-    gap: 3px;
+    flex-direction:
+      column;
 
-    margin: 2px 0 5px 25px;
+    gap:
+      3px;
 
-    padding: 3px 0 3px 14px;
+    margin:
+      2px
+      0
+      5px
+      25px;
 
-    border-left: 1px solid #dbe2ea;
+    padding:
+      3px
+      0
+      3px
+      14px;
+
+    border-left:
+      1px solid
+      #dbe2ea;
   }
 
 
   .navbar-mobile-submenu-item {
-    width: 100%;
-    min-height: 42px;
+    width:
+      100%;
 
-    display: flex;
-    align-items: center;
+    min-height:
+      42px;
 
-    gap: 9px;
+    display:
+      flex;
 
-    padding: 6px 10px;
+    align-items:
+      center;
 
-    border: 0;
-    border-radius: 8px;
+    gap:
+      9px;
 
-    background: transparent;
+    padding:
+      6px
+      10px;
 
-    color: #64748b;
+    border:
+      0;
 
-    font: inherit;
-    font-size: 12px;
-    font-weight: 650;
+    border-radius:
+      8px;
 
-    text-align: left;
+    background:
+      transparent;
+
+    color:
+      #64748b;
+
+    font:
+      inherit;
+
+    font-size:
+      12px;
+
+    font-weight:
+      650;
+
+    text-align:
+      left;
   }
 
 
   .navbar-mobile-submenu-item.active {
-    background: #eff6ff;
+    background:
+      #eff6ff;
 
-    color: #1d4ed8;
+    color:
+      #1d4ed8;
   }
 
 
   .navbar-mobile-submenu-item > span:first-of-type {
-    flex: 1;
+    flex:
+      1;
   }
 
 
-  /* =======================================================
-     ADMINISTRAÇÃO
-  ======================================================= */
-
   .navbar-mobile-admin {
-    display: flex;
-    flex-direction: column;
+    display:
+      flex;
 
-    gap: 3px;
+    flex-direction:
+      column;
 
-    padding: 12px;
+    gap:
+      3px;
 
-    border-top: 1px solid #e2e8f0;
+    padding:
+      12px;
 
-    background: #fcfdff;
+    border-top:
+      1px solid
+      #e2e8f0;
+
+    background:
+      #fcfdff;
   }
 
 
   .navbar-mobile-section-label {
-    padding: 0 7px 5px;
+    padding:
+      0
+      7px
+      5px;
 
-    color: #94a3b8;
+    color:
+      #94a3b8;
 
-    font-size: 9px;
-    font-weight: 800;
+    font-size:
+      9px;
 
-    letter-spacing: 0.07em;
+    font-weight:
+      800;
 
-    text-transform: uppercase;
+    letter-spacing:
+      0.07em;
+
+    text-transform:
+      uppercase;
   }
 
 
   .navbar-mobile-admin-link {
-    width: 100%;
-    min-height: 42px;
+    width:
+      100%;
 
-    display: flex;
-    align-items: center;
+    min-height:
+      42px;
 
-    gap: 10px;
+    display:
+      flex;
 
-    padding: 0 10px;
+    align-items:
+      center;
 
-    border: 0;
-    border-radius: 8px;
+    gap:
+      10px;
 
-    background: transparent;
+    padding:
+      0
+      10px;
 
-    color: #475569;
+    border:
+      0;
 
-    font: inherit;
-    font-size: 12px;
-    font-weight: 650;
+    border-radius:
+      8px;
 
-    text-align: left;
+    background:
+      transparent;
+
+    color:
+      #475569;
+
+    font:
+      inherit;
+
+    font-size:
+      12px;
+
+    font-weight:
+      650;
+
+    text-align:
+      left;
   }
 
-
-  /* =======================================================
-     SAIR
-  ======================================================= */
 
   .navbar-mobile-footer {
     padding:
@@ -2351,39 +2606,65 @@ body {
       12px
       calc(
         10px +
-        env(safe-area-inset-bottom)
+        env(
+          safe-area-inset-bottom
+        )
       );
 
-    border-top: 1px solid #e2e8f0;
+    border-top:
+      1px solid
+      #e2e8f0;
   }
 
 
   .navbar-mobile-logout {
-    width: 100%;
-    min-height: 44px;
+    width:
+      100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height:
+      44px;
 
-    gap: 9px;
+    display:
+      flex;
 
-    border: 1px solid #fecaca;
-    border-radius: 9px;
+    align-items:
+      center;
 
-    background: #fffafa;
+    justify-content:
+      center;
 
-    color: #b91c1c;
+    gap:
+      9px;
 
-    font: inherit;
-    font-size: 12px;
-    font-weight: 700;
+    border:
+      1px solid
+      #fecaca;
+
+    border-radius:
+      9px;
+
+    background:
+      #fffafa;
+
+    color:
+      #b91c1c;
+
+    font:
+      inherit;
+
+    font-size:
+      12px;
+
+    font-weight:
+      700;
   }
 }
 
 
-@media (max-width: 420px) {
-
+@media (
+  max-width:
+    420px
+) {
   .navbar-mobile-drawer {
     width:
       min(
@@ -2393,15 +2674,325 @@ body {
   }
 }
 
+
 /* =========================================================
-   CONTADOR DE PEDIDOS - VERMELHO
+   CONTADOR DE PEDIDOS - NOTIFICAÇÃO
+   ALTERAÇÃO VISUAL
 ========================================================= */
 
-.navbar-pedidos-badge,
-.navbar-pedidos-badge-modulo,
-.navbar-mobile-count,
+/*
+ * Contador principal ao lado de "Pedidos".
+ *
+ * Antes o número recebia apenas fundo vermelho,
+ * sem altura, largura e centralização próprias.
+ */
+
+.navbar-pedidos-badge {
+  min-width:
+    22px;
+
+  height:
+    22px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex:
+    0 0 auto;
+
+  padding:
+    0
+    6px;
+
+  border:
+    2px solid
+    #ffffff;
+
+  border-radius:
+    999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444
+      0%,
+      #dc2626
+      100%
+    );
+
+  color:
+    #ffffff;
+
+  font-size:
+    10px;
+
+  font-weight:
+    850;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    -0.02em;
+
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space:
+    nowrap;
+
+  box-shadow:
+    0
+    4px
+    10px
+    rgba(
+      220,
+      38,
+      38,
+      0.24
+    );
+}
+
+
+/* =========================================================
+   CONTADOR NO BOTÃO DO MÓDULO
+========================================================= */
+
+.navbar-pedidos-badge-modulo {
+  position:
+    static !important;
+
+  flex:
+    0 0 auto;
+
+  margin-left:
+    2px;
+
+  margin-right:
+    1px;
+
+  transform:
+    translateY(
+      -1px
+    );
+}
+
+
+/* =========================================================
+   CONTADOR DENTRO DO DROPDOWN / MOBILE
+========================================================= */
+
+.navbar-mobile-count {
+  min-width:
+    22px;
+
+  height:
+    22px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex:
+    0 0 auto;
+
+  padding:
+    0
+    6px;
+
+  border:
+    2px solid
+    #ffffff;
+
+  border-radius:
+    999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444
+      0%,
+      #dc2626
+      100%
+    ) !important;
+
+  color:
+    #ffffff !important;
+
+  font-size:
+    10px;
+
+  font-weight:
+    850;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    -0.02em;
+
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space:
+    nowrap;
+
+  box-shadow:
+    0
+    4px
+    10px
+    rgba(
+      220,
+      38,
+      38,
+      0.20
+    );
+}
+
+
+/*
+ * Dentro do dropdown desktop o contador
+ * fica totalmente alinhado à direita.
+ */
+
+.navbar-modulo-dropdown-item
+.navbar-mobile-count {
+  margin-left:
+    auto;
+}
+
+
+/* =========================================================
+   CONTADOR DO HAMBÚRGUER
+========================================================= */
+
 .navbar-hamburger-badge {
-  background: #dc2626 !important;
-  color: #ffffff !important;
-  border-color: #ffffff !important;
+  min-width:
+    20px;
+
+  height:
+    20px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    0
+    5px;
+
+  border:
+    2px solid
+    #ffffff !important;
+
+  border-radius:
+    999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444
+      0%,
+      #dc2626
+      100%
+    ) !important;
+
+  color:
+    #ffffff !important;
+
+  font-size:
+    9px;
+
+  font-weight:
+    850;
+
+  line-height:
+    1;
+
+  font-variant-numeric:
+    tabular-nums;
+
+  box-shadow:
+    0
+    4px
+    10px
+    rgba(
+      220,
+      38,
+      38,
+      0.22
+    );
+}
+
+
+/* =========================================================
+   PEDIDOS ATIVO
+========================================================= */
+
+.navbar-navigation-link.active
+.navbar-pedidos-badge {
+  border-color:
+    #f8fbff;
+}
+
+
+/* =========================================================
+   RESPONSIVO DO CONTADOR
+========================================================= */
+
+@media (
+  max-width:
+    1100px
+) {
+  .navbar-pedidos-badge {
+    min-width:
+      20px;
+
+    height:
+      20px;
+
+    padding:
+      0
+      5px;
+
+    font-size:
+      9px;
+  }
+}
+
+
+@media (
+  max-width:
+    800px
+) {
+  .navbar-mobile-count {
+    min-width:
+      21px;
+
+    height:
+      21px;
+
+    padding:
+      0
+      5px;
+
+    font-size:
+      9px;
+  }
 }
