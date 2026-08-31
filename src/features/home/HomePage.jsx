@@ -1123,7 +1123,7 @@ function Home({
                 size={16}
               />
 
-              Gestão Industrial
+              Gestão Integrada
 
             </div>
 
@@ -1131,21 +1131,22 @@ function Home({
             <div className="home-public-title">
 
               <span>
-                PEDRASPLAST
+                GESTÃO INTEGRADA PEDRASPLAST
               </span>
 
 
               <h1>
-                Gestão da produção
+                Gestão integrada
                 em um único ambiente.
               </h1>
 
 
               <p>
-                Centralize informações,
-                acompanhe indicadores
-                e tenha uma visão clara
-                da operação industrial.
+                Centralize produção,
+                pedidos e informações
+                financeiras para acompanhar
+                a operação e apoiar decisões
+                com mais clareza.
               </p>
 
             </div>
@@ -1168,8 +1169,9 @@ function Home({
 
 
                   <span>
-                    Informações organizadas
-                    para acompanhamento
+                    Acompanhe indicadores,
+                    horas trabalhadas,
+                    paradas e desempenho
                     da operação.
                   </span>
 
@@ -1188,14 +1190,15 @@ function Home({
                 <div>
 
                   <strong>
-                    Pedidos e prazos
+                    Pedidos e financeiro
                   </strong>
 
 
                   <span>
-                    Acompanhe pedidos,
-                    previsões e atrasos
-                    em um único ambiente.
+                    Monitore pedidos, prazos,
+                    receitas, despesas,
+                    saldo e evolução
+                    financeira.
                   </span>
 
                 </div>
@@ -1219,7 +1222,8 @@ function Home({
 
                   <span>
                     Cada colaborador acessa
-                    somente os recursos
+                    somente os módulos
+                    e informações
                     autorizados.
                   </span>
 
@@ -1257,7 +1261,8 @@ function Home({
 
               <p>
                 Entre com suas credenciais
-                para continuar.
+                para acessar a plataforma
+                de gestão.
               </p>
 
             </div>
@@ -1368,7 +1373,8 @@ function Home({
                 size={15}
               />
 
-              Acesso protegido por usuário.
+              Acesso protegido
+              e controlado por usuário.
 
             </div>
 
@@ -1422,7 +1428,8 @@ function Home({
 
               <p>
                 Aqui estão as principais
-                informações da operação.
+                informações da produção,
+                dos pedidos e do financeiro.
               </p>
 
             </div>
@@ -2559,7 +2566,7 @@ function Home({
 
 
           <span>
-            Gestão e acompanhamento operacional
+            Gestão integrada e acompanhamento operacional
           </span>
 
         </footer>
