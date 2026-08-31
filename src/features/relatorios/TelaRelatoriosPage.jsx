@@ -1,6 +1,13 @@
 import React, { useMemo, useState } from "react";
 
-import { FiArrowLeft, FiChevronRight, FiDownload, FiEye, FiFileText, FiX } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiChevronRight,
+  FiDownload,
+  FiEye,
+  FiFileText,
+  FiX,
+} from "react-icons/fi";
 
 
 import {
@@ -71,6 +78,42 @@ const criarFiltrosIniciais = (fonteDados = "producao") => ({
 });
 
 /* =========================================================
+   CONTAGEM DE REGISTROS
+
+   Para Pedidos em Aberto:
+   - a tabela continua mostrando todos os itens;
+   - o contador considera pedidos únicos.
+========================================================= */
+
+function contarRegistrosRelatorio(relatorio, dados = []) {
+  if (!Array.isArray(dados)) {
+    return 0;
+  }
+
+  if (relatorio?.id !== "pedidos-abertos") {
+    return dados.length;
+  }
+
+  const pedidosUnicos = new Set();
+
+  for (const item of dados) {
+    const numeroPedido = String(
+      item?.pedido ??
+        item?.numero_pedido ??
+        item?.codigoPedido ??
+        item?.codigo_pedido ??
+        "",
+    ).trim();
+
+    if (numeroPedido) {
+      pedidosUnicos.add(numeroPedido);
+    }
+  }
+
+  return pedidosUnicos.size;
+}
+
+/* =========================================================
    COMPONENTE PRINCIPAL
 ========================================================= */
 
@@ -90,7 +133,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const relatorioSelecionado = useMemo(
-    () => RELATORIOS.find((relatorio) => relatorio.id === relatorioSelecionadoId) || null,
+    () =>
+      RELATORIOS.find(
+        (relatorio) => relatorio.id === relatorioSelecionadoId,
+      ) || null,
 
     [relatorioSelecionadoId],
   );
@@ -111,7 +157,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      PRODUÇÃO
   ===================================================== */
 
-  const temDadosExternos = Array.isArray(dadosExternos) && dadosExternos.length > 0;
+  const temDadosExternos =
+    Array.isArray(dadosExternos) && dadosExternos.length > 0;
 
   const {
     dados: dadosProducao,
@@ -125,7 +172,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       !relatorioEhCustom,
   });
 
-  const dadosProducaoBrutos = temDadosExternos ? dadosExternos : dadosProducao;
+  const dadosProducaoBrutos =
+    temDadosExternos ? dadosExternos : dadosProducao;
 
   /* =====================================================
      PEDIDOS
@@ -202,17 +250,27 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     if (relatorioSelecionado.id === "producao-produto") {
       const indiceProduto = chaves.indexOf("produto");
 
-      if (indiceProduto !== -1 && !chaves.includes("descricao_produto")) {
-        chaves.splice(indiceProduto + 1, 0, "descricao_produto");
+      if (
+        indiceProduto !== -1 &&
+        !chaves.includes("descricao_produto")
+      ) {
+        chaves.splice(
+          indiceProduto + 1,
+          0,
+          "descricao_produto",
+        );
       }
     }
 
     return chaves.map((chave) => ({
       chave,
 
-      titulo: TITULOS_COLUNAS_VISUALIZACAO[chave] || criarTituloAutomatico(chave),
+      titulo:
+        TITULOS_COLUNAS_VISUALIZACAO[chave] ||
+        criarTituloAutomatico(chave),
 
-      numerica: COLUNAS_NUMERICAS.has(chave),
+      numerica:
+        COLUNAS_NUMERICAS.has(chave),
     }));
   }, [relatorioEhCustom, relatorioSelecionado]);
 
@@ -225,50 +283,104 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    let lista = Array.isArray(dadosBrutos) ? dadosBrutos : [];
+    let lista =
+      Array.isArray(dadosBrutos)
+        ? dadosBrutos
+        : [];
 
-    if (filtros.injetora && filtros.injetora !== "Todos") {
+    if (
+      filtros.injetora &&
+      filtros.injetora !== "Todos"
+    ) {
       lista = lista.filter(
-        (item) => String(item.injetora || "").trim() === String(filtros.injetora).trim(),
+        (item) =>
+          String(
+            item.injetora || "",
+          ).trim() ===
+          String(
+            filtros.injetora,
+          ).trim(),
       );
     }
 
     return valoresUnicos(
-      lista.map((item) => item.cod_prod || item.produto),
+      lista.map(
+        (item) =>
+          item.cod_prod ||
+          item.produto,
+      ),
     );
-  }, [dadosBrutos, filtros.injetora, fonteEhPedidos, relatorioEhCustom]);
+  }, [
+    dadosBrutos,
+    filtros.injetora,
+    fonteEhPedidos,
+    relatorioEhCustom,
+  ]);
 
   /* =====================================================
      MATÉRIAS-PRIMAS
   ===================================================== */
 
   const mpsDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
+    if (
+      fonteEhPedidos ||
+      relatorioEhCustom ||
+      !Array.isArray(dadosBrutos)
+    ) {
       return [];
     }
 
     return valoresUnicos(
-      dadosBrutos.map((item) => item.mp || item.materia_prima),
+      dadosBrutos.map(
+        (item) =>
+          item.mp ||
+          item.materia_prima,
+      ),
     );
-  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
+  }, [
+    dadosBrutos,
+    fonteEhPedidos,
+    relatorioEhCustom,
+  ]);
 
   /* =====================================================
      TIPOS
   ===================================================== */
 
   const tiposDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
+    if (
+      fonteEhPedidos ||
+      relatorioEhCustom ||
+      !Array.isArray(dadosBrutos)
+    ) {
       return [];
     }
 
     return [
       ...new Set(
         dadosBrutos
-          .map((item) => String(item.tipo ?? "").trim())
-          .filter((tipo) => ["1", "2", "3"].includes(tipo)),
+          .map(
+            (item) =>
+              String(
+                item.tipo ?? "",
+              ).trim(),
+          )
+          .filter((tipo) =>
+            ["1", "2", "3"].includes(
+              tipo,
+            ),
+          ),
       ),
-    ].sort((a, b) => Number(a) - Number(b));
-  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
+    ].sort(
+      (a, b) =>
+        Number(a) -
+        Number(b),
+    );
+  }, [
+    dadosBrutos,
+    fonteEhPedidos,
+    relatorioEhCustom,
+  ]);
 
   /* =====================================================
      FILTRAGEM
@@ -284,39 +396,68 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     }
 
     /* =================================================
-           PEDIDOS
-        ================================================= */
+       PEDIDOS
+    ================================================= */
 
     if (fonteEhPedidos) {
       return dadosBrutos.filter((item) => {
         /* FILTRO FIXO */
 
-        if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
+        if (
+          relatorioSelecionado.filtroFixo &&
+          !relatorioSelecionado.filtroFixo(item)
+        ) {
           return false;
         }
 
         /* STATUS */
 
-        if (relatorioSelecionado.filtros.status && filtros.status && filtros.status !== "todos") {
-          if (normalizarTexto(item.status) !== normalizarTexto(filtros.status)) {
+        if (
+          relatorioSelecionado.filtros.status &&
+          filtros.status &&
+          filtros.status !== "todos"
+        ) {
+          if (
+            normalizarTexto(item.status) !==
+            normalizarTexto(filtros.status)
+          ) {
             return false;
           }
         }
 
         /* PERÍODO */
 
-        if (relatorioSelecionado.filtros.periodo) {
-          const dataRegistro = obterDataPedidoRelatorio(item);
+        if (
+          relatorioSelecionado.filtros.periodo
+        ) {
+          const dataRegistro =
+            obterDataPedidoRelatorio(
+              item,
+            );
 
-          if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
+          if (
+            (
+              filtros.dataInicio ||
+              filtros.dataFim
+            ) &&
+            !dataRegistro
+          ) {
             return false;
           }
 
-          if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
+          if (
+            filtros.dataInicio &&
+            dataRegistro <
+              filtros.dataInicio
+          ) {
             return false;
           }
 
-          if (filtros.dataFim && dataRegistro > filtros.dataFim) {
+          if (
+            filtros.dataFim &&
+            dataRegistro >
+              filtros.dataFim
+          ) {
             return false;
           }
         }
@@ -328,7 +469,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.cliente &&
           filtros.cliente !== "todos"
         ) {
-          if (String(item.cliente || "").trim() !== String(filtros.cliente).trim()) {
+          if (
+            String(
+              item.cliente || "",
+            ).trim() !==
+            String(
+              filtros.cliente,
+            ).trim()
+          ) {
             return false;
           }
         }
@@ -340,7 +488,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.vendedor &&
           filtros.vendedor !== "todos"
         ) {
-          if (String(item.vendedor || "").trim() !== String(filtros.vendedor).trim()) {
+          if (
+            String(
+              item.vendedor || "",
+            ).trim() !==
+            String(
+              filtros.vendedor,
+            ).trim()
+          ) {
             return false;
           }
         }
@@ -352,11 +507,20 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.cod_prod &&
           filtros.cod_prod !== "Todos"
         ) {
-          const codigo = String(
-            item.codigoProduto ?? item.codigo_produto ?? item.codigo ?? "",
-          ).trim();
+          const codigo =
+            String(
+              item.codigoProduto ??
+                item.codigo_produto ??
+                item.codigo ??
+                "",
+            ).trim();
 
-          if (codigo !== String(filtros.cod_prod).trim()) {
+          if (
+            codigo !==
+            String(
+              filtros.cod_prod,
+            ).trim()
+          ) {
             return false;
           }
         }
@@ -366,30 +530,50 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     }
 
     /* =================================================
-           PRODUÇÃO E PARADAS
-        ================================================= */
+       PRODUÇÃO E PARADAS
+    ================================================= */
 
     return dadosBrutos.filter((item) => {
       /* FILTRO FIXO */
 
-      if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
+      if (
+        relatorioSelecionado.filtroFixo &&
+        !relatorioSelecionado.filtroFixo(item)
+      ) {
         return false;
       }
 
       /* PERÍODO */
 
-      if (relatorioSelecionado.filtros.periodo) {
-        const dataRegistro = obterDataDoRegistro(item);
+      if (
+        relatorioSelecionado.filtros.periodo
+      ) {
+        const dataRegistro =
+          obterDataDoRegistro(item);
 
-        if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
+        if (
+          (
+            filtros.dataInicio ||
+            filtros.dataFim
+          ) &&
+          !dataRegistro
+        ) {
           return false;
         }
 
-        if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
+        if (
+          filtros.dataInicio &&
+          dataRegistro <
+            filtros.dataInicio
+        ) {
           return false;
         }
 
-        if (filtros.dataFim && dataRegistro > filtros.dataFim) {
+        if (
+          filtros.dataFim &&
+          dataRegistro >
+            filtros.dataFim
+        ) {
           return false;
         }
       }
@@ -401,7 +585,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         filtros.injetora &&
         filtros.injetora !== "Todos"
       ) {
-        if (String(item.injetora || "").trim() !== String(filtros.injetora).trim()) {
+        if (
+          String(
+            item.injetora || "",
+          ).trim() !==
+          String(
+            filtros.injetora,
+          ).trim()
+        ) {
           return false;
         }
       }
@@ -413,19 +604,43 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         filtros.cod_prod &&
         filtros.cod_prod !== "Todos"
       ) {
-        const produto = String(item.cod_prod || item.produto || "").trim();
+        const produto =
+          String(
+            item.cod_prod ||
+              item.produto ||
+              "",
+          ).trim();
 
-        if (produto !== String(filtros.cod_prod).trim()) {
+        if (
+          produto !==
+          String(
+            filtros.cod_prod,
+          ).trim()
+        ) {
           return false;
         }
       }
 
       /* MP */
 
-      if (relatorioSelecionado.filtros.mp && filtros.mp && filtros.mp !== "Todos") {
-        const mp = String(item.mp || item.materia_prima || "").trim();
+      if (
+        relatorioSelecionado.filtros.mp &&
+        filtros.mp &&
+        filtros.mp !== "Todos"
+      ) {
+        const mp =
+          String(
+            item.mp ||
+              item.materia_prima ||
+              "",
+          ).trim();
 
-        if (mp !== String(filtros.mp).trim()) {
+        if (
+          mp !==
+          String(
+            filtros.mp,
+          ).trim()
+        ) {
           return false;
         }
       }
@@ -437,34 +652,65 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         Array.isArray(filtros.tipo) &&
         filtros.tipo.length > 0
       ) {
-        const tipo = String(item.tipo || "").trim();
+        const tipo =
+          String(
+            item.tipo || "",
+          ).trim();
 
-        const selecionados = filtros.tipo.map((valor) => String(valor).trim());
+        const selecionados =
+          filtros.tipo.map(
+            (valor) =>
+              String(
+                valor,
+              ).trim(),
+          );
 
-        if (!selecionados.includes(tipo)) {
+        if (
+          !selecionados.includes(
+            tipo,
+          )
+        ) {
           return false;
         }
       }
 
       return true;
     });
-  }, [dadosBrutos, filtros, fonteEhPedidos, relatorioEhCustom, relatorioSelecionado]);
+  }, [
+    dadosBrutos,
+    filtros,
+    fonteEhPedidos,
+    relatorioEhCustom,
+    relatorioSelecionado,
+  ]);
 
   /* =====================================================
      TRANSFORMAR DADOS
   ===================================================== */
 
   const dadosRelatorio = useMemo(() => {
-    if (!relatorioSelecionado || relatorioEhCustom) {
+    if (
+      !relatorioSelecionado ||
+      relatorioEhCustom
+    ) {
       return [];
     }
 
-    if (typeof relatorioSelecionado.transformarDados === "function") {
-      return relatorioSelecionado.transformarDados(dadosFiltrados);
+    if (
+      typeof relatorioSelecionado.transformarDados ===
+      "function"
+    ) {
+      return relatorioSelecionado.transformarDados(
+        dadosFiltrados,
+      );
     }
 
     return dadosFiltrados;
-  }, [dadosFiltrados, relatorioEhCustom, relatorioSelecionado]);
+  }, [
+    dadosFiltrados,
+    relatorioEhCustom,
+    relatorioSelecionado,
+  ]);
 
   /* =====================================================
      DESCRIÇÃO DO PRODUTO
@@ -475,41 +721,102 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    if (relatorioSelecionado?.id !== "producao-produto") {
+    if (
+      relatorioSelecionado?.id !==
+      "producao-produto"
+    ) {
       return dadosRelatorio;
     }
 
     return dadosRelatorio.map((item) => {
-      const codigo = normalizarCodigoProduto(item.produto || item.cod_prod || "");
+      const codigo =
+        normalizarCodigoProduto(
+          item.produto ||
+            item.cod_prod ||
+            "",
+        );
 
       let descricao = "-";
 
-      if (descricoesProdutos instanceof Map) {
-        descricao = descricoesProdutos.get(codigo) || "-";
-      } else if (descricoesProdutos && typeof descricoesProdutos === "object") {
-        descricao = descricoesProdutos[codigo] || "-";
+      if (
+        descricoesProdutos instanceof
+        Map
+      ) {
+        descricao =
+          descricoesProdutos.get(
+            codigo,
+          ) || "-";
+      } else if (
+        descricoesProdutos &&
+        typeof descricoesProdutos ===
+          "object"
+      ) {
+        descricao =
+          descricoesProdutos[
+            codigo
+          ] || "-";
       }
 
       return {
         ...item,
 
-        descricao_produto: descricao,
+        descricao_produto:
+          descricao,
       };
     });
-  }, [dadosRelatorio, descricoesProdutos, relatorioEhCustom, relatorioSelecionado]);
+  }, [
+    dadosRelatorio,
+    descricoesProdutos,
+    relatorioEhCustom,
+    relatorioSelecionado,
+  ]);
+
+  /* =====================================================
+     TOTAL DE REGISTROS
+
+     Pedidos em Aberto:
+     conta pedidos únicos.
+
+     Demais relatórios:
+     mantém a quantidade de linhas.
+  ===================================================== */
+
+  const totalRegistrosRelatorio = useMemo(
+    () =>
+      contarRegistrosRelatorio(
+        relatorioSelecionado,
+        dadosRelatorioFinal,
+      ),
+    [
+      relatorioSelecionado,
+      dadosRelatorioFinal,
+    ],
+  );
 
   /* =====================================================
      SELECIONAR RELATÓRIO
   ===================================================== */
 
   const selecionarRelatorio = (id) => {
-    const relatorio = RELATORIOS.find((item) => item.id === id);
+    const relatorio =
+      RELATORIOS.find(
+        (item) => item.id === id,
+      );
 
-    setRelatorioSelecionadoId(id);
+    setRelatorioSelecionadoId(
+      id,
+    );
 
-    setFiltros(criarFiltrosIniciais(relatorio?.fonteDados || "producao"));
+    setFiltros(
+      criarFiltrosIniciais(
+        relatorio?.fonteDados ||
+          "producao",
+      ),
+    );
 
-    setVisualizacaoAberta(false);
+    setVisualizacaoAberta(
+      false,
+    );
   };
 
   /* =====================================================
@@ -517,11 +824,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const voltarListaRelatorios = () => {
-    setRelatorioSelecionadoId(null);
+    setRelatorioSelecionadoId(
+      null,
+    );
 
-    setFiltros(criarFiltrosIniciais());
+    setFiltros(
+      criarFiltrosIniciais(),
+    );
 
-    setVisualizacaoAberta(false);
+    setVisualizacaoAberta(
+      false,
+    );
   };
 
   /* =====================================================
@@ -538,47 +851,99 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     /* PEDIDOS */
 
     if (fonteEhPedidos) {
-      if (filtros.cliente && filtros.cliente !== "todos") {
-        lista.push(`Cliente: ${filtros.cliente}`);
+      if (
+        filtros.cliente &&
+        filtros.cliente !==
+          "todos"
+      ) {
+        lista.push(
+          `Cliente: ${filtros.cliente}`,
+        );
       }
 
-      if (filtros.vendedor && filtros.vendedor !== "todos") {
-        lista.push(`Vendedor: ${filtros.vendedor}`);
+      if (
+        filtros.vendedor &&
+        filtros.vendedor !==
+          "todos"
+      ) {
+        lista.push(
+          `Vendedor: ${filtros.vendedor}`,
+        );
       }
 
-      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
-        lista.push(`Produto: ${filtros.cod_prod}`);
+      if (
+        filtros.cod_prod &&
+        filtros.cod_prod !==
+          "Todos"
+      ) {
+        lista.push(
+          `Produto: ${filtros.cod_prod}`,
+        );
       }
 
-      if (relatorioSelecionado?.filtros?.status && filtros.status && filtros.status !== "todos") {
-        lista.push(`Status: ${filtros.status}`);
+      if (
+        relatorioSelecionado?.filtros?.status &&
+        filtros.status &&
+        filtros.status !==
+          "todos"
+      ) {
+        lista.push(
+          `Status: ${filtros.status}`,
+        );
       }
     } else {
       /* PRODUÇÃO */
 
-      if (filtros.injetora && filtros.injetora !== "Todos") {
-        lista.push(`Injetora: ${filtros.injetora}`);
+      if (
+        filtros.injetora &&
+        filtros.injetora !==
+          "Todos"
+      ) {
+        lista.push(
+          `Injetora: ${filtros.injetora}`,
+        );
       }
 
-      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
-        lista.push(`Produto: ${filtros.cod_prod}`);
+      if (
+        filtros.cod_prod &&
+        filtros.cod_prod !==
+          "Todos"
+      ) {
+        lista.push(
+          `Produto: ${filtros.cod_prod}`,
+        );
       }
 
-      if (filtros.mp && filtros.mp !== "Todos") {
-        lista.push(`MP: ${filtros.mp}`);
+      if (
+        filtros.mp &&
+        filtros.mp !== "Todos"
+      ) {
+        lista.push(
+          `MP: ${filtros.mp}`,
+        );
       }
     }
 
     /* DATA INICIAL */
 
     if (filtros.dataInicio) {
-      lista.push(`De: ${filtros.dataInicio.split("-").reverse().join("/")}`);
+      lista.push(
+        `De: ${filtros.dataInicio
+          .split("-")
+          .reverse()
+          .join("/")}`,
+      );
     }
 
     /* DATA FINAL */
 
     if (filtros.dataFim) {
-      lista.push(`Até: ${filtros.dataFim.split("-").reverse().join("/")}`);
+      lista.push(
+        `Até: ${filtros.dataFim
+          .split("-")
+          .reverse()
+          .join("/")}`,
+      );
     }
 
     return lista.length > 0
@@ -597,16 +962,21 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return;
     }
 
-    const { gerarPdfRelatorio } = await import(
+    const {
+      gerarPdfRelatorio,
+    } = await import(
       "./exportacao/GerarPDF"
     );
 
     gerarPdfRelatorio({
-      relatorio: relatorioSelecionado,
+      relatorio:
+        relatorioSelecionado,
 
-      dados: dadosRelatorioFinal,
+      dados:
+        dadosRelatorioFinal,
 
-      textoFiltros: montarTextoFiltros(),
+      textoFiltros:
+        montarTextoFiltros(),
     });
   };
 
@@ -614,33 +984,43 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      EXCEL
   ===================================================== */
 
-  const handleGerarExcel = async () => {
-    if (relatorioEhCustom) {
-      return;
-    }
+  const handleGerarExcel =
+    async () => {
+      if (relatorioEhCustom) {
+        return;
+      }
 
-    const { gerarExcelRelatorio } = await import(
-      "./exportacao/GerarExcel"
-    );
+      const {
+        gerarExcelRelatorio,
+      } = await import(
+        "./exportacao/GerarExcel"
+      );
 
-    await gerarExcelRelatorio({
-      relatorio: relatorioSelecionado,
+      await gerarExcelRelatorio({
+        relatorio:
+          relatorioSelecionado,
 
-      dados: dadosRelatorioFinal,
-    });
-  };
+        dados:
+          dadosRelatorioFinal,
+      });
+    };
 
   /* =====================================================
      CARREGANDO
   ===================================================== */
 
-  if (loading && relatorioSelecionado) {
+  if (
+    loading &&
+    relatorioSelecionado
+  ) {
     return (
       <div className="relatorios-loading">
         <div className="relatorios-loading-card">
           <div className="relatorios-spinner" />
 
-          <p>Carregando dados do relatório...</p>
+          <p>
+            Carregando dados do relatório...
+          </p>
         </div>
       </div>
     );
@@ -658,23 +1038,33 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       {relatorioSelecionado && (
         <div className="relatorios-navegacao-topo">
-          <button type="button" className="btn-voltar-topo" onClick={voltarListaRelatorios}>
+          <button
+            type="button"
+            className="btn-voltar-topo"
+            onClick={
+              voltarListaRelatorios
+            }
+          >
             <FiArrowLeft />
 
-            <span>Painel de Relatórios</span>
+            <span>
+              Painel de Relatórios
+            </span>
           </button>
         </div>
       )}
 
       {/* =================================================
-    CABEÇALHO
-    APARECE SOMENTE NO MENU DE RELATÓRIOS
-================================================= */}
+          CABEÇALHO
+          APARECE SOMENTE NO MENU DE RELATÓRIOS
+      ================================================= */}
 
       {!relatorioSelecionado && (
         <div className="relatorios-header">
           <div>
-            <span className="relatorios-eyebrow">Central de Relatórios</span>
+            <span className="relatorios-eyebrow">
+              Central de Relatórios
+            </span>
 
             <h1>Relatórios</h1>
 
@@ -691,49 +1081,86 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       {!relatorioSelecionado && (
         <div className="relatorios-lista">
-          {categorias.map((categoria) => {
-            const relatoriosCategoria =
-              RELATORIOS_POR_CATEGORIA.get(categoria) || [];
+          {categorias.map(
+            (categoria) => {
+              const relatoriosCategoria =
+                RELATORIOS_POR_CATEGORIA.get(
+                  categoria,
+                ) || [];
 
-            return (
-              <section key={categoria} className="relatorios-categoria">
-                <div className="relatorios-categoria-header">
-                  <h2>{categoria}</h2>
+              return (
+                <section
+                  key={categoria}
+                  className="relatorios-categoria"
+                >
+                  <div className="relatorios-categoria-header">
+                    <h2>
+                      {categoria}
+                    </h2>
 
-                  <span>{relatoriosCategoria.length} relatório(s)</span>
-                </div>
+                    <span>
+                      {
+                        relatoriosCategoria.length
+                      }{" "}
+                      relatório(s)
+                    </span>
+                  </div>
 
-                <div className="relatorios-grid">
-                  {relatoriosCategoria.map((relatorio) => {
-                    const Icone = relatorio.icone;
+                  <div className="relatorios-grid">
+                    {relatoriosCategoria.map(
+                      (
+                        relatorio,
+                      ) => {
+                        const Icone =
+                          relatorio.icone;
 
-                    return (
-                      <button
-                        key={relatorio.id}
-                        type="button"
-                        className="relatorio-card"
-                        onClick={() => selecionarRelatorio(relatorio.id)}
-                      >
-                        <div className="relatorio-card-icone">
-                          <Icone />
-                        </div>
+                        return (
+                          <button
+                            key={
+                              relatorio.id
+                            }
+                            type="button"
+                            className="relatorio-card"
+                            onClick={() =>
+                              selecionarRelatorio(
+                                relatorio.id,
+                              )
+                            }
+                          >
+                            <div className="relatorio-card-icone">
+                              <Icone />
+                            </div>
 
-                        <div className="relatorio-card-conteudo">
-                          <span className="relatorio-card-categoria">{relatorio.categoria}</span>
+                            <div className="relatorio-card-conteudo">
+                              <span className="relatorio-card-categoria">
+                                {
+                                  relatorio.categoria
+                                }
+                              </span>
 
-                          <h3>{relatorio.titulo}</h3>
+                              <h3>
+                                {
+                                  relatorio.titulo
+                                }
+                              </h3>
 
-                          <p>{relatorio.descricao}</p>
-                        </div>
+                              <p>
+                                {
+                                  relatorio.descricao
+                                }
+                              </p>
+                            </div>
 
-                        <FiChevronRight className="relatorio-card-seta" />
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            );
-          })}
+                            <FiChevronRight className="relatorio-card-seta" />
+                          </button>
+                        );
+                      },
+                    )}
+                  </div>
+                </section>
+              );
+            },
+          )}
         </div>
       )}
 
@@ -748,263 +1175,422 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           =============================================== */}
 
           {!relatorioEhCustom && (
-          <div className="relatorio-selecionado-header">
-            <div className="relatorio-selecionado-icone">
-              {React.createElement(relatorioSelecionado.icone)}
+            <div className="relatorio-selecionado-header">
+              <div className="relatorio-selecionado-icone">
+                {React.createElement(
+                  relatorioSelecionado.icone,
+                )}
+              </div>
+
+              <div>
+                <span className="relatorio-selecionado-categoria">
+                  {
+                    relatorioSelecionado.categoria
+                  }
+                </span>
+
+                <h2>
+                  {
+                    relatorioSelecionado.titulo
+                  }
+                </h2>
+
+                <p>
+                  {
+                    relatorioSelecionado.descricao
+                  }
+                </p>
+              </div>
             </div>
-
-            <div>
-              <span className="relatorio-selecionado-categoria">
-                {relatorioSelecionado.categoria}
-              </span>
-
-              <h2>{relatorioSelecionado.titulo}</h2>
-
-              <p>{relatorioSelecionado.descricao}</p>
-            </div>
-          </div>
           )}
 
           {/* ===============================================
               RELATÓRIO CUSTOMIZADO
           =============================================== */}
 
-          {relatorioEhCustom && ComponenteCustomizado && (
-            <ComponenteCustomizado
-              relatorio={relatorioSelecionado}
-            />
-          )}
+          {relatorioEhCustom &&
+            ComponenteCustomizado && (
+              <ComponenteCustomizado
+                relatorio={
+                  relatorioSelecionado
+                }
+              />
+            )}
 
           {/* ===============================================
               ERRO PEDIDOS
           =============================================== */}
 
-          {fonteEhPedidos && erroPedidos && (
-            <div className="relatorios-erro">
-              {erroPedidos.message || "Não foi possível carregar os pedidos."}
-            </div>
-          )}
+          {fonteEhPedidos &&
+            erroPedidos && (
+              <div className="relatorios-erro">
+                {erroPedidos.message ||
+                  "Não foi possível carregar os pedidos."}
+              </div>
+            )}
 
           {/* ===============================================
               AÇÕES
           =============================================== */}
 
           {!relatorioEhCustom && (
-          <>
-          <div className="relatorio-acoes">
-            <button
-              type="button"
-              className="btn-relatorio"
-              onClick={() => setVisualizacaoAberta(true)}
-              disabled={dadosRelatorioFinal.length === 0}
-            >
-              <FiEye />
+            <>
+              <div className="relatorio-acoes">
+                <button
+                  type="button"
+                  className="btn-relatorio"
+                  onClick={() =>
+                    setVisualizacaoAberta(
+                      true,
+                    )
+                  }
+                  disabled={
+                    dadosRelatorioFinal.length ===
+                    0
+                  }
+                >
+                  <FiEye />
 
-              <div>
-                <strong>Visualizar</strong>
+                  <div>
+                    <strong>
+                      Visualizar
+                    </strong>
 
-                <span>Conferir antes de exportar</span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              className="btn-relatorio btn-relatorio-pdf"
-              onClick={handleGerarPDF}
-              disabled={dadosRelatorioFinal.length === 0}
-            >
-              <FiFileText />
-
-              <div>
-                <strong>Baixar PDF</strong>
-
-                <span>Relatório formatado</span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              className="btn-relatorio btn-relatorio-csv"
-              onClick={handleGerarExcel}
-              disabled={dadosRelatorioFinal.length === 0}
-            >
-              <FiDownload />
-
-              <div>
-                <strong>Exportar Excel</strong>
-
-                <span>Tabela XLSX</span>
-              </div>
-            </button>
-          </div>
-
-
-          {/* ===============================================
-              FILTROS
-          =============================================== */}
-
-          <div className="relatorio-filtros-card">
-            <div className="relatorio-filtros-header">
-              <div>
-                <h3>Parâmetros do relatório</h3>
-
-                <p>Refine os dados antes de visualizar ou exportar.</p>
-              </div>
-            </div>
-
-            {fonteEhPedidos ? (
-              <FiltrosPedidosRelatorio
-                filtros={filtros}
-
-                setFiltros={setFiltros}
-
-                pedidos={pedidosBrutos}
-
-                relatorio={relatorioSelecionado}
-              />
-            ) : (
-              <FiltrosDashboard
-                filtros={filtros}
-
-                setFiltros={setFiltros}
-
-                rawDados={dadosBrutos}
-
-                exibirPeriodo={relatorioSelecionado.filtros.periodo}
-
-                exibirInjetora={relatorioSelecionado.filtros.injetora}
-
-                exibirTurno={false}
-
-                exibirProduto={relatorioSelecionado.filtros.produto}
-
-                exibirMp={relatorioSelecionado.filtros.mp}
-
-                exibirTipo={relatorioSelecionado.filtros.tipo}
-
-                tiposDisponiveis={tiposDisponiveis}
-
-                produtosDisponiveis={produtosDisponiveis}
-
-                mpsDisponiveis={mpsDisponiveis}
-
-                modoRelatorio={true}
-              />
-            )}
-          </div>
-
-          {/* ===============================================
-              RESUMO
-          =============================================== */}
-
-          <div className="relatorio-resumo-grid">
-            <div className="relatorio-resumo-card">
-              <span>Registros no relatório</span>
-
-              <strong>{dadosRelatorioFinal.length}</strong>
-            </div>
-
-            <div className="relatorio-resumo-card">
-              <span>Relatório selecionado</span>
-
-              <strong className="relatorio-resumo-texto">{relatorioSelecionado.titulo}</strong>
-            </div>
-
-            <div className="relatorio-resumo-card">
-              <span>Filtros aplicados</span>
-
-              <strong className="relatorio-resumo-texto">{montarTextoFiltros()}</strong>
-            </div>
-          </div>
-
-          
-          {/* ===============================================
-              VISUALIZAÇÃO
-          =============================================== */}
-
-          {visualizacaoAberta && (
-            <section className="relatorio-visualizacao">
-              <div className="relatorio-visualizacao-header">
-                <div>
-                  <span className="relatorio-visualizacao-eyebrow">Pré-visualização</span>
-
-                  <h3>{relatorioSelecionado.titulo}</h3>
-                </div>
+                    <span>
+                      Conferir antes de exportar
+                    </span>
+                  </div>
+                </button>
 
                 <button
                   type="button"
-                  className="relatorio-visualizacao-fechar"
-                  onClick={() => setVisualizacaoAberta(false)}
-                  aria-label="Fechar visualização"
+                  className="btn-relatorio btn-relatorio-pdf"
+                  onClick={
+                    handleGerarPDF
+                  }
+                  disabled={
+                    dadosRelatorioFinal.length ===
+                    0
+                  }
                 >
-                  <FiX />
+                  <FiFileText />
+
+                  <div>
+                    <strong>
+                      Baixar PDF
+                    </strong>
+
+                    <span>
+                      Relatório formatado
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-relatorio btn-relatorio-csv"
+                  onClick={
+                    handleGerarExcel
+                  }
+                  disabled={
+                    dadosRelatorioFinal.length ===
+                    0
+                  }
+                >
+                  <FiDownload />
+
+                  <div>
+                    <strong>
+                      Exportar Excel
+                    </strong>
+
+                    <span>
+                      Tabela XLSX
+                    </span>
+                  </div>
                 </button>
               </div>
 
-              <div className="relatorio-visualizacao-info">
-                <div className="relatorio-visualizacao-info-item">
-                  <span>Filtros</span>
+              {/* ===============================================
+                  FILTROS
+              =============================================== */}
 
-                  <strong>{montarTextoFiltros()}</strong>
+              <div className="relatorio-filtros-card">
+                <div className="relatorio-filtros-header">
+                  <div>
+                    <h3>
+                      Parâmetros do relatório
+                    </h3>
+
+                    <p>
+                      Refine os dados antes de visualizar ou exportar.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-                  <span>Registros</span>
+                {fonteEhPedidos ? (
+                  <FiltrosPedidosRelatorio
+                    filtros={
+                      filtros
+                    }
+                    setFiltros={
+                      setFiltros
+                    }
+                    pedidos={
+                      pedidosBrutos
+                    }
+                    relatorio={
+                      relatorioSelecionado
+                    }
+                  />
+                ) : (
+                  <FiltrosDashboard
+                    filtros={
+                      filtros
+                    }
+                    setFiltros={
+                      setFiltros
+                    }
+                    rawDados={
+                      dadosBrutos
+                    }
+                    exibirPeriodo={
+                      relatorioSelecionado
+                        .filtros
+                        .periodo
+                    }
+                    exibirInjetora={
+                      relatorioSelecionado
+                        .filtros
+                        .injetora
+                    }
+                    exibirTurno={
+                      false
+                    }
+                    exibirProduto={
+                      relatorioSelecionado
+                        .filtros
+                        .produto
+                    }
+                    exibirMp={
+                      relatorioSelecionado
+                        .filtros.mp
+                    }
+                    exibirTipo={
+                      relatorioSelecionado
+                        .filtros.tipo
+                    }
+                    tiposDisponiveis={
+                      tiposDisponiveis
+                    }
+                    produtosDisponiveis={
+                      produtosDisponiveis
+                    }
+                    mpsDisponiveis={
+                      mpsDisponiveis
+                    }
+                    modoRelatorio={
+                      true
+                    }
+                  />
+                )}
+              </div>
 
-                  <strong>{dadosRelatorioFinal.length}</strong>
+              {/* ===============================================
+                  RESUMO
+              =============================================== */}
+
+              <div className="relatorio-resumo-grid">
+                <div className="relatorio-resumo-card">
+                  <span>
+                    Registros no relatório
+                  </span>
+
+                  <strong>
+                    {
+                      totalRegistrosRelatorio
+                    }
+                  </strong>
+                </div>
+
+                <div className="relatorio-resumo-card">
+                  <span>
+                    Relatório selecionado
+                  </span>
+
+                  <strong className="relatorio-resumo-texto">
+                    {
+                      relatorioSelecionado.titulo
+                    }
+                  </strong>
+                </div>
+
+                <div className="relatorio-resumo-card">
+                  <span>
+                    Filtros aplicados
+                  </span>
+
+                  <strong className="relatorio-resumo-texto">
+                    {
+                      montarTextoFiltros()
+                    }
+                  </strong>
                 </div>
               </div>
 
-              {dadosRelatorioFinal.length > 0 ? (
-                <div className="relatorio-visualizacao-tabela-wrapper">
-                  <table className="relatorio-visualizacao-tabela">
-                    <thead>
-                      <tr>
-                        {colunasVisualizacao.map((coluna) => (
-                          <th
-                            key={coluna.chave}
-                            className={coluna.numerica ? "coluna-numerica" : ""}
-                          >
-                            {coluna.titulo}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
+              {/* ===============================================
+                  VISUALIZAÇÃO
+              =============================================== */}
 
-                    <tbody>
-                      {dadosRelatorioFinal.map((item, indice) => (
-                        <tr key={`${relatorioSelecionado.id}-${indice}`}>
-                          {colunasVisualizacao.map((coluna) => (
-                            <td
-                              key={coluna.chave}
-                              className={coluna.numerica ? "coluna-numerica" : ""}
-                            >
-                              {obterValorVisualizacao(item, coluna.chave)}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="relatorio-visualizacao-vazia">
-                  <FiFileText />
+              {visualizacaoAberta && (
+                <section className="relatorio-visualizacao">
+                  <div className="relatorio-visualizacao-header">
+                    <div>
+                      <span className="relatorio-visualizacao-eyebrow">
+                        Pré-visualização
+                      </span>
 
-                  <strong>Nenhum registro encontrado</strong>
+                      <h3>
+                        {
+                          relatorioSelecionado.titulo
+                        }
+                      </h3>
+                    </div>
 
-                  <span>Ajuste os filtros para visualizar os dados.</span>
-                </div>
+                    <button
+                      type="button"
+                      className="relatorio-visualizacao-fechar"
+                      onClick={() =>
+                        setVisualizacaoAberta(
+                          false,
+                        )
+                      }
+                      aria-label="Fechar visualização"
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+
+                  <div className="relatorio-visualizacao-info">
+                    <div className="relatorio-visualizacao-info-item">
+                      <span>
+                        Filtros
+                      </span>
+
+                      <strong>
+                        {
+                          montarTextoFiltros()
+                        }
+                      </strong>
+                    </div>
+
+                    <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
+                      <span>
+                        Registros
+                      </span>
+
+                      <strong>
+                        {
+                          totalRegistrosRelatorio
+                        }
+                      </strong>
+                    </div>
+                  </div>
+
+                  {dadosRelatorioFinal.length >
+                  0 ? (
+                    <div className="relatorio-visualizacao-tabela-wrapper">
+                      <table className="relatorio-visualizacao-tabela">
+                        <thead>
+                          <tr>
+                            {colunasVisualizacao.map(
+                              (
+                                coluna,
+                              ) => (
+                                <th
+                                  key={
+                                    coluna.chave
+                                  }
+                                  className={
+                                    coluna.numerica
+                                      ? "coluna-numerica"
+                                      : ""
+                                  }
+                                >
+                                  {
+                                    coluna.titulo
+                                  }
+                                </th>
+                              ),
+                            )}
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {dadosRelatorioFinal.map(
+                            (
+                              item,
+                              indice,
+                            ) => (
+                              <tr
+                                key={`${relatorioSelecionado.id}-${indice}`}
+                              >
+                                {colunasVisualizacao.map(
+                                  (
+                                    coluna,
+                                  ) => (
+                                    <td
+                                      key={
+                                        coluna.chave
+                                      }
+                                      className={
+                                        coluna.numerica
+                                          ? "coluna-numerica"
+                                          : ""
+                                      }
+                                    >
+                                      {obterValorVisualizacao(
+                                        item,
+                                        coluna.chave,
+                                      )}
+                                    </td>
+                                  ),
+                                )}
+                              </tr>
+                            ),
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="relatorio-visualizacao-vazia">
+                      <FiFileText />
+
+                      <strong>
+                        Nenhum registro encontrado
+                      </strong>
+
+                      <span>
+                        Ajuste os filtros para visualizar os dados.
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="relatorio-visualizacao-footer">
+                    <span>
+                      {
+                        dadosRelatorioFinal.length
+                      }{" "}
+                      linha(s) exibida(s)
+                    </span>
+
+                    <span>
+                      Visualização atualizada conforme os filtros
+                    </span>
+                  </div>
+                </section>
               )}
-
-              <div className="relatorio-visualizacao-footer">
-                <span>{dadosRelatorioFinal.length} registro(s) exibido(s)</span>
-
-                <span>Visualização atualizada conforme os filtros</span>
-              </div>
-            </section>
-          )}
-          </>
+            </>
           )}
         </div>
       )}
