@@ -7,6 +7,30 @@ import {
 
 
 /* =========================================================
+   CLASSE DOS VALORES PRINCIPAIS
+========================================================= */
+
+function obterClasseNumero(
+  valor,
+) {
+  const numero =
+    Number(
+      valor ?? 0,
+    );
+
+  return [
+    "financeiro-card-numero",
+
+    numero < 0
+      ? "financeiro-card-numero-negativo"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+
+/* =========================================================
    CARD INDIVIDUAL
 ========================================================= */
 
@@ -14,6 +38,7 @@ function CardFinanceiro({
   titulo,
   dados,
   tipo,
+  exibirVariacao = true,
 }) {
   const previsto =
     Number(
@@ -69,6 +94,7 @@ function CardFinanceiro({
         `financeiro-card-${tipo}`,
       ].join(" ")}
     >
+
       {/* ===================================================
           TÍTULO
       =================================================== */}
@@ -94,7 +120,13 @@ function CardFinanceiro({
             Previsto
           </span>
 
-          <strong className="financeiro-card-numero">
+          <strong
+            className={
+              obterClasseNumero(
+                previsto,
+              )
+            }
+          >
             {formatarMoeda(
               previsto,
             )}
@@ -109,7 +141,13 @@ function CardFinanceiro({
             Realizado / a realizar
           </span>
 
-          <strong className="financeiro-card-numero">
+          <strong
+            className={
+              obterClasseNumero(
+                realizado,
+              )
+            }
+          >
             {formatarMoeda(
               realizado,
             )}
@@ -122,32 +160,35 @@ function CardFinanceiro({
 
       {/* ===================================================
           VARIAÇÃO
+          NÃO EXIBIMOS NO CARD SALDO
       =================================================== */}
 
-      <div
-        className={[
-          "financeiro-card-variacao",
-          `financeiro-card-variacao-${classeVariacao}`,
-        ].join(" ")}
-      >
+      {exibirVariacao && (
+        <div
+          className={[
+            "financeiro-card-variacao",
+            `financeiro-card-variacao-${classeVariacao}`,
+          ].join(" ")}
+        >
 
-        <span>
-          Variação
-        </span>
+          <span>
+            Variação
+          </span>
 
-        <strong>
-          {formatarMoeda(
-            variacao,
-          )}
-        </strong>
+          <strong>
+            {formatarMoeda(
+              variacao,
+            )}
+          </strong>
 
-        <span className="financeiro-card-percentual">
-          {formatarPercentual(
-            percentual,
-          )}
-        </span>
+          <span className="financeiro-card-percentual">
+            {formatarPercentual(
+              percentual,
+            )}
+          </span>
 
-      </div>
+        </div>
+      )}
 
     </section>
   );
@@ -187,6 +228,9 @@ function FinanceiroResumo({
         tipo="saldo"
         dados={
           resumo?.saldo
+        }
+        exibirVariacao={
+          false
         }
       />
 

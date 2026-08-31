@@ -1135,7 +1135,13 @@ export default function FinanceiroEvolucaoMensalPage() {
                     Média mensal
                   </span>
 
-                  <strong>
+                  <strong
+                    className={
+                      indicadores.mediaResultado >= 0
+                        ? "financeiro-insight-positivo"
+                        : "financeiro-insight-negativo"
+                    }
+                  >
                     {formatarMoeda(
                       indicadores.mediaResultado,
                     )}
