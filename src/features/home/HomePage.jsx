@@ -8,13 +8,17 @@ import {
   AlertTriangle,
   CalendarClock,
   CheckCircle2,
+  CircleDollarSign,
   Clock3,
   Factory,
   LockKeyhole,
   ShieldCheck,
   ShoppingCart,
+  TrendingDown,
+  TrendingUp,
   UploadCloud,
   UsersRound,
+  WalletCards,
 } from "lucide-react";
 
 import {
@@ -44,6 +48,11 @@ import {
 import {
   buscarPedidosOmie,
 } from "@/features/pedidos/omie.functions";
+
+import {
+  formatarMoeda,
+  processarFinanceiro,
+} from "@/features/financeiro/utils/financeiro.utils";
 
 import "./Home.css";
 
@@ -566,6 +575,21 @@ function Home({
     );
 
 
+  const podeVerFinanceiro =
+    Boolean(
+      user &&
+      (
+        isAdmin ||
+        (
+          !loadingPermissoes &&
+          podeAcessarTela(
+            "financeiro",
+          )
+        )
+      ),
+    );
+
+
   const podeImportar =
     Boolean(
       user &&
@@ -615,14 +639,6 @@ function Home({
 
   /* =====================================================
      MÉTRICAS DE PRODUÇÃO
-
-     IMPORTANTE:
-
-     É EXATAMENTE O MESMO HOOK
-     USADO PELO DASHBOARD.
-
-     Não existe mais cálculo
-     de horas dentro da Home.
   ===================================================== */
 
   const metricasProducao =
@@ -630,6 +646,189 @@ function Home({
       dadosProducao,
       TIPOS_PRODUCAO_HOME,
     );
+
+
+  /* =====================================================
+     FINANCEIRO
+     MÊS ATUAL
+  ===================================================== */
+
+  const periodoFinanceiro =
+    useMemo(
+      () => {
+        const agora =
+          new Date();
+
+
+        return {
+          ano:
+            agora.getFullYear(),
+
+          mes:
+            agora.getMonth() +
+            1,
+
+          nome:
+            agora.toLocaleDateString(
+              "pt-BR",
+              {
+                month:
+                  "long",
+
+                year:
+                  "numeric",
+              },
+            ),
+        };
+      },
+      [],
+    );
+
+
+  const {
+    data:
+      dadosFinanceiro = [],
+
+    error:
+      erroFinanceiro,
+
+    isLoading:
+      carregandoFinanceiro,
+  } =
+    useQuery({
+      queryKey: [
+        "home-resumo-financeiro",
+        periodoFinanceiro.ano,
+        periodoFinanceiro.mes,
+      ],
+
+
+      enabled:
+        podeVerFinanceiro,
+
+
+      queryFn:
+        async () => {
+          const {
+            data,
+            error,
+          } =
+            await supabase
+              .from(
+                "financeiro_omie_resumo",
+              )
+              .select(
+                `
+                  id,
+                  ano,
+                  mes,
+                  tipo,
+                  codigo_categoria,
+                  categoria,
+                  valor_previsto,
+                  valor_realizado
+                `,
+              )
+              .eq(
+                "ano",
+                periodoFinanceiro.ano,
+              )
+              .eq(
+                "mes",
+                periodoFinanceiro.mes,
+              )
+              .order(
+                "tipo",
+                {
+                  ascending:
+                    true,
+                },
+              )
+              .order(
+                "codigo_categoria",
+                {
+                  ascending:
+                    true,
+                },
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          return Array.isArray(
+            data,
+          )
+            ? data
+            : [];
+        },
+
+
+      staleTime:
+        5 * 60 * 1000,
+
+
+      refetchOnMount:
+        true,
+
+
+      refetchOnWindowFocus:
+        false,
+
+
+      retry:
+        1,
+    });
+
+
+  const financeiroHome =
+    useMemo(
+      () =>
+        processarFinanceiro(
+          dadosFinanceiro,
+        ),
+      [
+        dadosFinanceiro,
+      ],
+    );
+
+
+  const receitaFinanceira =
+    converterNumero(
+      financeiroHome
+        ?.resumo
+        ?.receitas
+        ?.realizado,
+    );
+
+
+  const despesaFinanceira =
+    converterNumero(
+      financeiroHome
+        ?.resumo
+        ?.despesas
+        ?.realizado,
+    );
+
+
+  const saldoFinanceiro =
+    converterNumero(
+      financeiroHome
+        ?.resumo
+        ?.saldo
+        ?.realizado,
+    );
+
+
+  const margemFinanceira =
+    receitaFinanceira !== 0
+      ? (
+          saldoFinanceiro /
+          receitaFinanceira
+        ) * 100
+      : 0;
 
 
   /* =====================================================
@@ -1318,9 +1517,7 @@ function Home({
             <div className="home-summary-grid">
 
 
-              {/* =============================================
-                  HORAS TRABALHADAS
-              ============================================= */}
+              {/* HORAS TRABALHADAS */}
 
               <article className="home-summary-card">
 
@@ -1360,9 +1557,7 @@ function Home({
               </article>
 
 
-              {/* =============================================
-                  HORAS PARADAS
-              ============================================= */}
+              {/* HORAS PARADAS */}
 
               <article
                 className={
@@ -1422,9 +1617,7 @@ function Home({
               </article>
 
 
-              {/* =============================================
-                  % HORAS TRABALHADAS
-              ============================================= */}
+              {/* % HORAS TRABALHADAS */}
 
               <article className="home-summary-card">
 
@@ -1466,9 +1659,7 @@ function Home({
               </article>
 
 
-              {/* =============================================
-                  REGISTROS DE PARADA
-              ============================================= */}
+              {/* REGISTROS DE PARADA */}
 
               <article
                 className={
@@ -1533,6 +1724,296 @@ function Home({
           )}
 
         </section>
+
+
+        {/* ===============================================
+            FINANCEIRO
+        =============================================== */}
+
+        {podeVerFinanceiro && (
+
+          <section className="home-summary-section">
+
+            <div className="home-section-heading">
+
+              <div>
+
+                <span>
+                  FINANCEIRO
+                </span>
+
+
+                <h2>
+                  Resumo financeiro
+                </h2>
+
+
+                <p>
+                  Visão geral de{" "}
+                  {periodoFinanceiro.nome}.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            {erroFinanceiro ? (
+
+              <div className="home-summary-error">
+
+                <AlertTriangle
+                  size={20}
+                />
+
+
+                <div>
+
+                  <strong>
+                    Não foi possível carregar
+                    o resumo financeiro.
+                  </strong>
+
+
+                  <span>
+                    Consulte o módulo Financeiro
+                    para verificar os dados.
+                  </span>
+
+                </div>
+
+              </div>
+
+            ) : (
+
+              <div className="home-summary-grid">
+
+
+                {/* RECEITAS */}
+
+                <article className="home-summary-card">
+
+                  <div className="home-summary-icon home-summary-icon-success">
+
+                    <TrendingUp
+                      size={22}
+                    />
+
+                  </div>
+
+
+                  <div className="home-summary-info">
+
+                    <span>
+                      RECEITAS
+                    </span>
+
+
+                    <strong
+                      style={{
+                        color:
+                          receitaFinanceira < 0
+                            ? "#dc2626"
+                            : "#059669",
+                      }}
+                    >
+
+                      {carregandoFinanceiro
+                        ? "-"
+                        : formatarMoeda(
+                            receitaFinanceira,
+                          )}
+
+                    </strong>
+
+
+                    <p>
+                      Realizado / a realizar
+                      no mês.
+                    </p>
+
+                  </div>
+
+                </article>
+
+
+                {/* DESPESAS */}
+
+                <article className="home-summary-card">
+
+                  <div
+                    className="home-summary-icon"
+                    style={{
+                      background:
+                        "#fef2f2",
+
+                      color:
+                        "#dc2626",
+                    }}
+                  >
+
+                    <TrendingDown
+                      size={22}
+                    />
+
+                  </div>
+
+
+                  <div className="home-summary-info">
+
+                    <span>
+                      DESPESAS
+                    </span>
+
+
+                    <strong>
+
+                      {carregandoFinanceiro
+                        ? "-"
+                        : formatarMoeda(
+                            despesaFinanceira,
+                          )}
+
+                    </strong>
+
+
+                    <p>
+                      Realizado / a realizar
+                      no mês.
+                    </p>
+
+                  </div>
+
+                </article>
+
+
+                {/* SALDO */}
+
+                <article className="home-summary-card">
+
+                  <div
+                    className="home-summary-icon"
+                    style={{
+                      background:
+                        saldoFinanceiro < 0
+                          ? "#fef2f2"
+                          : "#ecfdf5",
+
+                      color:
+                        saldoFinanceiro < 0
+                          ? "#dc2626"
+                          : "#059669",
+                    }}
+                  >
+
+                    <WalletCards
+                      size={22}
+                    />
+
+                  </div>
+
+
+                  <div className="home-summary-info">
+
+                    <span>
+                      SALDO
+                    </span>
+
+
+                    <strong
+                      style={{
+                        color:
+                          saldoFinanceiro < 0
+                            ? "#dc2626"
+                            : "#059669",
+                      }}
+                    >
+
+                      {carregandoFinanceiro
+                        ? "-"
+                        : formatarMoeda(
+                            saldoFinanceiro,
+                          )}
+
+                    </strong>
+
+
+                    <p>
+                      Receitas menos despesas.
+                    </p>
+
+                  </div>
+
+                </article>
+
+
+                {/* MARGEM */}
+
+                <article className="home-summary-card">
+
+                  <div
+                    className="home-summary-icon"
+                    style={{
+                      background:
+                        margemFinanceira < 0
+                          ? "#fef2f2"
+                          : "#ecfdf5",
+
+                      color:
+                        margemFinanceira < 0
+                          ? "#dc2626"
+                          : "#059669",
+                    }}
+                  >
+
+                    <CircleDollarSign
+                      size={22}
+                    />
+
+                  </div>
+
+
+                  <div className="home-summary-info">
+
+                    <span>
+                      MARGEM
+                    </span>
+
+
+                    <strong
+                      style={{
+                        color:
+                          margemFinanceira < 0
+                            ? "#dc2626"
+                            : "#059669",
+                      }}
+                    >
+
+                      {carregandoFinanceiro
+                        ? "-"
+                        : formatarPercentual(
+                            margemFinanceira,
+                          )}
+
+                    </strong>
+
+
+                    <p>
+                      Resultado sobre
+                      a receita.
+                    </p>
+
+                  </div>
+
+                </article>
+
+              </div>
+
+            )}
+
+          </section>
+
+        )}
 
 
         {/* ===============================================
