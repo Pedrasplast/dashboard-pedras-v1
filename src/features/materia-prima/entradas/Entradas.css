@@ -1,0 +1,597 @@
+/* =========================================================
+   ENTRADAS PP
+========================================================= */
+
+.entradas-pp {
+  width: 100%;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.entradas-pp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.entradas-pp-indicadores {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.entradas-pp-indicadores > div {
+  min-width: 105px;
+
+  padding: 8px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.entradas-pp-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.entradas-pp-indicadores strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+
+.entradas-pp-novo {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.entradas-pp-novo:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.entradas-pp-filtros {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 11px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #ffffff;
+}
+
+
+.entradas-pp-busca {
+  flex: 1;
+
+  min-width: 220px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  color: #64748b;
+}
+
+
+.entradas-pp-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.entradas-pp-busca:focus-within {
+  border-color: #2563eb;
+}
+
+
+.entradas-pp-filtros > input,
+.entradas-pp-filtros > select {
+  box-sizing: border-box;
+
+  height: 38px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.entradas-pp-filtros > select {
+  max-width: 190px;
+}
+
+
+.entradas-pp-atualizar {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.entradas-pp-atualizar:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+.entradas-pp-atualizar
+.girando {
+  animation:
+    entradas-girando
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes entradas-girando {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.entradas-pp-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.entradas-pp-tabela {
+  width: 100%;
+  min-width: 900px;
+
+  border-collapse: collapse;
+}
+
+
+.entradas-pp-tabela th {
+  padding: 10px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.entradas-pp-tabela td {
+  padding: 11px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+
+.entradas-pp-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.entradas-pp-data {
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.entradas-pp-fornecedor {
+  min-width: 190px;
+}
+
+
+.entradas-pp-fornecedor strong {
+  display: block;
+
+  color: #0f172a;
+}
+
+
+.entradas-pp-fornecedor small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #b45309;
+
+  font-size: 8px;
+}
+
+
+.entradas-pp-quantidade {
+  color: #2563eb !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+.entradas-pp-observacao {
+  max-width: 280px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.entradas-pp-status {
+  display: inline-flex;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.entradas-pp-status.ativo {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.entradas-pp-status.inativo {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   EDITAR
+========================================================= */
+
+.entradas-pp-editar {
+  min-height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.entradas-pp-editar:hover:not(:disabled) {
+  border-color: #93c5fd;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.entradas-pp-rodape {
+  padding: 10px 13px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.entradas-pp-rodape strong {
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.entradas-pp-estado,
+.entradas-pp-sem-resultado {
+  min-height: 270px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.entradas-pp-estado strong,
+.entradas-pp-sem-resultado strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+
+.entradas-pp-estado p,
+.entradas-pp-sem-resultado p {
+  max-width: 430px;
+
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.entradas-pp-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    entradas-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes entradas-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.entradas-pp-erro {
+  color: #b91c1c;
+}
+
+
+.entradas-pp-vazio-novo {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 7px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (
+  max-width: 1100px
+) {
+  .entradas-pp-filtros {
+    flex-wrap: wrap;
+  }
+
+
+  .entradas-pp-busca {
+    flex-basis: 100%;
+  }
+}
+
+
+@media (
+  max-width: 700px
+) {
+  .entradas-pp-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .entradas-pp-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .entradas-pp-indicadores > div {
+    min-width: 0;
+  }
+
+
+  .entradas-pp-novo {
+    width: 100%;
+  }
+
+
+  .entradas-pp-filtros {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .entradas-pp-busca,
+  .entradas-pp-filtros > input,
+  .entradas-pp-filtros > select,
+  .entradas-pp-atualizar {
+    width: 100%;
+    max-width: none;
+  }
+}

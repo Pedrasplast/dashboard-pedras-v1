@@ -54,6 +54,16 @@ const MODULOS_PERMISSOES = Object.freeze([
   },
 
   {
+    id: "materia-prima",
+    nome: "Matéria-Prima",
+    descricao:
+      "Controle e planejamento de matéria-prima PP.",
+    chaves: [
+      "materia_prima",
+    ],
+  },
+
+  {
     id: "financeiro",
     nome: "Financeiro",
     descricao:

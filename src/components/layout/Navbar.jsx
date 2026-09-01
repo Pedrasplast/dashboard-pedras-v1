@@ -11,6 +11,7 @@ import { useRouterState } from "@tanstack/react-router";
 
 import {
   Bell,
+  Boxes,
   ChevronDown,
   DollarSign,
   Factory,
@@ -88,6 +89,15 @@ const NAVIGATION_GROUPS = Object.freeze([
         notificationKey: "pedidos",
       },
     ],
+  },
+
+  {
+    type: "link",
+    id: "materia-prima",
+    label: "Matéria-Prima",
+    path: "/materia-prima",
+    icon: Boxes,
+    permissao: "materia_prima",
   },
 
   {

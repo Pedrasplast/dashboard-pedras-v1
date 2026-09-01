@@ -1,0 +1,1164 @@
+/* =========================================================
+   FORNECEDORES PP
+========================================================= */
+
+.fornecedores-pp {
+  width: 100%;
+}
+
+
+/* =========================================================
+   BARRA SUPERIOR
+========================================================= */
+
+.fornecedores-pp-toolbar {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 16px;
+
+  padding:
+    14px
+    18px;
+
+  border-bottom:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  background:
+    var(
+      --color-surface-subtle,
+      #f8fafc
+    );
+}
+
+
+.fornecedores-pp-resumo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+
+.fornecedores-pp-resumo-icone {
+  flex:
+    0
+    0
+    auto;
+
+  width: 38px;
+
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background:
+    var(
+      --color-primary-soft,
+      #eff6ff
+    );
+
+  color:
+    var(
+      --color-primary,
+      #2563eb
+    );
+}
+
+
+.fornecedores-pp-resumo > div:last-child {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.fornecedores-pp-resumo span {
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  font-size: 10px;
+
+  font-weight: 650;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+}
+
+
+.fornecedores-pp-resumo strong {
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-size: 18px;
+
+  font-weight: 750;
+
+  line-height: 1.1;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.fornecedores-pp-acoes {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   BUSCA
+========================================================= */
+
+.fornecedores-pp-busca {
+  width:
+    min(
+      360px,
+      100%
+    );
+
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding:
+    0
+    11px;
+
+  border:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  border-radius: 8px;
+
+  background:
+    var(
+      --color-surface,
+      #ffffff
+    );
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  transition:
+    border-color
+    0.15s
+    ease,
+    box-shadow
+    0.15s
+    ease;
+}
+
+
+.fornecedores-pp-busca:focus-within {
+  border-color:
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(
+      37,
+      99,
+      235,
+      0.08
+    );
+}
+
+
+.fornecedores-pp-busca input {
+  width: 100%;
+
+  min-width: 0;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font: inherit;
+
+  font-size: 12px;
+}
+
+
+.fornecedores-pp-busca input::placeholder {
+  color:
+    var(
+      --color-text-light,
+      #94a3b8
+    );
+}
+
+
+/* =========================================================
+   ATUALIZAR
+========================================================= */
+
+.fornecedores-pp-recarregar {
+  height: 38px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  border-radius: 8px;
+
+  background:
+    var(
+      --color-surface,
+      #ffffff
+    );
+
+  color:
+    var(
+      --color-text-secondary,
+      #475569
+    );
+
+  font: inherit;
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background-color
+    0.15s
+    ease,
+    border-color
+    0.15s
+    ease,
+    color
+    0.15s
+    ease;
+}
+
+
+.fornecedores-pp-recarregar:hover:not(:disabled) {
+  border-color:
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  background:
+    var(
+      --color-primary-soft,
+      #eff6ff
+    );
+
+  color:
+    var(
+      --color-primary,
+      #2563eb
+    );
+}
+
+
+.fornecedores-pp-recarregar:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+.fornecedores-pp-recarregar
+.girando {
+  animation:
+    fornecedores-pp-girando
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes fornecedores-pp-girando {
+  to {
+    transform:
+      rotate(
+        360deg
+      );
+  }
+}
+
+
+/* =========================================================
+   NOVO FORNECEDOR
+========================================================= */
+
+.fornecedores-pp-novo {
+  height: 38px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0
+    13px;
+
+  border:
+    1px solid
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  border-radius: 8px;
+
+  background:
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  color:
+    #ffffff;
+
+  font: inherit;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    opacity
+    0.15s
+    ease,
+    box-shadow
+    0.15s
+    ease,
+    transform
+    0.15s
+    ease;
+}
+
+
+.fornecedores-pp-novo:hover:not(:disabled) {
+  opacity: 0.92;
+
+  box-shadow:
+    0
+    4px
+    10px
+    rgba(
+      37,
+      99,
+      235,
+      0.18
+    );
+}
+
+
+.fornecedores-pp-novo:active:not(:disabled) {
+  transform:
+    translateY(
+      1px
+    );
+}
+
+
+.fornecedores-pp-novo:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.fornecedores-pp-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.fornecedores-pp-tabela {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+
+.fornecedores-pp-tabela th {
+  padding:
+    10px
+    14px;
+
+  border-bottom:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  background: #f8fafc;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  letter-spacing: 0.04em;
+
+  text-align: left;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.fornecedores-pp-tabela td {
+  padding:
+    11px
+    14px;
+
+  border-bottom:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-size: 12px;
+
+  vertical-align: middle;
+}
+
+
+.fornecedores-pp-tabela tbody tr {
+  transition:
+    background-color
+    0.12s
+    ease;
+}
+
+
+.fornecedores-pp-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.fornecedores-pp-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   FORNECEDOR
+========================================================= */
+
+.fornecedores-pp-nome {
+  min-width: 280px;
+}
+
+
+.fornecedores-pp-fornecedor {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.fornecedores-pp-fornecedor-icone {
+  flex:
+    0
+    0
+    auto;
+
+  width: 30px;
+
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background:
+    #f1f5f9;
+
+  color:
+    #64748b;
+}
+
+
+.fornecedores-pp-fornecedor > span {
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.fornecedores-pp-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 24px;
+
+  padding:
+    3px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.fornecedores-pp-status.ativo {
+  background:
+    #ecfdf5;
+
+  color:
+    #047857;
+}
+
+
+.fornecedores-pp-status.inativo {
+  background:
+    #f1f5f9;
+
+  color:
+    #64748b;
+}
+
+
+/* =========================================================
+   EDITAR FORNECEDOR
+========================================================= */
+
+.fornecedores-pp-editar {
+  min-height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  padding:
+    0
+    10px;
+
+  border:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  border-radius: 7px;
+
+  background:
+    var(
+      --color-surface,
+      #ffffff
+    );
+
+  color:
+    var(
+      --color-text-secondary,
+      #475569
+    );
+
+  font: inherit;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    border-color
+    0.15s
+    ease,
+    background-color
+    0.15s
+    ease,
+    color
+    0.15s
+    ease,
+    box-shadow
+    0.15s
+    ease;
+}
+
+
+.fornecedores-pp-editar:hover:not(:disabled) {
+  border-color:
+    rgba(
+      37,
+      99,
+      235,
+      0.4
+    );
+
+  background:
+    var(
+      --color-primary-soft,
+      #eff6ff
+    );
+
+  color:
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  box-shadow:
+    0
+    1px
+    3px
+    rgba(
+      15,
+      23,
+      42,
+      0.06
+    );
+}
+
+
+.fornecedores-pp-editar:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   BOTÃO ESTADO VAZIO
+========================================================= */
+
+.fornecedores-pp-vazio-novo {
+  min-height: 36px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-top: 8px;
+
+  padding:
+    0
+    13px;
+
+  border:
+    1px solid
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  border-radius: 8px;
+
+  background:
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  color:
+    #ffffff;
+
+  font: inherit;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    opacity
+    0.15s
+    ease,
+    box-shadow
+    0.15s
+    ease;
+}
+
+
+.fornecedores-pp-vazio-novo:hover:not(:disabled) {
+  opacity: 0.92;
+
+  box-shadow:
+    0
+    4px
+    10px
+    rgba(
+      37,
+      99,
+      235,
+      0.16
+    );
+}
+
+
+.fornecedores-pp-vazio-novo:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.fornecedores-pp-rodape {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    space-between;
+
+  gap: 12px;
+
+  padding:
+    11px
+    14px;
+
+  border-top:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  background:
+    #f8fafc;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  font-size: 10px;
+}
+
+
+.fornecedores-pp-rodape strong {
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.fornecedores-pp-estado {
+  min-height: 300px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    40px
+    20px;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  text-align: center;
+}
+
+
+.fornecedores-pp-estado strong {
+  margin-top: 4px;
+
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.fornecedores-pp-estado p {
+  max-width: 450px;
+
+  margin: 0;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   ERRO
+========================================================= */
+
+.fornecedores-pp-erro {
+  color: #b91c1c;
+}
+
+
+.fornecedores-pp-erro strong {
+  color: #991b1b;
+}
+
+
+.fornecedores-pp-erro button {
+  min-height: 34px;
+
+  margin-top: 6px;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1px solid
+    #fecaca;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #b91c1c;
+
+  font: inherit;
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+
+.fornecedores-pp-erro button:hover {
+  background:
+    #fef2f2;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.fornecedores-pp-loading {
+  width: 26px;
+
+  height: 26px;
+
+  border:
+    2px solid
+    #e2e8f0;
+
+  border-top-color:
+    #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    fornecedores-pp-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes fornecedores-pp-loading {
+  to {
+    transform:
+      rotate(
+        360deg
+      );
+  }
+}
+
+
+/* =========================================================
+   BUSCA SEM RESULTADO
+========================================================= */
+
+.fornecedores-pp-sem-resultado {
+  min-height: 220px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  padding:
+    30px
+    20px;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  text-align: center;
+}
+
+
+.fornecedores-pp-sem-resultado strong {
+  margin-top: 3px;
+
+  color:
+    var(
+      --color-text,
+      #0f172a
+    );
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+.fornecedores-pp-sem-resultado p {
+  margin: 0;
+
+  color:
+    var(
+      --color-text-muted,
+      #64748b
+    );
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width:
+    900px
+) {
+  .fornecedores-pp-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .fornecedores-pp-acoes {
+    width: 100%;
+
+    justify-content:
+      flex-start;
+  }
+
+
+  .fornecedores-pp-busca {
+    flex: 1;
+
+    width: auto;
+  }
+}
+
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media (
+  max-width:
+    600px
+) {
+  .fornecedores-pp-toolbar {
+    padding: 12px;
+  }
+
+
+  .fornecedores-pp-acoes {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .fornecedores-pp-busca {
+    width: 100%;
+  }
+
+
+  .fornecedores-pp-recarregar,
+  .fornecedores-pp-novo {
+    width: 100%;
+  }
+
+
+  .fornecedores-pp-tabela {
+    min-width: 620px;
+  }
+
+
+  .fornecedores-pp-rodape {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+}

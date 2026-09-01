@@ -1,0 +1,430 @@
+.compra-futura-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+
+.compra-futura-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - 48px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 60px
+    rgba(15, 23, 42, 0.24);
+}
+
+
+.compra-futura-modal-header {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.compra-futura-modal-icone {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.compra-futura-modal-header-texto {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.compra-futura-modal-header-texto > span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  text-transform: uppercase;
+}
+
+
+.compra-futura-modal-header-texto h3 {
+  margin: 2px 0 0;
+
+  color: #0f172a;
+
+  font-size: 18px;
+}
+
+
+.compra-futura-modal-header-texto p {
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+
+.compra-futura-modal-fechar {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+
+.compra-futura-modal-form {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 17px;
+
+  padding: 20px;
+
+  overflow-y: auto;
+}
+
+
+.compra-futura-modal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+
+.compra-futura-modal-campo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.compra-futura-modal-campo > span {
+  color: #475569;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.compra-futura-modal-campo > input,
+.compra-futura-modal-campo > select,
+.compra-futura-modal-campo > textarea {
+  box-sizing: border-box;
+
+  width: 100%;
+  min-width: 0;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+
+.compra-futura-modal-campo > input,
+.compra-futura-modal-campo > select {
+  height: 42px;
+}
+
+
+.compra-futura-modal-campo > textarea {
+  min-height: 78px;
+
+  padding-top: 10px;
+
+  resize: vertical;
+}
+
+
+.compra-futura-modal-campo > input:focus,
+.compra-futura-modal-campo > select:focus,
+.compra-futura-modal-campo > textarea:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+
+.compra-futura-modal-quantidade {
+  height: 42px;
+
+  display: flex;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+
+.compra-futura-modal-quantidade input {
+  flex: 1;
+
+  width: 0;
+  min-width: 0;
+
+  padding: 0 11px;
+
+  border: 0;
+  outline: 0;
+}
+
+
+.compra-futura-modal-quantidade > span {
+  min-width: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-left: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.compra-futura-modal-recebimento {
+  padding: 12px;
+
+  border: 1px solid #a7f3d0;
+  border-radius: 9px;
+
+  background: #ecfdf5;
+}
+
+
+.compra-futura-modal-recebimento small {
+  color: #047857;
+
+  font-size: 9px;
+}
+
+
+.compra-futura-modal-status {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #f8fafc;
+}
+
+
+.compra-futura-modal-status input {
+  width: 16px;
+  height: 16px;
+
+  accent-color: #2563eb;
+}
+
+
+.compra-futura-modal-status div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.compra-futura-modal-status strong {
+  color: #0f172a;
+
+  font-size: 11px;
+}
+
+
+.compra-futura-modal-status span {
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.compra-futura-modal-erro {
+  padding: 10px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+.compra-futura-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+
+.compra-futura-modal-cancelar,
+.compra-futura-modal-salvar {
+  min-height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.compra-futura-modal-cancelar {
+  border: 1px solid #e2e8f0;
+
+  background: #ffffff;
+
+  color: #475569;
+}
+
+
+.compra-futura-modal-salvar {
+  border: 1px solid #2563eb;
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+.compra-futura-modal-cancelar:disabled,
+.compra-futura-modal-salvar:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 600px) {
+  .compra-futura-modal-overlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+
+  .compra-futura-modal {
+    max-height: 94vh;
+
+    border-radius:
+      16px 16px 0 0;
+  }
+
+
+  .compra-futura-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .compra-futura-modal-acoes {
+    flex-direction: column-reverse;
+  }
+
+
+  .compra-futura-modal-cancelar,
+  .compra-futura-modal-salvar {
+    width: 100%;
+  }
+}

@@ -1,0 +1,491 @@
+.produto-pp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.5);
+
+  backdrop-filter: blur(2px);
+}
+
+
+.produto-pp-modal {
+  width: 100%;
+  max-width: 620px;
+  max-height: calc(100vh - 48px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 60px
+    rgba(15, 23, 42, 0.24);
+}
+
+
+.produto-pp-modal-header {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.produto-pp-modal-header-icone {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.produto-pp-modal-header-texto {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.produto-pp-modal-header-texto > span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  text-transform: uppercase;
+}
+
+
+.produto-pp-modal-header-texto h3 {
+  margin: 2px 0 0;
+
+  color: #0f172a;
+
+  font-size: 18px;
+  font-weight: 750;
+}
+
+
+.produto-pp-modal-header-texto p {
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+
+.produto-pp-modal-fechar {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+
+.produto-pp-modal-fechar:hover:not(:disabled) {
+  background: #e2e8f0;
+
+  color: #0f172a;
+}
+
+
+.produto-pp-modal-form {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 17px;
+
+  padding: 20px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+.produto-pp-modal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+
+.produto-pp-modal-campo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.produto-pp-modal-campo > span {
+  color: #475569;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.produto-pp-modal-campo > input {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 42px;
+  min-width: 0;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+
+.produto-pp-modal-campo > input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+
+.produto-pp-modal-peso {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 42px;
+
+  display: flex;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.produto-pp-modal-peso:focus-within {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+
+.produto-pp-modal-peso input {
+  flex: 1;
+
+  width: 0;
+  min-width: 0;
+
+  padding: 0 11px;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+
+.produto-pp-modal-peso > span {
+  min-width: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-left: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.produto-pp-modal-resumo {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+
+  padding: 11px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+
+  background: #f8fbff;
+}
+
+
+.produto-pp-modal-resumo > div {
+  min-width: 0;
+
+  padding: 8px 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+}
+
+
+.produto-pp-modal-resumo span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.produto-pp-modal-resumo strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #0f172a;
+
+  font-size: 11px;
+}
+
+
+.produto-pp-modal-status {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  cursor: pointer;
+}
+
+
+.produto-pp-modal-status input {
+  width: 16px;
+  height: 16px;
+
+  margin-top: 1px;
+
+  accent-color: #2563eb;
+}
+
+
+.produto-pp-modal-status div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.produto-pp-modal-status strong {
+  color: #0f172a;
+
+  font-size: 11px;
+}
+
+
+.produto-pp-modal-status span {
+  color: #64748b;
+
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+
+.produto-pp-modal-erro {
+  padding: 10px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+.produto-pp-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+
+.produto-pp-modal-cancelar,
+.produto-pp-modal-salvar {
+  min-height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.produto-pp-modal-cancelar {
+  border: 1px solid #e2e8f0;
+
+  background: #ffffff;
+
+  color: #475569;
+}
+
+
+.produto-pp-modal-salvar {
+  border: 1px solid #2563eb;
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+.produto-pp-modal-cancelar:disabled,
+.produto-pp-modal-salvar:disabled,
+.produto-pp-modal-fechar:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 600px) {
+  .produto-pp-modal-overlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+
+  .produto-pp-modal {
+    max-height: 94vh;
+
+    border-radius:
+      16px 16px 0 0;
+  }
+
+
+  .produto-pp-modal-grid,
+  .produto-pp-modal-resumo {
+    grid-template-columns: 1fr;
+  }
+
+
+  .produto-pp-modal-acoes {
+    flex-direction: column-reverse;
+  }
+
+
+  .produto-pp-modal-cancelar,
+  .produto-pp-modal-salvar {
+    width: 100%;
+  }
+}

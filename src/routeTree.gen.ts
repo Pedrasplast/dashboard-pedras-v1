@@ -19,6 +19,7 @@ import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as FinanceiroEvolucaoMensalRouteImport } from './routes/financeiro-evolucao-mensal'
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MateriaPrimaRouteImport } from './routes/materia-prima'
 import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
@@ -74,6 +75,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MateriaPrimaRoute = MateriaPrimaRouteImport.update({
+  id: '/materia-prima',
+  path: '/materia-prima',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PedidosRoute = PedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
+  '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/financeiro-evolucao-mensal'
     | '/importar'
     | '/login'
+    | '/materia-prima'
     | '/pedidos'
     | '/relatorios'
     | '/usuarios'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/financeiro-evolucao-mensal'
     | '/importar'
     | '/login'
+    | '/materia-prima'
     | '/pedidos'
     | '/relatorios'
     | '/usuarios'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/financeiro-evolucao-mensal'
     | '/importar'
     | '/login'
+    | '/materia-prima'
     | '/pedidos'
     | '/relatorios'
     | '/usuarios'
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   FinanceiroEvolucaoMensalRoute: typeof FinanceiroEvolucaoMensalRoute
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
+  MateriaPrimaRoute: typeof MateriaPrimaRoute
   PedidosRoute: typeof PedidosRoute
   RelatoriosRoute: typeof RelatoriosRoute
   UsuariosRoute: typeof UsuariosRoute
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/materia-prima': {
+      id: '/materia-prima'
+      path: '/materia-prima'
+      fullPath: '/materia-prima'
+      preLoaderRoute: typeof MateriaPrimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pedidos': {
       id: '/pedidos'
       path: '/pedidos'
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   FinanceiroEvolucaoMensalRoute: FinanceiroEvolucaoMensalRoute,
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
+  MateriaPrimaRoute: MateriaPrimaRoute,
   PedidosRoute: PedidosRoute,
   RelatoriosRoute: RelatoriosRoute,
   UsuariosRoute: UsuariosRoute,

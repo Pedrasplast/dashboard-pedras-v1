@@ -1,0 +1,349 @@
+.compras-futuras {
+  width: 100%;
+}
+
+
+.compras-futuras-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.compras-futuras-indicadores {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.compras-futuras-indicadores > div {
+  min-width: 110px;
+
+  padding: 8px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.compras-futuras-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.compras-futuras-indicadores strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+
+.compras-futuras-nova {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.compras-futuras-filtros {
+  display: flex;
+
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.compras-futuras-busca {
+  flex: 1;
+
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  color: #64748b;
+}
+
+
+.compras-futuras-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  font-size: 10px;
+}
+
+
+.compras-futuras-filtros select,
+.compras-futuras-atualizar {
+  height: 38px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font-size: 10px;
+}
+
+
+.compras-futuras-atualizar {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  cursor: pointer;
+}
+
+
+.compras-futuras-tabela-container {
+  overflow-x: auto;
+}
+
+
+.compras-futuras-tabela {
+  width: 100%;
+  min-width: 950px;
+
+  border-collapse: collapse;
+}
+
+
+.compras-futuras-tabela th {
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+
+  text-transform: uppercase;
+}
+
+
+.compras-futuras-tabela td {
+  padding: 11px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+}
+
+
+.compras-futuras-quantidade {
+  color: #2563eb !important;
+
+  font-weight: 750;
+}
+
+
+.compras-futuras-status {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.compras-futuras-status.prevista {
+  background: #f1f5f9;
+
+  color: #475569;
+}
+
+
+.compras-futuras-status.confirmada {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.compras-futuras-status.recebida {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.compras-futuras-status.cancelada {
+  background: #fef2f2;
+
+  color: #b91c1c;
+}
+
+
+.compras-futuras-editar {
+  height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.compras-futuras-estado {
+  min-height: 270px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.compras-futuras-estado strong {
+  color: #0f172a;
+}
+
+
+.compras-futuras-erro {
+  color: #b91c1c;
+}
+
+
+.compras-futuras-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    compras-futuras-loading
+    0.75s linear infinite;
+}
+
+
+.girando {
+  animation:
+    compras-futuras-loading
+    0.75s linear infinite;
+}
+
+
+@keyframes compras-futuras-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@media (max-width: 800px) {
+  .compras-futuras-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .compras-futuras-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+
+  .compras-futuras-nova {
+    justify-content: center;
+  }
+
+
+  .compras-futuras-filtros {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,535 @@
+.saldos-iniciais {
+  width: 100%;
+}
+
+
+.saldos-iniciais-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.saldos-iniciais-indicadores {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.saldos-iniciais-indicadores > div {
+  min-width: 120px;
+
+  padding: 8px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.saldos-iniciais-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.saldos-iniciais-indicadores strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+
+.saldos-iniciais-novo {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.saldos-iniciais-explicacao {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin: 14px 18px 0;
+
+  padding: 12px 14px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+
+  background: #f8fbff;
+
+  color: #2563eb;
+}
+
+
+.saldos-iniciais-explicacao div {
+  min-width: 0;
+}
+
+
+.saldos-iniciais-explicacao strong {
+  display: block;
+
+  color: #1e40af;
+
+  font-size: 10px;
+}
+
+
+.saldos-iniciais-explicacao p {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+
+.saldos-iniciais-filtros {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 14px 18px 11px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.saldos-iniciais-busca {
+  flex: 1;
+
+  min-width: 220px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  color: #64748b;
+}
+
+
+.saldos-iniciais-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.saldos-iniciais-filtros > input,
+.saldos-iniciais-filtros > select,
+.saldos-iniciais-atualizar {
+  height: 38px;
+
+  box-sizing: border-box;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.saldos-iniciais-atualizar {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  cursor: pointer;
+}
+
+
+.saldos-iniciais-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.saldos-iniciais-tabela {
+  width: 100%;
+  min-width: 900px;
+
+  border-collapse: collapse;
+}
+
+
+.saldos-iniciais-tabela th {
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.saldos-iniciais-tabela td {
+  padding: 11px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+
+.saldos-iniciais-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.saldos-iniciais-data {
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.saldos-iniciais-fornecedor {
+  min-width: 190px;
+}
+
+
+.saldos-iniciais-fornecedor strong {
+  display: block;
+
+  color: #0f172a;
+}
+
+
+.saldos-iniciais-fornecedor small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #b45309;
+
+  font-size: 8px;
+}
+
+
+.saldos-iniciais-quantidade {
+  color: #2563eb !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+.saldos-iniciais-observacao {
+  max-width: 280px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.saldos-iniciais-base,
+.saldos-iniciais-status {
+  display: inline-flex;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.saldos-iniciais-base.atual {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.saldos-iniciais-base.historico {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+.saldos-iniciais-status.ativo {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.saldos-iniciais-status.inativo {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+.saldos-iniciais-editar {
+  height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.saldos-iniciais-editar:hover:not(:disabled) {
+  border-color: #93c5fd;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.saldos-iniciais-estado,
+.saldos-iniciais-sem-resultado {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.saldos-iniciais-estado strong,
+.saldos-iniciais-sem-resultado strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+
+.saldos-iniciais-estado p,
+.saldos-iniciais-sem-resultado p {
+  max-width: 430px;
+
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.saldos-iniciais-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    saldos-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes saldos-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.saldos-iniciais-erro {
+  color: #b91c1c;
+}
+
+
+.saldos-iniciais-vazio-novo {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 7px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.girando {
+  animation:
+    saldos-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@media (max-width: 850px) {
+  .saldos-iniciais-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .saldos-iniciais-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .saldos-iniciais-indicadores > div {
+    min-width: 0;
+  }
+
+
+  .saldos-iniciais-filtros {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .saldos-iniciais-busca,
+  .saldos-iniciais-filtros > input,
+  .saldos-iniciais-filtros > select,
+  .saldos-iniciais-atualizar {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .saldos-iniciais-indicadores {
+    grid-template-columns: 1fr;
+  }
+}
