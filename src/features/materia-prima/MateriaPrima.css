@@ -47,6 +47,10 @@
 ========================================================= */
 
 .materia-prima-header {
+  position: relative;
+
+  overflow: hidden;
+
   display: flex;
 
   align-items: center;
@@ -54,45 +58,122 @@
   justify-content:
     space-between;
 
-  gap: 20px;
+  gap: 24px;
 
   padding:
-    20px
-    22px;
+    24px
+    26px;
 
   margin-bottom: 14px;
 
   border:
     1px solid
-    var(
-      --color-border,
-      #e2e8f0
+    rgba(
+      37,
+      99,
+      235,
+      0.20
     );
 
-  border-radius: 12px;
+  border-left:
+    4px solid
+    var(
+      --color-primary,
+      #2563eb
+    );
+
+  border-radius: 14px;
 
   background:
-    var(
-      --color-surface,
+    linear-gradient(
+      135deg,
       #ffffff
+      0%,
+      #f8fbff
+      60%,
+      #eff6ff
+      100%
     );
 
   box-shadow:
     0
-    1px
-    2px
+    6px
+    18px
     rgba(
       15,
       23,
       42,
-      0.04
+      0.06
     );
 }
 
-.materia-prima-eyebrow {
-  display: block;
+.materia-prima-header::before {
+  content: "";
 
-  margin-bottom: 4px;
+  position: absolute;
+
+  top: -85px;
+  right: -55px;
+
+  width: 220px;
+  height: 220px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        37,
+        99,
+        235,
+        0.11
+      )
+      0%,
+      rgba(
+        37,
+        99,
+        235,
+        0
+      )
+      70%
+    );
+
+  pointer-events: none;
+}
+
+.materia-prima-header > div:first-child {
+  position: relative;
+
+  z-index: 1;
+
+  min-width: 0;
+}
+
+.materia-prima-eyebrow {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-height: 25px;
+
+  padding:
+    0
+    10px;
+
+  margin-bottom: 7px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      37,
+      99,
+      235,
+      0.09
+    );
 
   color:
     var(
@@ -100,11 +181,11 @@
       #2563eb
     );
 
-  font-size: 11px;
+  font-size: 10px;
 
-  font-weight: 750;
+  font-weight: 800;
 
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 
   text-transform: uppercase;
 }
@@ -112,11 +193,14 @@
 .materia-prima-header h1 {
   margin: 0;
 
-  font-size: 25px;
+  font-size: 27px;
 
-  font-weight: 750;
+  font-weight: 800;
 
-  line-height: 1.2;
+  line-height: 1.18;
+
+  letter-spacing:
+    -0.02em;
 
   color:
     var(
@@ -129,7 +213,7 @@
   max-width: 760px;
 
   margin:
-    5px
+    7px
     0
     0;
 
@@ -141,18 +225,22 @@
 
   font-size: 13px;
 
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .materia-prima-header-icone {
+  position: relative;
+
+  z-index: 1;
+
   flex:
     0
     0
     auto;
 
-  width: 54px;
+  width: 60px;
 
-  height: 54px;
+  height: 60px;
 
   display: flex;
 
@@ -160,18 +248,41 @@
 
   justify-content: center;
 
-  border-radius: 13px;
+  border:
+    1px solid
+    rgba(
+      37,
+      99,
+      235,
+      0.16
+    );
+
+  border-radius: 15px;
 
   background:
-    var(
-      --color-primary-soft,
-      #eff6ff
+    linear-gradient(
+      145deg,
+      #ffffff
+      0%,
+      #dbeafe
+      100%
     );
 
   color:
     var(
       --color-primary,
       #2563eb
+    );
+
+  box-shadow:
+    0
+    6px
+    14px
+    rgba(
+      37,
+      99,
+      235,
+      0.11
     );
 }
 
@@ -887,11 +998,9 @@
   color:
     #64748b;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    700;
+  font-weight: 700;
 
   white-space:
     nowrap;
@@ -918,11 +1027,9 @@
   color:
     #2563eb;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    700;
+  font-weight: 700;
 
   white-space:
     nowrap;
@@ -1110,13 +1217,27 @@
       flex-start;
 
     padding:
-      16px;
+      18px;
 
-    gap: 12px;
+    gap: 14px;
+
+    border-left-width: 3px;
+  }
+
+  .materia-prima-eyebrow {
+    min-height: 23px;
+
+    padding:
+      0
+      8px;
+
+    margin-bottom: 6px;
+
+    font-size: 9px;
   }
 
   .materia-prima-header h1 {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .materia-prima-header p {
@@ -1124,9 +1245,11 @@
   }
 
   .materia-prima-header-icone {
-    width: 44px;
+    width: 46px;
 
-    height: 44px;
+    height: 46px;
+
+    border-radius: 12px;
   }
 
   .materia-prima-navegacao {
