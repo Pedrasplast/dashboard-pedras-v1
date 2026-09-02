@@ -363,14 +363,16 @@ export default function FinanceiroPage() {
         </div>
 
 
-        <FinanceiroStatusSincronizacao
-          sincronizacao={
-            sincronizacao
-          }
-          carregando={
-            carregandoSincronizacao
-          }
-        />
+        <div className="financeiro-status-canto">
+          <FinanceiroStatusSincronizacao
+            sincronizacao={
+              sincronizacao
+            }
+            carregando={
+              carregandoSincronizacao
+            }
+          />
+        </div>
 
       </header>
 
