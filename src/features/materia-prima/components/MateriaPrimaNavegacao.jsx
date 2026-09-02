@@ -9,6 +9,8 @@ import {
   Truck,
 } from "lucide-react";
 
+import "./MateriaPrimaNavegacao.css";
+
 
 /* =========================================================
    SEÇÕES DO MÓDULO

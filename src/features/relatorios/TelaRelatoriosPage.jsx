@@ -21,6 +21,7 @@ import { valoresUnicos } from "@/lib/colecoes";
 import { normalizarTexto } from "@/lib/texto";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
+import PageHeader from "@/components/layout/PageHeader";
 
 import { RELATORIOS } from "./config/Relatorio.config";
 
@@ -1060,19 +1061,13 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       ================================================= */}
 
       {!relatorioSelecionado && (
-        <div className="relatorios-header">
-          <div>
-            <span className="relatorios-eyebrow">
-              Central de Relatórios
-            </span>
-
-            <h1>Relatórios</h1>
-
-            <p>
-              Consulte produção, paradas, pedidos e financeiro utilizando dados já sincronizados no sistema.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          eyebrow="Central de Relatórios"
+          title="Relatórios"
+          description="Consulte produção, paradas, pedidos e financeiro utilizando dados já sincronizados no sistema."
+          icon={FiFileText}
+          className="relatorios-header"
+        />
       )}
 
       {/* =================================================

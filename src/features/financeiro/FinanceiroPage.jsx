@@ -7,6 +7,9 @@ import {
 
 import "./FinanceiroPage.css";
 
+import { WalletCards } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
+
 import FinanceiroStatusSincronizacao from "./components/FinanceiroStatusSincronizacao";
 
 import FinanceiroDetalhes from "./components/FinanceiroDetalhes";
@@ -348,33 +351,19 @@ export default function FinanceiroPage() {
           CABEÇALHO
       =================================================== */}
 
-      <header className="financeiro-cabecalho">
-
-        <div>
-
-          <h1 className="financeiro-titulo">
-            Financeiro
-          </h1>
-
-          <p className="financeiro-subtitulo">
-            Previsto x realizado
-          </p>
-
-        </div>
-
-
-        <div className="financeiro-status-canto">
+      <PageHeader
+        eyebrow="Gestão financeira"
+        title="Financeiro"
+        description="Previsto x realizado"
+        icon={WalletCards}
+        className="financeiro-cabecalho"
+        actions={
           <FinanceiroStatusSincronizacao
-            sincronizacao={
-              sincronizacao
-            }
-            carregando={
-              carregandoSincronizacao
-            }
+            sincronizacao={sincronizacao}
+            carregando={carregandoSincronizacao}
           />
-        </div>
-
-      </header>
+        }
+      />
 
 
       {/* ===================================================

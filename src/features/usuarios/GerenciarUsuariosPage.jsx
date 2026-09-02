@@ -18,6 +18,7 @@ import {
 } from "react-icons/fi";
 
 import { supabase } from "@/lib/supabaseClient";
+import PageHeader from "@/components/layout/PageHeader";
 
 import "./GerenciarUsuarios.css";
 
@@ -1360,29 +1361,24 @@ function GerenciarUsuarios() {
         </span>
       </button>
 
-      <div className="admin-header-block admin-header-com-acoes">
-        <div>
-          <h2>
-            Gerenciamento de Usuários
-          </h2>
-
-          <p>
-            Altere os níveis de acesso e
-            escolha quais módulos, telas e
-            relatórios cada colaborador
-            poderá acessar.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="btn-novo-usuario"
-          onClick={abrirNovoUsuario}
-        >
-          <FiUserPlus />
-          <span>Cadastrar usuário</span>
-        </button>
-      </div>
+      <PageHeader
+        eyebrow="Administração"
+        title="Gerenciamento de Usuários"
+        titleAs="h2"
+        description="Altere os níveis de acesso e escolha quais módulos, telas e relatórios cada colaborador poderá acessar."
+        icon={FiSettings}
+        className="admin-header-block admin-header-com-acoes"
+        actions={
+          <button
+            type="button"
+            className="btn-novo-usuario"
+            onClick={abrirNovoUsuario}
+          >
+            <FiUserPlus />
+            <span>Cadastrar usuário</span>
+          </button>
+        }
+      />
 
       {mensagem.texto && (
         <div

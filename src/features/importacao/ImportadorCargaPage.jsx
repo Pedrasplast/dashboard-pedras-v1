@@ -28,6 +28,7 @@ import {
 import {
   supabase
 } from "@/lib/supabaseClient";
+import PageHeader from "@/components/layout/PageHeader";
 
 import './ImportadorCarga.css';
 import './ImportadorConfirmacao.css';
@@ -2223,14 +2224,16 @@ export default function ImportadorCarga() {
         </span>
       </button>
 
+      <PageHeader
+        eyebrow="Administração"
+        title="Importador de Dados"
+        description="Importe planilhas para atualizar as bases de dados do sistema."
+        icon={FiUploadCloud}
+        className="importador-header"
+        titleAs="h2"
+      />
 
       <div className="importador-card">
-
-        <h3>
-          Importador de Dados
-        </h3>
-
-
         <div className="select-tabela">
 
           <label
