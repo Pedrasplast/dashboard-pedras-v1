@@ -286,10 +286,6 @@
   text-overflow: ellipsis;
 }
 
-.financeiro-card-numero-negativo {
-  color: var(--color-danger, #dc2626);
-}
-
 .financeiro-card-variacao {
   display: flex;
   align-items: center;

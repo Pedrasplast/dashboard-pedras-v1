@@ -1,0 +1,587 @@
+/* =========================================================
+   PROGRAMAÇÃO PP
+========================================================= */
+
+.programacao-pp {
+  width: 100%;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.programacao-pp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.programacao-pp-indicadores {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.programacao-pp-indicadores > div {
+  min-width: 95px;
+
+  padding: 8px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.programacao-pp-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.programacao-pp-indicadores strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.programacao-pp-acoes {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.programacao-pp-busca {
+  width: 280px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #64748b;
+}
+
+
+.programacao-pp-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+
+.programacao-pp-busca:focus-within {
+  border-color: #2563eb;
+}
+
+
+.programacao-pp-data {
+  height: 38px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.programacao-pp-atualizar,
+.programacao-pp-novo {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+
+.programacao-pp-atualizar {
+  border: 1px solid #e2e8f0;
+
+  background: #ffffff;
+
+  color: #475569;
+}
+
+
+.programacao-pp-novo {
+  border: 1px solid #2563eb;
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+.programacao-pp-atualizar:disabled,
+.programacao-pp-novo:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+.programacao-pp-atualizar
+.girando {
+  animation:
+    programacao-girando
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes programacao-girando {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.programacao-pp-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.programacao-pp-tabela {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 1050px;
+}
+
+
+.programacao-pp-tabela th {
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.programacao-pp-tabela td {
+  padding: 11px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+
+.programacao-pp-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.programacao-pp-data-coluna,
+.programacao-pp-codigo {
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.programacao-pp-produto {
+  min-width: 280px;
+}
+
+
+.programacao-pp-produto strong {
+  display: block;
+
+  color: #0f172a;
+
+  font-size: 10px;
+}
+
+
+.programacao-pp-produto small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+
+.programacao-pp-consumo {
+  color: #2563eb !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   RECEITA
+========================================================= */
+
+.programacao-pp-receita {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 4px 7px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.programacao-pp-receita.ok {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.programacao-pp-receita.pendente {
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.programacao-pp-status {
+  display: inline-flex;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.programacao-pp-status.ativo {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.programacao-pp-status.inativo {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   EDITAR
+========================================================= */
+
+.programacao-pp-editar {
+  min-height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.programacao-pp-editar:hover:not(:disabled) {
+  border-color: #93c5fd;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.programacao-pp-rodape {
+  padding: 10px 13px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.programacao-pp-rodape strong {
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.programacao-pp-estado,
+.programacao-pp-sem-resultado {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.programacao-pp-estado strong,
+.programacao-pp-sem-resultado strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+
+.programacao-pp-estado p,
+.programacao-pp-sem-resultado p {
+  max-width: 430px;
+
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.programacao-pp-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    programacao-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes programacao-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.programacao-pp-erro {
+  color: #b91c1c;
+}
+
+
+.programacao-pp-vazio-novo {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 7px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (
+  max-width: 1050px
+) {
+  .programacao-pp-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .programacao-pp-acoes {
+    width: 100%;
+  }
+
+
+  .programacao-pp-busca {
+    flex: 1;
+
+    width: auto;
+  }
+}
+
+
+@media (
+  max-width: 650px
+) {
+  .programacao-pp-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+
+  .programacao-pp-indicadores > div {
+    min-width: 0;
+  }
+
+
+  .programacao-pp-acoes {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .programacao-pp-busca,
+  .programacao-pp-data,
+  .programacao-pp-atualizar,
+  .programacao-pp-novo {
+    width: 100%;
+  }
+}

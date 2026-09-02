@@ -1,0 +1,597 @@
+.produtos-pp {
+  width: 100%;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.produtos-pp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.produtos-pp-indicadores {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+.produtos-pp-indicadores > div {
+  min-width: 105px;
+
+  padding: 8px 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.produtos-pp-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.produtos-pp-indicadores strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+
+.produtos-pp-novo {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.produtos-pp-novo:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   EXPLICAÇÃO
+========================================================= */
+
+.produtos-pp-explicacao {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin: 14px 18px 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+
+  background: #f8fbff;
+
+  color: #2563eb;
+}
+
+
+.produtos-pp-explicacao div {
+  min-width: 0;
+}
+
+
+.produtos-pp-explicacao strong {
+  display: block;
+
+  color: #1e40af;
+
+  font-size: 10px;
+}
+
+
+.produtos-pp-explicacao p {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.produtos-pp-filtros {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 14px 18px 11px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.produtos-pp-busca {
+  flex: 1;
+
+  min-width: 220px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #64748b;
+}
+
+
+.produtos-pp-busca:focus-within {
+  border-color: #2563eb;
+}
+
+
+.produtos-pp-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.produtos-pp-filtros > select,
+.produtos-pp-atualizar {
+  height: 38px;
+
+  box-sizing: border-box;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.produtos-pp-atualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.produtos-pp-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.produtos-pp-tabela {
+  width: 100%;
+  min-width: 760px;
+
+  border-collapse: collapse;
+}
+
+
+.produtos-pp-tabela th {
+  padding: 10px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.produtos-pp-tabela td {
+  padding: 11px 13px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+
+.produtos-pp-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.produtos-pp-codigo {
+  color: #2563eb !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+.produtos-pp-produto {
+  min-width: 260px;
+}
+
+
+.produtos-pp-produto strong {
+  display: block;
+
+  color: #0f172a;
+
+  font-size: 10px;
+}
+
+
+.produtos-pp-material {
+  display: inline-flex;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 9px;
+  font-weight: 750;
+}
+
+
+.produtos-pp-peso {
+  color: #0f172a !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.produtos-pp-status {
+  display: inline-flex;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.produtos-pp-status.ativo {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.produtos-pp-status.inativo {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   EDITAR
+========================================================= */
+
+.produtos-pp-editar {
+  height: 31px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.produtos-pp-editar:hover:not(:disabled) {
+  border-color: #93c5fd;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.produtos-pp-editar:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.produtos-pp-rodape {
+  padding: 10px 13px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.produtos-pp-rodape strong {
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.produtos-pp-estado,
+.produtos-pp-sem-resultado {
+  min-height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.produtos-pp-estado strong,
+.produtos-pp-sem-resultado strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+
+.produtos-pp-estado p,
+.produtos-pp-sem-resultado p {
+  max-width: 430px;
+
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.produtos-pp-erro {
+  color: #b91c1c;
+}
+
+
+.produtos-pp-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    produtos-pp-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+.produtos-pp-atualizar
+.girando {
+  animation:
+    produtos-pp-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes produtos-pp-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.produtos-pp-vazio-novo {
+  height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 8px;
+
+  padding: 0 12px;
+
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 750px) {
+  .produtos-pp-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .produtos-pp-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .produtos-pp-indicadores > div {
+    min-width: 0;
+  }
+
+
+  .produtos-pp-novo {
+    width: 100%;
+  }
+
+
+  .produtos-pp-filtros {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .produtos-pp-busca,
+  .produtos-pp-filtros > select,
+  .produtos-pp-atualizar {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 520px) {
+  .produtos-pp-indicadores {
+    grid-template-columns: 1fr;
+  }
+}

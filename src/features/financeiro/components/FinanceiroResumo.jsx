@@ -1,162 +1,73 @@
 import { memo } from "react";
 
-import {
-  formatarMoeda,
-  formatarPercentual,
-} from "../utils/financeiro.utils";
-
+import { formatarMoeda, formatarPercentual } from "../utils/financeiro.utils";
 
 /* =========================================================
    CLASSE DOS VALORES PRINCIPAIS
 ========================================================= */
 
-function obterClasseNumero(
-  valor,
-) {
-  const numero =
-    Number(
-      valor ?? 0,
-    );
+function obterClasseNumero(valor) {
+  const numero = Number(valor ?? 0);
 
-  return [
-    "financeiro-card-numero",
-
-    numero < 0
-      ? "financeiro-card-numero-negativo"
-      : "",
-  ]
+  return ["financeiro-card-numero", numero < 0 ? "financeiro-card-numero-negativo" : ""]
     .filter(Boolean)
     .join(" ");
 }
-
 
 /* =========================================================
    CARD INDIVIDUAL
 ========================================================= */
 
-function CardFinanceiro({
-  titulo,
-  dados,
-  tipo,
-  exibirVariacao = true,
-}) {
-  const previsto =
-    Number(
-      dados?.previsto ??
-        0,
-    );
+function CardFinanceiro({ titulo, dados, tipo, exibirVariacao = true }) {
+  const previsto = Number(dados?.previsto ?? 0);
 
-  const realizado =
-    Number(
-      dados?.realizado ??
-        0,
-    );
+  const realizado = Number(dados?.realizado ?? 0);
 
-  const variacao =
-    Number(
-      dados?.variacao ??
-        0,
-    );
+  const variacao = Number(dados?.variacao ?? 0);
 
-  const percentual =
-    dados?.percentual ??
-    null;
-
+  const percentual = dados?.percentual ?? null;
 
   /* =======================================================
      SITUAÇÃO DA VARIAÇÃO
   ======================================================= */
 
-  let classeVariacao =
-    "neutra";
+  let classeVariacao = "neutra";
 
-
-  if (
-    variacao > 0
-  ) {
-    classeVariacao =
-      "positiva";
+  if (variacao > 0) {
+    classeVariacao = "positiva";
   }
 
-
-  if (
-    variacao < 0
-  ) {
-    classeVariacao =
-      "negativa";
+  if (variacao < 0) {
+    classeVariacao = "negativa";
   }
-
 
   return (
-    <section
-      className={[
-        "financeiro-card",
-        `financeiro-card-${tipo}`,
-      ].join(" ")}
-    >
-
+    <section className={["financeiro-card", `financeiro-card-${tipo}`].join(" ")}>
       {/* ===================================================
           TÍTULO
       =================================================== */}
 
       <div className="financeiro-card-cabecalho">
-
-        <h3 className="financeiro-card-titulo">
-          {titulo}
-        </h3>
-
+        <h3 className="financeiro-card-titulo">{titulo}</h3>
       </div>
-
 
       {/* ===================================================
           PREVISTO / REALIZADO
       =================================================== */}
 
       <div className="financeiro-card-valores">
-
         <div className="financeiro-card-valor">
+          <span className="financeiro-card-label">Previsto</span>
 
-          <span className="financeiro-card-label">
-            Previsto
-          </span>
-
-          <strong
-            className={
-              obterClasseNumero(
-                previsto,
-              )
-            }
-          >
-            {formatarMoeda(
-              previsto,
-            )}
-          </strong>
-
+          <strong className={obterClasseNumero(previsto)}>{formatarMoeda(previsto)}</strong>
         </div>
 
-
         <div className="financeiro-card-valor">
+          <span className="financeiro-card-label">Realizado / a realizar</span>
 
-          <span className="financeiro-card-label">
-            Realizado / a realizar
-          </span>
-
-          <strong
-            className={
-              obterClasseNumero(
-                realizado,
-              )
-            }
-          >
-            {formatarMoeda(
-              realizado,
-            )}
-          </strong>
-
+          <strong className={obterClasseNumero(realizado)}>{formatarMoeda(realizado)}</strong>
         </div>
-
       </div>
-
 
       {/* ===================================================
           VARIAÇÃO
@@ -170,79 +81,52 @@ function CardFinanceiro({
             `financeiro-card-variacao-${classeVariacao}`,
           ].join(" ")}
         >
+          <span>Variação</span>
 
-          <span>
-            Variação
+          <strong>{formatarMoeda(variacao)}</strong>
+
+          <span className="financeiro-card-percentual">{formatarPercentual(percentual)}
           </span>
-
-          <strong>
-            {formatarMoeda(
-              variacao,
-            )}
-          </strong>
-
-          <span className="financeiro-card-percentual">
-            {formatarPercentual(
-              percentual,
-            )}
-          </span>
-
         </div>
       )}
-
     </section>
   );
 }
-
 
 /* =========================================================
    RESUMO FINANCEIRO
 ========================================================= */
 
-function FinanceiroResumo({
-  resumo,
-}) {
+function FinanceiroResumo({ resumo }) {
   return (
     <div className="financeiro-resumo">
-
       <CardFinanceiro
         titulo="Receitas"
         tipo="receitas"
-        dados={
-          resumo?.receitas
-        }
+        dados={resumo?.receitas}
+        destacarNegativo={true}
       />
-
 
       <CardFinanceiro
         titulo="Despesas"
         tipo="despesas"
-        dados={
-          resumo?.despesas
-        }
+        dados={resumo?.despesas}
+        destacarNegativo={true}
       />
-
 
       <CardFinanceiro
         titulo="Saldo"
         tipo="saldo"
-        dados={
-          resumo?.saldo
-        }
-        exibirVariacao={
-          false
-        }
+        dados={resumo?.saldo}
+        exibirVariacao={false}
+        destacarNegativo={true}
       />
-
     </div>
   );
 }
-
 
 /* =========================================================
    MEMO
 ========================================================= */
 
-export default memo(
-  FinanceiroResumo,
-);
+export default memo(FinanceiroResumo);

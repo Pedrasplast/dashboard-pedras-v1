@@ -1,0 +1,477 @@
+.projecao-diaria {
+  width: 100%;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.projecao-diaria-filtros {
+  display: flex;
+  align-items: flex-end;
+
+  gap: 9px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.projecao-diaria-periodo {
+  flex: 1;
+
+  display: flex;
+  align-items: flex-end;
+
+  gap: 9px;
+
+  color: #64748b;
+}
+
+
+.projecao-diaria-periodo label {
+  min-width: 140px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.projecao-diaria-periodo label > span {
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.projecao-diaria-periodo input,
+.projecao-diaria-filtros > select {
+  box-sizing: border-box;
+
+  height: 38px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+}
+
+
+.projecao-diaria-filtros > select {
+  min-width: 190px;
+}
+
+
+.projecao-diaria-atualizar {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   INDICADORES
+========================================================= */
+
+.projecao-diaria-indicadores {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+
+  padding: 14px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.projecao-diaria-indicadores > div {
+  min-width: 0;
+
+  padding: 10px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+
+.projecao-diaria-indicadores span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.projecao-diaria-indicadores strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #0f172a;
+
+  font-size: 15px;
+}
+
+
+.projecao-diaria-indicadores strong.negativo {
+  color: #b91c1c;
+}
+
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.projecao-diaria-alerta {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  margin: 12px 18px 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid #fde68a;
+  border-radius: 9px;
+
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+
+.projecao-diaria-alerta.negativo {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+}
+
+
+.projecao-diaria-alerta strong {
+  display: block;
+
+  font-size: 10px;
+}
+
+
+.projecao-diaria-alerta p {
+  margin: 3px 0 0;
+
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.projecao-diaria-tabela-container {
+  width: 100%;
+
+  margin-top: 14px;
+
+  overflow-x: auto;
+}
+
+
+.projecao-diaria-tabela {
+  width: 100%;
+  min-width: 1050px;
+
+  border-collapse: collapse;
+}
+
+
+.projecao-diaria-tabela th {
+  padding: 10px 12px;
+
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.projecao-diaria-tabela td {
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+
+.projecao-diaria-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.projecao-diaria-data {
+  white-space: nowrap;
+}
+
+
+.projecao-diaria-data strong {
+  display: block;
+
+  color: #0f172a;
+}
+
+
+.projecao-diaria-data small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #2563eb;
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+
+.projecao-diaria-fornecedor {
+  min-width: 180px;
+
+  color: #0f172a !important;
+
+  font-weight: 700;
+}
+
+
+.projecao-diaria-entrada {
+  color: #047857 !important;
+
+  font-weight: 700;
+}
+
+
+.projecao-diaria-futura {
+  color: #2563eb !important;
+
+  font-weight: 700;
+}
+
+
+.projecao-diaria-consumo {
+  color: #b45309 !important;
+
+  font-weight: 700;
+}
+
+
+.projecao-diaria-saldo {
+  color: #0f172a !important;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+.projecao-diaria-saldo.negativo {
+  color: #b91c1c !important;
+
+  background: #fef2f2;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.projecao-diaria-estado {
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.projecao-diaria-estado strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+
+.projecao-diaria-estado p {
+  max-width: 450px;
+
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.projecao-diaria-erro {
+  color: #b91c1c;
+}
+
+
+.projecao-diaria-loading {
+  width: 27px;
+  height: 27px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    projecao-diaria-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+.projecao-diaria-atualizar
+.girando {
+  animation:
+    projecao-diaria-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes projecao-diaria-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 900px) {
+  .projecao-diaria-filtros {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .projecao-diaria-periodo {
+    align-items: stretch;
+
+    flex-wrap: wrap;
+  }
+
+
+  .projecao-diaria-filtros > select,
+  .projecao-diaria-atualizar {
+    width: 100%;
+  }
+
+
+  .projecao-diaria-indicadores {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+}
+
+
+@media (max-width: 600px) {
+  .projecao-diaria-periodo {
+    flex-direction: column;
+  }
+
+
+  .projecao-diaria-periodo label {
+    width: 100%;
+  }
+
+
+  .projecao-diaria-periodo input {
+    width: 100%;
+  }
+
+
+  .projecao-diaria-indicadores {
+    grid-template-columns: 1fr;
+  }
+}

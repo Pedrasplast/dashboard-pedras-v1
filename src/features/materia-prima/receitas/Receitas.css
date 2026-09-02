@@ -1,0 +1,1351 @@
+/* =========================================================
+   RECEITAS PP
+========================================================= */
+
+.receitas-pp {
+  width: 100%;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.receitas-pp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 14px 18px;
+
+  border-bottom:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  background:
+    var(
+      --color-surface-subtle,
+      #f8fafc
+    );
+}
+
+
+.receitas-pp-indicadores {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.receitas-pp-indicador {
+  min-width: 95px;
+
+  padding: 8px 11px;
+
+  border:
+    1px solid
+    var(
+      --color-border,
+      #e2e8f0
+    );
+
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+
+.receitas-pp-indicador span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.04em;
+}
+
+
+.receitas-pp-indicador strong {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #0f172a;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.receitas-pp-acoes {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.receitas-pp-busca {
+  width: 330px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #64748b;
+}
+
+
+.receitas-pp-busca:focus-within {
+  border-color: #2563eb;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(
+      37,
+      99,
+      235,
+      0.08
+    );
+}
+
+
+.receitas-pp-busca input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 12px;
+}
+
+
+.receitas-pp-atualizar {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.receitas-pp-atualizar:hover:not(:disabled) {
+  border-color: #2563eb;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.receitas-pp-atualizar:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+.receitas-pp-atualizar
+.girando {
+  animation:
+    receitas-girando
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes receitas-girando {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.receitas-pp-tabela-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.receitas-pp-tabela {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+
+.receitas-pp-tabela th {
+  padding: 10px 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  letter-spacing: 0.04em;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.receitas-pp-tabela td {
+  padding: 11px 14px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #0f172a;
+
+  font-size: 11px;
+
+  vertical-align: middle;
+}
+
+
+.receitas-pp-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.receitas-pp-codigo {
+  width: 140px;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+.receitas-pp-produto {
+  min-width: 300px;
+}
+
+
+.receitas-pp-produto strong {
+  display: block;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+
+.receitas-pp-produto small {
+  display: block;
+
+  max-width: 470px;
+
+  margin-top: 4px;
+
+  color: #64748b;
+
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+
+.receitas-pp-total {
+  color: #b45309;
+}
+
+
+.receitas-pp-total.valido {
+  color: #047857;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.receitas-pp-status {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding: 3px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+.receitas-pp-status.configurada {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.receitas-pp-status.incompleta {
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+
+.receitas-pp-status.pendente {
+  background: #f1f5f9;
+
+  color: #64748b;
+}
+
+
+/* =========================================================
+   CONFIGURAR
+========================================================= */
+
+.receitas-pp-configurar {
+  min-height: 32px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+
+.receitas-pp-configurar:hover:not(:disabled) {
+  border-color:
+    rgba(
+      37,
+      99,
+      235,
+      0.4
+    );
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.receitas-pp-configurar:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.receitas-pp-rodape {
+  padding: 11px 14px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+
+.receitas-pp-rodape strong {
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.receitas-pp-estado,
+.receitas-pp-sem-resultado {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 35px 20px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.receitas-pp-estado strong,
+.receitas-pp-sem-resultado strong {
+  color: #0f172a;
+
+  font-size: 14px;
+}
+
+
+.receitas-pp-estado p,
+.receitas-pp-sem-resultado p {
+  max-width: 440px;
+
+  margin: 0;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+.receitas-pp-loading {
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid #e2e8f0;
+  border-top-color: #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    receitas-loading
+    0.75s
+    linear
+    infinite;
+}
+
+
+@keyframes receitas-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.receitas-pp-erro {
+  color: #b91c1c;
+}
+
+
+.receitas-pp-erro button {
+  min-height: 34px;
+
+  margin-top: 6px;
+
+  padding: 0 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #b91c1c;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   OVERLAY DO EDITOR
+========================================================= */
+
+.receitas-editor-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(
+      15,
+      23,
+      42,
+      0.5
+    );
+
+  backdrop-filter: blur(2px);
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.receitas-editor {
+  width: 100%;
+  max-width: 720px;
+  max-height: 92vh;
+
+  overflow-y: auto;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0
+    24px
+    60px
+    rgba(
+      15,
+      23,
+      42,
+      0.24
+    );
+}
+
+
+/* =========================================================
+   CABEÇALHO DO EDITOR
+========================================================= */
+
+.receitas-editor-header {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.receitas-editor-header-icone {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+
+.receitas-editor-header-texto {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.receitas-editor-header-texto > span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+
+.receitas-editor-header-texto h3 {
+  margin: 2px 0 0;
+
+  color: #0f172a;
+
+  font-size: 18px;
+}
+
+
+.receitas-editor-header-texto p {
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+
+.receitas-editor-fechar {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+
+.receitas-editor-fechar:hover:not(:disabled) {
+  background: #e2e8f0;
+
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.receitas-editor-info {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap: 10px;
+
+  padding: 15px 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.receitas-editor-info > div {
+  padding: 10px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #f8fafc;
+}
+
+
+.receitas-editor-info span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.receitas-editor-info strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #0f172a;
+
+  font-size: 14px;
+}
+
+
+.receitas-editor-info strong.valido {
+  color: #047857;
+}
+
+
+.receitas-editor-info strong.invalido {
+  color: #b45309;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.receitas-editor-body {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+
+  padding: 18px;
+}
+
+
+.receitas-editor-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+
+.receitas-editor-titulo > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+.receitas-editor-titulo strong {
+  color: #0f172a;
+
+  font-size: 12px;
+}
+
+
+.receitas-editor-titulo span {
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+
+.receitas-editor-adicionar {
+  min-height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  border: 1px solid #2563eb;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #2563eb;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.receitas-editor-adicionar:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+
+.receitas-editor-adicionar:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ITENS
+========================================================= */
+
+.receitas-editor-itens {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.receitas-editor-item {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1fr
+    )
+    150px
+    38px;
+
+  align-items: end;
+
+  gap: 8px;
+
+  padding: 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #f8fafc;
+}
+
+
+.receitas-editor-item label {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+
+.receitas-editor-item label > span {
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.receitas-editor-item select,
+.receitas-editor-percentual input {
+  width: 100%;
+  height: 38px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font: inherit;
+  font-size: 11px;
+}
+
+
+.receitas-editor-item select {
+  padding: 0 9px;
+}
+
+
+.receitas-editor-item select:focus,
+.receitas-editor-percentual input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(
+      37,
+      99,
+      235,
+      0.07
+    );
+}
+
+
+.receitas-editor-percentual > div {
+  height: 38px;
+
+  display: flex;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #ffffff;
+}
+
+
+.receitas-editor-percentual input {
+  flex: 1;
+
+  min-width: 0;
+
+  height: 100%;
+
+  padding: 0 9px;
+
+  border: 0;
+  border-radius: 0;
+}
+
+
+.receitas-editor-percentual > div > span {
+  width: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-left: 1px solid #e2e8f0;
+
+  background: #f1f5f9;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.receitas-editor-remover {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #b91c1c;
+
+  cursor: pointer;
+}
+
+
+.receitas-editor-remover:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.receitas-editor-vazio {
+  min-height: 180px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 25px;
+
+  border: 1px dashed #cbd5e1;
+  border-radius: 9px;
+
+  color: #64748b;
+
+  text-align: center;
+}
+
+
+.receitas-editor-vazio strong {
+  color: #0f172a;
+
+  font-size: 12px;
+}
+
+
+.receitas-editor-vazio p {
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+.receitas-editor-vazio button {
+  min-height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 6px;
+
+  padding: 0 11px;
+
+  border: 1px solid #2563eb;
+  border-radius: 7px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.receitas-editor-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+
+.receitas-editor-total.valido {
+  border-color: #a7f3d0;
+
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+
+.receitas-editor-total > div {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.receitas-editor-total span {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.receitas-editor-total strong {
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ERRO
+========================================================= */
+
+.receitas-editor-erro {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 7px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   AÇÕES DO EDITOR
+========================================================= */
+
+.receitas-editor-acoes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  padding: 14px 18px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #f8fafc;
+}
+
+
+.receitas-editor-cancelar,
+.receitas-editor-salvar {
+  min-height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.receitas-editor-cancelar {
+  border: 1px solid #e2e8f0;
+
+  background: #ffffff;
+
+  color: #475569;
+}
+
+
+.receitas-editor-salvar {
+  border: 1px solid #2563eb;
+
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+
+.receitas-editor-cancelar:disabled,
+.receitas-editor-salvar:disabled,
+.receitas-editor-fechar:disabled,
+.receitas-editor-remover:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (
+  max-width:
+    900px
+) {
+  .receitas-pp-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .receitas-pp-acoes {
+    width: 100%;
+  }
+
+
+  .receitas-pp-busca {
+    flex: 1;
+
+    width: auto;
+  }
+
+
+  .receitas-pp-tabela {
+    min-width: 900px;
+  }
+}
+
+
+@media (
+  max-width:
+    600px
+) {
+  .receitas-pp-toolbar {
+    padding: 12px;
+  }
+
+
+  .receitas-pp-indicadores {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+
+  .receitas-pp-indicador {
+    min-width: 0;
+  }
+
+
+  .receitas-pp-acoes {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .receitas-pp-busca,
+  .receitas-pp-atualizar {
+    width: 100%;
+  }
+
+
+  .receitas-editor-overlay {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+
+  .receitas-editor {
+    max-height: 94vh;
+
+    border-radius:
+      16px
+      16px
+      0
+      0;
+  }
+
+
+  .receitas-editor-info {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .receitas-editor-titulo {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .receitas-editor-adicionar {
+    width: 100%;
+  }
+
+
+  .receitas-editor-item {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .receitas-editor-remover {
+    width: 100%;
+  }
+
+
+  .receitas-editor-acoes {
+    align-items: stretch;
+
+    flex-direction: column-reverse;
+  }
+
+
+  .receitas-editor-cancelar,
+  .receitas-editor-salvar {
+    width: 100%;
+  }
+}
