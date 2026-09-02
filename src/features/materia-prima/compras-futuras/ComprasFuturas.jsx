@@ -7,6 +7,7 @@ import {
   RefreshCw,
   Search,
   ShoppingCart,
+  Trash2,
   XCircle,
 } from "lucide-react";
 
@@ -14,6 +15,9 @@ import {
   useMemo,
   useState,
 } from "react";
+
+import ConfirmacaoExclusao
+  from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import CompraFuturaModal from "./CompraFuturaModal";
 import useComprasFuturas from "./useComprasFuturas";
@@ -55,8 +59,11 @@ function formatarKg(
   ).toLocaleString(
     "pt-BR",
     {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3,
+      minimumFractionDigits:
+        3,
+
+      maximumFractionDigits:
+        3,
     },
   )} kg`;
 }
@@ -106,6 +113,16 @@ export default function ComprasFuturas() {
     setItemEdicao,
   ] = useState(null);
 
+  const [
+    itemParaExcluir,
+    setItemParaExcluir,
+  ] = useState(null);
+
+  const [
+    erroExclusao,
+    setErroExclusao,
+  ] = useState("");
+
 
   const {
     compras,
@@ -114,9 +131,12 @@ export default function ComprasFuturas() {
     carregado,
     erro,
     salvando,
+    excluindo,
     recarregar,
     salvarCompraFutura,
+    excluirCompraFutura,
     compraEstaSalvando,
+    compraEstaExcluindo,
   } =
     useComprasFuturas();
 
@@ -245,7 +265,19 @@ export default function ComprasFuturas() {
     );
 
 
+  /* =======================================================
+     NOVA COMPRA
+  ======================================================= */
+
   function novo() {
+    if (
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
     setItemEdicao(
       null,
     );
@@ -256,9 +288,22 @@ export default function ComprasFuturas() {
   }
 
 
+  /* =======================================================
+     EDITAR
+  ======================================================= */
+
   function editar(
     compra,
   ) {
+    if (
+      !compra ||
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
     setItemEdicao(
       compra,
     );
@@ -268,6 +313,10 @@ export default function ComprasFuturas() {
     );
   }
 
+
+  /* =======================================================
+     SALVAR
+  ======================================================= */
 
   async function salvar(
     dados,
@@ -287,6 +336,85 @@ export default function ComprasFuturas() {
   }
 
 
+  /* =======================================================
+     EXCLUSÃO
+  ======================================================= */
+
+  function solicitarExclusao(
+    compra,
+  ) {
+    if (
+      !compra ||
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setItemParaExcluir(
+      compra,
+    );
+  }
+
+
+  function cancelarExclusao() {
+    if (excluindo) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setItemParaExcluir(
+      null,
+    );
+  }
+
+
+  async function confirmarExclusao() {
+    if (
+      !itemParaExcluir ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+
+    try {
+      await excluirCompraFutura(
+        itemParaExcluir.id,
+      );
+
+
+      setItemParaExcluir(
+        null,
+      );
+    } catch (error) {
+      setErroExclusao(
+        error
+          ?.message ||
+          "Não foi possível excluir a compra futura.",
+      );
+    }
+  }
+
+
+  /* =======================================================
+     STATUS
+  ======================================================= */
+
   function statusCompra(
     compra,
   ) {
@@ -296,8 +424,13 @@ export default function ComprasFuturas() {
     ) {
       return (
         <span className="compras-futuras-status recebida">
-          <CheckCircle2 size={13} />
+
+          <CheckCircle2
+            size={13}
+          />
+
           Recebida
+
         </span>
       );
     }
@@ -309,8 +442,13 @@ export default function ComprasFuturas() {
     ) {
       return (
         <span className="compras-futuras-status confirmada">
-          <Clock3 size={13} />
+
+          <Clock3
+            size={13}
+          />
+
           Confirmada
+
         </span>
       );
     }
@@ -322,8 +460,13 @@ export default function ComprasFuturas() {
     ) {
       return (
         <span className="compras-futuras-status cancelada">
-          <XCircle size={13} />
+
+          <XCircle
+            size={13}
+          />
+
           Cancelada
+
         </span>
       );
     }
@@ -331,12 +474,21 @@ export default function ComprasFuturas() {
 
     return (
       <span className="compras-futuras-status prevista">
-        <Clock3 size={13} />
+
+        <Clock3
+          size={13}
+        />
+
         Prevista
+
       </span>
     );
   }
 
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <>
@@ -347,6 +499,7 @@ export default function ComprasFuturas() {
           <div className="compras-futuras-indicadores">
 
             <div>
+
               <span>
                 Compras abertas
               </span>
@@ -354,10 +507,12 @@ export default function ComprasFuturas() {
               <strong>
                 {indicadores.abertas}
               </strong>
+
             </div>
 
 
             <div>
+
               <span>
                 PP a receber
               </span>
@@ -367,10 +522,12 @@ export default function ComprasFuturas() {
                   indicadores.quantidadeAberta,
                 )}
               </strong>
+
             </div>
 
 
             <div>
+
               <span>
                 Recebidas
               </span>
@@ -378,6 +535,7 @@ export default function ComprasFuturas() {
               <strong>
                 {indicadores.recebidas}
               </strong>
+
             </div>
 
           </div>
@@ -390,12 +548,17 @@ export default function ComprasFuturas() {
               novo
             }
             disabled={
-              salvando
+              salvando ||
+              excluindo
             }
           >
-            <Plus size={17} />
+
+            <Plus
+              size={17}
+            />
 
             Nova compra
+
           </button>
 
         </div>
@@ -405,7 +568,9 @@ export default function ComprasFuturas() {
 
           <label className="compras-futuras-busca">
 
-            <Search size={16} />
+            <Search
+              size={16}
+            />
 
             <input
               value={
@@ -442,6 +607,7 @@ export default function ComprasFuturas() {
                 )
             }
           >
+
             <option value="ABERTAS">
               Compras abertas
             </option>
@@ -465,6 +631,7 @@ export default function ComprasFuturas() {
             <option value="TODOS">
               Todas
             </option>
+
           </select>
 
 
@@ -475,7 +642,9 @@ export default function ComprasFuturas() {
               recarregar
             }
             disabled={
-              carregando
+              carregando ||
+              salvando ||
+              excluindo
             }
           >
 
@@ -498,11 +667,13 @@ export default function ComprasFuturas() {
         {carregando && (
 
           <div className="compras-futuras-estado">
+
             <span className="compras-futuras-loading" />
 
             <strong>
               Carregando compras
             </strong>
+
           </div>
 
         )}
@@ -513,7 +684,9 @@ export default function ComprasFuturas() {
 
           <div className="compras-futuras-estado compras-futuras-erro">
 
-            <AlertTriangle size={30} />
+            <AlertTriangle
+              size={30}
+            />
 
             <strong>
               Erro ao carregar compras
@@ -564,6 +737,7 @@ export default function ComprasFuturas() {
             <table className="compras-futuras-tabela">
 
               <thead>
+
                 <tr>
                   <th>Compra</th>
                   <th>Previsão</th>
@@ -574,6 +748,7 @@ export default function ComprasFuturas() {
                   <th>Status</th>
                   <th>Ações</th>
                 </tr>
+
               </thead>
 
 
@@ -582,94 +757,203 @@ export default function ComprasFuturas() {
                 {filtradas.map(
                   (
                     compra,
-                  ) => (
+                  ) => {
 
-                  <tr key={compra.id}>
+                    const estaSalvando =
+                      compraEstaSalvando(
+                        compra.id,
+                      );
 
-                    <td>
-                      {formatarData(
-                        compra.dataCompra,
-                      )}
-                    </td>
-
-
-                    <td>
-                      {formatarData(
-                        compra.dataPrevista,
-                      )}
-                    </td>
+                    const estaExcluindo =
+                      compraEstaExcluindo(
+                        compra.id,
+                      );
 
 
-                    <td>
-                      {formatarData(
-                        compra.dataRecebimento,
-                      )}
-                    </td>
-
-
-                    <td>
-                      <strong>
-                        {compra.fornecedorNome}
-                      </strong>
-                    </td>
-
-
-                    <td className="compras-futuras-quantidade">
-                      {formatarKg(
-                        compra.quantidadeKg,
-                      )}
-                    </td>
-
-
-                    <td>
-                      {compra.numeroPedido ||
-                        "-"}
-                    </td>
-
-
-                    <td>
-                      {statusCompra(
-                        compra,
-                      )}
-                    </td>
-
-
-                    <td>
-
-                      <button
-                        type="button"
-                        className="compras-futuras-editar"
-                        onClick={
-                          () =>
-                            editar(
-                              compra,
-                            )
-                        }
-                        disabled={
-                          salvando
+                    return (
+                      <tr
+                        key={
+                          compra.id
                         }
                       >
 
-                        <Pencil size={14} />
+                        <td>
 
-                        {compraEstaSalvando(
-                          compra.id,
-                        )
-                          ? "Salvando..."
-                          : "Editar"}
+                          {formatarData(
+                            compra.dataCompra,
+                          )}
 
-                      </button>
+                        </td>
 
-                    </td>
 
-                  </tr>
+                        <td>
 
-                  ),
+                          {formatarData(
+                            compra.dataPrevista,
+                          )}
+
+                        </td>
+
+
+                        <td>
+
+                          {formatarData(
+                            compra.dataRecebimento,
+                          )}
+
+                        </td>
+
+
+                        <td>
+
+                          <strong>
+                            {compra.fornecedorNome}
+                          </strong>
+
+                        </td>
+
+
+                        <td className="compras-futuras-quantidade">
+
+                          {formatarKg(
+                            compra.quantidadeKg,
+                          )}
+
+                        </td>
+
+
+                        <td>
+
+                          {compra.numeroPedido ||
+                            "-"}
+
+                        </td>
+
+
+                        <td>
+
+                          {statusCompra(
+                            compra,
+                          )}
+
+                        </td>
+
+
+                        <td>
+
+                          <div
+                            style={{
+                              display:
+                                "flex",
+
+                              alignItems:
+                                "center",
+
+                              gap:
+                                "6px",
+                            }}
+                          >
+
+                            <button
+                              type="button"
+                              className="compras-futuras-editar"
+                              onClick={
+                                () =>
+                                  editar(
+                                    compra,
+                                  )
+                              }
+                              disabled={
+                                salvando ||
+                                excluindo
+                              }
+                            >
+
+                              <Pencil
+                                size={14}
+                              />
+
+                              {estaSalvando
+                                ? "Salvando..."
+                                : "Editar"}
+
+                            </button>
+
+
+                            <button
+                              type="button"
+                              className="compras-futuras-editar"
+                              onClick={
+                                () =>
+                                  solicitarExclusao(
+                                    compra,
+                                  )
+                              }
+                              disabled={
+                                salvando ||
+                                excluindo
+                              }
+                              style={{
+                                color:
+                                  "#dc2626",
+
+                                borderColor:
+                                  "#fecaca",
+
+                                background:
+                                  "#ffffff",
+                              }}
+                            >
+
+                              <Trash2
+                                size={14}
+                              />
+
+                              {estaExcluindo
+                                ? "Excluindo..."
+                                : "Excluir"}
+
+                            </button>
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+                    );
+                  },
                 )}
 
               </tbody>
 
             </table>
+
+          </div>
+
+        )}
+
+
+        {!carregando &&
+          !erro &&
+          compras.length >
+            0 &&
+          filtradas.length ===
+            0 && (
+
+          <div className="compras-futuras-estado">
+
+            <Search
+              size={27}
+            />
+
+            <strong>
+              Nenhuma compra encontrada
+            </strong>
+
+            <p>
+              Altere os filtros para visualizar
+              outras compras.
+            </p>
 
           </div>
 
@@ -692,13 +976,118 @@ export default function ComprasFuturas() {
           salvando
         }
         onCancelar={
-          () =>
+          () => {
+            if (salvando) {
+              return;
+            }
+
+
             setModalAberto(
               false,
-            )
+            );
+
+            setItemEdicao(
+              null,
+            );
+          }
         }
         onSalvar={
           salvar
+        }
+      />
+
+
+      <ConfirmacaoExclusao
+        aberto={
+          Boolean(
+            itemParaExcluir,
+          )
+        }
+        titulo="Excluir compra futura?"
+        descricao="Esta compra será removida das previsões de recebimento e deixará de participar da projeção de estoque."
+        itemTitulo={
+          itemParaExcluir
+            ?.fornecedorNome ??
+          ""
+        }
+        itemDescricao={
+          itemParaExcluir
+            ?.numeroPedido
+            ? `Pedido ${itemParaExcluir.numeroPedido}`
+            : "Compra de PP"
+        }
+        detalhes={[
+          {
+            label:
+              "Quantidade",
+
+            valor:
+              itemParaExcluir
+                ? formatarKg(
+                    itemParaExcluir
+                      .quantidadeKg,
+                  )
+                : "-",
+          },
+
+          {
+            label:
+              "Status",
+
+            valor:
+              itemParaExcluir
+                ?.status ===
+                "CONFIRMADA"
+                ? "Confirmada"
+                : itemParaExcluir
+                    ?.status ===
+                    "RECEBIDA"
+                  ? "Recebida"
+                  : itemParaExcluir
+                      ?.status ===
+                      "CANCELADA"
+                    ? "Cancelada"
+                    : "Prevista",
+          },
+
+          {
+            label:
+              "Data da compra",
+
+            valor:
+              itemParaExcluir
+                ? formatarData(
+                    itemParaExcluir
+                      .dataCompra,
+                  )
+                : "-",
+          },
+
+          {
+            label:
+              "Previsão",
+
+            valor:
+              itemParaExcluir
+                ? formatarData(
+                    itemParaExcluir
+                      .dataPrevista,
+                  )
+                : "-",
+          },
+        ]}
+        erro={
+          erroExclusao
+        }
+        processando={
+          excluindo
+        }
+        textoConfirmar="Excluir compra"
+        onCancelar={
+          cancelarExclusao
+        }
+        onConfirmar={
+          confirmarExclusao
         }
       />
 

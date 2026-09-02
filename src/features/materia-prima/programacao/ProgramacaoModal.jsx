@@ -12,6 +12,7 @@ import {
 
 import {
   calcularConsumoProgramacao,
+  verificarConflitoInjetora,
 } from "./programacaoService";
 
 import "./ProgramacaoModal.css";
@@ -50,6 +51,104 @@ function dataHojeLocal() {
 }
 
 
+function horaAtualLocal() {
+  const agora =
+    new Date();
+
+  const hora =
+    String(
+      agora.getHours(),
+    ).padStart(
+      2,
+      "0",
+    );
+
+  const minuto =
+    String(
+      agora.getMinutes(),
+    ).padStart(
+      2,
+      "0",
+    );
+
+
+  return `${hora}:${minuto}`;
+}
+
+
+function converterDataHoraParaNumero(
+  data,
+  hora,
+) {
+  if (
+    !data ||
+    !hora
+  ) {
+    return null;
+  }
+
+
+  const [
+    ano,
+    mes,
+    dia,
+  ] =
+    String(
+      data,
+    )
+      .split(
+        "-",
+      )
+      .map(
+        Number,
+      );
+
+  const [
+    horas,
+    minutos,
+  ] =
+    String(
+      hora,
+    )
+      .split(
+        ":",
+      )
+      .map(
+        Number,
+      );
+
+
+  if (
+    !Number.isInteger(
+      ano,
+    ) ||
+    !Number.isInteger(
+      mes,
+    ) ||
+    !Number.isInteger(
+      dia,
+    ) ||
+    !Number.isInteger(
+      horas,
+    ) ||
+    !Number.isInteger(
+      minutos,
+    )
+  ) {
+    return null;
+  }
+
+
+  return Date.UTC(
+    ano,
+    mes - 1,
+    dia,
+    horas,
+    minutos,
+  );
+}
+
+
 function formatarKg(
   valor,
 ) {
@@ -78,6 +177,67 @@ function formatarKg(
         3,
     },
   )} kg`;
+}
+
+
+function formatarNumero(
+  valor,
+  casas = 0,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0";
+  }
+
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        casas,
+      maximumFractionDigits:
+        casas,
+    },
+  );
+}
+
+
+function formatarHoras(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0 h";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        0,
+      maximumFractionDigits:
+        2,
+    },
+  )} h`;
 }
 
 
@@ -111,6 +271,7 @@ export default function ProgramacaoModal({
   aberto,
   item = null,
   produtos = [],
+  programacao = [],
   salvando = false,
   onCancelar,
   onSalvar,
@@ -123,6 +284,13 @@ export default function ProgramacaoModal({
   );
 
   const [
+    horaInicio,
+    setHoraInicio,
+  ] = useState(
+    horaAtualLocal(),
+  );
+
+  const [
     dataFim,
     setDataFim,
   ] = useState(
@@ -130,13 +298,13 @@ export default function ProgramacaoModal({
   );
 
   const [
-    codigoProduto,
-    setCodigoProduto,
+    horaFim,
+    setHoraFim,
   ] = useState("");
 
   const [
-    quantidade,
-    setQuantidade,
+    codigoProduto,
+    setCodigoProduto,
   ] = useState("");
 
   const [
@@ -172,24 +340,26 @@ export default function ProgramacaoModal({
             dataHojeLocal(),
         );
 
+        setHoraInicio(
+          item.horaInicio ||
+            "",
+        );
+
         setDataFim(
           item.dataFim ||
             item.dataInicio ||
             dataHojeLocal(),
         );
 
+        setHoraFim(
+          item.horaFim ||
+            "",
+        );
+
         setCodigoProduto(
           String(
             item
               .codigoProduto ??
-              "",
-          ),
-        );
-
-        setQuantidade(
-          String(
-            item
-              .quantidade ??
               "",
           ),
         );
@@ -216,15 +386,19 @@ export default function ProgramacaoModal({
           hoje,
         );
 
+        setHoraInicio(
+          horaAtualLocal(),
+        );
+
         setDataFim(
           hoje,
         );
 
-        setCodigoProduto(
+        setHoraFim(
           "",
         );
 
-        setQuantidade(
+        setCodigoProduto(
           "",
         );
 
@@ -284,10 +458,21 @@ export default function ProgramacaoModal({
     useMemo(
       () =>
         calcularConsumoProgramacao({
-          quantidade:
-            Number(
-              quantidade,
-            ),
+          dataInicio,
+
+          horaInicio,
+
+          dataFim,
+
+          horaFim,
+
+          cicloSegundos:
+            produtoSelecionado
+              ?.cicloSegundos,
+
+          cavidadeMolde:
+            produtoSelecionado
+              ?.cavidadeMolde,
 
           pesoKg:
             produtoSelecionado
@@ -297,16 +482,82 @@ export default function ProgramacaoModal({
             produtoSelecionado
               ?.receitaItens ??
             [],
-
-          dataInicio,
-
-          dataFim,
         }),
       [
-        quantidade,
-        produtoSelecionado,
         dataInicio,
+        horaInicio,
         dataFim,
+        horaFim,
+        produtoSelecionado,
+      ],
+    );
+
+
+  /* =======================================================
+     INJETORAS OCUPADAS NO PERÍODO
+  ======================================================= */
+
+  const injetorasOcupadas =
+    useMemo(
+      () => {
+        const ocupadas =
+          new Set();
+
+
+        if (
+          !dataInicio ||
+          !horaInicio ||
+          !dataFim ||
+          !horaFim
+        ) {
+          return ocupadas;
+        }
+
+
+        INJETORAS.forEach(
+          (
+            numero,
+          ) => {
+            const conflito =
+              verificarConflitoInjetora({
+                programacao,
+
+                injetora:
+                  numero,
+
+                dataInicio,
+
+                horaInicio,
+
+                dataFim,
+
+                horaFim,
+
+                ignorarId:
+                  item
+                    ?.id ??
+                  null,
+              });
+
+
+            if (conflito) {
+              ocupadas.add(
+                numero,
+              );
+            }
+          },
+        );
+
+
+        return ocupadas;
+      },
+      [
+        programacao,
+        dataInicio,
+        horaInicio,
+        dataFim,
+        horaFim,
+        item,
       ],
     );
 
@@ -380,6 +631,15 @@ export default function ProgramacaoModal({
     }
 
 
+    if (!horaInicio) {
+      setErro(
+        "Informe a hora inicial.",
+      );
+
+      return;
+    }
+
+
     if (!dataFim) {
       setErro(
         "Informe a data final.",
@@ -389,12 +649,35 @@ export default function ProgramacaoModal({
     }
 
 
+    if (!horaFim) {
+      setErro(
+        "Informe a hora final.",
+      );
+
+      return;
+    }
+
+
+    const inicio =
+      converterDataHoraParaNumero(
+        dataInicio,
+        horaInicio,
+      );
+
+    const fim =
+      converterDataHoraParaNumero(
+        dataFim,
+        horaFim,
+      );
+
+
     if (
-      dataFim <
-      dataInicio
+      inicio === null ||
+      fim === null ||
+      fim <= inicio
     ) {
       setErro(
-        "A data final não pode ser anterior à data inicial.",
+        "A data e hora final precisam ser posteriores à data e hora inicial.",
       );
 
       return;
@@ -410,21 +693,76 @@ export default function ProgramacaoModal({
     }
 
 
-    const quantidadeNumero =
-      Number(
-        quantidade,
+    if (
+      !produtoSelecionado
+    ) {
+      setErro(
+        "Produto selecionado não encontrado.",
       );
+
+      return;
+    }
+
+
+    if (
+      injetora &&
+      injetorasOcupadas.has(
+        injetora,
+      )
+    ) {
+      setErro(
+        `A Injetora ${injetora} já possui uma programação ativa neste período.`,
+      );
+
+      return;
+    }
+
+
+    if (
+      !Number.isFinite(
+        Number(
+          produtoSelecionado
+            ?.cicloSegundos,
+        ),
+      ) ||
+      Number(
+        produtoSelecionado
+          ?.cicloSegundos,
+      ) <= 0
+    ) {
+      setErro(
+        "O produto selecionado não possui ciclo válido.",
+      );
+
+      return;
+    }
 
 
     if (
       !Number.isInteger(
-        quantidadeNumero,
+        Number(
+          produtoSelecionado
+            ?.cavidadeMolde,
+        ),
       ) ||
-      quantidadeNumero <=
-        0
+      Number(
+        produtoSelecionado
+          ?.cavidadeMolde,
+      ) <= 0
     ) {
       setErro(
-        "Informe uma quantidade diária inteira maior que zero.",
+        "O produto selecionado não possui quantidade de cavidades válida.",
+      );
+
+      return;
+    }
+
+
+    if (
+      calculo.ciclosCompletos <= 0
+    ) {
+      setErro(
+        "O período informado não é suficiente para completar um ciclo de produção.",
       );
 
       return;
@@ -440,12 +778,13 @@ export default function ProgramacaoModal({
 
         dataInicio,
 
+        horaInicio,
+
         dataFim,
 
-        codigoProduto,
+        horaFim,
 
-        quantidade:
-          quantidadeNumero,
+        codigoProduto,
 
         injetora:
           injetora ||
@@ -486,10 +825,6 @@ export default function ProgramacaoModal({
         aria-labelledby="programacao-modal-titulo"
       >
 
-        {/* =================================================
-            CABEÇALHO
-        ================================================= */}
-
         <div className="programacao-modal-header">
 
           <div className="programacao-modal-header-icone">
@@ -516,9 +851,9 @@ export default function ProgramacaoModal({
             </h3>
 
             <p>
-              Defina o período e a
-              quantidade diária de
-              produção.
+              Defina o período real de
+              produção para calcular o
+              consumo previsto de PP.
             </p>
 
           </div>
@@ -547,20 +882,12 @@ export default function ProgramacaoModal({
         </div>
 
 
-        {/* =================================================
-            FORMULÁRIO
-        ================================================= */}
-
         <form
           className="programacao-modal-form"
           onSubmit={
             enviarFormulario
           }
         >
-
-          {/* ===============================================
-              PERÍODO
-          =============================================== */}
 
           <div className="programacao-modal-grid">
 
@@ -616,6 +943,44 @@ export default function ProgramacaoModal({
             <label className="programacao-modal-campo">
 
               <span>
+                Hora início
+              </span>
+
+              <input
+                type="time"
+                value={
+                  horaInicio
+                }
+                onChange={
+                  (
+                    event,
+                  ) => {
+                    setHoraInicio(
+                      event
+                        .target
+                        .value,
+                    );
+
+                    setErro(
+                      "",
+                    );
+                  }
+                }
+                disabled={
+                  salvando
+                }
+              />
+
+            </label>
+
+          </div>
+
+
+          <div className="programacao-modal-grid">
+
+            <label className="programacao-modal-campo">
+
+              <span>
                 Data fim
               </span>
 
@@ -649,12 +1014,42 @@ export default function ProgramacaoModal({
 
             </label>
 
+
+            <label className="programacao-modal-campo">
+
+              <span>
+                Hora fim
+              </span>
+
+              <input
+                type="time"
+                value={
+                  horaFim
+                }
+                onChange={
+                  (
+                    event,
+                  ) => {
+                    setHoraFim(
+                      event
+                        .target
+                        .value,
+                    );
+
+                    setErro(
+                      "",
+                    );
+                  }
+                }
+                disabled={
+                  salvando
+                }
+              />
+
+            </label>
+
           </div>
 
-
-          {/* ===============================================
-              INJETORA
-          =============================================== */}
 
           <label className="programacao-modal-campo">
 
@@ -694,31 +1089,41 @@ export default function ProgramacaoModal({
               {INJETORAS.map(
                 (
                   numero,
-                ) => (
+                ) => {
 
-                  <option
-                    key={
-                      numero
-                    }
-                    value={
-                      numero
-                    }
-                  >
-                    Injetora{" "}
-                    {numero}
-                  </option>
+                  const ocupada =
+                    injetorasOcupadas.has(
+                      numero,
+                    );
 
-                ),
+
+                  return (
+                    <option
+                      key={
+                        numero
+                      }
+                      value={
+                        numero
+                      }
+                      disabled={
+                        ocupada
+                      }
+                    >
+                      Injetora{" "}
+                      {numero}
+
+                      {ocupada
+                        ? " - Ocupada"
+                        : ""}
+                    </option>
+                  );
+                },
               )}
 
             </select>
 
           </label>
 
-
-          {/* ===============================================
-              PRODUTO
-          =============================================== */}
 
           <label className="programacao-modal-campo">
 
@@ -783,59 +1188,6 @@ export default function ProgramacaoModal({
           </label>
 
 
-          {/* ===============================================
-              QUANTIDADE POR DIA
-          =============================================== */}
-
-          <label className="programacao-modal-campo">
-
-            <span>
-              Quantidade por dia
-            </span>
-
-            <div className="programacao-modal-quantidade">
-
-              <input
-                type="number"
-                min="1"
-                step="1"
-                value={
-                  quantidade
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setQuantidade(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
-                  }
-                }
-                placeholder="Ex.: 1000"
-                disabled={
-                  salvando
-                }
-              />
-
-              <span>
-                peças/dia
-              </span>
-
-            </div>
-
-          </label>
-
-
-          {/* ===============================================
-              PREVISÃO
-          =============================================== */}
-
           {produtoSelecionado && (
 
             <div className="programacao-modal-previsao">
@@ -861,23 +1213,87 @@ export default function ProgramacaoModal({
               <div className="programacao-modal-previsao-info">
 
                 <div>
-
                   <span>
-                    Dias programados
+                    Horas programadas
                   </span>
 
                   <strong>
                     {
-                      calculo
-                        .quantidadeDias
+                      formatarHoras(
+                        calculo
+                          .horasPeriodo,
+                      )
                     }
                   </strong>
-
                 </div>
 
 
                 <div>
+                  <span>
+                    Ciclo
+                  </span>
 
+                  <strong>
+                    {formatarNumero(
+                      produtoSelecionado
+                        .cicloSegundos,
+                      0,
+                    )}{" "}
+                    s
+                  </strong>
+                </div>
+
+
+                <div>
+                  <span>
+                    Cavidades
+                  </span>
+
+                  <strong>
+                    {
+                      formatarNumero(
+                        produtoSelecionado
+                          .cavidadeMolde,
+                      )
+                    }
+                  </strong>
+                </div>
+
+
+                <div>
+                  <span>
+                    Peças / hora
+                  </span>
+
+                  <strong>
+                    {
+                      formatarNumero(
+                        calculo
+                          .pecasPorHora,
+                        0,
+                      )
+                    }
+                  </strong>
+                </div>
+
+
+                <div>
+                  <span>
+                    Peças previstas
+                  </span>
+
+                  <strong>
+                    {
+                      formatarNumero(
+                        calculo
+                          .pecasPrevistas,
+                      )
+                    }
+                  </strong>
+                </div>
+
+
+                <div>
                   <span>
                     Peso da peça
                   </span>
@@ -890,30 +1306,26 @@ export default function ProgramacaoModal({
                       )
                     }
                   </strong>
-
                 </div>
 
 
                 <div>
-
                   <span>
-                    Consumo por dia
+                    PP / hora
                   </span>
 
                   <strong>
                     {
                       formatarKg(
                         calculo
-                          .consumoDiarioKg,
+                          .consumoPorHoraKg,
                       )
                     }
                   </strong>
-
                 </div>
 
 
                 <div>
-
                   <span>
                     Receita
                   </span>
@@ -924,7 +1336,6 @@ export default function ProgramacaoModal({
                       ? "100% configurada"
                       : "Pendente"}
                   </strong>
-
                 </div>
 
               </div>
@@ -1005,10 +1416,6 @@ export default function ProgramacaoModal({
           )}
 
 
-          {/* ===============================================
-              STATUS
-          =============================================== */}
-
           <label className="programacao-modal-status">
 
             <input
@@ -1039,17 +1446,13 @@ export default function ProgramacaoModal({
 
               <span>
                 Programações ativas entram
-                na projeção diária de PP.
+                na projeção de consumo de PP.
               </span>
 
             </div>
 
           </label>
 
-
-          {/* ===============================================
-              ERRO
-          =============================================== */}
 
           {erro && (
 
@@ -1059,10 +1462,6 @@ export default function ProgramacaoModal({
 
           )}
 
-
-          {/* ===============================================
-              AÇÕES
-          =============================================== */}
 
           <div className="programacao-modal-acoes">
 

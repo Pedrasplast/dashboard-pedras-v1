@@ -13,10 +13,10 @@ import "./ProdutoPPModal.css";
 
 
 /* =========================================================
-   PESO
+   UTILITÁRIOS
 ========================================================= */
 
-function normalizarPeso(
+function normalizarNumero(
   valor,
 ) {
   const texto =
@@ -52,6 +52,60 @@ function normalizarPeso(
 }
 
 
+function normalizarInteiro(
+  valor,
+) {
+  const numero =
+    normalizarNumero(
+      valor,
+    );
+
+
+  if (
+    numero === null ||
+    !Number.isInteger(
+      numero,
+    )
+  ) {
+    return null;
+  }
+
+
+  return numero;
+}
+
+
+function formatarValor(
+  valor,
+  casasMinimas = 0,
+  casasMaximas = 2,
+) {
+  const numero =
+    normalizarNumero(
+      valor,
+    );
+
+
+  if (
+    numero === null
+  ) {
+    return "-";
+  }
+
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        casasMinimas,
+
+      maximumFractionDigits:
+        casasMaximas,
+    },
+  );
+}
+
+
 /* =========================================================
    MODAL PRODUTO PP
 ========================================================= */
@@ -76,6 +130,16 @@ export default function ProdutoPPModal({
   const [
     pesoKg,
     setPesoKg,
+  ] = useState("");
+
+  const [
+    cicloSegundos,
+    setCicloSegundos,
+  ] = useState("");
+
+  const [
+    cavidadeMolde,
+    setCavidadeMolde,
   ] = useState("");
 
   const [
@@ -106,17 +170,19 @@ export default function ProdutoPPModal({
             "",
         );
 
+
         setNomeProduto(
           item.nomeProduto ||
             item.produto ||
             "",
         );
 
+
         setPesoKg(
           item.pesoKg ===
-            null ||
+              null ||
           item.pesoKg ===
-            undefined
+              undefined
             ? ""
             : String(
                 item.pesoKg,
@@ -125,6 +191,34 @@ export default function ProdutoPPModal({
                 ",",
               ),
         );
+
+
+        setCicloSegundos(
+          item.cicloSegundos ===
+              null ||
+          item.cicloSegundos ===
+              undefined
+            ? ""
+            : String(
+                item.cicloSegundos,
+              ).replace(
+                ".",
+                ",",
+              ),
+        );
+
+
+        setCavidadeMolde(
+          item.cavidadeMolde ===
+              null ||
+          item.cavidadeMolde ===
+              undefined
+            ? ""
+            : String(
+                item.cavidadeMolde,
+              ),
+        );
+
 
         setAtivo(
           item.ativo !==
@@ -140,6 +234,14 @@ export default function ProdutoPPModal({
         );
 
         setPesoKg(
+          "",
+        );
+
+        setCicloSegundos(
+          "",
+        );
+
+        setCavidadeMolde(
           "",
         );
 
@@ -227,8 +329,18 @@ export default function ProdutoPPModal({
       nomeProduto.trim();
 
     const pesoFinal =
-      normalizarPeso(
+      normalizarNumero(
         pesoKg,
+      );
+
+    const cicloFinal =
+      normalizarNumero(
+        cicloSegundos,
+      );
+
+    const cavidadeFinal =
+      normalizarInteiro(
+        cavidadeMolde,
       );
 
 
@@ -264,6 +376,34 @@ export default function ProdutoPPModal({
     }
 
 
+    if (
+      cicloFinal ===
+        null ||
+      cicloFinal <=
+        0
+    ) {
+      setErro(
+        "Informe um ciclo maior que zero.",
+      );
+
+      return;
+    }
+
+
+    if (
+      cavidadeFinal ===
+        null ||
+      cavidadeFinal <=
+        0
+    ) {
+      setErro(
+        "Informe uma quantidade de cavidades inteira e maior que zero.",
+      );
+
+      return;
+    }
+
+
     try {
       await onSalvar?.({
         codigoProdutoOriginal:
@@ -279,6 +419,12 @@ export default function ProdutoPPModal({
 
         pesoKg:
           pesoFinal,
+
+        cicloSegundos:
+          cicloFinal,
+
+        cavidadeMolde:
+          cavidadeFinal,
 
         ativo,
       });
@@ -335,8 +481,8 @@ export default function ProdutoPPModal({
             </h3>
 
             <p>
-              Cadastre diretamente os produtos
-              que utilizam PP.
+              Informe os dados do produto e
+              seus parâmetros de produção.
             </p>
 
           </div>
@@ -431,12 +577,12 @@ export default function ProdutoPPModal({
                     );
                   }
                 }
-                placeholder="Ex.: 0,840"
-                autoComplete="off"
-                disabled={
-                  salvando
-                }
-              />
+                  placeholder="Ex.: 0,840"
+                  autoComplete="off"
+                  disabled={
+                    salvando
+                  }
+                />
 
                 <span>
                   kg
@@ -483,16 +629,108 @@ export default function ProdutoPPModal({
           </label>
 
 
+          <div className="produto-pp-modal-grid">
+
+            <label className="produto-pp-modal-campo">
+
+              <span>
+                Ciclo
+              </span>
+
+              <div className="produto-pp-modal-peso">
+
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={
+                    cicloSegundos
+                  }
+                  onChange={
+                    (
+                      event,
+                    ) => {
+                    setCicloSegundos(
+                      event.target.value,
+                    );
+
+                    setErro(
+                      "",
+                    );
+                  }
+                }
+                  placeholder="Ex.: 79"
+                  autoComplete="off"
+                  disabled={
+                    salvando
+                  }
+                />
+
+                <span>
+                  s
+                </span>
+
+              </div>
+
+            </label>
+
+
+            <label className="produto-pp-modal-campo">
+
+              <span>
+                Cavidades
+              </span>
+
+              <input
+                type="number"
+                inputMode="numeric"
+                min="1"
+                step="1"
+                value={
+                  cavidadeMolde
+                }
+                onChange={
+                  (
+                    event,
+                  ) => {
+                    setCavidadeMolde(
+                      event.target.value,
+                    );
+
+                    setErro(
+                      "",
+                    );
+                  }
+                }
+                placeholder="Ex.: 1"
+                autoComplete="off"
+                disabled={
+                  salvando
+                }
+              />
+
+            </label>
+
+          </div>
+
+
           <div className="produto-pp-modal-resumo">
 
             <div>
 
               <span>
-                Material
+                Peso
               </span>
 
               <strong>
-                PP
+                {normalizarNumero(
+                  pesoKg,
+                ) !== null
+                  ? `${formatarValor(
+                      pesoKg,
+                      3,
+                      6,
+                    )} kg`
+                  : "-"}
               </strong>
 
             </div>
@@ -501,24 +739,37 @@ export default function ProdutoPPModal({
             <div>
 
               <span>
-                Peso cadastrado
+                Ciclo
               </span>
 
               <strong>
-                {normalizarPeso(
-                  pesoKg,
+                {normalizarNumero(
+                  cicloSegundos,
                 ) !== null
-                  ? `${normalizarPeso(
-                      pesoKg,
-                    ).toLocaleString(
-                      "pt-BR",
-                      {
-                        minimumFractionDigits:
-                          3,
-                        maximumFractionDigits:
-                          6,
-                      },
-                    )} kg`
+                  ? `${formatarValor(
+                      cicloSegundos,
+                      0,
+                      2,
+                    )} s`
+                  : "-"}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Cavidades
+              </span>
+
+              <strong>
+                {normalizarInteiro(
+                  cavidadeMolde,
+                ) !== null
+                  ? normalizarInteiro(
+                      cavidadeMolde,
+                    )
                   : "-"}
               </strong>
 
@@ -602,7 +853,9 @@ export default function ProdutoPPModal({
 
               {salvando
                 ? "Salvando..."
-                : "Salvar produto"}
+                : item
+                  ? "Salvar alterações"
+                  : "Salvar produto"}
 
             </button>
 

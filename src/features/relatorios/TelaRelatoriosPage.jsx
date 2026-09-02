@@ -1003,6 +1003,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
         dados:
           dadosRelatorioFinal,
+
+        textoFiltros:
+          montarTextoFiltros(),
       });
     };
 

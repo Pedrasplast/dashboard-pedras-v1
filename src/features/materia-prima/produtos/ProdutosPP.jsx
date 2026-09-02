@@ -5,12 +5,16 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Trash2,
 } from "lucide-react";
 
 import {
   useMemo,
   useState,
 } from "react";
+
+import ConfirmacaoExclusao
+  from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import ProdutoPPModal from "./ProdutoPPModal";
 import useProdutosPP from "./useProdutosPP";
@@ -90,6 +94,16 @@ export default function ProdutosPP() {
     setProdutoEdicao,
   ] = useState(null);
 
+  const [
+    produtoParaExcluir,
+    setProdutoParaExcluir,
+  ] = useState(null);
+
+  const [
+    erroExclusao,
+    setErroExclusao,
+  ] = useState("");
+
 
   const {
     produtos,
@@ -97,9 +111,12 @@ export default function ProdutosPP() {
     carregado,
     erro,
     salvando,
+    excluindo,
     recarregar,
     salvarProduto,
+    excluirProduto,
     produtoEstaSalvando,
+    produtoEstaExcluindo,
   } =
     useProdutosPP();
 
@@ -202,7 +219,10 @@ export default function ProdutosPP() {
   ======================================================= */
 
   function novoProduto() {
-    if (salvando) {
+    if (
+      salvando ||
+      excluindo
+    ) {
       return;
     }
 
@@ -226,7 +246,8 @@ export default function ProdutosPP() {
   ) {
     if (
       !produto ||
-      salvando
+      salvando ||
+      excluindo
     ) {
       return;
     }
@@ -281,6 +302,82 @@ export default function ProdutosPP() {
     setProdutoEdicao(
       null,
     );
+  }
+
+
+  /* =======================================================
+     EXCLUSÃO
+  ======================================================= */
+
+  function solicitarExclusao(
+    produto,
+  ) {
+    if (
+      !produto ||
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setProdutoParaExcluir(
+      produto,
+    );
+  }
+
+
+  function cancelarExclusao() {
+    if (excluindo) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setProdutoParaExcluir(
+      null,
+    );
+  }
+
+
+  async function confirmarExclusao() {
+    if (
+      !produtoParaExcluir ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+
+    try {
+      await excluirProduto(
+        produtoParaExcluir
+          .codigoProduto,
+      );
+
+
+      setProdutoParaExcluir(
+        null,
+      );
+    } catch (error) {
+      setErroExclusao(
+        error
+          ?.message ||
+        "Não foi possível excluir o Produto PP.",
+      );
+    }
   }
 
 
@@ -344,7 +441,8 @@ export default function ProdutosPP() {
               novoProduto
             }
             disabled={
-              salvando
+              salvando ||
+              excluindo
             }
           >
 
@@ -446,7 +544,8 @@ export default function ProdutosPP() {
             }
             disabled={
               carregando ||
-              salvando
+              salvando ||
+              excluindo
             }
           >
 
@@ -522,8 +621,8 @@ export default function ProdutosPP() {
 
             <p>
               Cadastre os produtos que utilizam
-              matéria-prima PP e informe o peso
-              de cada peça.
+              matéria-prima PP e informe os
+              parâmetros de produção.
             </p>
 
 
@@ -564,6 +663,8 @@ export default function ProdutosPP() {
                     <th>Produto</th>
                     <th>Material</th>
                     <th>Peso por peça</th>
+                    <th>Ciclo</th>
+                    <th>Cavidades</th>
                     <th>Status</th>
                     <th>Ações</th>
                   </tr>
@@ -608,9 +709,43 @@ export default function ProdutosPP() {
 
 
                       <td className="produtos-pp-peso">
+
                         {formatarKg(
                           produto.pesoKg,
                         )}
+
+                      </td>
+
+
+                      <td className="produtos-pp-ciclo">
+
+                        {produto
+                          .cicloSegundos !==
+                            null &&
+                        produto
+                          .cicloSegundos !==
+                            undefined
+                          ? `${Number(
+                              produto
+                                .cicloSegundos,
+                            ).toLocaleString(
+                              "pt-BR",
+                              {
+                                maximumFractionDigits:
+                                  2,
+                              },
+                            )} s`
+                          : "-"}
+
+                      </td>
+
+
+                      <td className="produtos-pp-cavidades">
+
+                        {produto
+                          .cavidadeMolde ??
+                          "-"}
+
                       </td>
 
 
@@ -633,29 +768,85 @@ export default function ProdutosPP() {
 
                       <td>
 
-                        <button
-                          type="button"
-                          className="produtos-pp-editar"
-                          onClick={
-                            () =>
-                              editarProduto(
-                                produto,
-                              )
-                          }
-                          disabled={
-                            salvando
-                          }
+                        <div
+                          style={{
+                            display:
+                              "flex",
+
+                            alignItems:
+                              "center",
+
+                            gap:
+                              "6px",
+                          }}
                         >
 
-                          <Pencil size={14} />
+                          <button
+                            type="button"
+                            className="produtos-pp-editar"
+                            onClick={
+                              () =>
+                                editarProduto(
+                                  produto,
+                                )
+                            }
+                            disabled={
+                              salvando ||
+                              excluindo
+                            }
+                          >
 
-                          {produtoEstaSalvando(
-                            produto.codigoProduto,
-                          )
-                            ? "Salvando..."
-                            : "Editar"}
+                            <Pencil
+                              size={14}
+                            />
 
-                        </button>
+                            {produtoEstaSalvando(
+                              produto.codigoProduto,
+                            )
+                              ? "Salvando..."
+                              : "Editar"}
+
+                          </button>
+
+
+                          <button
+                            type="button"
+                            className="produtos-pp-editar"
+                            onClick={
+                              () =>
+                                solicitarExclusao(
+                                  produto,
+                                )
+                            }
+                            disabled={
+                              salvando ||
+                              excluindo
+                            }
+                            style={{
+                              color:
+                                "#dc2626",
+
+                              borderColor:
+                                "#fecaca",
+
+                              background:
+                                "#ffffff",
+                            }}
+                          >
+
+                            <Trash2
+                              size={14}
+                            />
+
+                            {produtoEstaExcluindo(
+                              produto.codigoProduto,
+                            )
+                              ? "Excluindo..."
+                              : "Excluir"}
+
+                          </button>
+
+                        </div>
 
                       </td>
 
@@ -732,6 +923,83 @@ export default function ProdutosPP() {
         }
         onSalvar={
           salvar
+        }
+      />
+
+
+      <ConfirmacaoExclusao
+        aberto={
+          Boolean(
+            produtoParaExcluir,
+          )
+        }
+        titulo="Excluir Produto PP?"
+        descricao="O produto e seus parâmetros técnicos serão removidos definitivamente."
+        itemTitulo={
+          produtoParaExcluir
+            ?.nomeProduto ??
+          ""
+        }
+        itemDescricao={
+          produtoParaExcluir
+            ? `Código ${produtoParaExcluir.codigoProduto}`
+            : ""
+        }
+        detalhes={[
+          {
+            label:
+              "Peso da peça",
+
+            valor:
+              produtoParaExcluir
+                ? formatarKg(
+                    produtoParaExcluir
+                      .pesoKg,
+                  )
+                : "-",
+          },
+          {
+            label:
+              "Ciclo",
+
+            valor:
+              produtoParaExcluir
+                ?.cicloSegundos
+                ? `${produtoParaExcluir.cicloSegundos} s`
+                : "-",
+          },
+          {
+            label:
+              "Cavidades",
+
+            valor:
+              produtoParaExcluir
+                ?.cavidadeMolde ??
+              "-",
+          },
+          {
+            label:
+              "Status",
+
+            valor:
+              produtoParaExcluir
+                ?.ativo
+                ? "Ativo"
+                : "Inativo",
+          },
+        ]}
+        erro={
+          erroExclusao
+        }
+        processando={
+          excluindo
+        }
+        textoConfirmar="Excluir produto"
+        onCancelar={
+          cancelarExclusao
+        }
+        onConfirmar={
+          confirmarExclusao
         }
       />
 

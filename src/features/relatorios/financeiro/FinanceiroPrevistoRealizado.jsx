@@ -608,6 +608,8 @@ export default function FinanceiroPrevistoRealizado({
       dados:
         dadosExportacao,
 
+      textoFiltros,
+
       grupos:
         gruposRelatorio,
     });

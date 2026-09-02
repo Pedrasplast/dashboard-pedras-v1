@@ -108,8 +108,8 @@ function normalizarItemReceita(
 
 
   const id =
-    registro
-      ?.id;
+    registro?.id;
+
 
   const codigoProduto =
     String(
@@ -118,9 +118,11 @@ function normalizarItemReceita(
         "",
     ).trim();
 
+
   const fornecedorId =
     registro
       ?.fornecedor_id;
+
 
   const percentual =
     normalizarNumero(
@@ -359,7 +361,9 @@ export async function buscarReceitas() {
   ] =
     await Promise.all([
       buscarProdutosPP(),
+
       buscarFornecedores(),
+
       buscarItensReceitas(),
     ]);
 
@@ -465,7 +469,7 @@ export async function buscarReceitas() {
 
 
   /* =======================================================
-     MONTAR RESULTADO
+     MONTAR RECEITAS
   ======================================================= */
 
   const receitas =
@@ -723,6 +727,7 @@ function validarReceita({
         {
           minimumFractionDigits:
             0,
+
           maximumFractionDigits:
             4,
         },
@@ -862,7 +867,7 @@ async function restaurarReceitaAnterior({
 
 
   /* =======================================================
-     DESATIVAR ITENS NOVOS CRIADOS DURANTE A TENTATIVA
+     DESATIVAR ITENS NOVOS DA TENTATIVA
   ======================================================= */
 
   const itensNovos =
@@ -1195,6 +1200,100 @@ export async function salvarReceita({
 
     throw error;
   }
+}
+
+
+/* =========================================================
+   EXCLUIR RECEITA
+
+   Exclusão lógica:
+   - desativa todos os itens ativos da receita;
+   - mantém o Produto PP;
+   - o produto volta para "A configurar".
+========================================================= */
+
+export async function excluirReceita(
+  codigoProduto,
+) {
+  const codigo =
+    String(
+      codigoProduto ??
+        "",
+    ).trim();
+
+
+  if (!codigo) {
+    throw new Error(
+      "Código do produto não informado.",
+    );
+  }
+
+
+  const agora =
+    new Date()
+      .toISOString();
+
+
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_receitas_itens",
+      )
+      .update({
+        ativo:
+          false,
+
+        atualizado_em:
+          agora,
+      })
+      .eq(
+        "codigo_produto",
+        codigo,
+      )
+      .eq(
+        "ativo",
+        true,
+      )
+      .select(
+        "id",
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const itensExcluidos =
+    Array.isArray(
+      data,
+    )
+      ? data.length
+      : 0;
+
+
+  if (
+    itensExcluidos ===
+    0
+  ) {
+    throw new Error(
+      "Esta receita não possui itens ativos para excluir.",
+    );
+  }
+
+
+  return {
+    codigoProduto:
+      codigo,
+
+    itensExcluidos,
+
+    excluida:
+      true,
+  };
 }
 
 
