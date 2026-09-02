@@ -23,6 +23,7 @@ import {
 import {
   supabase,
 } from "@/lib/supabaseClient";
+import PageHeader from "@/components/layout/PageHeader";
 
 import "./FinanceiroEvolucaoMensalPage.css";
 
@@ -618,61 +619,13 @@ export default function FinanceiroEvolucaoMensalPage() {
           CABEÇALHO
       =================================================== */}
 
-      <header className="financeiro-evolucao-cabecalho">
-
-        <div className="financeiro-evolucao-cabecalho-principal">
-
-          <div className="financeiro-evolucao-cabecalho-icone">
-            <FiActivity />
-          </div>
-
-
-          <div>
-
-            <span className="financeiro-evolucao-categoria">
-              Financeiro
-            </span>
-
-            <h1>
-              Evolução Mensal Financeira
-            </h1>
-
-            <p>
-              Acompanhe a evolução de receitas, despesas e resultado ao longo dos meses.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <button
-          type="button"
-          className="financeiro-evolucao-atualizar"
-          onClick={
-            () =>
-              refetch()
-          }
-          disabled={
-            isFetching
-          }
-        >
-          <FiRefreshCw
-            className={
-              isFetching
-                ? "girando"
-                : ""
-            }
-          />
-
-          <span>
-            {isFetching
-              ? "Atualizando..."
-              : "Atualizar"}
-          </span>
-        </button>
-
-      </header>
+      <PageHeader
+        eyebrow="Financeiro"
+        title="Evolução Mensal Financeira"
+        description="Acompanhe a evolução de receitas, despesas e resultado ao longo dos meses."
+        icon={FiActivity}
+        className="financeiro-evolucao-cabecalho"
+      />
 
 
       {/* ===================================================

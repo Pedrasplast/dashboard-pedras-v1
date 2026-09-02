@@ -3,12 +3,14 @@ import {
   Calculator,
   CheckCircle2,
   Clock,
+  Factory,
   PauseCircle,
   Target,
   XCircle,
 } from "lucide-react";
 
 import Sidebar from "@/components/layout/Sidebar";
+import PageHeader from "@/components/layout/PageHeader";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 import { valoresUnicosOrdenados } from "@/lib/colecoes";
 import { useCargaMaquina } from "@/lib/cargaMaquina";
@@ -105,9 +107,13 @@ export default function Dashboard() {
       </Sidebar>
 
       <main className="main-content">
-        <header className="dashboard-header">
-          <h1>Dashboard de Produção</h1>
-        </header>
+        <PageHeader
+          eyebrow="Produção"
+          title="Dashboard de Produção"
+          description="Indicadores consolidados de produção, qualidade e horas trabalhadas."
+          icon={Factory}
+          className="dashboard-header"
+        />
 
         {erro && <div className="dashboard-error">{erro}</div>}
 

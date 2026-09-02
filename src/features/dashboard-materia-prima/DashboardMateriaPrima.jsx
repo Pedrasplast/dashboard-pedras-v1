@@ -1,5 +1,6 @@
 import React from 'react';
 import { Wrench } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 import './DashboardMateriaPrima.css';
 
 function DashboardMateriaPrima() {
@@ -7,15 +8,13 @@ function DashboardMateriaPrima() {
     <div className="materia-prima-layout">
       
       <main className="materia-prima-main">
-        <header className="materia-prima-header">
-          <span className="materia-prima-subtitle">
-            Controle de consumo
-          </span>
-
-          <h1>
-            Dashboard de Matéria-Prima
-          </h1>
-        </header>
+        <PageHeader
+          eyebrow="Controle de consumo"
+          title="Dashboard de Matéria-Prima"
+          description="Indicadores de consumo e acompanhamento de matérias-primas."
+          icon={Wrench}
+          className="materia-prima-header"
+        />
 
         <section className="materia-prima-content">
           <div className="construcao-card">

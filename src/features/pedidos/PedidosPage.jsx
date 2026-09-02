@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 
 import Paginacao from "@/components/paginacao/Paginacao";
+import PageHeader from "@/components/layout/PageHeader";
 
 import { buscarPedidosOmie } from "./omie.functions";
 
@@ -1385,18 +1386,13 @@ export default function PedidosPage() {
             CABEÇALHO
         ================================================= */}
 
-        <section className="pedidos-header">
-          <div>
-            <h1>
-              Pedidos
-            </h1>
-
-            <p>
-              Acompanhamento dos pedidos de venda e consulta dos pedidos cancelados.
-            </p>
-          </div>
-
-          <div className="pedidos-header-actions">
+        <PageHeader
+          eyebrow="Comercial"
+          title="Pedidos"
+          description="Acompanhamento dos pedidos de venda e consulta dos pedidos cancelados."
+          icon={ShoppingCart}
+          className="pedidos-header"
+          actions={
             <div
               className="pedidos-atualizacao"
               title={
@@ -1441,8 +1437,8 @@ export default function PedidosPage() {
                 </span>
               </div>
             </div>
-          </div>
-        </section>
+          }
+        />
 
         {/* =================================================
             CARDS

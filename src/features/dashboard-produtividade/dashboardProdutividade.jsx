@@ -19,6 +19,7 @@ import {
 } from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
+import PageHeader from "@/components/layout/PageHeader";
 
 import { calcularOeeCargaMaquina } from "./CalcularOee";
 import {
@@ -340,23 +341,13 @@ function DashboardProdutividadeEmValidacao() {
 
         {/* CABEÇALHO */}
 
-        <header className="produtividade-header">
-          <div>
-            <span className="produtividade-subtitle">
-              Eficiência global da produção
-            </span>
-
-            <h1>
-              Dashboard de OEE
-            </h1>
-
-            <p>
-              Disponibilidade, performance,
-              qualidade e eficiência global
-              da produção.
-            </p>
-          </div>
-        </header>
+        <PageHeader
+          eyebrow="Eficiência global da produção"
+          title="Dashboard de OEE"
+          description="Disponibilidade, performance, qualidade e eficiência global da produção."
+          icon={Gauge}
+          className="produtividade-header"
+        />
 
         {/* FILTROS */}
 
