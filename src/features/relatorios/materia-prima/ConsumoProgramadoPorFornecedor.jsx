@@ -1,10 +1,13 @@
 import {
+  Fragment,
   useMemo,
   useState,
 } from "react";
 
 import {
   FiAlertTriangle,
+  FiChevronDown,
+  FiChevronUp,
   FiDownload,
   FiEye,
   FiFileText,
@@ -16,36 +19,737 @@ import {
 import useConsumoProgramado
   from "./useConsumoProgramado";
 
-import {
-  formatarData,
-  formatarKg,
-  formatarNumero,
-  periodoInicial,
-} from "./relatorioConsumo.utils";
-
-import "./RelatorioConsumo.css";
+import "./ConsumoProgramadoPorFornecedor.css";
 
 
 /* =========================================================
-   TABELA
-============================================================ */
+   DATAS
+========================================================= */
+
+function dataHojeLocal() {
+  const agora =
+    new Date();
+
+  return [
+    agora.getFullYear(),
+
+    String(
+      agora.getMonth() + 1,
+    ).padStart(
+      2,
+      "0",
+    ),
+
+    String(
+      agora.getDate(),
+    ).padStart(
+      2,
+      "0",
+    ),
+  ].join("-");
+}
+
+
+function adicionarDiasLocal(
+  valor,
+  dias,
+) {
+  const [
+    ano,
+    mes,
+    dia,
+  ] =
+    String(
+      valor,
+    )
+      .split("-")
+      .map(Number);
+
+
+  const data =
+    new Date(
+      ano,
+      mes - 1,
+      dia + dias,
+      12,
+      0,
+      0,
+    );
+
+
+  return [
+    data.getFullYear(),
+
+    String(
+      data.getMonth() + 1,
+    ).padStart(
+      2,
+      "0",
+    ),
+
+    String(
+      data.getDate(),
+    ).padStart(
+      2,
+      "0",
+    ),
+  ].join("-");
+}
+
+
+function obterPeriodoInicial() {
+  const hoje =
+    dataHojeLocal();
+
+
+  return {
+    inicio:
+      hoje,
+
+    fim:
+      adicionarDiasLocal(
+        hoje,
+        7,
+      ),
+  };
+}
+
+
+/* =========================================================
+   FORMATADORES
+========================================================= */
+
+function formatarData(
+  valor,
+) {
+  if (!valor) {
+    return "-";
+  }
+
+
+  const partes =
+    String(
+      valor,
+    ).split("-");
+
+
+  if (
+    partes.length !==
+    3
+  ) {
+    return String(
+      valor,
+    );
+  }
+
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+
+function formatarDataHora(
+  data,
+  hora,
+) {
+  return hora
+    ? `${formatarData(
+        data,
+      )} ${String(
+        hora,
+      ).slice(
+        0,
+        5,
+      )}`
+    : formatarData(
+        data,
+      );
+}
+
+
+function formatarNumero(
+  valor,
+  casas = 0,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "-";
+  }
+
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        casas,
+
+      maximumFractionDigits:
+        casas,
+    },
+  );
+}
+
+
+function formatarKg(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0,000 kg";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        3,
+
+      maximumFractionDigits:
+        3,
+    },
+  )} kg`;
+}
+
+
+function formatarPercentual(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0%";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        0,
+
+      maximumFractionDigits:
+        4,
+    },
+  )}%`;
+}
+
+
+function montarTextoPeriodo(
+  dataInicial,
+  dataFinal,
+) {
+  if (
+    dataInicial &&
+    dataFinal
+  ) {
+    return `De: ${formatarData(
+      dataInicial,
+    )} | Até: ${formatarData(
+      dataFinal,
+    )}`;
+  }
+
+
+  if (dataInicial) {
+    return `De: ${formatarData(
+      dataInicial,
+    )}`;
+  }
+
+
+  if (dataFinal) {
+    return `Até: ${formatarData(
+      dataFinal,
+    )}`;
+  }
+
+
+  return "Sem período informado";
+}
+
+
+/* =========================================================
+   PRODUTO
+========================================================= */
+
+function montarProduto(
+  codigo,
+  descricao,
+) {
+  const codigoLimpo =
+    String(
+      codigo ?? "",
+    ).trim();
+
+
+  const descricaoLimpa =
+    String(
+      descricao ?? "",
+    ).trim();
+
+
+  if (
+    codigoLimpo &&
+    descricaoLimpa
+  ) {
+    return `${codigoLimpo} - ${descricaoLimpa}`;
+  }
+
+
+  if (
+    codigoLimpo
+  ) {
+    return codigoLimpo;
+  }
+
+
+  if (
+    descricaoLimpa
+  ) {
+    return descricaoLimpa;
+  }
+
+
+  return "-";
+}
+
+
+/* =========================================================
+   TOTAL DE PEÇAS POR FORNECEDOR
+========================================================= */
+
+function obterTotalPecasFornecedor(
+  grupo,
+) {
+  return (
+    grupo?.detalhes ||
+    []
+  ).reduce(
+    (
+      total,
+      detalhe,
+    ) =>
+      total +
+      Number(
+        detalhe?.pecasPrevistas ||
+        0,
+      ),
+    0,
+  );
+}
+
+
+/* =========================================================
+   TOTAL DE PEÇAS SEM RECEITA
+========================================================= */
+
+function obterTotalPecasSemReceita(
+  dados,
+) {
+  return (
+    dados?.semReceita ||
+    []
+  ).reduce(
+    (
+      total,
+      item,
+    ) =>
+      total +
+      Number(
+        item?.pecasPrevistas ||
+        0,
+      ),
+    0,
+  );
+}
+
+
+/* =========================================================
+   EXPORTAÇÃO AGRUPADA
+
+   ESTA MESMA ESTRUTURA É UTILIZADA EM:
+   - PDF
+   - EXCEL
+
+   UMA LINHA POR FORNECEDOR.
+
+   COLUNAS:
+   - Fornecedor
+   - Período
+   - Peças
+   - Consumo
+
+   REMOVIDOS:
+   - Injetora
+   - Programação
+   - Produto
+   - Participação
+
+   TOTAL GERAL:
+   - não soma peças;
+   - somente consumo PP.
+========================================================= */
+
+function prepararExportacaoFornecedor(
+  relatorio,
+  dados,
+  dataInicial,
+  dataFinal,
+) {
+  const relatorioExportacao = {
+    ...relatorio,
+
+    titulo:
+      relatorio?.titulo ||
+      "Consumo Programado por Fornecedor",
+
+    descricao:
+      relatorio?.descricao ||
+      "Consolida a necessidade prevista de PP por fornecedor conforme as receitas dos produtos e a programação das injetoras no período selecionado.",
+
+    colunas: [
+      "fornecedor",
+      "periodo",
+      "pecas",
+      "consumo",
+    ],
+  };
+
+
+  const linhas =
+    [];
+
+
+  const periodo =
+    dataInicial &&
+    dataFinal
+      ? `${formatarData(
+          dataInicial,
+        )} até ${formatarData(
+          dataFinal,
+        )}`
+      : montarTextoPeriodo(
+          dataInicial,
+          dataFinal,
+        );
+
+
+  /* =====================================================
+     FORNECEDORES
+  ===================================================== */
+
+  for (
+    const grupo
+    of dados?.porFornecedor ||
+    []
+  ) {
+    linhas.push({
+      fornecedor:
+        grupo.fornecedorNome,
+
+      periodo,
+
+      pecas:
+        formatarNumero(
+          obterTotalPecasFornecedor(
+            grupo,
+          ),
+        ),
+
+      consumo:
+        formatarKg(
+          grupo.consumoKg,
+        ),
+    });
+  }
+
+
+  /* =====================================================
+     SEM RECEITA
+
+     APARECE SOMENTE QUANDO EXISTIR CONSUMO NÃO
+     DISTRIBUÍDO ENTRE FORNECEDORES.
+  ===================================================== */
+
+  if (
+    Number(
+      dados?.resumo
+        ?.consumoSemReceitaKg ||
+        0,
+    ) > 0
+  ) {
+    linhas.push({
+      fornecedor:
+        "SEM RECEITA",
+
+      periodo,
+
+      pecas:
+        formatarNumero(
+          obterTotalPecasSemReceita(
+            dados,
+          ),
+        ),
+
+      consumo:
+        formatarKg(
+          dados?.resumo
+            ?.consumoSemReceitaKg,
+        ),
+    });
+  }
+
+
+  /* =====================================================
+     TOTAL GERAL
+
+     SOMENTE O CONSUMO PP É TOTALIZADO.
+
+     NÃO SOMAMOS PEÇAS PORQUE UMA MESMA PEÇA PODE
+     CONSUMIR MATERIAL DE MAIS DE UM FORNECEDOR.
+  ===================================================== */
+
+  if (
+    linhas.length >
+    0
+  ) {
+    linhas.push({
+      fornecedor:
+        "TOTAL GERAL",
+
+      periodo:
+        "-",
+
+      pecas:
+        "-",
+
+      consumo:
+        formatarKg(
+          dados?.resumo
+            ?.consumoTotalKg,
+        ),
+    });
+  }
+
+
+  return {
+    relatorioExportacao,
+
+    dadosExportacao:
+      linhas,
+  };
+}
+
+
+/* =========================================================
+   DETALHES DO FORNECEDOR
+========================================================= */
+
+function DetalhesFornecedor({
+  grupo,
+}) {
+  return (
+    <div className="mpf-detalhes-lista">
+
+      {grupo.detalhes.map(
+        (
+          detalhe,
+          indice,
+        ) => (
+
+        <article
+          key={`${grupo.fornecedorId}-${detalhe.programacaoId}-${detalhe.codigoProduto}-${indice}`}
+          className="mpf-detalhe"
+        >
+
+          <div className="mpf-detalhe-topo">
+
+            <div>
+
+              <span>
+                Injetora{" "}
+                {detalhe.injetora}
+                {" • "}
+                Programação #{
+                  detalhe.programacaoId
+                }
+              </span>
+
+
+              <strong>
+                {montarProduto(
+                  detalhe.codigoProduto,
+                  detalhe.descricao,
+                )}
+              </strong>
+
+            </div>
+
+
+            <strong className="mpf-detalhe-consumo">
+              {formatarKg(
+                detalhe.consumoFornecedorKg,
+              )}
+            </strong>
+
+          </div>
+
+
+          <div className="mpf-detalhe-grid">
+
+            <div>
+
+              <span>
+                Período considerado
+              </span>
+
+
+              <strong>
+
+                {formatarDataHora(
+                  detalhe.dataInicioConsiderada,
+                  detalhe.horaInicioConsiderada,
+                )}
+
+                {" → "}
+
+                {formatarDataHora(
+                  detalhe.dataFimConsiderada,
+                  detalhe.horaFimConsiderada,
+                )}
+
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Receita
+              </span>
+
+
+              <strong>
+                {formatarPercentual(
+                  detalhe.percentual,
+                )}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Peças previstas
+              </span>
+
+
+              <strong>
+                {formatarNumero(
+                  detalhe.pecasPrevistas,
+                )}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                PP total do programa
+              </span>
+
+
+              <strong>
+                {formatarKg(
+                  detalhe.consumoProgramaKg,
+                )}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </article>
+
+        ),
+      )}
+
+    </div>
+  );
+}
+
+
+/* =========================================================
+   TABELA DA TELA
+========================================================= */
 
 function TabelaFornecedores({
   dados,
+  expandidos,
+  onAlternar,
 }) {
   return (
-    <div className="rmp-tabela-container">
+    <div className="relatorio-visualizacao-tabela-wrapper">
 
-      <table className="rmp-tabela">
+      <table className="relatorio-visualizacao-tabela mpf-tabela">
 
         <thead>
 
           <tr>
-            <th>Fornecedor</th>
-            <th>Injetoras</th>
-            <th>Produtos</th>
-            <th>Programações</th>
-            <th>Consumo PP</th>
+
+            <th>
+              Fornecedor
+            </th>
+
+            <th className="coluna-numerica">
+              Injetoras
+            </th>
+
+            <th className="coluna-numerica">
+              Produtos
+            </th>
+
+            <th className="coluna-numerica">
+              Programações
+            </th>
+
+            <th className="coluna-numerica">
+              Consumo PP
+            </th>
+
+            <th>
+              Detalhes
+            </th>
+
           </tr>
 
         </thead>
@@ -53,66 +757,131 @@ function TabelaFornecedores({
 
         <tbody>
 
-          {dados
-            .porFornecedor
-            .map(
-              (
-                grupo,
-              ) => (
+          {dados.porFornecedor.map(
+            (
+              grupo,
+            ) => {
+              const chave =
+                String(
+                  grupo.fornecedorId ??
+                  grupo.fornecedorNome,
+                );
 
-                <tr
-                  className="rmp-linha"
+
+              const expandido =
+                expandidos.has(
+                  chave,
+                );
+
+
+              return (
+                <Fragment
                   key={
-                    grupo
-                      .fornecedorId
+                    chave
                   }
                 >
 
-                  <td>
+                  <tr>
 
-                    <strong>
-                      {grupo
-                        .fornecedorNome}
-                    </strong>
+                    <td>
 
-                  </td>
+                      <strong className="mpf-fornecedor">
+                        {grupo.fornecedorNome}
+                      </strong>
 
-
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .quantidadeInjetoras,
-                    )}
-                  </td>
+                    </td>
 
 
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .quantidadeProdutos,
-                    )}
-                  </td>
+                    <td className="coluna-numerica">
+
+                      {formatarNumero(
+                        grupo.quantidadeInjetoras,
+                      )}
+
+                    </td>
 
 
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .quantidadeProgramacoes,
-                    )}
-                  </td>
+                    <td className="coluna-numerica">
+
+                      {formatarNumero(
+                        grupo.quantidadeProdutos,
+                      )}
+
+                    </td>
 
 
-                  <td className="rmp-consumo">
-                    {formatarKg(
-                      grupo
-                        .consumoKg,
-                    )}
-                  </td>
+                    <td className="coluna-numerica">
 
-                </tr>
+                      {formatarNumero(
+                        grupo.quantidadeProgramacoes,
+                      )}
 
-              ),
-            )}
+                    </td>
+
+
+                    <td className="coluna-numerica mpf-total">
+
+                      {formatarKg(
+                        grupo.consumoKg,
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      <button
+                        type="button"
+                        className="mpf-expandir"
+                        onClick={
+                          () =>
+                            onAlternar(
+                              chave,
+                            )
+                        }
+                        aria-expanded={
+                          expandido
+                        }
+                      >
+
+                        {expandido
+                          ? <FiChevronUp />
+                          : <FiChevronDown />}
+
+
+                        {expandido
+                          ? "Fechar"
+                          : "Ver"}
+
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+
+                  {expandido && (
+
+                    <tr className="mpf-linha-detalhe">
+
+                      <td colSpan={6}>
+
+                        <DetalhesFornecedor
+                          grupo={
+                            grupo
+                          }
+                        />
+
+                      </td>
+
+                    </tr>
+
+                  )}
+
+                </Fragment>
+              );
+            },
+          )}
 
         </tbody>
 
@@ -124,16 +893,110 @@ function TabelaFornecedores({
 
 
 /* =========================================================
+   SEM RECEITA
+========================================================= */
+
+function BlocoSemReceita({
+  dados,
+}) {
+  if (
+    !dados.semReceita.length
+  ) {
+    return null;
+  }
+
+
+  return (
+    <section className="mpf-sem-receita">
+
+      <div className="mpf-sem-receita-header">
+
+        <div>
+
+          <FiAlertTriangle />
+
+
+          <div>
+
+            <strong>
+              Sem receita configurada
+            </strong>
+
+
+            <span>
+              Consumo ainda não distribuído entre fornecedores.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <b>
+          {formatarKg(
+            dados.resumo.consumoSemReceitaKg,
+          )}
+        </b>
+
+      </div>
+
+
+      <div className="mpf-sem-receita-lista">
+
+        {dados.semReceita.map(
+          (
+            item,
+          ) => (
+
+          <div
+            key={
+              item.id
+            }
+          >
+
+            <span>
+              Injetora{" "}
+              {item.injetora}
+            </span>
+
+
+            <strong>
+              {montarProduto(
+                item.codigoProduto,
+                item.descricao,
+              )}
+            </strong>
+
+
+            <b>
+              {formatarKg(
+                item.consumoSemReceitaKg,
+              )}
+            </b>
+
+          </div>
+
+          ),
+        )}
+
+      </div>
+
+    </section>
+  );
+}
+
+
+/* =========================================================
    RELATÓRIO
 ========================================================= */
 
 export default function ConsumoProgramadoPorFornecedor({
   relatorio,
 }) {
-  const inicial =
+  const periodoInicial =
     useMemo(
       () =>
-        periodoInicial(),
+        obterPeriodoInicial(),
       [],
     );
 
@@ -143,7 +1006,7 @@ export default function ConsumoProgramadoPorFornecedor({
     setDataInicial,
   ] =
     useState(
-      inicial.inicio,
+      periodoInicial.inicio,
     );
 
 
@@ -152,7 +1015,17 @@ export default function ConsumoProgramadoPorFornecedor({
     setDataFinal,
   ] =
     useState(
-      inicial.fim,
+      periodoInicial.fim,
+    );
+
+
+  const [
+    fornecedoresExpandidos,
+    setFornecedoresExpandidos,
+  ] =
+    useState(
+      () =>
+        new Set(),
     );
 
 
@@ -188,7 +1061,6 @@ export default function ConsumoProgramadoPorFornecedor({
     carregando,
     atualizando,
     erro,
-    recarregar,
   } =
     useConsumoProgramado({
       dataInicial,
@@ -201,10 +1073,79 @@ export default function ConsumoProgramadoPorFornecedor({
 
 
   const possuiDados =
-    dados
-      .porFornecedor
-      .length >
-    0;
+    dados.porFornecedor.length >
+      0 ||
+    dados.semReceita.length >
+      0;
+
+
+  const textoFiltros =
+    montarTextoPeriodo(
+      dataInicial,
+      dataFinal,
+    );
+
+
+  /* =======================================================
+     EXPORTAÇÃO
+
+     PDF E EXCEL UTILIZAM EXATAMENTE A MESMA BASE.
+  ======================================================= */
+
+  const exportacao =
+    useMemo(
+      () =>
+        prepararExportacaoFornecedor(
+          relatorio,
+          dados,
+          dataInicial,
+          dataFinal,
+        ),
+      [
+        relatorio,
+        dados,
+        dataInicial,
+        dataFinal,
+      ],
+    );
+
+
+  /* =======================================================
+     EXPANSÃO
+  ======================================================= */
+
+  function alternarFornecedor(
+    chave,
+  ) {
+    setFornecedoresExpandidos(
+      (
+        atuais,
+      ) => {
+        const proximo =
+          new Set(
+            atuais,
+          );
+
+
+        if (
+          proximo.has(
+            chave,
+          )
+        ) {
+          proximo.delete(
+            chave,
+          );
+        } else {
+          proximo.add(
+            chave,
+          );
+        }
+
+
+        return proximo;
+      },
+    );
+  }
 
 
   /* =======================================================
@@ -214,7 +1155,9 @@ export default function ConsumoProgramadoPorFornecedor({
   async function exportarPDF() {
     if (
       !possuiDados ||
-      exportando
+      exportando ||
+      exportacao.dadosExportacao.length ===
+        0
     ) {
       return;
     }
@@ -227,27 +1170,26 @@ export default function ConsumoProgramadoPorFornecedor({
 
 
       const {
-        exportarPdfConsumoFornecedor,
+        gerarPdfRelatorio,
       } =
         await import(
-          "./ExportarConsumoProgramado.js"
+          "../exportacao/GerarPDF"
         );
 
 
-      await exportarPdfConsumoFornecedor({
-        relatorio,
+      await gerarPdfRelatorio({
+        relatorio:
+          exportacao.relatorioExportacao,
 
-        dados,
+        dados:
+          exportacao.dadosExportacao,
 
-        dataInicial,
-
-        dataFinal,
+        textoFiltros,
       });
-    } catch (
-      error
-    ) {
+
+    } catch (error) {
       console.error(
-        "Erro ao gerar PDF do consumo por fornecedor:",
+        "Erro ao exportar relatório por fornecedor em PDF:",
         error,
       );
 
@@ -255,6 +1197,7 @@ export default function ConsumoProgramadoPorFornecedor({
       window.alert(
         "Não foi possível gerar o PDF.",
       );
+
     } finally {
       setExportando(
         null,
@@ -265,12 +1208,16 @@ export default function ConsumoProgramadoPorFornecedor({
 
   /* =======================================================
      EXCEL
+
+     MESMAS COLUNAS, AGRUPAMENTO E TOTAL DO PDF.
   ======================================================= */
 
   async function exportarExcel() {
     if (
       !possuiDados ||
-      exportando
+      exportando ||
+      exportacao.dadosExportacao.length ===
+        0
     ) {
       return;
     }
@@ -283,27 +1230,24 @@ export default function ConsumoProgramadoPorFornecedor({
 
 
       const {
-        exportarExcelConsumoFornecedor,
+        gerarExcelRelatorio,
       } =
         await import(
-          "./ExportarConsumoProgramado.js"
+          "../exportacao/GerarExcel"
         );
 
 
-      await exportarExcelConsumoFornecedor({
-        relatorio,
+      await gerarExcelRelatorio({
+        relatorio:
+          exportacao.relatorioExportacao,
 
-        dados,
-
-        dataInicial,
-
-        dataFinal,
+        dados:
+          exportacao.dadosExportacao,
       });
-    } catch (
-      error
-    ) {
+
+    } catch (error) {
       console.error(
-        "Erro ao gerar Excel do consumo por fornecedor:",
+        "Erro ao exportar relatório por fornecedor em Excel:",
         error,
       );
 
@@ -311,6 +1255,7 @@ export default function ConsumoProgramadoPorFornecedor({
       window.alert(
         "Não foi possível gerar o Excel.",
       );
+
     } finally {
       setExportando(
         null,
@@ -325,6 +1270,9 @@ export default function ConsumoProgramadoPorFornecedor({
 
   return (
     <>
+      {/* =================================================
+          CABEÇALHO
+      ================================================= */}
 
       <div className="relatorio-selecionado-header">
 
@@ -336,19 +1284,20 @@ export default function ConsumoProgramadoPorFornecedor({
         <div>
 
           <span className="relatorio-selecionado-categoria">
-            Matéria-Prima
+            {relatorio?.categoria ||
+              "Matéria-Prima"}
           </span>
 
+
           <h2>
-            {relatorio
-              ?.titulo ||
+            {relatorio?.titulo ||
               "Consumo Programado por Fornecedor"}
           </h2>
 
+
           <p>
-            {relatorio
-              ?.descricao ||
-              "Necessidade prevista de PP por fornecedor conforme as receitas e a programação das injetoras."}
+            {relatorio?.descricao ||
+              "Necessidade total de PP por fornecedor conforme as receitas e a programação das injetoras no período."}
           </p>
 
         </div>
@@ -378,14 +1327,17 @@ export default function ConsumoProgramadoPorFornecedor({
 
           <FiEye />
 
+
           <div>
+
             <strong>
               Visualizar
             </strong>
 
             <span>
-              Conferir totais por fornecedor
+              Conferir antes de exportar
             </span>
+
           </div>
 
         </button>
@@ -406,13 +1358,16 @@ export default function ConsumoProgramadoPorFornecedor({
         >
 
           {exportando ===
-          "pdf"
-            ? (
-              <FiRefreshCw className="rmp-girando" />
-            )
-            : (
-              <FiFileText />
-            )}
+          "pdf" ? (
+
+            <FiRefreshCw className="mpf-girando" />
+
+          ) : (
+
+            <FiFileText />
+
+          )}
+
 
           <div>
 
@@ -421,7 +1376,7 @@ export default function ConsumoProgramadoPorFornecedor({
             </strong>
 
             <span>
-              Totais por fornecedor
+              Relatório formatado
             </span>
 
           </div>
@@ -444,13 +1399,16 @@ export default function ConsumoProgramadoPorFornecedor({
         >
 
           {exportando ===
-          "excel"
-            ? (
-              <FiRefreshCw className="rmp-girando" />
-            )
-            : (
-              <FiDownload />
-            )}
+          "excel" ? (
+
+            <FiRefreshCw className="mpf-girando" />
+
+          ) : (
+
+            <FiDownload />
+
+          )}
+
 
           <div>
 
@@ -459,7 +1417,7 @@ export default function ConsumoProgramadoPorFornecedor({
             </strong>
 
             <span>
-              Totais por fornecedor
+              Tabela XLSX
             </span>
 
           </div>
@@ -483,8 +1441,9 @@ export default function ConsumoProgramadoPorFornecedor({
               Parâmetros do relatório
             </h3>
 
+
             <p>
-              O consumo é consolidado por fornecedor dentro do período informado.
+              Refine os dados antes de visualizar ou exportar.
             </p>
 
           </div>
@@ -492,13 +1451,14 @@ export default function ConsumoProgramadoPorFornecedor({
         </div>
 
 
-        <div className="rmp-filtros">
+        <div className="mpf-filtros">
 
           <label>
 
             <span>
               De
             </span>
+
 
             <input
               type="date"
@@ -514,9 +1474,7 @@ export default function ConsumoProgramadoPorFornecedor({
                   event,
                 ) =>
                   setDataInicial(
-                    event
-                      .target
-                      .value,
+                    event.target.value,
                   )
               }
             />
@@ -529,6 +1487,7 @@ export default function ConsumoProgramadoPorFornecedor({
             <span>
               Até
             </span>
+
 
             <input
               type="date"
@@ -544,9 +1503,7 @@ export default function ConsumoProgramadoPorFornecedor({
                   event,
                 ) =>
                   setDataFinal(
-                    event
-                      .target
-                      .value,
+                    event.target.value,
                   )
               }
             />
@@ -554,40 +1511,30 @@ export default function ConsumoProgramadoPorFornecedor({
           </label>
 
 
-          <button
-            type="button"
-            className="rmp-atualizar"
-            onClick={
-              () =>
-                recarregar()
-            }
-            disabled={
-              carregando ||
-              atualizando ||
-              periodoInvalido
-            }
-          >
+          {atualizando && (
 
-            <FiRefreshCw
-              className={
-                atualizando
-                  ? "rmp-girando"
-                  : ""
-              }
-            />
+            <span className="mpf-atualizando">
 
-            Atualizar
+              <FiRefreshCw className="mpf-girando" />
 
-          </button>
+              Atualizando dados...
+
+            </span>
+
+          )}
 
         </div>
 
       </div>
 
 
+      {/* =================================================
+          ERROS
+      ================================================= */}
+
       {periodoInvalido && (
 
-        <div className="rmp-mensagem erro">
+        <div className="mpf-mensagem mpf-mensagem-erro">
 
           <FiAlertTriangle />
 
@@ -602,7 +1549,7 @@ export default function ConsumoProgramadoPorFornecedor({
 
       {erro && (
 
-        <div className="rmp-mensagem erro">
+        <div className="mpf-mensagem mpf-mensagem-erro">
 
           <FiAlertTriangle />
 
@@ -615,150 +1562,87 @@ export default function ConsumoProgramadoPorFornecedor({
       )}
 
 
-      {!carregando &&
-        possuiDados && (
+      {/* =================================================
+          RESUMO
+      ================================================= */}
 
-        <>
+      <div className="relatorio-resumo-grid">
 
-          <div className="rmp-resumo">
-
-            <article>
-
-              <span>
-                Fornecedores envolvidos
-              </span>
-
-              <strong>
-                {dados
-                  .resumo
-                  .fornecedoresEnvolvidos}
-              </strong>
-
-            </article>
-
-
-            <article>
-
-              <span>
-                Programações
-              </span>
-
-              <strong>
-                {dados
-                  .resumo
-                  .programacoes}
-              </strong>
-
-            </article>
-
-
-            <article>
-
-              <span>
-                PP distribuído
-              </span>
-
-              <strong>
-                {formatarKg(
-                  dados
-                    .resumo
-                    .consumoDistribuidoKg,
-                )}
-              </strong>
-
-            </article>
-
-
-            <article
-              className={
-                dados
-                  .resumo
-                  .consumoSemReceitaKg >
-                  0
-                  ? "aviso"
-                  : ""
-              }
-            >
-
-              <span>
-                Sem receita
-              </span>
-
-              <strong>
-                {formatarKg(
-                  dados
-                    .resumo
-                    .consumoSemReceitaKg,
-                )}
-              </strong>
-
-            </article>
-
-
-            <article className="destaque">
-
-              <span>
-                Consumo total
-              </span>
-
-              <strong>
-                {formatarKg(
-                  dados
-                    .resumo
-                    .consumoTotalKg,
-                )}
-              </strong>
-
-            </article>
-
-          </div>
-
-
-          <TabelaFornecedores
-            dados={
-              dados
-            }
-          />
-
-        </>
-
-      )}
-
-
-      {carregando && (
-
-        <div className="rmp-estado">
-
-          <FiRefreshCw className="rmp-girando" />
-
-          <strong>
-            Calculando necessidade por fornecedor
-          </strong>
+        <div className="relatorio-resumo-card">
 
           <span>
-            Aguarde enquanto as receitas são consolidadas.
+            Registros no relatório
           </span>
+
+
+          <strong>
+
+            {carregando
+              ? "..."
+              : formatarNumero(
+                  dados.resumo.fornecedoresEnvolvidos,
+                )}
+
+          </strong>
 
         </div>
 
-      )}
 
-
-      {!carregando &&
-        !erro &&
-        !periodoInvalido &&
-        !possuiDados && (
-
-        <div className="rmp-estado">
-
-          <FiPackage />
-
-          <strong>
-            Nenhum consumo programado
-          </strong>
+        <div className="relatorio-resumo-card">
 
           <span>
-            Não existem programações ativas dentro do período selecionado.
+            Relatório selecionado
+          </span>
+
+
+          <strong className="relatorio-resumo-texto">
+
+            {relatorio?.titulo ||
+              "Consumo Programado por Fornecedor"}
+
+          </strong>
+
+        </div>
+
+
+        <div className="relatorio-resumo-card">
+
+          <span>
+            Filtros aplicados
+          </span>
+
+
+          <strong className="relatorio-resumo-texto">
+            {textoFiltros}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      {Number(
+        dados.resumo.consumoSemReceitaKg ||
+          0,
+      ) > 0 && (
+
+        <div className="mpf-mensagem mpf-mensagem-aviso">
+
+          <FiAlertTriangle />
+
+
+          <span>
+
+            <strong>
+              {formatarKg(
+                dados.resumo.consumoSemReceitaKg,
+              )}
+            </strong>{" "}
+
+            ainda não pode ser atribuído a fornecedores porque{" "}
+            {dados.resumo.programacoesSemReceita} programação(ões)
+            possui(em) receita pendente.
+
           </span>
 
         </div>
@@ -782,8 +1666,10 @@ export default function ConsumoProgramadoPorFornecedor({
                 Pré-visualização
               </span>
 
+
               <h3>
-                Consumo Programado por Fornecedor
+                {relatorio?.titulo ||
+                  "Consumo Programado por Fornecedor"}
               </h3>
 
             </div>
@@ -800,26 +1686,53 @@ export default function ConsumoProgramadoPorFornecedor({
               }
               aria-label="Fechar visualização"
             >
+
               <FiX />
+
             </button>
 
           </div>
 
 
-          <div className="relatorio-visualizacao-info">
+          <div className="relatorio-visualizacao-info mpf-visualizacao-info">
 
             <div className="relatorio-visualizacao-info-item">
 
               <span>
-                Período
+                Filtros
               </span>
 
               <strong>
-                {formatarData(
-                  dataInicial,
-                )} até{" "}
-                {formatarData(
-                  dataFinal,
+                {textoFiltros}
+              </strong>
+
+            </div>
+
+
+            <div className="relatorio-visualizacao-info-item">
+
+              <span>
+                PP distribuído
+              </span>
+
+              <strong>
+                {formatarKg(
+                  dados.resumo.consumoDistribuidoKg,
+                )}
+              </strong>
+
+            </div>
+
+
+            <div className="relatorio-visualizacao-info-item">
+
+              <span>
+                Sem receita
+              </span>
+
+              <strong>
+                {formatarKg(
+                  dados.resumo.consumoSemReceitaKg,
                 )}
               </strong>
 
@@ -829,13 +1742,13 @@ export default function ConsumoProgramadoPorFornecedor({
             <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
 
               <span>
-                Fornecedores
+                Consumo total
               </span>
 
               <strong>
-                {dados
-                  .resumo
-                  .fornecedoresEnvolvidos}
+                {formatarKg(
+                  dados.resumo.consumoTotalKg,
+                )}
               </strong>
 
             </div>
@@ -843,13 +1756,51 @@ export default function ConsumoProgramadoPorFornecedor({
           </div>
 
 
-          {possuiDados ? (
+          {carregando ? (
 
-            <TabelaFornecedores
-              dados={
-                dados
-              }
-            />
+            <div className="relatorio-visualizacao-vazia">
+
+              <FiRefreshCw className="mpf-girando" />
+
+              <strong>
+                Carregando dados do relatório...
+              </strong>
+
+              <span>
+                Aguarde enquanto o consumo por fornecedor é calculado.
+              </span>
+
+            </div>
+
+          ) : possuiDados ? (
+
+            <>
+
+              {dados.porFornecedor.length >
+                0 && (
+
+                <TabelaFornecedores
+                  dados={
+                    dados
+                  }
+                  expandidos={
+                    fornecedoresExpandidos
+                  }
+                  onAlternar={
+                    alternarFornecedor
+                  }
+                />
+
+              )}
+
+
+              <BlocoSemReceita
+                dados={
+                  dados
+                }
+              />
+
+            </>
 
           ) : (
 
@@ -873,19 +1824,16 @@ export default function ConsumoProgramadoPorFornecedor({
           <div className="relatorio-visualizacao-footer">
 
             <span>
-              {dados
-                .resumo
-                .fornecedoresEnvolvidos}{" "}
-              fornecedor(es) exibido(s)
+
+              {formatarNumero(
+                dados.porFornecedor.length,
+              )} fornecedor(es) exibido(s)
+
             </span>
 
+
             <span>
-              Consumo total:{" "}
-              {formatarKg(
-                dados
-                  .resumo
-                  .consumoTotalKg,
-              )}
+              Visualização atualizada conforme os filtros
             </span>
 
           </div>

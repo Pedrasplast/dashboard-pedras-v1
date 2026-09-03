@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useMemo,
   useState,
 } from "react";
@@ -6,6 +7,8 @@ import {
 import {
   FiActivity,
   FiAlertTriangle,
+  FiChevronDown,
+  FiChevronUp,
   FiDownload,
   FiEye,
   FiFileText,
@@ -16,38 +19,1001 @@ import {
 import useConsumoProgramado
   from "./useConsumoProgramado";
 
-import {
-  formatarData,
-  formatarHoras,
-  formatarKg,
-  formatarNumero,
-  periodoInicial,
-} from "./relatorioConsumo.utils";
-
-import "./RelatorioConsumo.css";
+import "./ConsumoProgramadoPorInjetora.css";
 
 
 /* =========================================================
-   TABELA
+   DATAS
+========================================================= */
+
+function dataHojeLocal() {
+  const agora = new Date();
+
+  return [
+    agora.getFullYear(),
+    String(agora.getMonth() + 1).padStart(2, "0"),
+    String(agora.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+
+function adicionarDiasLocal(
+  valor,
+  dias,
+) {
+  const [
+    ano,
+    mes,
+    dia,
+  ] = String(
+    valor,
+  )
+    .split("-")
+    .map(Number);
+
+
+  const data =
+    new Date(
+      ano,
+      mes - 1,
+      dia + dias,
+      12,
+      0,
+      0,
+    );
+
+
+  return [
+    data.getFullYear(),
+
+    String(
+      data.getMonth() + 1,
+    ).padStart(
+      2,
+      "0",
+    ),
+
+    String(
+      data.getDate(),
+    ).padStart(
+      2,
+      "0",
+    ),
+  ].join("-");
+}
+
+
+function obterPeriodoInicial() {
+  const hoje =
+    dataHojeLocal();
+
+
+  return {
+    inicio:
+      hoje,
+
+    fim:
+      adicionarDiasLocal(
+        hoje,
+        7,
+      ),
+  };
+}
+
+
+/* =========================================================
+   FORMATADORES
+========================================================= */
+
+function formatarData(
+  valor,
+) {
+  if (!valor) {
+    return "-";
+  }
+
+
+  const partes =
+    String(
+      valor,
+    ).split("-");
+
+
+  if (
+    partes.length !==
+    3
+  ) {
+    return String(
+      valor,
+    );
+  }
+
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+
+function formatarDataHora(
+  data,
+  hora,
+) {
+  return hora
+    ? `${formatarData(
+        data,
+      )} ${String(
+        hora,
+      ).slice(
+        0,
+        5,
+      )}`
+    : formatarData(
+        data,
+      );
+}
+
+
+function formatarNumero(
+  valor,
+  casas = 0,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "-";
+  }
+
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        casas,
+
+      maximumFractionDigits:
+        casas,
+    },
+  );
+}
+
+
+function formatarKg(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0,000 kg";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        3,
+
+      maximumFractionDigits:
+        3,
+    },
+  )} kg`;
+}
+
+
+function formatarHoras(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined
+  ) {
+    return "Legado";
+  }
+
+
+  return `${formatarNumero(
+    valor,
+    2,
+  )} h`;
+}
+
+
+function formatarPercentual(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0%";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        0,
+
+      maximumFractionDigits:
+        4,
+    },
+  )}%`;
+}
+
+
+function montarTextoPeriodo(
+  dataInicial,
+  dataFinal,
+) {
+  if (
+    dataInicial &&
+    dataFinal
+  ) {
+    return `De: ${formatarData(
+      dataInicial,
+    )} | Até: ${formatarData(
+      dataFinal,
+    )}`;
+  }
+
+
+  if (dataInicial) {
+    return `De: ${formatarData(
+      dataInicial,
+    )}`;
+  }
+
+
+  if (dataFinal) {
+    return `Até: ${formatarData(
+      dataFinal,
+    )}`;
+  }
+
+
+  return "Sem período informado";
+}
+
+
+/* =========================================================
+   PRODUTO / CICLO POR INJETORA
+========================================================= */
+
+function montarProduto(
+  codigo,
+  descricao,
+) {
+  const codigoLimpo =
+    String(
+      codigo ?? "",
+    ).trim();
+
+
+  const descricaoLimpa =
+    String(
+      descricao ?? "",
+    ).trim();
+
+
+  if (
+    codigoLimpo &&
+    descricaoLimpa
+  ) {
+    return `${codigoLimpo} - ${descricaoLimpa}`;
+  }
+
+
+  if (
+    codigoLimpo
+  ) {
+    return codigoLimpo;
+  }
+
+
+  if (
+    descricaoLimpa
+  ) {
+    return descricaoLimpa;
+  }
+
+
+  return "-";
+}
+
+
+function obterProdutosGrupo(
+  grupo,
+) {
+  const produtos =
+    [];
+
+
+  const encontrados =
+    new Set();
+
+
+  for (
+    const programacao
+    of grupo?.programacoes ||
+    []
+  ) {
+    const produto =
+      montarProduto(
+        programacao?.codigoProduto,
+        programacao?.descricao,
+      );
+
+
+    if (
+      produto === "-" ||
+      encontrados.has(
+        produto,
+      )
+    ) {
+      continue;
+    }
+
+
+    encontrados.add(
+      produto,
+    );
+
+
+    produtos.push(
+      produto,
+    );
+  }
+
+
+  return produtos.length > 0
+    ? produtos.join(" / ")
+    : "-";
+}
+
+
+function obterCiclosProdutosGrupo(
+  grupo,
+) {
+  const pares =
+    [];
+
+
+  const chaves =
+    new Set();
+
+
+  for (
+    const programacao
+    of grupo?.programacoes ||
+    []
+  ) {
+    const codigo =
+      String(
+        programacao?.codigoProduto ??
+        "",
+      ).trim();
+
+
+    const ciclo =
+      Number(
+        programacao?.cicloSegundos,
+      );
+
+
+    if (
+      !Number.isFinite(
+        ciclo,
+      ) ||
+      ciclo <= 0
+    ) {
+      continue;
+    }
+
+
+    const chave =
+      `${codigo}|${ciclo}`;
+
+
+    if (
+      chaves.has(
+        chave,
+      )
+    ) {
+      continue;
+    }
+
+
+    chaves.add(
+      chave,
+    );
+
+
+    pares.push({
+      codigo,
+      ciclo,
+    });
+  }
+
+
+  if (
+    pares.length ===
+    0
+  ) {
+    return "-";
+  }
+
+
+  if (
+    pares.length ===
+    1
+  ) {
+    return `${formatarNumero(
+      pares[0].ciclo,
+      2,
+    )} s`;
+  }
+
+
+  return pares
+    .map(
+      (
+        item,
+      ) =>
+        item.codigo
+          ? `${item.codigo}: ${formatarNumero(
+              item.ciclo,
+              2,
+            )} s`
+          : `${formatarNumero(
+              item.ciclo,
+              2,
+            )} s`,
+    )
+    .join(" | ");
+}
+
+
+/* =========================================================
+   EXPORTAÇÃO CENTRAL
+
+   PDF e Excel utilizam os mesmos geradores dos demais
+   relatórios do sistema.
+========================================================= */
+
+function prepararExportacaoInjetora(
+  relatorio,
+  dados,
+) {
+  const relatorioExportacao = {
+    ...relatorio,
+
+    titulo:
+      relatorio?.titulo ||
+      "Consumo Programado por Injetora",
+
+    descricao:
+      relatorio?.descricao ||
+      "Consumo previsto de PP por injetora no período selecionado.",
+
+    colunas: [
+      "injetora",
+      "produto",
+      "horas",
+      "ciclo",
+      "pecas",
+      "consumo_pp",
+    ],
+  };
+
+
+  const linhas =
+    [];
+
+
+  for (
+    const grupo
+    of dados?.porInjetora ||
+    []
+  ) {
+    for (
+      const programacao
+      of grupo?.programacoes ||
+      []
+    ) {
+      linhas.push({
+        injetora:
+          `Injetora ${grupo.injetora}`,
+
+        produto:
+          montarProduto(
+            programacao?.codigoProduto,
+            programacao?.descricao,
+          ),
+
+        horas:
+          formatarHoras(
+            programacao?.horasProgramadas,
+          ),
+
+        ciclo:
+          Number.isFinite(
+            Number(
+              programacao?.cicloSegundos,
+            ),
+          ) &&
+          Number(
+            programacao?.cicloSegundos,
+          ) > 0
+            ? `${formatarNumero(
+                programacao.cicloSegundos,
+                2,
+              )} s`
+            : "-",
+
+        pecas:
+          formatarNumero(
+            programacao?.pecasPrevistas,
+          ),
+
+        consumo_pp:
+          formatarKg(
+            programacao?.consumoTotalKg,
+          ),
+      });
+    }
+  }
+
+
+  /*
+   * TOTAL GERAL
+   *
+   * Somente o consumo de PP é totalizado.
+   *
+   * Não totalizamos:
+   * - horas;
+   * - ciclo;
+   * - peças.
+   */
+  if (
+    linhas.length >
+    0
+  ) {
+    linhas.push({
+      injetora:
+        "TOTAL GERAL",
+
+      produto:
+        "-",
+
+      horas:
+        "-",
+
+      ciclo:
+        "-",
+
+      pecas:
+        "-",
+
+      consumo_pp:
+        formatarKg(
+          dados?.resumo?.consumoTotalKg,
+        ),
+    });
+  }
+
+
+  return {
+    relatorioExportacao,
+
+    dadosExportacao:
+      linhas,
+  };
+}
+
+
+/* =========================================================
+   DETALHE DA PROGRAMAÇÃO
+========================================================= */
+
+function DetalheProgramacao({
+  programacao,
+}) {
+  return (
+    <article className="mpi-programacao">
+
+      <div className="mpi-programacao-topo">
+
+        <div>
+
+          <span>
+            Programação #{programacao.id}
+          </span>
+
+
+          <strong>
+            {montarProduto(
+              programacao.codigoProduto,
+              programacao.descricao,
+            )}
+          </strong>
+
+        </div>
+
+
+        <strong className="mpi-programacao-consumo">
+          {formatarKg(
+            programacao.consumoTotalKg,
+          )}
+        </strong>
+
+      </div>
+
+
+      <div className="mpi-programacao-grid">
+
+        <div>
+
+          <span>
+            Período considerado
+          </span>
+
+
+          <strong>
+
+            {formatarDataHora(
+              programacao.dataInicioConsiderada,
+              programacao.horaInicioConsiderada,
+            )}
+
+            {" → "}
+
+            {formatarDataHora(
+              programacao.dataFimConsiderada,
+              programacao.horaFimConsiderada,
+            )}
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Horas
+          </span>
+
+
+          <strong>
+            {formatarHoras(
+              programacao.horasProgramadas,
+            )}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Ciclo
+          </span>
+
+
+          <strong>
+
+            {programacao.cicloSegundos
+              ? `${formatarNumero(
+                  programacao.cicloSegundos,
+                  2,
+                )} s`
+              : "-"}
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Cavidades
+          </span>
+
+
+          <strong>
+            {formatarNumero(
+              programacao.cavidadeMolde,
+            )}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Ciclos completos
+          </span>
+
+
+          <strong>
+
+            {programacao.ciclosCompletos ===
+            null
+              ? "Legado"
+              : formatarNumero(
+                  programacao.ciclosCompletos,
+                )}
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Peças previstas
+          </span>
+
+
+          <strong>
+            {formatarNumero(
+              programacao.pecasPrevistas,
+            )}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Peso da peça
+          </span>
+
+
+          <strong>
+            {formatarKg(
+              programacao.pesoKg,
+            )}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Receita
+          </span>
+
+
+          <strong
+            className={
+              programacao.receitaConfigurada
+                ? "mpi-texto-ok"
+                : "mpi-texto-aviso"
+            }
+          >
+
+            {programacao.receitaConfigurada
+              ? "100% configurada"
+              : `${formatarPercentual(
+                  programacao.receitaPercentualTotal,
+                )} configurado`}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      {!programacao.parametrosValidos && (
+
+        <div className="mpi-aviso-inline">
+
+          <FiAlertTriangle />
+
+
+          <span>
+            Esta programação possui parâmetros técnicos inválidos e não pôde ter o consumo calculado.
+          </span>
+
+        </div>
+
+      )}
+
+
+      {programacao.receitaConfigurada &&
+      programacao.consumosFornecedores.length >
+        0 ? (
+
+        <div className="mpi-receita">
+
+          <div className="mpi-receita-titulo">
+            Receita por fornecedor
+          </div>
+
+
+          <div className="mpi-receita-tabela-wrapper">
+
+            <table className="mpi-receita-tabela">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Fornecedor
+                  </th>
+
+                  <th className="coluna-numerica">
+                    Participação
+                  </th>
+
+                  <th className="coluna-numerica">
+                    Consumo
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+                {programacao.consumosFornecedores.map(
+                  (
+                    fornecedor,
+                  ) => (
+
+                  <tr
+                    key={`${programacao.id}-${fornecedor.fornecedorId}-${fornecedor.fornecedorNome}`}
+                  >
+
+                    <td>
+                      {fornecedor.fornecedorNome}
+                    </td>
+
+
+                    <td className="coluna-numerica">
+
+                      {formatarPercentual(
+                        fornecedor.percentual,
+                      )}
+
+                    </td>
+
+
+                    <td className="coluna-numerica mpi-receita-consumo">
+
+                      {formatarKg(
+                        fornecedor.consumoKg,
+                      )}
+
+                    </td>
+
+                  </tr>
+
+                  ),
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      ) : Number(
+          programacao.consumoSemReceitaKg ||
+            0,
+        ) > 0 ? (
+
+        <div className="mpi-receita-pendente">
+
+          <FiAlertTriangle />
+
+
+          <div>
+
+            <strong>
+              Receita pendente
+            </strong>
+
+
+            <span>
+
+              {formatarKg(
+                programacao.consumoSemReceitaKg,
+              )} não distribuído entre fornecedores.
+
+            </span>
+
+          </div>
+
+        </div>
+
+      ) : null}
+
+    </article>
+  );
+}
+
+
+/* =========================================================
+   TABELA PRINCIPAL
 ========================================================= */
 
 function TabelaInjetoras({
   dados,
+  expandidas,
+  onAlternar,
 }) {
   return (
-    <div className="rmp-tabela-container">
+    <div className="relatorio-visualizacao-tabela-wrapper">
 
-      <table className="rmp-tabela">
+      <table className="relatorio-visualizacao-tabela mpi-tabela">
 
         <thead>
 
           <tr>
-            <th>Injetora</th>
-            <th>Programações</th>
-            <th>Horas</th>
-            <th>Ciclos</th>
-            <th>Peças</th>
-            <th>Consumo PP</th>
+
+            <th>
+              Injetora
+            </th>
+
+            <th>
+              Produto
+            </th>
+
+            <th className="coluna-numerica">
+              Horas
+            </th>
+
+            <th className="coluna-numerica">
+              Ciclo
+            </th>
+
+            <th className="coluna-numerica">
+              Peças
+            </th>
+
+            <th className="coluna-numerica">
+              Consumo PP
+            </th>
+
+            <th>
+              Detalhes
+            </th>
+
           </tr>
 
         </thead>
@@ -55,75 +1021,160 @@ function TabelaInjetoras({
 
         <tbody>
 
-          {dados
-            .porInjetora
-            .map(
-              (
-                grupo,
-              ) => (
+          {dados.porInjetora.map(
+            (
+              grupo,
+            ) => {
+              const expandida =
+                expandidas.has(
+                  grupo.injetora,
+                );
 
-                <tr
-                  className="rmp-linha"
+
+              return (
+                <Fragment
                   key={
-                    grupo
-                      .injetora
+                    grupo.injetora
                   }
                 >
 
-                  <td>
+                  <tr>
 
-                    <strong>
-                      Injetora{" "}
-                      {grupo
-                        .injetora}
-                    </strong>
+                    <td>
 
-                  </td>
+                      <strong className="mpi-injetora">
+                        Injetora{" "}
+                        {grupo.injetora}
+                      </strong>
 
-
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .quantidadeProgramacoes,
-                    )}
-                  </td>
+                    </td>
 
 
-                  <td>
-                    {formatarHoras(
-                      grupo
-                        .horasProgramadas,
-                    )}
-                  </td>
+                    <td>
+
+                      <strong>
+                        {obterProdutosGrupo(
+                          grupo,
+                        )}
+                      </strong>
+
+                    </td>
 
 
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .ciclosCompletos,
-                    )}
-                  </td>
+                    <td className="coluna-numerica">
+
+                      {formatarHoras(
+                        grupo.horasProgramadas,
+                      )}
 
 
-                  <td>
-                    {formatarNumero(
-                      grupo
-                        .pecasPrevistas,
-                    )}
-                  </td>
+                      {grupo.possuiCalculoLegado && (
+
+                        <span className="mpi-legado">
+                          Legado
+                        </span>
+
+                      )}
+
+                    </td>
 
 
-                  <td className="rmp-consumo">
-                    {formatarKg(
-                      grupo
-                        .consumoTotalKg,
-                    )}
-                  </td>
+                    <td className="coluna-numerica">
 
-                </tr>
+                      {obterCiclosProdutosGrupo(
+                        grupo,
+                      )}
 
-              ),
-            )}
+                    </td>
+
+
+                    <td className="coluna-numerica">
+
+                      {formatarNumero(
+                        grupo.pecasPrevistas,
+                      )}
+
+                    </td>
+
+
+                    <td className="coluna-numerica mpi-total">
+
+                      {formatarKg(
+                        grupo.consumoTotalKg,
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      <button
+                        type="button"
+                        className="mpi-expandir"
+                        onClick={
+                          () =>
+                            onAlternar(
+                              grupo.injetora,
+                            )
+                        }
+                        aria-expanded={
+                          expandida
+                        }
+                      >
+
+                        {expandida
+                          ? <FiChevronUp />
+                          : <FiChevronDown />}
+
+
+                        {expandida
+                          ? "Fechar"
+                          : "Ver"}
+
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+
+                  {expandida && (
+
+                    <tr className="mpi-linha-detalhe">
+
+                      <td colSpan={7}>
+
+                        <div className="mpi-programacoes-lista">
+
+                          {grupo.programacoes.map(
+                            (
+                              programacao,
+                            ) => (
+
+                            <DetalheProgramacao
+                              key={
+                                programacao.id
+                              }
+                              programacao={
+                                programacao
+                              }
+                            />
+
+                            ),
+                          )}
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  )}
+
+                </Fragment>
+              );
+            },
+          )}
 
         </tbody>
 
@@ -141,10 +1192,10 @@ function TabelaInjetoras({
 export default function ConsumoProgramadoPorInjetora({
   relatorio,
 }) {
-  const inicial =
+  const periodoInicial =
     useMemo(
       () =>
-        periodoInicial(),
+        obterPeriodoInicial(),
       [],
     );
 
@@ -154,7 +1205,7 @@ export default function ConsumoProgramadoPorInjetora({
     setDataInicial,
   ] =
     useState(
-      inicial.inicio,
+      periodoInicial.inicio,
     );
 
 
@@ -163,7 +1214,17 @@ export default function ConsumoProgramadoPorInjetora({
     setDataFinal,
   ] =
     useState(
-      inicial.fim,
+      periodoInicial.fim,
+    );
+
+
+  const [
+    injetorasExpandidas,
+    setInjetorasExpandidas,
+  ] =
+    useState(
+      () =>
+        new Set(),
     );
 
 
@@ -199,7 +1260,6 @@ export default function ConsumoProgramadoPorInjetora({
     carregando,
     atualizando,
     erro,
-    recarregar,
   } =
     useConsumoProgramado({
       dataInicial,
@@ -212,10 +1272,67 @@ export default function ConsumoProgramadoPorInjetora({
 
 
   const possuiDados =
-    dados
-      .porInjetora
-      .length >
+    dados.porInjetora.length >
     0;
+
+
+  const textoFiltros =
+    montarTextoPeriodo(
+      dataInicial,
+      dataFinal,
+    );
+
+
+  const exportacao =
+    useMemo(
+      () =>
+        prepararExportacaoInjetora(
+          relatorio,
+          dados,
+        ),
+      [
+        relatorio,
+        dados,
+      ],
+    );
+
+
+  /* =======================================================
+     EXPANSÃO
+  ======================================================= */
+
+  function alternarInjetora(
+    injetora,
+  ) {
+    setInjetorasExpandidas(
+      (
+        atuais,
+      ) => {
+        const proximo =
+          new Set(
+            atuais,
+          );
+
+
+        if (
+          proximo.has(
+            injetora,
+          )
+        ) {
+          proximo.delete(
+            injetora,
+          );
+        } else {
+          proximo.add(
+            injetora,
+          );
+        }
+
+
+        return proximo;
+      },
+    );
+  }
 
 
   /* =======================================================
@@ -225,7 +1342,9 @@ export default function ConsumoProgramadoPorInjetora({
   async function exportarPDF() {
     if (
       !possuiDados ||
-      exportando
+      exportando ||
+      exportacao.dadosExportacao.length ===
+        0
     ) {
       return;
     }
@@ -238,27 +1357,26 @@ export default function ConsumoProgramadoPorInjetora({
 
 
       const {
-        exportarPdfConsumoInjetora,
+        gerarPdfRelatorio,
       } =
         await import(
-          "./ExportarConsumoProgramado.js"
+          "../exportacao/GerarPDF"
         );
 
 
-      await exportarPdfConsumoInjetora({
-        relatorio,
+      await gerarPdfRelatorio({
+        relatorio:
+          exportacao.relatorioExportacao,
 
-        dados,
+        dados:
+          exportacao.dadosExportacao,
 
-        dataInicial,
-
-        dataFinal,
+        textoFiltros,
       });
-    } catch (
-      error
-    ) {
+
+    } catch (error) {
       console.error(
-        "Erro ao gerar PDF do consumo por injetora:",
+        "Erro ao exportar relatório por injetora em PDF:",
         error,
       );
 
@@ -266,6 +1384,7 @@ export default function ConsumoProgramadoPorInjetora({
       window.alert(
         "Não foi possível gerar o PDF.",
       );
+
     } finally {
       setExportando(
         null,
@@ -281,7 +1400,9 @@ export default function ConsumoProgramadoPorInjetora({
   async function exportarExcel() {
     if (
       !possuiDados ||
-      exportando
+      exportando ||
+      exportacao.dadosExportacao.length ===
+        0
     ) {
       return;
     }
@@ -294,27 +1415,24 @@ export default function ConsumoProgramadoPorInjetora({
 
 
       const {
-        exportarExcelConsumoInjetora,
+        gerarExcelRelatorio,
       } =
         await import(
-          "./ExportarConsumoProgramado.js"
+          "../exportacao/GerarExcel"
         );
 
 
-      await exportarExcelConsumoInjetora({
-        relatorio,
+      await gerarExcelRelatorio({
+        relatorio:
+          exportacao.relatorioExportacao,
 
-        dados,
-
-        dataInicial,
-
-        dataFinal,
+        dados:
+          exportacao.dadosExportacao,
       });
-    } catch (
-      error
-    ) {
+
+    } catch (error) {
       console.error(
-        "Erro ao gerar Excel do consumo por injetora:",
+        "Erro ao exportar relatório por injetora em Excel:",
         error,
       );
 
@@ -322,6 +1440,7 @@ export default function ConsumoProgramadoPorInjetora({
       window.alert(
         "Não foi possível gerar o Excel.",
       );
+
     } finally {
       setExportando(
         null,
@@ -336,6 +1455,9 @@ export default function ConsumoProgramadoPorInjetora({
 
   return (
     <>
+      {/* =================================================
+          CABEÇALHO
+      ================================================= */}
 
       <div className="relatorio-selecionado-header">
 
@@ -347,25 +1469,30 @@ export default function ConsumoProgramadoPorInjetora({
         <div>
 
           <span className="relatorio-selecionado-categoria">
-            Matéria-Prima
+            {relatorio?.categoria ||
+              "Matéria-Prima"}
           </span>
 
+
           <h2>
-            {relatorio
-              ?.titulo ||
+            {relatorio?.titulo ||
               "Consumo Programado por Injetora"}
           </h2>
 
+
           <p>
-            {relatorio
-              ?.descricao ||
-              "Consumo previsto de PP por injetora no período selecionado."}
+            {relatorio?.descricao ||
+              "Consumo previsto de PP por injetora, com detalhamento das programações e da receita por fornecedor."}
           </p>
 
         </div>
 
       </div>
 
+
+      {/* =================================================
+          AÇÕES
+      ================================================= */}
 
       <div className="relatorio-acoes">
 
@@ -385,6 +1512,7 @@ export default function ConsumoProgramadoPorInjetora({
 
           <FiEye />
 
+
           <div>
 
             <strong>
@@ -392,7 +1520,7 @@ export default function ConsumoProgramadoPorInjetora({
             </strong>
 
             <span>
-              Conferir totais por injetora
+              Conferir antes de exportar
             </span>
 
           </div>
@@ -415,13 +1543,15 @@ export default function ConsumoProgramadoPorInjetora({
         >
 
           {exportando ===
-          "pdf"
-            ? (
-              <FiRefreshCw className="rmp-girando" />
-            )
-            : (
-              <FiFileText />
-            )}
+          "pdf" ? (
+
+            <FiRefreshCw className="mpi-girando" />
+
+          ) : (
+
+            <FiFileText />
+
+          )}
 
 
           <div>
@@ -431,7 +1561,7 @@ export default function ConsumoProgramadoPorInjetora({
             </strong>
 
             <span>
-              Totais por injetora
+              Relatório formatado
             </span>
 
           </div>
@@ -454,13 +1584,15 @@ export default function ConsumoProgramadoPorInjetora({
         >
 
           {exportando ===
-          "excel"
-            ? (
-              <FiRefreshCw className="rmp-girando" />
-            )
-            : (
-              <FiDownload />
-            )}
+          "excel" ? (
+
+            <FiRefreshCw className="mpi-girando" />
+
+          ) : (
+
+            <FiDownload />
+
+          )}
 
 
           <div>
@@ -470,7 +1602,7 @@ export default function ConsumoProgramadoPorInjetora({
             </strong>
 
             <span>
-              Totais por injetora
+              Tabela XLSX
             </span>
 
           </div>
@@ -479,6 +1611,10 @@ export default function ConsumoProgramadoPorInjetora({
 
       </div>
 
+
+      {/* =================================================
+          FILTROS
+      ================================================= */}
 
       <div className="relatorio-filtros-card">
 
@@ -491,7 +1627,7 @@ export default function ConsumoProgramadoPorInjetora({
             </h3>
 
             <p>
-              O consumo considera somente o trecho da programação dentro do período.
+              Refine os dados antes de visualizar ou exportar.
             </p>
 
           </div>
@@ -499,13 +1635,14 @@ export default function ConsumoProgramadoPorInjetora({
         </div>
 
 
-        <div className="rmp-filtros">
+        <div className="mpi-filtros">
 
           <label>
 
             <span>
               De
             </span>
+
 
             <input
               type="date"
@@ -521,9 +1658,7 @@ export default function ConsumoProgramadoPorInjetora({
                   event,
                 ) =>
                   setDataInicial(
-                    event
-                      .target
-                      .value,
+                    event.target.value,
                   )
               }
             />
@@ -536,6 +1671,7 @@ export default function ConsumoProgramadoPorInjetora({
             <span>
               Até
             </span>
+
 
             <input
               type="date"
@@ -551,9 +1687,7 @@ export default function ConsumoProgramadoPorInjetora({
                   event,
                 ) =>
                   setDataFinal(
-                    event
-                      .target
-                      .value,
+                    event.target.value,
                   )
               }
             />
@@ -561,40 +1695,30 @@ export default function ConsumoProgramadoPorInjetora({
           </label>
 
 
-          <button
-            type="button"
-            className="rmp-atualizar"
-            onClick={
-              () =>
-                recarregar()
-            }
-            disabled={
-              carregando ||
-              atualizando ||
-              periodoInvalido
-            }
-          >
+          {atualizando && (
 
-            <FiRefreshCw
-              className={
-                atualizando
-                  ? "rmp-girando"
-                  : ""
-              }
-            />
+            <span className="mpi-atualizando">
 
-            Atualizar
+              <FiRefreshCw className="mpi-girando" />
 
-          </button>
+              Atualizando dados...
+
+            </span>
+
+          )}
 
         </div>
 
       </div>
 
 
+      {/* =================================================
+          ERROS / AVISOS
+      ================================================= */}
+
       {periodoInvalido && (
 
-        <div className="rmp-mensagem erro">
+        <div className="mpi-mensagem mpi-mensagem-erro">
 
           <FiAlertTriangle />
 
@@ -609,7 +1733,7 @@ export default function ConsumoProgramadoPorInjetora({
 
       {erro && (
 
-        <div className="rmp-mensagem erro">
+        <div className="mpi-mensagem mpi-mensagem-erro">
 
           <FiAlertTriangle />
 
@@ -622,146 +1746,87 @@ export default function ConsumoProgramadoPorInjetora({
       )}
 
 
-      {!carregando &&
-        possuiDados && (
+      {/* =================================================
+          RESUMO
+      ================================================= */}
 
-        <>
+      <div className="relatorio-resumo-grid">
 
-          <div className="rmp-resumo">
-
-            <article>
-
-              <span>
-                Injetoras programadas
-              </span>
-
-              <strong>
-                {dados
-                  .resumo
-                  .injetorasProgramadas}
-              </strong>
-
-            </article>
-
-
-            <article>
-
-              <span>
-                Programações
-              </span>
-
-              <strong>
-                {dados
-                  .resumo
-                  .programacoes}
-              </strong>
-
-            </article>
-
-
-            <article>
-
-              <span>
-                Horas programadas
-              </span>
-
-              <strong>
-                {formatarHoras(
-                  dados
-                    .resumo
-                    .horasProgramadas,
-                )}
-              </strong>
-
-            </article>
-
-
-            <article>
-
-              <span>
-                Peças previstas
-              </span>
-
-              <strong>
-                {formatarNumero(
-                  dados
-                    .resumo
-                    .pecasPrevistas,
-                )}
-              </strong>
-
-            </article>
-
-
-            <article className="destaque">
-
-              <span>
-                Consumo PP
-              </span>
-
-              <strong>
-                {formatarKg(
-                  dados
-                    .resumo
-                    .consumoTotalKg,
-                )}
-              </strong>
-
-            </article>
-
-          </div>
-
-
-          {dados
-            .resumo
-            .programacoesSemReceita >
-            0 && (
-
-            <div className="rmp-mensagem aviso">
-
-              <FiAlertTriangle />
-
-              <span>
-                {dados
-                  .resumo
-                  .programacoesSemReceita}{" "}
-                programação(ões) possuem receita pendente.{" "}
-
-                {formatarKg(
-                  dados
-                    .resumo
-                    .consumoSemReceitaKg,
-                )} ainda não está distribuído entre fornecedores.
-              </span>
-
-            </div>
-
-          )}
-
-
-          <TabelaInjetoras
-            dados={
-              dados
-            }
-          />
-
-        </>
-
-      )}
-
-
-      {carregando && (
-
-        <div className="rmp-estado">
-
-          <FiRefreshCw className="rmp-girando" />
-
-          <strong>
-            Calculando consumo programado
-          </strong>
+        <div className="relatorio-resumo-card">
 
           <span>
-            Aguarde enquanto as programações e receitas são consolidadas.
+            Registros no relatório
+          </span>
+
+
+          <strong>
+
+            {carregando
+              ? "..."
+              : formatarNumero(
+                  dados.resumo.injetorasProgramadas,
+                )}
+
+          </strong>
+
+        </div>
+
+
+        <div className="relatorio-resumo-card">
+
+          <span>
+            Relatório selecionado
+          </span>
+
+
+          <strong className="relatorio-resumo-texto">
+
+            {relatorio?.titulo ||
+              "Consumo Programado por Injetora"}
+
+          </strong>
+
+        </div>
+
+
+        <div className="relatorio-resumo-card">
+
+          <span>
+            Filtros aplicados
+          </span>
+
+
+          <strong className="relatorio-resumo-texto">
+            {textoFiltros}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      {Number(
+        dados.resumo.consumoSemReceitaKg ||
+          0,
+      ) > 0 && (
+
+        <div className="mpi-mensagem mpi-mensagem-aviso">
+
+          <FiAlertTriangle />
+
+
+          <span>
+
+            <strong>
+              {formatarKg(
+                dados.resumo.consumoSemReceitaKg,
+              )}
+            </strong>{" "}
+
+            ainda não está distribuído entre fornecedores porque{" "}
+            {dados.resumo.programacoesSemReceita} programação(ões)
+            possui(em) receita pendente.
+
           </span>
 
         </div>
@@ -769,27 +1834,9 @@ export default function ConsumoProgramadoPorInjetora({
       )}
 
 
-      {!carregando &&
-        !erro &&
-        !periodoInvalido &&
-        !possuiDados && (
-
-        <div className="rmp-estado">
-
-          <FiActivity />
-
-          <strong>
-            Nenhuma injetora programada
-          </strong>
-
-          <span>
-            Não existem programações ativas dentro do período selecionado.
-          </span>
-
-        </div>
-
-      )}
-
+      {/* =================================================
+          VISUALIZAÇÃO
+      ================================================= */}
 
       {visualizacaoAberta && (
 
@@ -803,8 +1850,10 @@ export default function ConsumoProgramadoPorInjetora({
                 Pré-visualização
               </span>
 
+
               <h3>
-                Consumo Programado por Injetora
+                {relatorio?.titulo ||
+                  "Consumo Programado por Injetora"}
               </h3>
 
             </div>
@@ -821,26 +1870,53 @@ export default function ConsumoProgramadoPorInjetora({
               }
               aria-label="Fechar visualização"
             >
+
               <FiX />
+
             </button>
 
           </div>
 
 
-          <div className="relatorio-visualizacao-info">
+          <div className="relatorio-visualizacao-info mpi-visualizacao-info">
 
             <div className="relatorio-visualizacao-info-item">
 
               <span>
-                Período
+                Filtros
               </span>
 
               <strong>
-                {formatarData(
-                  dataInicial,
-                )} até{" "}
-                {formatarData(
-                  dataFinal,
+                {textoFiltros}
+              </strong>
+
+            </div>
+
+
+            <div className="relatorio-visualizacao-info-item">
+
+              <span>
+                Programações
+              </span>
+
+              <strong>
+                {formatarNumero(
+                  dados.resumo.programacoes,
+                )}
+              </strong>
+
+            </div>
+
+
+            <div className="relatorio-visualizacao-info-item">
+
+              <span>
+                Peças previstas
+              </span>
+
+              <strong>
+                {formatarNumero(
+                  dados.resumo.pecasPrevistas,
                 )}
               </strong>
 
@@ -850,13 +1926,13 @@ export default function ConsumoProgramadoPorInjetora({
             <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
 
               <span>
-                Injetoras
+                Consumo PP
               </span>
 
               <strong>
-                {dados
-                  .resumo
-                  .injetorasProgramadas}
+                {formatarKg(
+                  dados.resumo.consumoTotalKg,
+                )}
               </strong>
 
             </div>
@@ -864,11 +1940,33 @@ export default function ConsumoProgramadoPorInjetora({
           </div>
 
 
-          {possuiDados ? (
+          {carregando ? (
+
+            <div className="relatorio-visualizacao-vazia">
+
+              <FiRefreshCw className="mpi-girando" />
+
+              <strong>
+                Carregando dados do relatório...
+              </strong>
+
+              <span>
+                Aguarde enquanto o consumo programado é calculado.
+              </span>
+
+            </div>
+
+          ) : possuiDados ? (
 
             <TabelaInjetoras
               dados={
                 dados
+              }
+              expandidas={
+                injetorasExpandidas
+              }
+              onAlternar={
+                alternarInjetora
               }
             />
 
@@ -894,19 +1992,14 @@ export default function ConsumoProgramadoPorInjetora({
           <div className="relatorio-visualizacao-footer">
 
             <span>
-              {dados
-                .resumo
-                .injetorasProgramadas}{" "}
-              injetora(s) exibida(s)
+              {formatarNumero(
+                dados.porInjetora.length,
+              )} injetora(s) exibida(s)
             </span>
 
+
             <span>
-              Consumo total:{" "}
-              {formatarKg(
-                dados
-                  .resumo
-                  .consumoTotalKg,
-              )}
+              Visualização atualizada conforme os filtros
             </span>
 
           </div>
