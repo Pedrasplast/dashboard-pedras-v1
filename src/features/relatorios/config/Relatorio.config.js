@@ -62,6 +62,10 @@ import ConsumoProgramadoPorFornecedor
   from "../materia-prima/ConsumoProgramadoPorFornecedor";
 
 
+import NecessidadeCompraMateriaPrima
+  from "../materia-prima/NecessidadeCompraMateriaPrima";
+
+
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -647,6 +651,52 @@ export const RELATORIOS = [
 
     componenteCustomizado:
       ConsumoProgramadoPorFornecedor,
+
+    filtros: {
+      periodo: false,
+
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+
+    transformarDados:
+      null,
+
+    colunas: [],
+  },
+
+
+  {
+    id:
+      "materia-prima-necessidade-compra",
+
+    categoria:
+      "Matéria-Prima",
+
+    titulo:
+      "Necessidade de Compra de Matéria-Prima",
+
+    descricao:
+      "Projeta o estoque de PP por fornecedor, considerando saldo atual, compras futuras, consumo programado, estoque mínimo, estoque alvo e prazo de reposição.",
+
+    icone:
+      FiShoppingCart,
+
+    fonteDados:
+      "custom",
+
+    tipoRelatorio:
+      "custom",
+
+    componenteCustomizado:
+      NecessidadeCompraMateriaPrima,
 
     filtros: {
       periodo: false,

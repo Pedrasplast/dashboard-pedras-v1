@@ -51,7 +51,7 @@ const NAVIGATION_GROUPS = Object.freeze([
 
     children: [
       {
-        label: "Visão Geral",
+        label: "Dashboard-Produção",
         path: "/dashboard",
         icon: Factory,
         permissao: "dashboard",

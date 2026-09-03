@@ -39,6 +39,91 @@ function normalizarTexto(
 }
 
 
+function formatarKg(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "-";
+  }
+
+
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "-";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        3,
+
+      maximumFractionDigits:
+        3,
+    },
+  )} kg`;
+}
+
+
+function formatarPrazoEntrega(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "-";
+  }
+
+
+  const dias =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      dias,
+    )
+  ) {
+    return "-";
+  }
+
+
+  if (
+    dias ===
+    1
+  ) {
+    return "1 dia";
+  }
+
+
+  return `${dias.toLocaleString(
+    "pt-BR",
+    {
+      maximumFractionDigits:
+        0,
+    },
+  )} dias`;
+}
+
+
 /* =========================================================
    FORNECEDORES
 ========================================================= */
@@ -478,6 +563,18 @@ export default function Fornecedores() {
                         Fornecedor
                       </th>
 
+                      <th className="fornecedores-pp-coluna-numero">
+                        Estoque mínimo
+                      </th>
+
+                      <th className="fornecedores-pp-coluna-numero">
+                        Estoque alvo
+                      </th>
+
+                      <th className="fornecedores-pp-coluna-numero">
+                        Prazo entrega
+                      </th>
+
                       <th>
                         Status
                       </th>
@@ -510,6 +607,10 @@ export default function Fornecedores() {
                             }
                           >
 
+                            {/* ===================================
+                                FORNECEDOR
+                            =================================== */}
+
                             <td className="fornecedores-pp-nome">
 
                               <div className="fornecedores-pp-fornecedor">
@@ -536,6 +637,64 @@ export default function Fornecedores() {
                             </td>
 
 
+                            {/* ===================================
+                                ESTOQUE MÍNIMO
+                            =================================== */}
+
+                            <td className="fornecedores-pp-coluna-numero">
+
+                              <span className="fornecedores-pp-parametro">
+
+                                {formatarKg(
+                                  fornecedor
+                                    ?.estoqueMinimoKg,
+                                )}
+
+                              </span>
+
+                            </td>
+
+
+                            {/* ===================================
+                                ESTOQUE ALVO
+                            =================================== */}
+
+                            <td className="fornecedores-pp-coluna-numero">
+
+                              <span className="fornecedores-pp-parametro">
+
+                                {formatarKg(
+                                  fornecedor
+                                    ?.estoqueAlvoKg,
+                                )}
+
+                              </span>
+
+                            </td>
+
+
+                            {/* ===================================
+                                PRAZO DE ENTREGA
+                            =================================== */}
+
+                            <td className="fornecedores-pp-coluna-numero">
+
+                              <span className="fornecedores-pp-parametro">
+
+                                {formatarPrazoEntrega(
+                                  fornecedor
+                                    ?.leadTimeDias,
+                                )}
+
+                              </span>
+
+                            </td>
+
+
+                            {/* ===================================
+                                STATUS
+                            =================================== */}
+
                             <td>
 
                               <span
@@ -554,6 +713,10 @@ export default function Fornecedores() {
 
                             </td>
 
+
+                            {/* ===================================
+                                AÇÕES
+                            =================================== */}
 
                             <td>
 

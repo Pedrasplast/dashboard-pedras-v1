@@ -184,6 +184,9 @@ export default function useFornecedores({
         id = null,
         nome,
         ativo = true,
+        estoqueMinimoKg = null,
+        estoqueAlvoKg = null,
+        leadTimeDias = null,
       }) => {
         const idFornecedor =
           id !== null &&
@@ -210,6 +213,12 @@ export default function useFornecedores({
               nome,
 
               ativo,
+
+              estoqueMinimoKg,
+
+              estoqueAlvoKg,
+
+              leadTimeDias,
             });
 
 

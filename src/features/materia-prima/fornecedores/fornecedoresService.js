@@ -23,6 +23,87 @@ function compararNomes(
 }
 
 
+function converterNumeroOpcional(
+  valor,
+  nomeCampo,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    String(valor).trim() === ""
+  ) {
+    return null;
+  }
+
+
+  const numero =
+    Number(
+      String(valor)
+        .trim()
+        .replace(
+          ",",
+          ".",
+        ),
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    throw new Error(
+      `Informe um valor válido para ${nomeCampo}.`,
+    );
+  }
+
+
+  if (
+    numero < 0
+  ) {
+    throw new Error(
+      `${nomeCampo} não pode ser negativo.`,
+    );
+  }
+
+
+  return numero;
+}
+
+
+function converterInteiroOpcional(
+  valor,
+  nomeCampo,
+) {
+  const numero =
+    converterNumeroOpcional(
+      valor,
+      nomeCampo,
+    );
+
+
+  if (
+    numero === null
+  ) {
+    return null;
+  }
+
+
+  if (
+    !Number.isInteger(
+      numero,
+    )
+  ) {
+    throw new Error(
+      `${nomeCampo} precisa ser informado em dias inteiros.`,
+    );
+  }
+
+
+  return numero;
+}
+
+
 function normalizarFornecedor(
   registro,
 ) {
@@ -54,6 +135,40 @@ function normalizarFornecedor(
   }
 
 
+  const estoqueMinimoKg =
+    registro
+      ?.estoque_minimo_kg === null ||
+    registro
+      ?.estoque_minimo_kg === undefined
+      ? null
+      : Number(
+          registro
+            .estoque_minimo_kg,
+        );
+
+  const estoqueAlvoKg =
+    registro
+      ?.estoque_alvo_kg === null ||
+    registro
+      ?.estoque_alvo_kg === undefined
+      ? null
+      : Number(
+          registro
+            .estoque_alvo_kg,
+        );
+
+  const leadTimeDias =
+    registro
+      ?.lead_time_dias === null ||
+    registro
+      ?.lead_time_dias === undefined
+      ? null
+      : Number(
+          registro
+            .lead_time_dias,
+        );
+
+
   return {
     id,
 
@@ -63,6 +178,27 @@ function normalizarFornecedor(
       registro
         ?.ativo !==
       false,
+
+    estoqueMinimoKg:
+      Number.isFinite(
+        estoqueMinimoKg,
+      )
+        ? estoqueMinimoKg
+        : null,
+
+    estoqueAlvoKg:
+      Number.isFinite(
+        estoqueAlvoKg,
+      )
+        ? estoqueAlvoKg
+        : null,
+
+    leadTimeDias:
+      Number.isInteger(
+        leadTimeDias,
+      )
+        ? leadTimeDias
+        : null,
 
     criadoEm:
       registro
@@ -101,6 +237,16 @@ function tratarErroFornecedor(
   }
 
 
+  if (
+    error.code ===
+    "23514"
+  ) {
+    return new Error(
+      "Os parâmetros de compra informados são inválidos. Confirme estoque mínimo, estoque alvo e prazo de entrega.",
+    );
+  }
+
+
   return new Error(
     error.message ||
       "Não foi possível salvar o fornecedor.",
@@ -126,6 +272,9 @@ export async function buscarFornecedores() {
           id,
           nome,
           ativo,
+          estoque_minimo_kg,
+          estoque_alvo_kg,
+          lead_time_dias,
           criado_em,
           atualizado_em
         `,
@@ -179,6 +328,9 @@ export async function salvarFornecedor({
   id = null,
   nome,
   ativo = true,
+  estoqueMinimoKg = null,
+  estoqueAlvoKg = null,
+  leadTimeDias = null,
 }) {
   const nomeFinal =
     String(
@@ -193,9 +345,75 @@ export async function salvarFornecedor({
   }
 
 
+  const estoqueMinimoFinal =
+    converterNumeroOpcional(
+      estoqueMinimoKg,
+      "o estoque mínimo",
+    );
+
+  const estoqueAlvoFinal =
+    converterNumeroOpcional(
+      estoqueAlvoKg,
+      "o estoque alvo",
+    );
+
+  const leadTimeFinal =
+    converterInteiroOpcional(
+      leadTimeDias,
+      "o prazo de entrega",
+    );
+
+
+  if (
+    estoqueMinimoFinal !== null &&
+    estoqueAlvoFinal !== null &&
+    estoqueAlvoFinal <
+      estoqueMinimoFinal
+  ) {
+    throw new Error(
+      "O estoque alvo deve ser maior ou igual ao estoque mínimo.",
+    );
+  }
+
+
   const agora =
     new Date()
       .toISOString();
+
+
+  const dadosFornecedor = {
+    nome:
+      nomeFinal,
+
+    ativo:
+      Boolean(
+        ativo,
+      ),
+
+    estoque_minimo_kg:
+      estoqueMinimoFinal,
+
+    estoque_alvo_kg:
+      estoqueAlvoFinal,
+
+    lead_time_dias:
+      leadTimeFinal,
+
+    atualizado_em:
+      agora,
+  };
+
+
+  const colunasRetorno = `
+    id,
+    nome,
+    ativo,
+    estoque_minimo_kg,
+    estoque_alvo_kg,
+    lead_time_dias,
+    criado_em,
+    atualizado_em
+  `;
 
 
   /* =======================================================
@@ -215,31 +433,14 @@ export async function salvarFornecedor({
           "materia_prima_fornecedores",
         )
         .update(
-          {
-            nome:
-              nomeFinal,
-
-            ativo:
-              Boolean(
-                ativo,
-              ),
-
-            atualizado_em:
-              agora,
-          },
+          dadosFornecedor,
         )
         .eq(
           "id",
           id,
         )
         .select(
-          `
-            id,
-            nome,
-            ativo,
-            criado_em,
-            atualizado_em
-          `,
+          colunasRetorno,
         )
         .single();
 
@@ -281,27 +482,10 @@ export async function salvarFornecedor({
         "materia_prima_fornecedores",
       )
       .insert(
-        {
-          nome:
-            nomeFinal,
-
-          ativo:
-            Boolean(
-              ativo,
-            ),
-
-          atualizado_em:
-            agora,
-        },
+        dadosFornecedor,
       )
       .select(
-        `
-          id,
-          nome,
-          ativo,
-          criado_em,
-          atualizado_em
-        `,
+        colunasRetorno,
       )
       .single();
 
