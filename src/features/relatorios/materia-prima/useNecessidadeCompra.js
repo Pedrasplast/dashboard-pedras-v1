@@ -2,10 +2,12 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 
-import {
+/*import {
   buscarNecessidadeCompra,
   criarResultadoNecessidadeCompraVazio,
-} from "./necessidadeCompraService";
+} from "./necessidadeCompraService";*/
+
+import { buscarNecessidadeCompra, criarResultadoNecessidadeCompraVazio } from "./necessidadeCompraService";
 
 
 /* =========================================================
