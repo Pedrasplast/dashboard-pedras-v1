@@ -1,56 +1,32 @@
-import {
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-/*import {
+import {
   buscarNecessidadeCompra,
   criarResultadoNecessidadeCompraVazio,
-} from "./necessidadeCompraService";*/
-
-import { buscarNecessidadeCompra, criarResultadoNecessidadeCompraVazio } from "./necessidadeCompraService";
-
+} from "./necessidadeCompraService";
 
 /* =========================================================
    HOOK DO RELATÓRIO DE NECESSIDADE DE COMPRA
 ============================================================ */
 
-export default function useNecessidadeCompra({
-  dataInicial,
-  dataFinal,
-  habilitado = true,
-}) {
-  const consulta =
-    useQuery({
-      queryKey: [
-        "relatorio-necessidade-compra-materia-prima",
+export default function useNecessidadeCompra({ dataInicial, dataFinal, habilitado = true }) {
+  const consulta = useQuery({
+    queryKey: ["relatorio-necessidade-compra-materia-prima", dataInicial, dataFinal],
+
+    queryFn: () =>
+      buscarNecessidadeCompra({
         dataInicial,
         dataFinal,
-      ],
+      }),
 
-      queryFn:
-        () =>
-          buscarNecessidadeCompra({
-            dataInicial,
-            dataFinal,
-          }),
+    enabled: Boolean(habilitado && dataInicial && dataFinal),
 
-      enabled:
-        Boolean(
-          habilitado &&
-          dataInicial &&
-          dataFinal,
-        ),
+    staleTime: 30 * 1000,
 
-      staleTime:
-        30 * 1000,
+    refetchOnWindowFocus: true,
 
-      refetchOnWindowFocus:
-        true,
-
-      retry:
-        1,
-    });
-
+    retry: 1,
+  });
 
   const dados =
     consulta.data ??
@@ -59,25 +35,18 @@ export default function useNecessidadeCompra({
       dataFinal,
     });
 
-
   return {
     dados,
 
-    carregando:
-      consulta.isLoading,
+    carregando: consulta.isLoading,
 
-    atualizando:
-      consulta.isFetching &&
-      !consulta.isLoading,
+    atualizando: consulta.isFetching && !consulta.isLoading,
 
-    erro:
-      consulta.isError
-        ? consulta.error
-            ?.message ||
-          "Não foi possível calcular a necessidade de compra de matéria-prima."
-        : "",
+    erro: consulta.isError
+      ? consulta.error?.message ||
+        "Não foi possível calcular a necessidade de compra de matéria-prima."
+      : "",
 
-    recarregar:
-      consulta.refetch,
+    recarregar: consulta.refetch,
   };
 }
