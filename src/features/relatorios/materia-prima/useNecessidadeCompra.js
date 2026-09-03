@@ -10,7 +10,7 @@ import {
 
 /* =========================================================
    HOOK DO RELATÓRIO DE NECESSIDADE DE COMPRA
-========================================================= */
+============================================================ */
 
 export default function useNecessidadeCompra({
   dataInicial,
