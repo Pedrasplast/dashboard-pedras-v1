@@ -33,14 +33,24 @@ import "./GerenciarUsuarios.css";
 
 const MODULOS_PERMISSOES = Object.freeze([
   {
-    id: "producao",
-    nome: "Produção",
+    id: "dashboards",
+    nome: "Dashboards",
     descricao:
-      "Dashboards e indicadores do processo produtivo.",
+      "Painéis gerenciais e indicadores da operação.",
     chaves: [
       "dashboard",
       "dashboard_produtividade",
       "dashboard_materia_prima",
+    ],
+  },
+
+  {
+    id: "producao",
+    nome: "Produção",
+    descricao:
+      "Operação e planejamento dos processos produtivos.",
+    chaves: [
+      "materia_prima",
     ],
   },
 
@@ -51,16 +61,6 @@ const MODULOS_PERMISSOES = Object.freeze([
       "Consulta e acompanhamento dos pedidos.",
     chaves: [
       "pedidos",
-    ],
-  },
-
-  {
-    id: "materia-prima",
-    nome: "Matéria-Prima",
-    descricao:
-      "Controle e planejamento de matéria-prima PP.",
-    chaves: [
-      "materia_prima",
     ],
   },
 
@@ -1346,6 +1346,47 @@ function GerenciarUsuarios() {
         )
       : false;
 
+  /* =========================================================
+     RESUMO DO MODAL DE PERMISSÕES
+  ========================================================= */
+
+  const resumoPermissoesModal =
+    useMemo(() => {
+      const telasLiberadas =
+        telasGerenciaveis.filter(
+          (tela) =>
+            Boolean(
+              permissoesTemporarias[
+                String(tela.id)
+              ]
+            )
+        ).length;
+
+      const relatoriosPermitidos =
+        relatorios.filter(
+          (relatorio) =>
+            Boolean(
+              permissoesRelatoriosTemporarias[
+                String(relatorio.id)
+              ]
+            )
+        ).length;
+
+      return {
+        telasLiberadas,
+        totalTelas:
+          telasGerenciaveis.length,
+        relatoriosPermitidos,
+        totalRelatorios:
+          relatorios.length,
+      };
+    }, [
+      telasGerenciaveis,
+      relatorios,
+      permissoesTemporarias,
+      permissoesRelatoriosTemporarias,
+    ]);
+
   return (
     <div className="gerenciar-usuarios-container">
       <button
@@ -1558,52 +1599,159 @@ function GerenciarUsuarios() {
       ====================================================== */}
 
       {usuarioPermissoes && (
-        <div className="modal-overlay">
-          <div className="modal-content modal-permissoes">
-            <div className="modal-permissoes-header">
-              <div className="modal-permissoes-icon">
-                <FiSettings />
+        <div className="modal-overlay modal-overlay-permissoes">
+          <div
+            className="modal-content modal-permissoes modal-permissoes-v2"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-modal-permissoes"
+          >
+            {/* =================================================
+                CABEÇALHO
+            ================================================= */}
+
+            <div className="modal-permissoes-header modal-permissoes-header-v2">
+              <div className="modal-permissoes-header-principal">
+                <div className="modal-permissoes-icon">
+                  <FiSettings />
+                </div>
+
+                <div className="modal-permissoes-identificacao">
+                  <span className="modal-permissoes-eyebrow">
+                    Controle de acesso
+                  </span>
+
+                  <h3 id="titulo-modal-permissoes">
+                    Permissões do usuário
+                  </h3>
+
+                  <p>
+                    {usuarioPermissoes.email}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <h3>
-                  Permissões de acesso
-                </h3>
+              <button
+                type="button"
+                className="modal-permissoes-fechar"
+                onClick={fecharModalPermissoes}
+                disabled={salvandoPermissoes}
+                aria-label="Fechar permissões"
+              >
+                <FiX />
+              </button>
+            </div>
+
+            {/* =================================================
+                RESUMO
+            ================================================= */}
+
+            <div className="modal-permissoes-resumo">
+              <div className="modal-permissoes-resumo-card">
+                <span>Acessos liberados</span>
+
+                <strong>
+                  {resumoPermissoesModal.telasLiberadas}
+                  <small>
+                    /{resumoPermissoesModal.totalTelas}
+                  </small>
+                </strong>
 
                 <p>
-                  {
-                    usuarioPermissoes.email
-                  }
+                  Telas e módulos do sistema
+                </p>
+              </div>
+
+              <div className="modal-permissoes-resumo-card">
+                <span>Relatórios liberados</span>
+
+                <strong>
+                  {resumoPermissoesModal.relatoriosPermitidos}
+                  <small>
+                    /{resumoPermissoesModal.totalRelatorios}
+                  </small>
+                </strong>
+
+                <p>
+                  Permissões individuais de relatório
+                </p>
+              </div>
+
+              <div
+                className={`modal-permissoes-resumo-card ${
+                  relatoriosLiberados
+                    ? "resumo-liberado"
+                    : "resumo-bloqueado"
+                }`}
+              >
+                <span>Central de relatórios</span>
+
+                <strong className="modal-permissoes-resumo-status">
+                  {relatoriosLiberados
+                    ? "Liberada"
+                    : "Bloqueada"}
+                </strong>
+
+                <p>
+                  {relatoriosLiberados
+                    ? "Escolha os relatórios abaixo"
+                    : "Libere o módulo Relatórios para configurar"}
                 </p>
               </div>
             </div>
 
-            <div className="acoes-permissoes-rapidas">
-              <button
-                type="button"
-                onClick={
-                  marcarTodasTelas
-                }
-              >
-                Liberar todas
-              </button>
+            {/* =================================================
+                AÇÕES RÁPIDAS
+            ================================================= */}
 
-              <button
-                type="button"
-                onClick={
-                  desmarcarTodasTelas
-                }
-              >
-                Bloquear todas
-              </button>
-            </div>
+            <div className="acoes-permissoes-rapidas acoes-permissoes-rapidas-v2">
+              <div>
+                <strong>
+                  Ações rápidas
+                </strong>
 
-            <div className="lista-permissoes">
-              <div className="titulo-grupo-permissoes">
-                Acesso por módulo
+                <span>
+                  Aplique uma regra geral e ajuste os itens individualmente.
+                </span>
               </div>
 
-              <div className="permissoes-modulos-lista">
+              <div className="acoes-permissoes-rapidas-botoes">
+                <button
+                  type="button"
+                  className="acao-permissao-liberar"
+                  onClick={marcarTodasTelas}
+                >
+                  Liberar todos os acessos
+                </button>
+
+                <button
+                  type="button"
+                  className="acao-permissao-bloquear"
+                  onClick={desmarcarTodasTelas}
+                >
+                  Bloquear todos
+                </button>
+              </div>
+            </div>
+
+            {/* =================================================
+                CONTEÚDO
+            ================================================= */}
+
+            <div className="lista-permissoes lista-permissoes-v2">
+              <div className="titulo-grupo-permissoes titulo-grupo-permissoes-v2">
+                <div>
+                  <strong>
+                    Acesso por módulo
+                  </strong>
+
+                  <span>
+                    Clique no módulo inteiro ou escolha cada tela separadamente.
+                  </span>
+                </div>
+              </div>
+
+              <div className="permissoes-modulos-lista permissoes-modulos-grid">
                 {telasPorModulo.map(
                   (modulo) => {
                     const status =
@@ -1614,36 +1762,56 @@ function GerenciarUsuarios() {
                     return (
                       <section
                         key={modulo.id}
-                        className={`permissao-modulo-card ${
+                        className={[
+                          "permissao-modulo-card",
+                          "permissao-modulo-card-v2",
+                          modulo.id === "relatorios"
+                            ? "permissao-modulo-card-relatorios"
+                            : "",
                           status.completo
                             ? "ativo"
                             : status.parcial
                               ? "parcial"
-                              : ""
-                        }`}
+                              : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
                       >
                         <div className="permissao-modulo-header">
                           <div className="permissao-modulo-titulo">
-                            <strong>
-                              {modulo.nome}
-                            </strong>
+                            <div className="permissao-modulo-titulo-linha">
+                              <strong>
+                                {modulo.nome}
+                              </strong>
+
+                              <span
+                                className={[
+                                  "permissao-modulo-status",
+                                  status.completo
+                                    ? "completo"
+                                    : status.parcial
+                                      ? "parcial"
+                                      : "bloqueado",
+                                ].join(" ")}
+                              >
+                                {status.completo
+                                  ? "Liberado"
+                                  : status.parcial
+                                    ? "Parcial"
+                                    : "Bloqueado"}
+                              </span>
+                            </div>
 
                             <span>
-                              {
-                                modulo.descricao
-                              }
+                              {modulo.descricao}
                             </span>
                           </div>
 
                           <div className="permissao-modulo-acoes">
                             <span className="permissao-modulo-contador">
-                              {
-                                status.permitidas
-                              }
+                              {status.permitidas}
                               /
-                              {
-                                status.total
-                              }
+                              {status.total}
                             </span>
 
                             <button
@@ -1661,7 +1829,7 @@ function GerenciarUsuarios() {
                               }
                             >
                               {status.completo
-                                ? "Bloquear módulo"
+                                ? "Bloquear"
                                 : "Liberar módulo"}
                             </button>
                           </div>
@@ -1681,10 +1849,8 @@ function GerenciarUsuarios() {
 
                               return (
                                 <label
-                                  key={
-                                    tela.id
-                                  }
-                                  className={`item-permissao item-permissao-modulo ${
+                                  key={tela.id}
+                                  className={`item-permissao item-permissao-modulo item-permissao-v2 ${
                                     marcado
                                       ? "ativo"
                                       : ""
@@ -1692,29 +1858,32 @@ function GerenciarUsuarios() {
                                 >
                                   <div className="item-permissao-info">
                                     <strong>
-                                      {
-                                        tela.nome
-                                      }
+                                      {tela.nome}
                                     </strong>
 
                                     <span>
-                                      {
-                                        tela.rota
-                                      }
+                                      {tela.rota}
                                     </span>
                                   </div>
 
-                                  <input
-                                    type="checkbox"
-                                    checked={
-                                      marcado
-                                    }
-                                    onChange={() =>
-                                      alterarPermissaoTemporaria(
-                                        tela.id
-                                      )
-                                    }
-                                  />
+                                  <span className="permissao-switch">
+                                    <input
+                                      type="checkbox"
+                                      checked={marcado}
+                                      onChange={() =>
+                                        alterarPermissaoTemporaria(
+                                          tela.id
+                                        )
+                                      }
+                                    />
+
+                                    <span
+                                      className="permissao-switch-trilho"
+                                      aria-hidden="true"
+                                    >
+                                      <span />
+                                    </span>
+                                  </span>
                                 </label>
                               );
                             }
@@ -1724,7 +1893,7 @@ function GerenciarUsuarios() {
                         {modulo.id ===
                           "relatorios" &&
                           relatoriosLiberados && (
-                            <div className="bloco-permissoes-relatorios bloco-relatorios-dentro-modulo">
+                            <div className="bloco-permissoes-relatorios bloco-relatorios-dentro-modulo bloco-relatorios-v2">
                               <div className="cabecalho-permissoes-relatorios">
                                 <div>
                                   <div className="titulo-relatorios-permissoes">
@@ -1734,103 +1903,120 @@ function GerenciarUsuarios() {
                                   </div>
 
                                   <p>
-                                    Escolha quais
-                                    relatórios este
-                                    usuário poderá
-                                    visualizar.
+                                    Libere somente os relatórios que este usuário
+                                    realmente precisa consultar.
                                   </p>
                                 </div>
 
                                 <div className="acoes-relatorios-permissoes">
                                   <button
                                     type="button"
-                                    onClick={
-                                      marcarTodosRelatorios
-                                    }
+                                    className="acao-permissao-liberar"
+                                    onClick={marcarTodosRelatorios}
                                   >
                                     Liberar todos
                                   </button>
 
                                   <button
                                     type="button"
-                                    onClick={
-                                      desmarcarTodosRelatorios
-                                    }
+                                    className="acao-permissao-bloquear"
+                                    onClick={desmarcarTodosRelatorios}
                                   >
                                     Bloquear todos
                                   </button>
                                 </div>
                               </div>
 
-                              {Object.entries(
-                                relatoriosPorCategoria
-                              ).map(
-                                ([
-                                  categoria,
-                                  itens,
-                                ]) => (
-                                  <div
-                                    key={
-                                      categoria
-                                    }
-                                    className="grupo-relatorios-permissoes"
-                                  >
-                                    <div className="categoria-relatorios-permissoes">
-                                      {
-                                        categoria
-                                      }
-                                    </div>
+                              <div className="relatorios-permissoes-grid">
+                                {Object.entries(
+                                  relatoriosPorCategoria
+                                ).map(
+                                  ([
+                                    categoria,
+                                    itens,
+                                  ]) => (
+                                    <div
+                                      key={categoria}
+                                      className="grupo-relatorios-permissoes grupo-relatorios-permissoes-v2"
+                                    >
+                                      <div className="categoria-relatorios-permissoes">
+                                        <span>
+                                          {categoria}
+                                        </span>
 
-                                    {itens.map(
-                                      (
-                                        relatorio
-                                      ) => {
-                                        const marcado =
-                                          Boolean(
-                                            permissoesRelatoriosTemporarias[
-                                              String(
-                                                relatorio.id
-                                              )
-                                            ]
-                                          );
-
-                                        return (
-                                          <label
-                                            key={
-                                              relatorio.id
-                                            }
-                                            className={`item-permissao item-permissao-relatorio ${
-                                              marcado
-                                                ? "ativo"
-                                                : ""
-                                            }`}
-                                          >
-                                            <div className="item-permissao-info">
-                                              <strong>
-                                                {
-                                                  relatorio.nome
-                                                }
-                                              </strong>
-                                            </div>
-
-                                            <input
-                                              type="checkbox"
-                                              checked={
-                                                marcado
-                                              }
-                                              onChange={() =>
-                                                alterarPermissaoRelatorio(
-                                                  relatorio.id
+                                        <small>
+                                          {
+                                            itens.filter(
+                                              (relatorio) =>
+                                                Boolean(
+                                                  permissoesRelatoriosTemporarias[
+                                                    String(
+                                                      relatorio.id
+                                                    )
+                                                  ]
                                                 )
-                                              }
-                                            />
-                                          </label>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                )
-                              )}
+                                            ).length
+                                          }
+                                          /{itens.length}
+                                        </small>
+                                      </div>
+
+                                      <div className="grupo-relatorios-itens">
+                                        {itens.map(
+                                          (
+                                            relatorio
+                                          ) => {
+                                            const marcado =
+                                              Boolean(
+                                                permissoesRelatoriosTemporarias[
+                                                  String(
+                                                    relatorio.id
+                                                  )
+                                                ]
+                                              );
+
+                                            return (
+                                              <label
+                                                key={relatorio.id}
+                                                className={`item-permissao item-permissao-relatorio item-permissao-v2 ${
+                                                  marcado
+                                                    ? "ativo"
+                                                    : ""
+                                                }`}
+                                              >
+                                                <div className="item-permissao-info">
+                                                  <strong>
+                                                    {relatorio.nome}
+                                                  </strong>
+                                                </div>
+
+                                                <span className="permissao-switch permissao-switch-relatorio">
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={marcado}
+                                                    onChange={() =>
+                                                      alterarPermissaoRelatorio(
+                                                        relatorio.id
+                                                      )
+                                                    }
+                                                  />
+
+                                                  <span
+                                                    className="permissao-switch-trilho"
+                                                    aria-hidden="true"
+                                                  >
+                                                    <span />
+                                                  </span>
+                                                </span>
+                                              </label>
+                                            );
+                                          }
+                                        )}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
                             </div>
                           )}
                       </section>
@@ -1840,32 +2026,42 @@ function GerenciarUsuarios() {
               </div>
             </div>
 
-            <div className="modal-actions">
-              <button
-                className="btn-modal-cancelar"
-                disabled={
-                  salvandoPermissoes
-                }
-                onClick={
-                  fecharModalPermissoes
-                }
-              >
-                Cancelar
-              </button>
+            {/* =================================================
+                RODAPÉ
+            ================================================= */}
 
-              <button
-                className="btn-modal-salvar-permissoes"
-                disabled={
-                  salvandoPermissoes
-                }
-                onClick={
-                  salvarPermissoes
-                }
-              >
-                {salvandoPermissoes
-                  ? "Salvando..."
-                  : "Salvar permissões"}
-              </button>
+            <div className="modal-actions modal-permissoes-actions-v2">
+              <div className="modal-permissoes-actions-info">
+                <strong>
+                  {resumoPermissoesModal.telasLiberadas}
+                </strong>
+
+                <span>
+                  acesso(s) selecionado(s)
+                </span>
+              </div>
+
+              <div className="modal-permissoes-actions-botoes">
+                <button
+                  type="button"
+                  className="btn-modal-cancelar"
+                  disabled={salvandoPermissoes}
+                  onClick={fecharModalPermissoes}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-modal-salvar-permissoes"
+                  disabled={salvandoPermissoes}
+                  onClick={salvarPermissoes}
+                >
+                  {salvandoPermissoes
+                    ? "Salvando..."
+                    : "Salvar permissões"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
