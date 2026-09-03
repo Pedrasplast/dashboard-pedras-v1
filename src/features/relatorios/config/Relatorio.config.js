@@ -50,6 +50,22 @@ import FinanceiroPrevistoRealizado
   from "../financeiro/FinanceiroPrevistoRealizado";
 
 
+/* =========================================================
+   MATÉRIA-PRIMA
+========================================================= */
+
+import ConsumoProgramadoPorInjetora
+  from "../materia-prima/ConsumoProgramadoPorInjetora";
+
+
+import ConsumoProgramadoPorFornecedor
+  from "../materia-prima/ConsumoProgramadoPorFornecedor";
+
+
+import NecessidadeCompraMateriaPrima
+  from "../materia-prima/NecessidadeCompraMateriaPrima";
+
+
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -559,5 +575,147 @@ export const RELATORIOS = [
       "variacao_percentual",
     ],
   },
- 
+
+
+  /* =====================================================
+     MATÉRIA-PRIMA
+  ===================================================== */
+
+  {
+    id:
+      "materia-prima-consumo-injetora",
+
+    categoria:
+      "Matéria-Prima",
+
+    titulo:
+      "Consumo Programado por Injetora",
+
+    descricao:
+      "Mostra o consumo previsto de PP de cada injetora no período selecionado, com detalhamento das programações e da receita por fornecedor.",
+
+    icone:
+      FiActivity,
+
+    fonteDados:
+      "custom",
+
+    tipoRelatorio:
+      "custom",
+
+    componenteCustomizado:
+      ConsumoProgramadoPorInjetora,
+
+    filtros: {
+      periodo: false,
+
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+
+    transformarDados:
+      null,
+
+    colunas: [],
+  },
+
+
+  {
+    id:
+      "materia-prima-consumo-fornecedor",
+
+    categoria:
+      "Matéria-Prima",
+
+    titulo:
+      "Consumo Programado por Fornecedor",
+
+    descricao:
+      "Consolida a necessidade prevista de PP por fornecedor conforme as receitas dos produtos e a programação das injetoras no período selecionado.",
+
+    icone:
+      FiPackage,
+
+    fonteDados:
+      "custom",
+
+    tipoRelatorio:
+      "custom",
+
+    componenteCustomizado:
+      ConsumoProgramadoPorFornecedor,
+
+    filtros: {
+      periodo: false,
+
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+
+    transformarDados:
+      null,
+
+    colunas: [],
+  },
+
+
+  {
+    id:
+      "materia-prima-necessidade-compra",
+
+    categoria:
+      "Matéria-Prima",
+
+    titulo:
+      "Necessidade de Compra de Matéria-Prima",
+
+    descricao:
+      "Projeta o estoque de PP por fornecedor, considerando saldo atual, compras futuras, consumo programado, estoque mínimo, estoque alvo e prazo de reposição.",
+
+    icone:
+      FiShoppingCart,
+
+    fonteDados:
+      "custom",
+
+    tipoRelatorio:
+      "custom",
+
+    componenteCustomizado:
+      NecessidadeCompraMateriaPrima,
+
+    filtros: {
+      periodo: false,
+
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+
+    transformarDados:
+      null,
+
+    colunas: [],
+  },
+
 ];

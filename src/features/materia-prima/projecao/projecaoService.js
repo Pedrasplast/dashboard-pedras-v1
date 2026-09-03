@@ -159,6 +159,162 @@ function listarDatas(
 
 
 /* =========================================================
+   HORAS
+========================================================= */
+
+function normalizarHora(
+  valor,
+) {
+  const hora =
+    String(
+      valor ?? "",
+    ).trim();
+
+
+  if (!hora) {
+    return null;
+  }
+
+
+  const partes =
+    hora.split(
+      ":",
+    );
+
+
+  if (
+    partes.length <
+    2
+  ) {
+    return null;
+  }
+
+
+  const horas =
+    Number(
+      partes[0],
+    );
+
+  const minutos =
+    Number(
+      partes[1],
+    );
+
+  const segundos =
+    Number(
+      partes[2] ??
+      0,
+    );
+
+
+  if (
+    !Number.isInteger(
+      horas,
+    ) ||
+    !Number.isInteger(
+      minutos,
+    ) ||
+    !Number.isInteger(
+      segundos,
+    ) ||
+    horas < 0 ||
+    horas > 23 ||
+    minutos < 0 ||
+    minutos > 59 ||
+    segundos < 0 ||
+    segundos > 59
+  ) {
+    return null;
+  }
+
+
+  return {
+    horas,
+    minutos,
+    segundos,
+  };
+}
+
+
+function converterDataHoraUTC(
+  data,
+  hora,
+) {
+  const dataBase =
+    converterDataUTC(
+      data,
+    );
+
+  const horaBase =
+    normalizarHora(
+      hora,
+    );
+
+
+  if (
+    !dataBase ||
+    !horaBase
+  ) {
+    return null;
+  }
+
+
+  return Date.UTC(
+    dataBase.getUTCFullYear(),
+    dataBase.getUTCMonth(),
+    dataBase.getUTCDate(),
+    horaBase.horas,
+    horaBase.minutos,
+    horaBase.segundos,
+  );
+}
+
+
+function inicioDiaUTC(
+  data,
+) {
+  const dataBase =
+    converterDataUTC(
+      data,
+    );
+
+
+  if (!dataBase) {
+    return null;
+  }
+
+
+  return dataBase.getTime();
+}
+
+
+function fimDiaUTC(
+  data,
+) {
+  const inicio =
+    inicioDiaUTC(
+      data,
+    );
+
+
+  if (
+    inicio === null
+  ) {
+    return null;
+  }
+
+
+  return (
+    inicio +
+    24 *
+      60 *
+      60 *
+      1000
+  );
+}
+
+
+/* =========================================================
    NORMALIZAR RESULTADO DA PROGRAMAÇÃO
 ========================================================= */
 
@@ -286,98 +442,13 @@ function adicionarMovimento(
 
 
 /* =========================================================
-   CONSUMO POR FORNECEDOR
+   RECEITA DA PROGRAMAÇÃO
 ========================================================= */
 
-function obterConsumosFornecedores(
+function obterItensReceita(
   programacao,
 ) {
-  /*
-   * Se programacaoService já trouxe
-   * os consumos calculados pela receita,
-   * usamos diretamente.
-   */
-  if (
-    Array.isArray(
-      programacao
-        ?.consumosFornecedores,
-    ) &&
-    programacao
-      .consumosFornecedores
-      .length >
-      0
-  ) {
-    return programacao
-      .consumosFornecedores
-      .map(
-        (
-          item,
-        ) => ({
-          fornecedorId:
-            item
-              ?.fornecedorId ??
-            item
-              ?.fornecedor_id ??
-            null,
-
-          fornecedorNome:
-            item
-              ?.fornecedorNome ??
-            item
-              ?.fornecedor_nome ??
-            "",
-
-          consumoDiarioKg:
-            arredondarKg(
-              item
-                ?.consumoDiarioKg ??
-              item
-                ?.consumo_diario_kg ??
-              0,
-            ),
-        }),
-      )
-      .filter(
-        (
-          item,
-        ) =>
-          item.fornecedorId !==
-            null &&
-          item.fornecedorId !==
-            undefined &&
-          item.consumoDiarioKg >
-            0,
-      );
-  }
-
-
-  /*
-   * Fallback:
-   * quantidade/dia x peso x percentual.
-   */
-  const quantidade =
-    numero(
-      programacao
-        ?.quantidade,
-    );
-
-  const pesoKg =
-    numero(
-      programacao
-        ?.pesoKg ??
-      programacao
-        ?.peso_kg,
-    );
-
-
-  const consumoDiarioKg =
-    arredondarKg(
-      quantidade *
-        pesoKg,
-    );
-
-
-  const receitaItens =
+  const itens =
     Array.isArray(
       programacao
         ?.receitaItens,
@@ -387,17 +458,7 @@ function obterConsumosFornecedores(
       : [];
 
 
-  if (
-    consumoDiarioKg <=
-      0 ||
-    receitaItens.length ===
-      0
-  ) {
-    return [];
-  }
-
-
-  return receitaItens
+  return itens
     .filter(
       (
         item,
@@ -408,39 +469,27 @@ function obterConsumosFornecedores(
     .map(
       (
         item,
-      ) => {
-        const fornecedorId =
+      ) => ({
+        fornecedorId:
           item
             ?.fornecedorId ??
           item
             ?.fornecedor_id ??
-          null;
+          null,
 
-        const percentual =
+        fornecedorNome:
+          item
+            ?.fornecedorNome ??
+          item
+            ?.fornecedor_nome ??
+          "",
+
+        percentual:
           numero(
             item
               ?.percentual,
-          );
-
-
-        return {
-          fornecedorId,
-
-          fornecedorNome:
-            item
-              ?.fornecedorNome ??
-            item
-              ?.fornecedor_nome ??
-            "",
-
-          consumoDiarioKg:
-            arredondarKg(
-              consumoDiarioKg *
-                percentual /
-                100,
-            ),
-        };
-      },
+          ),
+      }),
     )
     .filter(
       (
@@ -450,9 +499,428 @@ function obterConsumosFornecedores(
           null &&
         item.fornecedorId !==
           undefined &&
-        item.consumoDiarioKg >
+        item.percentual >
           0,
     );
+}
+
+
+/* =========================================================
+   CONSUMO TOTAL DE UMA PROGRAMAÇÃO
+========================================================= */
+
+function obterConsumoTotalProgramacao(
+  programacao,
+) {
+  const consumoPeriodo =
+    numero(
+      programacao
+        ?.consumoPeriodoKg ??
+      programacao
+        ?.consumo_periodo_kg,
+    );
+
+
+  if (
+    consumoPeriodo >
+    0
+  ) {
+    return consumoPeriodo;
+  }
+
+
+  const pesoKg =
+    numero(
+      programacao
+        ?.pesoKg ??
+      programacao
+        ?.peso_kg,
+    );
+
+
+  /*
+   * Para registros antigos sem horário,
+   * quantidade continua representando
+   * quantidade diária.
+   */
+  const possuiHorario =
+    Boolean(
+      programacao
+        ?.horaInicio ??
+      programacao
+        ?.hora_inicio,
+    ) &&
+    Boolean(
+      programacao
+        ?.horaFim ??
+      programacao
+        ?.hora_fim,
+    );
+
+
+  if (!possuiHorario) {
+    const quantidadeDiaria =
+      numero(
+        programacao
+          ?.quantidade,
+      );
+
+
+    const inicio =
+      programacao
+        ?.dataInicio ??
+      programacao
+        ?.data_inicio;
+
+    const fim =
+      programacao
+        ?.dataFim ??
+      programacao
+        ?.data_fim;
+
+
+    const dias =
+      listarDatas(
+        inicio,
+        fim,
+      ).length;
+
+
+    return arredondarKg(
+      quantidadeDiaria *
+        pesoKg *
+        dias,
+    );
+  }
+
+
+  /*
+   * Nos registros novos, quantidade
+   * representa o total de peças previstas
+   * para o período inteiro.
+   */
+  return arredondarKg(
+    numero(
+      programacao
+        ?.quantidade,
+    ) *
+      pesoKg,
+  );
+}
+
+
+/* =========================================================
+   CONSUMO DIÁRIO DA PROGRAMAÇÃO
+
+   IMPORTANTE:
+
+   Não fazemos:
+
+   floor(segundos_do_dia / ciclo)
+
+   isoladamente para cada dia.
+
+   Fazemos o cálculo acumulado desde o início
+   da programação para não perder ciclos que
+   atravessam a mudança de data.
+========================================================= */
+
+function calcularConsumoProgramacaoNaData(
+  programacao,
+  data,
+) {
+  const dataInicio =
+    programacao
+      ?.dataInicio ??
+    programacao
+      ?.data_inicio;
+
+  const dataFim =
+    programacao
+      ?.dataFim ??
+    programacao
+      ?.data_fim;
+
+  const horaInicio =
+    programacao
+      ?.horaInicio ??
+    programacao
+      ?.hora_inicio;
+
+  const horaFim =
+    programacao
+      ?.horaFim ??
+    programacao
+      ?.hora_fim;
+
+
+  const pesoKg =
+    numero(
+      programacao
+        ?.pesoKg ??
+      programacao
+        ?.peso_kg,
+    );
+
+
+  /* =======================================================
+     REGISTRO ANTIGO
+
+     Sem hora inicial/final:
+     mantém o comportamento anterior.
+  ======================================================= */
+
+  if (
+    !horaInicio ||
+    !horaFim
+  ) {
+    if (
+      !dataInicio ||
+      !dataFim ||
+      data <
+        dataInicio ||
+      data >
+        dataFim
+    ) {
+      return {
+        ciclos: null,
+
+        pecas: 0,
+
+        consumoKg: 0,
+      };
+    }
+
+
+    const quantidadeDiaria =
+      numero(
+        programacao
+          ?.quantidade,
+      );
+
+
+    return {
+      ciclos: null,
+
+      pecas:
+        quantidadeDiaria,
+
+      consumoKg:
+        arredondarKg(
+          quantidadeDiaria *
+            pesoKg,
+        ),
+    };
+  }
+
+
+  /* =======================================================
+     REGISTRO NOVO
+  ======================================================= */
+
+  const cicloSegundos =
+    numero(
+      programacao
+        ?.cicloSegundos ??
+      programacao
+        ?.ciclo_segundos,
+    );
+
+  const cavidadeMolde =
+    numero(
+      programacao
+        ?.cavidadeMolde ??
+      programacao
+        ?.cavidade_molde,
+    );
+
+
+  if (
+    !dataInicio ||
+    !dataFim ||
+    pesoKg <= 0 ||
+    cicloSegundos <= 0 ||
+    cavidadeMolde <= 0
+  ) {
+    return {
+      ciclos: 0,
+
+      pecas: 0,
+
+      consumoKg: 0,
+    };
+  }
+
+
+  const inicioProgramacao =
+    converterDataHoraUTC(
+      dataInicio,
+      horaInicio,
+    );
+
+  const fimProgramacao =
+    converterDataHoraUTC(
+      dataFim,
+      horaFim,
+    );
+
+  const inicioDia =
+    inicioDiaUTC(
+      data,
+    );
+
+  const fimDia =
+    fimDiaUTC(
+      data,
+    );
+
+
+  if (
+    inicioProgramacao ===
+      null ||
+    fimProgramacao ===
+      null ||
+    inicioDia ===
+      null ||
+    fimDia ===
+      null ||
+    fimProgramacao <=
+      inicioProgramacao
+  ) {
+    return {
+      ciclos: 0,
+
+      pecas: 0,
+
+      consumoKg: 0,
+    };
+  }
+
+
+  /*
+   * Não existe interseção entre
+   * o dia e a programação.
+   */
+  if (
+    fimDia <=
+      inicioProgramacao ||
+    inicioDia >=
+      fimProgramacao
+  ) {
+    return {
+      ciclos: 0,
+
+      pecas: 0,
+
+      consumoKg: 0,
+    };
+  }
+
+
+  const marcoInicio =
+    Math.max(
+      inicioDia,
+      inicioProgramacao,
+    );
+
+  const marcoFim =
+    Math.min(
+      fimDia,
+      fimProgramacao,
+    );
+
+
+  if (
+    marcoFim <=
+    marcoInicio
+  ) {
+    return {
+      ciclos: 0,
+
+      pecas: 0,
+
+      consumoKg: 0,
+    };
+  }
+
+
+  /*
+   * Segundos acumulados desde o início
+   * real da programação até os limites
+   * daquele dia.
+   */
+  const segundosAteInicio =
+    Math.max(
+      0,
+      (
+        marcoInicio -
+        inicioProgramacao
+      ) /
+        1000,
+    );
+
+
+  const segundosAteFim =
+    Math.max(
+      0,
+      (
+        marcoFim -
+        inicioProgramacao
+      ) /
+        1000,
+    );
+
+
+  /*
+   * Ciclos completos acumulados.
+   */
+  const ciclosAntes =
+    Math.floor(
+      segundosAteInicio /
+        cicloSegundos,
+    );
+
+
+  const ciclosAteFim =
+    Math.floor(
+      segundosAteFim /
+        cicloSegundos,
+    );
+
+
+  /*
+   * Ciclos atribuídos especificamente
+   * a este dia.
+   */
+  const ciclosDia =
+    Math.max(
+      ciclosAteFim -
+        ciclosAntes,
+      0,
+    );
+
+
+  const pecasDia =
+    ciclosDia *
+    cavidadeMolde;
+
+
+  const consumoKg =
+    arredondarKg(
+      pecasDia *
+        pesoKg,
+    );
+
+
+  return {
+    ciclos:
+      ciclosDia,
+
+    pecas:
+      pecasDia,
+
+    consumoKg,
+  };
 }
 
 
@@ -656,6 +1124,32 @@ export async function buscarProjecao({
   );
 
 
+  /*
+   * Também registramos fornecedores
+   * existentes nas receitas da programação.
+   */
+  programacoes.forEach(
+    (
+      programacao,
+    ) => {
+      obterItensReceita(
+        programacao,
+      ).forEach(
+        (
+          item,
+        ) => {
+          registrarFornecedor(
+            fornecedoresMapa,
+            item.fornecedorId,
+            item.fornecedorNome,
+            true,
+          );
+        },
+      );
+    },
+  );
+
+
   /* =======================================================
      SALDOS ATIVOS
   ======================================================= */
@@ -793,12 +1287,16 @@ export async function buscarProjecao({
 
 
   /* =======================================================
-     COMPRAS
+     MOVIMENTOS
   ======================================================= */
 
   const movimentosMapa =
     new Map();
 
+
+  /* =======================================================
+     COMPRAS
+  ======================================================= */
 
   compras.forEach(
     (
@@ -821,6 +1319,10 @@ export async function buscarProjecao({
         compra.fornecedorAtivo,
       );
 
+
+      /* ===================================================
+         MATERIAL JÁ RECEBIDO
+      =================================================== */
 
       if (
         compra.status ===
@@ -846,6 +1348,10 @@ export async function buscarProjecao({
         return;
       }
 
+
+      /* ===================================================
+         COMPRA FUTURA
+      =================================================== */
 
       if (
         (
@@ -917,35 +1423,35 @@ export async function buscarProjecao({
       }
 
 
-      const consumos =
-        obterConsumosFornecedores(
+      const itensReceita =
+        obterItensReceita(
           programacao,
         );
 
 
+      const receitaConfigurada =
+        programacao
+          ?.receitaConfigurada ===
+          true;
+
+
+      /* ===================================================
+         PROGRAMAÇÃO SEM RECEITA
+      =================================================== */
+
       if (
-        consumos.length ===
-        0
+        !receitaConfigurada ||
+        itensReceita.length ===
+          0
       ) {
-        const consumoDiario =
-          numero(
-            programacao
-              ?.consumoDiarioKg,
-          ) ||
-          (
-            numero(
-              programacao
-                ?.quantidade,
-            ) *
-            numero(
-              programacao
-                ?.pesoKg,
-            )
+        const consumoTotal =
+          obterConsumoTotalProgramacao(
+            programacao,
           );
 
 
         if (
-          consumoDiario >
+          consumoTotal >
           0
         ) {
           programacoesSemReceita.push({
@@ -961,6 +1467,8 @@ export async function buscarProjecao({
 
             produto:
               programacao
+                .descricao ??
+              programacao
                 .produto ??
               programacao
                 .descricaoProduto ??
@@ -973,19 +1481,27 @@ export async function buscarProjecao({
       }
 
 
-      consumos.forEach(
+      /* ===================================================
+         REGISTRAR FORNECEDORES DA RECEITA
+      =================================================== */
+
+      itensReceita.forEach(
         (
-          consumo,
+          item,
         ) => {
           registrarFornecedor(
             fornecedoresMapa,
-            consumo.fornecedorId,
-            consumo.fornecedorNome,
+            item.fornecedorId,
+            item.fornecedorNome,
             true,
           );
         },
       );
 
+
+      /* ===================================================
+         INTERVALO QUE PRECISA SER PROJETADO
+      =================================================== */
 
       const inicioAplicado =
         inicio <
@@ -1007,20 +1523,53 @@ export async function buscarProjecao({
         );
 
 
+      /* ===================================================
+         CONSUMO REAL POR DIA
+      =================================================== */
+
       datasProgramacao.forEach(
         (
           data,
         ) => {
-          consumos.forEach(
+          const consumoDia =
+            calcularConsumoProgramacaoNaData(
+              programacao,
+              data,
+            );
+
+
+          if (
+            consumoDia
+              .consumoKg <=
+            0
+          ) {
+            return;
+          }
+
+
+          /* ===============================================
+             DISTRIBUIÇÃO PELA RECEITA
+          =============================================== */
+
+          itensReceita.forEach(
             (
-              consumo,
+              item,
             ) => {
+              const consumoFornecedorKg =
+                arredondarKg(
+                  consumoDia
+                    .consumoKg *
+                    item.percentual /
+                    100,
+                );
+
+
               adicionarMovimento(
                 movimentosMapa,
                 data,
-                consumo.fornecedorId,
+                item.fornecedorId,
                 "consumoKg",
-                consumo.consumoDiarioKg,
+                consumoFornecedorKg,
               );
             },
           );
@@ -1320,6 +1869,10 @@ export async function buscarProjecao({
   );
 
 
+  /* =======================================================
+     FORNECEDORES
+  ======================================================= */
+
   const fornecedores =
     Array.from(
       fornecedoresEnvolvidos,
@@ -1353,6 +1906,10 @@ export async function buscarProjecao({
           ),
       );
 
+
+  /* =======================================================
+     RESULTADO
+  ======================================================= */
 
   return {
     dataInicio,

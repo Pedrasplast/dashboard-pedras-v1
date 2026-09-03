@@ -13,6 +13,76 @@ import "./FornecedorModal.css";
 
 
 /* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function valorCampoNumero(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "";
+  }
+
+
+  return String(
+    valor,
+  );
+}
+
+
+function converterNumeroOpcional(
+  valor,
+  nomeCampo,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    String(valor).trim() === ""
+  ) {
+    return null;
+  }
+
+
+  const numero =
+    Number(
+      String(valor)
+        .trim()
+        .replace(
+          ",",
+          ".",
+        ),
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    throw new Error(
+      `Informe um valor válido para ${nomeCampo}.`,
+    );
+  }
+
+
+  if (
+    numero < 0
+  ) {
+    throw new Error(
+      `${nomeCampo} não pode ser negativo.`,
+    );
+  }
+
+
+  return numero;
+}
+
+
+/* =========================================================
    MODAL FORNECEDOR
 ========================================================= */
 
@@ -26,6 +96,21 @@ export default function FornecedorModal({
   const [
     nome,
     setNome,
+  ] = useState("");
+
+  const [
+    estoqueMinimoKg,
+    setEstoqueMinimoKg,
+  ] = useState("");
+
+  const [
+    estoqueAlvoKg,
+    setEstoqueAlvoKg,
+  ] = useState("");
+
+  const [
+    leadTimeDias,
+    setLeadTimeDias,
   ] = useState("");
 
   const [
@@ -59,6 +144,27 @@ export default function FornecedorModal({
           ),
         );
 
+        setEstoqueMinimoKg(
+          valorCampoNumero(
+            fornecedor
+              ?.estoqueMinimoKg,
+          ),
+        );
+
+        setEstoqueAlvoKg(
+          valorCampoNumero(
+            fornecedor
+              ?.estoqueAlvoKg,
+          ),
+        );
+
+        setLeadTimeDias(
+          valorCampoNumero(
+            fornecedor
+              ?.leadTimeDias,
+          ),
+        );
+
         setAtivo(
           fornecedor
             ?.ativo !==
@@ -66,6 +172,18 @@ export default function FornecedorModal({
         );
       } else {
         setNome(
+          "",
+        );
+
+        setEstoqueMinimoKg(
+          "",
+        );
+
+        setEstoqueAlvoKg(
+          "",
+        );
+
+        setLeadTimeDias(
           "",
         );
 
@@ -170,6 +288,53 @@ export default function FornecedorModal({
 
 
     try {
+      const estoqueMinimoFinal =
+        converterNumeroOpcional(
+          estoqueMinimoKg,
+          "o estoque mínimo",
+        );
+
+      const estoqueAlvoFinal =
+        converterNumeroOpcional(
+          estoqueAlvoKg,
+          "o estoque alvo",
+        );
+
+      const leadTimeFinal =
+        converterNumeroOpcional(
+          leadTimeDias,
+          "o prazo de entrega",
+        );
+
+
+      if (
+        leadTimeFinal !== null &&
+        !Number.isInteger(
+          leadTimeFinal,
+        )
+      ) {
+        setErro(
+          "O prazo de entrega precisa ser informado em dias inteiros.",
+        );
+
+        return;
+      }
+
+
+      if (
+        estoqueMinimoFinal !== null &&
+        estoqueAlvoFinal !== null &&
+        estoqueAlvoFinal <
+          estoqueMinimoFinal
+      ) {
+        setErro(
+          "O estoque alvo deve ser maior ou igual ao estoque mínimo.",
+        );
+
+        return;
+      }
+
+
       await onSalvar?.({
         id:
           fornecedor
@@ -178,6 +343,15 @@ export default function FornecedorModal({
 
         nome:
           nomeFinal,
+
+        estoqueMinimoKg:
+          estoqueMinimoFinal,
+
+        estoqueAlvoKg:
+          estoqueAlvoFinal,
+
+        leadTimeDias:
+          leadTimeFinal,
 
         ativo:
           Boolean(
@@ -247,9 +421,9 @@ export default function FornecedorModal({
             </h3>
 
             <p>
-              Cadastre o fornecedor ou
-              origem do PP utilizado
-              nas receitas.
+              Cadastre o fornecedor e os
+              parâmetros utilizados no
+              planejamento de compras.
             </p>
 
           </div>
@@ -326,6 +500,136 @@ export default function FornecedorModal({
                 salvando
               }
             />
+
+          </label>
+
+
+          {/* ===============================================
+              ESTOQUE MÍNIMO
+          =============================================== */}
+
+          <label className="fornecedor-modal-campo">
+
+            <span className="fornecedor-modal-label">
+              Estoque mínimo (kg)
+            </span>
+
+
+            <input
+              type="number"
+              min="0"
+              step="0.001"
+              value={
+                estoqueMinimoKg
+              }
+              onChange={
+                (
+                  event,
+                ) => {
+                  setEstoqueMinimoKg(
+                    event
+                      .target
+                      .value,
+                  );
+
+                  setErro(
+                    "",
+                  );
+                }
+              }
+              placeholder="Ex.: 2000"
+              disabled={
+                salvando
+              }
+            />
+
+          </label>
+
+
+          {/* ===============================================
+              ESTOQUE ALVO
+          =============================================== */}
+
+          <label className="fornecedor-modal-campo">
+
+            <span className="fornecedor-modal-label">
+              Estoque alvo (kg)
+            </span>
+
+
+            <input
+              type="number"
+              min="0"
+              step="0.001"
+              value={
+                estoqueAlvoKg
+              }
+              onChange={
+                (
+                  event,
+                ) => {
+                  setEstoqueAlvoKg(
+                    event
+                      .target
+                      .value,
+                  );
+
+                  setErro(
+                    "",
+                  );
+                }
+              }
+              placeholder="Ex.: 6000"
+              disabled={
+                salvando
+              }
+            />
+
+          </label>
+
+
+          {/* ===============================================
+              PRAZO DE ENTREGA
+          =============================================== */}
+
+          <label className="fornecedor-modal-campo">
+
+            <span className="fornecedor-modal-label">
+              Prazo de entrega (dias)
+            </span>
+
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={
+                leadTimeDias
+              }
+              onChange={
+                (
+                  event,
+                ) => {
+                  setLeadTimeDias(
+                    event
+                      .target
+                      .value,
+                  );
+
+                  setErro(
+                    "",
+                  );
+                }
+              }
+              placeholder="Ex.: 5"
+              disabled={
+                salvando
+              }
+            />
+
+            <small>
+              O estoque mínimo dispara a necessidade de compra. O estoque alvo define até onde repor e o prazo será usado para calcular a data limite da compra.
+            </small>
 
           </label>
 

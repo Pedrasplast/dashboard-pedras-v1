@@ -6,6 +6,9 @@ import {
 
 import {
   buscarProgramacao,
+
+  excluirProgramacao as excluirProgramacaoService,
+
   salvarProgramacao as salvarProgramacaoService,
 } from "./programacaoService";
 
@@ -50,6 +53,16 @@ export default function useProgramacao({
   const [
     salvandoId,
     setSalvandoId,
+  ] = useState(null);
+
+  const [
+    excluindo,
+    setExcluindo,
+  ] = useState(false);
+
+  const [
+    excluindoId,
+    setExcluindoId,
   ] = useState(null);
 
 
@@ -115,6 +128,8 @@ export default function useProgramacao({
           );
 
           setErro(
+            error
+              ?.message ||
             "Não foi possível carregar a programação de matéria-prima.",
           );
 
@@ -205,8 +220,8 @@ export default function useProgramacao({
 
           /*
            * Recarregamos porque o consumo
-           * depende também do peso e da
-           * receita atual do produto.
+           * depende dos parâmetros técnicos
+           * e da receita atual do produto.
            */
           await carregarProgramacao();
 
@@ -226,6 +241,73 @@ export default function useProgramacao({
           );
 
           setSalvandoId(
+            null,
+          );
+        }
+      },
+      [
+        carregarProgramacao,
+      ],
+    );
+
+
+  /* =======================================================
+     EXCLUIR
+  ======================================================= */
+
+  const excluirProgramacao =
+    useCallback(
+      async (
+        id,
+      ) => {
+        if (
+          id === null ||
+          id === undefined
+        ) {
+          throw new Error(
+            "Programação não informada.",
+          );
+        }
+
+
+        setExcluindo(
+          true,
+        );
+
+        setExcluindoId(
+          id,
+        );
+
+
+        try {
+          const resultado =
+            await excluirProgramacaoService(
+              id,
+            );
+
+
+          /*
+           * Recarrega a lista e todos
+           * os cálculos após excluir.
+           */
+          await carregarProgramacao();
+
+
+          return resultado;
+        } catch (error) {
+          console.error(
+            "Erro ao excluir programação:",
+            error,
+          );
+
+
+          throw error;
+        } finally {
+          setExcluindo(
+            false,
+          );
+
+          setExcluindoId(
             null,
           );
         }
@@ -278,6 +360,44 @@ export default function useProgramacao({
 
 
   /* =======================================================
+     ITEM ESTÁ EXCLUINDO?
+  ======================================================= */
+
+  const itemEstaExcluindo =
+    useCallback(
+      (
+        id,
+      ) => {
+        if (!excluindo) {
+          return false;
+        }
+
+
+        if (
+          id === null ||
+          id === undefined
+        ) {
+          return false;
+        }
+
+
+        return (
+          String(
+            id,
+          ) ===
+          String(
+            excluindoId,
+          )
+        );
+      },
+      [
+        excluindo,
+        excluindoId,
+      ],
+    );
+
+
+  /* =======================================================
      RETORNO
   ======================================================= */
 
@@ -296,10 +416,18 @@ export default function useProgramacao({
 
     salvandoId,
 
+    excluindo,
+
+    excluindoId,
+
     recarregar,
 
     salvarProgramacao,
 
+    excluirProgramacao,
+
     itemEstaSalvando,
+
+    itemEstaExcluindo,
   };
 }

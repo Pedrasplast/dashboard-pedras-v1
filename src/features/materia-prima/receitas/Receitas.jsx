@@ -757,10 +757,6 @@ export default function Receitas() {
     <>
       <div className="receitas-pp">
 
-        {/* =================================================
-            BARRA SUPERIOR
-        ================================================= */}
-
         <div className="receitas-pp-toolbar">
 
           <div className="receitas-pp-indicadores">
@@ -876,10 +872,6 @@ export default function Receitas() {
         </div>
 
 
-        {/* =================================================
-            CARREGANDO
-        ================================================= */}
-
         {carregando && (
 
           <div className="receitas-pp-estado">
@@ -900,10 +892,6 @@ export default function Receitas() {
 
         )}
 
-
-        {/* =================================================
-            ERRO
-        ================================================= */}
 
         {!carregando &&
           erro && (
@@ -939,10 +927,6 @@ export default function Receitas() {
           )}
 
 
-        {/* =================================================
-            SEM PRODUTOS PP
-        ================================================= */}
-
         {!carregando &&
           !erro &&
           carregado &&
@@ -972,10 +956,6 @@ export default function Receitas() {
 
           )}
 
-
-        {/* =================================================
-            TABELA
-        ================================================= */}
 
         {!carregando &&
           !erro &&
@@ -1257,10 +1237,6 @@ export default function Receitas() {
           )}
 
 
-        {/* =================================================
-            BUSCA VAZIA
-        ================================================= */}
-
         {!carregando &&
           !erro &&
           receitas.length >
@@ -1297,10 +1273,6 @@ export default function Receitas() {
       </div>
 
 
-      {/* ===================================================
-          EDITOR DA RECEITA
-      =================================================== */}
-
       {receitaEmEdicao && (
 
         <div className="receitas-editor-overlay">
@@ -1310,10 +1282,6 @@ export default function Receitas() {
             role="dialog"
             aria-modal="true"
           >
-
-            {/* ===============================================
-                CABEÇALHO
-            =============================================== */}
 
             <div className="receitas-editor-header">
 
@@ -1372,10 +1340,6 @@ export default function Receitas() {
             </div>
 
 
-            {/* ===============================================
-                INFORMAÇÕES
-            =============================================== */}
-
             <div className="receitas-editor-info">
 
               <div>
@@ -1420,10 +1384,6 @@ export default function Receitas() {
 
             </div>
 
-
-            {/* ===============================================
-                ITENS
-            =============================================== */}
 
             <div className="receitas-editor-body">
 
@@ -1504,6 +1464,7 @@ export default function Receitas() {
                       />
 
                       Adicionar fornecedor
+
                     </button>
 
                   )}
@@ -1673,10 +1634,6 @@ export default function Receitas() {
               )}
 
 
-              {/* =============================================
-                  TOTAL
-              ============================================= */}
-
               <div
                 className={
                   totalValido
@@ -1724,10 +1681,6 @@ export default function Receitas() {
               </div>
 
 
-              {/* =============================================
-                  ERRO
-              ============================================= */}
-
               {erroEdicao && (
 
                 <div className="receitas-editor-erro">
@@ -1748,10 +1701,6 @@ export default function Receitas() {
 
             </div>
 
-
-            {/* ===============================================
-                AÇÕES
-            =============================================== */}
 
             <div className="receitas-editor-acoes">
 

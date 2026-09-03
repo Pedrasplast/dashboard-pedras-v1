@@ -80,6 +80,86 @@ function formatarDataHora(
 }
 
 
+/* =========================================================
+   DATA SEM CONVERSÃO DE FUSO HORÁRIO
+
+   Campos DATE do PostgreSQL chegam normalmente como:
+   2026-09-14
+
+   Não devemos usar:
+   new Date("2026-09-14")
+
+   porque o JavaScript interpreta essa data em UTC e,
+   no horário do Brasil, pode exibir 13/09/2026.
+
+   Aqui a data é tratada como calendário, sem timezone.
+========================================================= */
+
+function formatarDataCalendario(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "-";
+  }
+
+
+  const texto =
+    String(
+      valor,
+    ).trim();
+
+
+  const correspondencia =
+    texto.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+    );
+
+
+  if (
+    correspondencia
+  ) {
+    const [
+      ,
+      ano,
+      mes,
+      dia,
+    ] =
+      correspondencia;
+
+
+    return `${dia}/${mes}/${ano}`;
+  }
+
+
+  /*
+   * Segurança para algum campo antigo que eventualmente
+   * tenha sido salvo como timestamp em vez de DATE.
+   */
+  const data =
+    new Date(
+      texto,
+    );
+
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return texto;
+  }
+
+
+  return data.toLocaleDateString(
+    "pt-BR",
+  );
+}
+
+
 function formatarDataInput(
   data,
 ) {
@@ -254,6 +334,15 @@ function formatarValorGenerico(
       chave,
     );
 
+
+  /* =======================================================
+     DATAS
+
+     IMPORTANTE:
+     campos DATE são tratados sem new Date() para evitar
+     deslocamento de um dia por causa do fuso horário.
+  ======================================================= */
+
   if (
     chaveNormalizada.includes(
       "data",
@@ -262,23 +351,15 @@ function formatarValorGenerico(
       "previsao",
     )
   ) {
-    const data =
-      new Date(
-        String(
-          valor,
-        ),
-      );
-
-    if (
-      !Number.isNaN(
-        data.getTime(),
-      )
-    ) {
-      return data.toLocaleDateString(
-        "pt-BR",
-      );
-    }
+    return formatarDataCalendario(
+      valor,
+    );
   }
+
+
+  /* =======================================================
+     VALOR
+  ======================================================= */
 
   if (
     chaveNormalizada ===
@@ -632,7 +713,6 @@ export default function PedidosAlteradosRelatorio() {
      INDICADORES
   ======================================================= */
 
-
   const totalAlteracoes =
     useMemo(
       () =>
@@ -653,7 +733,6 @@ export default function PedidosAlteradosRelatorio() {
         pedidosFiltrados,
       ],
     );
-
 
 
   /* =======================================================
@@ -1497,5 +1576,4 @@ export default function PedidosAlteradosRelatorio() {
         )}
     </>
   );
-
 }

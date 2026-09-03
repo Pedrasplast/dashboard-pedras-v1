@@ -6,15 +6,16 @@ import {
 
 import {
   buscarProdutosPP,
-  salvarProdutoPP as salvarProdutoPPService,
+
+  excluirProdutoPP as excluirProdutoPPService,
+
+  salvarProdutoPP,
 } from "./produtosPPService";
 
 
-/* =========================================================
-   HOOK PRODUTOS PP
-========================================================= */
-
-export default function useProdutosPP() {
+export default function useProdutosPP({
+  carregar = true,
+} = {}) {
   const [
     produtos,
     setProdutos,
@@ -43,6 +44,16 @@ export default function useProdutosPP() {
   const [
     salvandoCodigo,
     setSalvandoCodigo,
+  ] = useState(null);
+
+  const [
+    excluindo,
+    setExcluindo,
+  ] = useState(false);
+
+  const [
+    excluindoCodigo,
+    setExcluindoCodigo,
   ] = useState(null);
 
 
@@ -90,11 +101,11 @@ export default function useProdutosPP() {
             [],
           );
 
-
           setErro(
-            "Não foi possível carregar os produtos PP.",
+            error
+              ?.message ||
+            "Não foi possível carregar os Produtos PP.",
           );
-
 
           setCarregado(
             true,
@@ -110,17 +121,44 @@ export default function useProdutosPP() {
 
 
   /* =======================================================
-     AUTOMÁTICO
+     CARREGAMENTO AUTOMÁTICO
   ======================================================= */
 
   useEffect(
     () => {
+      if (
+        !carregar ||
+        carregado ||
+        carregando
+      ) {
+        return;
+      }
+
+
       void carregarProdutos();
     },
     [
+      carregar,
+      carregado,
+      carregando,
       carregarProdutos,
     ],
   );
+
+
+  /* =======================================================
+     RECARREGAR
+  ======================================================= */
+
+  const recarregar =
+    useCallback(
+      async () => {
+        await carregarProdutos();
+      },
+      [
+        carregarProdutos,
+      ],
+    );
 
 
   /* =======================================================
@@ -132,20 +170,26 @@ export default function useProdutosPP() {
       async (
         dados,
       ) => {
+        const codigo =
+          dados
+            ?.codigoProdutoOriginal ??
+          dados
+            ?.codigoProduto ??
+          null;
+
+
         setSalvando(
           true,
         );
 
         setSalvandoCodigo(
-          dados
-            ?.codigoProdutoOriginal ??
-          null,
+          codigo,
         );
 
 
         try {
           const resultado =
-            await salvarProdutoPPService(
+            await salvarProdutoPP(
               dados,
             );
 
@@ -154,14 +198,6 @@ export default function useProdutosPP() {
 
 
           return resultado;
-        } catch (error) {
-          console.error(
-            "Erro ao salvar Produto PP:",
-            error,
-          );
-
-
-          throw error;
         } finally {
           setSalvando(
             false,
@@ -179,39 +215,66 @@ export default function useProdutosPP() {
 
 
   /* =======================================================
-     PRODUTO SALVANDO
+     EXCLUIR
+  ======================================================= */
+
+  const excluirProduto =
+    useCallback(
+      async (
+        codigoProduto,
+      ) => {
+        setExcluindo(
+          true,
+        );
+
+        setExcluindoCodigo(
+          codigoProduto,
+        );
+
+
+        try {
+          const resultado =
+            await excluirProdutoPPService(
+              codigoProduto,
+            );
+
+
+          await carregarProdutos();
+
+
+          return resultado;
+        } finally {
+          setExcluindo(
+            false,
+          );
+
+          setExcluindoCodigo(
+            null,
+          );
+        }
+      },
+      [
+        carregarProdutos,
+      ],
+    );
+
+
+  /* =======================================================
+     ESTADOS POR ITEM
   ======================================================= */
 
   const produtoEstaSalvando =
     useCallback(
       (
         codigo,
-      ) => {
-        if (!salvando) {
-          return false;
-        }
-
-
-        if (
-          codigo === null ||
-          codigo === undefined
-        ) {
-          return (
-            salvandoCodigo ===
-            null
-          );
-        }
-
-
-        return (
+      ) =>
+        salvando &&
+        String(
+          codigo ?? "",
+        ) ===
           String(
-            codigo,
-          ) ===
-          String(
-            salvandoCodigo,
-          )
-        );
-      },
+            salvandoCodigo ?? "",
+          ),
       [
         salvando,
         salvandoCodigo,
@@ -219,9 +282,24 @@ export default function useProdutosPP() {
     );
 
 
-  /* =======================================================
-     RETORNO
-  ======================================================= */
+  const produtoEstaExcluindo =
+    useCallback(
+      (
+        codigo,
+      ) =>
+        excluindo &&
+        String(
+          codigo ?? "",
+        ) ===
+          String(
+            excluindoCodigo ?? "",
+          ),
+      [
+        excluindo,
+        excluindoCodigo,
+      ],
+    );
+
 
   return {
     produtos,
@@ -234,11 +312,16 @@ export default function useProdutosPP() {
 
     salvando,
 
-    recarregar:
-      carregarProdutos,
+    excluindo,
+
+    recarregar,
 
     salvarProduto,
 
+    excluirProduto,
+
     produtoEstaSalvando,
+
+    produtoEstaExcluindo,
   };
 }

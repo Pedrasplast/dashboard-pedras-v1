@@ -1,0 +1,474 @@
+/* =========================================================
+   CONSUMO PROGRAMADO POR FORNECEDOR
+   Complemento do padrão visual de TelaRelatorios.css
+========================================================= */
+
+.mpf-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.mpf-filtros label {
+  min-width: 180px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.mpf-filtros label > span {
+  color: #64748b;
+
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.mpf-filtros input {
+  min-height: 39px;
+
+  padding: 0 10px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: #334155;
+
+  font: inherit;
+  font-size: 0.75rem;
+
+  outline: none;
+}
+
+.mpf-filtros input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+.mpf-atualizando {
+  min-height: 39px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: #64748b;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+.mpf-mensagem {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 8px;
+
+  margin-top: 12px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #f8fafc;
+
+  color: #475569;
+
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.mpf-mensagem svg {
+  flex: 0 0 auto;
+
+  margin-top: 1px;
+}
+
+.mpf-mensagem-erro {
+  border-color:
+    rgba(220, 38, 38, 0.18);
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+}
+
+.mpf-mensagem-aviso {
+  border-color:
+    rgba(217, 119, 6, 0.2);
+
+  background: #fffbeb;
+
+  color: #92400e;
+}
+
+
+/* =========================================================
+   VISUALIZAÇÃO
+========================================================= */
+
+.mpf-visualizacao-info {
+  grid-template-columns:
+    minmax(240px, 2fr)
+    repeat(3, minmax(140px, 1fr));
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.mpf-tabela {
+  min-width: 850px;
+}
+
+.mpf-fornecedor {
+  color: #0f172a;
+
+  font-weight: 800;
+}
+
+.mpf-total {
+  color: #1d4ed8 !important;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.mpf-expandir {
+  min-height: 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 7px;
+
+  background: #fff;
+
+  color: #2563eb;
+
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.mpf-expandir:hover {
+  border-color: #2563eb;
+
+  background: #eff6ff;
+}
+
+.mpf-linha-detalhe td {
+  padding: 0 !important;
+
+  background: #f8fafc !important;
+}
+
+
+/* =========================================================
+   DETALHAMENTO
+========================================================= */
+
+.mpf-detalhes-lista {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 12px;
+}
+
+.mpf-detalhe {
+  padding: 13px 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #fff;
+}
+
+.mpf-detalhe-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 10px;
+}
+
+.mpf-detalhe-topo > div {
+  min-width: 0;
+}
+
+.mpf-detalhe-topo span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #94a3b8;
+
+  font-size: 0.58rem;
+  font-weight: 750;
+
+  letter-spacing: 0.035em;
+
+  text-transform: uppercase;
+}
+
+.mpf-detalhe-topo strong {
+  display: block;
+
+  color: #0f172a;
+
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.mpf-detalhe-consumo {
+  flex: 0 0 auto;
+
+  color: #1d4ed8 !important;
+
+  font-size: 0.82rem !important;
+
+  white-space: nowrap;
+}
+
+.mpf-detalhe-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(280px, 2fr)
+    repeat(3, minmax(110px, 1fr));
+
+  gap: 8px;
+}
+
+.mpf-detalhe-grid > div {
+  padding: 8px 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #f8fafc;
+}
+
+.mpf-detalhe-grid span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #94a3b8;
+
+  font-size: 0.56rem;
+  font-weight: 750;
+
+  text-transform: uppercase;
+}
+
+.mpf-detalhe-grid strong {
+  color: #334155;
+
+  font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   SEM RECEITA
+========================================================= */
+
+.mpf-sem-receita {
+  margin:
+    14px
+    16px
+    0;
+
+  overflow: hidden;
+
+  border: 1px solid #fde68a;
+  border-radius: 9px;
+
+  background: #fffbeb;
+}
+
+.mpf-sem-receita-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 10px 12px;
+
+  border-bottom: 1px solid #fde68a;
+
+  color: #92400e;
+}
+
+.mpf-sem-receita-header > div {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 8px;
+}
+
+.mpf-sem-receita-header strong,
+.mpf-sem-receita-header span {
+  display: block;
+}
+
+.mpf-sem-receita-header strong {
+  font-size: 0.7rem;
+}
+
+.mpf-sem-receita-header span {
+  margin-top: 2px;
+
+  font-size: 0.64rem;
+}
+
+.mpf-sem-receita-header b {
+  font-size: 0.72rem;
+
+  white-space: nowrap;
+}
+
+.mpf-sem-receita-lista {
+  display: grid;
+
+  gap: 6px;
+
+  padding: 10px 12px;
+}
+
+.mpf-sem-receita-lista > div {
+  display: grid;
+
+  grid-template-columns:
+    120px
+    minmax(220px, 1fr)
+    150px;
+
+  gap: 10px;
+
+  align-items: center;
+
+  padding: 8px 10px;
+
+  border:
+    1px
+    solid
+    rgba(217, 119, 6, 0.18);
+
+  border-radius: 7px;
+
+  background:
+    rgba(255, 255, 255, 0.65);
+}
+
+.mpf-sem-receita-lista span {
+  color: #a16207;
+
+  font-size: 0.64rem;
+}
+
+.mpf-sem-receita-lista strong {
+  color: #78350f;
+
+  font-size: 0.68rem;
+}
+
+.mpf-sem-receita-lista b {
+  color: #92400e;
+
+  font-size: 0.7rem;
+
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.mpf-girando {
+  animation:
+    mpf-girar
+    0.75s
+    linear
+    infinite;
+}
+
+@keyframes mpf-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1000px) {
+  .mpf-visualizacao-info,
+  .mpf-detalhe-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .mpf-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mpf-filtros label {
+    width: 100%;
+  }
+
+  .mpf-visualizacao-info,
+  .mpf-detalhe-grid,
+  .mpf-sem-receita-lista > div {
+    grid-template-columns: 1fr;
+  }
+
+  .mpf-detalhe-topo,
+  .mpf-sem-receita-header {
+    flex-direction: column;
+  }
+
+  .mpf-sem-receita-lista b {
+    text-align: left;
+  }
+}

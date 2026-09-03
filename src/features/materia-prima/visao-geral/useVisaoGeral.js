@@ -1,23 +1,13 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import {
-  buscarVisaoGeral,
-} from "./visaoGeralService";
-
+import { buscarVisaoGeral } from "./visaoGeralService";
 
 /* =========================================================
    HOOK VISÃO GERAL
 ========================================================= */
 
 export default function useVisaoGeral() {
-  const [
-    dados,
-    setDados,
-  ] = useState({
+  const [dados, setDados] = useState({
     hoje: null,
 
     dataFim: null,
@@ -49,78 +39,45 @@ export default function useVisaoGeral() {
     programacoesSemReceita: [],
   });
 
-  const [
-    carregando,
-    setCarregando,
-  ] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
-  const [
-    carregado,
-    setCarregado,
-  ] = useState(false);
+  const [carregado, setCarregado] = useState(false);
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
-
+  const [erro, setErro] = useState("");
 
   /* =======================================================
      CARREGAR
   ======================================================= */
 
-  const carregar =
-    useCallback(
-      async () => {
-        setCarregando(true);
+  const carregar = useCallback(async () => {
+    setCarregando(true);
 
-        setErro("");
+    setErro("");
 
+    try {
+      const resultado = await buscarVisaoGeral();
 
-        try {
-          const resultado =
-            await buscarVisaoGeral();
+      setDados(resultado);
 
+      setCarregado(true);
+    } catch (error) {
+      console.error("Erro ao carregar visão geral da matéria-prima:", error);
 
-          setDados(
-            resultado,
-          );
+      setErro(error?.message || "Não foi possível carregar a visão geral.");
 
-          setCarregado(true);
-        } catch (error) {
-          console.error(
-            "Erro ao carregar visão geral da matéria-prima:",
-            error,
-          );
-
-
-          setErro(
-            error?.message ||
-              "Não foi possível carregar a visão geral.",
-          );
-
-          setCarregado(true);
-        } finally {
-          setCarregando(false);
-        }
-      },
-      [],
-    );
-
+      setCarregado(true);
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
 
   /* =======================================================
      AUTOMÁTICO
   ======================================================= */
 
-  useEffect(
-    () => {
-      void carregar();
-    },
-    [
-      carregar,
-    ],
-  );
-
+  useEffect(() => {
+    void carregar();
+  }, [carregar]);
 
   return {
     ...dados,
@@ -131,7 +88,6 @@ export default function useVisaoGeral() {
 
     erro,
 
-    recarregar:
-      carregar,
+    recarregar: carregar,
   };
 }

@@ -6,12 +6,16 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Trash2,
 } from "lucide-react";
 
 import {
   useMemo,
   useState,
 } from "react";
+
+import ConfirmacaoExclusao
+  from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
@@ -74,18 +78,80 @@ function formatarData(
 }
 
 
-function formatarNumero(
+function formatarHora(
   valor,
 ) {
-  return Number(
-    valor ?? 0,
-  ).toLocaleString(
+  if (!valor) {
+    return "";
+  }
+
+
+  return String(
+    valor,
+  ).slice(
+    0,
+    5,
+  );
+}
+
+
+function formatarNumero(
+  valor,
+  casas = 0,
+) {
+  const numero =
+    Number(
+      valor ?? 0,
+    );
+
+
+  return numero.toLocaleString(
     "pt-BR",
     {
+      minimumFractionDigits:
+        casas,
       maximumFractionDigits:
-        0,
+        casas,
     },
   );
+}
+
+
+function formatarHoras(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined
+  ) {
+    return "-";
+  }
+
+
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "-";
+  }
+
+
+  return `${numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        0,
+      maximumFractionDigits:
+        2,
+    },
+  )} h`;
 }
 
 
@@ -132,6 +198,16 @@ export default function Programacao() {
     setItemEmEdicao,
   ] = useState(null);
 
+  const [
+    itemParaExcluir,
+    setItemParaExcluir,
+  ] = useState(null);
+
+  const [
+    erroExclusao,
+    setErroExclusao,
+  ] = useState("");
+
 
   const {
     programacao,
@@ -140,9 +216,12 @@ export default function Programacao() {
     carregado,
     erro,
     salvando,
+    excluindo,
     recarregar,
     salvarProgramacao,
+    excluirProgramacao,
     itemEstaSalvando,
+    itemEstaExcluindo,
   } =
     useProgramacao();
 
@@ -235,15 +314,10 @@ export default function Programacao() {
                 item,
               ) =>
                 total +
-                (
-                  Number(
-                    item.quantidade ??
-                      0,
-                  ) *
-                  Number(
-                    item.quantidadeDias ??
-                      0,
-                  )
+                Number(
+                  item
+                    .pecasPrevistas ??
+                    0,
                 ),
               0,
             ),
@@ -271,11 +345,14 @@ export default function Programacao() {
 
 
   /* =======================================================
-     NOVO / EDITAR
+     NOVO
   ======================================================= */
 
   function abrirNovo() {
-    if (salvando) {
+    if (
+      salvando ||
+      excluindo
+    ) {
       return;
     }
 
@@ -290,12 +367,17 @@ export default function Programacao() {
   }
 
 
+  /* =======================================================
+     EDITAR
+  ======================================================= */
+
   function abrirEdicao(
     item,
   ) {
     if (
       !item ||
-      salvando
+      salvando ||
+      excluindo
     ) {
       return;
     }
@@ -310,6 +392,10 @@ export default function Programacao() {
     );
   }
 
+
+  /* =======================================================
+     FECHAR MODAL
+  ======================================================= */
 
   function fecharModal() {
     if (salvando) {
@@ -326,6 +412,10 @@ export default function Programacao() {
     );
   }
 
+
+  /* =======================================================
+     SALVAR
+  ======================================================= */
 
   async function salvar(
     dados,
@@ -350,6 +440,90 @@ export default function Programacao() {
 
 
   /* =======================================================
+     SOLICITAR EXCLUSÃO
+  ======================================================= */
+
+  function solicitarExclusao(
+    item,
+  ) {
+    if (
+      !item ||
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setItemParaExcluir(
+      item,
+    );
+  }
+
+
+  /* =======================================================
+     CANCELAR EXCLUSÃO
+  ======================================================= */
+
+  function cancelarExclusao() {
+    if (excluindo) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+    setItemParaExcluir(
+      null,
+    );
+  }
+
+
+  /* =======================================================
+     CONFIRMAR EXCLUSÃO
+  ======================================================= */
+
+  async function confirmarExclusao() {
+    if (
+      !itemParaExcluir ||
+      salvando ||
+      excluindo
+    ) {
+      return;
+    }
+
+
+    setErroExclusao(
+      "",
+    );
+
+
+    try {
+      await excluirProgramacao(
+        itemParaExcluir.id,
+      );
+
+
+      setItemParaExcluir(
+        null,
+      );
+    } catch (error) {
+      setErroExclusao(
+        error
+          ?.message ||
+          "Não foi possível excluir a programação.",
+      );
+    }
+  }
+
+
+  /* =======================================================
      RENDER
   ======================================================= */
 
@@ -362,6 +536,7 @@ export default function Programacao() {
           <div className="programacao-pp-indicadores">
 
             <div>
+
               <span>
                 Programações
               </span>
@@ -371,10 +546,12 @@ export default function Programacao() {
                   indicadores.registros
                 }
               </strong>
+
             </div>
 
 
             <div>
+
               <span>
                 Peças período
               </span>
@@ -387,10 +564,12 @@ export default function Programacao() {
                   )
                 }
               </strong>
+
             </div>
 
 
             <div>
+
               <span>
                 PP período
               </span>
@@ -403,6 +582,7 @@ export default function Programacao() {
                   )
                 }
               </strong>
+
             </div>
 
           </div>
@@ -466,7 +646,8 @@ export default function Programacao() {
               }
               disabled={
                 carregando ||
-                salvando
+                salvando ||
+                excluindo
               }
             >
 
@@ -493,6 +674,7 @@ export default function Programacao() {
               }
               disabled={
                 salvando ||
+                excluindo ||
                 produtos.length ===
                   0
               }
@@ -523,8 +705,9 @@ export default function Programacao() {
             </strong>
 
             <p>
-              Calculando períodos,
-              receitas e consumo previsto.
+              Calculando período real,
+              ciclos, cavidades e consumo
+              previsto de PP.
             </p>
 
           </div>
@@ -535,24 +718,24 @@ export default function Programacao() {
         {!carregando &&
           erro && (
 
-            <div className="programacao-pp-estado programacao-pp-erro">
+          <div className="programacao-pp-estado programacao-pp-erro">
 
-              <AlertTriangle
-                size={30}
-              />
+            <AlertTriangle
+              size={30}
+            />
 
-              <strong>
-                Não foi possível carregar
-                a programação
-              </strong>
+            <strong>
+              Não foi possível carregar
+              a programação
+            </strong>
 
-              <p>
-                {erro}
-              </p>
+            <p>
+              {erro}
+            </p>
 
-            </div>
+          </div>
 
-          )}
+        )}
 
 
         {!carregando &&
@@ -561,49 +744,48 @@ export default function Programacao() {
           programacao.length ===
             0 && (
 
-            <div className="programacao-pp-estado">
+          <div className="programacao-pp-estado">
 
-              <CalendarDays
-                size={34}
-                strokeWidth={1.7}
-              />
+            <CalendarDays
+              size={34}
+              strokeWidth={1.7}
+            />
 
-              <strong>
-                Nenhuma produção programada
-              </strong>
+            <strong>
+              Nenhuma produção programada
+            </strong>
 
-              <p>
-                Cadastre um período de
-                produção para calcular
-                o consumo diário e total
-                de PP.
-              </p>
+            <p>
+              Cadastre o período real de
+              produção para calcular o
+              consumo previsto de PP.
+            </p>
 
 
-              {produtos.length >
-                0 && (
+            {produtos.length >
+              0 && (
 
-                <button
-                  type="button"
-                  className="programacao-pp-vazio-novo"
-                  onClick={
-                    abrirNovo
-                  }
-                >
+              <button
+                type="button"
+                className="programacao-pp-vazio-novo"
+                onClick={
+                  abrirNovo
+                }
+              >
 
-                  <Plus
-                    size={16}
-                  />
+                <Plus
+                  size={16}
+                />
 
-                  Nova programação
+                Nova programação
 
-                </button>
+              </button>
 
-              )}
+            )}
 
-            </div>
+          </div>
 
-          )}
+        )}
 
 
         {!carregando &&
@@ -611,219 +793,274 @@ export default function Programacao() {
           programacao.length >
             0 && (
 
-            <>
+          <>
 
-              <div className="programacao-pp-tabela-container">
+            <div className="programacao-pp-tabela-container">
 
-                <table className="programacao-pp-tabela">
+              <table className="programacao-pp-tabela">
 
-                  <thead>
+                <thead>
 
-                    <tr>
-                      <th>Período</th>
-                      <th>Dias</th>
-                      <th>Injetora</th>
-                      <th>Código</th>
-                      <th>Produto</th>
-                      <th>Qtd./dia</th>
-                      <th>Peso</th>
-                      <th>PP/dia</th>
-                      <th>PP período</th>
-                      <th>Receita</th>
-                      <th>Status</th>
-                      <th>Ações</th>
-                    </tr>
+                  <tr>
+                    <th>Período</th>
+                    <th>Horas</th>
+                    <th>Injetora</th>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Ciclo</th>
+                    <th>Cavidades</th>
+                    <th>Peças previstas</th>
+                    <th>Peso</th>
+                    <th>PP período</th>
+                    <th>Receita</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
 
-                  </thead>
-
-
-                  <tbody>
-
-                    {programacaoFiltrada.map(
-                      (
-                        item,
-                      ) => {
-
-                        const estaSalvando =
-                          itemEstaSalvando(
-                            item.id,
-                          );
+                </thead>
 
 
-                        return (
-                          <tr
-                            key={
-                              item.id
+                <tbody>
+
+                  {programacaoFiltrada.map(
+                    (
+                      item,
+                    ) => {
+                      const estaSalvando =
+                        itemEstaSalvando(
+                          item.id,
+                        );
+
+                      const estaExcluindo =
+                        itemEstaExcluindo(
+                          item.id,
+                        );
+
+
+                      return (
+                        <tr
+                          key={
+                            item.id
+                          }
+                        >
+
+                          <td className="programacao-pp-data-coluna">
+
+                            {
+                              formatarData(
+                                item.dataInicio,
+                              )
                             }
-                          >
 
-                            <td className="programacao-pp-data-coluna">
+                            {item.horaInicio
+                              ? ` ${formatarHora(
+                                  item.horaInicio,
+                                )}`
+                              : ""}
 
-                              {
-                                formatarData(
-                                  item.dataInicio,
-                                )
-                              }
+                            {" até "}
 
-                              {" até "}
+                            {
+                              formatarData(
+                                item.dataFim,
+                              )
+                            }
 
-                              {
-                                formatarData(
-                                  item.dataFim,
-                                )
-                              }
+                            {item.horaFim
+                              ? ` ${formatarHora(
+                                  item.horaFim,
+                                )}`
+                              : ""}
 
-                            </td>
-
-
-                            <td>
-                              {
-                                item.quantidadeDias
-                              }
-                            </td>
+                          </td>
 
 
-                            <td>
+                          <td>
+                            {
+                              formatarHoras(
+                                item.horasPeriodo,
+                              )
+                            }
+                          </td>
+
+
+                          <td>
+
+                            {item
+                              .injetora
+                              ? `Injetora ${item.injetora}`
+                              : "-"}
+
+                          </td>
+
+
+                          <td className="programacao-pp-codigo">
+
+                            {
+                              item.codigoProduto
+                            }
+
+                          </td>
+
+
+                          <td className="programacao-pp-produto">
+
+                            <strong>
                               {item
-                                .injetora
-                                ? `Injetora ${item.injetora}`
-                                : "-"}
-                            </td>
+                                .descricao ||
+                                "Sem descrição"}
+                            </strong>
 
 
-                            <td className="programacao-pp-codigo">
-                              {
-                                item.codigoProduto
-                              }
-                            </td>
+                            {item
+                              .receitaConfigurada &&
+                              item
+                                .consumosFornecedores
+                                .length >
+                                0 && (
 
+                              <small>
 
-                            <td className="programacao-pp-produto">
-
-                              <strong>
                                 {item
-                                  .descricao ||
-                                  "Sem descrição"}
-                              </strong>
-
-
-                              {item
-                                .receitaConfigurada &&
-                                item
                                   .consumosFornecedores
-                                  .length >
-                                  0 && (
+                                  .map(
+                                    (
+                                      fornecedor,
+                                    ) =>
+                                      `${fornecedor.fornecedorNome}: ${formatarKg(
+                                        fornecedor
+                                          .consumoPeriodoKg,
+                                      )}`,
+                                  )
+                                  .join(
+                                    " • ",
+                                  )}
 
-                                <small>
+                              </small>
 
-                                  {item
-                                    .consumosFornecedores
-                                    .map(
-                                      (
-                                        fornecedor,
-                                      ) =>
-                                        `${fornecedor.fornecedorNome}: ${formatarKg(
-                                          fornecedor
-                                            .consumoPeriodoKg,
-                                        )}`,
-                                    )
-                                    .join(
-                                      " • ",
-                                    )}
+                            )}
 
-                                </small>
-
-                              )}
-
-                            </td>
+                          </td>
 
 
-                            <td>
-                              {
-                                formatarNumero(
-                                  item.quantidade,
+                          <td>
+
+                            {item.cicloSegundos
+                              ? `${formatarNumero(
+                                  item.cicloSegundos,
+                                )} s`
+                              : "-"}
+
+                          </td>
+
+
+                          <td>
+
+                            {item.cavidadeMolde
+                              ? formatarNumero(
+                                  item.cavidadeMolde,
                                 )
-                              }
-                            </td>
+                              : "-"}
+
+                          </td>
 
 
-                            <td>
-                              {
-                                formatarKg(
-                                  item.pesoKg,
-                                )
-                              }
-                            </td>
+                          <td>
+
+                            {
+                              formatarNumero(
+                                item.pecasPrevistas,
+                              )
+                            }
+
+                          </td>
 
 
-                            <td>
-                              {
-                                formatarKg(
-                                  item.consumoDiarioKg,
-                                )
-                              }
-                            </td>
+                          <td>
+
+                            {
+                              formatarKg(
+                                item.pesoKg,
+                              )
+                            }
+
+                          </td>
 
 
-                            <td className="programacao-pp-consumo">
-                              {
-                                formatarKg(
-                                  item.consumoPeriodoKg,
-                                )
-                              }
-                            </td>
+                          <td className="programacao-pp-consumo">
+
+                            {
+                              formatarKg(
+                                item.consumoPeriodoKg,
+                              )
+                            }
+
+                          </td>
 
 
-                            <td>
+                          <td>
 
-                              {item
-                                .receitaConfigurada ? (
+                            {item
+                              .receitaConfigurada ? (
 
-                                <span className="programacao-pp-receita ok">
+                              <span className="programacao-pp-receita ok">
 
-                                  <CheckCircle2
-                                    size={13}
-                                  />
+                                <CheckCircle2
+                                  size={13}
+                                />
 
-                                  100%
+                                100%
 
-                                </span>
-
-                              ) : (
-
-                                <span className="programacao-pp-receita pendente">
-
-                                  <AlertTriangle
-                                    size={13}
-                                  />
-
-                                  Pendente
-
-                                </span>
-
-                              )}
-
-                            </td>
-
-
-                            <td>
-
-                              <span
-                                className={
-                                  item.ativo
-                                    ? "programacao-pp-status ativo"
-                                    : "programacao-pp-status inativo"
-                                }
-                              >
-                                {item.ativo
-                                  ? "Ativa"
-                                  : "Inativa"}
                               </span>
 
-                            </td>
+                            ) : (
+
+                              <span className="programacao-pp-receita pendente">
+
+                                <AlertTriangle
+                                  size={13}
+                                />
+
+                                Pendente
+
+                              </span>
+
+                            )}
+
+                          </td>
 
 
-                            <td>
+                          <td>
+
+                            <span
+                              className={
+                                item.ativo
+                                  ? "programacao-pp-status ativo"
+                                  : "programacao-pp-status inativo"
+                              }
+                            >
+                              {item.ativo
+                                ? "Ativa"
+                                : "Inativa"}
+                            </span>
+
+                          </td>
+
+
+                          <td>
+
+                            <div
+                              style={{
+                                display:
+                                  "flex",
+
+                                alignItems:
+                                  "center",
+
+                                gap:
+                                  "6px",
+                              }}
+                            >
 
                               <button
                                 type="button"
@@ -835,7 +1072,8 @@ export default function Programacao() {
                                     )
                                 }
                                 disabled={
-                                  salvando
+                                  salvando ||
+                                  excluindo
                                 }
                               >
 
@@ -849,45 +1087,83 @@ export default function Programacao() {
 
                               </button>
 
-                            </td>
 
-                          </tr>
-                        );
-                      },
-                    )}
+                              <button
+                                type="button"
+                                className="programacao-pp-editar"
+                                onClick={
+                                  () =>
+                                    solicitarExclusao(
+                                      item,
+                                    )
+                                }
+                                disabled={
+                                  salvando ||
+                                  excluindo
+                                }
+                                style={{
+                                  color:
+                                    "#dc2626",
 
-                  </tbody>
+                                  borderColor:
+                                    "#fecaca",
 
-                </table>
+                                  background:
+                                    "#ffffff",
+                                }}
+                              >
 
-              </div>
+                                <Trash2
+                                  size={14}
+                                />
+
+                                {estaExcluindo
+                                  ? "Excluindo..."
+                                  : "Excluir"}
+
+                              </button>
+
+                            </div>
+
+                          </td>
+
+                        </tr>
+                      );
+                    },
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
 
 
-              <div className="programacao-pp-rodape">
+            <div className="programacao-pp-rodape">
 
-                Exibindo{" "}
+              Exibindo{" "}
 
-                <strong>
-                  {
-                    programacaoFiltrada.length
-                  }
-                </strong>
+              <strong>
+                {
+                  programacaoFiltrada.length
+                }
+              </strong>
 
-                {" "}de{" "}
+              {" "}de{" "}
 
-                <strong>
-                  {
-                    programacao.length
-                  }
-                </strong>
+              <strong>
+                {
+                  programacao.length
+                }
+              </strong>
 
-                {" "}programações
+              {" "}programações
 
-              </div>
+            </div>
 
-            </>
+          </>
 
-          )}
+        )}
 
 
         {!carregando &&
@@ -897,24 +1173,24 @@ export default function Programacao() {
           programacaoFiltrada.length ===
             0 && (
 
-            <div className="programacao-pp-sem-resultado">
+          <div className="programacao-pp-sem-resultado">
 
-              <Search
-                size={27}
-              />
+            <Search
+              size={27}
+            />
 
-              <strong>
-                Nenhuma programação encontrada
-              </strong>
+            <strong>
+              Nenhuma programação encontrada
+            </strong>
 
-              <p>
-                Altere os filtros para
-                visualizar outros períodos.
-              </p>
+            <p>
+              Altere os filtros para
+              visualizar outros períodos.
+            </p>
 
-            </div>
+          </div>
 
-          )}
+        )}
 
       </div>
 
@@ -929,6 +1205,9 @@ export default function Programacao() {
         produtos={
           produtos
         }
+        programacao={
+          programacao
+        }
         salvando={
           salvando
         }
@@ -937,6 +1216,107 @@ export default function Programacao() {
         }
         onSalvar={
           salvar
+        }
+      />
+
+
+      <ConfirmacaoExclusao
+        aberto={
+          Boolean(
+            itemParaExcluir,
+          )
+        }
+        titulo="Excluir programação?"
+        descricao="Esta programação será removida definitivamente da projeção de matéria-prima."
+        itemTitulo={
+          itemParaExcluir
+            ?.descricao ??
+          ""
+        }
+        itemDescricao={
+          itemParaExcluir
+            ? `Código ${itemParaExcluir.codigoProduto}`
+            : ""
+        }
+        detalhes={[
+          {
+            label:
+              "Injetora",
+
+            valor:
+              itemParaExcluir
+                ?.injetora
+                ? `Injetora ${itemParaExcluir.injetora}`
+                : "Não informada",
+          },
+
+          {
+            label:
+              "Peças previstas",
+
+            valor:
+              itemParaExcluir
+                ? formatarNumero(
+                    itemParaExcluir
+                      .pecasPrevistas,
+                  )
+                : "-",
+          },
+
+          {
+            label:
+              "Início",
+
+            valor:
+              itemParaExcluir
+                ? `${formatarData(
+                    itemParaExcluir
+                      .dataInicio,
+                  )}${
+                    itemParaExcluir
+                      .horaInicio
+                      ? ` ${formatarHora(
+                          itemParaExcluir
+                            .horaInicio,
+                        )}`
+                      : ""
+                  }`
+                : "-",
+          },
+
+          {
+            label:
+              "Fim",
+
+            valor:
+              itemParaExcluir
+                ? `${formatarData(
+                    itemParaExcluir
+                      .dataFim,
+                  )}${
+                    itemParaExcluir
+                      .horaFim
+                      ? ` ${formatarHora(
+                          itemParaExcluir
+                            .horaFim,
+                        )}`
+                      : ""
+                  }`
+                : "-",
+          },
+        ]}
+        erro={
+          erroExclusao
+        }
+        processando={
+          excluindo
+        }
+        textoConfirmar="Excluir programação"
+        onCancelar={
+          cancelarExclusao
+        }
+        onConfirmar={
+          confirmarExclusao
         }
       />
 

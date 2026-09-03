@@ -6,6 +6,9 @@ import {
 
 import {
   buscarComprasFuturas,
+
+  excluirCompraFutura as excluirCompraFuturaService,
+
   salvarCompraFutura as salvarCompraFuturaService,
 } from "./comprasFuturasService";
 
@@ -50,6 +53,16 @@ export default function useComprasFuturas({
   const [
     salvandoId,
     setSalvandoId,
+  ] = useState(null);
+
+  const [
+    excluindo,
+    setExcluindo,
+  ] = useState(false);
+
+  const [
+    excluindoId,
+    setExcluindoId,
   ] = useState(null);
 
 
@@ -115,7 +128,8 @@ export default function useComprasFuturas({
           );
 
           setErro(
-            "Não foi possível carregar as compras futuras.",
+            error?.message ||
+              "Não foi possível carregar as compras futuras.",
           );
 
           setCarregado(
@@ -219,6 +233,61 @@ export default function useComprasFuturas({
 
 
   /* =======================================================
+     EXCLUIR
+  ======================================================= */
+
+  const excluirCompraFutura =
+    useCallback(
+      async (
+        id,
+      ) => {
+        if (
+          id === null ||
+          id === undefined
+        ) {
+          throw new Error(
+            "Compra futura não informada.",
+          );
+        }
+
+
+        setExcluindo(
+          true,
+        );
+
+        setExcluindoId(
+          id,
+        );
+
+
+        try {
+          const resultado =
+            await excluirCompraFuturaService(
+              id,
+            );
+
+
+          await carregarCompras();
+
+
+          return resultado;
+        } finally {
+          setExcluindo(
+            false,
+          );
+
+          setExcluindoId(
+            null,
+          );
+        }
+      },
+      [
+        carregarCompras,
+      ],
+    );
+
+
+  /* =======================================================
      ITEM SALVANDO
   ======================================================= */
 
@@ -259,6 +328,36 @@ export default function useComprasFuturas({
     );
 
 
+  /* =======================================================
+     ITEM EXCLUINDO
+  ======================================================= */
+
+  const compraEstaExcluindo =
+    useCallback(
+      (
+        id,
+      ) => {
+        if (!excluindo) {
+          return false;
+        }
+
+
+        return (
+          String(
+            id,
+          ) ===
+          String(
+            excluindoId,
+          )
+        );
+      },
+      [
+        excluindo,
+        excluindoId,
+      ],
+    );
+
+
   return {
     compras,
 
@@ -272,10 +371,16 @@ export default function useComprasFuturas({
 
     salvando,
 
+    excluindo,
+
     recarregar,
 
     salvarCompraFutura,
 
+    excluirCompraFutura,
+
     compraEstaSalvando,
+
+    compraEstaExcluindo,
   };
 }

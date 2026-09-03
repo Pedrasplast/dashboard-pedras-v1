@@ -1,0 +1,468 @@
+/* =========================================================
+   CONSUMO PROGRAMADO POR INJETORA
+   Complemento do padrão visual de TelaRelatorios.css
+========================================================= */
+
+.mpi-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.mpi-filtros label {
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpi-filtros label > span {
+  color: #64748b;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.mpi-filtros input {
+  min-height: 39px;
+  padding: 0 10px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #fff;
+  color: #334155;
+
+  font: inherit;
+  font-size: 0.75rem;
+
+  outline: none;
+}
+
+.mpi-filtros input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+.mpi-atualizando {
+  min-height: 39px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #64748b;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+.mpi-mensagem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  margin-top: 12px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #f8fafc;
+  color: #475569;
+
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.mpi-mensagem svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.mpi-mensagem-erro {
+  border-color: rgba(220, 38, 38, 0.18);
+
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.mpi-mensagem-aviso {
+  border-color: rgba(217, 119, 6, 0.2);
+
+  background: #fffbeb;
+  color: #92400e;
+}
+
+
+/* =========================================================
+   VISUALIZAÇÃO
+========================================================= */
+
+.mpi-visualizacao-info {
+  grid-template-columns:
+    minmax(240px, 2fr)
+    repeat(3, minmax(130px, 1fr));
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.mpi-tabela {
+  min-width: 900px;
+}
+
+.mpi-injetora {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.mpi-total {
+  color: #1d4ed8 !important;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+.mpi-legado {
+  display: inline-flex;
+
+  margin-left: 5px;
+
+  padding: 2px 5px;
+
+  border-radius: 999px;
+
+  background: #f1f5f9;
+
+  color: #64748b;
+
+  font-size: 0.55rem;
+  font-weight: 750;
+
+  text-transform: uppercase;
+}
+
+.mpi-expandir {
+  min-height: 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid #dbe3ec;
+  border-radius: 7px;
+
+  background: #fff;
+
+  color: #2563eb;
+
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.mpi-expandir:hover {
+  border-color: #2563eb;
+
+  background: #eff6ff;
+}
+
+.mpi-linha-detalhe td {
+  padding: 0 !important;
+
+  background: #f8fafc !important;
+}
+
+
+/* =========================================================
+   PROGRAMAÇÕES
+========================================================= */
+
+.mpi-programacoes-lista {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding: 12px;
+}
+
+.mpi-programacao {
+  padding: 13px 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #fff;
+}
+
+.mpi-programacao-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 10px;
+}
+
+.mpi-programacao-topo > div {
+  min-width: 0;
+}
+
+.mpi-programacao-topo span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #94a3b8;
+
+  font-size: 0.58rem;
+  font-weight: 750;
+
+  letter-spacing: 0.035em;
+
+  text-transform: uppercase;
+}
+
+.mpi-programacao-topo strong {
+  display: block;
+
+  color: #0f172a;
+
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.mpi-programacao-consumo {
+  flex: 0 0 auto;
+
+  color: #1d4ed8 !important;
+
+  font-size: 0.82rem !important;
+
+  white-space: nowrap;
+}
+
+.mpi-programacao-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 8px;
+}
+
+.mpi-programacao-grid > div {
+  padding: 8px 9px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  background: #f8fafc;
+}
+
+.mpi-programacao-grid span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #94a3b8;
+
+  font-size: 0.56rem;
+  font-weight: 750;
+
+  text-transform: uppercase;
+}
+
+.mpi-programacao-grid strong {
+  color: #334155;
+
+  font-size: 0.68rem;
+}
+
+.mpi-texto-ok {
+  color: #15803d !important;
+}
+
+.mpi-texto-aviso {
+  color: #b45309 !important;
+}
+
+
+/* =========================================================
+   AVISOS INTERNOS
+========================================================= */
+
+.mpi-aviso-inline,
+.mpi-receita-pendente {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  margin-top: 10px;
+
+  padding: 9px 10px;
+
+  border: 1px solid #fde68a;
+  border-radius: 7px;
+
+  background: #fffbeb;
+
+  color: #92400e;
+
+  font-size: 0.66rem;
+}
+
+
+/* =========================================================
+   RECEITA
+========================================================= */
+
+.mpi-receita {
+  margin-top: 10px;
+}
+
+.mpi-receita-titulo {
+  margin-bottom: 6px;
+
+  color: #475569;
+
+  font-size: 0.64rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.mpi-receita-tabela-wrapper {
+  overflow-x: auto;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.mpi-receita-tabela {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.mpi-receita-tabela th,
+.mpi-receita-tabela td {
+  padding: 8px 10px;
+
+  border-bottom: 1px solid #edf2f7;
+
+  font-size: 0.68rem;
+}
+
+.mpi-receita-tabela th {
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 0.58rem;
+  font-weight: 800;
+
+  text-align: left;
+
+  text-transform: uppercase;
+}
+
+.mpi-receita-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.mpi-receita-tabela .coluna-numerica {
+  text-align: right;
+}
+
+.mpi-receita-consumo {
+  color: #0f172a;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.mpi-receita-pendente strong,
+.mpi-receita-pendente span {
+  display: block;
+}
+
+.mpi-receita-pendente strong {
+  margin-bottom: 2px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.mpi-girando {
+  animation:
+    mpi-girar
+    0.75s
+    linear
+    infinite;
+}
+
+@keyframes mpi-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1000px) {
+  .mpi-visualizacao-info,
+  .mpi-programacao-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .mpi-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mpi-filtros label {
+    width: 100%;
+  }
+
+  .mpi-visualizacao-info,
+  .mpi-programacao-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mpi-programacao-topo {
+    flex-direction: column;
+  }
+}

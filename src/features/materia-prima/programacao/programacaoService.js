@@ -4,6 +4,10 @@ import {
   buscarReceitas,
 } from "../receitas/receitasService";
 
+import {
+  buscarProdutosPP,
+} from "../produtos/produtosPPService";
+
 
 /* =========================================================
    UTILITÁRIOS
@@ -14,14 +18,10 @@ function compararProgramacao(
   itemB,
 ) {
   const inicioA =
-    String(
-      itemA?.dataInicio ?? "",
-    );
+    `${itemA?.dataInicio ?? ""} ${itemA?.horaInicio ?? ""}`;
 
   const inicioB =
-    String(
-      itemB?.dataInicio ?? "",
-    );
+    `${itemB?.dataInicio ?? ""} ${itemB?.horaInicio ?? ""}`;
 
 
   const comparacaoInicio =
@@ -113,6 +113,117 @@ function arredondarKg(
 }
 
 
+function arredondarNumero(
+  valor,
+  casas = 2,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return 0;
+  }
+
+
+  const fator =
+    10 ** casas;
+
+
+  return Math.round(
+    (
+      numero +
+      Number.EPSILON
+    ) *
+      fator,
+  ) / fator;
+}
+
+
+function normalizarHora(
+  valor,
+) {
+  const hora =
+    String(
+      valor ?? "",
+    ).trim();
+
+
+  if (!hora) {
+    return null;
+  }
+
+
+  const partes =
+    hora.split(
+      ":",
+    );
+
+
+  if (
+    partes.length < 2
+  ) {
+    return null;
+  }
+
+
+  const horas =
+    Number(
+      partes[0],
+    );
+
+  const minutos =
+    Number(
+      partes[1],
+    );
+
+  const segundos =
+    Number(
+      partes[2] ?? 0,
+    );
+
+
+  if (
+    !Number.isInteger(
+      horas,
+    ) ||
+    !Number.isInteger(
+      minutos,
+    ) ||
+    !Number.isInteger(
+      segundos,
+    ) ||
+    horas < 0 ||
+    horas > 23 ||
+    minutos < 0 ||
+    minutos > 59 ||
+    segundos < 0 ||
+    segundos > 59
+  ) {
+    return null;
+  }
+
+
+  return `${String(
+    horas,
+  ).padStart(
+    2,
+    "0",
+  )}:${String(
+    minutos,
+  ).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+
 function converterDataParaUTC(
   valor,
 ) {
@@ -125,8 +236,7 @@ function converterDataParaUTC(
 
 
   if (
-    partes.length !==
-    3
+    partes.length !== 3
   ) {
     return null;
   }
@@ -170,6 +280,59 @@ function converterDataParaUTC(
   );
 }
 
+
+function converterDataHoraParaUTC(
+  data,
+  hora,
+) {
+  const dataBase =
+    converterDataParaUTC(
+      data,
+    );
+
+  const horaNormalizada =
+    normalizarHora(
+      hora,
+    );
+
+
+  if (
+    dataBase === null ||
+    !horaNormalizada
+  ) {
+    return null;
+  }
+
+
+  const [
+    horas,
+    minutos,
+  ] =
+    horaNormalizada
+      .split(
+        ":",
+      )
+      .map(
+        Number,
+      );
+
+
+  return (
+    dataBase +
+    horas *
+      60 *
+      60 *
+      1000 +
+    minutos *
+      60 *
+      1000
+  );
+}
+
+
+/* =========================================================
+   DIAS DO PERÍODO
+========================================================= */
 
 export function calcularDiasPeriodo(
   dataInicio,
@@ -215,6 +378,57 @@ export function calcularDiasPeriodo(
 }
 
 
+/* =========================================================
+   HORAS DO PERÍODO
+========================================================= */
+
+export function calcularHorasPeriodo({
+  dataInicio,
+  horaInicio,
+  dataFim,
+  horaFim,
+}) {
+  const inicio =
+    converterDataHoraParaUTC(
+      dataInicio,
+      horaInicio,
+    );
+
+  const fim =
+    converterDataHoraParaUTC(
+      dataFim,
+      horaFim,
+    );
+
+
+  if (
+    inicio === null ||
+    fim === null ||
+    fim <= inicio
+  ) {
+    return 0;
+  }
+
+
+  return arredondarNumero(
+    (
+      fim -
+      inicio
+    ) /
+      (
+        60 *
+        60 *
+        1000
+      ),
+    4,
+  );
+}
+
+
+/* =========================================================
+   NORMALIZAR PROGRAMAÇÃO
+========================================================= */
+
 function normalizarProgramacao(
   registro,
 ) {
@@ -233,12 +447,24 @@ function normalizarProgramacao(
         "",
     ).trim();
 
+  const horaInicio =
+    normalizarHora(
+      registro
+        ?.hora_inicio,
+    );
+
   const dataFim =
     String(
       registro
         ?.data_fim ??
         "",
     ).trim();
+
+  const horaFim =
+    normalizarHora(
+      registro
+        ?.hora_fim,
+    );
 
   const codigoProduto =
     String(
@@ -280,7 +506,11 @@ function normalizarProgramacao(
 
     dataInicio,
 
+    horaInicio,
+
     dataFim,
+
+    horaFim,
 
     quantidadeDias:
       calcularDiasPeriodo(
@@ -315,54 +545,322 @@ function normalizarProgramacao(
 
 
 /* =========================================================
-   CALCULAR CONSUMO
+   VERIFICAR CONFLITO DE INJETORA
+========================================================= */
+
+export function programacoesSeSobrepoem({
+  inicioA,
+  fimA,
+  inicioB,
+  fimB,
+}) {
+  if (
+    inicioA === null ||
+    fimA === null ||
+    inicioB === null ||
+    fimB === null
+  ) {
+    return false;
+  }
+
+
+  return (
+    inicioA <
+      fimB &&
+    fimA >
+      inicioB
+  );
+}
+
+
+export function verificarConflitoInjetora({
+  programacao = [],
+  injetora,
+  dataInicio,
+  horaInicio,
+  dataFim,
+  horaFim,
+  ignorarId = null,
+}) {
+  const numeroInjetora =
+    String(
+      injetora ?? "",
+    ).trim();
+
+
+  if (
+    !numeroInjetora ||
+    !dataInicio ||
+    !horaInicio ||
+    !dataFim ||
+    !horaFim
+  ) {
+    return null;
+  }
+
+
+  const inicioNovo =
+    converterDataHoraParaUTC(
+      dataInicio,
+      horaInicio,
+    );
+
+  const fimNovo =
+    converterDataHoraParaUTC(
+      dataFim,
+      horaFim,
+    );
+
+
+  if (
+    inicioNovo === null ||
+    fimNovo === null ||
+    fimNovo <= inicioNovo
+  ) {
+    return null;
+  }
+
+
+  return (
+    Array.isArray(
+      programacao,
+    )
+      ? programacao
+      : []
+  ).find(
+    (
+      item,
+    ) => {
+      if (
+        item
+          ?.ativo ===
+        false
+      ) {
+        return false;
+      }
+
+
+      if (
+        String(
+          item
+            ?.injetora ??
+            "",
+        ) !==
+        numeroInjetora
+      ) {
+        return false;
+      }
+
+
+      if (
+        ignorarId !== null &&
+        ignorarId !== undefined &&
+        String(
+          item
+            ?.id,
+        ) ===
+        String(
+          ignorarId,
+        )
+      ) {
+        return false;
+      }
+
+
+      /*
+       * Registros antigos sem horário
+       * ocupam o dia inteiro.
+       */
+      const horaInicialExistente =
+        item
+          ?.horaInicio ||
+        "00:00";
+
+      const horaFinalExistente =
+        item
+          ?.horaFim ||
+        "23:59";
+
+
+      const inicioExistente =
+        converterDataHoraParaUTC(
+          item
+            ?.dataInicio,
+          horaInicialExistente,
+        );
+
+      const fimExistente =
+        converterDataHoraParaUTC(
+          item
+            ?.dataFim,
+          horaFinalExistente,
+        );
+
+
+      return programacoesSeSobrepoem({
+        inicioA:
+          inicioNovo,
+
+        fimA:
+          fimNovo,
+
+        inicioB:
+          inicioExistente,
+
+        fimB:
+          fimExistente,
+      });
+    },
+  ) ?? null;
+}
+
+
+/* =========================================================
+   CALCULAR CONSUMO PELO PERÍODO REAL
 ========================================================= */
 
 export function calcularConsumoProgramacao({
-  quantidade,
-  pesoKg,
-  receitaItens = [],
   dataInicio = null,
+  horaInicio = null,
   dataFim = null,
+  horaFim = null,
+  cicloSegundos = null,
+  cavidadeMolde = null,
+  pesoKg = null,
+  receitaItens = [],
 }) {
-  const quantidadeNumero =
-    Number(
-      quantidade,
+  const inicio =
+    converterDataHoraParaUTC(
+      dataInicio,
+      horaInicio,
     );
 
-  const pesoNumero =
-    Number(
+  const fim =
+    converterDataHoraParaUTC(
+      dataFim,
+      horaFim,
+    );
+
+  const ciclo =
+    normalizarNumero(
+      cicloSegundos,
+    );
+
+  const cavidades =
+    normalizarNumero(
+      cavidadeMolde,
+    );
+
+  const peso =
+    normalizarNumero(
       pesoKg,
     );
 
-  const quantidadeDias =
-    dataInicio &&
-    dataFim
-      ? calcularDiasPeriodo(
+
+  const periodoValido =
+    inicio !== null &&
+    fim !== null &&
+    fim > inicio;
+
+
+  const parametrosValidos =
+    ciclo !== null &&
+    ciclo > 0 &&
+    cavidades !== null &&
+    Number.isInteger(
+      cavidades,
+    ) &&
+    cavidades > 0 &&
+    peso !== null &&
+    peso > 0;
+
+
+  if (
+    !periodoValido ||
+    !parametrosValidos
+  ) {
+    return {
+      periodoValido,
+
+      parametrosValidos,
+
+      quantidadeDias:
+        calcularDiasPeriodo(
           dataInicio,
           dataFim,
-        )
-      : 1;
+        ),
+
+      horasPeriodo: 0,
+
+      segundosPeriodo: 0,
+
+      ciclosCompletos: 0,
+
+      pecasPorHora: 0,
+
+      pecasPrevistas: 0,
+
+      consumoPorHoraKg: 0,
+
+      consumoPeriodoKg: 0,
+
+      consumosFornecedores: [],
+    };
+  }
 
 
-  const consumoDiarioKg =
-    Number.isFinite(
-      quantidadeNumero,
-    ) &&
-    Number.isFinite(
-      pesoNumero,
-    )
-      ? arredondarKg(
-          quantidadeNumero *
-            pesoNumero,
-        )
-      : 0;
+  const segundosPeriodo =
+    Math.floor(
+      (
+        fim -
+        inicio
+      ) /
+        1000,
+    );
+
+
+  const horasPeriodo =
+    arredondarNumero(
+      segundosPeriodo /
+        3600,
+      4,
+    );
+
+
+  const ciclosCompletos =
+    Math.floor(
+      segundosPeriodo /
+        ciclo,
+    );
+
+
+  const pecasPrevistas =
+    ciclosCompletos *
+    cavidades;
+
+
+  const pecasPorHora =
+    arredondarNumero(
+      (
+        3600 /
+        ciclo
+      ) *
+        cavidades,
+      2,
+    );
+
+
+  const consumoPorHoraKg =
+    arredondarKg(
+      pecasPorHora *
+        peso,
+    );
 
 
   const consumoPeriodoKg =
     arredondarKg(
-      consumoDiarioKg *
-        quantidadeDias,
+      pecasPrevistas *
+        peso,
     );
 
 
@@ -385,13 +883,125 @@ export function calcularConsumoProgramacao({
           );
 
 
-        const consumoDiarioFornecedorKg =
-          arredondarKg(
-            consumoDiarioKg *
-              (
-                percentual /
-                100
-              ),
+        return {
+          fornecedorId:
+            item
+              ?.fornecedorId,
+
+          fornecedorNome:
+            item
+              ?.fornecedorNome ??
+            "Fornecedor",
+
+          percentual,
+
+          consumoPeriodoKg:
+            arredondarKg(
+              consumoPeriodoKg *
+                (
+                  percentual /
+                  100
+                ),
+            ),
+        };
+      },
+    );
+
+
+  return {
+    periodoValido,
+
+    parametrosValidos,
+
+    quantidadeDias:
+      calcularDiasPeriodo(
+        dataInicio,
+        dataFim,
+      ),
+
+    horasPeriodo,
+
+    segundosPeriodo,
+
+    ciclosCompletos,
+
+    pecasPorHora,
+
+    pecasPrevistas,
+
+    consumoPorHoraKg,
+
+    consumoPeriodoKg,
+
+    consumosFornecedores,
+  };
+}
+
+
+/* =========================================================
+   CÁLCULO LEGADO
+========================================================= */
+
+function calcularConsumoLegado({
+  quantidade,
+  pesoKg,
+  receitaItens = [],
+  dataInicio = null,
+  dataFim = null,
+}) {
+  const quantidadeNumero =
+    Number(
+      quantidade,
+    );
+
+  const pesoNumero =
+    Number(
+      pesoKg,
+    );
+
+  const quantidadeDias =
+    calcularDiasPeriodo(
+      dataInicio,
+      dataFim,
+    );
+
+
+  const pecasPrevistas =
+    Number.isFinite(
+      quantidadeNumero,
+    )
+      ? quantidadeNumero *
+        quantidadeDias
+      : 0;
+
+
+  const consumoPeriodoKg =
+    Number.isFinite(
+      pesoNumero,
+    )
+      ? arredondarKg(
+          pecasPrevistas *
+            pesoNumero,
+        )
+      : 0;
+
+
+  const consumosFornecedores =
+    (
+      Array.isArray(
+        receitaItens,
+      )
+        ? receitaItens
+        : []
+    ).map(
+      (
+        item,
+      ) => {
+        const percentual =
+          Number(
+            item
+              ?.percentual ??
+              0,
           );
 
 
@@ -407,13 +1017,13 @@ export function calcularConsumoProgramacao({
 
           percentual,
 
-          consumoDiarioKg:
-            consumoDiarioFornecedorKg,
-
           consumoPeriodoKg:
             arredondarKg(
-              consumoDiarioFornecedorKg *
-                quantidadeDias,
+              consumoPeriodoKg *
+                (
+                  percentual /
+                  100
+                ),
             ),
         };
       },
@@ -423,7 +1033,17 @@ export function calcularConsumoProgramacao({
   return {
     quantidadeDias,
 
-    consumoDiarioKg,
+    horasPeriodo: null,
+
+    segundosPeriodo: null,
+
+    ciclosCompletos: null,
+
+    pecasPorHora: null,
+
+    pecasPrevistas,
+
+    consumoPorHoraKg: null,
 
     consumoPeriodoKg,
 
@@ -439,10 +1059,13 @@ export function calcularConsumoProgramacao({
 export async function buscarProgramacao() {
   const [
     dadosReceitas,
+    produtosPP,
     resultadoProgramacao,
   ] =
     await Promise.all([
       buscarReceitas(),
+
+      buscarProdutosPP(),
 
       supabase
         .from(
@@ -452,7 +1075,9 @@ export async function buscarProgramacao() {
           `
             id,
             data_inicio,
+            hora_inicio,
             data_fim,
+            hora_fim,
             codigo_produto,
             quantidade,
             injetora,
@@ -465,6 +1090,13 @@ export async function buscarProgramacao() {
           "data_inicio",
           {
             ascending: true,
+          },
+        )
+        .order(
+          "hora_inicio",
+          {
+            ascending: true,
+            nullsFirst: true,
           },
         )
         .order(
@@ -513,6 +1145,45 @@ export async function buscarProgramacao() {
   );
 
 
+  const produtosTecnicos =
+    Array.isArray(
+      produtosPP,
+    )
+      ? produtosPP
+      : [];
+
+
+  const produtosPorCodigo =
+    new Map();
+
+
+  produtosTecnicos.forEach(
+    (
+      produto,
+    ) => {
+      const codigo =
+        String(
+          produto
+            ?.codigoProduto ??
+          produto
+            ?.codigo ??
+          "",
+        ).trim();
+
+
+      if (!codigo) {
+        return;
+      }
+
+
+      produtosPorCodigo.set(
+        codigo,
+        produto,
+      );
+    },
+  );
+
+
   const programacao =
     (
       Array.isArray(
@@ -544,41 +1215,102 @@ export async function buscarProgramacao() {
             );
 
 
+          const produtoTecnico =
+            produtosPorCodigo.get(
+              item.codigoProduto,
+            );
+
+
           const pesoKg =
-            receita
-              ?.pesoKg ??
-            null;
+            normalizarNumero(
+              produtoTecnico
+                ?.pesoKg,
+            );
+
+
+          const cicloSegundos =
+            normalizarNumero(
+              produtoTecnico
+                ?.cicloSegundos,
+            );
+
+
+          const cavidadeMolde =
+            normalizarNumero(
+              produtoTecnico
+                ?.cavidadeMolde,
+            );
+
+
+          const possuiHorario =
+            Boolean(
+              item.horaInicio &&
+              item.horaFim,
+            );
 
 
           const calculo =
-            calcularConsumoProgramacao({
-              quantidade:
-                item.quantidade,
+            possuiHorario
+              ? calcularConsumoProgramacao({
+                  dataInicio:
+                    item.dataInicio,
 
-              pesoKg,
+                  horaInicio:
+                    item.horaInicio,
 
-              receitaItens:
-                receita
-                  ?.itens ??
-                [],
+                  dataFim:
+                    item.dataFim,
 
-              dataInicio:
-                item.dataInicio,
+                  horaFim:
+                    item.horaFim,
 
-              dataFim:
-                item.dataFim,
-            });
+                  cicloSegundos,
+
+                  cavidadeMolde,
+
+                  pesoKg,
+
+                  receitaItens:
+                    receita
+                      ?.itens ??
+                    [],
+                })
+              : calcularConsumoLegado({
+                  quantidade:
+                    item.quantidade,
+
+                  pesoKg,
+
+                  receitaItens:
+                    receita
+                      ?.itens ??
+                    [],
+
+                  dataInicio:
+                    item.dataInicio,
+
+                  dataFim:
+                    item.dataFim,
+                });
 
 
           return {
             ...item,
 
             descricao:
+              produtoTecnico
+                ?.nomeProduto ??
+              produtoTecnico
+                ?.descricao ??
               receita
                 ?.descricao ??
               "Produto não encontrado",
 
             pesoKg,
+
+            cicloSegundos,
+
+            cavidadeMolde,
 
             receitaConfigurada:
               receita
@@ -595,9 +1327,28 @@ export async function buscarProgramacao() {
                 ?.itens ??
               [],
 
-            consumoDiarioKg:
+            calculoLegado:
+              !possuiHorario,
+
+            horasPeriodo:
               calculo
-                .consumoDiarioKg,
+                .horasPeriodo,
+
+            ciclosCompletos:
+              calculo
+                .ciclosCompletos,
+
+            pecasPorHora:
+              calculo
+                .pecasPorHora,
+
+            pecasPrevistas:
+              calculo
+                .pecasPrevistas,
+
+            consumoPorHoraKg:
+              calculo
+                .consumoPorHoraKg,
 
             consumoPeriodoKg:
               calculo
@@ -618,35 +1369,83 @@ export async function buscarProgramacao() {
 
 
   const produtos =
-    receitas.map(
-      (
-        receita,
-      ) => ({
-        codigo:
-          receita.codigo,
+    produtosTecnicos
+      .filter(
+        (
+          produto,
+        ) =>
+          produto
+            ?.usaPP ===
+            true &&
+          produto
+            ?.ativo !==
+            false,
+      )
+      .map(
+        (
+          produto,
+        ) => {
+          const codigo =
+            String(
+              produto
+                ?.codigoProduto ??
+              produto
+                ?.codigo ??
+              "",
+            ).trim();
 
-        descricao:
-          receita
-            .descricao,
 
-        pesoKg:
-          receita
-            .pesoKg,
+          const receita =
+            receitasPorProduto.get(
+              codigo,
+            );
 
-        receitaConfigurada:
-          receita
-            .configurada,
 
-        percentualReceita:
-          receita
-            .percentualTotal,
+          return {
+            codigo,
 
-        receitaItens:
-          receita
-            .itens ??
-          [],
-      }),
-    );
+            descricao:
+              produto
+                ?.nomeProduto ??
+              produto
+                ?.descricao ??
+              "Sem descrição",
+
+            pesoKg:
+              normalizarNumero(
+                produto
+                  ?.pesoKg,
+              ),
+
+            cicloSegundos:
+              normalizarNumero(
+                produto
+                  ?.cicloSegundos,
+              ),
+
+            cavidadeMolde:
+              normalizarNumero(
+                produto
+                  ?.cavidadeMolde,
+              ),
+
+            receitaConfigurada:
+              receita
+                ?.configurada ===
+              true,
+
+            percentualReceita:
+              receita
+                ?.percentualTotal ??
+              0,
+
+            receitaItens:
+              receita
+                ?.itens ??
+              [],
+          };
+        },
+      );
 
 
   return {
@@ -664,9 +1463,10 @@ export async function buscarProgramacao() {
 export async function salvarProgramacao({
   id = null,
   dataInicio,
+  horaInicio,
   dataFim,
+  horaFim,
   codigoProduto,
-  quantidade,
   injetora = null,
   ativo = true,
 }) {
@@ -680,16 +1480,21 @@ export async function salvarProgramacao({
       dataFim ?? "",
     ).trim();
 
+  const horaInicial =
+    normalizarHora(
+      horaInicio,
+    );
+
+  const horaFinal =
+    normalizarHora(
+      horaFim,
+    );
+
   const codigo =
     String(
       codigoProduto ??
         "",
     ).trim();
-
-  const quantidadeNumero =
-    normalizarNumero(
-      quantidade,
-    );
 
   const injetoraFinal =
     String(
@@ -705,6 +1510,13 @@ export async function salvarProgramacao({
   }
 
 
+  if (!horaInicial) {
+    throw new Error(
+      "Informe a hora inicial.",
+    );
+  }
+
+
   if (!fim) {
     throw new Error(
       "Informe a data final.",
@@ -712,14 +1524,9 @@ export async function salvarProgramacao({
   }
 
 
-  if (
-    calcularDiasPeriodo(
-      inicio,
-      fim,
-    ) <= 0
-  ) {
+  if (!horaFinal) {
     throw new Error(
-      "A data final não pode ser anterior à data inicial.",
+      "Informe a hora final.",
     );
   }
 
@@ -731,17 +1538,297 @@ export async function salvarProgramacao({
   }
 
 
+  const inicioMs =
+    converterDataHoraParaUTC(
+      inicio,
+      horaInicial,
+    );
+
+  const fimMs =
+    converterDataHoraParaUTC(
+      fim,
+      horaFinal,
+    );
+
+
   if (
-    quantidadeNumero ===
-      null ||
-    quantidadeNumero <=
-      0 ||
-    !Number.isInteger(
-      quantidadeNumero,
-    )
+    inicioMs === null ||
+    fimMs === null ||
+    fimMs <= inicioMs
   ) {
     throw new Error(
-      "Informe uma quantidade diária inteira maior que zero.",
+      "A data e hora final precisam ser posteriores à data e hora inicial.",
+    );
+  }
+
+
+  /* =======================================================
+     VERIFICAR CONFLITO NO BANCO ANTES DE SALVAR
+  ======================================================= */
+
+  if (injetoraFinal) {
+    let consultaConflito =
+      supabase
+        .from(
+          "materia_prima_programacao",
+        )
+        .select(
+          `
+            id,
+            data_inicio,
+            hora_inicio,
+            data_fim,
+            hora_fim,
+            injetora,
+            ativo
+          `,
+        )
+        .eq(
+          "ativo",
+          true,
+        )
+        .eq(
+          "injetora",
+          injetoraFinal,
+        );
+
+
+    if (
+      id !== null &&
+      id !== undefined
+    ) {
+      consultaConflito =
+        consultaConflito.neq(
+          "id",
+          id,
+        );
+    }
+
+
+    const {
+      data:
+        programacoesInjetora,
+      error:
+        erroConflito,
+    } =
+      await consultaConflito;
+
+
+    if (erroConflito) {
+      throw erroConflito;
+    }
+
+
+    const conflito =
+      verificarConflitoInjetora({
+        programacao:
+          (
+            Array.isArray(
+              programacoesInjetora,
+            )
+              ? programacoesInjetora
+              : []
+          ).map(
+            (
+              registro,
+            ) => ({
+              id:
+                registro.id,
+
+              dataInicio:
+                registro
+                  .data_inicio,
+
+              horaInicio:
+                normalizarHora(
+                  registro
+                    .hora_inicio,
+                ),
+
+              dataFim:
+                registro
+                  .data_fim,
+
+              horaFim:
+                normalizarHora(
+                  registro
+                    .hora_fim,
+                ),
+
+              injetora:
+                registro
+                  .injetora,
+
+              ativo:
+                registro
+                  .ativo !==
+                false,
+            }),
+          ),
+
+        injetora:
+          injetoraFinal,
+
+        dataInicio:
+          inicio,
+
+        horaInicio:
+          horaInicial,
+
+        dataFim:
+          fim,
+
+        horaFim:
+          horaFinal,
+
+        ignorarId:
+          id,
+      });
+
+
+    if (conflito) {
+      throw new Error(
+        `A Injetora ${injetoraFinal} já possui uma programação ativa neste período.`,
+      );
+    }
+  }
+
+
+  /* =======================================================
+     BUSCAR PRODUTO
+  ======================================================= */
+
+  const produtosPP =
+    await buscarProdutosPP();
+
+
+  const produto =
+    (
+      Array.isArray(
+        produtosPP,
+      )
+        ? produtosPP
+        : []
+    ).find(
+      (
+        registro,
+      ) =>
+        String(
+          registro
+            ?.codigoProduto ??
+          registro
+            ?.codigo ??
+          "",
+        ).trim() ===
+        codigo,
+    );
+
+
+  if (!produto) {
+    throw new Error(
+      "Produto PP não encontrado.",
+    );
+  }
+
+
+  const pesoKg =
+    normalizarNumero(
+      produto
+        ?.pesoKg,
+    );
+
+  const cicloSegundos =
+    normalizarNumero(
+      produto
+        ?.cicloSegundos,
+    );
+
+  const cavidadeMolde =
+    normalizarNumero(
+      produto
+        ?.cavidadeMolde,
+    );
+
+
+  if (
+    pesoKg === null ||
+    pesoKg <= 0
+  ) {
+    throw new Error(
+      "O produto selecionado não possui peso por peça válido.",
+    );
+  }
+
+
+  if (
+    cicloSegundos === null ||
+    cicloSegundos <= 0
+  ) {
+    throw new Error(
+      "O produto selecionado não possui ciclo válido.",
+    );
+  }
+
+
+  if (
+    cavidadeMolde === null ||
+    !Number.isInteger(
+      cavidadeMolde,
+    ) ||
+    cavidadeMolde <= 0
+  ) {
+    throw new Error(
+      "O produto selecionado não possui quantidade de cavidades válida.",
+    );
+  }
+
+
+  const calculo =
+    calcularConsumoProgramacao({
+      dataInicio:
+        inicio,
+
+      horaInicio:
+        horaInicial,
+
+      dataFim:
+        fim,
+
+      horaFim:
+        horaFinal,
+
+      cicloSegundos,
+
+      cavidadeMolde,
+
+      pesoKg,
+    });
+
+
+  if (
+    !calculo.periodoValido
+  ) {
+    throw new Error(
+      "O período informado é inválido.",
+    );
+  }
+
+
+  if (
+    !calculo.parametrosValidos
+  ) {
+    throw new Error(
+      "Os parâmetros técnicos do produto são inválidos.",
+    );
+  }
+
+
+  if (
+    calculo.ciclosCompletos <= 0 ||
+    calculo.pecasPrevistas <= 0
+  ) {
+    throw new Error(
+      "O período informado não é suficiente para completar um ciclo de produção.",
     );
   }
 
@@ -755,14 +1842,21 @@ export async function salvarProgramacao({
     data_inicio:
       inicio,
 
+    hora_inicio:
+      horaInicial,
+
     data_fim:
       fim,
+
+    hora_fim:
+      horaFinal,
 
     codigo_produto:
       codigo,
 
     quantidade:
-      quantidadeNumero,
+      calculo
+        .pecasPrevistas,
 
     injetora:
       injetoraFinal ||
@@ -806,7 +1900,9 @@ export async function salvarProgramacao({
           `
             id,
             data_inicio,
+            hora_inicio,
             data_fim,
+            hora_fim,
             codigo_produto,
             quantidade,
             injetora,
@@ -849,7 +1945,9 @@ export async function salvarProgramacao({
         `
           id,
           data_inicio,
+          hora_inicio,
           data_fim,
+          hora_fim,
           codigo_produto,
           quantidade,
           injetora,
@@ -869,4 +1967,49 @@ export async function salvarProgramacao({
   return normalizarProgramacao(
     registroSalvo,
   );
+}
+
+
+/* =========================================================
+   EXCLUIR PROGRAMAÇÃO
+========================================================= */
+
+export async function excluirProgramacao(
+  id,
+) {
+  if (
+    id === null ||
+    id === undefined
+  ) {
+    throw new Error(
+      "Programação não informada.",
+    );
+  }
+
+
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_programacao",
+      )
+      .delete()
+      .eq(
+        "id",
+        id,
+      )
+      .select(
+        "id",
+      )
+      .single();
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  return data;
 }

@@ -1,0 +1,380 @@
+/* =========================================================
+   NECESSIDADE DE COMPRA DE MATÉRIA-PRIMA
+   Complemento do padrão visual de TelaRelatorios.css
+========================================================= */
+
+.ncm-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.ncm-filtros label {
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ncm-filtros label > span {
+  color: #64748b;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.ncm-filtros input {
+  min-height: 39px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.ncm-filtros input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.ncm-atualizando {
+  min-height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+.ncm-mensagem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.ncm-mensagem svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.ncm-mensagem-erro {
+  border-color: rgba(220, 38, 38, 0.18);
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.ncm-mensagem-aviso {
+  border-color: rgba(217, 119, 6, 0.2);
+  background: #fffbeb;
+  color: #92400e;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DA VISUALIZAÇÃO
+========================================================= */
+
+.ncm-visualizacao-info {
+  grid-template-columns:
+    minmax(240px, 2fr)
+    repeat(3, minmax(130px, 1fr));
+}
+
+
+/* =========================================================
+   TABELA PRINCIPAL
+========================================================= */
+
+.ncm-tabela {
+  min-width: 1580px;
+}
+
+.ncm-fornecedor {
+  color: #0f172a;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ncm-comprar {
+  color: #1d4ed8 !important;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.ncm-valor-alerta {
+  color: #b45309;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.ncm-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  min-height: 24px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ncm-status.ok {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.ncm-status.atencao {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.ncm-status.comprar {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.ncm-status.critico {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.ncm-status.configurar,
+.ncm-status.sem-saldo,
+.ncm-status.neutro {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   BOTÃO DETALHES
+========================================================= */
+
+.ncm-expandir {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #475569;
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ncm-expandir:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+
+/* =========================================================
+   LINHA EXPANDIDA
+========================================================= */
+
+.ncm-linha-detalhe > td {
+  padding: 0 !important;
+  background: #f8fafc !important;
+}
+
+.ncm-detalhe {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ncm-detalhe-resumo {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ncm-detalhe-resumo > div {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.ncm-detalhe-resumo span,
+.ncm-detalhe-resumo small {
+  display: block;
+  color: #64748b;
+  font-size: 0.6rem;
+}
+
+.ncm-detalhe-resumo span {
+  margin-bottom: 5px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ncm-detalhe-resumo strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   TABELA DIÁRIA
+========================================================= */
+
+.ncm-detalhe-tabela-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.ncm-detalhe-tabela {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+}
+
+.ncm-detalhe-tabela th {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ncm-detalhe-tabela td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #edf2f7;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.68rem;
+  vertical-align: middle;
+}
+
+.ncm-detalhe-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ncm-detalhe-linha-abaixo td {
+  background: #fffbeb;
+}
+
+.ncm-entrada {
+  color: #047857 !important;
+  font-weight: 700;
+}
+
+.ncm-saida {
+  color: #b45309 !important;
+  font-weight: 700;
+}
+
+.ncm-base-badge {
+  display: inline-flex;
+  margin-left: 6px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.52rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+.ncm-girando {
+  animation:
+    ncm-girar
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes ncm-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 900px) {
+  .ncm-visualizacao-info {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .ncm-detalhe-resumo {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .ncm-filtros {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ncm-filtros label {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ncm-visualizacao-info,
+  .ncm-detalhe-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .ncm-detalhe {
+    padding: 12px;
+  }
+}

@@ -245,6 +245,10 @@ export async function buscarComprasFuturas() {
             atualizado_em
           `,
         )
+        .eq(
+          "ativo",
+          true,
+        )
         .order(
           "data_prevista",
           {
@@ -476,11 +480,6 @@ export async function salvarCompraFutura({
       );
     }
   } else {
-    /*
-     * Compra que deixou de ser RECEBIDA
-     * não deve manter uma data de
-     * recebimento antiga.
-     */
     dataRecebimentoFinal =
       null;
   }
@@ -623,4 +622,86 @@ export async function salvarCompraFutura({
   return normalizarCompra(
     data,
   );
+}
+
+
+/* =========================================================
+   EXCLUIR COMPRA FUTURA
+
+   Exclusão lógica:
+   - mantém histórico no banco;
+   - deixa de aparecer na tela;
+   - deixa de entrar na projeção.
+========================================================= */
+
+export async function excluirCompraFutura(
+  id,
+) {
+  if (
+    id === null ||
+    id === undefined
+  ) {
+    throw new Error(
+      "Compra futura não informada.",
+    );
+  }
+
+
+  const agora =
+    new Date()
+      .toISOString();
+
+
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_compras_futuras",
+      )
+      .update({
+        ativo:
+          false,
+
+        atualizado_em:
+          agora,
+      })
+      .eq(
+        "id",
+        id,
+      )
+      .eq(
+        "ativo",
+        true,
+      )
+      .select(
+        "id",
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  if (
+    !Array.isArray(
+      data,
+    ) ||
+    data.length ===
+      0
+  ) {
+    throw new Error(
+      "A compra futura não foi encontrada ou já foi excluída.",
+    );
+  }
+
+
+  return {
+    id,
+
+    excluida:
+      true,
+  };
 }

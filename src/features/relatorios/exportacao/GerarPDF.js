@@ -1,6 +1,124 @@
 import jsPDF from "jspdf";
 
-import { obterColunasExportacao } from "./ColunasExportacao";
+import {
+  obterColunasRelatorio,
+} from "../config/Colunas.config";
+
+
+/* =====================================================
+   COLUNAS PARA PDF
+
+   Produção por Produto:
+
+   Produto
+   Descrição do Produto
+   Injetora
+   ...
+===================================================== */
+
+function obterColunasPdf(
+  relatorio,
+) {
+  const colunas = [
+    ...obterColunasRelatorio(
+      relatorio,
+    ),
+  ];
+
+  if (
+    relatorio?.id !==
+    "producao-produto"
+  ) {
+    return colunas;
+  }
+
+  /*
+   * Evita duplicação caso futuramente
+   * a coluna também exista no config.
+   */
+  const jaExiste =
+    colunas.some(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "descricao_produto",
+    );
+
+  if (jaExiste) {
+    return colunas;
+  }
+
+  const indiceProduto =
+    colunas.findIndex(
+      (
+        coluna,
+      ) =>
+        coluna.chave ===
+        "produto",
+    );
+
+  const colunaDescricao = {
+    chave:
+      "descricao_produto",
+
+    titulo:
+      "Descrição do Produto",
+
+    larguraPdf:
+      48,
+
+    valor:
+      (
+        item,
+      ) =>
+        item.descricao_produto ||
+        "-",
+  };
+
+  if (
+    indiceProduto !==
+    -1
+  ) {
+    colunas.splice(
+      indiceProduto + 1,
+      0,
+      colunaDescricao,
+    );
+  } else {
+    colunas.unshift(
+      colunaDescricao,
+    );
+  }
+
+  return colunas;
+}
+
+
+/* =====================================================
+   IDENTIFICAR LINHA TOTAL GERAL
+===================================================== */
+
+function linhaEhTotalGeral(
+  item,
+) {
+  const valores =
+    Object.values(
+      item || {},
+    );
+
+  return valores.some(
+    (
+      valor,
+    ) =>
+      String(
+        valor ?? "",
+      )
+        .trim()
+        .toUpperCase() ===
+      "TOTAL GERAL",
+  );
+}
 
 
 /* =====================================================
@@ -28,9 +146,8 @@ export function gerarPdfRelatorio({
   }
 
   const colunas =
-    obterColunasExportacao(
+    obterColunasPdf(
       relatorio,
-      "pdf",
     );
 
   if (
@@ -482,11 +599,6 @@ export function gerarPdfRelatorio({
                 "",
             );
 
-          /*
-           * TODOS OS CABEÇALHOS
-           * ALINHADOS À ESQUERDA
-           */
-
           doc.text(
             primeiraLinha,
 
@@ -495,11 +607,6 @@ export function gerarPdfRelatorio({
 
             y +
               5.7,
-
-            {
-              align:
-                "left",
-            },
           );
         },
       );
@@ -546,6 +653,16 @@ export function gerarPdfRelatorio({
 
 
       /* ===============================================
+         IDENTIFICAR TOTAL GERAL
+      =============================================== */
+
+      const totalGeral =
+        linhaEhTotalGeral(
+          item,
+        );
+
+
+      /* ===============================================
          FUNDO DA LINHA
       =============================================== */
 
@@ -559,6 +676,14 @@ export function gerarPdfRelatorio({
           coluna,
         ) => {
           if (
+            totalGeral
+          ) {
+            doc.setFillColor(
+              241,
+              245,
+              249,
+            );
+          } else if (
             linhaPar
           ) {
             doc.setFillColor(
@@ -601,11 +726,16 @@ export function gerarPdfRelatorio({
 
       /* ===============================================
          TEXTO
+
+         Somente TOTAL GERAL fica em negrito.
       =============================================== */
 
       doc.setFont(
         "helvetica",
-        "normal",
+
+        totalGeral
+          ? "bold"
+          : "normal",
       );
 
       doc.setFontSize(
@@ -613,10 +743,19 @@ export function gerarPdfRelatorio({
       );
 
       doc.setTextColor(
-        51,
-        65,
-        85,
+        totalGeral
+          ? 15
+          : 51,
+
+        totalGeral
+          ? 23
+          : 65,
+
+        totalGeral
+          ? 42
+          : 85,
       );
+
 
       colunasPosicionadas.forEach(
         (
@@ -663,26 +802,55 @@ export function gerarPdfRelatorio({
 
           /* ===========================================
              ALINHAMENTO
-
-             TODOS OS CAMPOS,
-             TEXTOS E NÚMEROS,
-             FICAM ALINHADOS À ESQUERDA.
           =========================================== */
 
-          doc.text(
-            textoFinal,
+          const camposCentralizados =
+            [
+              "ranking",
+              "ocorrencias",
+              "conforme",
+              "danificada",
+              "total_produzido",
+              "peso",
+              "consumo_total",
+              "gasto_unidade",
+              "peso_total",
+              "tempo_total",
+              "tempo_medio",
+              "percentual_impacto",
+            ];
 
-            coluna.x +
-              2,
+          if (
+            camposCentralizados.includes(
+              coluna.chave,
+            )
+          ) {
+            doc.text(
+              textoFinal,
 
-            y +
-              5.25,
+              coluna.x +
+                coluna.largura /
+                  2,
 
-            {
-              align:
-                "left",
-            },
-          );
+              y +
+                5.25,
+
+              {
+                align:
+                  "center",
+              },
+            );
+          } else {
+            doc.text(
+              textoFinal,
+
+              coluna.x +
+                2,
+
+              y +
+                5.25,
+            );
+          }
         },
       );
 
