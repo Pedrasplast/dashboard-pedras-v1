@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { FiArrowLeft, FiChevronRight, FiDownload, FiEye, FiFileText, FiX } from "react-icons/fi";
 
@@ -11,6 +11,7 @@ import {
 import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
 import { valoresUnicos } from "@/lib/colecoes";
 import { normalizarTexto } from "@/lib/texto";
+import { supabase } from "@/lib/supabaseClient";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 import PageHeader from "@/components/layout/PageHeader";
@@ -31,18 +32,6 @@ import { obterDataPedidoRelatorio } from "./pedidos/PedidosRelatorios";
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
 
 import "./TelaRelatorios.css";
-
-const RELATORIOS_POR_CATEGORIA = new Map();
-
-for (const relatorio of RELATORIOS) {
-  if (!RELATORIOS_POR_CATEGORIA.has(relatorio.categoria)) {
-    RELATORIOS_POR_CATEGORIA.set(relatorio.categoria, []);
-  }
-
-  RELATORIOS_POR_CATEGORIA.get(relatorio.categoria).push(relatorio);
-}
-
-const CATEGORIAS_RELATORIOS = Object.freeze([...RELATORIOS_POR_CATEGORIA.keys()]);
 
 /* =========================================================
    FILTROS INICIAIS
@@ -114,14 +103,183 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
   const [visualizacaoAberta, setVisualizacaoAberta] = useState(false);
 
+  const [permissoesRelatoriosCarregadas, setPermissoesRelatoriosCarregadas] =
+    useState(false);
+
+  const [relatoriosPermitidosIds, setRelatoriosPermitidosIds] = useState(
+    () => new Set(),
+  );
+
+  const [erroPermissoesRelatorios, setErroPermissoesRelatorios] = useState("");
+
+  /* =====================================================
+     CARREGAR PERMISSÕES DOS RELATÓRIOS
+
+     ADMIN:
+     - acesso a todos os relatórios configurados.
+
+     OPERADOR:
+     - acesso somente aos relatórios liberados em
+       usuario_relatorio_permissoes.
+  ===================================================== */
+
+  useEffect(() => {
+    let ativo = true;
+
+    async function carregarPermissoesRelatorios() {
+      try {
+        if (ativo) {
+          setPermissoesRelatoriosCarregadas(false);
+          setErroPermissoesRelatorios("");
+        }
+
+        const { data: dadosUsuario, error: erroUsuario } =
+          await supabase.auth.getUser();
+
+        if (erroUsuario) {
+          throw erroUsuario;
+        }
+
+        const usuario = dadosUsuario?.user;
+
+        if (!usuario?.id) {
+          if (ativo) {
+            setRelatoriosPermitidosIds(new Set());
+          }
+
+          return;
+        }
+
+        const { data: perfil, error: erroPerfil } = await supabase
+          .from("perfis")
+          .select("regra")
+          .eq("id", usuario.id)
+          .maybeSingle();
+
+        if (erroPerfil) {
+          throw erroPerfil;
+        }
+
+        if (perfil?.regra === "admin") {
+          if (ativo) {
+            setRelatoriosPermitidosIds(
+              new Set(RELATORIOS.map((relatorio) => relatorio.id)),
+            );
+          }
+
+          return;
+        }
+
+        const [respostaRelatorios, respostaPermissoes] = await Promise.all([
+          supabase
+            .from("relatorios_sistema")
+            .select("id, chave, ativo")
+            .eq("ativo", true),
+
+          supabase
+            .from("usuario_relatorio_permissoes")
+            .select("relatorio_id, permitido")
+            .eq("usuario_id", usuario.id)
+            .eq("permitido", true),
+        ]);
+
+        if (respostaRelatorios.error) {
+          throw respostaRelatorios.error;
+        }
+
+        if (respostaPermissoes.error) {
+          throw respostaPermissoes.error;
+        }
+
+        const idsPermitidos = new Set(
+          (respostaPermissoes.data || []).map((permissao) =>
+            String(permissao.relatorio_id),
+          ),
+        );
+
+        const chavesPermitidas = new Set(
+          (respostaRelatorios.data || [])
+            .filter((relatorio) => idsPermitidos.has(String(relatorio.id)))
+            .map((relatorio) => String(relatorio.chave || "").trim())
+            .filter(Boolean),
+        );
+
+        if (ativo) {
+          setRelatoriosPermitidosIds(
+            new Set(
+              RELATORIOS.filter((relatorio) =>
+                chavesPermitidas.has(relatorio.id),
+              ).map((relatorio) => relatorio.id),
+            ),
+          );
+        }
+      } catch (error) {
+        console.error("Erro ao carregar permissões dos relatórios:", error);
+
+        if (ativo) {
+          setRelatoriosPermitidosIds(new Set());
+
+          setErroPermissoesRelatorios(
+            error?.message ||
+              "Não foi possível verificar as permissões dos relatórios.",
+          );
+        }
+      } finally {
+        if (ativo) {
+          setPermissoesRelatoriosCarregadas(true);
+        }
+      }
+    }
+
+    carregarPermissoesRelatorios();
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  /* =====================================================
+     RELATÓRIOS DISPONÍVEIS AO USUÁRIO
+  ===================================================== */
+
+  const relatoriosDisponiveis = useMemo(
+    () =>
+      RELATORIOS.filter((relatorio) =>
+        relatoriosPermitidosIds.has(relatorio.id),
+      ),
+    [relatoriosPermitidosIds],
+  );
+
+  const relatoriosPorCategoria = useMemo(() => {
+    const mapa = new Map();
+
+    for (const relatorio of relatoriosDisponiveis) {
+      if (!mapa.has(relatorio.categoria)) {
+        mapa.set(relatorio.categoria, []);
+      }
+
+      mapa.get(relatorio.categoria).push(relatorio);
+    }
+
+    return mapa;
+  }, [relatoriosDisponiveis]);
+
+  const categorias = useMemo(
+    () => [...relatoriosPorCategoria.keys()],
+    [relatoriosPorCategoria],
+  );
+
   /* =====================================================
      RELATÓRIO SELECIONADO
   ===================================================== */
 
   const relatorioSelecionado = useMemo(
-    () => RELATORIOS.find((relatorio) => relatorio.id === relatorioSelecionadoId) || null,
+    () =>
+      relatoriosDisponiveis.find(
+        (relatorio) => relatorio.id === relatorioSelecionadoId,
+      ) || null,
 
-    [relatorioSelecionadoId],
+    [relatorioSelecionadoId, relatoriosDisponiveis],
   );
 
   const fonteEhPedidos = relatorioSelecionado?.fonteDados === "pedidos";
@@ -133,6 +291,30 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   const ComponenteCustomizado = relatorioEhCustom
     ? relatorioSelecionado?.componenteCustomizado
     : null;
+
+  /* =====================================================
+     GARANTIR QUE UM RELATÓRIO SEM PERMISSÃO NÃO CONTINUE
+     ABERTO CASO A PERMISSÃO SEJA REMOVIDA.
+  ===================================================== */
+
+  useEffect(() => {
+    if (
+      !permissoesRelatoriosCarregadas ||
+      !relatorioSelecionadoId
+    ) {
+      return;
+    }
+
+    if (!relatoriosPermitidosIds.has(relatorioSelecionadoId)) {
+      setRelatorioSelecionadoId(null);
+      setFiltros(criarFiltrosIniciais());
+      setVisualizacaoAberta(false);
+    }
+  }, [
+    permissoesRelatoriosCarregadas,
+    relatorioSelecionadoId,
+    relatoriosPermitidosIds,
+  ]);
 
   /* =====================================================
      PRODUÇÃO
@@ -195,12 +377,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   const { descricoesProdutos } = useDescricoesProdutos({
     enabled: !relatorioEhCustom && relatorioSelecionadoId === "producao-produto",
   });
-
-  /* =====================================================
-     CATEGORIAS
-  ===================================================== */
-
-  const categorias = CATEGORIAS_RELATORIOS;
 
   /* =====================================================
      COLUNAS
@@ -530,7 +706,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const selecionarRelatorio = (id) => {
-    const relatorio = RELATORIOS.find((item) => item.id === id);
+    const relatorio = relatoriosDisponiveis.find((item) => item.id === id);
+
+    if (!relatorio) {
+      return;
+    }
 
     setRelatorioSelecionadoId(id);
 
@@ -656,7 +836,23 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   };
 
   /* =====================================================
-     CARREGANDO
+     CARREGANDO PERMISSÕES
+  ===================================================== */
+
+  if (!permissoesRelatoriosCarregadas) {
+    return (
+      <div className="relatorios-loading">
+        <div className="relatorios-loading-card">
+          <div className="relatorios-spinner" />
+
+          <p>Verificando permissões dos relatórios...</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* =====================================================
+     CARREGANDO DADOS
   ===================================================== */
 
   if (loading && relatorioSelecionado) {
@@ -707,13 +903,34 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       )}
 
       {/* =================================================
+          ERRO DE PERMISSÕES
+      ================================================= */}
+
+      {!relatorioSelecionado && erroPermissoesRelatorios && (
+        <div className="relatorios-erro">{erroPermissoesRelatorios}</div>
+      )}
+
+      {/* =================================================
+          SEM RELATÓRIOS LIBERADOS
+      ================================================= */}
+
+      {!relatorioSelecionado &&
+        !erroPermissoesRelatorios &&
+        relatoriosDisponiveis.length === 0 && (
+          <div className="relatorios-erro">
+            Você não possui relatórios liberados. Solicite a um administrador a
+            permissão necessária.
+          </div>
+        )}
+
+      {/* =================================================
           LISTA DOS RELATÓRIOS
       ================================================= */}
 
-      {!relatorioSelecionado && (
+      {!relatorioSelecionado && relatoriosDisponiveis.length > 0 && (
         <div className="relatorios-lista">
           {categorias.map((categoria) => {
-            const relatoriosCategoria = RELATORIOS_POR_CATEGORIA.get(categoria) || [];
+            const relatoriosCategoria = relatoriosPorCategoria.get(categoria) || [];
 
             return (
               <section key={categoria} className="relatorios-categoria">
