@@ -11,6 +11,7 @@ import {
   FileText,
   Gauge,
   Home,
+  LayoutDashboard,
   LogIn,
   LogOut,
   Menu,
@@ -21,105 +22,177 @@ import {
 } from "lucide-react";
 
 import { usePermissoes } from "@/hooks/usePermissoes";
+
 import { useNavigate } from "@/lib/navegacao";
+
 import { supabase } from "@/lib/supabaseClient";
 
 import "./Navbar.css";
 
 /* =========================================================
    NAVEGAÇÃO POR MÓDULOS
-
-   Mantemos somente rotas que já existem hoje.
-   Depois adicionaremos as novas páginas Financeiras.
 ========================================================= */
 
 const NAVIGATION_GROUPS = Object.freeze([
   {
     type: "link",
+
     id: "inicio",
+
     label: "Início",
+
     path: "/",
+
     icon: Home,
+
     permissao: null,
   },
 
+  /* =====================================================
+       DASHBOARDS
+    ===================================================== */
+
   {
     type: "group",
-    id: "producao",
-    label: "Produção",
-    icon: Factory,
+
+    id: "dashboards",
+
+    label: "Dashboards",
+
+    icon: LayoutDashboard,
 
     children: [
       {
         label: "Dashboard-Produção",
+
         path: "/dashboard",
+
         icon: Factory,
+
         permissao: "dashboard",
       },
 
-      /*{
-        label: "Produtividade",
-        path: "/dashboard-produtividade",
+      {
+        label: "Dashboard-Matéria-Prima",
+
+        path: "/dashboard-materia-prima",
+
         icon: Gauge,
-        permissao: "dashboard_produtividade",
-      },*/
+
+        permissao: "dashboard_materia_prima",
+      },
+    ],
+  },
+
+  /* =====================================================
+       PRODUÇÃO
+    ===================================================== */
+
+  {
+    type: "group",
+
+    id: "producao",
+
+    label: "Produção",
+
+    icon: Factory,
+
+    children: [
       {
         type: "link",
+
         id: "materia-prima",
+
         label: "Matéria-Prima",
+
         path: "/materia-prima",
+
         icon: Boxes,
+
         permissao: "materia_prima",
       },
     ],
   },
 
+  /* =====================================================
+       PEDIDOS
+    ===================================================== */
+
   {
     type: "group",
+
     id: "pedidos",
+
     label: "Pedidos",
+
     icon: ShoppingCart,
 
     children: [
       {
         label: "Pedidos",
+
         path: "/pedidos",
+
         icon: ShoppingCart,
+
         permissao: "pedidos",
+
         notificationKey: "pedidos",
       },
     ],
   },
 
+  /* =====================================================
+       FINANCEIRO
+    ===================================================== */
+
   {
     type: "group",
+
     id: "financeiro",
+
     label: "Financeiro",
+
     icon: DollarSign,
 
     children: [
       {
         label: "Visão Geral",
+
         path: "/financeiro",
+
         icon: DollarSign,
+
         permissao: "financeiro",
       },
 
       {
         label: "Evolução Mensal",
+
         path: "/financeiro-evolucao-mensal",
+
         icon: DollarSign,
+
         permissao: "financeiro_evolucao_mensal",
       },
     ],
   },
 
+  /* =====================================================
+       RELATÓRIOS
+    ===================================================== */
+
   {
     type: "link",
+
     id: "relatorios",
+
     label: "Relatórios",
+
     path: "/relatorios",
+
     icon: FileText,
+
     permissao: "relatorios",
   },
 ]);
@@ -321,6 +394,7 @@ function Navbar({ user, isAdmin }) {
 
       return {
         ...item,
+
         children,
       };
     }).filter(Boolean);
