@@ -2012,55 +2012,37 @@ export default function ProgramacaoModal({
         <div className="programacao-modal-header">
 
           <div className="programacao-modal-header-icone">
-
             <CalendarDays
               size={22}
               strokeWidth={2}
               aria-hidden="true"
             />
-
           </div>
 
-
           <div className="programacao-modal-header-texto">
-
             <span>
-              Matéria-Prima PP
+              Planejamento de produção · PP
             </span>
 
-
             <h3 id="programacao-modal-titulo">
-
               {item
                 ? "Editar programação"
                 : "Nova programação"}
-
             </h3>
 
-
             <p>
-              Selecione os dias no calendário e aplique a jornada desejada.
+              Defina a máquina, o produto e os dias de produção. O sistema calcula automaticamente horas, peças e consumo de PP.
             </p>
-
           </div>
-
 
           <button
             type="button"
             className="programacao-modal-fechar"
-            onClick={
-              onCancelar
-            }
-            disabled={
-              salvando
-            }
+            onClick={onCancelar}
+            disabled={salvando}
             aria-label="Fechar"
           >
-
-            <X
-              size={19}
-            />
-
+            <X size={19} />
           </button>
 
         </div>
@@ -2068,188 +2050,206 @@ export default function ProgramacaoModal({
 
         <form
           className="programacao-modal-form"
-          onSubmit={
-            enviarFormulario
-          }
+          onSubmit={enviarFormulario}
         >
 
           {itemLegado && (
-
             <div className="programacao-calendario-legado">
-
-              <AlertTriangle
-                size={18}
-              />
-
+              <AlertTriangle size={18} />
 
               <div>
-
                 <strong>
                   Programação antiga
                 </strong>
 
-
                 <span>
                   Este registro pertence ao modelo anterior e está preservado.
                 </span>
-
               </div>
-
             </div>
-
           )}
 
 
-          <div className="programacao-modal-grid programacao-calendario-config">
+          <section className="programacao-calendario-configuracao">
 
-            <label className="programacao-modal-campo">
+            <div className="programacao-calendario-configuracao-cabecalho">
+              <div>
+                <span className="programacao-calendario-eyebrow">
+                  01 · Configuração da produção
+                </span>
 
-              <span>
-                Injetora
-              </span>
+                <strong>
+                  Máquina e produto
+                </strong>
+
+                <p>
+                  Selecione a injetora e o produto que serão considerados nesta programação.
+                </p>
+              </div>
+
+              {(injetora || produtoSelecionado) && (
+                <div className="programacao-calendario-configuracao-status">
+                  <span>
+                    {injetora
+                      ? `INJETORA ${injetora}`
+                      : "INJETORA PENDENTE"}
+                  </span>
+
+                  <strong>
+                    {produtoSelecionado
+                      ? produtoSelecionado.codigo
+                      : "PRODUTO PENDENTE"}
+                  </strong>
+                </div>
+              )}
+            </div>
 
 
-              <select
-                value={
-                  injetora
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setInjetora(
-                      event.target.value,
-                    );
+            <div className="programacao-modal-grid programacao-calendario-config">
 
+              <label className="programacao-modal-campo">
+                <span>
+                  Injetora
+                </span>
+
+                <select
+                  value={injetora}
+                  onChange={(event) => {
+                    setInjetora(event.target.value);
                     setErro("");
-                  }
-                }
-                disabled={
-                  salvando ||
-                  itemLegado
-                }
-              >
+                  }}
+                  disabled={salvando || itemLegado}
+                >
+                  <option value="">
+                    Selecione a injetora
+                  </option>
 
-                <option value="">
-                  Selecione a injetora
-                </option>
-
-
-                {INJETORAS.map(
-                  (
-                    numero,
-                  ) => (
-
+                  {INJETORAS.map((numero) => (
                     <option
-                      key={
-                        numero
-                      }
-                      value={
-                        numero
-                      }
+                      key={numero}
+                      value={numero}
                     >
                       Injetora {numero}
                     </option>
-
-                  ),
-                )}
-
-              </select>
-
-            </label>
+                  ))}
+                </select>
+              </label>
 
 
-            <label className="programacao-modal-campo">
+              <label className="programacao-modal-campo">
+                <span>
+                  Produto
+                </span>
 
-              <span>
-                Produto
-              </span>
-
-
-              <select
-                value={
-                  codigoProduto
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setCodigoProduto(
-                      event.target.value,
-                    );
-
+                <select
+                  value={codigoProduto}
+                  onChange={(event) => {
+                    setCodigoProduto(event.target.value);
                     setErro("");
-                  }
-                }
-                disabled={
-                  salvando ||
-                  itemLegado
-                }
-              >
+                  }}
+                  disabled={salvando || itemLegado}
+                >
+                  <option value="">
+                    Selecione o produto
+                  </option>
 
-                <option value="">
-                  Selecione o produto
-                </option>
-
-
-                {produtos.map(
-                  (
-                    produto,
-                  ) => (
-
+                  {produtos.map((produto) => (
                     <option
-                      key={
-                        produto.codigo
-                      }
-                      value={
-                        produto.codigo
-                      }
+                      key={produto.codigo}
+                      value={produto.codigo}
                     >
                       {produto.codigo}
                       {" - "}
-                      {produto.descricao ||
-                        "Sem descrição"}
+                      {produto.descricao || "Sem descrição"}
                     </option>
+                  ))}
+                </select>
+              </label>
 
-                  ),
-                )}
+            </div>
 
-              </select>
 
-            </label>
+            {produtoSelecionado && (
+              <div className="programacao-calendario-config-tecnico">
+                <div>
+                  <span>
+                    Ciclo
+                  </span>
+                  <strong>
+                    {formatarNumero(produtoSelecionado.cicloSegundos)}s
+                  </strong>
+                </div>
 
-          </div>
+                <div>
+                  <span>
+                    Cavidades
+                  </span>
+                  <strong>
+                    {formatarNumero(produtoSelecionado.cavidadeMolde)}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>
+                    Capacidade
+                  </span>
+                  <strong>
+                    {formatarNumero(calculo.pecasPorHora)} pç/h
+                  </strong>
+                </div>
+
+                <div>
+                  <span>
+                    Consumo
+                  </span>
+                  <strong>
+                    {formatarKg(calculo.consumoPorHoraKg)}/h
+                  </strong>
+                </div>
+
+                <div className={[
+                  "programacao-calendario-receita-status",
+                  produtoSelecionado.receitaConfigurada
+                    ? "ok"
+                    : "pendente",
+                ].join(" ")}
+                >
+                  <span>
+                    Receita
+                  </span>
+                  <strong>
+                    {produtoSelecionado.receitaConfigurada
+                      ? "CONFIGURADA"
+                      : "PENDENTE"}
+                  </strong>
+                </div>
+              </div>
+            )}
+
+          </section>
 
 
           {!itemLegado && (
-
             <>
 
               <section className="programacao-calendario-bloco">
 
                 <div className="programacao-calendario-cabecalho">
 
-                  <div>
-
-                    <span>
-                      Dias de trabalho
+                  <div className="programacao-calendario-cabecalho-texto">
+                    <span className="programacao-calendario-eyebrow">
+                      02 · Calendário de produção
                     </span>
 
-
                     <strong>
-                      {
-                        NOMES_MESES[
-                          mesReferencia.getMonth()
-                        ]
-                      }
-
+                      {NOMES_MESES[mesReferencia.getMonth()]}
                       {" "}
-
-                      {
-                        mesReferencia.getFullYear()
-                      }
+                      {mesReferencia.getFullYear()}
                     </strong>
 
+                    <p>
+                      Clique nos dias disponíveis. Depois aplique 5h, 17h, 22h, 24h ou uma jornada personalizada.
+                    </p>
                   </div>
 
 
@@ -2257,49 +2257,38 @@ export default function ProgramacaoModal({
 
                     <button
                       type="button"
-                      onClick={
-                        () =>
-                          setMesReferencia(
-                            (
-                              atual,
-                            ) =>
-                              adicionarMeses(
-                                atual,
-                                -1,
-                              ),
-                          )
+                      onClick={() =>
+                        setMesReferencia((atual) =>
+                          adicionarMeses(atual, -1),
+                        )
                       }
                       aria-label="Mês anterior"
                     >
-
-                      <ChevronLeft
-                        size={18}
-                      />
-
+                      <ChevronLeft size={18} />
                     </button>
-
 
                     <button
                       type="button"
-                      onClick={
-                        () =>
-                          setMesReferencia(
-                            (
-                              atual,
-                            ) =>
-                              adicionarMeses(
-                                atual,
-                                1,
-                              ),
-                          )
+                      className="programacao-calendario-navegacao-hoje"
+                      onClick={() =>
+                        setMesReferencia(
+                          obterInicioMes(new Date()),
+                        )
+                      }
+                    >
+                      Hoje
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMesReferencia((atual) =>
+                          adicionarMeses(atual, 1),
+                        )
                       }
                       aria-label="Próximo mês"
                     >
-
-                      <ChevronRight
-                        size={18}
-                      />
-
+                      <ChevronRight size={18} />
                     </button>
 
                   </div>
@@ -2307,682 +2296,483 @@ export default function ProgramacaoModal({
                 </div>
 
 
+                <div className="programacao-calendario-legenda">
+                  <span>
+                    <i className="disponivel" />
+                    Disponível
+                  </span>
+
+                  <span>
+                    <i className="selecionado" />
+                    Selecionado
+                  </span>
+
+                  <span>
+                    <i className="programado" />
+                    Programado
+                  </span>
+
+                  <span>
+                    <i className="fechado" />
+                    Sem produção
+                  </span>
+                </div>
+
+
                 <div className="programacao-calendario-grade">
 
-                  {DIAS_SEMANA.map(
-                    (
-                      dia,
-                    ) => (
+                  {DIAS_SEMANA.map((dia) => (
+                    <div
+                      key={dia}
+                      className="programacao-calendario-semana"
+                    >
+                      {dia}
+                    </div>
+                  ))}
 
-                      <div
-                        key={
-                          dia
+
+                  {diasGrade.map((data) => {
+                    const dataISO =
+                      formatarDataISO(data);
+
+                    const configuracao =
+                      calendarioPorData.get(dataISO);
+
+                    const programado =
+                      diasCalculadosPorData.get(dataISO);
+
+                    const limite =
+                      Number(
+                        configuracao?.minutosProgramados ?? 0,
+                      );
+
+                    const passado =
+                      dataISO < hojeISO;
+
+                    const hoje =
+                      dataISO === hojeISO;
+
+                    const foraMes =
+                      data.getMonth() !==
+                      mesReferencia.getMonth();
+
+                    const fechado =
+                      limite <= 0;
+
+                    const marcado =
+                      marcadasSet.has(dataISO);
+
+                    const observacaoCalendario =
+                      String(
+                        configuracao?.observacao ?? "",
+                      ).trim();
+
+                    const feriado =
+                      fechado &&
+                      /FERIADO|NATAL|TIRADENTES|FINADOS|INDEPENDÊNCIA|CONSCIÊNCIA|REPÚBLICA|APARECIDA|PÁSCOA|CARNAVAL|CORPUS/i.test(
+                        observacaoCalendario,
+                      );
+
+                    const disponibilidade =
+                      configuracao?.perfilCodigo ||
+                      (limite >= 1440 ? "24H" : "");
+
+                    return (
+                      <button
+                        key={dataISO}
+                        type="button"
+                        className={[
+                          "programacao-calendario-dia",
+                          programado ? "programado" : "",
+                          marcado ? "marcado" : "",
+                          hoje ? "hoje" : "",
+                          foraMes ? "fora-mes" : "",
+                          passado ? "passado" : "",
+                          fechado ? "indisponivel" : "",
+                          feriado ? "feriado" : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                        onClick={() =>
+                          alternarMarcacaoDia(dataISO)
                         }
-                        className="programacao-calendario-semana"
+                        disabled={
+                          passado ||
+                          fechado ||
+                          carregandoCalendario
+                        }
                       >
-                        {dia}
-                      </div>
 
-                    ),
-                  )}
+                        <div className="programacao-calendario-dia-topo">
+                          <strong>
+                            {data.getDate()}
+                          </strong>
 
+                          <div className="programacao-calendario-dia-badges">
+                            {hoje && (
+                              <span className="programacao-calendario-hoje-badge">
+                                Hoje
+                              </span>
+                            )}
 
-                  {diasGrade.map(
-                    (
-                      data,
-                    ) => {
-                      const dataISO =
-                        formatarDataISO(
-                          data,
-                        );
-
-
-                      const configuracao =
-                        calendarioPorData.get(
-                          dataISO,
-                        );
-
-
-                      const programado =
-                        diasCalculadosPorData.get(
-                          dataISO,
-                        );
-
-
-                      const limite =
-                        Number(
-                          configuracao
-                            ?.minutosProgramados ??
-                            0,
-                        );
-
-
-                      const passado =
-                        dataISO <
-                        hojeISO;
-
-
-                      const hoje =
-                        dataISO ===
-                        hojeISO;
-
-
-                      const foraMes =
-                        data.getMonth() !==
-                        mesReferencia.getMonth();
-
-
-                      const fechado =
-                        limite <= 0;
-
-
-                      const marcado =
-                        marcadasSet.has(
-                          dataISO,
-                        );
-
-
-                      return (
-                        <button
-                          key={
-                            dataISO
-                          }
-                          type="button"
-                          className={[
-                            "programacao-calendario-dia",
-
-                            programado
-                              ? "programado"
-                              : "",
-
-                            marcado
-                              ? "marcado"
-                              : "",
-
-                            hoje
-                              ? "hoje"
-                              : "",
-
-                            foraMes
-                              ? "fora-mes"
-                              : "",
-
-                            passado
-                              ? "passado"
-                              : "",
-
-                            fechado
-                              ? "indisponivel"
-                              : "",
-                          ]
-                            .filter(
-                              Boolean,
-                            )
-                            .join(" ")}
-                          onClick={
-                            () =>
-                              alternarMarcacaoDia(
-                                dataISO,
-                              )
-                          }
-                          disabled={
-                            passado ||
-                            fechado ||
-                            carregandoCalendario
-                          }
-                        >
-
-                          <div className="programacao-calendario-dia-topo">
-
-                            <strong>
-                              {
-                                data.getDate()
-                              }
-                            </strong>
-
+                            {feriado && (
+                              <span className="programacao-calendario-feriado-badge">
+                                Feriado
+                              </span>
+                            )}
 
                             {marcado && (
-
                               <span className="programacao-calendario-check">
-
                                 <Check
                                   size={12}
                                   strokeWidth={3}
                                 />
-
                               </span>
-
                             )}
-
                           </div>
+                        </div>
 
 
-                          <div className="programacao-calendario-dia-conteudo">
+                        <div className="programacao-calendario-dia-conteudo">
 
-                            {passado ? (
-
+                          {passado ? (
+                            <>
                               <span className="programacao-calendario-status-passado">
-                                Passado
+                                Encerrado
                               </span>
+                              <small>
+                                Dia anterior
+                              </small>
+                            </>
+                          ) : fechado ? (
+                            <>
+                              <strong className="programacao-calendario-status-fechado">
+                                Sem produção
+                              </strong>
 
-                            ) : fechado ? (
-
-                              <span className="programacao-calendario-status-fechado">
-                                Fechado
-                              </span>
-
-                            ) : programado ? (
-
-                              <>
-
-                                <strong className="programacao-calendario-horas-programadas">
-
-                                  {
-                                    formatarMinutos(
-                                      programado
-                                        .minutosSolicitados,
-                                    )
-                                  }
-
-                                </strong>
-
-
-                                {hoje &&
-                                programado.minutosDescontados >
-                                  0 ? (
-
-                                  <small>
-                                    {
-                                      formatarMinutos(
-                                        programado
-                                          .minutosEfetivos,
-                                      )
-                                    }{" "}
-                                    efet.
-                                  </small>
-
-                                ) : (
-
-                                  <small>
-                                    Programado
-                                  </small>
-
+                              <small>
+                                {feriado
+                                  ? "Feriado"
+                                  : "Bloqueado"}
+                              </small>
+                            </>
+                          ) : programado ? (
+                            <>
+                              <strong className="programacao-calendario-horas-programadas">
+                                {formatarMinutos(
+                                  programado.minutosSolicitados,
                                 )}
+                              </strong>
 
-                              </>
-
-                            ) : marcado ? (
-
-                              <>
-
-                                <strong className="programacao-calendario-definir">
-                                  Definir
-                                </strong>
-
+                              {hoje &&
+                              programado.minutosDescontados > 0 ? (
                                 <small>
-                                  horas
+                                  {formatarMinutos(
+                                    programado.minutosEfetivos,
+                                  )}{" "}
+                                  efetivas
                                 </small>
-
-                              </>
-
-                            ) : (
-
-                              <>
-
-                                <strong className="programacao-calendario-adicionar">
-                                  +
-                                </strong>
-
+                              ) : (
                                 <small>
-                                  Programar
+                                  Programado
                                 </small>
+                              )}
+                            </>
+                          ) : marcado ? (
+                            <>
+                              <strong className="programacao-calendario-definir">
+                                Selecionado
+                              </strong>
+                              <small>
+                                Defina a jornada
+                              </small>
+                            </>
+                          ) : (
+                            <>
+                              <span className="programacao-calendario-disponibilidade">
+                                {disponibilidade || "Disponível"}
+                              </span>
 
-                              </>
-
-                            )}
-
-                          </div>
-
-
-                          {hoje && (
-
-                            <span className="programacao-calendario-hoje-badge">
-                              Hoje
-                            </span>
-
+                              <strong className="programacao-calendario-adicionar">
+                                + Selecionar
+                              </strong>
+                            </>
                           )}
 
-                        </button>
-                      );
-                    },
-                  )}
+                        </div>
+
+                      </button>
+                    );
+                  })}
 
                 </div>
 
 
-                {datasMarcadas.length >
-                  0 && (
-
+                {datasMarcadas.length > 0 && (
                   <div className="programacao-calendario-lote">
 
                     <div className="programacao-calendario-lote-info">
+                      <span>
+                        Jornada dos dias selecionados
+                      </span>
 
                       <strong>
                         {datasMarcadas.length}
-
                         {" "}
-
-                        {datasMarcadas.length ===
-                        1
+                        {datasMarcadas.length === 1
                           ? "dia selecionado"
                           : "dias selecionados"}
                       </strong>
 
-
-                      <span>
-                        Escolha a jornada para aplicar aos dias marcados.
-                      </span>
-
+                      <small>
+                        Escolha uma jornada para aplicar em lote.
+                      </small>
                     </div>
 
 
                     <div className="programacao-calendario-lote-acoes">
 
                       <div className="programacao-calendario-lote-presets">
-
-                        {PERFIS.map(
-                          (
-                            perfil,
-                          ) => (
-
-                            <button
-                              key={
-                                perfil.codigo
-                              }
-                              type="button"
-                              onClick={
-                                () =>
-                                  aplicarPerfil(
-                                    perfil,
-                                  )
-                              }
-                              disabled={
-                                salvando
-                              }
-                            >
-                              {perfil.rotulo}
-                            </button>
-
-                          ),
-                        )}
-
+                        {PERFIS.map((perfil) => (
+                          <button
+                            key={perfil.codigo}
+                            type="button"
+                            onClick={() =>
+                              aplicarPerfil(perfil)
+                            }
+                            disabled={salvando}
+                          >
+                            {perfil.rotulo}
+                          </button>
+                        ))}
                       </div>
 
 
                       <div className="programacao-calendario-lote-outro">
-
                         <span>
                           Outro
                         </span>
-
 
                         <input
                           type="number"
                           min="0.25"
                           max="24"
                           step="0.25"
-                          value={
-                            horasOutroLote
+                          value={horasOutroLote}
+                          onChange={(event) =>
+                            setHorasOutroLote(
+                              event.target.value,
+                            )
                           }
-                          onChange={
-                            (
-                              event,
-                            ) =>
-                              setHorasOutroLote(
-                                event.target.value,
-                              )
-                          }
-                          disabled={
-                            salvando
-                          }
+                          disabled={salvando}
                         />
-
 
                         <span>
                           h
                         </span>
 
-
                         <button
                           type="button"
-                          onClick={
-                            aplicarOutro
-                          }
-                          disabled={
-                            salvando
-                          }
+                          onClick={aplicarOutro}
+                          disabled={salvando}
                         >
                           Aplicar
                         </button>
-
                       </div>
 
 
                       {algumMarcadoProgramado && (
-
                         <button
                           type="button"
                           className="programacao-calendario-lote-remover"
-                          onClick={
-                            removerMarcadosDaProgramacao
-                          }
-                          disabled={
-                            salvando
-                          }
+                          onClick={removerMarcadosDaProgramacao}
+                          disabled={salvando}
                         >
-
-                          <Trash2
-                            size={14}
-                          />
-
+                          <Trash2 size={14} />
                           Remover
-
                         </button>
-
                       )}
 
 
                       <button
                         type="button"
                         className="programacao-calendario-lote-limpar"
-                        onClick={
-                          () =>
-                            setDatasMarcadas(
-                              [],
-                            )
+                        onClick={() =>
+                          setDatasMarcadas([])
                         }
-                        disabled={
-                          salvando
-                        }
+                        disabled={salvando}
                       >
-                        Limpar seleção
+                        Limpar
                       </button>
 
                     </div>
 
                   </div>
-
                 )}
 
               </section>
 
 
-              <section className="programacao-calendario-resumo">
+              <section className="programacao-calendario-resumo-bloco">
 
-                <div>
+                <div className="programacao-calendario-resumo-cabecalho">
+                  <div>
+                    <span className="programacao-calendario-eyebrow">
+                      03 · Resultado da programação
+                    </span>
 
-                  <span>
-                    Dias programados
+                    <strong>
+                      Resumo operacional
+                    </strong>
+                  </div>
+
+                  <span className="programacao-calendario-resumo-situacao">
+                    {diasCalculados.length > 0
+                      ? `${diasCalculados.length} DIA${
+                          diasCalculados.length === 1 ? "" : "S"
+                        } PROGRAMADO${
+                          diasCalculados.length === 1 ? "" : "S"
+                        }`
+                      : "AGUARDANDO PROGRAMAÇÃO"}
                   </span>
-
-                  <strong>
-                    {
-                      diasCalculados.length
-                    }
-                  </strong>
-
                 </div>
 
 
-                <div>
+                <div className="programacao-calendario-resumo">
 
-                  <span>
-                    Horas efetivas
-                  </span>
+                  <div className="dias">
+                    <span>
+                      Dias programados
+                    </span>
+                    <strong>
+                      {diasCalculados.length}
+                    </strong>
+                    <small>
+                      dias de produção
+                    </small>
+                  </div>
 
-                  <strong>
-                    {
-                      formatarMinutos(
-                        calculo
-                          .minutosEfetivos,
-                      )
-                    }
-                  </strong>
+                  <div className="horas">
+                    <span>
+                      Horas efetivas
+                    </span>
+                    <strong>
+                      {formatarMinutos(
+                        calculo.minutosEfetivos,
+                      )}
+                    </strong>
+                    <small>
+                      tempo produtivo
+                    </small>
+                  </div>
 
-                </div>
+                  <div className="pecas">
+                    <span>
+                      Peças previstas
+                    </span>
+                    <strong>
+                      {formatarNumero(
+                        calculo.pecasPrevistas,
+                      )}
+                    </strong>
+                    <small>
+                      produção estimada
+                    </small>
+                  </div>
 
-
-                <div>
-
-                  <span>
-                    Peças previstas
-                  </span>
-
-                  <strong>
-                    {
-                      formatarNumero(
-                        calculo
-                          .pecasPrevistas,
-                      )
-                    }
-                  </strong>
-
-                </div>
-
-
-                <div>
-
-                  <span>
-                    PP previsto
-                  </span>
-
-                  <strong>
-                    {
-                      formatarKg(
-                        calculo
-                          .consumoPeriodoKg,
-                      )
-                    }
-                  </strong>
+                  <div className="pp">
+                    <span>
+                      PP previsto
+                    </span>
+                    <strong>
+                      {formatarKg(
+                        calculo.consumoPeriodoKg,
+                      )}
+                    </strong>
+                    <small>
+                      consumo projetado
+                    </small>
+                  </div>
 
                 </div>
 
               </section>
 
-
-              {produtoSelecionado && (
-
-                <div className="programacao-calendario-tecnico">
-
-                  <div className="programacao-calendario-tecnico-item">
-                    <span>
-                      Ciclo
-                    </span>
-
-                    <strong>
-                      {
-                        formatarNumero(
-                          produtoSelecionado
-                            .cicloSegundos,
-                        )
-                      }s
-                    </strong>
-                  </div>
-
-
-                  <div className="programacao-calendario-tecnico-item">
-                    <span>
-                      Cavidades
-                    </span>
-
-                    <strong>
-                      {
-                        formatarNumero(
-                          produtoSelecionado
-                            .cavidadeMolde,
-                        )
-                      }
-                    </strong>
-                  </div>
-
-
-                  <div className="programacao-calendario-tecnico-item">
-                    <span>
-                      Peças/h
-                    </span>
-
-                    <strong>
-                      {
-                        formatarNumero(
-                          calculo
-                            .pecasPorHora,
-                        )
-                      }
-                    </strong>
-                  </div>
-
-
-                  <div className="programacao-calendario-tecnico-item">
-                    <span>
-                      PP/h
-                    </span>
-
-                    <strong>
-                      {
-                        formatarKg(
-                          calculo
-                            .consumoPorHoraKg,
-                        )
-                      }
-                    </strong>
-                  </div>
-
-
-                  <div className="programacao-calendario-tecnico-item">
-                    <span>
-                      Receita
-                    </span>
-
-                    <strong>
-
-                      {produtoSelecionado
-                        .receitaConfigurada
-                        ? "100%"
-                        : "Pendente"}
-
-                    </strong>
-                  </div>
-
-                </div>
-
-              )}
-
             </>
-
           )}
 
 
           {!itemLegado && (
-
-            <label className="programacao-modal-status">
-
+            <label className={[
+              "programacao-modal-status",
+              ativo ? "ativo" : "inativo",
+            ].join(" ")}
+            >
               <input
                 type="checkbox"
-                checked={
-                  ativo
+                checked={ativo}
+                onChange={(event) =>
+                  setAtivo(event.target.checked)
                 }
-                onChange={
-                  (
-                    event,
-                  ) =>
-                    setAtivo(
-                      event.target.checked,
-                    )
-                }
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               />
 
-
               <div>
-
                 <strong>
                   Programação ativa
                 </strong>
 
-
                 <span>
-                  Programações ativas entram na projeção de consumo de PP.
+                  Quando ativa, esta programação entra automaticamente na projeção de consumo de PP.
                 </span>
-
               </div>
 
+              <span className="programacao-modal-status-badge">
+                {ativo ? "ATIVA" : "INATIVA"}
+              </span>
             </label>
-
           )}
 
 
           {erro && (
-
             <div className="programacao-modal-erro">
               {erro}
             </div>
-
           )}
 
 
           <div className="programacao-modal-acoes">
-
             <button
               type="button"
               className="programacao-modal-cancelar"
-              onClick={
-                onCancelar
-              }
-              disabled={
-                salvando
-              }
+              onClick={onCancelar}
+              disabled={salvando}
             >
               {itemLegado
                 ? "Fechar"
                 : "Cancelar"}
             </button>
 
-
             {!itemLegado && (
-
               <button
                 type="submit"
                 className="programacao-modal-salvar"
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               >
-
-                <Save
-                  size={17}
-                />
-
+                <Save size={17} />
 
                 <span>
-
                   {salvando
                     ? "Salvando..."
                     : "Salvar programação"}
-
                 </span>
-
               </button>
-
             )}
-
           </div>
 
         </form>
 
       </div>
-
     </div>
   );
 }
