@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuthContext } from "../lib/auth-context";
+import { normalizarCamposMaiusculos } from "../lib/uppercase-fields";
 import Navbar from "../components/layout/Navbar";
 import "../legacy-base.css";
 import "../app-layout.css";
@@ -118,7 +119,7 @@ function LayoutAplicacao() {
   const { user, isAdmin } = useAuthContext();
 
   return (
-    <div className="app-layout">
+    <div className="app-layout" onChangeCapture={normalizarCamposMaiusculos}>
       <Navbar user={user} isAdmin={isAdmin} />
       <main className="main-content">
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
