@@ -152,103 +152,6 @@ function validarDataISO(
 }
 
 
-function normalizarHora(
-  valor,
-) {
-  const texto =
-    String(
-      valor ?? "",
-    ).trim();
-
-
-  if (!texto) {
-    return null;
-  }
-
-
-  const partes =
-    texto.match(
-      /^(\d{1,2}):(\d{2})(?::(\d{2}))?/,
-    );
-
-
-  if (!partes) {
-    return null;
-  }
-
-
-  const hora =
-    Number(
-      partes[1],
-    );
-
-  const minuto =
-    Number(
-      partes[2],
-    );
-
-  const segundo =
-    Number(
-      partes[3] ?? 0,
-    );
-
-
-  if (
-    !Number.isInteger(hora) ||
-    !Number.isInteger(minuto) ||
-    !Number.isInteger(segundo) ||
-    hora < 0 ||
-    hora > 23 ||
-    minuto < 0 ||
-    minuto > 59 ||
-    segundo < 0 ||
-    segundo > 59
-  ) {
-    return null;
-  }
-
-
-  return {
-    hora,
-    minuto,
-    segundo,
-  };
-}
-
-
-function dataHoraMs(
-  data,
-  hora,
-) {
-  const dataNormalizada =
-    validarDataISO(
-      data,
-    );
-
-  const horaNormalizada =
-    normalizarHora(
-      hora,
-    );
-
-
-  if (
-    !dataNormalizada ||
-    !horaNormalizada
-  ) {
-    return null;
-  }
-
-
-  return Date.UTC(
-    dataNormalizada.ano,
-    dataNormalizada.mes - 1,
-    dataNormalizada.dia,
-    horaNormalizada.hora,
-    horaNormalizada.minuto,
-    horaNormalizada.segundo,
-  );
-}
-
 
 function formatarDataMs(
   valorMs,
@@ -494,6 +397,9 @@ function adicionarMovimento({
 
 /* =========================================================
    CONSUMO DIÁRIO EXATO
+
+   A programação nova já chega uma linha por dia, com o
+   consumo calculado pela fonte canônica do banco.
 ========================================================= */
 
 function obterPercentuaisReceita(
@@ -540,223 +446,26 @@ function obterPercentuaisReceita(
 }
 
 
-function calcularConsumoDiaProgramacaoComHorario({
-  programacao,
-  data,
-}) {
-  const inicioProgramacaoMs =
-    dataHoraMs(
-      programacao?.dataInicioOriginal,
-      programacao?.horaInicioOriginal,
-    );
-
-  const fimProgramacaoMs =
-    dataHoraMs(
-      programacao?.dataFimOriginal,
-      programacao?.horaFimOriginal,
-    );
-
-  const dia =
-    validarDataISO(
-      data,
-    );
-
-  const cicloSegundos =
-    numeroOpcional(
-      programacao?.cicloSegundos,
-    );
-
-  const cavidades =
-    numeroOpcional(
-      programacao?.cavidadeMolde,
-    );
-
-  const pesoKg =
-    numeroOpcional(
-      programacao?.pesoKg,
-    );
-
-
-  if (
-    inicioProgramacaoMs === null ||
-    fimProgramacaoMs === null ||
-    !dia ||
-    cicloSegundos === null ||
-    cicloSegundos <= 0 ||
-    cavidades === null ||
-    cavidades <= 0 ||
-    pesoKg === null ||
-    pesoKg <= 0
-  ) {
-    return 0;
-  }
-
-
-  const inicioDiaMs =
-    dia.ms;
-
-  const fimDiaMs =
-    dia.ms +
-    MS_DIA;
-
-
-  const inicioConsideradoMs =
-    Math.max(
-      inicioDiaMs,
-      inicioProgramacaoMs,
-    );
-
-  const fimConsideradoMs =
-    Math.min(
-      fimDiaMs,
-      fimProgramacaoMs,
-    );
-
-
-  if (
-    fimConsideradoMs <=
-    inicioConsideradoMs
-  ) {
-    return 0;
-  }
-
-
-  const segundosAntes =
-    Math.max(
-      0,
-      Math.floor(
-        (
-          inicioConsideradoMs -
-          inicioProgramacaoMs
-        ) /
-          1000,
-      ),
-    );
-
-  const segundosAteFim =
-    Math.max(
-      0,
-      Math.floor(
-        (
-          fimConsideradoMs -
-          inicioProgramacaoMs
-        ) /
-          1000,
-      ),
-    );
-
-
-  const ciclosAntes =
-    Math.floor(
-      segundosAntes /
-      cicloSegundos,
-    );
-
-  const ciclosAteFim =
-    Math.floor(
-      segundosAteFim /
-      cicloSegundos,
-    );
-
-
-  const ciclosDia =
-    Math.max(
-      0,
-      ciclosAteFim -
-        ciclosAntes,
-    );
-
-
-  const pecasDia =
-    ciclosDia *
-    cavidades;
-
-
-  return arredondarKg(
-    pecasDia *
-      pesoKg,
-  );
-}
-
-
-function calcularConsumoDiaProgramacaoLegada({
-  programacao,
-  data,
-}) {
-  const dataInicio =
-    programacao?.dataInicioConsiderada ??
-    programacao?.dataInicioOriginal;
-
-  const dataFim =
-    programacao?.dataFimConsiderada ??
-    programacao?.dataFimOriginal;
-
-
-  if (
-    !dataInicio ||
-    !dataFim ||
-    data < dataInicio ||
-    data > dataFim
-  ) {
-    return 0;
-  }
-
-
-  const quantidadeDias =
-    numero(
-      programacao?.quantidadeDias,
-    );
-
-  const pecasPrevistas =
-    numero(
-      programacao?.pecasPrevistas,
-    );
-
-  const pesoKg =
-    numero(
-      programacao?.pesoKg,
-    );
-
-
-  if (
-    quantidadeDias <= 0 ||
-    pecasPrevistas <= 0 ||
-    pesoKg <= 0
-  ) {
-    return 0;
-  }
-
-
-  const pecasDia =
-    pecasPrevistas /
-    quantidadeDias;
-
-
-  return arredondarKg(
-    pecasDia *
-      pesoKg,
-  );
-}
-
-
 function calcularConsumoDiaProgramacao({
   programacao,
   data,
 }) {
+  const dataProgramada =
+    programacao?.dataInicioConsiderada ??
+    programacao?.dataInicioOriginal;
+
+
   if (
-    programacao?.calculoLegado
+    !dataProgramada ||
+    data !== dataProgramada
   ) {
-    return calcularConsumoDiaProgramacaoLegada({
-      programacao,
-      data,
-    });
+    return 0;
   }
 
 
-  return calcularConsumoDiaProgramacaoComHorario({
-    programacao,
-    data,
-  });
+  return arredondarKg(
+    programacao?.consumoTotalKg,
+  );
 }
 
 
