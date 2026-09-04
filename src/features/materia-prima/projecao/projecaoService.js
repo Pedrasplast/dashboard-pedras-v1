@@ -3,8 +3,8 @@ import {
 } from "../compras-futuras/comprasFuturasService";
 
 import {
-  buscarProgramacao,
-} from "../programacao/programacaoService";
+  buscarProgramacaoParaProjecao,
+} from "../programacao/programacaoDiariaService";
 
 import {
   buscarSaldosIniciais,
@@ -502,6 +502,72 @@ function obterItensReceita(
         item.percentual >
           0,
     );
+}
+
+
+function distribuirConsumoReceita(
+  consumoTotalKg,
+  itensReceita,
+) {
+  const itens =
+    Array.isArray(
+      itensReceita,
+    )
+      ? itensReceita
+      : [];
+
+
+  if (
+    itens.length === 0
+  ) {
+    return [];
+  }
+
+
+  const total =
+    arredondarKg(
+      consumoTotalKg,
+    );
+
+
+  let acumulado = 0;
+
+
+  return itens.map(
+    (
+      item,
+      indice,
+    ) => {
+      const ultimo =
+        indice ===
+        itens.length - 1;
+
+
+      const consumoKg =
+        ultimo
+          ? arredondarKg(
+              total - acumulado,
+            )
+          : arredondarKg(
+              total *
+                item.percentual /
+                100,
+            );
+
+
+      acumulado =
+        arredondarKg(
+          acumulado +
+            consumoKg,
+        );
+
+
+      return {
+        ...item,
+        consumoKg,
+      };
+    },
+  );
 }
 
 
@@ -1022,7 +1088,10 @@ export async function buscarProjecao({
 
       buscarComprasFuturas(),
 
-      buscarProgramacao(),
+      buscarProgramacaoParaProjecao({
+        dataInicio: null,
+        dataFim,
+      }),
     ]);
 
 
@@ -1551,25 +1620,19 @@ export async function buscarProjecao({
              DISTRIBUIÇÃO PELA RECEITA
           =============================================== */
 
-          itensReceita.forEach(
+          distribuirConsumoReceita(
+            consumoDia.consumoKg,
+            itensReceita,
+          ).forEach(
             (
               item,
             ) => {
-              const consumoFornecedorKg =
-                arredondarKg(
-                  consumoDia
-                    .consumoKg *
-                    item.percentual /
-                    100,
-                );
-
-
               adicionarMovimento(
                 movimentosMapa,
                 data,
                 item.fornecedorId,
                 "consumoKg",
-                consumoFornecedorKg,
+                item.consumoKg,
               );
             },
           );

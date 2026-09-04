@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import MateriaPrimaHeader from "./components/MateriaPrimaHeader";
+
 import MateriaPrimaNavegacao, {
   MATERIA_PRIMA_SECOES,
 } from "./components/MateriaPrimaNavegacao";

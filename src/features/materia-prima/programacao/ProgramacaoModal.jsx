@@ -1,248 +1,34 @@
 import {
+  AlertTriangle,
+  CalendarDays,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
+
+import {
   useEffect,
   useMemo,
   useState,
 } from "react";
 
 import {
-  CalendarDays,
-  Save,
-  X,
-} from "lucide-react";
+  listarCalendarioIndustrial,
+} from "@/features/calendario-industrial/calendarioIndustrialService";
 
 import {
-  calcularConsumoProgramacao,
-  verificarConflitoInjetora,
-} from "./programacaoService";
+  listarPeriodosProgramacao,
+} from "./programacaoCalendarioService";
 
 import "./ProgramacaoModal.css";
+import "./ProgramacaoCalendario.css";
 
 
 /* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function dataHojeLocal() {
-  const agora =
-    new Date();
-
-  const ano =
-    agora.getFullYear();
-
-  const mes =
-    String(
-      agora.getMonth() +
-        1,
-    ).padStart(
-      2,
-      "0",
-    );
-
-  const dia =
-    String(
-      agora.getDate(),
-    ).padStart(
-      2,
-      "0",
-    );
-
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-
-function horaAtualLocal() {
-  const agora =
-    new Date();
-
-  const hora =
-    String(
-      agora.getHours(),
-    ).padStart(
-      2,
-      "0",
-    );
-
-  const minuto =
-    String(
-      agora.getMinutes(),
-    ).padStart(
-      2,
-      "0",
-    );
-
-
-  return `${hora}:${minuto}`;
-}
-
-
-function converterDataHoraParaNumero(
-  data,
-  hora,
-) {
-  if (
-    !data ||
-    !hora
-  ) {
-    return null;
-  }
-
-
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    String(
-      data,
-    )
-      .split(
-        "-",
-      )
-      .map(
-        Number,
-      );
-
-  const [
-    horas,
-    minutos,
-  ] =
-    String(
-      hora,
-    )
-      .split(
-        ":",
-      )
-      .map(
-        Number,
-      );
-
-
-  if (
-    !Number.isInteger(
-      ano,
-    ) ||
-    !Number.isInteger(
-      mes,
-    ) ||
-    !Number.isInteger(
-      dia,
-    ) ||
-    !Number.isInteger(
-      horas,
-    ) ||
-    !Number.isInteger(
-      minutos,
-    )
-  ) {
-    return null;
-  }
-
-
-  return Date.UTC(
-    ano,
-    mes - 1,
-    dia,
-    horas,
-    minutos,
-  );
-}
-
-
-function formatarKg(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
-    return "0,000 kg";
-  }
-
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        3,
-
-      maximumFractionDigits:
-        3,
-    },
-  )} kg`;
-}
-
-
-function formatarNumero(
-  valor,
-  casas = 0,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
-    return "0";
-  }
-
-
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
-      maximumFractionDigits:
-        casas,
-    },
-  );
-}
-
-
-function formatarHoras(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
-    return "0 h";
-  }
-
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        0,
-      maximumFractionDigits:
-        2,
-    },
-  )} h`;
-}
-
-
-/* =========================================================
-   INJETORAS
+   CONSTANTES
 ========================================================= */
 
 const INJETORAS =
@@ -263,8 +49,792 @@ const INJETORAS =
   );
 
 
+const NOMES_MESES = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+
+const DIAS_SEMANA = [
+  "Seg",
+  "Ter",
+  "Qua",
+  "Qui",
+  "Sex",
+  "Sáb",
+  "Dom",
+];
+
+
+const PERFIS = [
+  {
+    codigo: "5H",
+    minutos: 300,
+    rotulo: "5h",
+  },
+
+  {
+    codigo: "17H",
+    minutos: 1020,
+    rotulo: "17h",
+  },
+
+  {
+    codigo: "22H",
+    minutos: 1320,
+    rotulo: "22h",
+  },
+
+  {
+    codigo: "24H",
+    minutos: 1440,
+    rotulo: "24h",
+  },
+];
+
+
 /* =========================================================
-   MODAL
+   UTILITÁRIOS
+========================================================= */
+
+function formatarDataISO(
+  data,
+) {
+  const ano =
+    data.getFullYear();
+
+  const mes =
+    String(
+      data.getMonth() + 1,
+    ).padStart(
+      2,
+      "0",
+    );
+
+  const dia =
+    String(
+      data.getDate(),
+    ).padStart(
+      2,
+      "0",
+    );
+
+
+  return `${ano}-${mes}-${dia}`;
+}
+
+
+function dataHojeLocal() {
+  return formatarDataISO(
+    new Date(),
+  );
+}
+
+
+function criarDataLocal(
+  valor,
+) {
+  const [
+    ano,
+    mes,
+    dia,
+  ] =
+    String(
+      valor ?? "",
+    )
+      .split("-")
+      .map(Number);
+
+
+  if (
+    !ano ||
+    !mes ||
+    !dia
+  ) {
+    return null;
+  }
+
+
+  return new Date(
+    ano,
+    mes - 1,
+    dia,
+    12,
+    0,
+    0,
+  );
+}
+
+
+function formatarDataVisual(
+  valor,
+) {
+  const data =
+    criarDataLocal(
+      valor,
+    );
+
+
+  if (!data) {
+    return valor || "-";
+  }
+
+
+  return data.toLocaleDateString(
+    "pt-BR",
+  );
+}
+
+
+function formatarNumero(
+  valor,
+  casas = 0,
+) {
+  const numero =
+    Number(
+      valor ?? 0,
+    );
+
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0";
+  }
+
+
+  return numero.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits:
+        casas,
+
+      maximumFractionDigits:
+        casas,
+    },
+  );
+}
+
+
+function formatarKg(
+  valor,
+) {
+  return `${formatarNumero(
+    valor,
+    3,
+  )} kg`;
+}
+
+
+function formatarMinutos(
+  minutos,
+) {
+  const total =
+    Math.max(
+      0,
+      Math.round(
+        Number(
+          minutos ?? 0,
+        ),
+      ),
+    );
+
+
+  const horas =
+    Math.floor(
+      total / 60,
+    );
+
+
+  const resto =
+    total % 60;
+
+
+  if (
+    resto === 0
+  ) {
+    return `${horas}h`;
+  }
+
+
+  return `${horas}h${String(
+    resto,
+  ).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+
+function obterInicioMes(
+  referencia,
+) {
+  return new Date(
+    referencia.getFullYear(),
+    referencia.getMonth(),
+    1,
+    12,
+    0,
+    0,
+  );
+}
+
+
+function adicionarMeses(
+  referencia,
+  quantidade,
+) {
+  return new Date(
+    referencia.getFullYear(),
+    referencia.getMonth() +
+      quantidade,
+    1,
+    12,
+    0,
+    0,
+  );
+}
+
+
+function criarDiasGrade(
+  referencia,
+) {
+  const primeiro =
+    obterInicioMes(
+      referencia,
+    );
+
+
+  const ultimo =
+    new Date(
+      referencia.getFullYear(),
+      referencia.getMonth() + 1,
+      0,
+      12,
+      0,
+      0,
+    );
+
+
+  const deslocamentoInicio =
+    (
+      primeiro.getDay() +
+      6
+    ) % 7;
+
+
+  const inicio =
+    new Date(
+      primeiro,
+    );
+
+
+  inicio.setDate(
+    primeiro.getDate() -
+      deslocamentoInicio,
+  );
+
+
+  const deslocamentoFim =
+    (
+      7 -
+      (
+        (
+          ultimo.getDay() +
+          6
+        ) % 7
+      ) -
+      1
+    ) % 7;
+
+
+  const fim =
+    new Date(
+      ultimo,
+    );
+
+
+  fim.setDate(
+    ultimo.getDate() +
+      deslocamentoFim,
+  );
+
+
+  const dias = [];
+
+
+  const atual =
+    new Date(
+      inicio,
+    );
+
+
+  while (
+    atual <= fim
+  ) {
+    dias.push(
+      new Date(
+        atual,
+      ),
+    );
+
+
+    atual.setDate(
+      atual.getDate() + 1,
+    );
+  }
+
+
+  return dias;
+}
+
+
+function minutosHorario(
+  hora,
+) {
+  const [
+    horas,
+    minutos,
+  ] =
+    String(
+      hora ?? "",
+    )
+      .slice(
+        0,
+        5,
+      )
+      .split(":")
+      .map(Number);
+
+
+  if (
+    !Number.isFinite(
+      horas,
+    ) ||
+    !Number.isFinite(
+      minutos,
+    )
+  ) {
+    return null;
+  }
+
+
+  return (
+    horas * 60 +
+    minutos
+  );
+}
+
+
+function dataEhPassada(
+  dataISO,
+) {
+  if (!dataISO) {
+    return false;
+  }
+
+
+  return (
+    dataISO <
+    dataHojeLocal()
+  );
+}
+
+
+function perfilBasePorLimite(
+  limite,
+) {
+  if (
+    limite >= 1440
+  ) {
+    return "24H";
+  }
+
+
+  if (
+    limite >= 1320
+  ) {
+    return "22H";
+  }
+
+
+  if (
+    limite >= 1020
+  ) {
+    return "17H";
+  }
+
+
+  if (
+    limite >= 300
+  ) {
+    return "5H";
+  }
+
+
+  return null;
+}
+
+
+/* =========================================================
+   TEMPO PASSADO HOJE
+========================================================= */
+
+function calcularMinutosPassadosEmPeriodos(
+  periodos,
+  agoraMinutos,
+) {
+  let total = 0;
+
+
+  for (
+    const periodo
+    of periodos
+  ) {
+    const inicio =
+      minutosHorario(
+        periodo.horaInicio,
+      );
+
+
+    const fim =
+      minutosHorario(
+        periodo.horaFim,
+      );
+
+
+    if (
+      inicio === null ||
+      fim === null
+    ) {
+      continue;
+    }
+
+
+    const cruzaMeiaNoite =
+      fim <= inicio;
+
+
+    const duracaoBruta =
+      cruzaMeiaNoite
+        ? (
+            1440 -
+            inicio +
+            fim
+          )
+        : (
+            fim -
+            inicio
+          );
+
+
+    let decorrido = 0;
+
+
+    if (
+      !cruzaMeiaNoite
+    ) {
+      if (
+        agoraMinutos <= inicio
+      ) {
+        decorrido = 0;
+      } else if (
+        agoraMinutos >= fim
+      ) {
+        decorrido =
+          duracaoBruta;
+      } else {
+        decorrido =
+          agoraMinutos -
+          inicio;
+      }
+    } else if (
+      agoraMinutos < fim
+    ) {
+      decorrido =
+        1440 -
+        inicio +
+        agoraMinutos;
+    } else if (
+      agoraMinutos >= inicio
+    ) {
+      decorrido =
+        agoraMinutos -
+        inicio;
+    } else {
+      decorrido = 0;
+    }
+
+
+    const desconto =
+      Number(
+        periodo
+          .descontoIntervaloMinutos ??
+          0,
+      );
+
+
+    if (
+      decorrido >=
+        duracaoBruta &&
+      desconto > 0
+    ) {
+      decorrido -=
+        desconto;
+    }
+
+
+    total +=
+      Math.max(
+        0,
+        Math.min(
+          Number(
+            periodo
+              .duracaoMinutos ??
+              decorrido,
+          ),
+          decorrido,
+        ),
+      );
+  }
+
+
+  return Math.max(
+    0,
+    Math.round(
+      total,
+    ),
+  );
+}
+
+
+function calcularMinutosDescontadosHoje({
+  data,
+  perfilHoras,
+  minutosSolicitados,
+  limiteMinutos,
+  periodos,
+}) {
+  if (
+    data !==
+    dataHojeLocal()
+  ) {
+    return 0;
+  }
+
+
+  if (
+    !perfilHoras ||
+    minutosSolicitados <= 0
+  ) {
+    return 0;
+  }
+
+
+  const agora =
+    new Date();
+
+
+  const agoraMinutos =
+    agora.getHours() * 60 +
+    agora.getMinutes();
+
+
+  if (
+    perfilHoras ===
+    "24H"
+  ) {
+    return Math.min(
+      Math.max(
+        0,
+        minutosSolicitados - 1,
+      ),
+      agoraMinutos,
+    );
+  }
+
+
+  const perfilCalculo =
+    perfilHoras ===
+    "OUTRO"
+      ? perfilBasePorLimite(
+          limiteMinutos,
+        )
+      : perfilHoras;
+
+
+  if (
+    !perfilCalculo
+  ) {
+    return 0;
+  }
+
+
+  if (
+    perfilCalculo ===
+    "24H"
+  ) {
+    return Math.min(
+      Math.max(
+        0,
+        minutosSolicitados - 1,
+      ),
+      agoraMinutos,
+    );
+  }
+
+
+  const periodosPerfil =
+    periodos.filter(
+      (
+        periodo,
+      ) =>
+        periodo.perfilCodigo ===
+        perfilCalculo,
+    );
+
+
+  const passados =
+    calcularMinutosPassadosEmPeriodos(
+      periodosPerfil,
+      agoraMinutos,
+    );
+
+
+  return Math.min(
+    Math.max(
+      0,
+      minutosSolicitados - 1,
+    ),
+    passados,
+  );
+}
+
+
+/* =========================================================
+   CONFLITOS
+========================================================= */
+
+function existeConflito({
+  programacao,
+  injetora,
+  dias,
+  ignorarId,
+}) {
+  if (
+    !injetora ||
+    !Array.isArray(
+      dias,
+    ) ||
+    dias.length === 0
+  ) {
+    return null;
+  }
+
+
+  const datas =
+    new Set(
+      dias
+        .filter(
+          (
+            dia,
+          ) =>
+            !dataEhPassada(
+              dia.data,
+            ),
+        )
+        .map(
+          (
+            dia,
+          ) =>
+            dia.data,
+        ),
+    );
+
+
+  return (
+    Array.isArray(
+      programacao,
+    )
+      ? programacao
+      : []
+  ).find(
+    (
+      item,
+    ) => {
+      if (
+        item?.ativo === false ||
+        String(
+          item?.injetora ?? "",
+        ) !==
+          String(
+            injetora,
+          ) ||
+        String(
+          item?.id ?? "",
+        ) ===
+          String(
+            ignorarId ?? "",
+          )
+      ) {
+        return false;
+      }
+
+
+      if (
+        item?.tipoProgramacao ===
+        "CALENDARIO"
+      ) {
+        return (
+          item?.diasProgramacao ??
+          []
+        ).some(
+          (
+            dia,
+          ) =>
+            datas.has(
+              dia.data,
+            ),
+        );
+      }
+
+
+      return [
+        ...datas,
+      ].some(
+        (
+          data,
+        ) =>
+          data >=
+            String(
+              item?.dataInicio ??
+                "",
+            ) &&
+          data <=
+            String(
+              item?.dataFim ??
+                "",
+            ),
+      );
+    },
+  ) ?? null;
+}
+
+
+/* =========================================================
+   COMPONENTE
 ========================================================= */
 
 export default function ProgramacaoModal({
@@ -276,32 +846,6 @@ export default function ProgramacaoModal({
   onCancelar,
   onSalvar,
 }) {
-  const [
-    dataInicio,
-    setDataInicio,
-  ] = useState(
-    dataHojeLocal(),
-  );
-
-  const [
-    horaInicio,
-    setHoraInicio,
-  ] = useState(
-    horaAtualLocal(),
-  );
-
-  const [
-    dataFim,
-    setDataFim,
-  ] = useState(
-    dataHojeLocal(),
-  );
-
-  const [
-    horaFim,
-    setHoraFim,
-  ] = useState("");
-
   const [
     codigoProduto,
     setCodigoProduto,
@@ -318,13 +862,65 @@ export default function ProgramacaoModal({
   ] = useState(true);
 
   const [
+    diasSelecionados,
+    setDiasSelecionados,
+  ] = useState([]);
+
+  const [
+    datasMarcadas,
+    setDatasMarcadas,
+  ] = useState([]);
+
+  const [
+    horasOutroLote,
+    setHorasOutroLote,
+  ] = useState("8");
+
+  const [
+    mesReferencia,
+    setMesReferencia,
+  ] = useState(
+    () =>
+      obterInicioMes(
+        new Date(),
+      ),
+  );
+
+  const [
+    calendario,
+    setCalendario,
+  ] = useState([]);
+
+  const [
+    periodos,
+    setPeriodos,
+  ] = useState([]);
+
+  const [
+    carregandoCalendario,
+    setCarregandoCalendario,
+  ] = useState(false);
+
+  const [
     erro,
     setErro,
   ] = useState("");
 
 
+  const hojeISO =
+    dataHojeLocal();
+
+
+  const itemLegado =
+    Boolean(
+      item,
+    ) &&
+    item?.tipoProgramacao !==
+      "CALENDARIO";
+
+
   /* =======================================================
-     CARREGAR FORMULÁRIO
+     INICIALIZAÇÃO
   ======================================================= */
 
   useEffect(
@@ -334,97 +930,636 @@ export default function ProgramacaoModal({
       }
 
 
-      if (item) {
-        setDataInicio(
-          item.dataInicio ||
-            dataHojeLocal(),
-        );
-
-        setHoraInicio(
-          item.horaInicio ||
+      setCodigoProduto(
+        String(
+          item?.codigoProduto ??
             "",
-        );
+        ),
+      );
 
-        setDataFim(
-          item.dataFim ||
-            item.dataInicio ||
-            dataHojeLocal(),
-        );
 
-        setHoraFim(
-          item.horaFim ||
+      setInjetora(
+        String(
+          item?.injetora ??
             "",
-        );
+        ),
+      );
 
-        setCodigoProduto(
-          String(
-            item
-              .codigoProduto ??
-              "",
-          ),
-        );
 
-        setInjetora(
-          String(
-            item
-              .injetora ??
-              "",
-          ),
-        );
-
-        setAtivo(
-          item
-            .ativo !==
+      setAtivo(
+        item?.ativo !==
           false,
+      );
+
+
+      setErro("");
+      setDatasMarcadas([]);
+      setHorasOutroLote("8");
+
+
+      if (
+        item?.tipoProgramacao ===
+        "CALENDARIO"
+      ) {
+        const dias =
+          (
+            item?.diasProgramacao ??
+            []
+          ).map(
+            (
+              dia,
+            ) => ({
+              data:
+                dia.data,
+
+              perfilHoras:
+                dia.perfilHoras,
+
+              minutosSolicitados:
+                Number(
+                  dia
+                    .minutosSolicitados ??
+                    0,
+                ),
+
+              minutosDescontados:
+                Number(
+                  dia
+                    .minutosDescontados ??
+                    0,
+                ),
+
+              limiteMinutos:
+                1440,
+
+              limitePerfilCodigo:
+                "24H",
+            }),
+          );
+
+
+        setDiasSelecionados(
+          dias,
+        );
+
+
+        const primeiroEditavel =
+          dias.find(
+            (
+              dia,
+            ) =>
+              dia.data >=
+              hojeISO,
+          );
+
+
+        const referencia =
+          criarDataLocal(
+            primeiroEditavel?.data,
+          );
+
+
+        setMesReferencia(
+          obterInicioMes(
+            referencia ||
+              new Date(),
+          ),
         );
       } else {
-        const hoje =
-          dataHojeLocal();
-
-
-        setDataInicio(
-          hoje,
-        );
-
-        setHoraInicio(
-          horaAtualLocal(),
-        );
-
-        setDataFim(
-          hoje,
-        );
-
-        setHoraFim(
-          "",
-        );
-
-        setCodigoProduto(
-          "",
-        );
-
-        setInjetora(
-          "",
-        );
-
-        setAtivo(
-          true,
+        setDiasSelecionados([]);
+        setMesReferencia(
+          obterInicioMes(
+            new Date(),
+          ),
         );
       }
-
-
-      setErro(
-        "",
-      );
     },
     [
       aberto,
       item,
+      hojeISO,
     ],
   );
 
 
   /* =======================================================
-     PRODUTO SELECIONADO
+     CALENDÁRIO
+  ======================================================= */
+
+  const diasGrade =
+    useMemo(
+      () =>
+        criarDiasGrade(
+          mesReferencia,
+        ),
+      [
+        mesReferencia,
+      ],
+    );
+
+
+  const periodoGrade =
+    useMemo(
+      () => ({
+        inicio:
+          diasGrade.length > 0
+            ? formatarDataISO(
+                diasGrade[0],
+              )
+            : "",
+
+        fim:
+          diasGrade.length > 0
+            ? formatarDataISO(
+                diasGrade[
+                  diasGrade.length - 1
+                ],
+              )
+            : "",
+      }),
+      [
+        diasGrade,
+      ],
+    );
+
+
+  useEffect(
+    () => {
+      if (
+        !aberto ||
+        !periodoGrade.inicio ||
+        !periodoGrade.fim
+      ) {
+        return;
+      }
+
+
+      let cancelado =
+        false;
+
+
+      async function carregar() {
+        setCarregandoCalendario(
+          true,
+        );
+
+
+        try {
+          const [
+            dias,
+            periodosConfigurados,
+          ] =
+            await Promise.all([
+              listarCalendarioIndustrial({
+                dataInicio:
+                  periodoGrade.inicio,
+
+                dataFim:
+                  periodoGrade.fim,
+              }),
+
+              listarPeriodosProgramacao(),
+            ]);
+
+
+          if (
+            cancelado
+          ) {
+            return;
+          }
+
+
+          setCalendario(
+            dias,
+          );
+
+
+          setPeriodos(
+            periodosConfigurados,
+          );
+        } catch (error) {
+          if (
+            !cancelado
+          ) {
+            setErro(
+              error?.message ||
+                "Não foi possível carregar o calendário de programação.",
+            );
+          }
+        } finally {
+          if (
+            !cancelado
+          ) {
+            setCarregandoCalendario(
+              false,
+            );
+          }
+        }
+      }
+
+
+      void carregar();
+
+
+      return () => {
+        cancelado = true;
+      };
+    },
+    [
+      aberto,
+      periodoGrade.inicio,
+      periodoGrade.fim,
+    ],
+  );
+
+
+  const calendarioPorData =
+    useMemo(
+      () =>
+        new Map(
+          calendario.map(
+            (
+              dia,
+            ) => [
+              dia.data,
+              dia,
+            ],
+          ),
+        ),
+      [
+        calendario,
+      ],
+    );
+
+
+  const programacaoPorData =
+    useMemo(
+      () =>
+        new Map(
+          diasSelecionados.map(
+            (
+              dia,
+            ) => [
+              dia.data,
+              dia,
+            ],
+          ),
+        ),
+      [
+        diasSelecionados,
+      ],
+    );
+
+
+  const marcadasSet =
+    useMemo(
+      () =>
+        new Set(
+          datasMarcadas,
+        ),
+      [
+        datasMarcadas,
+      ],
+    );
+
+
+  /* =======================================================
+     MARCAÇÃO DE DIAS
+  ======================================================= */
+
+  function alternarMarcacaoDia(
+    dataISO,
+  ) {
+    if (
+      dataEhPassada(
+        dataISO,
+      )
+    ) {
+      return;
+    }
+
+
+    const configuracao =
+      calendarioPorData.get(
+        dataISO,
+      );
+
+
+    const limite =
+      Number(
+        configuracao
+          ?.minutosProgramados ??
+          0,
+      );
+
+
+    if (
+      limite <= 0
+    ) {
+      return;
+    }
+
+
+    setErro("");
+
+
+    setDatasMarcadas(
+      (
+        atuais,
+      ) => {
+        if (
+          atuais.includes(
+            dataISO,
+          )
+        ) {
+          return atuais.filter(
+            (
+              data,
+            ) =>
+              data !==
+              dataISO,
+          );
+        }
+
+
+        return [
+          ...atuais,
+          dataISO,
+        ].sort();
+      },
+    );
+  }
+
+
+  /* =======================================================
+     APLICAR HORAS
+  ======================================================= */
+
+  function aplicarHorasMarcadas({
+    perfilHoras,
+    minutosSolicitados,
+  }) {
+    if (
+      datasMarcadas.length ===
+      0
+    ) {
+      return;
+    }
+
+
+    if (
+      !Number.isFinite(
+        minutosSolicitados,
+      ) ||
+      minutosSolicitados <= 0 ||
+      minutosSolicitados > 1440
+    ) {
+      setErro(
+        "Informe uma quantidade de horas válida entre 0 e 24.",
+      );
+
+      return;
+    }
+
+
+    for (
+      const data
+      of datasMarcadas
+    ) {
+      const configuracao =
+        calendarioPorData.get(
+          data,
+        );
+
+
+      const limite =
+        Number(
+          configuracao
+            ?.minutosProgramados ??
+            1440,
+        );
+
+
+      if (
+        limite <= 0
+      ) {
+        setErro(
+          `${formatarDataVisual(
+            data,
+          )} está marcado como Sem Produção.`,
+        );
+
+        return;
+      }
+
+
+      if (
+        minutosSolicitados >
+        limite
+      ) {
+        setErro(
+          `${formatarDataVisual(
+            data,
+          )} não possui disponibilidade suficiente.`,
+        );
+
+        return;
+      }
+    }
+
+
+    setDiasSelecionados(
+      (
+        atuais,
+      ) => {
+        const mapa =
+          new Map(
+            atuais.map(
+              (
+                dia,
+              ) => [
+                dia.data,
+                dia,
+              ],
+            ),
+          );
+
+
+        for (
+          const data
+          of datasMarcadas
+        ) {
+          const configuracao =
+            calendarioPorData.get(
+              data,
+            );
+
+
+          mapa.set(
+            data,
+            {
+              ...(mapa.get(
+                data,
+              ) || {}),
+
+              data,
+
+              perfilHoras,
+
+              minutosSolicitados,
+
+              limiteMinutos:
+                Number(
+                  configuracao
+                    ?.minutosProgramados ??
+                    1440,
+                ),
+
+              limitePerfilCodigo:
+                configuracao
+                  ?.perfilCodigo ??
+                  "24H",
+            },
+          );
+        }
+
+
+        return [
+          ...mapa.values(),
+        ].sort(
+          (
+            a,
+            b,
+          ) =>
+            a.data.localeCompare(
+              b.data,
+            ),
+        );
+      },
+    );
+
+
+    setDatasMarcadas([]);
+    setErro("");
+  }
+
+
+  function aplicarPerfil(
+    perfil,
+  ) {
+    aplicarHorasMarcadas({
+      perfilHoras:
+        perfil.codigo,
+
+      minutosSolicitados:
+        perfil.minutos,
+    });
+  }
+
+
+  function aplicarOutro() {
+    const horas =
+      Number(
+        horasOutroLote,
+      );
+
+
+    if (
+      !Number.isFinite(
+        horas,
+      ) ||
+      horas <= 0 ||
+      horas > 24
+    ) {
+      setErro(
+        "No campo Outro, informe um valor maior que 0 e de no máximo 24 horas.",
+      );
+
+      return;
+    }
+
+
+    aplicarHorasMarcadas({
+      perfilHoras:
+        "OUTRO",
+
+      minutosSolicitados:
+        Math.round(
+          horas * 60,
+        ),
+    });
+  }
+
+
+  /* =======================================================
+     REMOVER DIAS
+  ======================================================= */
+
+  function removerMarcadosDaProgramacao() {
+    if (
+      datasMarcadas.length ===
+      0
+    ) {
+      return;
+    }
+
+
+    const remover =
+      new Set(
+        datasMarcadas,
+      );
+
+
+    setDiasSelecionados(
+      (
+        atuais,
+      ) =>
+        atuais.filter(
+          (
+            dia,
+          ) => {
+            if (
+              dataEhPassada(
+                dia.data,
+              )
+            ) {
+              return true;
+            }
+
+
+            return !remover.has(
+              dia.data,
+            );
+          },
+        ),
+    );
+
+
+    setDatasMarcadas([]);
+    setErro("");
+  }
+
+
+  const algumMarcadoProgramado =
+    useMemo(
+      () =>
+        datasMarcadas.some(
+          (
+            data,
+          ) =>
+            programacaoPorData.has(
+              data,
+            ),
+        ),
+      [
+        datasMarcadas,
+        programacaoPorData,
+      ],
+    );
+
+
+  /* =======================================================
+     PRODUTO
   ======================================================= */
 
   const produtoSelecionado =
@@ -435,14 +1570,13 @@ export default function ProgramacaoModal({
             produto,
           ) =>
             String(
-              produto
-                ?.codigo,
+              produto?.codigo ??
+                "",
             ) ===
             String(
               codigoProduto,
             ),
-        ) ??
-        null,
+        ) ?? null,
       [
         produtos,
         codigoProduto,
@@ -451,160 +1585,216 @@ export default function ProgramacaoModal({
 
 
   /* =======================================================
-     CÁLCULO
+     DIAS CALCULADOS
+  ======================================================= */
+
+  const diasCalculados =
+    useMemo(
+      () =>
+        diasSelecionados.map(
+          (
+            dia,
+          ) => {
+            const configuracao =
+              calendarioPorData.get(
+                dia.data,
+              );
+
+
+            const limiteMinutos =
+              Number(
+                configuracao
+                  ?.minutosProgramados ??
+                  dia.limiteMinutos ??
+                  1440,
+              );
+
+
+            const minutosDescontados =
+              dataEhPassada(
+                dia.data,
+              )
+                ? Number(
+                    dia
+                      ?.minutosDescontados ??
+                      0,
+                  )
+                : calcularMinutosDescontadosHoje({
+                    data:
+                      dia.data,
+
+                    perfilHoras:
+                      dia.perfilHoras,
+
+                    minutosSolicitados:
+                      Number(
+                        dia
+                          .minutosSolicitados ??
+                          0,
+                      ),
+
+                    limiteMinutos,
+
+                    periodos,
+                  });
+
+
+            return {
+              ...dia,
+
+              limiteMinutos,
+
+              minutosDescontados,
+
+              minutosEfetivos:
+                Math.max(
+                  0,
+                  Number(
+                    dia
+                      .minutosSolicitados ??
+                      0,
+                  ) -
+                    minutosDescontados,
+                ),
+            };
+          },
+        ),
+      [
+        diasSelecionados,
+        calendarioPorData,
+        periodos,
+      ],
+    );
+
+
+  const diasCalculadosPorData =
+    useMemo(
+      () =>
+        new Map(
+          diasCalculados.map(
+            (
+              dia,
+            ) => [
+              dia.data,
+              dia,
+            ],
+          ),
+        ),
+      [
+        diasCalculados,
+      ],
+    );
+
+
+  /* =======================================================
+     CÁLCULO GERAL
   ======================================================= */
 
   const calculo =
     useMemo(
-      () =>
-        calcularConsumoProgramacao({
-          dataInicio,
+      () => {
+        const minutosEfetivos =
+          diasCalculados.reduce(
+            (
+              total,
+              dia,
+            ) =>
+              total +
+              Number(
+                dia
+                  .minutosEfetivos ??
+                  0,
+              ),
+            0,
+          );
 
-          horaInicio,
 
-          dataFim,
-
-          horaFim,
-
-          cicloSegundos:
+        const ciclo =
+          Number(
             produtoSelecionado
-              ?.cicloSegundos,
+              ?.cicloSegundos ??
+              0,
+          );
 
-          cavidadeMolde:
-            produtoSelecionado
-              ?.cavidadeMolde,
 
-          pesoKg:
+        const cavidades =
+          Number(
             produtoSelecionado
-              ?.pesoKg,
+              ?.cavidadeMolde ??
+              0,
+          );
 
-          receitaItens:
+
+        const peso =
+          Number(
             produtoSelecionado
-              ?.receitaItens ??
-            [],
-        }),
+              ?.pesoKg ??
+              0,
+          );
+
+
+        const segundos =
+          minutosEfetivos *
+          60;
+
+
+        const valido =
+          ciclo > 0 &&
+          Number.isInteger(
+            cavidades,
+          ) &&
+          cavidades > 0 &&
+          peso > 0 &&
+          segundos > 0;
+
+
+        const ciclosCompletos =
+          valido
+            ? Math.floor(
+                segundos /
+                  ciclo,
+              )
+            : 0;
+
+
+        const pecasPrevistas =
+          ciclosCompletos *
+          cavidades;
+
+
+        const pecasPorHora =
+          valido
+            ? (
+                3600 /
+                ciclo
+              ) *
+              cavidades
+            : 0;
+
+
+        const consumoPeriodoKg =
+          pecasPrevistas *
+          peso;
+
+
+        const consumoPorHoraKg =
+          pecasPorHora *
+          peso;
+
+
+        return {
+          minutosEfetivos,
+          pecasPrevistas,
+          pecasPorHora,
+          consumoPeriodoKg,
+          consumoPorHoraKg,
+        };
+      },
       [
-        dataInicio,
-        horaInicio,
-        dataFim,
-        horaFim,
+        diasCalculados,
         produtoSelecionado,
       ],
     );
-
-
-  /* =======================================================
-     INJETORAS OCUPADAS NO PERÍODO
-  ======================================================= */
-
-  const injetorasOcupadas =
-    useMemo(
-      () => {
-        const ocupadas =
-          new Set();
-
-
-        if (
-          !dataInicio ||
-          !horaInicio ||
-          !dataFim ||
-          !horaFim
-        ) {
-          return ocupadas;
-        }
-
-
-        INJETORAS.forEach(
-          (
-            numero,
-          ) => {
-            const conflito =
-              verificarConflitoInjetora({
-                programacao,
-
-                injetora:
-                  numero,
-
-                dataInicio,
-
-                horaInicio,
-
-                dataFim,
-
-                horaFim,
-
-                ignorarId:
-                  item
-                    ?.id ??
-                  null,
-              });
-
-
-            if (conflito) {
-              ocupadas.add(
-                numero,
-              );
-            }
-          },
-        );
-
-
-        return ocupadas;
-      },
-      [
-        programacao,
-        dataInicio,
-        horaInicio,
-        dataFim,
-        horaFim,
-        item,
-      ],
-    );
-
-
-  /* =======================================================
-     FECHAR COM ESC
-  ======================================================= */
-
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
-
-
-      function fecharComEscape(
-        event,
-      ) {
-        if (
-          event.key ===
-            "Escape" &&
-          !salvando
-        ) {
-          onCancelar?.();
-        }
-      }
-
-
-      document.addEventListener(
-        "keydown",
-        fecharComEscape,
-      );
-
-
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharComEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
 
 
   /* =======================================================
@@ -617,74 +1807,35 @@ export default function ProgramacaoModal({
     event.preventDefault();
 
 
-    setErro(
-      "",
-    );
-
-
-    if (!dataInicio) {
-      setErro(
-        "Informe a data inicial.",
-      );
-
-      return;
-    }
-
-
-    if (!horaInicio) {
-      setErro(
-        "Informe a hora inicial.",
-      );
-
-      return;
-    }
-
-
-    if (!dataFim) {
-      setErro(
-        "Informe a data final.",
-      );
-
-      return;
-    }
-
-
-    if (!horaFim) {
-      setErro(
-        "Informe a hora final.",
-      );
-
-      return;
-    }
-
-
-    const inicio =
-      converterDataHoraParaNumero(
-        dataInicio,
-        horaInicio,
-      );
-
-    const fim =
-      converterDataHoraParaNumero(
-        dataFim,
-        horaFim,
-      );
+    setErro("");
 
 
     if (
-      inicio === null ||
-      fim === null ||
-      fim <= inicio
+      itemLegado
     ) {
       setErro(
-        "A data e hora final precisam ser posteriores à data e hora inicial.",
+        "Esta programação pertence ao modelo antigo.",
       );
 
       return;
     }
 
 
-    if (!codigoProduto) {
+    if (
+      !injetora
+    ) {
+      setErro(
+        "Selecione a injetora.",
+      );
+
+      return;
+    }
+
+
+    if (
+      !codigoProduto ||
+      !produtoSelecionado
+    ) {
       setErro(
         "Selecione o produto.",
       );
@@ -694,10 +1845,11 @@ export default function ProgramacaoModal({
 
 
     if (
-      !produtoSelecionado
+      diasCalculados.length ===
+      0
     ) {
       setErro(
-        "Produto selecionado não encontrado.",
+        "Programe pelo menos um dia.",
       );
 
       return;
@@ -705,13 +1857,96 @@ export default function ProgramacaoModal({
 
 
     if (
-      injetora &&
-      injetorasOcupadas.has(
-        injetora,
+      !item &&
+      diasCalculados.some(
+        (
+          dia,
+        ) =>
+          dataEhPassada(
+            dia.data,
+          ),
       )
     ) {
       setErro(
-        `A Injetora ${injetora} já possui uma programação ativa neste período.`,
+        "Não é permitido programar uma data anterior ao dia atual.",
+      );
+
+      return;
+    }
+
+
+    for (
+      const dia
+      of diasCalculados
+    ) {
+      if (
+        dataEhPassada(
+          dia.data,
+        )
+      ) {
+        continue;
+      }
+
+
+      if (
+        !dia.perfilHoras ||
+        dia.minutosSolicitados <= 0
+      ) {
+        setErro(
+          `Defina as horas de ${formatarDataVisual(
+            dia.data,
+          )}.`,
+        );
+
+        return;
+      }
+
+
+      if (
+        dia.minutosSolicitados >
+        dia.limiteMinutos
+      ) {
+        setErro(
+          `${formatarDataVisual(
+            dia.data,
+          )} ultrapassa a disponibilidade permitida.`,
+        );
+
+        return;
+      }
+
+
+      if (
+        dia.minutosEfetivos <= 0
+      ) {
+        setErro(
+          `Não restam horas produtivas disponíveis em ${formatarDataVisual(
+            dia.data,
+          )}.`,
+        );
+
+        return;
+      }
+    }
+
+
+    const conflito =
+      existeConflito({
+        programacao,
+        injetora,
+        dias:
+          diasCalculados,
+        ignorarId:
+          item?.id ??
+          null,
+      });
+
+
+    if (
+      conflito
+    ) {
+      setErro(
+        `A Injetora ${injetora} já possui programação em um dos dias selecionados.`,
       );
 
       return;
@@ -719,50 +1954,11 @@ export default function ProgramacaoModal({
 
 
     if (
-      !Number.isFinite(
-        Number(
-          produtoSelecionado
-            ?.cicloSegundos,
-        ),
-      ) ||
-      Number(
-        produtoSelecionado
-          ?.cicloSegundos,
-      ) <= 0
+      calculo.pecasPrevistas <=
+      0
     ) {
       setErro(
-        "O produto selecionado não possui ciclo válido.",
-      );
-
-      return;
-    }
-
-
-    if (
-      !Number.isInteger(
-        Number(
-          produtoSelecionado
-            ?.cavidadeMolde,
-        ),
-      ) ||
-      Number(
-        produtoSelecionado
-          ?.cavidadeMolde,
-      ) <= 0
-    ) {
-      setErro(
-        "O produto selecionado não possui quantidade de cavidades válida.",
-      );
-
-      return;
-    }
-
-
-    if (
-      calculo.ciclosCompletos <= 0
-    ) {
-      setErro(
-        "O período informado não é suficiente para completar um ciclo de produção.",
+        "As horas selecionadas não são suficientes para completar um ciclo.",
       );
 
       return;
@@ -772,54 +1968,42 @@ export default function ProgramacaoModal({
     try {
       await onSalvar?.({
         id:
-          item
-            ?.id ??
+          item?.id ??
           null,
-
-        dataInicio,
-
-        horaInicio,
-
-        dataFim,
-
-        horaFim,
 
         codigoProduto,
 
-        injetora:
-          injetora ||
-          null,
+        injetora,
 
         ativo,
+
+        quantidade:
+          calculo.pecasPrevistas,
+
+        dias:
+          diasCalculados,
       });
     } catch (error) {
       setErro(
-        error
-          ?.message ||
+        error?.message ||
           "Não foi possível salvar a programação.",
       );
     }
   }
 
 
-  /* =======================================================
-     NÃO RENDERIZAR
-  ======================================================= */
-
-  if (!aberto) {
+  if (
+    !aberto
+  ) {
     return null;
   }
 
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
 
   return (
     <div className="programacao-modal-overlay">
 
       <div
-        className="programacao-modal"
+        className="programacao-modal programacao-modal-calendario"
         role="dialog"
         aria-modal="true"
         aria-labelledby="programacao-modal-titulo"
@@ -844,16 +2028,18 @@ export default function ProgramacaoModal({
               Matéria-Prima PP
             </span>
 
+
             <h3 id="programacao-modal-titulo">
+
               {item
                 ? "Editar programação"
                 : "Nova programação"}
+
             </h3>
 
+
             <p>
-              Defina o período real de
-              produção para calcular o
-              consumo previsto de PP.
+              Selecione os dias no calendário e aplique a jornada desejada.
             </p>
 
           </div>
@@ -873,8 +2059,6 @@ export default function ProgramacaoModal({
 
             <X
               size={19}
-              strokeWidth={2}
-              aria-hidden="true"
             />
 
           </button>
@@ -889,215 +2073,73 @@ export default function ProgramacaoModal({
           }
         >
 
-          <div className="programacao-modal-grid">
+          {itemLegado && (
+
+            <div className="programacao-calendario-legado">
+
+              <AlertTriangle
+                size={18}
+              />
+
+
+              <div>
+
+                <strong>
+                  Programação antiga
+                </strong>
+
+
+                <span>
+                  Este registro pertence ao modelo anterior e está preservado.
+                </span>
+
+              </div>
+
+            </div>
+
+          )}
+
+
+          <div className="programacao-modal-grid programacao-calendario-config">
 
             <label className="programacao-modal-campo">
 
               <span>
-                Data início
+                Injetora
               </span>
 
-              <input
-                type="date"
+
+              <select
                 value={
-                  dataInicio
+                  injetora
                 }
                 onChange={
                   (
                     event,
                   ) => {
-                    const novaData =
-                      event
-                        .target
-                        .value;
-
-
-                    setDataInicio(
-                      novaData,
+                    setInjetora(
+                      event.target.value,
                     );
 
-
-                    if (
-                      dataFim <
-                      novaData
-                    ) {
-                      setDataFim(
-                        novaData,
-                      );
-                    }
-
-
-                    setErro(
-                      "",
-                    );
+                    setErro("");
                   }
                 }
                 disabled={
-                  salvando
+                  salvando ||
+                  itemLegado
                 }
-              />
+              >
 
-            </label>
+                <option value="">
+                  Selecione a injetora
+                </option>
 
 
-            <label className="programacao-modal-campo">
-
-              <span>
-                Hora início
-              </span>
-
-              <input
-                type="time"
-                value={
-                  horaInicio
-                }
-                onChange={
+                {INJETORAS.map(
                   (
-                    event,
-                  ) => {
-                    setHoraInicio(
-                      event
-                        .target
-                        .value,
-                    );
+                    numero,
+                  ) => (
 
-                    setErro(
-                      "",
-                    );
-                  }
-                }
-                disabled={
-                  salvando
-                }
-              />
-
-            </label>
-
-          </div>
-
-
-          <div className="programacao-modal-grid">
-
-            <label className="programacao-modal-campo">
-
-              <span>
-                Data fim
-              </span>
-
-              <input
-                type="date"
-                min={
-                  dataInicio
-                }
-                value={
-                  dataFim
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setDataFim(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
-                  }
-                }
-                disabled={
-                  salvando
-                }
-              />
-
-            </label>
-
-
-            <label className="programacao-modal-campo">
-
-              <span>
-                Hora fim
-              </span>
-
-              <input
-                type="time"
-                value={
-                  horaFim
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setHoraFim(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
-                  }
-                }
-                disabled={
-                  salvando
-                }
-              />
-
-            </label>
-
-          </div>
-
-
-          <label className="programacao-modal-campo">
-
-            <span>
-              Injetora
-            </span>
-
-            <select
-              value={
-                injetora
-              }
-              onChange={
-                (
-                  event,
-                ) => {
-                  setInjetora(
-                    event
-                      .target
-                      .value,
-                  );
-
-                  setErro(
-                    "",
-                  );
-                }
-              }
-              disabled={
-                salvando
-              }
-            >
-
-              <option value="">
-                Não informar
-              </option>
-
-
-              {INJETORAS.map(
-                (
-                  numero,
-                ) => {
-
-                  const ocupada =
-                    injetorasOcupadas.has(
-                      numero,
-                    );
-
-
-                  return (
                     <option
                       key={
                         numero
@@ -1105,179 +2147,613 @@ export default function ProgramacaoModal({
                       value={
                         numero
                       }
-                      disabled={
-                        ocupada
+                    >
+                      Injetora {numero}
+                    </option>
+
+                  ),
+                )}
+
+              </select>
+
+            </label>
+
+
+            <label className="programacao-modal-campo">
+
+              <span>
+                Produto
+              </span>
+
+
+              <select
+                value={
+                  codigoProduto
+                }
+                onChange={
+                  (
+                    event,
+                  ) => {
+                    setCodigoProduto(
+                      event.target.value,
+                    );
+
+                    setErro("");
+                  }
+                }
+                disabled={
+                  salvando ||
+                  itemLegado
+                }
+              >
+
+                <option value="">
+                  Selecione o produto
+                </option>
+
+
+                {produtos.map(
+                  (
+                    produto,
+                  ) => (
+
+                    <option
+                      key={
+                        produto.codigo
+                      }
+                      value={
+                        produto.codigo
                       }
                     >
-                      Injetora{" "}
-                      {numero}
-
-                      {ocupada
-                        ? " - Ocupada"
-                        : ""}
+                      {produto.codigo}
+                      {" - "}
+                      {produto.descricao ||
+                        "Sem descrição"}
                     </option>
-                  );
-                },
-              )}
 
-            </select>
+                  ),
+                )}
 
-          </label>
+              </select>
 
+            </label>
 
-          <label className="programacao-modal-campo">
-
-            <span>
-              Produto
-            </span>
-
-            <select
-              value={
-                codigoProduto
-              }
-              onChange={
-                (
-                  event,
-                ) => {
-                  setCodigoProduto(
-                    event
-                      .target
-                      .value,
-                  );
-
-                  setErro(
-                    "",
-                  );
-                }
-              }
-              disabled={
-                salvando
-              }
-            >
-
-              <option value="">
-                Selecione o produto
-              </option>
+          </div>
 
 
-              {produtos.map(
-                (
-                  produto,
-                ) => (
+          {!itemLegado && (
 
-                  <option
-                    key={
-                      produto.codigo
-                    }
-                    value={
-                      produto.codigo
-                    }
-                  >
-                    {produto.codigo}
-                    {" - "}
-                    {produto
-                      .descricao ||
-                      "Sem descrição"}
-                  </option>
+            <>
 
-                ),
-              )}
+              <section className="programacao-calendario-bloco">
 
-            </select>
+                <div className="programacao-calendario-cabecalho">
 
-          </label>
+                  <div>
+
+                    <span>
+                      Dias de trabalho
+                    </span>
 
 
-          {produtoSelecionado && (
+                    <strong>
+                      {
+                        NOMES_MESES[
+                          mesReferencia.getMonth()
+                        ]
+                      }
 
-            <div className="programacao-modal-previsao">
+                      {" "}
 
-              <div className="programacao-modal-previsao-header">
+                      {
+                        mesReferencia.getFullYear()
+                      }
+                    </strong>
 
-                <span>
-                  Consumo total do período
-                </span>
-
-                <strong>
-                  {
-                    formatarKg(
-                      calculo
-                        .consumoPeriodoKg,
-                    )
-                  }
-                </strong>
-
-              </div>
+                  </div>
 
 
-              <div className="programacao-modal-previsao-info">
+                  <div className="programacao-calendario-navegacao">
+
+                    <button
+                      type="button"
+                      onClick={
+                        () =>
+                          setMesReferencia(
+                            (
+                              atual,
+                            ) =>
+                              adicionarMeses(
+                                atual,
+                                -1,
+                              ),
+                          )
+                      }
+                      aria-label="Mês anterior"
+                    >
+
+                      <ChevronLeft
+                        size={18}
+                      />
+
+                    </button>
+
+
+                    <button
+                      type="button"
+                      onClick={
+                        () =>
+                          setMesReferencia(
+                            (
+                              atual,
+                            ) =>
+                              adicionarMeses(
+                                atual,
+                                1,
+                              ),
+                          )
+                      }
+                      aria-label="Próximo mês"
+                    >
+
+                      <ChevronRight
+                        size={18}
+                      />
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                <div className="programacao-calendario-grade">
+
+                  {DIAS_SEMANA.map(
+                    (
+                      dia,
+                    ) => (
+
+                      <div
+                        key={
+                          dia
+                        }
+                        className="programacao-calendario-semana"
+                      >
+                        {dia}
+                      </div>
+
+                    ),
+                  )}
+
+
+                  {diasGrade.map(
+                    (
+                      data,
+                    ) => {
+                      const dataISO =
+                        formatarDataISO(
+                          data,
+                        );
+
+
+                      const configuracao =
+                        calendarioPorData.get(
+                          dataISO,
+                        );
+
+
+                      const programado =
+                        diasCalculadosPorData.get(
+                          dataISO,
+                        );
+
+
+                      const limite =
+                        Number(
+                          configuracao
+                            ?.minutosProgramados ??
+                            0,
+                        );
+
+
+                      const passado =
+                        dataISO <
+                        hojeISO;
+
+
+                      const hoje =
+                        dataISO ===
+                        hojeISO;
+
+
+                      const foraMes =
+                        data.getMonth() !==
+                        mesReferencia.getMonth();
+
+
+                      const fechado =
+                        limite <= 0;
+
+
+                      const marcado =
+                        marcadasSet.has(
+                          dataISO,
+                        );
+
+
+                      return (
+                        <button
+                          key={
+                            dataISO
+                          }
+                          type="button"
+                          className={[
+                            "programacao-calendario-dia",
+
+                            programado
+                              ? "programado"
+                              : "",
+
+                            marcado
+                              ? "marcado"
+                              : "",
+
+                            hoje
+                              ? "hoje"
+                              : "",
+
+                            foraMes
+                              ? "fora-mes"
+                              : "",
+
+                            passado
+                              ? "passado"
+                              : "",
+
+                            fechado
+                              ? "indisponivel"
+                              : "",
+                          ]
+                            .filter(
+                              Boolean,
+                            )
+                            .join(" ")}
+                          onClick={
+                            () =>
+                              alternarMarcacaoDia(
+                                dataISO,
+                              )
+                          }
+                          disabled={
+                            passado ||
+                            fechado ||
+                            carregandoCalendario
+                          }
+                        >
+
+                          <div className="programacao-calendario-dia-topo">
+
+                            <strong>
+                              {
+                                data.getDate()
+                              }
+                            </strong>
+
+
+                            {marcado && (
+
+                              <span className="programacao-calendario-check">
+
+                                <Check
+                                  size={12}
+                                  strokeWidth={3}
+                                />
+
+                              </span>
+
+                            )}
+
+                          </div>
+
+
+                          <div className="programacao-calendario-dia-conteudo">
+
+                            {passado ? (
+
+                              <span className="programacao-calendario-status-passado">
+                                Passado
+                              </span>
+
+                            ) : fechado ? (
+
+                              <span className="programacao-calendario-status-fechado">
+                                Fechado
+                              </span>
+
+                            ) : programado ? (
+
+                              <>
+
+                                <strong className="programacao-calendario-horas-programadas">
+
+                                  {
+                                    formatarMinutos(
+                                      programado
+                                        .minutosSolicitados,
+                                    )
+                                  }
+
+                                </strong>
+
+
+                                {hoje &&
+                                programado.minutosDescontados >
+                                  0 ? (
+
+                                  <small>
+                                    {
+                                      formatarMinutos(
+                                        programado
+                                          .minutosEfetivos,
+                                      )
+                                    }{" "}
+                                    efet.
+                                  </small>
+
+                                ) : (
+
+                                  <small>
+                                    Programado
+                                  </small>
+
+                                )}
+
+                              </>
+
+                            ) : marcado ? (
+
+                              <>
+
+                                <strong className="programacao-calendario-definir">
+                                  Definir
+                                </strong>
+
+                                <small>
+                                  horas
+                                </small>
+
+                              </>
+
+                            ) : (
+
+                              <>
+
+                                <strong className="programacao-calendario-adicionar">
+                                  +
+                                </strong>
+
+                                <small>
+                                  Programar
+                                </small>
+
+                              </>
+
+                            )}
+
+                          </div>
+
+
+                          {hoje && (
+
+                            <span className="programacao-calendario-hoje-badge">
+                              Hoje
+                            </span>
+
+                          )}
+
+                        </button>
+                      );
+                    },
+                  )}
+
+                </div>
+
+
+                {datasMarcadas.length >
+                  0 && (
+
+                  <div className="programacao-calendario-lote">
+
+                    <div className="programacao-calendario-lote-info">
+
+                      <strong>
+                        {datasMarcadas.length}
+
+                        {" "}
+
+                        {datasMarcadas.length ===
+                        1
+                          ? "dia selecionado"
+                          : "dias selecionados"}
+                      </strong>
+
+
+                      <span>
+                        Escolha a jornada para aplicar aos dias marcados.
+                      </span>
+
+                    </div>
+
+
+                    <div className="programacao-calendario-lote-acoes">
+
+                      <div className="programacao-calendario-lote-presets">
+
+                        {PERFIS.map(
+                          (
+                            perfil,
+                          ) => (
+
+                            <button
+                              key={
+                                perfil.codigo
+                              }
+                              type="button"
+                              onClick={
+                                () =>
+                                  aplicarPerfil(
+                                    perfil,
+                                  )
+                              }
+                              disabled={
+                                salvando
+                              }
+                            >
+                              {perfil.rotulo}
+                            </button>
+
+                          ),
+                        )}
+
+                      </div>
+
+
+                      <div className="programacao-calendario-lote-outro">
+
+                        <span>
+                          Outro
+                        </span>
+
+
+                        <input
+                          type="number"
+                          min="0.25"
+                          max="24"
+                          step="0.25"
+                          value={
+                            horasOutroLote
+                          }
+                          onChange={
+                            (
+                              event,
+                            ) =>
+                              setHorasOutroLote(
+                                event.target.value,
+                              )
+                          }
+                          disabled={
+                            salvando
+                          }
+                        />
+
+
+                        <span>
+                          h
+                        </span>
+
+
+                        <button
+                          type="button"
+                          onClick={
+                            aplicarOutro
+                          }
+                          disabled={
+                            salvando
+                          }
+                        >
+                          Aplicar
+                        </button>
+
+                      </div>
+
+
+                      {algumMarcadoProgramado && (
+
+                        <button
+                          type="button"
+                          className="programacao-calendario-lote-remover"
+                          onClick={
+                            removerMarcadosDaProgramacao
+                          }
+                          disabled={
+                            salvando
+                          }
+                        >
+
+                          <Trash2
+                            size={14}
+                          />
+
+                          Remover
+
+                        </button>
+
+                      )}
+
+
+                      <button
+                        type="button"
+                        className="programacao-calendario-lote-limpar"
+                        onClick={
+                          () =>
+                            setDatasMarcadas(
+                              [],
+                            )
+                        }
+                        disabled={
+                          salvando
+                        }
+                      >
+                        Limpar seleção
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </section>
+
+
+              <section className="programacao-calendario-resumo">
 
                 <div>
+
                   <span>
-                    Horas programadas
+                    Dias programados
                   </span>
 
                   <strong>
                     {
-                      formatarHoras(
+                      diasCalculados.length
+                    }
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Horas efetivas
+                  </span>
+
+                  <strong>
+                    {
+                      formatarMinutos(
                         calculo
-                          .horasPeriodo,
+                          .minutosEfetivos,
                       )
                     }
                   </strong>
+
                 </div>
 
 
                 <div>
-                  <span>
-                    Ciclo
-                  </span>
 
-                  <strong>
-                    {formatarNumero(
-                      produtoSelecionado
-                        .cicloSegundos,
-                      0,
-                    )}{" "}
-                    s
-                  </strong>
-                </div>
-
-
-                <div>
-                  <span>
-                    Cavidades
-                  </span>
-
-                  <strong>
-                    {
-                      formatarNumero(
-                        produtoSelecionado
-                          .cavidadeMolde,
-                      )
-                    }
-                  </strong>
-                </div>
-
-
-                <div>
-                  <span>
-                    Peças / hora
-                  </span>
-
-                  <strong>
-                    {
-                      formatarNumero(
-                        calculo
-                          .pecasPorHora,
-                        0,
-                      )
-                    }
-                  </strong>
-                </div>
-
-
-                <div>
                   <span>
                     Peças previstas
                   </span>
@@ -1290,168 +2766,161 @@ export default function ProgramacaoModal({
                       )
                     }
                   </strong>
+
                 </div>
 
 
                 <div>
+
                   <span>
-                    Peso da peça
-                  </span>
-
-                  <strong>
-                    {
-                      formatarKg(
-                        produtoSelecionado
-                          .pesoKg,
-                      )
-                    }
-                  </strong>
-                </div>
-
-
-                <div>
-                  <span>
-                    PP / hora
+                    PP previsto
                   </span>
 
                   <strong>
                     {
                       formatarKg(
                         calculo
-                          .consumoPorHoraKg,
+                          .consumoPeriodoKg,
                       )
                     }
                   </strong>
+
                 </div>
 
-
-                <div>
-                  <span>
-                    Receita
-                  </span>
-
-                  <strong>
-                    {produtoSelecionado
-                      .receitaConfigurada
-                      ? "100% configurada"
-                      : "Pendente"}
-                  </strong>
-                </div>
-
-              </div>
+              </section>
 
 
-              {produtoSelecionado
-                .receitaConfigurada &&
-                calculo
-                  .consumosFornecedores
-                  .length >
-                  0 && (
+              {produtoSelecionado && (
 
-                <div className="programacao-modal-fornecedores">
+                <div className="programacao-calendario-tecnico">
 
-                  {calculo
-                    .consumosFornecedores
-                    .map(
-                      (
-                        fornecedor,
-                      ) => (
+                  <div className="programacao-calendario-tecnico-item">
+                    <span>
+                      Ciclo
+                    </span>
 
-                        <div
-                          key={
-                            fornecedor
-                              .fornecedorId
-                          }
-                        >
-
-                          <span>
-                            {
-                              fornecedor
-                                .fornecedorNome
-                            }
-
-                            {" · "}
-
-                            {
-                              fornecedor
-                                .percentual
-                            }
-                            %
-                          </span>
+                    <strong>
+                      {
+                        formatarNumero(
+                          produtoSelecionado
+                            .cicloSegundos,
+                        )
+                      }s
+                    </strong>
+                  </div>
 
 
-                          <strong>
-                            {
-                              formatarKg(
-                                fornecedor
-                                  .consumoPeriodoKg,
-                              )
-                            }
-                          </strong>
+                  <div className="programacao-calendario-tecnico-item">
+                    <span>
+                      Cavidades
+                    </span>
 
-                        </div>
+                    <strong>
+                      {
+                        formatarNumero(
+                          produtoSelecionado
+                            .cavidadeMolde,
+                        )
+                      }
+                    </strong>
+                  </div>
 
-                      ),
-                    )}
+
+                  <div className="programacao-calendario-tecnico-item">
+                    <span>
+                      Peças/h
+                    </span>
+
+                    <strong>
+                      {
+                        formatarNumero(
+                          calculo
+                            .pecasPorHora,
+                        )
+                      }
+                    </strong>
+                  </div>
+
+
+                  <div className="programacao-calendario-tecnico-item">
+                    <span>
+                      PP/h
+                    </span>
+
+                    <strong>
+                      {
+                        formatarKg(
+                          calculo
+                            .consumoPorHoraKg,
+                        )
+                      }
+                    </strong>
+                  </div>
+
+
+                  <div className="programacao-calendario-tecnico-item">
+                    <span>
+                      Receita
+                    </span>
+
+                    <strong>
+
+                      {produtoSelecionado
+                        .receitaConfigurada
+                        ? "100%"
+                        : "Pendente"}
+
+                    </strong>
+                  </div>
 
                 </div>
 
               )}
 
-
-              {!produtoSelecionado
-                .receitaConfigurada && (
-
-                <p className="programacao-modal-aviso">
-                  A divisão do consumo por
-                  fornecedor ficará disponível
-                  quando a receita deste produto
-                  estiver configurada em 100%.
-                </p>
-
-              )}
-
-            </div>
+            </>
 
           )}
 
 
-          <label className="programacao-modal-status">
+          {!itemLegado && (
 
-            <input
-              type="checkbox"
-              checked={
-                ativo
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setAtivo(
-                    event
-                      .target
-                      .checked,
-                  )
-              }
-              disabled={
-                salvando
-              }
-            />
+            <label className="programacao-modal-status">
 
-            <div>
+              <input
+                type="checkbox"
+                checked={
+                  ativo
+                }
+                onChange={
+                  (
+                    event,
+                  ) =>
+                    setAtivo(
+                      event.target.checked,
+                    )
+                }
+                disabled={
+                  salvando
+                }
+              />
 
-              <strong>
-                Programação ativa
-              </strong>
 
-              <span>
-                Programações ativas entram
-                na projeção de consumo de PP.
-              </span>
+              <div>
 
-            </div>
+                <strong>
+                  Programação ativa
+                </strong>
 
-          </label>
+
+                <span>
+                  Programações ativas entram na projeção de consumo de PP.
+                </span>
+
+              </div>
+
+            </label>
+
+          )}
 
 
           {erro && (
@@ -1475,31 +2944,38 @@ export default function ProgramacaoModal({
                 salvando
               }
             >
-              Cancelar
+              {itemLegado
+                ? "Fechar"
+                : "Cancelar"}
             </button>
 
 
-            <button
-              type="submit"
-              className="programacao-modal-salvar"
-              disabled={
-                salvando
-              }
-            >
+            {!itemLegado && (
 
-              <Save
-                size={17}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <button
+                type="submit"
+                className="programacao-modal-salvar"
+                disabled={
+                  salvando
+                }
+              >
 
-              <span>
-                {salvando
-                  ? "Salvando..."
-                  : "Salvar programação"}
-              </span>
+                <Save
+                  size={17}
+                />
 
-            </button>
+
+                <span>
+
+                  {salvando
+                    ? "Salvando..."
+                    : "Salvar programação"}
+
+                </span>
+
+              </button>
+
+            )}
 
           </div>
 
