@@ -21,7 +21,6 @@
   -webkit-backdrop-filter: blur(5px);
 }
 
-
 /* =========================================================
    MODAL
 ========================================================= */
@@ -42,10 +41,8 @@
   background: #f8fafc;
   color: #0f172a;
 
-  box-shadow:
-    0 32px 90px rgba(15, 23, 42, 0.34);
+  box-shadow: 0 32px 90px rgba(15, 23, 42, 0.34);
 }
-
 
 /* =========================================================
    HEADER
@@ -66,7 +63,6 @@
   background: #ffffff;
 }
 
-
 .programacao-modal-header-icone {
   flex: 0 0 auto;
 
@@ -80,23 +76,16 @@
   border: 1px solid #bfdbfe;
   border-radius: 13px;
 
-  background:
-    linear-gradient(
-      145deg,
-      #eff6ff,
-      #dbeafe
-    );
+  background: linear-gradient(145deg, #eff6ff, #dbeafe);
 
   color: #2563eb;
 }
-
 
 .programacao-modal-header-texto {
   flex: 1;
 
   min-width: 0;
 }
-
 
 .programacao-modal-header-texto > span {
   display: block;
@@ -113,7 +102,6 @@
   text-transform: uppercase;
 }
 
-
 .programacao-modal-header-texto h3 {
   margin: 0;
 
@@ -124,7 +112,6 @@
 
   line-height: 1.2;
 }
-
 
 .programacao-modal-header-texto p {
   max-width: 800px;
@@ -137,7 +124,6 @@
 
   line-height: 1.5;
 }
-
 
 .programacao-modal-fechar {
   flex: 0 0 auto;
@@ -165,25 +151,21 @@
     transform 0.15s ease;
 }
 
-
 .programacao-modal-fechar:hover:not(:disabled) {
   background: #f1f5f9;
 
   color: #0f172a;
 }
 
-
 .programacao-modal-fechar:active:not(:disabled) {
   transform: scale(0.96);
 }
-
 
 .programacao-modal-fechar:disabled {
   opacity: 0.5;
 
   cursor: not-allowed;
 }
-
 
 /* =========================================================
    FORMULÁRIO / CONTEÚDO COM ROLAGEM
@@ -210,7 +192,6 @@
   overscroll-behavior: contain;
 }
 
-
 /*
    MUITO IMPORTANTE
 
@@ -223,7 +204,6 @@
   flex: 0 0 auto;
 }
 
-
 /* =========================================================
    SCROLLBAR
 ========================================================= */
@@ -232,20 +212,17 @@
   width: 9px;
 }
 
-
 .programacao-modal-form::-webkit-scrollbar-track {
   background: #f1f5f9;
 
   border-radius: 999px;
 }
 
-
 .programacao-modal-form::-webkit-scrollbar-thumb {
   border-radius: 999px;
 
   background: #cbd5e1;
 }
-
 
 /* =========================================================
    GRID
@@ -256,15 +233,10 @@
 
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 14px;
 }
-
 
 /* =========================================================
    CAMPOS
@@ -281,7 +253,6 @@
   margin: 0;
 }
 
-
 .programacao-modal-campo > span {
   color: #475569;
 
@@ -292,7 +263,6 @@
 
   text-transform: uppercase;
 }
-
 
 .programacao-modal-campo > input,
 .programacao-modal-campo > select {
@@ -322,21 +292,17 @@
     background-color 0.15s ease;
 }
 
-
 .programacao-modal-campo > input:hover:not(:disabled),
 .programacao-modal-campo > select:hover:not(:disabled) {
   border-color: #94a3b8;
 }
 
-
 .programacao-modal-campo > input:focus,
 .programacao-modal-campo > select:focus {
   border-color: #3b82f6;
 
-  box-shadow:
-    0 0 0 3px rgba(37, 99, 235, 0.10);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-
 
 .programacao-modal-campo > input:disabled,
 .programacao-modal-campo > select:disabled {
@@ -345,7 +311,6 @@
 
   cursor: not-allowed;
 }
-
 
 /* =========================================================
    STATUS
@@ -382,18 +347,15 @@
     box-shadow 0.15s ease;
 }
 
-
 .programacao-modal-status.ativo {
   border-color: #bbf7d0;
 
   background: #f0fdf4;
 }
 
-
 .programacao-modal-status.inativo {
   background: #f8fafc;
 }
-
 
 .programacao-modal-status input {
   width: 18px;
@@ -404,7 +366,6 @@
   accent-color: #16a34a;
 }
 
-
 .programacao-modal-status > div {
   min-width: 0;
 
@@ -414,7 +375,6 @@
   gap: 2px;
 }
 
-
 .programacao-modal-status strong {
   color: #0f172a;
 
@@ -422,17 +382,13 @@
   font-weight: 850;
 }
 
-
-.programacao-modal-status span:not(
-  .programacao-modal-status-badge
-) {
+.programacao-modal-status span:not(.programacao-modal-status-badge) {
   color: #64748b;
 
   font-size: 10px;
 
   line-height: 1.4;
 }
-
 
 .programacao-modal-status-badge {
   min-width: 66px;
@@ -452,14 +408,11 @@
   text-align: center;
 }
 
-
-.programacao-modal-status.inativo
-.programacao-modal-status-badge {
+.programacao-modal-status.inativo .programacao-modal-status-badge {
   background: #e2e8f0;
 
   color: #64748b;
 }
-
 
 /* =========================================================
    ERRO
@@ -482,7 +435,6 @@
   line-height: 1.45;
 }
 
-
 /* =========================================================
    AÇÕES
    FICAM VISÍVEIS NA PARTE INFERIOR
@@ -501,29 +453,19 @@
 
   gap: 9px;
 
-  margin:
-    0
-    -16px
-    -16px;
+  margin: 0 -16px -16px;
 
   padding: 12px 16px;
 
   border-top: 1px solid #dbe3ec;
 
-  background: rgba(
-    255,
-    255,
-    255,
-    0.97
-  );
+  background: rgba(255, 255, 255, 0.97);
 
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
-  box-shadow:
-    0 -8px 18px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.06);
 }
-
 
 .programacao-modal-cancelar,
 .programacao-modal-salvar {
@@ -555,7 +497,6 @@
     transform 0.15s ease;
 }
 
-
 .programacao-modal-cancelar {
   border: 1px solid #cbd5e1;
 
@@ -563,13 +504,11 @@
   color: #475569;
 }
 
-
 .programacao-modal-cancelar:hover:not(:disabled) {
   border-color: #94a3b8;
 
   background: #f8fafc;
 }
-
 
 .programacao-modal-salvar {
   border: 1px solid #2563eb;
@@ -577,21 +516,17 @@
   background: #2563eb;
   color: #ffffff;
 
-  box-shadow:
-    0 5px 14px rgba(37, 99, 235, 0.20);
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.2);
 }
-
 
 .programacao-modal-salvar:hover:not(:disabled) {
   background: #1d4ed8;
 }
 
-
 .programacao-modal-cancelar:active:not(:disabled),
 .programacao-modal-salvar:active:not(:disabled) {
   transform: translateY(1px);
 }
-
 
 .programacao-modal-cancelar:disabled,
 .programacao-modal-salvar:disabled {
@@ -600,32 +535,24 @@
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 760px) {
-
   .programacao-modal-overlay {
     align-items: flex-end;
 
     padding: 0;
   }
 
-
   .programacao-modal {
     width: 100%;
 
     max-height: 96dvh;
 
-    border-radius:
-      18px
-      18px
-      0
-      0;
+    border-radius: 18px 18px 0 0;
   }
-
 
   .programacao-modal-header,
   .programacao-modal-form {
@@ -633,11 +560,9 @@
     padding-right: 14px;
   }
 
-
   .programacao-modal-grid {
     grid-template-columns: 1fr;
   }
-
 
   .programacao-modal-status {
     grid-template-columns:
@@ -645,13 +570,11 @@
       minmax(0, 1fr);
   }
 
-
   .programacao-modal-status-badge {
     grid-column: 2;
 
     justify-self: start;
   }
-
 
   .programacao-modal-acoes {
     margin-left: -14px;
@@ -660,5 +583,4 @@
     padding-left: 14px;
     padding-right: 14px;
   }
-
 }
