@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   ShoppingCart,
+  ShieldCheck,
   Upload,
   Users,
   X,
@@ -1007,15 +1008,27 @@ function Navbar({ user, isAdmin }) {
                         )}
 
                         {isAdmin && (
-                          <button
-                            type="button"
-                            className="user-menu-item"
-                            onClick={() => goTo("/usuarios")}
-                            role="menuitem"
-                          >
-                            <Users size={17} aria-hidden="true" />
-                            Gerenciar usuários
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              className="user-menu-item"
+                              onClick={() => goTo("/administracao")}
+                              role="menuitem"
+                            >
+                              <ShieldCheck size={17} aria-hidden="true" />
+                              Calendario Industrial
+                            </button>
+
+                            <button
+                              type="button"
+                              className="user-menu-item"
+                              onClick={() => goTo("/usuarios")}
+                              role="menuitem"
+                            >
+                              <Users size={17} aria-hidden="true" />
+                              Gerenciar usuários
+                            </button>
+                          </>
                         )}
                       </div>
                     )}
@@ -1201,15 +1214,27 @@ function Navbar({ user, isAdmin }) {
                 )}
 
                 {isAdmin && (
-                  <button
-                    type="button"
-                    className="navbar-mobile-admin-link"
-                    onClick={() => goTo("/usuarios")}
-                  >
-                    <Users size={18} aria-hidden="true" />
+                  <>
+                    <button
+                      type="button"
+                      className="navbar-mobile-admin-link"
+                      onClick={() => goTo("/administracao")}
+                    >
+                      <ShieldCheck size={18} aria-hidden="true" />
 
-                    <span>Gerenciar usuários</span>
-                  </button>
+                      <span>Administração</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="navbar-mobile-admin-link"
+                      onClick={() => goTo("/usuarios")}
+                    >
+                      <Users size={18} aria-hidden="true" />
+
+                      <span>Gerenciar usuários</span>
+                    </button>
+                  </>
                 )}
               </div>
             )}
