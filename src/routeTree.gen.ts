@@ -14,6 +14,7 @@ import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
+import { Route as DashboardParadasRouteImport } from './routes/dashboard-paradas'
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
@@ -48,6 +49,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const DashboardMateriaPrimaRoute = DashboardMateriaPrimaRouteImport.update({
   id: '/dashboard-materia-prima',
   path: '/dashboard-materia-prima',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardParadasRoute = DashboardParadasRouteImport.update({
+  id: '/dashboard-paradas',
+  path: '/dashboard-paradas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/financeiro': typeof FinanceiroRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/financeiro': typeof FinanceiroRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
+  '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/financeiro': typeof FinanceiroRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
     | '/financeiro'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
     | '/financeiro'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/dashboard'
     | '/dashboard-materia-prima'
+    | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
     | '/financeiro'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
+  DashboardParadasRoute: typeof DashboardParadasRoute
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   FinanceiroRoute: typeof FinanceiroRoute
@@ -261,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-materia-prima'
       fullPath: '/dashboard-materia-prima'
       preLoaderRoute: typeof DashboardMateriaPrimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard-paradas': {
+      id: '/dashboard-paradas'
+      path: '/dashboard-paradas'
+      fullPath: '/dashboard-paradas'
+      preLoaderRoute: typeof DashboardParadasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard-produtividade': {
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
+  DashboardParadasRoute: DashboardParadasRoute,
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
   FinanceiroRoute: FinanceiroRoute,
