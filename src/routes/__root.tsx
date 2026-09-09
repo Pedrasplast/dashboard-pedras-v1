@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -131,12 +132,21 @@ function LayoutAplicacao() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const primeiroAcesso = useRouterState({
+    select: (state) => state.location.pathname.replace(/\/$/, "") === "/definir-senha",
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LayoutAplicacao />
-      </AuthProvider>
+      {primeiroAcesso ? (
+        <main>
+          <Outlet />
+        </main>
+      ) : (
+        <AuthProvider>
+          <LayoutAplicacao />
+        </AuthProvider>
+      )}
     </QueryClientProvider>
   );
 }

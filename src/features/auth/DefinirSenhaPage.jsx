@@ -1,15 +1,16 @@
 import React, {
   useEffect,
+  useRef,
   useState,
 } from "react";
 
 import {
-  FiLock,
-  FiCheckCircle,
   FiAlertTriangle,
+  FiCheckCircle,
+  FiLock,
 } from "react-icons/fi";
 
-import { supabase } from "@/lib/supabaseClient";
+import { criarClientePrimeiroAcesso } from "@/lib/supabaseClient";
 import { useNavigate } from "@/lib/navegacao";
 
 import "./DefinirSenhaPage.css";
@@ -17,161 +18,79 @@ import "./DefinirSenhaPage.css";
 export default function DefinirSenhaPage() {
   const navigate = useNavigate();
 
+  const timerRef = useRef(null);
+  const clienteRef = useRef(null);
+  const validacaoRef = useRef(null);
+  const usuarioConviteRef = useRef(null);
+
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [carregandoSessao, setCarregandoSessao] = useState(true);
-  const [sessaoValida, setSessaoValida] = useState(false);
-  const [salvando, setSalvando] = useState(false);
-  const [sucesso, setSucesso] = useState(false);
-  const [mensagemErro, setMensagemErro] = useState("");
+
+  const [carregandoSessao, setCarregandoSessao] =
+    useState(true);
+
+  const [sessaoValida, setSessaoValida] =
+    useState(false);
+
+
+
+  const [salvando, setSalvando] =
+    useState(false);
+
+  const [sucesso, setSucesso] =
+    useState(false);
+
+  const [mensagemErro, setMensagemErro] =
+    useState("");
 
   useEffect(() => {
     let ativo = true;
-    let timer;
-
-    const { data: listener } =
-      supabase.auth.onAuthStateChange(
-        (_evento, novaSessao) => {
-          if (!ativo) return;
-
-          if (novaSessao?.user) {
-            setSessaoValida(true);
-            setCarregandoSessao(false);
-          }
+    // A promessa sobrevive à repetição do efeito no StrictMode.
+    if (!validacaoRef.current) {
+      clienteRef.current = criarClientePrimeiroAcesso();
+      const cliente = clienteRef.current;
+      const parametros = new URLSearchParams(window.location.search);
+      const hash = new URLSearchParams(window.location.hash.slice(1));
+      validacaoRef.current = (async () => {
+        if (parametros.has("modo") || parametros.get("type") === "recovery" || hash.get("type") === "recovery") {
+          throw new Error("Este endereço aceita somente convites de primeiro acesso.");
         }
-      );
-
-    async function verificarSessao() {
-      try {
-        /*
-         * =====================================================
-         * 1. VERIFICA SE JÁ EXISTE SESSÃO
-         * =====================================================
-         */
-
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (!ativo) return;
-
-        if (session?.user) {
-          setSessaoValida(true);
-          setCarregandoSessao(false);
-          return;
+        let resposta;
+        const token = parametros.get("t") || (parametros.get("type") === "invite" ? parametros.get("token_hash") : null);
+        if (token) {
+          resposta = await cliente.auth.verifyOtp({ token_hash: token, type: "invite" });
+        } else if (hash.get("type") === "invite" && hash.get("access_token") && hash.get("refresh_token")) {
+          resposta = await cliente.auth.setSession({
+            access_token: hash.get("access_token"),
+            refresh_token: hash.get("refresh_token"),
+          });
+        } else {
+          throw new Error("Abra o convite de primeiro acesso fornecido pelo administrador.");
         }
-
-        /*
-         * =====================================================
-         * 2. LINK CURTO DE PRIMEIRO ACESSO
-         *
-         * Exemplo:
-         *
-         * /definir-senha?t=TOKEN
-         *
-         * =====================================================
-         */
-
-        const parametros =
-          new URLSearchParams(
-            window.location.search
-          );
-
-        const tokenHash =
-          parametros.get("t");
-
-        if (tokenHash) {
-          const {
-            data,
-            error,
-          } =
-            await supabase.auth.verifyOtp({
-              token_hash: tokenHash,
-              type: "invite",
-            });
-
-          if (error) {
-            throw error;
-          }
-
-          if (!ativo) return;
-
-          /*
-           * Remove o token da barra de endereço
-           * depois que ele já foi validado.
-           */
-
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
-
-          if (data?.session?.user) {
-            setSessaoValida(true);
-            setCarregandoSessao(false);
-            return;
-          }
-        }
-
-        /*
-         * =====================================================
-         * 3. COMPATIBILIDADE COM LINKS ANTIGOS
-         *
-         * Mantemos o comportamento anterior para que convites
-         * já gerados pelo Supabase continuem funcionando.
-         * =====================================================
-         */
-
-        timer = window.setTimeout(
-          async () => {
-            if (!ativo) return;
-
-            const {
-              data: {
-                session: sessaoFinal,
-              },
-            } =
-              await supabase.auth.getSession();
-
-            if (!ativo) return;
-
-            setSessaoValida(
-              Boolean(
-                sessaoFinal?.user
-              )
-            );
-
-            setCarregandoSessao(false);
-          },
-          2500
-        );
-      } catch (error) {
-        console.error(
-          "Erro ao verificar sessão:",
-          error
-        );
-
-        if (ativo) {
-          setSessaoValida(false);
-          setCarregandoSessao(false);
-        }
-      }
+        // Remove credenciais da URL mesmo quando o convite expirou.
+        window.history.replaceState({}, document.title, window.location.pathname);
+        if (resposta.error) throw resposta.error;
+        const usuario = resposta.data?.session?.user;
+        if (!usuario) throw new Error("Não foi possível validar o convite.");
+        return usuario.id;
+      })();
     }
-
-    verificarSessao();
-
+    validacaoRef.current.then((usuarioId) => {
+      if (!ativo) return;
+      usuarioConviteRef.current = usuarioId;
+      setSessaoValida(true);
+      setCarregandoSessao(false);
+    }).catch((error) => {
+      if (!ativo) return;
+      setMensagemErro(error?.message || "Este convite é inválido ou expirou.");
+      setSessaoValida(false);
+      setCarregandoSessao(false);
+    });
     return () => {
       ativo = false;
-
-      if (timer) {
-        window.clearTimeout(timer);
-      }
-
-      listener?.subscription?.unsubscribe();
+      if (timerRef.current) window.clearTimeout(timerRef.current);
     };
   }, []);
-
   async function definirSenha(event) {
     event.preventDefault();
 
@@ -208,8 +127,28 @@ export default function DefinirSenhaPage() {
     try {
       setSalvando(true);
 
-      const { error } =
-        await supabase.auth.updateUser({
+      const {
+        data: {
+          session,
+        },
+        error: erroSessao,
+      } =
+        await clienteRef.current.auth.getSession();
+
+      if (erroSessao) {
+        throw erroSessao;
+      }
+
+      if (!sessaoValida || !session?.user || session.user.id !== usuarioConviteRef.current) {
+        throw new Error(
+          "Sua sessão expirou. Solicite um novo link."
+        );
+      }
+
+      const {
+        error,
+      } =
+        await clienteRef.current.auth.updateUser({
           password: senha,
         });
 
@@ -219,13 +158,14 @@ export default function DefinirSenhaPage() {
 
       setSucesso(true);
 
-      await supabase.auth.signOut();
+      await clienteRef.current.auth.signOut({ scope: "local" });
 
-      window.setTimeout(() => {
-        navigate("/login", {
-          replace: true,
-        });
-      }, 1800);
+      timerRef.current =
+        window.setTimeout(() => {
+          navigate("/", {
+            replace: true,
+          });
+        }, 1800);
     } catch (error) {
       console.error(
         "Erro ao definir senha:",
@@ -266,18 +206,19 @@ export default function DefinirSenhaPage() {
           </h1>
 
           <p>
-            Este link de primeiro acesso não é mais válido.
+            {mensagemErro ||
+              "Este link não é mais válido."}
           </p>
 
           <p className="definir-senha-texto-secundario">
-            Solicite ao administrador um novo acesso.
+            Solicite um novo convite ao administrador.
           </p>
 
           <button
             type="button"
             className="definir-senha-btn-secundario"
             onClick={() =>
-              navigate("/login", {
+              navigate("/", {
                 replace: true,
               })
             }
@@ -302,7 +243,7 @@ export default function DefinirSenhaPage() {
           </h1>
 
           <p>
-            Seu acesso foi configurado com sucesso.
+            Sua nova senha foi salva com sucesso.
           </p>
 
           <p className="definir-senha-texto-secundario">
@@ -325,8 +266,7 @@ export default function DefinirSenhaPage() {
         </h1>
 
         <p>
-          Este é o seu primeiro acesso. Crie uma senha
-          para utilizar o sistema.
+          Este é o seu primeiro acesso. Crie uma senha para utilizar o sistema.
         </p>
 
         <form
@@ -395,7 +335,7 @@ export default function DefinirSenhaPage() {
           >
             {salvando
               ? "Salvando..."
-              : "Definir minha senha"}
+              : "Definir senha"}
           </button>
         </form>
       </div>

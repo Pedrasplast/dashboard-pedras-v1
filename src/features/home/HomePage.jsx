@@ -1,8 +1,4 @@
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   AlertTriangle,
@@ -21,49 +17,31 @@ import {
   WalletCards,
 } from "lucide-react";
 
-import {
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import {
-  usePermissoes,
-} from "@/hooks/usePermissoes";
+import { usePermissoes } from "@/hooks/usePermissoes";
 
-import {
-  useDashboardMetrics,
-} from "@/hooks/useDashboardMetrics";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 
-import {
-  useCargaMaquina,
-} from "@/lib/cargaMaquina";
+import { useCargaMaquina } from "@/lib/cargaMaquina";
 
-import {
-  useNavigate,
-} from "@/lib/navegacao";
+import { useNavigate } from "@/lib/navegacao";
 
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
-import {
-  buscarPedidosOmie,
-} from "@/features/pedidos/omie.functions";
+import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 
-import {
-  formatarMoeda,
-  processarFinanceiro,
-} from "@/features/financeiro/utils/financeiro.utils";
+import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
+
+
 
 import "./Home.css";
-
 
 /* =========================================================
    CONFIGURAÇÕES
 ========================================================= */
 
-const INTERVALO_RESUMO_PEDIDOS =
-  15 * 60 * 1000;
-
+const INTERVALO_RESUMO_PEDIDOS = 15 * 60 * 1000;
 
 /*
  * A Home não seleciona Tipo 3.
@@ -78,7 +56,6 @@ const INTERVALO_RESUMO_PEDIDOS =
  */
 const TIPOS_PRODUCAO_HOME = [];
 
-
 /* =========================================================
    USUÁRIO
 ========================================================= */
@@ -90,635 +67,301 @@ function obterNomeUsuario(email) {
 
   return email
     .split("@")[0]
-    .replace(
-      /[._-]+/g,
-      " ",
-    )
-    .replace(
-      /\b\w/g,
-      (letra) =>
-        letra.toUpperCase(),
-    );
+    .replace(/[._-]+/g, " ")
+    .replace(/\b\w/g, (letra) => letra.toUpperCase());
 }
-
 
 /* =========================================================
    TEXTO
 ========================================================= */
 
 function normalizarTexto(valor) {
-  return String(
-    valor ?? "",
-  )
+  return String(valor ?? "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .replace(/[\u0300-\u036f]/g, "");
 }
-
 
 /* =========================================================
    NÚMEROS
 ========================================================= */
 
 function converterNumero(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return 0;
   }
 
-
-  if (
-    typeof valor ===
-    "number"
-  ) {
-    return Number.isFinite(
-      valor,
-    )
-      ? valor
-      : 0;
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : 0;
   }
 
+  let texto = String(valor).trim().replace(/\s/g, "");
 
-  let texto =
-    String(valor)
-      .trim()
-      .replace(
-        /\s/g,
-        "",
-      );
-
-
-  if (
-    texto.includes(
-      ",",
-    ) &&
-    texto.includes(
-      ".",
-    )
-  ) {
-    texto =
-      texto
-        .replace(
-          /\./g,
-          "",
-        )
-        .replace(
-          ",",
-          ".",
-        );
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
   } else {
-    texto =
-      texto.replace(
-        ",",
-        ".",
-      );
+    texto = texto.replace(",", ".");
   }
 
+  const numero = Number(texto);
 
-  const numero =
-    Number(texto);
-
-
-  return Number.isFinite(
-    numero,
-  )
-    ? numero
-    : 0;
+  return Number.isFinite(numero) ? numero : 0;
 }
-
 
 function formatarNumero(valor) {
-  return converterNumero(
-    valor,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      maximumFractionDigits: 0,
-    },
-  );
+  return converterNumero(valor).toLocaleString("pt-BR", {
+    maximumFractionDigits: 0,
+  });
 }
 
-
 function formatarPercentual(valor) {
-  const numero =
-    Number(valor);
+  const numero = Number(valor);
 
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0,0%";
   }
 
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    },
-  )}%`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })}%`;
 }
-
 
 /* =========================================================
    DATAS DOS PEDIDOS
 ========================================================= */
 
-function converterData(
-  dataTexto,
-) {
+function converterData(dataTexto) {
   if (!dataTexto) {
     return null;
   }
 
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
+    const [dia, mes, ano] = dataTexto.split("/").map(Number);
 
-  if (
-    /^\d{2}\/\d{2}\/\d{4}$/.test(
-      dataTexto,
-    )
-  ) {
-    const [
-      dia,
-      mes,
-      ano,
-    ] =
-      dataTexto
-        .split("/")
-        .map(Number);
-
-
-    return new Date(
-      ano,
-      mes - 1,
-      dia,
-      0,
-      0,
-      0,
-      0,
-    );
+    return new Date(ano, mes - 1, dia, 0, 0, 0, 0);
   }
 
+  const data = new Date(dataTexto);
 
-  const data =
-    new Date(
-      dataTexto,
-    );
-
-
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return null;
   }
-
 
   return data;
 }
 
-
 function obterHoje() {
-  const agora =
-    new Date();
+  const agora = new Date();
 
-
-  return new Date(
-    agora.getFullYear(),
-    agora.getMonth(),
-    agora.getDate(),
-    0,
-    0,
-    0,
-    0,
-  );
+  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
 }
 
-
-function formatarHorario(
-  dataTexto,
-) {
+function formatarHorario(dataTexto) {
   if (!dataTexto) {
     return "-";
   }
 
+  const data = new Date(dataTexto);
 
-  const data =
-    new Date(
-      dataTexto,
-    );
-
-
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return "-";
   }
 
+  return data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
 
-  return data.toLocaleTimeString(
-    "pt-BR",
-    {
-      hour:
-        "2-digit",
-
-      minute:
-        "2-digit",
-    },
-  );
+    minute: "2-digit",
+  });
 }
 
-
-function formatarDataHora(
-  dataTexto,
-) {
+function formatarDataHora(dataTexto) {
   if (!dataTexto) {
     return "Ainda não atualizado";
   }
 
+  const data = new Date(dataTexto);
 
-  const data =
-    new Date(
-      dataTexto,
-    );
-
-
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return "Ainda não atualizado";
   }
 
+  return data.toLocaleString("pt-BR", {
+    day: "2-digit",
 
-  return data.toLocaleString(
-    "pt-BR",
-    {
-      day:
-        "2-digit",
+    month: "2-digit",
 
-      month:
-        "2-digit",
+    year: "numeric",
 
-      year:
-        "numeric",
+    hour: "2-digit",
 
-      hour:
-        "2-digit",
-
-      minute:
-        "2-digit",
-    },
-  );
+    minute: "2-digit",
+  });
 }
-
 
 /* =========================================================
    PEDIDOS
 ========================================================= */
 
-function obterChavePedido(
-  pedido,
-) {
+function obterChavePedido(pedido) {
   return String(
     pedido?.codigoPedido ||
-    pedido?.codigo_pedido ||
-    pedido?.pedido ||
-    pedido?.numero_pedido ||
-    pedido?.id ||
-    "",
+      pedido?.codigo_pedido ||
+      pedido?.pedido ||
+      pedido?.numero_pedido ||
+      pedido?.id ||
+      "",
   );
 }
-
 
 /* =========================================================
    HOME
 ========================================================= */
 
-function Home({
-  user,
-  isAdmin,
-}) {
-  const navigate =
-    useNavigate();
+function Home({ user, isAdmin }) {
+  const navigate = useNavigate();
 
-
-  const {
-    podeAcessarTela,
-    loadingPermissoes,
-  } =
-    usePermissoes();
-
+  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
 
   /* =====================================================
      LOGIN
   ===================================================== */
 
-  const [
-    email,
-    setEmail,
-  ] =
-    useState("");
+  const [email, setEmail] = useState("");
 
+  const [password, setPassword] = useState("");
 
-  const [
-    password,
-    setPassword,
-  ] =
-    useState("");
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
+  const [loginError, setLoginError] = useState("");
 
-  const [
-    loadingLogin,
-    setLoadingLogin,
-  ] =
-    useState(false);
+  const handleLogin = useCallback(
+    async (event) => {
+      event.preventDefault();
 
+      setLoadingLogin(true);
 
-  const [
-    loginError,
-    setLoginError,
-  ] =
-    useState("");
+      setLoginError("");
 
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
 
-  const handleLogin =
-    useCallback(
-      async (event) => {
-        event.preventDefault();
+          password,
+        });
 
-
-        setLoadingLogin(
-          true,
-        );
-
-        setLoginError(
-          "",
-        );
-
-
-        try {
-          const {
-            error,
-          } =
-            await supabase
-              .auth
-              .signInWithPassword({
-                email:
-                  email
-                    .trim()
-                    .toLowerCase(),
-
-                password,
-              });
-
-
-          if (error) {
-            setLoginError(
-              error.message ===
-                "Invalid login credentials"
-                ? "E-mail ou senha incorretos."
-                : error.message,
-            );
-
-
-            setPassword(
-              "",
-            );
-
-            return;
-          }
-
-
-          setPassword(
-            "",
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao realizar login:",
-            error,
-          );
-
-
+        if (error) {
           setLoginError(
-            "Não foi possível realizar o login. Tente novamente.",
+            error.message === "Invalid login credentials"
+              ? "E-mail ou senha incorretos."
+              : error.message,
           );
 
+          setPassword("");
 
-          setPassword(
-            "",
-          );
-        } finally {
-          setLoadingLogin(
-            false,
-          );
+          return;
         }
-      },
-      [
-        email,
-        password,
-      ],
-    );
 
+        setPassword("");
+      } catch (error) {
+        console.error("Erro ao realizar login:", error);
+
+        setLoginError("Não foi possível realizar o login. Tente novamente.");
+
+        setPassword("");
+      } finally {
+        setLoadingLogin(false);
+      }
+    },
+    [email, password],
+  );
 
   /* =====================================================
      PERFIL
   ===================================================== */
 
-  const nomeUsuario =
-    useMemo(
-      () =>
-        obterNomeUsuario(
-          user?.email,
-        ),
-      [
-        user?.email,
-      ],
-    );
+  const nomeUsuario = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
 
-
-  const perfilUsuario =
-    isAdmin
-      ? "Administrador"
-      : "Operador";
-
+  const perfilUsuario = isAdmin ? "Administrador" : "Operador";
 
   /* =====================================================
      PERMISSÕES
   ===================================================== */
 
-  const podeVerPedidos =
-    Boolean(
-      user &&
-      (
-        isAdmin ||
-        (
-          !loadingPermissoes &&
-          podeAcessarTela(
-            "pedidos",
-          )
-        )
-      ),
-    );
+  const podeVerPedidos = Boolean(
+    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("pedidos"))),
+  );
 
+  const podeVerFinanceiro = Boolean(
+    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("financeiro"))),
+  );
 
-  const podeVerFinanceiro =
-    Boolean(
-      user &&
-      (
-        isAdmin ||
-        (
-          !loadingPermissoes &&
-          podeAcessarTela(
-            "financeiro",
-          )
-        )
-      ),
-    );
+  const podeImportar = Boolean(
+    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("importar"))),
+  );
 
+  const podeGerenciarUsuarios = Boolean(user && isAdmin);
 
-  const podeImportar =
-    Boolean(
-      user &&
-      (
-        isAdmin ||
-        (
-          !loadingPermissoes &&
-          podeAcessarTela(
-            "importar",
-          )
-        )
-      ),
-    );
-
-
-  const podeGerenciarUsuarios =
-    Boolean(
-      user &&
-      isAdmin,
-    );
-
-
-  const possuiAcoesAdministrativas =
-    podeImportar ||
-    podeGerenciarUsuarios;
-
+  const possuiAcoesAdministrativas = podeImportar || podeGerenciarUsuarios;
 
   /* =====================================================
      PRODUÇÃO
   ===================================================== */
 
   const {
-    dados:
-      dadosProducao,
+    dados: dadosProducao,
 
-    loading:
-      carregandoProducao,
+    loading: carregandoProducao,
 
-    erro:
-      erroProducao,
-  } =
-    useCargaMaquina({
-      enabled:
-        Boolean(user),
-    });
-
+    erro: erroProducao,
+  } = useCargaMaquina({
+    enabled: Boolean(user),
+  });
 
   /* =====================================================
      MÉTRICAS DE PRODUÇÃO
   ===================================================== */
 
-  const metricasProducao =
-    useDashboardMetrics(
-      dadosProducao,
-      TIPOS_PRODUCAO_HOME,
-    );
-
+  const metricasProducao = useDashboardMetrics(dadosProducao, TIPOS_PRODUCAO_HOME);
 
   /* =====================================================
      FINANCEIRO
      MÊS ATUAL
   ===================================================== */
 
-  const periodoFinanceiro =
-    useMemo(
-      () => {
-        const agora =
-          new Date();
+  const periodoFinanceiro = useMemo(() => {
+    const agora = new Date();
 
+    return {
+      ano: agora.getFullYear(),
 
-        return {
-          ano:
-            agora.getFullYear(),
+      mes: agora.getMonth() + 1,
 
-          mes:
-            agora.getMonth() +
-            1,
+      nome: agora.toLocaleDateString("pt-BR", {
+        month: "long",
 
-          nome:
-            agora.toLocaleDateString(
-              "pt-BR",
-              {
-                month:
-                  "long",
-
-                year:
-                  "numeric",
-              },
-            ),
-        };
-      },
-      [],
-    );
-
+        year: "numeric",
+      }),
+    };
+  }, []);
 
   const {
-    data:
-      dadosFinanceiro = [],
+    data: dadosFinanceiro = [],
 
-    error:
-      erroFinanceiro,
+    error: erroFinanceiro,
 
-    isLoading:
-      carregandoFinanceiro,
-  } =
-    useQuery({
-      queryKey: [
-        "home-resumo-financeiro",
-        periodoFinanceiro.ano,
-        periodoFinanceiro.mes,
-      ],
+    isLoading: carregandoFinanceiro,
+  } = useQuery({
+    queryKey: ["home-resumo-financeiro", periodoFinanceiro.ano, periodoFinanceiro.mes],
 
+    enabled: podeVerFinanceiro,
 
-      enabled:
-        podeVerFinanceiro,
-
-
-      queryFn:
-        async () => {
-          const {
-            data,
-            error,
-          } =
-            await supabase
-              .from(
-                "financeiro_omie_resumo",
-              )
-              .select(
-                `
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("financeiro_omie_resumo")
+        .select(
+          `
                   id,
                   ano,
                   mes,
@@ -728,382 +371,170 @@ function Home({
                   valor_previsto,
                   valor_realizado
                 `,
-              )
-              .eq(
-                "ano",
-                periodoFinanceiro.ano,
-              )
-              .eq(
-                "mes",
-                periodoFinanceiro.mes,
-              )
-              .order(
-                "tipo",
-                {
-                  ascending:
-                    true,
-                },
-              )
-              .order(
-                "codigo_categoria",
-                {
-                  ascending:
-                    true,
-                },
-              );
+        )
+        .eq("ano", periodoFinanceiro.ano)
+        .eq("mes", periodoFinanceiro.mes)
+        .order("tipo", {
+          ascending: true,
+        })
+        .order("codigo_categoria", {
+          ascending: true,
+        });
 
+      if (error) {
+        throw error;
+      }
 
-          if (error) {
-            throw error;
-          }
+      return Array.isArray(data) ? data : [];
+    },
 
+    staleTime: 5 * 60 * 1000,
 
-          return Array.isArray(
-            data,
-          )
-            ? data
-            : [];
-        },
+    refetchOnMount: true,
 
+    refetchOnWindowFocus: false,
 
-      staleTime:
-        5 * 60 * 1000,
+    retry: 1,
+  });
 
+  const financeiroHome = useMemo(() => processarFinanceiro(dadosFinanceiro), [dadosFinanceiro]);
 
-      refetchOnMount:
-        true,
+  const receitaFinanceira = converterNumero(financeiroHome?.resumo?.receitas?.realizado);
 
+  const despesaFinanceira = converterNumero(financeiroHome?.resumo?.despesas?.realizado);
 
-      refetchOnWindowFocus:
-        false,
-
-
-      retry:
-        1,
-    });
-
-
-  const financeiroHome =
-    useMemo(
-      () =>
-        processarFinanceiro(
-          dadosFinanceiro,
-        ),
-      [
-        dadosFinanceiro,
-      ],
-    );
-
-
-  const receitaFinanceira =
-    converterNumero(
-      financeiroHome
-        ?.resumo
-        ?.receitas
-        ?.realizado,
-    );
-
-
-  const despesaFinanceira =
-    converterNumero(
-      financeiroHome
-        ?.resumo
-        ?.despesas
-        ?.realizado,
-    );
-
-
-  const saldoFinanceiro =
-    converterNumero(
-      financeiroHome
-        ?.resumo
-        ?.saldo
-        ?.realizado,
-    );
-
+  const saldoFinanceiro = converterNumero(financeiroHome?.resumo?.saldo?.realizado);
 
   const margemFinanceira =
-    receitaFinanceira !== 0
-      ? (
-          saldoFinanceiro /
-          receitaFinanceira
-        ) * 100
-      : 0;
-
+    receitaFinanceira !== 0 ? (saldoFinanceiro / receitaFinanceira) * 100 : 0;
 
   /* =====================================================
      PEDIDOS
   ===================================================== */
 
   const {
-    data:
-      respostaPedidos,
+    data: respostaPedidos,
 
-    error:
-      erroPedidos,
+    error: erroPedidos,
 
-    isLoading:
-      carregandoPedidos,
-  } =
-    useQuery({
-      queryKey: [
-        "home-resumo-pedidos",
-      ],
+    isLoading: carregandoPedidos,
+  } = useQuery({
+    queryKey: ["home-resumo-pedidos"],
 
+    enabled: podeVerPedidos,
 
-      enabled:
-        podeVerPedidos,
+    queryFn: async () => {
+      const {
+        data: sessaoData,
 
+        error: sessaoErro,
+      } = await supabase.auth.getSession();
 
-      queryFn:
-        async () => {
-          const {
-            data:
-              sessaoData,
+      if (sessaoErro) {
+        throw new Error("Não foi possível validar sua sessão.");
+      }
 
-            error:
-              sessaoErro,
-          } =
-            await supabase
-              .auth
-              .getSession();
+      const accessToken = sessaoData?.session?.access_token;
 
+      if (!accessToken) {
+        throw new Error("Sua sessão expirou.");
+      }
 
-          if (
-            sessaoErro
-          ) {
-            throw new Error(
-              "Não foi possível validar sua sessão.",
-            );
-          }
-
-
-          const accessToken =
-            sessaoData
-              ?.session
-              ?.access_token;
-
-
-          if (!accessToken) {
-            throw new Error(
-              "Sua sessão expirou.",
-            );
-          }
-
-
-          return await buscarPedidosOmie({
-            data: {
-              accessToken,
-            },
-          });
+      return await buscarPedidosOmie({
+        data: {
+          accessToken,
         },
+      });
+    },
 
+    refetchInterval: INTERVALO_RESUMO_PEDIDOS,
 
-      refetchInterval:
-        INTERVALO_RESUMO_PEDIDOS,
+    refetchIntervalInBackground: false,
 
+    refetchOnMount: true,
 
-      refetchIntervalInBackground:
-        false,
+    refetchOnWindowFocus: false,
 
+    staleTime: INTERVALO_RESUMO_PEDIDOS,
 
-      refetchOnMount:
-        true,
+    retry: 1,
+  });
 
-
-      refetchOnWindowFocus:
-        false,
-
-
-      staleTime:
-        INTERVALO_RESUMO_PEDIDOS,
-
-
-      retry:
-        1,
-    });
-
-
-  const pedidos =
-    useMemo(
-      () =>
-        Array.isArray(
-          respostaPedidos?.pedidos,
-        )
-          ? respostaPedidos.pedidos
-          : [],
-      [
-        respostaPedidos,
-      ],
-    );
-
+  const pedidos = useMemo(
+    () => (Array.isArray(respostaPedidos?.pedidos) ? respostaPedidos.pedidos : []),
+    [respostaPedidos],
+  );
 
   /* =====================================================
      PEDIDOS EM ABERTO
   ===================================================== */
 
-  const pedidosEmAberto =
-    useMemo(
-      () =>
-        pedidos.filter(
-          (pedido) =>
-            normalizarTexto(
-              pedido?.status,
-            ) ===
-            "pedido",
-        ),
-      [
-        pedidos,
-      ],
-    );
-
+  const pedidosEmAberto = useMemo(
+    () => pedidos.filter((pedido) => normalizarTexto(pedido?.status) === "pedido"),
+    [pedidos],
+  );
 
   /* =====================================================
      PEDIDOS ÚNICOS
   ===================================================== */
 
-  const pedidosUnicos =
-    useMemo(
-      () => {
-        const mapa =
-          new Map();
+  const pedidosUnicos = useMemo(() => {
+    const mapa = new Map();
 
+    for (const pedido of pedidosEmAberto) {
+      const chave = obterChavePedido(pedido);
 
-        for (
-          const pedido
-          of pedidosEmAberto
-        ) {
-          const chave =
-            obterChavePedido(
-              pedido,
-            );
+      if (chave && !mapa.has(chave)) {
+        mapa.set(chave, pedido);
+      }
+    }
 
-
-          if (
-            chave &&
-            !mapa.has(
-              chave,
-            )
-          ) {
-            mapa.set(
-              chave,
-              pedido,
-            );
-          }
-        }
-
-
-        return [
-          ...mapa.values(),
-        ];
-      },
-      [
-        pedidosEmAberto,
-      ],
-    );
-
+    return [...mapa.values()];
+  }, [pedidosEmAberto]);
 
   /* =====================================================
      PEDIDOS ATRASADOS
   ===================================================== */
 
-  const pedidosAtrasados =
-    useMemo(
-      () => {
-        const hoje =
-          obterHoje();
+  const pedidosAtrasados = useMemo(() => {
+    const hoje = obterHoje();
 
+    return pedidosUnicos.filter((pedido) => {
+      const previsao = converterData(pedido?.previsao);
 
-        return pedidosUnicos.filter(
-          (pedido) => {
-            const previsao =
-              converterData(
-                pedido?.previsao,
-              );
+      if (!previsao) {
+        return false;
+      }
 
+      previsao.setHours(0, 0, 0, 0);
 
-            if (!previsao) {
-              return false;
-            }
-
-
-            previsao.setHours(
-              0,
-              0,
-              0,
-              0,
-            );
-
-
-            return (
-              previsao <
-              hoje
-            );
-          },
-        ).length;
-      },
-      [
-        pedidosUnicos,
-      ],
-    );
-
+      return previsao < hoje;
+    }).length;
+  }, [pedidosUnicos]);
 
   /* =====================================================
      PRÓXIMOS 7 DIAS
   ===================================================== */
 
-  const proximosSeteDias =
-    useMemo(
-      () => {
-        const hoje =
-          obterHoje();
+  const proximosSeteDias = useMemo(() => {
+    const hoje = obterHoje();
 
+    const limite = new Date(hoje);
 
-        const limite =
-          new Date(
-            hoje,
-          );
+    limite.setDate(limite.getDate() + 7);
 
+    return pedidosUnicos.filter((pedido) => {
+      const previsao = converterData(pedido?.previsao);
 
-        limite.setDate(
-          limite.getDate() +
-          7,
-        );
+      if (!previsao) {
+        return false;
+      }
 
+      previsao.setHours(0, 0, 0, 0);
 
-        return pedidosUnicos.filter(
-          (pedido) => {
-            const previsao =
-              converterData(
-                pedido?.previsao,
-              );
-
-
-            if (!previsao) {
-              return false;
-            }
-
-
-            previsao.setHours(
-              0,
-              0,
-              0,
-              0,
-            );
-
-
-            return (
-              previsao >= hoje &&
-              previsao <= limite
-            );
-          },
-        ).length;
-      },
-      [
-        pedidosUnicos,
-      ],
-    );
-
+      return previsao >= hoje && previsao <= limite;
+    }).length;
+  }, [pedidosUnicos]);
 
   /* =====================================================
      HOME PÚBLICA
@@ -1112,281 +543,124 @@ function Home({
   if (!user) {
     return (
       <main className="home-page">
-
         <div className="home-public-layout">
-
           <section className="home-public-hero">
-
             <div className="home-brand-badge">
-
-              <Factory
-                size={16}
-              />
-
+              <Factory size={16} />
               Plataforma de Gestão
-
             </div>
-
 
             <div className="home-public-title">
+              <span>PEDRASPLAST</span>
 
-              <span>
-                PEDRASPLAST
-              </span>
-
-
-              <h1>
-                Produção, pedidos
-                e financeiro em um
-                único ambiente.
-              </h1>
-
+              <h1>Produção, pedidos e financeiro em um único ambiente.</h1>
 
               <p>
-                Centralize produção,
-                pedidos e informações
-                financeiras para acompanhar
-                a operação e apoiar decisões
-                com mais clareza.
+                Centralize produção, pedidos e informações financeiras para acompanhar a operação e
+                apoiar decisões com mais clareza.
               </p>
-
             </div>
-
 
             <div className="home-benefits">
-
               <div className="home-benefit">
-
-                <CheckCircle2
-                  size={20}
-                />
-
+                <CheckCircle2 size={20} />
 
                 <div>
-
-                  <strong>
-                    Produção e produtividade
-                  </strong>
-
+                  <strong>Produção e produtividade</strong>
 
                   <span>
-                    Acompanhe indicadores,
-                    horas trabalhadas,
-                    paradas e desempenho
-                    da operação.
+                    Acompanhe indicadores, horas trabalhadas, paradas e desempenho da operação.
                   </span>
-
                 </div>
-
               </div>
-
 
               <div className="home-benefit">
-
-                <CheckCircle2
-                  size={20}
-                />
-
+                <CheckCircle2 size={20} />
 
                 <div>
-
-                  <strong>
-                    Pedidos e financeiro
-                  </strong>
-
+                  <strong>Pedidos e financeiro</strong>
 
                   <span>
-                    Monitore pedidos, prazos,
-                    receitas, despesas,
-                    saldo e evolução
-                    financeira.
+                    Monitore pedidos, prazos, receitas, despesas, saldo e evolução financeira.
                   </span>
-
                 </div>
-
               </div>
-
 
               <div className="home-benefit">
-
-                <CheckCircle2
-                  size={20}
-                />
-
+                <CheckCircle2 size={20} />
 
                 <div>
+                  <strong>Acesso controlado</strong>
 
-                  <strong>
-                    Acesso controlado
-                  </strong>
-
-
-                  <span>
-                    Cada colaborador acessa
-                    somente os módulos
-                    e informações
-                    autorizados.
-                  </span>
-
+                  <span>Cada colaborador acessa somente os módulos e informações autorizados.</span>
                 </div>
-
               </div>
-
             </div>
-
           </section>
 
-
           <section className="home-login-card">
-
             <div className="home-login-icon">
-
-              <LockKeyhole
-                size={25}
-              />
-
+              <LockKeyhole size={25} />
             </div>
-
 
             <div className="home-login-header">
+              <span>Área restrita</span>
 
-              <span>
-                Área restrita
-              </span>
+              <h2>Acessar o sistema</h2>
 
-
-              <h2>
-                Acessar o sistema
-              </h2>
-
-
-              <p>
-                Entre com suas credenciais
-                para acessar a plataforma
-                de gestão.
-              </p>
-
+              <p>Entre com suas credenciais para acessar a plataforma de gestão.</p>
             </div>
 
+            {loginError && <div className="home-login-error">{loginError}</div>}
 
-            {loginError && (
-              <div className="home-login-error">
-                {loginError}
-              </div>
-            )}
-
-
-            <form
-              className="home-login-form"
-              onSubmit={
-                handleLogin
-              }
-              autoComplete="off"
-            >
-
+            <form className="home-login-form" onSubmit={handleLogin} autoComplete="off">
               <div className="home-login-field">
-
-                <label
-                  htmlFor="home-email"
-                >
-                  E-mail
-                </label>
-
+                <label htmlFor="home-email">E-mail</label>
 
                 <input
                   id="home-email"
                   type="email"
-                  value={
-                    email
-                  }
-                  onChange={(
-                    event,
-                  ) =>
-                    setEmail(
-                      event.target.value,
-                    )
-                  }
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="nome@empresa.com"
                   autoComplete="username"
-                  disabled={
-                    loadingLogin
-                  }
+                  disabled={loadingLogin}
                   required
                 />
-
               </div>
 
-
               <div className="home-login-field">
-
-                <label
-                  htmlFor="home-password"
-                >
-                  Senha
-                </label>
-
+                <label htmlFor="home-password">Senha</label>
 
                 <input
                   id="home-password"
                   type="password"
-                  value={
-                    password
-                  }
-                  onChange={(
-                    event,
-                  ) =>
-                    setPassword(
-                      event.target.value,
-                    )
-                  }
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   placeholder="Digite sua senha"
-                   autoComplete="new-password"
+                  autoComplete="new-password"
                   name="senha-acesso-home"
-                  disabled={
-                    loadingLogin
-                  }
+                  disabled={loadingLogin}
                   required
                 />
-
               </div>
 
-
-              <button
-                type="submit"
-                className="home-login-button"
-                disabled={
-                  loadingLogin
-                }
-              >
-
-                {loadingLogin
-                  ? "Autenticando..."
-                  : "Entrar no sistema"}
-
+              <button type="submit" className="home-login-button" disabled={loadingLogin}>
+                {loadingLogin ? "Autenticando..." : "Entrar no sistema"}
               </button>
+
 
             </form>
 
-
             <div className="home-login-security">
-
-              <ShieldCheck
-                size={15}
-              />
-
-              Acesso protegido
-              e controlado por usuário.
-
+              <ShieldCheck size={15} />
+              Acesso protegido e controlado por usuário.
             </div>
-
           </section>
-
         </div>
-
       </main>
     );
   }
-
 
   /* =====================================================
      HOME LOGADA
@@ -1394,619 +668,283 @@ function Home({
 
   return (
     <main className="home-page">
-
       <div className="home-dashboard">
-
-
         {/* ===============================================
             CABEÇALHO
         =============================================== */}
 
         <section className="home-welcome">
-
           <div className="home-welcome-main">
-
             <div className="home-welcome-icon">
-
-              <Factory
-                size={28}
-              />
-
+              <Factory size={28} />
             </div>
-
 
             <div>
+              <span className="home-welcome-label">Painel Pedrasplast</span>
 
-              <span className="home-welcome-label">
-                Painel Pedrasplast
-              </span>
+              <h1>Olá, {nomeUsuario}</h1>
 
-
-              <h1>
-                Olá, {nomeUsuario}
-              </h1>
-
-
-              <p>
-                Aqui estão as principais
-                informações da produção,
-                dos pedidos e do financeiro.
-              </p>
-
+              <p>Aqui estão as principais informações da produção, dos pedidos e do financeiro.</p>
             </div>
-
           </div>
-
 
           <div className="home-profile-badge">
-
-            <ShieldCheck
-              size={17}
-            />
-
+            <ShieldCheck size={17} />
 
             <div>
+              <span>Perfil</span>
 
-              <span>
-                Perfil
-              </span>
-
-
-              <strong>
-                {perfilUsuario}
-              </strong>
-
+              <strong>{perfilUsuario}</strong>
             </div>
-
           </div>
-
         </section>
-
 
         {/* ===============================================
             PRODUÇÃO
         =============================================== */}
 
         <section className="home-production-section">
-
           <div className="home-section-heading">
-
             <div>
+              <span>RESUMO DA PRODUÇÃO</span>
 
-              <span>
-                RESUMO DA PRODUÇÃO
-              </span>
+              <h2>Produção acumulada</h2>
 
-
-              <h2>
-                Produção acumulada
-              </h2>
-
-
-              <p>
-                Indicadores gerais considerando
-                todos os dados importados
-                no sistema.
-              </p>
-
+              <p>Indicadores gerais considerando todos os dados importados no sistema.</p>
             </div>
-
           </div>
 
-
           {erroProducao ? (
-
             <div className="home-summary-error">
-
-              <AlertTriangle
-                size={20}
-              />
-
+              <AlertTriangle size={20} />
 
               <div>
+                <strong>Não foi possível carregar os dados da produção.</strong>
 
-                <strong>
-                  Não foi possível carregar
-                  os dados da produção.
-                </strong>
-
-
-                <span>
-                  Consulte o Dashboard
-                  para verificar os dados.
-                </span>
-
+                <span>Consulte o Dashboard para verificar os dados.</span>
               </div>
-
             </div>
-
           ) : (
-
             <div className="home-summary-grid">
-
-
               <article className="home-summary-card">
-
                 <div className="home-summary-icon">
-
-                  <Clock3
-                    size={22}
-                  />
-
+                  <Clock3 size={22} />
                 </div>
-
 
                 <div className="home-summary-info">
-
-                  <span>
-                    HORAS TRABALHADAS
-                  </span>
-
+                  <span>HORAS TRABALHADAS</span>
 
                   <strong className="home-summary-duration">
-
-                    {carregandoProducao
-                      ? "-"
-                      : metricasProducao
-                          .horasTrabalhadas}
-
+                    {carregandoProducao ? "-" : metricasProducao.horasTrabalhadas}
                   </strong>
 
-
-                  <p>
-                    Total acumulado
-                    de horas em produção.
-                  </p>
-
+                  <p>Total acumulado de horas em produção.</p>
                 </div>
-
               </article>
-
 
               <article
                 className={
-                  Number(
-                    metricasProducao
-                      ?.horasParadasDec ||
-                    0,
-                  ) > 0
+                  Number(metricasProducao?.horasParadasDec || 0) > 0
                     ? "home-summary-card home-summary-card-warning"
                     : "home-summary-card"
                 }
               >
-
                 <div
                   className={
-                    Number(
-                      metricasProducao
-                        ?.horasParadasDec ||
-                      0,
-                    ) > 0
+                    Number(metricasProducao?.horasParadasDec || 0) > 0
                       ? "home-summary-icon home-summary-icon-warning"
                       : "home-summary-icon"
                   }
                 >
-
-                  <AlertTriangle
-                    size={22}
-                  />
-
+                  <AlertTriangle size={22} />
                 </div>
-
 
                 <div className="home-summary-info">
-
-                  <span>
-                    HORAS PARADAS
-                  </span>
-
+                  <span>HORAS PARADAS</span>
 
                   <strong className="home-summary-duration">
-
-                    {carregandoProducao
-                      ? "-"
-                      : metricasProducao
-                          .horasParadas}
-
+                    {carregandoProducao ? "-" : metricasProducao.horasParadas}
                   </strong>
 
-
-                  <p>
-                    Horas de indisponibilidade
-                    sem considerar Tipo 3.
-                  </p>
-
+                  <p>Horas de indisponibilidade sem considerar Tipo 3.</p>
                 </div>
-
               </article>
-
 
               <article className="home-summary-card">
-
                 <div className="home-summary-icon home-summary-icon-success">
-
-                  <CheckCircle2
-                    size={22}
-                  />
-
+                  <CheckCircle2 size={22} />
                 </div>
-
 
                 <div className="home-summary-info">
-
-                  <span>
-                    % HORAS TRABALHADAS
-                  </span>
-
+                  <span>% HORAS TRABALHADAS</span>
 
                   <strong>
-
                     {carregandoProducao
                       ? "-"
-                      : formatarPercentual(
-                          metricasProducao
-                            .percentualHorasTrabalhadas,
-                        )}
-
+                      : formatarPercentual(metricasProducao.percentualHorasTrabalhadas)}
                   </strong>
 
-
-                  <p>
-                    Percentual do tempo
-                    considerado em produção.
-                  </p>
-
+                  <p>Percentual do tempo considerado em produção.</p>
                 </div>
-
               </article>
-
 
               <article
                 className={
-                  Number(
-                    metricasProducao
-                      ?.registrosParada ||
-                    0,
-                  ) > 0
+                  Number(metricasProducao?.registrosParada || 0) > 0
                     ? "home-summary-card home-summary-card-warning"
                     : "home-summary-card"
                 }
               >
-
                 <div
                   className={
-                    Number(
-                      metricasProducao
-                        ?.registrosParada ||
-                      0,
-                    ) > 0
+                    Number(metricasProducao?.registrosParada || 0) > 0
                       ? "home-summary-icon home-summary-icon-warning"
                       : "home-summary-icon"
                   }
                 >
-
-                  <Clock3
-                    size={22}
-                  />
-
+                  <Clock3 size={22} />
                 </div>
-
 
                 <div className="home-summary-info">
-
-                  <span>
-                    REGISTROS DE PARADA
-                  </span>
-
+                  <span>REGISTROS DE PARADA</span>
 
                   <strong>
-
-                    {carregandoProducao
-                      ? "-"
-                      : formatarNumero(
-                          metricasProducao
-                            .registrosParada,
-                        )}
-
+                    {carregandoProducao ? "-" : formatarNumero(metricasProducao.registrosParada)}
                   </strong>
 
-
-                  <p>
-                    Ocorrências de indisponibilidade
-                    sem considerar Tipo 3.
-                  </p>
-
+                  <p>Ocorrências de indisponibilidade sem considerar Tipo 3.</p>
                 </div>
-
               </article>
-
             </div>
           )}
-
         </section>
-
 
         {/* ===============================================
             FINANCEIRO
         =============================================== */}
 
         {podeVerFinanceiro && (
-
           <section className="home-summary-section">
-
             <div className="home-section-heading">
-
               <div>
+                <span>FINANCEIRO</span>
 
-                <span>
-                  FINANCEIRO
-                </span>
+                <h2>Resumo financeiro</h2>
 
-
-                <h2>
-                  Resumo financeiro
-                </h2>
-
-
-                <p>
-                  Visão geral de{" "}
-                  {periodoFinanceiro.nome}.
-                </p>
-
+                <p>Visão geral de {periodoFinanceiro.nome}.</p>
               </div>
-
             </div>
 
-
             {erroFinanceiro ? (
-
               <div className="home-summary-error">
-
-                <AlertTriangle
-                  size={20}
-                />
-
+                <AlertTriangle size={20} />
 
                 <div>
+                  <strong>Não foi possível carregar o resumo financeiro.</strong>
 
-                  <strong>
-                    Não foi possível carregar
-                    o resumo financeiro.
-                  </strong>
-
-
-                  <span>
-                    Consulte o módulo Financeiro
-                    para verificar os dados.
-                  </span>
-
+                  <span>Consulte o módulo Financeiro para verificar os dados.</span>
                 </div>
-
               </div>
-
             ) : (
-
               <div className="home-summary-grid">
-
-
                 <article className="home-summary-card">
-
                   <div className="home-summary-icon home-summary-icon-success">
-
-                    <TrendingUp
-                      size={22}
-                    />
-
+                    <TrendingUp size={22} />
                   </div>
 
-
                   <div className="home-summary-info">
-
-                    <span>
-                      RECEITAS
-                    </span>
-
+                    <span>RECEITAS</span>
 
                     <strong
                       style={{
-                        color:
-                          receitaFinanceira < 0
-                            ? "#dc2626"
-                            : "#059669",
+                        color: receitaFinanceira < 0 ? "#dc2626" : "#059669",
                       }}
                     >
-
-                      {carregandoFinanceiro
-                        ? "-"
-                        : formatarMoeda(
-                            receitaFinanceira,
-                          )}
-
+                      {carregandoFinanceiro ? "-" : formatarMoeda(receitaFinanceira)}
                     </strong>
 
-
-                    <p>
-                      Realizado / a realizar
-                      no mês.
-                    </p>
-
+                    <p>Realizado / a realizar no mês.</p>
                   </div>
-
                 </article>
 
-
                 <article className="home-summary-card">
-
                   <div
                     className="home-summary-icon"
                     style={{
-                      background:
-                        "#fef2f2",
+                      background: "#fef2f2",
 
-                      color:
-                        "#dc2626",
+                      color: "#dc2626",
                     }}
                   >
-
-                    <TrendingDown
-                      size={22}
-                    />
-
+                    <TrendingDown size={22} />
                   </div>
-
 
                   <div className="home-summary-info">
+                    <span>DESPESAS</span>
 
-                    <span>
-                      DESPESAS
-                    </span>
+                    <strong>{carregandoFinanceiro ? "-" : formatarMoeda(despesaFinanceira)}</strong>
 
-
-                    <strong>
-
-                      {carregandoFinanceiro
-                        ? "-"
-                        : formatarMoeda(
-                            despesaFinanceira,
-                          )}
-
-                    </strong>
-
-
-                    <p>
-                      Realizado / a realizar
-                      no mês.
-                    </p>
-
+                    <p>Realizado / a realizar no mês.</p>
                   </div>
-
                 </article>
 
-
                 <article className="home-summary-card">
-
                   <div
                     className="home-summary-icon"
                     style={{
-                      background:
-                        saldoFinanceiro < 0
-                          ? "#fef2f2"
-                          : "#ecfdf5",
+                      background: saldoFinanceiro < 0 ? "#fef2f2" : "#ecfdf5",
 
-                      color:
-                        saldoFinanceiro < 0
-                          ? "#dc2626"
-                          : "#059669",
+                      color: saldoFinanceiro < 0 ? "#dc2626" : "#059669",
                     }}
                   >
-
-                    <WalletCards
-                      size={22}
-                    />
-
+                    <WalletCards size={22} />
                   </div>
 
-
                   <div className="home-summary-info">
-
-                    <span>
-                      SALDO
-                    </span>
-
+                    <span>SALDO</span>
 
                     <strong
                       style={{
-                        color:
-                          saldoFinanceiro < 0
-                            ? "#dc2626"
-                            : "#059669",
+                        color: saldoFinanceiro < 0 ? "#dc2626" : "#059669",
                       }}
                     >
-
-                      {carregandoFinanceiro
-                        ? "-"
-                        : formatarMoeda(
-                            saldoFinanceiro,
-                          )}
-
+                      {carregandoFinanceiro ? "-" : formatarMoeda(saldoFinanceiro)}
                     </strong>
 
-
-                    <p>
-                      Receitas menos despesas.
-                    </p>
-
+                    <p>Receitas menos despesas.</p>
                   </div>
-
                 </article>
 
-
                 <article className="home-summary-card">
-
                   <div
                     className="home-summary-icon"
                     style={{
-                      background:
-                        margemFinanceira < 0
-                          ? "#fef2f2"
-                          : "#ecfdf5",
+                      background: margemFinanceira < 0 ? "#fef2f2" : "#ecfdf5",
 
-                      color:
-                        margemFinanceira < 0
-                          ? "#dc2626"
-                          : "#059669",
+                      color: margemFinanceira < 0 ? "#dc2626" : "#059669",
                     }}
                   >
-
-                    <CircleDollarSign
-                      size={22}
-                    />
-
+                    <CircleDollarSign size={22} />
                   </div>
 
-
                   <div className="home-summary-info">
-
-                    <span>
-                      MARGEM
-                    </span>
-
+                    <span>MARGEM</span>
 
                     <strong
                       style={{
-                        color:
-                          margemFinanceira < 0
-                            ? "#dc2626"
-                            : "#059669",
+                        color: margemFinanceira < 0 ? "#dc2626" : "#059669",
                       }}
                     >
-
-                      {carregandoFinanceiro
-                        ? "-"
-                        : formatarPercentual(
-                            margemFinanceira,
-                          )}
-
+                      {carregandoFinanceiro ? "-" : formatarPercentual(margemFinanceira)}
                     </strong>
 
-
-                    <p>
-                      Resultado sobre
-                      a receita.
-                    </p>
-
+                    <p>Resultado sobre a receita.</p>
                   </div>
-
                 </article>
-
               </div>
-
             )}
-
           </section>
-
         )}
-
 
         {/* ===============================================
             PEDIDOS
@@ -2014,102 +952,44 @@ function Home({
 
         {podeVerPedidos && (
           <>
-
             <section className="home-summary-section">
-
               <div className="home-section-heading">
-
                 <div>
+                  <span>PEDIDOS</span>
 
-                  <span>
-                    PEDIDOS
-                  </span>
+                  <h2>Resumo comercial</h2>
 
-
-                  <h2>
-                    Resumo comercial
-                  </h2>
-
-
-                  <p>
-                    Atualização automática
-                    a cada 15 minutos.
-                  </p>
-
+                  <p>Atualização automática a cada 15 minutos.</p>
                 </div>
-
               </div>
 
-
               {erroPedidos ? (
-
                 <div className="home-summary-error">
-
-                  <AlertTriangle
-                    size={20}
-                  />
-
+                  <AlertTriangle size={20} />
 
                   <div>
+                    <strong>Não foi possível carregar o resumo dos pedidos.</strong>
 
-                    <strong>
-                      Não foi possível carregar
-                      o resumo dos pedidos.
-                    </strong>
-
-
-                    <span>
-                      Uma nova tentativa será
-                      realizada automaticamente.
-                    </span>
-
+                    <span>Uma nova tentativa será realizada automaticamente.</span>
                   </div>
-
                 </div>
-
               ) : (
-
                 <div className="home-summary-grid">
-
-
                   <article className="home-summary-card">
-
                     <div className="home-summary-icon">
-
-                      <ShoppingCart
-                        size={22}
-                      />
-
+                      <ShoppingCart size={22} />
                     </div>
-
 
                     <div className="home-summary-info">
-
-                      <span>
-                        PEDIDOS EM ABERTO
-                      </span>
-
+                      <span>PEDIDOS EM ABERTO</span>
 
                       <strong>
-
-                        {carregandoPedidos
-                          ? "-"
-                          : formatarNumero(
-                              pedidosUnicos.length,
-                            )}
-
+                        {carregandoPedidos ? "-" : formatarNumero(pedidosUnicos.length)}
                       </strong>
 
-
-                      <p>
-                        Pedidos comerciais
-                        em acompanhamento.
-                      </p>
-
+                      <p>Pedidos comerciais em acompanhamento.</p>
                     </div>
-
                   </article>
-
 
                   <article
                     className={
@@ -2118,7 +998,6 @@ function Home({
                         : "home-summary-card"
                     }
                   >
-
                     <div
                       className={
                         pedidosAtrasados > 0
@@ -2126,429 +1005,189 @@ function Home({
                           : "home-summary-icon"
                       }
                     >
-
-                      <AlertTriangle
-                        size={22}
-                      />
-
+                      <AlertTriangle size={22} />
                     </div>
 
-
                     <div className="home-summary-info">
+                      <span>PEDIDOS ATRASADOS</span>
 
-                      <span>
-                        PEDIDOS ATRASADOS
-                      </span>
-
-
-                      <strong>
-
-                        {carregandoPedidos
-                          ? "-"
-                          : formatarNumero(
-                              pedidosAtrasados,
-                            )}
-
-                      </strong>
-
+                      <strong>{carregandoPedidos ? "-" : formatarNumero(pedidosAtrasados)}</strong>
 
                       <p>
-
                         {pedidosAtrasados > 0
                           ? "Pedidos que precisam de atenção."
                           : "Nenhum atraso identificado."}
-
                       </p>
-
                     </div>
-
                   </article>
 
-
                   <article className="home-summary-card">
-
                     <div className="home-summary-icon">
-
-                      <CalendarClock
-                        size={22}
-                      />
-
+                      <CalendarClock size={22} />
                     </div>
-
 
                     <div className="home-summary-info">
+                      <span>PRÓXIMOS 7 DIAS</span>
 
-                      <span>
-                        PRÓXIMOS 7 DIAS
-                      </span>
+                      <strong>{carregandoPedidos ? "-" : formatarNumero(proximosSeteDias)}</strong>
 
-
-                      <strong>
-
-                        {carregandoPedidos
-                          ? "-"
-                          : formatarNumero(
-                              proximosSeteDias,
-                            )}
-
-                      </strong>
-
-
-                      <p>
-                        Pedidos previstos
-                        para faturamento.
-                      </p>
-
+                      <p>Pedidos previstos para faturamento.</p>
                     </div>
-
                   </article>
 
-
                   <article className="home-summary-card">
-
                     <div className="home-summary-icon">
-
-                      <Clock3
-                        size={22}
-                      />
-
+                      <Clock3 size={22} />
                     </div>
 
-
                     <div className="home-summary-info">
-
-                      <span>
-                        ÚLTIMA ATUALIZAÇÃO
-                      </span>
-
+                      <span>ÚLTIMA ATUALIZAÇÃO</span>
 
                       <strong className="home-summary-time">
-
-                        {carregandoPedidos
-                          ? "-"
-                          : formatarHorario(
-                              respostaPedidos
-                                ?.atualizadoEm,
-                            )}
-
+                        {carregandoPedidos ? "-" : formatarHorario(respostaPedidos?.atualizadoEm)}
                       </strong>
 
-
-                      <p>
-
-                        {formatarDataHora(
-                          respostaPedidos
-                            ?.atualizadoEm,
-                        )}
-
-                      </p>
-
+                      <p>{formatarDataHora(respostaPedidos?.atualizadoEm)}</p>
                     </div>
-
                   </article>
-
                 </div>
               )}
-
             </section>
 
+            {!carregandoPedidos && !erroPedidos && (
+              <section className="home-alerts-section">
+                <div className="home-section-heading">
+                  <div>
+                    <span>ATENÇÕES</span>
 
-            {!carregandoPedidos &&
-              !erroPedidos && (
-
-                <section className="home-alerts-section">
-
-                  <div className="home-section-heading">
-
-                    <div>
-
-                      <span>
-                        ATENÇÕES
-                      </span>
-
-
-                      <h2>
-                        Pedidos que merecem atenção
-                      </h2>
-
-                    </div>
-
+                    <h2>Pedidos que merecem atenção</h2>
                   </div>
+                </div>
 
-
-                  <div className="home-alerts-card">
-
-
-                    {pedidosAtrasados > 0 ? (
-
-                      <div className="home-alert-item home-alert-warning">
-
-                        <div className="home-alert-icon">
-
-                          <AlertTriangle
-                            size={19}
-                          />
-
-                        </div>
-
-
-                        <div>
-
-                          <strong>
-
-                            {formatarNumero(
-                              pedidosAtrasados,
-                            )} pedido
-                            {pedidosAtrasados !== 1
-                              ? "s"
-                              : ""} em atraso
-
-                          </strong>
-
-
-                          <p>
-                            Consulte Pedidos
-                            para verificar
-                            os prazos vencidos.
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                    ) : (
-
-                      <div className="home-alert-item home-alert-success">
-
-                        <div className="home-alert-icon">
-
-                          <CheckCircle2
-                            size={19}
-                          />
-
-                        </div>
-
-
-                        <div>
-
-                          <strong>
-                            Nenhum pedido em atraso
-                          </strong>
-
-
-                          <p>
-                            Não foram identificados
-                            pedidos vencidos
-                            no momento.
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                    )}
-
-
-                    <div className="home-alert-divider" />
-
-
-                    <div className="home-alert-item home-alert-info">
-
+                <div className="home-alerts-card">
+                  {pedidosAtrasados > 0 ? (
+                    <div className="home-alert-item home-alert-warning">
                       <div className="home-alert-icon">
-
-                        <CalendarClock
-                          size={19}
-                        />
-
+                        <AlertTriangle size={19} />
                       </div>
-
 
                       <div>
-
                         <strong>
-
-                          {formatarNumero(
-                            proximosSeteDias,
-                          )} faturamento
-                          {proximosSeteDias !== 1
-                            ? "s"
-                            : ""} nos próximos 7 dias
-
+                          {formatarNumero(pedidosAtrasados)} pedido
+                          {pedidosAtrasados !== 1 ? "s" : ""} em atraso
                         </strong>
 
-
-                        <p>
-                          Pedidos previstos
-                          para faturamento
-                          durante a próxima semana.
-                        </p>
-
+                        <p>Consulte Pedidos para verificar os prazos vencidos.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="home-alert-item home-alert-success">
+                      <div className="home-alert-icon">
+                        <CheckCircle2 size={19} />
                       </div>
 
+                      <div>
+                        <strong>Nenhum pedido em atraso</strong>
+
+                        <p>Não foram identificados pedidos vencidos no momento.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="home-alert-divider" />
+
+                  <div className="home-alert-item home-alert-info">
+                    <div className="home-alert-icon">
+                      <CalendarClock size={19} />
                     </div>
 
+                    <div>
+                      <strong>
+                        {formatarNumero(proximosSeteDias)} faturamento
+                        {proximosSeteDias !== 1 ? "s" : ""} nos próximos 7 dias
+                      </strong>
+
+                      <p>Pedidos previstos para faturamento durante a próxima semana.</p>
+                    </div>
                   </div>
-
-                </section>
-
-              )}
-
+                </div>
+              </section>
+            )}
           </>
         )}
-
 
         {/* ===============================================
             ADMINISTRAÇÃO
         =============================================== */}
 
         {possuiAcoesAdministrativas && (
-
           <section className="home-admin-section">
-
             <div className="home-section-heading">
-
               <div>
+                <span>ADMINISTRAÇÃO</span>
 
-                <span>
-                  ADMINISTRAÇÃO
-                </span>
+                <h2>Ferramentas administrativas</h2>
 
-
-                <h2>
-                  Ferramentas administrativas
-                </h2>
-
-
-                <p>
-                  Recursos adicionais
-                  disponíveis para seu perfil.
-                </p>
-
+                <p>Recursos adicionais disponíveis para seu perfil.</p>
               </div>
-
             </div>
-
 
             <div className="home-admin-actions">
-
-
               {podeImportar && (
-
                 <button
                   type="button"
                   className="home-admin-action"
-                  onClick={() =>
-                    navigate(
-                      "/importar",
-                    )
-                  }
+                  onClick={() => navigate("/importar")}
                 >
-
                   <div className="home-admin-action-icon">
-
-                    <UploadCloud
-                      size={21}
-                    />
-
+                    <UploadCloud size={21} />
                   </div>
-
 
                   <div>
+                    <strong>Importar dados</strong>
 
-                    <strong>
-                      Importar dados
-                    </strong>
-
-
-                    <span>
-                      Importação da programação
-                      e dados operacionais.
-                    </span>
-
+                    <span>Importação da programação e dados operacionais.</span>
                   </div>
-
                 </button>
-
               )}
-
 
               {podeGerenciarUsuarios && (
-
                 <button
                   type="button"
                   className="home-admin-action"
-                  onClick={() =>
-                    navigate(
-                      "/usuarios",
-                    )
-                  }
+                  onClick={() => navigate("/usuarios")}
                 >
-
                   <div className="home-admin-action-icon">
-
-                    <UsersRound
-                      size={21}
-                    />
-
+                    <UsersRound size={21} />
                   </div>
-
 
                   <div>
+                    <strong>Gerenciar usuários</strong>
 
-                    <strong>
-                      Gerenciar usuários
-                    </strong>
-
-
-                    <span>
-                      Usuários, perfis
-                      e permissões de acesso.
-                    </span>
-
+                    <span>Usuários, perfis e permissões de acesso.</span>
                   </div>
-
                 </button>
-
               )}
-
             </div>
-
           </section>
-
         )}
-
 
         {/* ===============================================
             RODAPÉ
         =============================================== */}
 
         <footer className="home-system-footer">
-
           <div>
+            <Factory size={15} />
 
-            <Factory
-              size={15}
-            />
-
-
-            <strong>
-              Pedrasplast
-            </strong>
-
+            <strong>Pedrasplast</strong>
           </div>
 
-
-          <span>
-            Gestão integrada e acompanhamento operacional
-          </span>
-
+          <span>Gestão integrada e acompanhamento operacional</span>
         </footer>
-
       </div>
-
     </main>
   );
 }
-
 
 export default Home;
