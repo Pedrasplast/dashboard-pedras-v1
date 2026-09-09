@@ -25,7 +25,18 @@ export const supabase = createClient(
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
+      detectSessionInUrl: false,
     },
   },
 );
+// O convite não pode substituir a sessão do administrador neste navegador.
+export function criarClientePrimeiroAcesso() {
+  return createClient(urlSupabase, chaveAnonSupabase, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      storageKey: 'pedrasplast-primeiro-acesso',
+    },
+  });
+}
