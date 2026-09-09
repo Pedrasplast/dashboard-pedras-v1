@@ -1,0 +1,158 @@
+/* =========================================================
+   CRITICIDADE — COMPONENTE
+========================================================= */
+
+.dp-criticidade {
+  min-width: 0;
+}
+
+/* =========================================================
+   QUADRANTES
+========================================================= */
+
+.dp-criticidade-quadrantes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.dp-criticidade-quadrante-card {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid;
+  border-radius: 9px;
+}
+
+.dp-criticidade-quadrante-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dp-criticidade-quadrante-topo strong {
+  font-size: 0.72rem;
+}
+
+.dp-criticidade-quadrante-topo span {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.dp-criticidade-quadrante-card > b {
+  display: block;
+  margin-top: 2px;
+  color: #1e293b;
+  font-size: 0.72rem;
+}
+
+.dp-criticidade-quadrante-card > small {
+  display: block;
+  margin-top: 1px;
+  color: #64748b;
+  line-height: 1.25;
+  font-size: 0.65rem;
+}
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+.dp-chart--criticidade {
+  width: 100%;
+  height: 310px;
+}
+
+.dp-chart--criticidade
+.recharts-reference-line-line {
+  stroke: #94a3b8;
+}
+
+.dp-criticidade-scatter {
+  cursor: pointer;
+}
+
+.dp-criticidade-scatter .recharts-symbols {
+  cursor: pointer;
+}
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.dp-criticidade__footer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 0.72rem;
+}
+
+.dp-criticidade__footer strong {
+  color: #334155;
+}
+
+.dp-criticidade__footer-clique {
+  margin-left: auto;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+/* =========================================================
+   TOOLTIP ESPECÍFICO
+========================================================= */
+
+.dp-criticidade-tooltip-prioridade {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0;
+  padding: 7px 9px;
+  border: 1px solid;
+  border-radius: 7px;
+}
+
+.dp-criticidade-tooltip-prioridade b {
+  font-size: 0.72rem;
+}
+
+.dp-criticidade-tooltip-prioridade span {
+  color: #64748b;
+  font-size: 0.67rem;
+}
+
+.dp-criticidade-tooltip-clique {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid #e2e8f0;
+  color: #2563eb;
+  font-size: 0.67rem;
+  font-weight: 700;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1250px) {
+  .dp-chart--criticidade {
+    height: 340px;
+  }
+}
+
+@media (max-width: 760px) {
+  .dp-criticidade-quadrantes {
+    grid-template-columns: 1fr;
+  }
+}

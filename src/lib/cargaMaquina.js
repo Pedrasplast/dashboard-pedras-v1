@@ -483,7 +483,15 @@ async function salvarMeta(
 
 
 /* =========================================================
-   LIMPAR CACHE COMPLETO
+   LIMPAR CACHE COMPLETO DA CARGA_MAQUINA
+
+   Limpa:
+   - registros salvos no IndexedDB;
+   - referência da última sincronização.
+
+   A próxima consulta será tratada como
+   uma primeira carga e buscará novamente
+   toda a tabela carga_maquina no Supabase.
 ========================================================= */
 
 export async function limparCacheCargaMaquina() {
@@ -714,10 +722,21 @@ async function buscarNovosRegistros(
 
 /* =========================================================
    SINCRONIZAÇÃO PRINCIPAL
+
+   Sincronização normal/incremental.
+
+   IMPORTANTE:
+   Esta estratégia detecta novos registros
+   usando criado_em.
+
+   Por isso, UPDATEs feitos diretamente em
+   registros antigos não são necessariamente
+   detectados aqui.
+
+   Para isso existe recarregarCompleto().
 ========================================================= */
 
 export async function buscarCargaMaquina() {
-
   /* =====================================================
      1. LÊ O INDEXEDDB
   ===================================================== */
@@ -727,7 +746,9 @@ export async function buscarCargaMaquina() {
     ultimaAtualizacaoCache,
   ] = await Promise.all([
     lerDadosIndexedDB(),
-    lerMeta(META_ULTIMA_ATUALIZACAO),
+    lerMeta(
+      META_ULTIMA_ATUALIZACAO,
+    ),
   ]);
 
 
@@ -779,7 +800,7 @@ export async function buscarCargaMaquina() {
 
 
   /* =====================================================
-     4. NÃO HOUVE ALTERAÇÃO
+     4. NÃO HOUVE NOVOS REGISTROS
   ===================================================== */
 
   if (
@@ -1169,6 +1190,44 @@ export function useCargaMaquina(
     });
 
 
+  /* =======================================================
+     ATUALIZAÇÃO COMPLETA
+
+     Diferente do refetch normal.
+
+     Fluxo:
+     1. limpa somente o cache local da carga_maquina;
+     2. limpa o marcador da última sincronização;
+     3. executa novamente buscarCargaMaquina();
+     4. como o IndexedDB estará vazio, a função baixa
+        novamente toda a tabela do Supabase.
+
+     Isso permite capturar também UPDATEs feitos em
+     registros antigos.
+  ======================================================= */
+
+  async function recarregarCompleto() {
+    logDesenvolvimento(
+      "[Carga Máquina] Atualização completa solicitada. Limpando cache local...",
+    );
+
+    await limparCacheCargaMaquina();
+
+    logDesenvolvimento(
+      "[Carga Máquina] Cache local limpo. Buscando base completa novamente...",
+    );
+
+    const resultado =
+      await consulta.refetch();
+
+    logDesenvolvimento(
+      "[Carga Máquina] Atualização completa finalizada.",
+    );
+
+    return resultado;
+  }
+
+
   return {
     dados:
       consulta.data ??
@@ -1191,7 +1250,18 @@ export function useCargaMaquina(
         : "",
 
 
+    /*
+     * Refetch normal:
+     * usa a sincronização incremental.
+     */
     recarregar:
       consulta.refetch,
+
+
+    /*
+     * Refetch completo:
+     * limpa o IndexedDB e baixa novamente do Supabase.
+     */
+    recarregarCompleto,
   };
 }

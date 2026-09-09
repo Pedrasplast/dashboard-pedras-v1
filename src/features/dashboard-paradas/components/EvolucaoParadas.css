@@ -1,0 +1,199 @@
+/* =========================================================
+   EVOLUÇÃO DAS PARADAS
+========================================================= */
+
+.dp-chart--evolucao {
+  height:
+    330px;
+}
+
+
+/* =========================================================
+   AÇÕES DO CABEÇALHO
+========================================================= */
+
+.dp-evolucao-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    8px;
+}
+
+
+.dp-evolucao-granularidade {
+  padding:
+    4px
+    8px;
+
+  color:
+    #64748b;
+
+  background:
+    #f8fafc;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    999px;
+
+  font-size:
+    0.59rem;
+
+  font-weight:
+    750;
+
+  white-space:
+    nowrap;
+}
+
+
+/* =========================================================
+   BOTÃO TEMPO / OCORRÊNCIAS
+========================================================= */
+
+.dp-chart-toggle {
+  display:
+    inline-flex;
+
+  padding:
+    3px;
+
+  background:
+    #f1f5f9;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    8px;
+}
+
+
+.dp-chart-toggle__btn {
+  min-height:
+    27px;
+
+  padding:
+    0
+    9px;
+
+  color:
+    #64748b;
+
+  background:
+    transparent;
+
+  border:
+    0;
+
+  border-radius:
+    6px;
+
+  font-family:
+    inherit;
+
+  font-size:
+    0.62rem;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+
+.dp-chart-toggle__btn:hover {
+  color:
+    var(--dp-text);
+}
+
+
+.dp-chart-toggle__btn.active {
+  color:
+    #ffffff;
+
+  background:
+    var(--dp-primary);
+
+  box-shadow:
+    0 2px 6px
+    rgba(
+      37,
+      99,
+      235,
+      0.2
+    );
+}
+
+
+/* =========================================================
+   GRÁFICO CLICÁVEL
+========================================================= */
+
+.dp-chart--evolucao-clicavel
+.recharts-wrapper {
+  cursor:
+    pointer;
+}
+
+
+.dp-chart--evolucao-clicavel
+.recharts-area-area,
+.dp-chart--evolucao-clicavel
+.recharts-area-curve,
+.dp-chart--evolucao-clicavel
+.recharts-dot,
+.dp-chart--evolucao-clicavel
+.recharts-active-dot {
+  cursor:
+    pointer;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (
+  max-width:
+    760px
+) {
+  .dp-evolucao-actions {
+    width:
+      100%;
+
+    justify-content:
+      flex-start;
+  }
+
+
+  .dp-chart-toggle {
+    width:
+      100%;
+  }
+
+
+  .dp-chart-toggle__btn {
+    flex:
+      1;
+  }
+}

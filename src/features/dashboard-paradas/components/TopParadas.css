@@ -1,0 +1,258 @@
+/* =========================================================
+   TOP 5 MAIORES PARADAS
+========================================================= */
+
+.dp-top-paradas-card-content {
+  padding:
+    4px
+    14px
+    10px;
+}
+
+.dp-top-paradas {
+  min-width: 0;
+}
+
+.dp-top-paradas__item {
+  display: grid;
+
+  grid-template-columns:
+    36px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  padding:
+    11px
+    2px;
+
+  border-bottom:
+    1px solid
+    #edf2f7;
+}
+
+.dp-top-paradas__item:last-child {
+  border-bottom: 0;
+}
+
+.dp-top-paradas__rank {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    #64748b;
+
+  background:
+    #f1f5f9;
+
+  border-radius: 8px;
+
+  font-size: 0.65rem;
+
+  font-weight: 850;
+}
+
+.dp-top-paradas__item:first-child
+.dp-top-paradas__rank {
+  color:
+    #b91c1c;
+
+  background:
+    #fef2f2;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.dp-top-paradas__content {
+  min-width: 0;
+}
+
+.dp-top-paradas__top {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.dp-top-paradas__machine {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.dp-top-paradas__machine-icon {
+  flex: 0 0 auto;
+
+  width: 25px;
+  height: 25px;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    var(--dp-primary);
+
+  background:
+    var(--dp-primary-soft);
+
+  border-radius: 6px;
+}
+
+.dp-top-paradas__machine strong {
+  overflow: hidden;
+
+  color:
+    var(--dp-text);
+
+  font-size: 0.72rem;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.dp-top-paradas__duration {
+  flex: 0 0 auto;
+
+  color:
+    var(--dp-danger);
+
+  font-size: 0.79rem;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+/* =========================================================
+   MOTIVO / TIPO
+========================================================= */
+
+.dp-top-paradas__reason {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-top: 5px;
+}
+
+.dp-top-paradas__reason > strong {
+  color:
+    #334155;
+
+  font-size: 0.68rem;
+}
+
+.dp-top-paradas__tipo {
+  padding:
+    2px
+    6px;
+
+  color:
+    #475569;
+
+  background:
+    #f1f5f9;
+
+  border-radius: 999px;
+
+  font-size: 0.55rem;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   JUSTIFICATIVA
+========================================================= */
+
+.dp-top-paradas__justificativa {
+  margin:
+    4px
+    0
+    0;
+
+  overflow: hidden;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.65rem;
+
+  line-height: 1.4;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+.dp-top-paradas__meta {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-top: 6px;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.59rem;
+}
+
+.dp-top-paradas__meta span {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (
+  max-width:
+    520px
+) {
+  .dp-top-paradas__top {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .dp-top-paradas__duration {
+    padding-left:
+      31px;
+  }
+}

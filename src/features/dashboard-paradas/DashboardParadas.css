@@ -1,0 +1,1501 @@
+/* =========================================================
+   DASHBOARD DE PARADAS
+   Escopo visual isolado com prefixo dp-
+========================================================= */
+
+.dp-page {
+  --dp-bg-top: #f8fbff;
+  --dp-bg-bottom: #eef4fb;
+
+  --dp-surface: #ffffff;
+  --dp-surface-soft: #f8fafc;
+
+  --dp-border: #dfe7f1;
+  --dp-border-soft: #edf2f7;
+
+  --dp-text: #0f172a;
+  --dp-text-secondary: #334155;
+  --dp-muted: #64748b;
+  --dp-muted-light: #94a3b8;
+
+  --dp-primary: #1d4ed8;
+  --dp-primary-dark: #0b1f5e;
+  --dp-primary-soft: #eff6ff;
+
+  --dp-success: #15803d;
+  --dp-success-soft: #f0fdf4;
+
+  --dp-warning: #b45309;
+  --dp-warning-soft: #fffbeb;
+
+  --dp-danger: #b91c1c;
+  --dp-danger-soft: #fef2f2;
+
+  --dp-shadow:
+    0 8px 24px
+    rgba(15, 23, 42, 0.055);
+
+  --dp-shadow-hover:
+    0 14px 34px
+    rgba(15, 23, 42, 0.09);
+
+  display: grid;
+
+  grid-template-columns:
+    296px
+    minmax(0, 1fr);
+
+  align-items: stretch;
+
+  /*
+   * Navbar desktop = 76px.
+   * O Dashboard ocupa somente o restante do viewport.
+   */
+  height:
+    calc(
+      100dvh - 76px
+    );
+
+  min-height: 0;
+
+  padding-top: 16px;
+
+  margin-top: 70px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--dp-bg-top) 0%,
+      var(--dp-bg-bottom) 100%
+    );
+}
+
+
+/* =========================================================
+   SIDEBAR — RESPIRO LATERAL
+========================================================= */
+
+.dp-sidebar-shell {
+  min-width: 0;
+  min-height: 0;
+
+  /*
+   * 12px de respiro no topo
+   * + 16px de respiro no rodapé.
+   */
+  height:
+    calc(
+      100% - 28px
+    );
+
+  align-self: start;
+
+  margin-top: 12px;
+
+  padding-left: 16px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+.dp-sidebar-shell > * {
+  width: 100%;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  /*
+   * O Sidebar permanece parado.
+   * Não existe mais rolagem interna na lateral.
+   */
+  position: static !important;
+
+  top: auto !important;
+
+  overflow: hidden !important;
+
+  box-sizing: border-box;
+
+  scrollbar-gutter: auto;
+}
+
+
+/* =========================================================
+   SIDEBAR — FILTROS COMPACTOS SEM ROLAGEM
+========================================================= */
+
+@media (
+  min-width: 761px
+) {
+  .dp-sidebar-shell .filter-section {
+    gap: 6px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .filter-header-row {
+    gap: 8px;
+
+    margin-top: 0;
+  }
+
+  .dp-sidebar-shell
+  .filter-section > label,
+  .dp-sidebar-shell
+  .filter-section
+  .filter-header-row > label {
+    margin:
+      8px
+      0
+      0;
+
+    font-size:
+      0.66rem;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .filter-header-row > label {
+    margin: 0;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .clear-date-btn {
+    padding:
+      3px
+      5px;
+
+    font-size:
+      0.62rem;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .date-inputs-container {
+    gap: 6px;
+  }
+
+  .dp-sidebar-shell
+  .calendar-trigger {
+    min-height:
+      48px;
+
+    gap: 2px;
+
+    padding:
+      7px
+      10px;
+  }
+
+  .dp-sidebar-shell
+  .calendar-trigger span {
+    font-size:
+      0.59rem;
+  }
+
+  .dp-sidebar-shell
+  .calendar-trigger strong {
+    font-size:
+      0.82rem;
+  }
+
+  .dp-sidebar-shell
+  .filter-section select {
+    min-height:
+      42px;
+
+    padding:
+      7px
+      34px
+      7px
+      10px;
+
+    font-size:
+      0.79rem;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .checkbox-group {
+    max-height:
+      none;
+
+    gap: 2px;
+
+    padding: 0;
+
+    overflow:
+      visible;
+
+    scrollbar-width:
+      none;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .checkbox-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label {
+    min-height:
+      32px;
+
+    gap: 6px;
+
+    padding:
+      4px
+      5px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label
+  input[type="checkbox"] {
+    width:
+      15px;
+
+    height:
+      15px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-label-conteudo {
+    gap: 6px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-label-numero {
+    width:
+      21px;
+
+    height:
+      21px;
+
+    font-size:
+      0.65rem;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-label-descricao {
+    font-size:
+      0.65rem;
+
+    line-height:
+      1.16;
+  }
+}
+
+
+/* =========================================================
+   SIDEBAR — NOTEBOOK COM POUCA ALTURA
+========================================================= */
+
+@media (
+  max-height: 760px
+) and (
+  min-width: 761px
+) {
+  .dp-sidebar-shell .filter-section {
+    gap: 4px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section > label {
+    margin-top:
+      6px;
+  }
+
+  .dp-sidebar-shell
+  .calendar-trigger {
+    min-height:
+      44px;
+
+    padding:
+      6px
+      9px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section select {
+    min-height:
+      39px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label {
+    min-height:
+      29px;
+
+    padding:
+      3px
+      4px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-label-numero {
+    width:
+      19px;
+
+    height:
+      19px;
+  }
+
+  .dp-sidebar-shell
+  .filter-section
+  .tipo-label-descricao {
+    font-size:
+      0.62rem;
+  }
+}
+
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+========================================================= */
+
+.dp-main {
+  min-width: 0;
+  min-height: 0;
+
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 0;
+
+  padding:
+    32px
+    36px
+    0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   CABEÇALHO FIXO DA ÁREA PRINCIPAL
+========================================================= */
+
+.dp-main-fixed {
+  flex: 0 0 auto;
+
+  min-width: 0;
+
+  position: relative;
+
+  z-index: 4;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(
+        248,
+        251,
+        255,
+        0.98
+      ) 0%,
+      rgba(
+        248,
+        251,
+        255,
+        0.94
+      ) 100%
+    );
+}
+
+
+/* =========================================================
+   ÁREA ROLÁVEL DOS DADOS
+========================================================= */
+
+.dp-data-scroll {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow-x: clip;
+  overflow-y: auto;
+
+  padding:
+    0
+    4px
+    44px
+    0;
+
+  box-sizing: border-box;
+
+  overscroll-behavior:
+    contain;
+
+  scrollbar-gutter:
+    stable;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.dp-header {
+  margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   ATUALIZAÇÃO
+========================================================= */
+
+.dp-updating {
+  width: fit-content;
+
+  margin:
+    -6px
+    0
+    12px
+    auto;
+
+  padding:
+    5px
+    9px;
+
+  color: #1d4ed8;
+
+  background: #eff6ff;
+
+  border:
+    1px solid
+    #dbeafe;
+
+  border-radius: 999px;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   INSIGHTS
+========================================================= */
+
+.dp-insights {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.dp-insight {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    12px
+    14px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
+
+  border:
+    1px solid
+    var(--dp-border);
+
+  border-radius: 11px;
+
+  box-shadow:
+    0 3px 12px
+    rgba(
+      15,
+      23,
+      42,
+      0.035
+    );
+}
+
+.dp-insight__icon {
+  flex: 0 0 auto;
+
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    var(--dp-primary);
+
+  background:
+    var(--dp-primary-soft);
+
+  border-radius: 9px;
+}
+
+.dp-insight__content {
+  min-width: 0;
+}
+
+.dp-insight__content > span {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.63rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.055em;
+
+  text-transform: uppercase;
+}
+
+.dp-insight__content > strong {
+  display: block;
+
+  overflow: hidden;
+
+  color:
+    var(--dp-text);
+
+  font-size: 0.91rem;
+  font-weight: 800;
+
+  line-height: 1.25;
+
+  text-overflow:
+    ellipsis;
+
+  white-space: nowrap;
+}
+
+.dp-insight__content > small {
+  display: block;
+
+  margin-top: 2px;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.66rem;
+
+  line-height: 1.35;
+}
+
+
+/* =========================================================
+   GRID DOS GRÁFICOS
+========================================================= */
+
+.dp-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+
+  align-items: stretch;
+}
+
+/*
+   Mantém a mesma divisão de colunas em todas as linhas.
+   Assim o divisor central dos cards fica perfeitamente alinhado.
+*/
+.dp-grid--principal,
+.dp-grid--analise,
+.dp-grid--operacional {
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+}
+
+.dp-grid > * {
+  min-width: 0;
+  height: 100%;
+}
+
+/* =========================================================
+   GRÁFICOS
+========================================================= */
+
+.dp-chart {
+  width: 100%;
+  height: 320px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   RECHARTS — PADRÃO VISUAL
+========================================================= */
+
+.dp-page
+.recharts-cartesian-grid-horizontal
+line,
+.dp-page
+.recharts-cartesian-grid-vertical
+line {
+  stroke:
+    #e8eef5;
+}
+
+.dp-page
+.recharts-cartesian-axis-line,
+.dp-page
+.recharts-cartesian-axis-tick-line {
+  stroke:
+    #cbd5e1;
+}
+
+.dp-page
+.recharts-cartesian-axis-tick-value {
+  fill:
+    #64748b;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   TOOLTIP DOS GRÁFICOS
+========================================================= */
+
+.dp-chart-tooltip {
+  min-width: 180px;
+
+  padding:
+    10px
+    12px;
+
+  color:
+    var(--dp-text-secondary);
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  border:
+    1px solid
+    #dbe3ee;
+
+  border-radius: 9px;
+
+  box-shadow:
+    0 14px 34px
+    rgba(
+      15,
+      23,
+      42,
+      0.16
+    );
+
+  font-size: 0.7rem;
+}
+
+.dp-chart-tooltip > strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    var(--dp-text);
+
+  font-size: 0.75rem;
+
+  font-weight: 800;
+}
+
+.dp-chart-tooltip__linha {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding:
+    3px
+    0;
+}
+
+.dp-chart-tooltip__linha span {
+  color:
+    var(--dp-muted);
+}
+
+.dp-chart-tooltip__linha b {
+  color:
+    var(--dp-text);
+
+  font-size: 0.7rem;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+/* =========================================================
+   ESTADO SEM DADOS DA PÁGINA
+========================================================= */
+
+.dp-empty-page {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 4px;
+
+  padding:
+    22px
+    20px;
+
+  color:
+    #64748b;
+
+  background:
+    #ffffff;
+
+  border:
+    1px dashed
+    #cbd5e1;
+
+  border-radius: 12px;
+}
+
+.dp-empty-page > svg {
+  flex: 0 0 auto;
+
+  color:
+    #94a3b8;
+}
+
+.dp-empty-page strong {
+  display: block;
+
+  color:
+    #334155;
+
+  font-size: 0.8rem;
+}
+
+.dp-empty-page p {
+  margin:
+    3px
+    0
+    0;
+
+  font-size: 0.69rem;
+
+  line-height: 1.4;
+}
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK / DESKTOP MENOR
+========================================================= */
+
+@media (
+  max-width: 1450px
+) {
+  .dp-page {
+    grid-template-columns:
+      268px
+      minmax(0, 1fr);
+
+    padding-top: 12px;
+  }
+
+  .dp-sidebar-shell {
+    height:
+      calc(
+        100% - 24px
+      );
+
+    margin-top: 10px;
+
+    padding-left: 12px;
+  }
+
+  .dp-main {
+    padding:
+      24px
+      24px
+      0;
+  }
+
+  .dp-header {
+    margin-bottom:
+      14px;
+  }
+
+  .dp-insights {
+    gap:
+      10px;
+
+    margin-bottom:
+      14px;
+  }
+
+  .dp-grid {
+    gap:
+      14px;
+
+    margin-bottom:
+      14px;
+  }
+
+  .dp-chart {
+    height:
+      300px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK COMPACTO
+========================================================= */
+
+@media (
+  max-width: 1280px
+) {
+  .dp-page {
+    grid-template-columns:
+      250px
+      minmax(0, 1fr);
+  }
+
+  .dp-main {
+    padding:
+      20px
+      18px
+      0;
+  }
+
+  .dp-insight {
+    gap:
+      9px;
+
+    padding:
+      10px
+      11px;
+  }
+
+  .dp-insight__icon {
+    width:
+      32px;
+
+    height:
+      32px;
+  }
+
+  .dp-insight__content > strong {
+    font-size:
+      0.82rem;
+  }
+
+  .dp-chart {
+    height:
+      285px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — LARGURA REDUZIDA
+   Sidebar continua fixa e os gráficos passam para uma coluna.
+========================================================= */
+
+@media (
+  max-width: 1120px
+) {
+  .dp-page {
+    grid-template-columns:
+      236px
+      minmax(0, 1fr);
+  }
+
+  .dp-main {
+    padding:
+      18px
+      16px
+      0;
+  }
+
+  .dp-grid--principal,
+  .dp-grid--analise,
+  .dp-grid--operacional {
+    grid-template-columns:
+      1fr;
+  }
+
+  .dp-insights {
+    grid-template-columns:
+      1fr;
+  }
+
+  .dp-chart {
+    height:
+      320px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET HORIZONTAL / TELA ESTREITA
+   Ainda mantém Sidebar + conteúdo lado a lado.
+========================================================= */
+
+@media (
+  max-width: 920px
+) {
+  .dp-page {
+    grid-template-columns:
+      218px
+      minmax(0, 1fr);
+
+    padding-top:
+      8px;
+  }
+
+  .dp-sidebar-shell {
+    height:
+      calc(
+        100% - 16px
+      );
+
+    margin-top:
+      8px;
+
+    padding-left:
+      8px;
+  }
+
+  .dp-main {
+    padding:
+      14px
+      12px
+      0;
+  }
+
+  .dp-header {
+    margin-bottom:
+      10px;
+  }
+
+  .dp-dashboard-actions {
+    margin:
+      -2px
+      0
+      10px;
+  }
+
+  .dp-data-scroll {
+    padding:
+      0
+      2px
+      28px
+      0;
+  }
+
+  .dp-chart {
+    height:
+      290px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR / TABLET VERTICAL
+   Aqui deixa de existir o layout fixo em duas colunas.
+========================================================= */
+
+@media (
+  max-width: 760px
+) {
+  .dp-page {
+    display:
+      block;
+
+    height:
+      auto;
+
+    min-height:
+      calc(
+        100dvh - 76px
+      );
+
+    padding:
+      10px
+      10px
+      18px;
+
+    overflow:
+      visible;
+  }
+
+  .dp-sidebar-shell {
+    width:
+      100%;
+
+    height:
+      auto;
+
+    margin-top:
+      0;
+
+    margin-bottom:
+      14px;
+
+    padding-left:
+      0;
+
+    overflow:
+      visible;
+  }
+
+  .dp-sidebar-shell > * {
+    width:
+      100%;
+
+    height:
+      auto !important;
+
+    min-height:
+      0 !important;
+
+    max-height:
+      none !important;
+
+    overflow:
+      visible !important;
+
+    scrollbar-gutter:
+      auto;
+  }
+
+  .dp-main {
+    width:
+      100%;
+
+    height:
+      auto;
+
+    display:
+      block;
+
+    padding:
+      0;
+
+    overflow:
+      visible;
+  }
+
+  .dp-main-fixed {
+    position:
+      static;
+
+    background:
+      transparent;
+  }
+
+  .dp-data-scroll {
+    overflow:
+      visible;
+
+    padding:
+      0;
+  }
+
+  .dp-dashboard-actions {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+
+    gap:
+      8px;
+
+    margin:
+      0
+      0
+      12px;
+  }
+
+  .dp-refresh-button {
+    width:
+      100%;
+  }
+
+  .dp-insights {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      10px;
+  }
+
+  .dp-grid,
+  .dp-grid--principal,
+  .dp-grid--analise,
+  .dp-grid--operacional {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      12px;
+  }
+
+  .dp-chart {
+    height:
+      280px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR PEQUENO
+========================================================= */
+
+@media (
+  max-width: 520px
+) {
+  .dp-page {
+    padding:
+      8px
+      8px
+      16px;
+  }
+
+  .dp-header {
+    margin-bottom:
+      10px;
+  }
+
+  .dp-insight {
+    padding:
+      10px;
+  }
+
+  .dp-chart {
+    height:
+      250px;
+  }
+
+  .dp-chart-tooltip {
+    min-width:
+      150px;
+
+    padding:
+      8px
+      9px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TELA BAIXA
+   Importante para notebooks 1366x768 e similares.
+========================================================= */
+
+@media (
+  max-height: 820px
+) and (
+  min-width: 761px
+) {
+  .dp-page {
+    padding-top:
+      8px;
+  }
+
+  .dp-sidebar-shell {
+    height:
+      calc(
+        100% - 14px
+      );
+
+    margin-top:
+      6px;
+  }
+
+  .dp-main {
+    padding-top:
+      16px;
+  }
+
+  .dp-header {
+    margin-bottom:
+      10px;
+  }
+
+  .dp-dashboard-actions {
+    min-height:
+      32px;
+
+    margin:
+      -3px
+      0
+      9px;
+  }
+
+  .dp-insights {
+    margin-bottom:
+      12px;
+  }
+
+  .dp-chart {
+    height:
+      270px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TELA MUITO BAIXA
+========================================================= */
+
+@media (
+  max-height: 680px
+) and (
+  min-width: 761px
+) {
+  .dp-main {
+    padding-top:
+      10px;
+  }
+
+  .dp-header {
+    margin-bottom:
+      7px;
+  }
+
+  .dp-chart {
+    height:
+      245px;
+  }
+}
+
+
+/* =========================================================
+   DRILL-DOWN GENÉRICO DOS GRÁFICOS
+========================================================= */
+
+.dp-drilldown-tooltip-clique {
+  margin-top: 8px;
+
+  padding-top: 7px;
+
+  border-top:
+    1px solid
+    #e2e8f0;
+
+  color:
+    #2563eb;
+
+  font-size:
+    0.67rem;
+
+  font-weight: 700;
+}
+
+.dp-drilldown__clique {
+  margin-top: 7px;
+
+  color:
+    #2563eb;
+
+  font-size:
+    0.66rem;
+
+  font-weight: 700;
+
+  text-align: right;
+}
+
+/* =========================================================
+   ATUALIZAÇÃO MANUAL DO DASHBOARD
+========================================================= */
+
+.dp-dashboard-actions {
+  min-height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin:
+    -5px
+    0
+    14px;
+}
+
+.dp-dashboard-actions__status {
+  min-width: 0;
+}
+
+.dp-dashboard-actions .dp-updating {
+  margin: 0;
+}
+
+/* =========================================================
+   BOTÃO ATUALIZAR
+========================================================= */
+
+.dp-refresh-button {
+  min-height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0
+    11px;
+
+  color:
+    var(--dp-primary);
+
+  background:
+    #ffffff;
+
+  border:
+    1px solid
+    #bfdbfe;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 2px 6px
+    rgba(
+      15,
+      23,
+      42,
+      0.035
+    );
+
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.dp-refresh-button:hover:not(:disabled) {
+  color:
+    #ffffff;
+
+  background:
+    var(--dp-primary);
+
+  border-color:
+    var(--dp-primary);
+
+  box-shadow:
+    0 5px 12px
+    rgba(
+      37,
+      99,
+      235,
+      0.18
+    );
+
+  transform:
+    translateY(-1px);
+}
+
+.dp-refresh-button:active:not(:disabled) {
+  transform:
+    translateY(0);
+}
+
+.dp-refresh-button:disabled {
+  opacity: 0.6;
+
+  cursor:
+    not-allowed;
+}
+
+.dp-refresh-button__icon {
+  flex:
+    0 0 auto;
+}
+
+/* =========================================================
+   ANIMAÇÃO DURANTE ATUALIZAÇÃO
+========================================================= */
+
+.dp-refresh-button__icon.is-spinning {
+  animation:
+    dpRefreshSpin
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes dpRefreshSpin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}

@@ -41,6 +41,7 @@ const MODULOS_PERMISSOES = Object.freeze([
       "dashboard",
       "dashboard_produtividade",
       "dashboard_materia_prima",
+      "dashboard_paradas",
     ],
   },
 
@@ -563,10 +564,6 @@ function GerenciarUsuarios() {
         return;
       }
 
-      /* -----------------------------------------------------
-         TELAS
-      ----------------------------------------------------- */
-
       const permissoesAtuais =
         permissoesPorUsuario[
           usuario.id
@@ -583,10 +580,6 @@ function GerenciarUsuarios() {
           ]
         );
       }
-
-      /* -----------------------------------------------------
-         RELATÓRIOS
-      ----------------------------------------------------- */
 
       const relatoriosAtuais =
         permissoesRelatoriosPorUsuario[
@@ -894,10 +887,6 @@ function GerenciarUsuarios() {
           true
         );
 
-        /* ---------------------------------------------------
-           TELAS
-        --------------------------------------------------- */
-
         const registrosTelas =
           telas.map((tela) => ({
             usuario_id:
@@ -914,10 +903,6 @@ function GerenciarUsuarios() {
             updated_at:
               new Date().toISOString(),
           }));
-
-        /* ---------------------------------------------------
-           RELATÓRIOS
-        --------------------------------------------------- */
 
         const registrosRelatorios =
           relatorios.map(
@@ -1606,10 +1591,6 @@ function GerenciarUsuarios() {
             aria-modal="true"
             aria-labelledby="titulo-modal-permissoes"
           >
-            {/* =================================================
-                CABEÇALHO
-            ================================================= */}
-
             <div className="modal-permissoes-header modal-permissoes-header-v2">
               <div className="modal-permissoes-header-principal">
                 <div className="modal-permissoes-icon">
@@ -1641,10 +1622,6 @@ function GerenciarUsuarios() {
                 <FiX />
               </button>
             </div>
-
-            {/* =================================================
-                RESUMO
-            ================================================= */}
 
             <div className="modal-permissoes-resumo">
               <div className="modal-permissoes-resumo-card">
@@ -1700,10 +1677,6 @@ function GerenciarUsuarios() {
               </div>
             </div>
 
-            {/* =================================================
-                AÇÕES RÁPIDAS
-            ================================================= */}
-
             <div className="acoes-permissoes-rapidas acoes-permissoes-rapidas-v2">
               <div>
                 <strong>
@@ -1733,10 +1706,6 @@ function GerenciarUsuarios() {
                 </button>
               </div>
             </div>
-
-            {/* =================================================
-                CONTEÚDO
-            ================================================= */}
 
             <div className="lista-permissoes lista-permissoes-v2">
               <div className="titulo-grupo-permissoes titulo-grupo-permissoes-v2">
@@ -2025,10 +1994,6 @@ function GerenciarUsuarios() {
                 )}
               </div>
             </div>
-
-            {/* =================================================
-                RODAPÉ
-            ================================================= */}
 
             <div className="modal-actions modal-permissoes-actions-v2">
               <div className="modal-permissoes-actions-info">

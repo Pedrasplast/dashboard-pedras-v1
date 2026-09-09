@@ -1,0 +1,412 @@
+/* =========================================================
+   KPIs
+========================================================= */
+
+.dp-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* =========================================================
+   CARD KPI
+========================================================= */
+
+.dp-kpi {
+  position: relative;
+  min-width: 0;
+  min-height: 150px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 16px 16px 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fbfdff 100%
+    );
+
+  border: 1px solid var(--dp-border);
+  border-top: 3px solid #94a3b8;
+  border-radius: 13px;
+
+  box-shadow: var(--dp-shadow);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.dp-kpi::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(148, 163, 184, 0.11),
+      transparent 70%
+    );
+}
+
+.dp-kpi:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: var(--dp-shadow-hover);
+}
+
+/* =========================================================
+   TONS
+========================================================= */
+
+.dp-kpi--danger {
+  border-top-color: #dc2626;
+}
+
+.dp-kpi--warning {
+  border-top-color: #d97706;
+}
+
+.dp-kpi--primary {
+  border-top-color: var(--dp-primary);
+}
+
+.dp-kpi--neutral {
+  border-top-color: #64748b;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.dp-kpi__top {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dp-kpi__label {
+  min-width: 0;
+
+  color: var(--dp-muted);
+
+  font-size: 0.63rem;
+  font-weight: 850;
+  line-height: 1.25;
+  letter-spacing: 0.065em;
+
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.dp-kpi__icon {
+  flex: 0 0 auto;
+
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  color: var(--dp-primary);
+  background: var(--dp-primary-soft);
+
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+}
+
+.dp-kpi--danger .dp-kpi__icon {
+  color: #dc2626;
+  background: #fef2f2;
+  border-color: #fee2e2;
+}
+
+.dp-kpi--warning .dp-kpi__icon {
+  color: #d97706;
+  background: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.dp-kpi--neutral .dp-kpi__icon {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+/* =========================================================
+   VALOR PADRÃO
+========================================================= */
+
+.dp-kpi__value {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  min-width: 0;
+
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  color: var(--dp-text);
+
+  font-size:
+    clamp(
+      1.25rem,
+      1.5vw,
+      1.7rem
+    );
+
+  font-weight: 850;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   DURAÇÃO
+========================================================= */
+
+.dp-kpi__value--duration {
+  overflow: visible;
+  white-space: normal;
+}
+
+.dp-kpi-duration {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 8px;
+
+  min-width: 0;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.dp-kpi-duration__principal {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dp-kpi-duration__numero {
+  color: var(--dp-text);
+
+  font-size:
+    clamp(
+      1.5rem,
+      1.8vw,
+      2rem
+    );
+
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.dp-kpi-duration__unidade {
+  color: var(--dp-text-secondary);
+
+  font-size: 0.73rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.dp-kpi-duration__secundario {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+
+  padding: 4px 7px;
+
+  color: #475569;
+  background: #f1f5f9;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+
+  white-space: nowrap;
+}
+
+.dp-kpi-duration__numero-secundario {
+  color: #334155;
+
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.dp-kpi-duration__unidade-secundaria {
+  color: #64748b;
+
+  font-size: 0.58rem;
+  font-weight: 750;
+  line-height: 1;
+}
+
+/* =========================================================
+   MÁQUINA MAIS IMPACTADA
+========================================================= */
+
+.dp-kpi__value--machine {
+  max-width: 100%;
+
+  font-size:
+    clamp(
+      1rem,
+      1.22vw,
+      1.35rem
+    );
+
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   DETALHE
+========================================================= */
+
+.dp-kpi__detail {
+  position: relative;
+  z-index: 1;
+
+  min-width: 0;
+  overflow: hidden;
+
+  color: var(--dp-muted);
+
+  font-size: 0.65rem;
+  line-height: 1.35;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   VARIAÇÃO
+========================================================= */
+
+.dp-kpi__variacao {
+  position: relative;
+  z-index: 1;
+
+  width: fit-content;
+  max-width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  margin-top: auto;
+  padding: 4px 7px;
+
+  border-radius: 999px;
+
+  font-size: 0.63rem;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.dp-kpi__variacao span {
+  font-variant-numeric: tabular-nums;
+}
+
+.dp-kpi__variacao small {
+  color: inherit;
+
+  font-size: 0.59rem;
+  font-weight: 600;
+
+  opacity: 0.8;
+}
+
+.dp-kpi__variacao.melhor {
+  color: var(--dp-success);
+  background: var(--dp-success-soft);
+}
+
+.dp-kpi__variacao.pior {
+  color: var(--dp-danger);
+  background: var(--dp-danger-soft);
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 1500px) {
+  .dp-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dp-kpi {
+    min-height: 138px;
+  }
+}
+
+@media (max-width: 760px) {
+  .dp-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .dp-kpi {
+    min-height: 132px;
+    padding: 13px;
+  }
+
+  .dp-kpi-duration {
+    gap: 6px;
+  }
+
+  .dp-kpi-duration__numero {
+    font-size: 1.55rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .dp-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .dp-kpi {
+    min-height: 120px;
+  }
+
+  .dp-kpi-duration__numero {
+    font-size: 1.6rem;
+  }
+
+  .dp-kpi__value--machine {
+    font-size: 1.08rem;
+  }
+}
