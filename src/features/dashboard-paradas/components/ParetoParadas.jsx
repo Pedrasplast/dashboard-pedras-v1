@@ -34,6 +34,8 @@ import {
   normalizarTextoOcorrencia,
 } from "../ocorrenciasParadas.utils";
 
+import "./ParetoParadas.css";
+
 /* =========================================================
    CONFIGURAÇÃO
 ========================================================= */

@@ -7,8 +7,12 @@ import {
 } from "react";
 
 import {
+  Activity,
   CirclePause,
+  Clock3,
+  Factory,
   Search,
+  Timer,
   X,
 } from "lucide-react";
 
@@ -25,6 +29,8 @@ import {
   obterMotivoRegistro,
 } from "../ocorrenciasParadas.utils";
 
+import "./ModalOcorrenciasParadas.css";
+
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
@@ -38,6 +44,50 @@ function formatarNumero(valor) {
       maximumFractionDigits: 0,
     },
   );
+}
+
+function formatarDuracaoHHMMSS(
+  segundos,
+) {
+  const total =
+    Math.max(
+      0,
+      Math.floor(
+        Number(segundos) || 0,
+      ),
+    );
+
+  const horas =
+    Math.floor(
+      total / 3600,
+    );
+
+  const minutos =
+    Math.floor(
+      (total % 3600) / 60,
+    );
+
+  const segundosRestantes =
+    total % 60;
+
+  return [
+    String(horas).padStart(
+      2,
+      "0",
+    ),
+
+    String(minutos).padStart(
+      2,
+      "0",
+    ),
+
+    String(
+      segundosRestantes,
+    ).padStart(
+      2,
+      "0",
+    ),
+  ].join(":");
 }
 
 /* =========================================================
@@ -328,66 +378,106 @@ function ModalOcorrenciasParadas({
         =============================================== */}
 
         <div className="dp-ocorrencias-resumo dp-ocorrencias-resumo--novo">
-          <article>
-            <span>
-              Total de ocorrências
-            </span>
+          <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--ocorrencias">
+            <div className="dp-ocorrencias-kpi__icon">
+              <Activity
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            </div>
 
-            <strong>
-              {formatarNumero(
-                resumo.total,
-              )}
-            </strong>
+            <div className="dp-ocorrencias-kpi__conteudo">
+              <span>
+                Total de ocorrências
+              </span>
 
-            <small>
-              registros encontrados
-            </small>
+              <strong>
+                {formatarNumero(
+                  resumo.total,
+                )}
+              </strong>
+
+              <small>
+                registros no recorte atual
+              </small>
+            </div>
           </article>
 
-          <article>
-            <span>
-              Tempo total parado
-            </span>
+          <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--tempo">
+            <div className="dp-ocorrencias-kpi__icon">
+              <Clock3
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            </div>
 
-            <strong>
-              {formatarDuracaoResumida(
-                resumo.totalSegundos,
-              )}
-            </strong>
+            <div className="dp-ocorrencias-kpi__conteudo">
+              <span>
+                Tempo total parado
+              </span>
 
-            <small>
-              soma das ocorrências
-            </small>
+              <strong>
+                {formatarDuracaoResumida(
+                  resumo.totalSegundos,
+                )}
+              </strong>
+
+              <small>
+                impacto acumulado
+              </small>
+            </div>
           </article>
 
-          <article>
-            <span>
-              Tempo médio
-            </span>
+          <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--media">
+            <div className="dp-ocorrencias-kpi__icon">
+              <Timer
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            </div>
 
-            <strong>
-              {formatarDuracaoResumida(
-                resumo.mediaSegundos,
-              )}
-            </strong>
+            <div className="dp-ocorrencias-kpi__conteudo">
+              <span>
+                Tempo médio
+              </span>
 
-            <small>
-              por ocorrência
-            </small>
+              <strong>
+                {formatarDuracaoResumida(
+                  resumo.mediaSegundos,
+                )}
+              </strong>
+
+              <small>
+                média por ocorrência
+              </small>
+            </div>
           </article>
 
-          <article>
-            <span>
-              Injetoras afetadas
-            </span>
+          <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--maquinas">
+            <div className="dp-ocorrencias-kpi__icon">
+              <Factory
+                size={18}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            </div>
 
-            <strong>
-              {resumo.injetoras}
-            </strong>
+            <div className="dp-ocorrencias-kpi__conteudo">
+              <span>
+                Injetoras afetadas
+              </span>
 
-            <small>
-              máquinas diferentes
-            </small>
+              <strong>
+                {resumo.injetoras}
+              </strong>
+
+              <small>
+                máquinas diferentes
+              </small>
+            </div>
           </article>
         </div>
 
@@ -427,16 +517,25 @@ function ModalOcorrenciasParadas({
             )}
           </label>
 
-          <div className="dp-ocorrencias-total-encontrado">
-            <strong>
-              {formatarNumero(
-                ocorrenciasPesquisadas.length,
-              )}
-            </strong>
-
-            <span>
-              resultado(s)
+          <div className="dp-ocorrencias-toolbar-info">
+            <span className="dp-ocorrencias-toolbar-info__label">
+              Registros exibidos
             </span>
+
+            <div className="dp-ocorrencias-total-encontrado">
+              <strong>
+                {formatarNumero(
+                  ocorrenciasPesquisadas.length,
+                )}
+              </strong>
+
+              <span>
+                de{" "}
+                {formatarNumero(
+                  resumo.total,
+                )}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -575,13 +674,13 @@ function ModalOcorrenciasParadas({
                           )}
                         </td>
 
-                        <td>
+                        <td className="dp-ocorrencias-duracao-cell">
                           <strong className="dp-ocorrencias-duracao">
                             {duracao > 0
-                              ? formatarDuracaoResumida(
+                              ? formatarDuracaoHHMMSS(
                                   duracao,
                                 )
-                              : "—"}
+                              : "00:00:00"}
                           </strong>
                         </td>
                       </tr>

@@ -4,6 +4,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+import "./DashboardParadasCard.css";
+
 /* =========================================================
    CARD PADRÃO DO DASHBOARD DE PARADAS
 

@@ -1,6 +1,13 @@
-import { useState } from "react";
+import {
+  useState,
+} from "react";
 
-import { Activity, CirclePause, Target } from "lucide-react";
+import {
+  Activity,
+  CirclePause,
+  RefreshCw,
+  Target,
+} from "lucide-react";
 
 import PageHeader from "@/components/layout/PageHeader";
 import Sidebar from "@/components/layout/Sidebar";
@@ -17,7 +24,9 @@ import ParetoParadas from "./components/ParetoParadas";
 import RankingInjetoras from "./components/RankingInjetoras";
 import TopParadas from "./components/TopParadas";
 
-import useDashboardParadas, { FILTROS_INICIAIS_PARADAS } from "./useDashboardParadas";
+import useDashboardParadas, {
+  FILTROS_INICIAIS_PARADAS,
+} from "./useDashboardParadas";
 
 import "./DashboardParadas.css";
 
@@ -25,17 +34,31 @@ import "./DashboardParadas.css";
    FORMATAÇÕES
 ========================================================= */
 
-function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
+function formatarPercentual(
+  valor,
+) {
+  return Number(
+    valor || 0,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    },
+  );
 }
 
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+function formatarNumero(
+  valor,
+) {
+  return Number(
+    valor || 0,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      maximumFractionDigits: 0,
+    },
+  );
 }
 
 /* =========================================================
@@ -45,39 +68,72 @@ function formatarNumero(valor) {
 export default function DashboardParadas() {
   /* =======================================================
      FILTROS
-
-     Cada dashboard mantém seu próprio estado.
-
-     O componente visual dos filtros continua sendo o mesmo
-     utilizado no Dashboard de Produção.
   ======================================================= */
 
-  const [filtros, setFiltros] = useState(() => ({
-    ...FILTROS_INICIAIS_PARADAS,
+  const [
+    filtros,
+    setFiltros,
+  ] = useState(
+    () => ({
+      ...FILTROS_INICIAIS_PARADAS,
 
-    tipo: [...FILTROS_INICIAIS_PARADAS.tipo],
-  }));
+      tipo: [
+        ...FILTROS_INICIAIS_PARADAS.tipo,
+      ],
+    }),
+  );
 
   /* =======================================================
      DADOS CONSOLIDADOS
   ======================================================= */
 
-  const dashboard = useDashboardParadas(filtros);
+  const dashboard =
+    useDashboardParadas(
+      filtros,
+    );
 
   /* =======================================================
      ATALHOS
   ======================================================= */
 
-  const motivoCritico = dashboard.motivoMaisCritico;
+  const motivoCritico =
+    dashboard.motivoMaisCritico;
 
-  const possuiDados = dashboard.totalParadas > 0;
+  const possuiDados =
+    dashboard.totalParadas > 0;
 
   /* =======================================================
-     LOADING
+     ATUALIZAR DADOS
+  ======================================================= */
+
+  async function atualizarDados() {
+    if (
+      dashboard.loading ||
+      dashboard.atualizando
+    ) {
+      return;
+    }
+
+    try {
+      await dashboard.recarregarCompleto();
+    } catch (erro) {
+      console.error(
+        "Erro ao atualizar dados do Dashboard de Paradas:",
+        erro,
+      );
+    }
+  }
+
+  /* =======================================================
+     LOADING INICIAL
   ======================================================= */
 
   if (dashboard.loading) {
-    return <div className="loading-spinner">Processando dados de paradas...</div>;
+    return (
+      <div className="loading-spinner">
+        Processando dados de paradas...
+      </div>
+    );
   }
 
   /* =======================================================
@@ -90,23 +146,34 @@ export default function DashboardParadas() {
           SIDEBAR / FILTROS
       =================================================== */}
 
-      <Sidebar>
-        <FiltrosDashboard
-          filtros={filtros}
-          setFiltros={setFiltros}
-          rawDados={dashboard.rawDados}
-          tiposDisponiveis={dashboard.tiposDisponiveis}
-          motivosDisponiveis={dashboard.motivosDisponiveis}
-          valoresPadrao={FILTROS_INICIAIS_PARADAS}
-          exibirPeriodo
-          exibirInjetora
-          exibirTurno={true}
-          exibirProduto={false}
-          exibirMp={false}
-          exibirTipo
-          exibirMotivo
-        />
-      </Sidebar>
+      <div className="dp-sidebar-shell">
+        <Sidebar>
+          <FiltrosDashboard
+            filtros={filtros}
+            setFiltros={setFiltros}
+            rawDados={
+              dashboard.rawDados
+            }
+            tiposDisponiveis={
+              dashboard.tiposDisponiveis
+            }
+            motivosDisponiveis={
+              dashboard.motivosDisponiveis
+            }
+            valoresPadrao={
+              FILTROS_INICIAIS_PARADAS
+            }
+            exibirPeriodo
+            exibirInjetora
+            exibirTurno={true}
+            exibirProduto={false}
+            exibirMp={false}
+            exibirTipo
+            exibirMotivo
+            motivoAbaixoTurno
+          />
+        </Sidebar>
+      </div>
 
       {/* ===================================================
           CONTEÚDO
@@ -117,60 +184,117 @@ export default function DashboardParadas() {
             CABEÇALHO
         ================================================= */}
 
-        <PageHeader
-          eyebrow="Análise operacional"
-          title="Dashboard de Paradas"
-          description="Visão gerencial das perdas, recorrências e principais causas das paradas registradas."
-          icon={CirclePause}
-          className="dashboard-header dp-header"
-        />
+        <div className="dp-main-fixed">
+          <PageHeader
+            eyebrow="Análise operacional"
+            title="Dashboard de Paradas"
+            description="Visão gerencial das perdas, recorrências e principais causas das paradas registradas."
+            icon={CirclePause}
+            className="dashboard-header dp-header"
+          />
+
+          {/* ===============================================
+              BARRA DE AÇÕES
+          =============================================== */}
+
+          <div className="dp-dashboard-actions">
+          <div className="dp-dashboard-actions__status">
+            {dashboard.atualizando && (
+              <span className="dp-updating">
+                Atualizando dados...
+              </span>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className="dp-refresh-button"
+            onClick={
+              atualizarDados
+            }
+            disabled={
+              dashboard.atualizando
+            }
+            title="Buscar novamente os dados atualizados"
+          >
+            <RefreshCw
+              size={15}
+              strokeWidth={2.2}
+              className={
+                dashboard.atualizando
+                  ? "dp-refresh-button__icon is-spinning"
+                  : "dp-refresh-button__icon"
+              }
+            />
+
+            <span>
+              {dashboard.atualizando
+                ? "Atualizando..."
+                : "Atualizar dados"}
+            </span>
+          </button>
+          </div>
+        </div>
 
         {/* =================================================
-            ERRO
+            ÁREA ROLÁVEL DOS DADOS
         ================================================= */}
 
-        {dashboard.erro && <div className="dashboard-error">{dashboard.erro}</div>}
+        <div className="dp-data-scroll">
+          {/* ===============================================
+              ERRO
+          =============================================== */}
 
-        {/* =================================================
-            INDICADOR DE ATUALIZAÇÃO
-
-            Não é botão.
-            Apenas informa caso o React Query esteja
-            atualizando os dados em segundo plano.
-        ================================================= */}
-
-        {dashboard.atualizando && !dashboard.loading && (
-          <div className="dp-updating">Atualizando dados...</div>
+          {dashboard.erro && (
+          <div className="dashboard-error">
+            {dashboard.erro}
+          </div>
         )}
 
         {/* =================================================
             KPIs
         ================================================= */}
 
-        <ParadasKpis dados={dashboard} />
+        <ParadasKpis
+          dados={dashboard}
+        />
 
         {/* =================================================
             INSIGHTS GERENCIAIS
         ================================================= */}
 
-        <section className="dp-insights" aria-label="Insights principais">
+        <section
+          className="dp-insights"
+          aria-label="Insights principais"
+        >
           {/* ===============================================
               MOTIVO MAIS CRÍTICO
           =============================================== */}
 
           <article className="dp-insight">
             <div className="dp-insight__icon">
-              <Activity size={19} strokeWidth={2} aria-hidden="true" />
+              <Activity
+                size={19}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </div>
 
             <div className="dp-insight__content">
-              <span>Motivo mais crítico</span>
+              <span>
+                Motivo mais crítico
+              </span>
 
-              <strong>{motivoCritico?.motivo || "Sem dados"}</strong>
+              <strong>
+                {motivoCritico?.motivo ||
+                  "Sem dados"}
+              </strong>
 
               <small>
                 {motivoCritico
-                  ? `${formatarPercentual(motivoCritico.percentual_impacto)}% do tempo total parado`
+                  ? `${formatarPercentual(
+                      motivoCritico.percentual_impacto,
+                    )}% do tempo total parado`
                   : "Nenhuma ocorrência encontrada"}
               </small>
             </div>
@@ -182,15 +306,29 @@ export default function DashboardParadas() {
 
           <article className="dp-insight">
             <div className="dp-insight__icon">
-              <Target size={19} strokeWidth={2} aria-hidden="true" />
+              <Target
+                size={19}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </div>
 
             <div className="dp-insight__content">
-              <span>Concentração das perdas</span>
+              <span>
+                Concentração das perdas
+              </span>
 
-              <strong>{formatarPercentual(dashboard.concentracaoTop3)}%</strong>
+              <strong>
+                {formatarPercentual(
+                  dashboard.concentracaoTop3,
+                )}
+                %
+              </strong>
 
-              <small>do tempo parado está concentrado nos 3 principais motivos</small>
+              <small>
+                do tempo parado está concentrado
+                nos 3 principais motivos
+              </small>
             </div>
           </article>
 
@@ -200,15 +338,28 @@ export default function DashboardParadas() {
 
           <article className="dp-insight">
             <div className="dp-insight__icon">
-              <CirclePause size={19} strokeWidth={2} aria-hidden="true" />
+              <CirclePause
+                size={19}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </div>
 
             <div className="dp-insight__content">
-              <span>Base analisada</span>
+              <span>
+                Base analisada
+              </span>
 
-              <strong>{formatarNumero(dashboard.totalParadas)} paradas</strong>
+              <strong>
+                {formatarNumero(
+                  dashboard.totalParadas,
+                )}{" "}
+                paradas
+              </strong>
 
-              <small>conforme os filtros selecionados</small>
+              <small>
+                conforme os filtros selecionados
+              </small>
             </div>
           </article>
         </section>
@@ -219,21 +370,27 @@ export default function DashboardParadas() {
 
         {!possuiDados && (
           <div className="dp-empty-page">
-            <CirclePause size={28} strokeWidth={1.7} aria-hidden="true" />
+            <CirclePause
+              size={28}
+              strokeWidth={1.7}
+              aria-hidden="true"
+            />
 
             <div>
-              <strong>Nenhuma parada encontrada</strong>
+              <strong>
+                Nenhuma parada encontrada
+              </strong>
 
-              <p>Não existem registros de parada para os filtros selecionados.</p>
+              <p>
+                Não existem registros de parada
+                para os filtros selecionados.
+              </p>
             </div>
           </div>
         )}
 
         {/* =================================================
             CONTEÚDO ANALÍTICO
-
-            Só renderizamos os gráficos quando existem
-            registros no período.
         ================================================= */}
 
         {possuiDados && (
@@ -244,9 +401,23 @@ export default function DashboardParadas() {
             ============================================= */}
 
             <section className="dp-grid dp-grid--principal">
-              <ParetoParadas dados={dashboard.pareto} ocorrencias={dashboard.dadosFiltrados} />
+              <ParetoParadas
+                dados={
+                  dashboard.pareto
+                }
+                ocorrencias={
+                  dashboard.dadosFiltrados
+                }
+              />
 
-              <EvolucaoParadas dados={dashboard.evolucao} ocorrencias={dashboard.dadosFiltrados} />
+              <EvolucaoParadas
+                dados={
+                  dashboard.evolucao
+                }
+                ocorrencias={
+                  dashboard.dadosFiltrados
+                }
+              />
             </section>
 
             {/* =============================================
@@ -256,13 +427,21 @@ export default function DashboardParadas() {
 
             <section className="dp-grid dp-grid--analise">
               <CriticidadeParadas
-                dados={dashboard.criticidade}
-                ocorrencias={dashboard.dadosFiltrados}
+                dados={
+                  dashboard.criticidade
+                }
+                ocorrencias={
+                  dashboard.dadosFiltrados
+                }
               />
 
               <DistribuicaoDuracao
-                dados={dashboard.distribuicaoDuracao}
-                ocorrencias={dashboard.dadosFiltrados}
+                dados={
+                  dashboard.distribuicaoDuracao
+                }
+                ocorrencias={
+                  dashboard.dadosFiltrados
+                }
               />
             </section>
 
@@ -270,7 +449,11 @@ export default function DashboardParadas() {
                 RANKING DAS MÁQUINAS
             ============================================= */}
 
-            <RankingInjetoras dados={dashboard.rankingInjetoras} />
+            <RankingInjetoras
+              dados={
+                dashboard.rankingInjetoras
+              }
+            />
 
             {/* =============================================
                 TERCEIRA LINHA
@@ -278,18 +461,31 @@ export default function DashboardParadas() {
             ============================================= */}
 
             <section className="dp-grid dp-grid--operacional">
-              <HeatmapParadas dados={dashboard.heatmap} />
+              <HeatmapParadas
+                dados={
+                  dashboard.heatmap
+                }
+              />
 
-              <TopParadas dados={dashboard.maioresParadas} />
+              <TopParadas
+                dados={
+                  dashboard.maioresParadas
+                }
+              />
             </section>
 
             {/* =============================================
                 JUSTIFICATIVAS
             ============================================= */}
 
-            <JustificativasParadas dados={dashboard.justificativas} />
+            <JustificativasParadas
+              dados={
+                dashboard.justificativas
+              }
+            />
           </>
         )}
+        </div>
       </main>
     </div>
   );

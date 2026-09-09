@@ -10,6 +10,8 @@ import {
   formatarDuracaoResumida,
 } from "../dashboardParadas.utils";
 
+import "./RankingInjetoras.css";
+
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
@@ -90,6 +92,7 @@ function RankingInjetoras({
       subtitle="Máquinas ordenadas pelo maior tempo total de parada"
       icon={Factory}
       empty={vazio}
+      className="dp-ranking-card"
       contentClassName="dp-ranking-card-content"
     >
       <div className="dp-ranking">
@@ -147,19 +150,11 @@ function RankingInjetoras({
                         item.injetora
                       }
                     >
-                      {/* =================================
-                          POSIÇÃO
-                      ================================= */}
-
                       <td>
                         <span className="dp-ranking__position">
                           {indice + 1}
                         </span>
                       </td>
-
-                      {/* =================================
-                          INJETORA
-                      ================================= */}
 
                       <td>
                         <div className="dp-ranking__machine">
@@ -176,10 +171,6 @@ function RankingInjetoras({
                           </strong>
                         </div>
                       </td>
-
-                      {/* =================================
-                          TEMPO TOTAL
-                      ================================= */}
 
                       <td>
                         <div className="dp-ranking__impact">
@@ -203,19 +194,11 @@ function RankingInjetoras({
                         </div>
                       </td>
 
-                      {/* =================================
-                          OCORRÊNCIAS
-                      ================================= */}
-
                       <td>
                         {formatarNumero(
                           item.ocorrencias,
                         )}
                       </td>
-
-                      {/* =================================
-                          TEMPO MÉDIO
-                      ================================= */}
 
                       <td>
                         {formatarDuracaoResumida(
@@ -223,19 +206,11 @@ function RankingInjetoras({
                         )}
                       </td>
 
-                      {/* =================================
-                          MAIOR PARADA
-                      ================================= */}
-
                       <td>
                         {formatarDuracaoResumida(
                           item.maior_parada_segundos,
                         )}
                       </td>
-
-                      {/* =================================
-                          IMPACTO
-                      ================================= */}
 
                       <td>
                         <span className="dp-ranking__impact-badge">

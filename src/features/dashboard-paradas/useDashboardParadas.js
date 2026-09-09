@@ -129,6 +129,9 @@ export default function useDashboardParadas(
      - reaproveita React Query;
      - reaproveita IndexedDB;
      - reaproveita cache existente.
+
+     Agora também expõe recarregarCompleto para permitir
+     uma atualização manual ignorando o cache local.
   ======================================================= */
 
   const {
@@ -137,6 +140,7 @@ export default function useDashboardParadas(
     atualizando,
     erro,
     recarregar,
+    recarregarCompleto,
   } = useCargaMaquina();
 
   /* =======================================================
@@ -322,12 +326,22 @@ export default function useDashboardParadas(
     loading,
     atualizando,
     erro,
+
+    /*
+     * Atualização incremental.
+     * Continua usando o cache local quando possível.
+     */
     recarregar,
+
+    /*
+     * Atualização completa.
+     * Limpa o IndexedDB da carga_maquina e baixa novamente
+     * a base do Supabase, capturando UPDATEs antigos.
+     */
+    recarregarCompleto,
 
     /* -----------------------------------------------------
        DADOS BRUTOS
-
-       Precisaremos deles no filtro compartilhado.
     ----------------------------------------------------- */
 
     rawDados,

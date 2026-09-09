@@ -1,0 +1,834 @@
+/* =========================================================
+   HEATMAP DE PARADAS
+========================================================= */
+
+.dp-heatmap-card-content {
+  padding:
+    12px
+    14px
+    16px;
+}
+
+.dp-heatmap {
+  min-width: 0;
+
+  /*
+   * A responsividade abaixo considera a largura REAL
+   * do card, e não apenas a largura total da tela.
+   */
+  container-type:
+    inline-size;
+}
+
+
+/* =========================================================
+   INSIGHT
+========================================================= */
+
+.dp-heatmap__insight {
+  display: flex;
+
+  align-items: baseline;
+
+  flex-wrap: wrap;
+
+  gap:
+    4px
+    8px;
+
+  margin-bottom:
+    12px;
+
+  padding:
+    8px
+    10px;
+
+  background:
+    #f8fafc;
+
+  border:
+    1px solid
+    #edf2f7;
+
+  border-radius:
+    8px;
+}
+
+.dp-heatmap__insight span {
+  color:
+    var(--dp-muted);
+
+  font-size:
+    0.61rem;
+}
+
+.dp-heatmap__insight strong {
+  color:
+    var(--dp-text);
+
+  font-size:
+    0.73rem;
+}
+
+.dp-heatmap__insight small {
+  color:
+    var(--dp-muted);
+
+  font-size:
+    0.61rem;
+}
+
+
+/* =========================================================
+   MATRIZ
+========================================================= */
+
+.dp-heatmap__scroll {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  /*
+   * O grid passa a se adaptar ao card.
+   * Não cria mais barra horizontal em notebook.
+   */
+  overflow-x:
+    hidden;
+}
+
+.dp-heatmap__grid {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    70px
+    repeat(
+      var(
+        --dp-heatmap-columns,
+        6
+      ),
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    5px;
+}
+
+
+/* =========================================================
+   CABEÇALHO / DIA
+========================================================= */
+
+.dp-heatmap__corner,
+.dp-heatmap__header,
+.dp-heatmap__day {
+  min-width:
+    0;
+
+  min-height:
+    32px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  overflow:
+    hidden;
+
+  color:
+    #64748b;
+
+  background:
+    #f8fafc;
+
+  border:
+    1px solid
+    #edf2f7;
+
+  border-radius:
+    6px;
+
+  font-size:
+    0.6rem;
+
+  font-weight:
+    800;
+
+  line-height:
+    1.1;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+.dp-heatmap__day {
+  justify-content:
+    flex-start;
+
+  padding-left:
+    9px;
+
+  color:
+    #334155;
+}
+
+
+/* =========================================================
+   CÉLULAS
+========================================================= */
+
+.dp-heatmap__cell {
+  min-width:
+    0;
+
+  min-height:
+    47px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    1px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    7px;
+
+  outline:
+    none;
+
+  transition:
+    transform
+      0.14s ease,
+    box-shadow
+      0.14s ease,
+    filter
+      0.14s ease,
+    border-color
+      0.14s ease;
+}
+
+.dp-heatmap__cell.is-clickable {
+  cursor:
+    pointer;
+}
+
+.dp-heatmap__cell.is-clickable:hover {
+  position:
+    relative;
+
+  z-index:
+    2;
+
+  transform:
+    translateY(
+      -2px
+    );
+
+  filter:
+    brightness(
+      0.98
+    );
+
+  box-shadow:
+    0 7px 16px
+    rgba(
+      15,
+      23,
+      42,
+      0.16
+    );
+}
+
+.dp-heatmap__cell.is-clickable:focus-visible {
+  position:
+    relative;
+
+  z-index:
+    3;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.22
+    );
+}
+
+.dp-heatmap__cell.is-selected {
+  position:
+    relative;
+
+  z-index:
+    3;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.28
+    );
+}
+
+.dp-heatmap__cell strong {
+  max-width:
+    100%;
+
+  overflow:
+    hidden;
+
+  font-size:
+    0.7rem;
+
+  font-weight:
+    850;
+
+  line-height:
+    1.05;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+.dp-heatmap__cell small {
+  max-width:
+    100%;
+
+  overflow:
+    hidden;
+
+  font-size:
+    0.55rem;
+
+  line-height:
+    1.05;
+
+  opacity:
+    0.82;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+/* =========================================================
+   NÍVEIS DE INTENSIDADE
+========================================================= */
+
+.dp-heatmap__cell.nivel-0 {
+  color:
+    #94a3b8;
+
+  background:
+    #f8fafc;
+
+  border-color:
+    #edf2f7;
+}
+
+.dp-heatmap__cell.nivel-1,
+.dp-heatmap__legend-scale
+.nivel-1 {
+  color:
+    #9a3412;
+
+  background:
+    #fff7ed;
+
+  border-color:
+    #ffedd5;
+}
+
+.dp-heatmap__cell.nivel-2,
+.dp-heatmap__legend-scale
+.nivel-2 {
+  color:
+    #9a3412;
+
+  background:
+    #ffedd5;
+
+  border-color:
+    #fed7aa;
+}
+
+.dp-heatmap__cell.nivel-3,
+.dp-heatmap__legend-scale
+.nivel-3 {
+  color:
+    #9a3412;
+
+  background:
+    #fed7aa;
+
+  border-color:
+    #fdba74;
+}
+
+.dp-heatmap__cell.nivel-4,
+.dp-heatmap__legend-scale
+.nivel-4 {
+  color:
+    #ffffff;
+
+  background:
+    #f97316;
+
+  border-color:
+    #ea580c;
+}
+
+.dp-heatmap__cell.nivel-5,
+.dp-heatmap__legend-scale
+.nivel-5 {
+  color:
+    #ffffff;
+
+  background:
+    #dc2626;
+
+  border-color:
+    #b91c1c;
+}
+
+
+/* =========================================================
+   LEGENDA
+========================================================= */
+
+.dp-heatmap__legend {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  gap:
+    7px;
+
+  margin-top:
+    10px;
+
+  color:
+    var(--dp-muted);
+
+  font-size:
+    0.57rem;
+}
+
+.dp-heatmap__legend-scale {
+  display:
+    flex;
+
+  gap:
+    3px;
+}
+
+.dp-heatmap__legend-scale i {
+  width:
+    17px;
+
+  height:
+    8px;
+
+  display:
+    block;
+
+  border-radius:
+    2px;
+}
+
+
+/* =========================================================
+   CARD MAIS ESTREITO
+   Ex.: notebook com Heatmap em meia coluna
+========================================================= */
+
+@container (
+  max-width:
+    720px
+) {
+  .dp-heatmap-card-content {
+    padding:
+      10px
+      10px
+      13px;
+  }
+
+  .dp-heatmap__insight {
+    gap:
+      3px
+      6px;
+
+    margin-bottom:
+      9px;
+
+    padding:
+      7px
+      8px;
+  }
+
+  .dp-heatmap__insight span,
+  .dp-heatmap__insight small {
+    font-size:
+      0.56rem;
+  }
+
+  .dp-heatmap__insight strong {
+    font-size:
+      0.67rem;
+  }
+
+  .dp-heatmap__grid {
+    grid-template-columns:
+      58px
+      repeat(
+        var(
+          --dp-heatmap-columns,
+          6
+        ),
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      4px;
+  }
+
+  .dp-heatmap__corner,
+  .dp-heatmap__header,
+  .dp-heatmap__day {
+    min-height:
+      29px;
+
+    border-radius:
+      5px;
+
+    font-size:
+      0.54rem;
+  }
+
+  .dp-heatmap__day {
+    padding-left:
+      7px;
+  }
+
+  .dp-heatmap__cell {
+    min-height:
+      43px;
+
+    border-radius:
+      6px;
+  }
+
+  .dp-heatmap__cell strong {
+    font-size:
+      0.64rem;
+  }
+
+  .dp-heatmap__cell small {
+    font-size:
+      0.49rem;
+  }
+
+  .dp-heatmap__legend {
+    gap:
+      5px;
+
+    margin-top:
+      8px;
+
+    font-size:
+      0.52rem;
+  }
+
+  .dp-heatmap__legend-scale {
+    gap:
+      2px;
+  }
+
+  .dp-heatmap__legend-scale i {
+    width:
+      14px;
+
+    height:
+      7px;
+  }
+}
+
+
+/* =========================================================
+   CARD COMPACTO
+========================================================= */
+
+@container (
+  max-width:
+    600px
+) {
+  .dp-heatmap-card-content {
+    padding:
+      8px
+      8px
+      11px;
+  }
+
+  .dp-heatmap__insight {
+    margin-bottom:
+      7px;
+
+    padding:
+      6px
+      7px;
+  }
+
+  .dp-heatmap__grid {
+    grid-template-columns:
+      50px
+      repeat(
+        var(
+          --dp-heatmap-columns,
+          6
+        ),
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      3px;
+  }
+
+  .dp-heatmap__corner,
+  .dp-heatmap__header,
+  .dp-heatmap__day {
+    min-height:
+      27px;
+
+    font-size:
+      0.5rem;
+  }
+
+  .dp-heatmap__day {
+    padding-left:
+      6px;
+  }
+
+  .dp-heatmap__cell {
+    min-height:
+      40px;
+
+    border-radius:
+      5px;
+  }
+
+  .dp-heatmap__cell strong {
+    font-size:
+      0.6rem;
+  }
+
+  .dp-heatmap__cell small {
+    font-size:
+      0.45rem;
+  }
+
+  .dp-heatmap__legend {
+    justify-content:
+      flex-start;
+
+    flex-wrap:
+      wrap;
+  }
+}
+
+
+/* =========================================================
+   CARD MUITO ESTREITO
+========================================================= */
+
+@container (
+  max-width:
+    470px
+) {
+  .dp-heatmap-card-content {
+    padding:
+      7px
+      6px
+      9px;
+  }
+
+  .dp-heatmap__insight {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      2px;
+  }
+
+  .dp-heatmap__grid {
+    grid-template-columns:
+      42px
+      repeat(
+        var(
+          --dp-heatmap-columns,
+          6
+        ),
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      2px;
+  }
+
+  .dp-heatmap__corner,
+  .dp-heatmap__header,
+  .dp-heatmap__day {
+    min-height:
+      25px;
+
+    padding:
+      0
+      2px;
+
+    font-size:
+      0.46rem;
+  }
+
+  .dp-heatmap__day {
+    justify-content:
+      center;
+  }
+
+  .dp-heatmap__cell {
+    min-height:
+      36px;
+  }
+
+  .dp-heatmap__cell strong {
+    font-size:
+      0.56rem;
+  }
+
+  .dp-heatmap__cell small {
+    font-size:
+      0.4rem;
+  }
+
+  .dp-heatmap__legend {
+    font-size:
+      0.47rem;
+  }
+
+  .dp-heatmap__legend-scale i {
+    width:
+      11px;
+
+    height:
+      6px;
+  }
+}
+
+
+/* =========================================================
+   CELULAR MUITO PEQUENO
+========================================================= */
+
+@container (
+  max-width:
+    390px
+) {
+  .dp-heatmap__cell small {
+    /*
+     * Em larguras extremas preservamos a leitura
+     * da quantidade, que é a informação principal.
+     * A duração continua disponível no clique/modal.
+     */
+    display:
+      none;
+  }
+
+  .dp-heatmap__cell {
+    min-height:
+      32px;
+  }
+
+  .dp-heatmap__corner,
+  .dp-heatmap__header,
+  .dp-heatmap__day {
+    font-size:
+      0.43rem;
+  }
+}
+
+
+/* =========================================================
+   FALLBACK DE RESPONSIVIDADE POR VIEWPORT
+========================================================= */
+
+@media (
+  max-width:
+    760px
+) {
+  .dp-heatmap__legend {
+    justify-content:
+      flex-start;
+
+    flex-wrap:
+      wrap;
+  }
+}

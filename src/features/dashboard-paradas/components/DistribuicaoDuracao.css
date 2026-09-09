@@ -1,0 +1,134 @@
+/* =========================================================
+   DISTRIBUIÇÃO POR DURAÇÃO
+========================================================= */
+
+.dp-distribuicao {
+  min-width: 0;
+}
+
+
+/* =========================================================
+   INSIGHT
+========================================================= */
+
+.dp-distribuicao__insight {
+  display: flex;
+
+  align-items: baseline;
+
+  flex-wrap: wrap;
+
+  gap:
+    4px
+    8px;
+
+  margin-bottom: 8px;
+
+  padding:
+    8px
+    10px;
+
+  background:
+    #f8fafc;
+
+  border:
+    1px solid
+    #edf2f7;
+
+  border-radius: 8px;
+}
+
+.dp-distribuicao__insight span {
+  color:
+    var(--dp-muted);
+
+  font-size: 0.61rem;
+
+  font-weight: 700;
+}
+
+.dp-distribuicao__insight strong {
+  color:
+    var(--dp-primary-dark);
+
+  font-size: 0.76rem;
+}
+
+.dp-distribuicao__insight small {
+  color:
+    var(--dp-muted);
+
+  font-size: 0.61rem;
+}
+
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+.dp-chart--duracao {
+  height: 270px;
+}
+
+.dp-chart--duracao
+.recharts-bar-rectangle
+path {
+  fill:
+    #1d4ed8;
+}
+
+
+/* =========================================================
+   DRILL-DOWN
+========================================================= */
+
+.dp-chart--duracao-clicavel
+.recharts-bar-rectangle
+path {
+  cursor: pointer;
+
+  transition:
+    opacity 0.15s ease;
+}
+
+.dp-chart--duracao-clicavel
+.recharts-bar-rectangle
+path:hover {
+  opacity: 0.82;
+}
+
+.dp-distribuicao-barra {
+  cursor: pointer;
+}
+
+.dp-distribuicao-tooltip-clique {
+  margin-top: 8px;
+
+  padding-top: 7px;
+
+  border-top:
+    1px solid
+    #e2e8f0;
+
+  color:
+    #2563eb;
+
+  font-size:
+    0.67rem;
+
+  font-weight: 700;
+}
+
+.dp-distribuicao__clique {
+  margin-top: 7px;
+
+  color:
+    #2563eb;
+
+  font-size:
+    0.66rem;
+
+  font-weight: 700;
+
+  text-align: right;
+}

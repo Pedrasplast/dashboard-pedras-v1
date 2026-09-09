@@ -38,6 +38,12 @@ function FiltrosDashboard({
   exibirTipo = true,
   exibirMotivo = false,
 
+  /*
+   * Permite mover o campo MOTIVO para logo abaixo
+   * do TURNO sem alterar a ordem dos demais dashboards.
+   */
+  motivoAbaixoTurno = false,
+
   /* =======================================================
      OPÇÕES DISPONÍVEIS
   ======================================================= */
@@ -510,6 +516,41 @@ function FiltrosDashboard({
           )}
 
           {/* =================================================
+              MOTIVO — POSIÇÃO ALTERNATIVA
+              Usado no Dashboard de Paradas para manter:
+              Injetora → Turno → Motivo → Tipo
+          ================================================= */}
+
+          {exibirMotivo && motivoAbaixoTurno && (
+            <>
+              <label>MOTIVO</label>
+
+              <select
+                value={filtros.motivo || "Todos"}
+                onChange={(evento) =>
+                  alterar(
+                    "motivo",
+                    evento.target.value,
+                  )
+                }
+              >
+                <option value="Todos">
+                  Todos os motivos
+                </option>
+
+                {motivosDisponiveis.map((motivo) => (
+                  <option
+                    key={motivo}
+                    value={motivo}
+                  >
+                    {motivo}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {/* =================================================
               PRODUTO
           ================================================= */}
 
@@ -623,7 +664,7 @@ function FiltrosDashboard({
               MOTIVO
           ================================================= */}
 
-          {exibirMotivo && (
+          {exibirMotivo && !motivoAbaixoTurno && (
             <>
               <label>MOTIVO</label>
 

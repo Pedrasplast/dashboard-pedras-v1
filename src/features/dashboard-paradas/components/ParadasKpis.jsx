@@ -8,12 +8,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import {
-  formatarDuracaoResumida,
-} from "../dashboardParadas.utils";
+import "./ParadasKpis.css";
 
 /* =========================================================
-   FORMATAÇÃO
+   FORMATAÇÕES
 ========================================================= */
 
 function formatarNumero(valor) {
@@ -24,6 +22,186 @@ function formatarNumero(valor) {
     {
       maximumFractionDigits: 0,
     },
+  );
+}
+
+/* =========================================================
+   DECOMPOR DURAÇÃO
+========================================================= */
+
+function decomporDuracao(
+  valor,
+) {
+  const totalSegundos =
+    Math.max(
+      0,
+      Math.floor(
+        Number(valor) || 0,
+      ),
+    );
+
+  const horas =
+    Math.floor(
+      totalSegundos / 3600,
+    );
+
+  const minutos =
+    Math.floor(
+      (totalSegundos % 3600) /
+        60,
+    );
+
+  const segundos =
+    totalSegundos % 60;
+
+  return {
+    totalSegundos,
+    horas,
+    minutos,
+    segundos,
+  };
+}
+
+/* =========================================================
+   DURAÇÃO PARA TEXTO SECUNDÁRIO
+========================================================= */
+
+function formatarDuracaoTexto(
+  valor,
+) {
+  const {
+    horas,
+    minutos,
+    segundos,
+  } =
+    decomporDuracao(
+      valor,
+    );
+
+  if (horas > 0) {
+    return `${formatarNumero(
+      horas,
+    )} h ${String(
+      minutos,
+    ).padStart(
+      2,
+      "0",
+    )} min`;
+  }
+
+  if (minutos > 0) {
+    return `${formatarNumero(
+      minutos,
+    )} min`;
+  }
+
+  if (segundos > 0) {
+    return `${segundos} s`;
+  }
+
+  return "0 min";
+}
+
+/* =========================================================
+   DURAÇÃO EM DESTAQUE
+========================================================= */
+
+function DuracaoDestaque({
+  segundos,
+}) {
+  const duracao =
+    decomporDuracao(
+      segundos,
+    );
+
+  if (
+    duracao.horas >
+    0
+  ) {
+    return (
+      <span className="dp-kpi-duration">
+        <span className="dp-kpi-duration__principal">
+          <span className="dp-kpi-duration__numero">
+            {formatarNumero(
+              duracao.horas,
+            )}
+          </span>
+
+          <span className="dp-kpi-duration__unidade">
+            h
+          </span>
+        </span>
+
+        <span className="dp-kpi-duration__secundario">
+          <span className="dp-kpi-duration__numero-secundario">
+            {String(
+              duracao.minutos,
+            ).padStart(
+              2,
+              "0",
+            )}
+          </span>
+
+          <span className="dp-kpi-duration__unidade-secundaria">
+            min
+          </span>
+        </span>
+      </span>
+    );
+  }
+
+  if (
+    duracao.minutos >
+    0
+  ) {
+    return (
+      <span className="dp-kpi-duration">
+        <span className="dp-kpi-duration__principal">
+          <span className="dp-kpi-duration__numero">
+            {formatarNumero(
+              duracao.minutos,
+            )}
+          </span>
+
+          <span className="dp-kpi-duration__unidade">
+            min
+          </span>
+        </span>
+      </span>
+    );
+  }
+
+  if (
+    duracao.segundos >
+    0
+  ) {
+    return (
+      <span className="dp-kpi-duration">
+        <span className="dp-kpi-duration__principal">
+          <span className="dp-kpi-duration__numero">
+            {duracao.segundos}
+          </span>
+
+          <span className="dp-kpi-duration__unidade">
+            s
+          </span>
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span className="dp-kpi-duration">
+      <span className="dp-kpi-duration__principal">
+        <span className="dp-kpi-duration__numero">
+          0
+        </span>
+
+        <span className="dp-kpi-duration__unidade">
+          min
+        </span>
+      </span>
+    </span>
   );
 }
 
@@ -47,12 +225,6 @@ function Variacao({
   const numero =
     Number(valor);
 
-  /*
-   * Para indicadores de parada:
-   *
-   * cair = bom
-   * subir = ruim
-   */
   const melhorou =
     numero < 0;
 
@@ -65,7 +237,6 @@ function Variacao({
     <span
       className={[
         "dp-kpi__variacao",
-
         melhorou
           ? "melhor"
           : "pior",
@@ -99,8 +270,6 @@ function Variacao({
 
 /* =========================================================
    CARD DE KPI
-
-   Componente interno reaproveitado pelos 5 indicadores.
 ========================================================= */
 
 function KpiCard({
@@ -110,6 +279,7 @@ function KpiCard({
   detail,
   variacao,
   tone = "neutral",
+  valueType = "default",
 }) {
   return (
     <article
@@ -132,9 +302,23 @@ function KpiCard({
         </div>
       </div>
 
-      <strong className="dp-kpi__value">
+      <div
+        className={[
+          "dp-kpi__value",
+          valueType ===
+          "duration"
+            ? "dp-kpi__value--duration"
+            : "",
+          valueType ===
+          "machine"
+            ? "dp-kpi__value--machine"
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         {value}
-      </strong>
+      </div>
 
       <span className="dp-kpi__detail">
         {detail}
@@ -168,17 +352,15 @@ export default function ParadasKpis({
       className="dp-kpis"
       aria-label="Indicadores principais de paradas"
     >
-      {/* ===================================================
-          TEMPO TOTAL PARADO
-      =================================================== */}
-
       <KpiCard
         icon={TimerOff}
         label="Tempo total parado"
         value={
-          formatarDuracaoResumida(
-            dados?.tempoTotalSegundos,
-          )
+          <DuracaoDestaque
+            segundos={
+              dados?.tempoTotalSegundos
+            }
+          />
         }
         detail={`${formatarNumero(
           dados?.totalParadas,
@@ -187,11 +369,8 @@ export default function ParadasKpis({
           comparativo.tempoTotal
         }
         tone="danger"
+        valueType="duration"
       />
-
-      {/* ===================================================
-          TOTAL DE PARADAS
-      =================================================== */}
 
       <KpiCard
         icon={AlertTriangle}
@@ -208,36 +387,33 @@ export default function ParadasKpis({
         tone="warning"
       />
 
-      {/* ===================================================
-          TEMPO MÉDIO
-      =================================================== */}
-
       <KpiCard
         icon={TimerReset}
         label="Tempo médio"
         value={
-          formatarDuracaoResumida(
-            dados?.tempoMedioSegundos,
-          )
+          <DuracaoDestaque
+            segundos={
+              dados?.tempoMedioSegundos
+            }
+          />
         }
         detail="Duração média por ocorrência"
         variacao={
           comparativo.tempoMedio
         }
         tone="neutral"
+        valueType="duration"
       />
-
-      {/* ===================================================
-          MAIOR PARADA
-      =================================================== */}
 
       <KpiCard
         icon={Clock3}
         label="Maior parada"
         value={
-          formatarDuracaoResumida(
-            maior?.duracao_segundos,
-          )
+          <DuracaoDestaque
+            segundos={
+              maior?.duracao_segundos
+            }
+          />
         }
         detail={
           maior
@@ -245,11 +421,8 @@ export default function ParadasKpis({
             : "Sem ocorrência"
         }
         tone="danger"
+        valueType="duration"
       />
-
-      {/* ===================================================
-          MÁQUINA MAIS IMPACTADA
-      =================================================== */}
 
       <KpiCard
         icon={Factory}
@@ -260,14 +433,15 @@ export default function ParadasKpis({
         }
         detail={
           maquina
-            ? `${formatarDuracaoResumida(
+            ? `${formatarDuracaoTexto(
                 maquina.duracao_segundos,
-              )} • ${
-                maquina.ocorrencias
-              } paradas`
+              )} • ${formatarNumero(
+                maquina.ocorrencias,
+              )} paradas`
             : "Sem ocorrência"
         }
         tone="primary"
+        valueType="machine"
       />
     </section>
   );

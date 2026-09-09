@@ -32,6 +32,8 @@ import {
   registroPertenceFaixaDuracao,
 } from "../ocorrenciasParadas.utils";
 
+import "./DistribuicaoDuracao.css";
+
 /* =========================================================
    TOOLTIP
 ========================================================= */

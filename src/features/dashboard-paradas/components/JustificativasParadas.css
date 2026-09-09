@@ -1,0 +1,236 @@
+/* =========================================================
+   PRINCIPAIS JUSTIFICATIVAS
+========================================================= */
+
+.dp-justificativas-card-content {
+  padding:
+    0
+    0
+    4px;
+}
+
+.dp-justificativas {
+  width:
+    100%;
+
+  min-width:
+    0;
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.dp-justificativas__table-wrapper {
+  width:
+    100%;
+
+  overflow-x:
+    auto;
+
+  scrollbar-width:
+    thin;
+
+  scrollbar-color:
+    #cbd5e1
+    transparent;
+}
+
+.dp-justificativas__table-wrapper::-webkit-scrollbar {
+  height:
+    6px;
+}
+
+.dp-justificativas__table-wrapper::-webkit-scrollbar-thumb {
+  background:
+    #cbd5e1;
+
+  border-radius:
+    999px;
+}
+
+.dp-justificativas__table {
+  width:
+    100%;
+
+  min-width:
+    1050px;
+
+  border-collapse:
+    collapse;
+}
+
+.dp-justificativas__table th,
+.dp-justificativas__table td {
+  padding:
+    11px
+    12px;
+
+  border-bottom:
+    1px solid
+    #edf2f7;
+
+  color:
+    #475569;
+
+  font-size:
+    0.69rem;
+
+  vertical-align:
+    middle;
+
+  text-align:
+    left;
+}
+
+.dp-justificativas__table th {
+  color:
+    #64748b;
+
+  background:
+    #f8fafc;
+
+  font-size:
+    0.6rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.045em;
+
+  text-transform:
+    uppercase;
+
+  white-space:
+    nowrap;
+}
+
+.dp-justificativas__table
+tbody
+tr {
+  transition:
+    background-color
+    0.14s ease;
+}
+
+.dp-justificativas__table
+tbody
+tr:hover {
+  background:
+    #f8fbff;
+}
+
+.dp-justificativas__table
+tbody
+tr:last-child
+td {
+  border-bottom:
+    0;
+}
+
+
+/* =========================================================
+   POSIÇÃO
+========================================================= */
+
+.dp-justificativas__position {
+  width:
+    24px;
+
+  height:
+    24px;
+
+  display:
+    inline-grid;
+
+  place-items:
+    center;
+
+  color:
+    #64748b;
+
+  background:
+    #f1f5f9;
+
+  border-radius:
+    6px;
+
+  font-size:
+    0.62rem;
+
+  font-weight:
+    800;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.dp-justificativas__motivo {
+  color:
+    var(--dp-text);
+
+  font-size:
+    0.68rem;
+}
+
+.dp-justificativas__texto {
+  display:
+    block;
+
+  max-width:
+    360px;
+
+  overflow:
+    hidden;
+
+  color:
+    #475569;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+/* =========================================================
+   IMPACTO
+========================================================= */
+
+.dp-justificativas__impacto {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    52px;
+
+  padding:
+    4px
+    7px;
+
+  color:
+    #1d4ed8;
+
+  background:
+    #eff6ff;
+
+  border-radius:
+    999px;
+
+  font-size:
+    0.63rem;
+
+  font-weight:
+    800;
+}

@@ -806,11 +806,24 @@ export function consolidarParadas(
 
               duracao_segundos:
                 0,
+
+              /*
+               * Guarda exatamente os mesmos registros
+               * que formaram esta célula do Heatmap.
+               *
+               * Assim o drill-down não precisa tentar
+               * reconstruir dia/horário novamente.
+               */
+              registros: [],
             }),
           );
 
-        celula.ocorrencias +=
-          1;
+        celula.registros.push(
+          registro,
+        );
+
+        celula.ocorrencias =
+          celula.registros.length;
 
         celula.duracao_segundos +=
           duracaoSegundos;
@@ -1058,6 +1071,13 @@ export function consolidarParadas(
      HEATMAP
   ===================================================== */
 
+  /*
+   * IMPORTANTE:
+   * cada item de heatmapLista contém "registros",
+   * com a lista exata que gerou ocorrencias e duração.
+   *
+   * O modal usa diretamente essa lista.
+   */
   const heatmapLista =
     Array.from(
       heatmap.values(),

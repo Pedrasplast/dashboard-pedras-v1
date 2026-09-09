@@ -10,6 +10,8 @@ import {
   formatarDuracaoResumida,
 } from "../dashboardParadas.utils";
 
+import "./JustificativasParadas.css";
+
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
@@ -39,6 +41,51 @@ function formatarPercentual(
       maximumFractionDigits: 1,
     },
   );
+}
+
+function formatarDuracaoComMilhar(
+  segundos,
+) {
+  const total =
+    Math.max(
+      0,
+      Math.floor(
+        Number(segundos) || 0,
+      ),
+    );
+
+  const horas =
+    Math.floor(
+      total / 3600,
+    );
+
+  const minutos =
+    Math.floor(
+      (total % 3600) / 60,
+    );
+
+  const horasFormatadas =
+    horas.toLocaleString(
+      "pt-BR",
+      {
+        maximumFractionDigits: 0,
+      },
+    );
+
+  if (horas <= 0) {
+    return `${minutos} min`;
+  }
+
+  if (minutos === 0) {
+    return `${horasFormatadas}h`;
+  }
+
+  return `${horasFormatadas}h ${String(
+    minutos,
+  ).padStart(
+    2,
+    "0",
+  )}min`;
 }
 
 /* =========================================================
@@ -140,7 +187,7 @@ function JustificativasParadas({
 
                     <td>
                       <strong>
-                        {formatarDuracaoResumida(
+                        {formatarDuracaoComMilhar(
                           item.duracao_segundos,
                         )}
                       </strong>

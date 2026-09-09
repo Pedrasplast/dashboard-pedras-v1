@@ -1,0 +1,242 @@
+/* =========================================================
+   CARD PADRÃO
+========================================================= */
+
+.dp-card {
+  min-width: 0;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  background:
+    var(--dp-surface);
+
+  border:
+    1px solid
+    var(--dp-border);
+
+  border-radius: 14px;
+
+  box-shadow:
+    var(--dp-shadow);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.dp-card:hover {
+  border-color:
+    #cbd5e1;
+
+  box-shadow:
+    var(--dp-shadow-hover);
+}
+
+
+/* =========================================================
+   CABEÇALHO DO CARD
+========================================================= */
+
+.dp-card__header {
+  min-height: 72px;
+
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding:
+    15px
+    17px
+    13px;
+
+  box-sizing: border-box;
+
+  border-bottom:
+    1px solid
+    var(--dp-border-soft);
+}
+
+.dp-card__heading {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 10px;
+}
+
+.dp-card__header-icon {
+  flex: 0 0 auto;
+
+  width: 31px;
+  height: 31px;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    var(--dp-primary);
+
+  background:
+    var(--dp-primary-soft);
+
+  border-radius: 8px;
+}
+
+.dp-card__titles {
+  min-width: 0;
+}
+
+.dp-card__titles h2 {
+  margin: 0;
+
+  color:
+    var(--dp-text);
+
+  font-size: 0.91rem;
+
+  font-weight: 800;
+
+  line-height: 1.25;
+
+  letter-spacing:
+    -0.01em;
+}
+
+.dp-card__titles p {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.67rem;
+
+  line-height: 1.4;
+}
+
+.dp-card__actions {
+  flex: 0 0 auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+}
+
+
+/* =========================================================
+   CONTEÚDO DOS CARDS
+========================================================= */
+
+.dp-card__content {
+  min-width: 0;
+  min-height: 0;
+
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  padding:
+    12px
+    15px
+    16px;
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.dp-card__empty {
+  min-height: 240px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  text-align: center;
+}
+
+.dp-card__empty-icon {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+
+  place-items: center;
+
+  margin-bottom: 3px;
+
+  color:
+    var(--dp-muted-light);
+
+  background:
+    #f8fafc;
+
+  border-radius: 50%;
+}
+
+.dp-card__empty strong {
+  color:
+    var(--dp-text-secondary);
+
+  font-size: 0.78rem;
+}
+
+.dp-card__empty p {
+  max-width: 320px;
+
+  margin: 0;
+
+  color:
+    var(--dp-muted);
+
+  font-size: 0.7rem;
+
+  line-height: 1.45;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (
+  max-width: 760px
+) {
+  .dp-card__header {
+    flex-direction: column;
+
+    min-height: 0;
+  }
+
+  .dp-card__actions {
+    width: 100%;
+
+    justify-content: flex-start;
+  }
+}

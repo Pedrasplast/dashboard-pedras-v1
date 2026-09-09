@@ -32,6 +32,8 @@ import {
   obterDataISORegistro,
 } from "../ocorrenciasParadas.utils";
 
+import "./EvolucaoParadas.css";
+
 /* =========================================================
    MODOS
 ========================================================= */

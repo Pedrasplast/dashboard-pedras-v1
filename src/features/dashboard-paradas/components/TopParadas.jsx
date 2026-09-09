@@ -13,6 +13,8 @@ import {
   formatarDuracaoResumida,
 } from "../dashboardParadas.utils";
 
+import "./TopParadas.css";
+
 /* =========================================================
    TOP MAIORES PARADAS
 ========================================================= */
@@ -49,10 +51,6 @@ function TopParadas({
               }
               className="dp-top-paradas__item"
             >
-              {/* =========================================
-                  POSIÇÃO
-              ========================================= */}
-
               <div className="dp-top-paradas__rank">
                 <span>
                   {String(
@@ -63,10 +61,6 @@ function TopParadas({
                   )}
                 </span>
               </div>
-
-              {/* =========================================
-                  CONTEÚDO
-              ========================================= */}
 
               <div className="dp-top-paradas__content">
                 <div className="dp-top-paradas__top">
@@ -91,10 +85,6 @@ function TopParadas({
                   </strong>
                 </div>
 
-                {/* =======================================
-                    MOTIVO
-                ======================================= */}
-
                 <div className="dp-top-paradas__reason">
                   <strong>
                     {item.motivo}
@@ -107,17 +97,9 @@ function TopParadas({
                   )}
                 </div>
 
-                {/* =======================================
-                    JUSTIFICATIVA
-                ======================================= */}
-
                 <p className="dp-top-paradas__justificativa">
                   {item.justificativa}
                 </p>
-
-                {/* =======================================
-                    RODAPÉ
-                ======================================= */}
 
                 <div className="dp-top-paradas__meta">
                   <span>

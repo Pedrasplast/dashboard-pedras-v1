@@ -35,6 +35,8 @@ import {
   obterMotivoRegistro,
 } from "../ocorrenciasParadas.utils";
 
+import "./CriticidadeParadas.css";
+
 /* =========================================================
    CONFIGURAÇÕES
 ========================================================= */

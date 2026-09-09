@@ -73,17 +73,7 @@ const NAVIGATION_GROUPS = Object.freeze([
 
         permissao: "dashboard",
       },
-
-      {
-        label: "Dashboard-Matéria-Prima",
-
-        path: "/dashboard-materia-prima",
-
-        icon: Gauge,
-
-        permissao: "dashboard_materia_prima",
-      },
-
+     
       {
         label: "Dashboard-Paradas",
 
@@ -93,6 +83,17 @@ const NAVIGATION_GROUPS = Object.freeze([
 
         permissao: "dashboard_paradas",
       },
+
+       {
+        label: "Dashboard-Matéria-Prima",
+
+        path: "/dashboard-materia-prima",
+
+        icon: Gauge,
+
+        permissao: "dashboard_materia_prima",
+      },
+
     ],
   },
 

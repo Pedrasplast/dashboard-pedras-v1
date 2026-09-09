@@ -1,0 +1,252 @@
+/* =========================================================
+   RANKING DAS INJETORAS
+========================================================= */
+
+.dp-ranking-card {
+  margin-bottom: 16px;
+}
+
+
+.dp-ranking-card-content {
+  padding:
+    0
+    0
+    4px;
+}
+
+.dp-ranking {
+  width: 100%;
+  min-width: 0;
+}
+
+.dp-ranking__table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #cbd5e1
+    transparent;
+}
+
+.dp-ranking__table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dp-ranking__table-wrapper::-webkit-scrollbar-thumb {
+  background:
+    #cbd5e1;
+
+  border-radius: 999px;
+}
+
+.dp-ranking__table {
+  width: 100%;
+
+  min-width: 980px;
+
+  border-collapse: collapse;
+}
+
+.dp-ranking__table th,
+.dp-ranking__table td {
+  padding:
+    11px
+    12px;
+
+  border-bottom:
+    1px solid
+    #edf2f7;
+
+  color:
+    #475569;
+
+  font-size: 0.7rem;
+
+  text-align: left;
+
+  vertical-align: middle;
+
+  white-space: nowrap;
+}
+
+.dp-ranking__table th {
+  position: sticky;
+
+  top: 0;
+
+  color:
+    #64748b;
+
+  background:
+    #f8fafc;
+
+  font-size: 0.61rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.045em;
+
+  text-transform: uppercase;
+}
+
+.dp-ranking__table tbody tr {
+  transition:
+    background-color 0.14s ease;
+}
+
+.dp-ranking__table tbody tr:hover {
+  background:
+    #f8fbff;
+}
+
+.dp-ranking__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   POSIÇÃO DO RANKING
+========================================================= */
+
+.dp-ranking__position {
+  width: 25px;
+  height: 25px;
+
+  display: inline-grid;
+
+  place-items: center;
+
+  color:
+    #64748b;
+
+  background:
+    #f1f5f9;
+
+  border-radius: 7px;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+}
+
+.dp-ranking__table
+tbody
+tr:first-child
+.dp-ranking__position {
+  color:
+    #92400e;
+
+  background:
+    #fef3c7;
+}
+
+
+/* =========================================================
+   MÁQUINA
+========================================================= */
+
+.dp-ranking__machine {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.dp-ranking__machine strong {
+  color:
+    var(--dp-text);
+
+  font-size: 0.72rem;
+}
+
+.dp-ranking__machine-icon {
+  width: 27px;
+  height: 27px;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    var(--dp-primary);
+
+  background:
+    var(--dp-primary-soft);
+
+  border-radius: 7px;
+}
+
+
+/* =========================================================
+   BARRA DE IMPACTO
+========================================================= */
+
+.dp-ranking__impact {
+  min-width: 120px;
+}
+
+.dp-ranking__impact > strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color:
+    var(--dp-text);
+
+  font-size: 0.69rem;
+}
+
+.dp-ranking__bar {
+  width: 100%;
+  height: 5px;
+
+  overflow: hidden;
+
+  background:
+    #e2e8f0;
+
+  border-radius: 999px;
+}
+
+.dp-ranking__bar-value {
+  display: block;
+
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #1d4ed8,
+      #60a5fa
+    );
+
+  border-radius: inherit;
+}
+
+.dp-ranking__impact-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 52px;
+
+  padding:
+    4px
+    7px;
+
+  color:
+    #1d4ed8;
+
+  background:
+    #eff6ff;
+
+  border-radius: 999px;
+
+  font-size: 0.64rem;
+
+  font-weight: 800;
+}
