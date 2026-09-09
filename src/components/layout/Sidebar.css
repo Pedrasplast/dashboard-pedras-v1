@@ -501,9 +501,12 @@
 
 /* =====================================================
    TABLET
+   (mesmo breakpoint das shells .producao-sidebar-shell /
+   .dp-sidebar-shell, que travam height/overflow via
+   !important até 760px — abaixo disso o layout empilha)
 ===================================================== */
 
-@media (max-width: 1024px) {
+@media (max-width: 760px) {
 
   .sidebar {
     position: relative;

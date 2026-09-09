@@ -60,7 +60,7 @@
 
   padding-top: 16px;
 
-  margin-top: 70px;
+  margin-top: 30px;
 
   box-sizing: border-box;
 
@@ -134,7 +134,7 @@
   min-width: 761px
 ) {
   .dp-sidebar-shell .filter-section {
-    gap: 6px;
+    gap: 8px;
   }
 
   .dp-sidebar-shell
@@ -151,7 +151,7 @@
   .filter-section
   .filter-header-row > label {
     margin:
-      8px
+      14px
       0
       0;
 
@@ -185,19 +185,11 @@
   .dp-sidebar-shell
   .calendar-trigger {
     min-height:
-      48px;
-
-    gap: 2px;
+      40px;
 
     padding:
-      7px
+      6px
       10px;
-  }
-
-  .dp-sidebar-shell
-  .calendar-trigger span {
-    font-size:
-      0.59rem;
   }
 
   .dp-sidebar-shell
@@ -309,22 +301,22 @@
   min-width: 761px
 ) {
   .dp-sidebar-shell .filter-section {
-    gap: 4px;
+    gap: 5px;
   }
 
   .dp-sidebar-shell
   .filter-section > label {
     margin-top:
-      6px;
+      9px;
   }
 
   .dp-sidebar-shell
   .calendar-trigger {
     min-height:
-      44px;
+      37px;
 
     padding:
-      6px
+      5px
       9px;
   }
 

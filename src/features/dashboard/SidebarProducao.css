@@ -1,0 +1,408 @@
+/* Sidebar de Produ??o: mesmo padr?o visual e breakpoints de Paradas. */
+.dashboard-container.producao-page {
+  --producao-sidebar-altura: calc(100dvh - 76px - 16px);
+  margin-top: 70px;
+}
+.dashboard-container.producao-page {
+
+  display: grid;
+
+  grid-template-columns:
+    296px
+    minmax(0, 1fr);
+
+  --producao-sidebar-altura: calc(100dvh - 76px - 16px); }
+
+.producao-sidebar-shell {
+  min-width: 0;
+  min-height: 0;
+
+  /*
+   * 12px de respiro no topo
+   * + 16px de respiro no rodapé.
+   */
+  height:
+    calc(
+      var(--producao-sidebar-altura) - 28px
+    );
+
+  align-self: start;
+
+  margin-top: 12px;
+
+  padding-left: 16px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+.producao-sidebar-shell > * {
+  width: 100%;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  /*
+   * O Sidebar permanece parado.
+   * Não existe mais rolagem interna na lateral.
+   */
+  position: static !important;
+
+  top: auto !important;
+
+  overflow: hidden !important;
+
+  box-sizing: border-box;
+
+  scrollbar-gutter: auto;
+}
+
+@media (
+  min-width: 761px
+) {
+  .producao-sidebar-shell .filter-section {
+    gap: 8px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .filter-header-row {
+    gap: 8px;
+
+    margin-top: 0;
+  }
+
+  .producao-sidebar-shell
+  .filter-section > label,
+  .producao-sidebar-shell
+  .filter-section
+  .filter-header-row > label {
+    margin:
+      14px
+      0
+      0;
+
+    font-size:
+      0.66rem;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .filter-header-row > label {
+    margin: 0;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .clear-date-btn {
+    padding:
+      3px
+      5px;
+
+    font-size:
+      0.62rem;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .date-inputs-container {
+    gap: 6px;
+  }
+
+  .producao-sidebar-shell
+  .calendar-trigger {
+    min-height:
+      40px;
+
+    padding:
+      6px
+      10px;
+  }
+
+  .producao-sidebar-shell
+  .calendar-trigger strong {
+    font-size:
+      0.82rem;
+  }
+
+  .producao-sidebar-shell
+  .filter-section select {
+    min-height:
+      42px;
+
+    padding:
+      7px
+      34px
+      7px
+      10px;
+
+    font-size:
+      0.79rem;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .checkbox-group {
+    max-height:
+      none;
+
+    gap: 2px;
+
+    padding: 0;
+
+    overflow:
+      visible;
+
+    scrollbar-width:
+      none;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .checkbox-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label {
+    min-height:
+      32px;
+
+    gap: 6px;
+
+    padding:
+      4px
+      5px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label
+  input[type="checkbox"] {
+    width:
+      15px;
+
+    height:
+      15px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-label-conteudo {
+    gap: 6px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-label-numero {
+    width:
+      21px;
+
+    height:
+      21px;
+
+    font-size:
+      0.65rem;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-label-descricao {
+    font-size:
+      0.65rem;
+
+    line-height:
+      1.16;
+  }
+}
+
+@media (
+  max-height: 760px
+) and (
+  min-width: 761px
+) {
+  .producao-sidebar-shell .filter-section {
+    gap: 5px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section > label {
+    margin-top:
+      9px;
+  }
+
+  .producao-sidebar-shell
+  .calendar-trigger {
+    min-height:
+      37px;
+
+    padding:
+      5px
+      9px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section select {
+    min-height:
+      39px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-checkbox-label {
+    min-height:
+      29px;
+
+    padding:
+      3px
+      4px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-label-numero {
+    width:
+      19px;
+
+    height:
+      19px;
+  }
+
+  .producao-sidebar-shell
+  .filter-section
+  .tipo-label-descricao {
+    font-size:
+      0.62rem;
+  }
+}
+
+@media (
+  max-width: 1450px
+) {
+ .dashboard-container.producao-page {
+    grid-template-columns:
+      268px
+      minmax(0, 1fr);
+    --producao-sidebar-altura: calc(100dvh - 76px - 12px); }
+
+  .producao-sidebar-shell {
+    height:
+      calc(
+        var(--producao-sidebar-altura) - 24px
+      );
+
+    margin-top: 10px;
+
+    padding-left: 12px;
+  }
+}
+
+@media (
+  max-width: 1280px
+) {
+ .dashboard-container.producao-page {
+    grid-template-columns:
+      250px
+      minmax(0, 1fr); }
+}
+
+@media (
+  max-width: 1120px
+) {
+ .dashboard-container.producao-page {
+    grid-template-columns:
+      236px
+      minmax(0, 1fr); }
+}
+
+@media (
+  max-width: 920px
+) {
+ .dashboard-container.producao-page {
+    grid-template-columns:
+      218px
+      minmax(0, 1fr);
+    --producao-sidebar-altura: calc(100dvh - 76px - 8px); }
+
+  .producao-sidebar-shell {
+    height:
+      calc(
+        var(--producao-sidebar-altura) - 16px
+      );
+
+    margin-top:
+      8px;
+
+    padding-left:
+      8px;
+  }
+}
+
+@media (
+  max-width: 760px
+) {
+ .dashboard-container.producao-page {
+    display:
+      block; }
+
+  .producao-sidebar-shell {
+    width:
+      100%;
+
+    height:
+      auto;
+
+    margin-top:
+      0;
+
+    margin-bottom:
+      14px;
+
+    padding-left:
+      0;
+
+    overflow:
+      visible;
+  }
+
+  .producao-sidebar-shell > * {
+    width:
+      100%;
+
+    height:
+      auto !important;
+
+    min-height:
+      0 !important;
+
+    max-height:
+      none !important;
+
+    overflow:
+      visible !important;
+
+    scrollbar-gutter:
+      auto;
+  }
+}
+
+@media (
+  max-height: 820px
+) and (
+  min-width: 761px
+) {
+ .dashboard-container.producao-page { --producao-sidebar-altura: calc(100dvh - 76px - 8px); }
+
+  .producao-sidebar-shell {
+    height:
+      calc(
+        var(--producao-sidebar-altura) - 14px
+      );
+
+    margin-top:
+      6px;
+  }
+}

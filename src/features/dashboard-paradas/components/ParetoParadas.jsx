@@ -98,62 +98,26 @@ function obterMotivoComparacao(
 }
 
 /* =========================================================
-   QUEBRAR NOME DO MOTIVO
+   TRUNCAR NOME DO MOTIVO
 ========================================================= */
 
-function quebrarRotulo(
+function truncarRotulo(
   texto,
-  limite = 16,
+  limite = 18,
 ) {
-  const palavras = String(
+  const valor = String(
     texto || "",
-  )
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  ).trim();
 
   if (
-    palavras.length === 0
+    valor.length <= limite
   ) {
-    return [""];
+    return valor;
   }
 
-  const linhas = [];
-  let linhaAtual = "";
-
-  for (
-    const palavra of palavras
-  ) {
-    const tentativa =
-      linhaAtual
-        ? `${linhaAtual} ${palavra}`
-        : palavra;
-
-    if (
-      tentativa.length <=
-      limite
-    ) {
-      linhaAtual =
-        tentativa;
-    } else {
-      if (linhaAtual) {
-        linhas.push(
-          linhaAtual,
-        );
-      }
-
-      linhaAtual =
-        palavra;
-    }
-  }
-
-  if (linhaAtual) {
-    linhas.push(
-      linhaAtual,
-    );
-  }
-
-  return linhas;
+  return `${valor
+    .slice(0, limite - 1)
+    .trimEnd()}…`;
 }
 
 /* =========================================================
@@ -165,10 +129,10 @@ function MotivoAxisTick({
   y,
   payload,
 }) {
-  const linhas =
-    quebrarRotulo(
+  const rotulo =
+    truncarRotulo(
       payload?.value,
-      16,
+      18,
     );
 
   return (
@@ -178,30 +142,14 @@ function MotivoAxisTick({
       <text
         x={0}
         y={0}
-        dy={13}
-        textAnchor="middle"
+        dy={9}
+        textAnchor="end"
         fill="#64748b"
         fontSize={9.5}
         fontWeight={600}
+        transform="rotate(-35)"
       >
-        {linhas.map(
-          (
-            linha,
-            indice,
-          ) => (
-            <tspan
-              key={`${linha}-${indice}`}
-              x={0}
-              dy={
-                indice === 0
-                  ? 0
-                  : 11
-              }
-            >
-              {linha}
-            </tspan>
-          ),
-        )}
+        {rotulo}
       </text>
     </g>
   );
@@ -668,7 +616,7 @@ function ParetoParadas({
               <XAxis
                 dataKey="motivo"
                 interval={0}
-                height={82}
+                height={68}
                 tickLine={false}
                 axisLine={{
                   stroke:

@@ -26,6 +26,7 @@ import {
 } from "./components/DashboardIndicadores";
 
 import "./Dashboard.css";
+import "./SidebarProducao.css";
 
 const FILTROS_INICIAIS = Object.freeze({
   injetora: "Todos",
@@ -89,7 +90,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container producao-page">
+      <div className="producao-sidebar-shell">
       <Sidebar>
         <FiltrosDashboard
           filtros={filtros}
@@ -105,6 +107,7 @@ export default function Dashboard() {
           exibirTipo
         />
       </Sidebar>
+      </div>
 
       <main className="main-content">
         <PageHeader
