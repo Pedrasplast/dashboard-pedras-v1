@@ -29,9 +29,11 @@ function CampoDataCalendario({
         className="calendar-trigger"
         disabled={desabilitado}
         onClick={onAlternar}
+        aria-label={titulo}
       >
-        <span>{titulo}</span>
-        <strong>{valorVisual || "Selecionar"}</strong>
+        <strong className={valorVisual ? undefined : "calendar-trigger-placeholder"}>
+          {valorVisual || titulo}
+        </strong>
       </button>
 
       {aberto && (
