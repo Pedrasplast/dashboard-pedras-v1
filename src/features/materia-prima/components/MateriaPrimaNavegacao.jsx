@@ -4,9 +4,7 @@ import {
   Boxes,
   CalendarDays,
   FlaskConical,
-  Package,
   ShoppingCart,
-  Truck,
 } from "lucide-react";
 
 import "./MateriaPrimaNavegacao.css";
@@ -27,19 +25,19 @@ export const MATERIA_PRIMA_SECOES =
     },
 
     {
-      id: "produtos",
-      titulo: "Produtos PP",
+      id: "compras-futuras",
+      titulo: "Compras Futuras",
       descricao:
-        "Definição dos produtos que utilizam PP.",
-      icone: Package,
+        "Controle das compras com recebimento previsto.",
+      icone: ShoppingCart,
     },
 
     {
-      id: "fornecedores",
-      titulo: "Fornecedores",
+      id: "entradas",
+      titulo: "Entradas",
       descricao:
-        "Cadastro dos fornecedores utilizados na composição.",
-      icone: Truck,
+        "Registro dos recebimentos reais de matéria-prima.",
+      icone: ArrowDownToLine,
     },
 
     {
@@ -56,22 +54,6 @@ export const MATERIA_PRIMA_SECOES =
       descricao:
         "Produtos programados e consumo diário previsto.",
       icone: CalendarDays,
-    },
-
-    {
-      id: "entradas",
-      titulo: "Entradas",
-      descricao:
-        "Registro dos recebimentos reais de matéria-prima.",
-      icone: ArrowDownToLine,
-    },
-
-    {
-      id: "compras-futuras",
-      titulo: "Compras Futuras",
-      descricao:
-        "Controle das compras com recebimento previsto.",
-      icone: ShoppingCart,
     },
 
     {
@@ -96,9 +78,7 @@ export default function MateriaPrimaNavegacao({
     <section className="materia-prima-navegacao">
 
       {MATERIA_PRIMA_SECOES.map(
-        (
-          secao,
-        ) => {
+        (secao) => {
           const Icone =
             secao.icone;
 
@@ -109,20 +89,17 @@ export default function MateriaPrimaNavegacao({
 
           return (
             <button
-              key={
-                secao.id
-              }
+              key={secao.id}
               type="button"
               className={
                 ativo
                   ? "materia-prima-nav-item ativo"
                   : "materia-prima-nav-item"
               }
-              onClick={
-                () =>
-                  onAlterarSecao(
-                    secao.id,
-                  )
+              onClick={() =>
+                onAlterarSecao(
+                  secao.id,
+                )
               }
             >
 

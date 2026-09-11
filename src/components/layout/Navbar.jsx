@@ -1,12 +1,22 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { useRouterState } from "@tanstack/react-router";
+import {
+  useRouterState,
+} from "@tanstack/react-router";
 
 import {
   Bell,
   Boxes,
   ChevronDown,
   CirclePause,
+  ClipboardList,
   DollarSign,
   Factory,
   FileText,
@@ -20,14 +30,21 @@ import {
   ShieldCheck,
   Upload,
   Users,
+  Warehouse,
   X,
 } from "lucide-react";
 
-import { usePermissoes } from "@/hooks/usePermissoes";
+import {
+  usePermissoes,
+} from "@/hooks/usePermissoes";
 
-import { useNavigate } from "@/lib/navegacao";
+import {
+  useNavigate,
+} from "@/lib/navegacao";
 
-import { supabase } from "@/lib/supabaseClient";
+import {
+  supabase,
+} from "@/lib/supabaseClient";
 
 import "./Navbar.css";
 
@@ -35,938 +52,1498 @@ import "./Navbar.css";
    NAVEGAÇÃO POR MÓDULOS
 ========================================================= */
 
-const NAVIGATION_GROUPS = Object.freeze([
-  {
-    type: "link",
+const NAVIGATION_GROUPS =
+  Object.freeze([
+    {
+      type:
+        "link",
 
-    id: "inicio",
+      id:
+        "inicio",
 
-    label: "Início",
+      label:
+        "Início",
 
-    path: "/",
+      path:
+        "/",
 
-    icon: Home,
+      icon:
+        Home,
 
-    permissao: null,
-  },
+      permissao:
+        null,
+    },
 
-  /* =====================================================
+    /* =====================================================
+       CADASTRO
+    ===================================================== */
+
+    {
+      type:
+        "group",
+
+      id:
+        "cadastro",
+
+      label:
+        "Cadastro",
+
+      icon:
+        ClipboardList,
+
+      children: [
+        {
+          type:
+            "link",
+
+          id:
+            "cadastro-produto",
+
+          label:
+            "Produtos e Fornecedores",
+
+          path:
+            "/cadastro-produto",
+
+          icon:
+            ClipboardList,
+
+          permissao:
+            "cadastros",
+        },
+      ],
+    },
+
+    /* =====================================================
        DASHBOARDS
     ===================================================== */
 
-  {
-    type: "group",
+    {
+      type:
+        "group",
 
-    id: "dashboards",
+      id:
+        "dashboards",
 
-    label: "Dashboards",
+      label:
+        "Dashboards",
 
-    icon: LayoutDashboard,
+      icon:
+        LayoutDashboard,
 
-    children: [
-      {
-        label: "Dashboard-Produção",
+      children: [
+        {
+          label:
+            "Dashboard-Produção",
 
-        path: "/dashboard",
+          path:
+            "/dashboard",
 
-        icon: Factory,
+          icon:
+            Factory,
 
-        permissao: "dashboard",
-      },
-     
-      {
-        label: "Dashboard-Paradas",
+          permissao:
+            "dashboard",
+        },
 
-        path: "/dashboard-paradas",
+        {
+          label:
+            "Dashboard-Matéria-Prima",
 
-        icon: CirclePause,
+          path:
+            "/dashboard-materia-prima",
 
-        permissao: "dashboard_paradas",
-      },
+          icon:
+            Gauge,
 
-       {
-        label: "Dashboard-Matéria-Prima",
+          permissao:
+            "dashboard_materia_prima",
+        },
 
-        path: "/dashboard-materia-prima",
+        {
+          label:
+            "Dashboard-Paradas",
 
-        icon: Gauge,
+          path:
+            "/dashboard-paradas",
 
-        permissao: "dashboard_materia_prima",
-      },
+          icon:
+            CirclePause,
 
-    ],
-  },
+          permissao:
+            "dashboard_paradas",
+        },
+      ],
+    },
 
-  /* =====================================================
+    /* =====================================================
        PRODUÇÃO
     ===================================================== */
 
-  {
-    type: "group",
+    {
+      type:
+        "group",
 
-    id: "producao",
+      id:
+        "producao",
 
-    label: "Produção",
+      label:
+        "Produção",
 
-    icon: Factory,
+      icon:
+        Factory,
 
-    children: [
-      {
-        type: "link",
+      children: [
+        {
+          type:
+            "link",
 
-        id: "materia-prima",
+          id:
+            "materia-prima",
 
-        label: "Matéria-Prima",
+          label:
+            "Matéria-Prima",
 
-        path: "/materia-prima",
+          path:
+            "/materia-prima",
 
-        icon: Boxes,
+          icon:
+            Boxes,
 
-        permissao: "materia_prima",
-      },
-    ],
-  },
+          permissao:
+            "materia_prima",
+        },
 
-  /* =====================================================
+        {
+          type:
+            "link",
+
+          id:
+            "estoque",
+
+          label:
+            "Estoque",
+
+          path:
+            "/estoque",
+
+          icon:
+            Warehouse,
+
+          permissao:
+            "estoque",
+        },
+      ],
+    },
+
+    /* =====================================================
        PEDIDOS
     ===================================================== */
 
-  {
-    type: "group",
+    {
+      type:
+        "group",
 
-    id: "pedidos",
+      id:
+        "pedidos",
 
-    label: "Pedidos",
+      label:
+        "Pedidos",
 
-    icon: ShoppingCart,
+      icon:
+        ShoppingCart,
 
-    children: [
-      {
-        label: "Pedidos",
+      children: [
+        {
+          label:
+            "Pedidos",
 
-        path: "/pedidos",
+          path:
+            "/pedidos",
 
-        icon: ShoppingCart,
+          icon:
+            ShoppingCart,
 
-        permissao: "pedidos",
+          permissao:
+            "pedidos",
 
-        notificationKey: "pedidos",
-      },
-    ],
-  },
+          notificationKey:
+            "pedidos",
+        },
+      ],
+    },
 
-  /* =====================================================
+    /* =====================================================
        FINANCEIRO
     ===================================================== */
 
-  {
-    type: "group",
+    {
+      type:
+        "group",
 
-    id: "financeiro",
+      id:
+        "financeiro",
 
-    label: "Financeiro",
+      label:
+        "Financeiro",
 
-    icon: DollarSign,
+      icon:
+        DollarSign,
 
-    children: [
-      {
-        label: "Visão Geral",
+      children: [
+        {
+          label:
+            "Visão Geral",
 
-        path: "/financeiro",
+          path:
+            "/financeiro",
 
-        icon: DollarSign,
+          icon:
+            DollarSign,
 
-        permissao: "financeiro",
-      },
+          permissao:
+            "financeiro",
+        },
 
-      {
-        label: "Evolução Mensal",
+        {
+          label:
+            "Evolução Mensal",
 
-        path: "/financeiro-evolucao-mensal",
+          path:
+            "/financeiro-evolucao-mensal",
 
-        icon: DollarSign,
+          icon:
+            DollarSign,
 
-        permissao: "financeiro_evolucao_mensal",
-      },
-    ],
-  },
+          permissao:
+            "financeiro_evolucao_mensal",
+        },
+      ],
+    },
 
-  /* =====================================================
+    /* =====================================================
        RELATÓRIOS
     ===================================================== */
 
-  {
-    type: "link",
+    {
+      type:
+        "link",
 
-    id: "relatorios",
+      id:
+        "relatorios",
 
-    label: "Relatórios",
+      label:
+        "Relatórios",
 
-    path: "/relatorios",
+      path:
+        "/relatorios",
 
-    icon: FileText,
+      icon:
+        FileText,
 
-    permissao: "relatorios",
-  },
-]);
+      permissao:
+        "relatorios",
+    },
+  ]);
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function normalizarCaminho(path) {
-  const caminho = String(path || "/").trim();
+function normalizarCaminho(
+  path,
+) {
+  const caminho =
+    String(
+      path ||
+        "/",
+    ).trim();
 
-  return caminho === "/" ? "/" : caminho.replace(/\/+$/, "");
+  return caminho ===
+    "/"
+    ? "/"
+    : caminho.replace(
+        /\/+$/,
+        "",
+      );
 }
 
-function obterNomeUsuario(email) {
+function obterNomeUsuario(
+  email,
+) {
   if (!email) {
     return "";
   }
 
-  return String(email)
+  return String(
+    email,
+  )
     .split("@")[0]
-    .replace(/[._-]+/g, " ")
-    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+    .replace(
+      /[._-]+/g,
+      " ",
+    )
+    .replace(
+      /\b\w/g,
+      (letra) =>
+        letra.toUpperCase(),
+    );
 }
 
-function obterIniciais(nome) {
+function obterIniciais(
+  nome,
+) {
   if (!nome) {
     return "US";
   }
 
-  const palavras = String(nome).trim().split(/\s+/).filter(Boolean);
+  const palavras =
+    String(
+      nome,
+    )
+      .trim()
+      .split(/\s+/)
+      .filter(
+        Boolean,
+      );
 
-  if (palavras.length === 0) {
+  if (
+    palavras.length ===
+    0
+  ) {
     return "US";
   }
 
-  if (palavras.length === 1) {
-    return palavras[0].slice(0, 2).toUpperCase();
+  if (
+    palavras.length ===
+    1
+  ) {
+    return palavras[0]
+      .slice(
+        0,
+        2,
+      )
+      .toUpperCase();
   }
 
-  return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
+  return `${palavras[0][0]}${palavras.at(-1)[0]}`
+    .toUpperCase();
 }
 
-function obterTipoNotificacao(notificacao) {
-  const tipo = String(
-    notificacao?.tipo_ultima_ocorrencia ?? notificacao?.tipo ?? "novo",
-  )
-    .trim()
-    .toLowerCase();
+function obterTipoNotificacao(
+  notificacao,
+) {
+  const tipo =
+    String(
+      notificacao
+        ?.tipo_ultima_ocorrencia ??
+        notificacao
+          ?.tipo ??
+        "novo",
+    )
+      .trim()
+      .toLowerCase();
 
-  return tipo === "alterado" ? "alterado" : "novo";
+  return tipo ===
+    "alterado"
+    ? "alterado"
+    : "novo";
 }
 
-function formatarBadgePedidos(quantidade) {
-  const numero = Number(quantidade || 0);
+function formatarBadgePedidos(
+  quantidade,
+) {
+  const numero =
+    Number(
+      quantidade ||
+        0,
+    );
 
-  if (!Number.isFinite(numero) || numero <= 0) {
+  if (
+    !Number.isFinite(
+      numero,
+    ) ||
+    numero <= 0
+  ) {
     return null;
   }
 
-  return numero > 99 ? "99+" : String(numero);
+  return numero >
+    99
+    ? "99+"
+    : String(
+        numero,
+      );
 }
 
 /* =========================================================
    NAVBAR
 ========================================================= */
 
-function Navbar({ user, isAdmin }) {
-  const navigate = useNavigate();
+function Navbar({
+  user,
+  isAdmin,
+}) {
+  const navigate =
+    useNavigate();
 
-  const menuRef = useRef(null);
+  const menuRef =
+    useRef(
+      null,
+    );
 
-  const navigationRef = useRef(null);
+  const navigationRef =
+    useRef(
+      null,
+    );
 
-  const alertaTimeoutRef = useRef(null);
+  const alertaTimeoutRef =
+    useRef(
+      null,
+    );
 
-  /* =======================================================
-     ESTADOS
-  ======================================================= */
+  const [
+    userMenuOpen,
+    setUserMenuOpen,
+  ] =
+    useState(
+      false,
+    );
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [
+    desktopMenuOpen,
+    setDesktopMenuOpen,
+  ] =
+    useState(
+      null,
+    );
 
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(null);
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] =
+    useState(
+      false,
+    );
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [
+    mobileGroupOpen,
+    setMobileGroupOpen,
+  ] =
+    useState(
+      null,
+    );
 
-  const [mobileGroupOpen, setMobileGroupOpen] = useState(null);
+  const [
+    pedidosNaoLidos,
+    setPedidosNaoLidos,
+  ] =
+    useState(
+      0,
+    );
 
-  const [pedidosNaoLidos, setPedidosNaoLidos] = useState(0);
+  const [
+    ultimaNotificacaoPedido,
+    setUltimaNotificacaoPedido,
+  ] =
+    useState(
+      null,
+    );
 
-  const [ultimaNotificacaoPedido, setUltimaNotificacaoPedido] = useState(null);
+  const [
+    mostrarAlertaPedido,
+    setMostrarAlertaPedido,
+  ] =
+    useState(
+      false,
+    );
 
-  const [mostrarAlertaPedido, setMostrarAlertaPedido] = useState(false);
-
-  /* =======================================================
-     PERMISSÕES
-  ======================================================= */
-
-  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
-
-  /* =======================================================
-     ROTA ATUAL
-  ======================================================= */
-
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
-
-  const currentPath = useMemo(
-    () => normalizarCaminho(pathname),
-    [pathname],
-  );
-
-  /* =======================================================
-     USUÁRIO
-  ======================================================= */
-
-  const userName = useMemo(
-    () => obterNomeUsuario(user?.email),
-    [user?.email],
-  );
-
-  const userInitials = useMemo(
-    () => obterIniciais(userName),
-    [userName],
-  );
-
-  /* =======================================================
-     PEDIDOS
-  ======================================================= */
-
-  const podeAcessarPedidos = useMemo(() => {
-    if (!user) {
-      return false;
-    }
-
-    if (isAdmin) {
-      return true;
-    }
-
-    if (loadingPermissoes) {
-      return false;
-    }
-
-    return podeAcessarTela("pedidos");
-  }, [
-    user,
-    isAdmin,
-    loadingPermissoes,
+  const {
     podeAcessarTela,
-  ]);
-
-  /* =======================================================
-     IMPORTAÇÃO
-  ======================================================= */
-
-  const podeImportar = useMemo(() => {
-    if (!user) {
-      return false;
-    }
-
-    if (isAdmin) {
-      return true;
-    }
-
-    if (loadingPermissoes) {
-      return false;
-    }
-
-    return podeAcessarTela("importar");
-  }, [
-    user,
-    isAdmin,
     loadingPermissoes,
-    podeAcessarTela,
-  ]);
+  } =
+    usePermissoes();
 
-  /* =======================================================
-     PERMISSÃO DE ITEM
-  ======================================================= */
+  const pathname =
+    useRouterState({
+      select:
+        (
+          state,
+        ) =>
+          state
+            .location
+            .pathname,
+    });
 
-  const podeVerItem = useCallback(
-    (item) => {
-      if (!item?.permissao) {
-        return true;
+  const currentPath =
+    useMemo(
+      () =>
+        normalizarCaminho(
+          pathname,
+        ),
+      [
+        pathname,
+      ],
+    );
+
+  const userName =
+    useMemo(
+      () =>
+        obterNomeUsuario(
+          user
+            ?.email,
+        ),
+      [
+        user
+          ?.email,
+      ],
+    );
+
+  const userInitials =
+    useMemo(
+      () =>
+        obterIniciais(
+          userName,
+        ),
+      [
+        userName,
+      ],
+    );
+
+  const podeAcessarPedidos =
+    useMemo(
+      () => {
+        if (!user) {
+          return false;
+        }
+
+        if (
+          isAdmin
+        ) {
+          return true;
+        }
+
+        if (
+          loadingPermissoes
+        ) {
+          return false;
+        }
+
+        return podeAcessarTela(
+          "pedidos",
+        );
+      },
+      [
+        user,
+        isAdmin,
+        loadingPermissoes,
+        podeAcessarTela,
+      ],
+    );
+
+  const podeImportar =
+    useMemo(
+      () => {
+        if (!user) {
+          return false;
+        }
+
+        if (
+          isAdmin
+        ) {
+          return true;
+        }
+
+        if (
+          loadingPermissoes
+        ) {
+          return false;
+        }
+
+        return podeAcessarTela(
+          "importar",
+        );
+      },
+      [
+        user,
+        isAdmin,
+        loadingPermissoes,
+        podeAcessarTela,
+      ],
+    );
+
+  const podeVerItem =
+    useCallback(
+      (
+        item,
+      ) => {
+        if (
+          !item
+            ?.permissao
+        ) {
+          return true;
+        }
+
+        if (
+          isAdmin
+        ) {
+          return true;
+        }
+
+        if (
+          loadingPermissoes
+        ) {
+          return false;
+        }
+
+        return podeAcessarTela(
+          item
+            .permissao,
+        );
+      },
+      [
+        isAdmin,
+        loadingPermissoes,
+        podeAcessarTela,
+      ],
+    );
+
+  const navigationGroupsVisiveis =
+    useMemo(
+      () => {
+        if (!user) {
+          return [];
+        }
+
+        return NAVIGATION_GROUPS
+          .map(
+            (
+              item,
+            ) => {
+              if (
+                item.type ===
+                "link"
+              ) {
+                return podeVerItem(
+                  item,
+                )
+                  ? item
+                  : null;
+              }
+
+              const children =
+                (
+                  item.children ||
+                  []
+                ).filter(
+                  podeVerItem,
+                );
+
+              if (
+                children.length ===
+                0
+              ) {
+                return null;
+              }
+
+              return {
+                ...item,
+
+                children,
+              };
+            },
+          )
+          .filter(
+            Boolean,
+          );
+      },
+      [
+        user,
+        podeVerItem,
+      ],
+    );
+
+  const caminhoAtivo =
+    useCallback(
+      (
+        path,
+      ) =>
+        currentPath ===
+        normalizarCaminho(
+          path,
+        ),
+      [
+        currentPath,
+      ],
+    );
+
+  const grupoAtivo =
+    useCallback(
+      (
+        grupo,
+      ) =>
+        (
+          grupo
+            ?.children ||
+          []
+        ).some(
+          (
+            child,
+          ) =>
+            caminhoAtivo(
+              child
+                .path,
+            ),
+        ),
+      [
+        caminhoAtivo,
+      ],
+    );
+
+  const badgePedidos =
+    useMemo(
+      () =>
+        formatarBadgePedidos(
+          pedidosNaoLidos,
+        ),
+      [
+        pedidosNaoLidos,
+      ],
+    );
+
+  const atualizarQuantidadePedidosNovos =
+    useCallback(
+      async () => {
+        if (
+          !user ||
+          !podeAcessarPedidos
+        ) {
+          setPedidosNaoLidos(
+            0,
+          );
+
+          return;
+        }
+
+        try {
+          const {
+            data,
+            error,
+          } =
+            await supabase
+              .rpc(
+                "contar_notificacoes_pedidos_nao_lidas",
+              );
+
+          if (
+            error
+          ) {
+            console.error(
+              "Erro ao consultar notificações de pedidos:",
+              error,
+            );
+
+            return;
+          }
+
+          const quantidade =
+            Number(
+              data ??
+                0,
+            );
+
+          setPedidosNaoLidos(
+            Number.isFinite(
+              quantidade,
+            )
+              ? quantidade
+              : 0,
+          );
+        } catch (
+          error
+        ) {
+          console.error(
+            "Erro inesperado ao consultar notificações de pedidos:",
+            error,
+          );
+        }
+      },
+      [
+        user,
+        podeAcessarPedidos,
+      ],
+    );
+
+  useEffect(
+    () => {
+      if (
+        !user ||
+        !podeAcessarPedidos
+      ) {
+        setPedidosNaoLidos(
+          0,
+        );
+
+        return undefined;
       }
 
-      if (isAdmin) {
-        return true;
-      }
+      void atualizarQuantidadePedidosNovos();
 
-      if (loadingPermissoes) {
-        return false;
-      }
-
-      return podeAcessarTela(item.permissao);
+      return undefined;
     },
     [
-      isAdmin,
-      loadingPermissoes,
-      podeAcessarTela,
+      user,
+      podeAcessarPedidos,
+      atualizarQuantidadePedidosNovos,
     ],
   );
 
-  /* =======================================================
-     MÓDULOS VISÍVEIS
-  ======================================================= */
-
-  const navigationGroupsVisiveis = useMemo(() => {
-    if (!user) {
-      return [];
-    }
-
-    return NAVIGATION_GROUPS.map((item) => {
-      if (item.type === "link") {
-        return podeVerItem(item) ? item : null;
+  useEffect(
+    () => {
+      if (
+        !user ||
+        !podeAcessarPedidos
+      ) {
+        return undefined;
       }
 
-      const children = (item.children || []).filter(podeVerItem);
+      const canal =
+        supabase
+          .channel(
+            `navbar-pedidos-${user.id}`,
+          )
+          .on(
+            "postgres_changes",
+            {
+              event:
+                "*",
 
-      if (children.length === 0) {
-        return null;
-      }
+              schema:
+                "public",
 
-      return {
-        ...item,
+              table:
+                "pedidos_notificacoes",
+            },
+            (
+              payload,
+            ) => {
+              const notificacao =
+                payload
+                  ?.new;
 
-        children,
-      };
-    }).filter(Boolean);
-  }, [
-    user,
-    podeVerItem,
-  ]);
+              if (
+                !notificacao
+              ) {
+                void atualizarQuantidadePedidosNovos();
 
-  /* =======================================================
-     ATIVOS
-  ======================================================= */
+                return;
+              }
 
-  const caminhoAtivo = useCallback(
-    (path) => currentPath === normalizarCaminho(path),
-    [currentPath],
-  );
+              if (
+                notificacao
+                  .notificar !==
+                true
+              ) {
+                void atualizarQuantidadePedidosNovos();
 
-  const grupoAtivo = useCallback(
-    (grupo) =>
-      (grupo?.children || []).some(
-        (child) => caminhoAtivo(child.path),
-      ),
-    [caminhoAtivo],
-  );
+                return;
+              }
 
-  const badgePedidos = useMemo(
-    () => formatarBadgePedidos(pedidosNaoLidos),
-    [pedidosNaoLidos],
-  );
+              const tipo =
+                obterTipoNotificacao(
+                  notificacao,
+                );
 
-  /* =======================================================
-     BUSCAR QUANTIDADE DE PEDIDOS PENDENTES
-  ======================================================= */
+              void atualizarQuantidadePedidosNovos();
 
-  const atualizarQuantidadePedidosNovos = useCallback(async () => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
+              setUltimaNotificacaoPedido({
+                id:
+                  notificacao
+                    .id,
 
-      return;
-    }
+                codigoPedidoOmie:
+                  notificacao
+                    .codigo_pedido_omie,
 
-    try {
-      const { data, error } = await supabase.rpc(
-        "contar_notificacoes_pedidos_nao_lidas",
-      );
+                numeroPedido:
+                  notificacao
+                    .numero_pedido,
 
-      if (error) {
-        console.error(
-          "Erro ao consultar notificações de pedidos:",
-          error,
-        );
+                cliente:
+                  notificacao
+                    .cliente,
 
-        return;
-      }
+                vendedor:
+                  notificacao
+                    .vendedor,
 
-      const quantidade = Number(data ?? 0);
+                tipo,
 
-      setPedidosNaoLidos(
-        Number.isFinite(quantidade)
-          ? quantidade
-          : 0,
-      );
-    } catch (error) {
-      console.error(
-        "Erro inesperado ao consultar notificações de pedidos:",
-        error,
-      );
-    }
-  }, [
-    user,
-    podeAcessarPedidos,
-  ]);
+                resumo:
+                  notificacao
+                    .resumo ||
+                  (
+                    tipo ===
+                    "alterado"
+                      ? "Pedido alterado"
+                      : "Novo pedido recebido"
+                  ),
 
-  /* =======================================================
-     CONTADOR INICIAL
-  ======================================================= */
+                camposAlterados:
+                  Array.isArray(
+                    notificacao
+                      .campos_alterados,
+                  )
+                    ? notificacao
+                        .campos_alterados
+                    : [],
+              });
 
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
+              setMostrarAlertaPedido(
+                true,
+              );
 
-      return undefined;
-    }
+              if (
+                alertaTimeoutRef
+                  .current
+              ) {
+                window.clearTimeout(
+                  alertaTimeoutRef
+                    .current,
+                );
+              }
 
-    void atualizarQuantidadePedidosNovos();
+              alertaTimeoutRef.current =
+                window.setTimeout(
+                  () => {
+                    setMostrarAlertaPedido(
+                      false,
+                    );
+                  },
+                  10000,
+                );
+            },
+          )
+          .subscribe();
 
-    return undefined;
-  }, [
-    user,
-    podeAcessarPedidos,
-    atualizarQuantidadePedidosNovos,
-  ]);
-
-  /* =======================================================
-     REALTIME
-  ======================================================= */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const canal = supabase
-      .channel(`navbar-pedidos-${user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-
-          schema: "public",
-
-          table: "pedidos_notificacoes",
-        },
-        (payload) => {
-          const notificacao = payload?.new;
-
-          if (!notificacao) {
-            void atualizarQuantidadePedidosNovos();
-
-            return;
-          }
-
-          if (notificacao.notificar !== true) {
-            void atualizarQuantidadePedidosNovos();
-
-            return;
-          }
-
-          const tipo = obterTipoNotificacao(notificacao);
-
-          void atualizarQuantidadePedidosNovos();
-
-          setUltimaNotificacaoPedido({
-            id: notificacao.id,
-
-            codigoPedidoOmie:
-              notificacao.codigo_pedido_omie,
-
-            numeroPedido:
-              notificacao.numero_pedido,
-
-            cliente:
-              notificacao.cliente,
-
-            vendedor:
-              notificacao.vendedor,
-
-            tipo,
-
-            resumo:
-              notificacao.resumo ||
-              (
-                tipo === "alterado"
-                  ? "Pedido alterado"
-                  : "Novo pedido recebido"
-              ),
-
-            camposAlterados:
-              Array.isArray(
-                notificacao.campos_alterados,
-              )
-                ? notificacao.campos_alterados
-                : [],
-          });
-
-          setMostrarAlertaPedido(true);
-
-          if (alertaTimeoutRef.current) {
-            window.clearTimeout(
-              alertaTimeoutRef.current,
-            );
-          }
+      return () => {
+        if (
+          alertaTimeoutRef
+            .current
+        ) {
+          window.clearTimeout(
+            alertaTimeoutRef
+              .current,
+          );
 
           alertaTimeoutRef.current =
-            window.setTimeout(() => {
-              setMostrarAlertaPedido(false);
-            }, 10000);
-        },
-      )
-      .subscribe();
+            null;
+        }
 
-    return () => {
-      if (alertaTimeoutRef.current) {
-        window.clearTimeout(
-          alertaTimeoutRef.current,
+        supabase.removeChannel(
+          canal,
         );
+      };
+    },
+    [
+      user,
+      podeAcessarPedidos,
+      atualizarQuantidadePedidosNovos,
+    ],
+  );
 
-        alertaTimeoutRef.current = null;
+  useEffect(
+    () => {
+      if (
+        !user ||
+        !podeAcessarPedidos
+      ) {
+        return undefined;
       }
 
-      supabase.removeChannel(canal);
-    };
-  }, [
-    user,
-    podeAcessarPedidos,
-    atualizarQuantidadePedidosNovos,
-  ]);
+      const atualizarContador =
+        () => {
+          void atualizarQuantidadePedidosNovos();
+        };
 
-  /* =======================================================
-     EVENTO DO PEDIDOSPAGE
-  ======================================================= */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const atualizarContador = () => {
-      void atualizarQuantidadePedidosNovos();
-    };
-
-    window.addEventListener(
-      "pedidos-notificacoes-atualizadas",
-      atualizarContador,
-    );
-
-    return () => {
-      window.removeEventListener(
+      window.addEventListener(
         "pedidos-notificacoes-atualizadas",
         atualizarContador,
       );
-    };
-  }, [
-    user,
-    podeAcessarPedidos,
-    atualizarQuantidadePedidosNovos,
-  ]);
 
-  /* =======================================================
-     POLLING
-  ======================================================= */
+      return () => {
+        window.removeEventListener(
+          "pedidos-notificacoes-atualizadas",
+          atualizarContador,
+        );
+      };
+    },
+    [
+      user,
+      podeAcessarPedidos,
+      atualizarQuantidadePedidosNovos,
+    ],
+  );
 
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const intervalo = window.setInterval(() => {
-      void atualizarQuantidadePedidosNovos();
-    }, 60_000);
-
-    return () => {
-      window.clearInterval(intervalo);
-    };
-  }, [
-    user,
-    podeAcessarPedidos,
-    atualizarQuantidadePedidosNovos,
-  ]);
-
-  /* =======================================================
-     ABA VISÍVEL
-  ======================================================= */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const verificarAoVoltar = () => {
-      if (document.visibilityState === "visible") {
-        void atualizarQuantidadePedidosNovos();
+  useEffect(
+    () => {
+      if (
+        !user ||
+        !podeAcessarPedidos
+      ) {
+        return undefined;
       }
-    };
 
-    document.addEventListener(
-      "visibilitychange",
-      verificarAoVoltar,
-    );
+      const intervalo =
+        window.setInterval(
+          () => {
+            void atualizarQuantidadePedidosNovos();
+          },
+          60_000,
+        );
 
-    return () => {
-      document.removeEventListener(
+      return () => {
+        window.clearInterval(
+          intervalo,
+        );
+      };
+    },
+    [
+      user,
+      podeAcessarPedidos,
+      atualizarQuantidadePedidosNovos,
+    ],
+  );
+
+  useEffect(
+    () => {
+      if (
+        !user ||
+        !podeAcessarPedidos
+      ) {
+        return undefined;
+      }
+
+      const verificarAoVoltar =
+        () => {
+          if (
+            document
+              .visibilityState ===
+            "visible"
+          ) {
+            void atualizarQuantidadePedidosNovos();
+          }
+        };
+
+      document.addEventListener(
         "visibilitychange",
         verificarAoVoltar,
       );
-    };
-  }, [
-    user,
-    podeAcessarPedidos,
-    atualizarQuantidadePedidosNovos,
-  ]);
 
-  /* =======================================================
-     NAVEGAÇÃO
-  ======================================================= */
-
-  const goTo = useCallback(
-    (path) => {
-      setUserMenuOpen(false);
-
-      setDesktopMenuOpen(null);
-
-      setMobileMenuOpen(false);
-
-      setMobileGroupOpen(null);
-
-      navigate(normalizarCaminho(path));
+      return () => {
+        document.removeEventListener(
+          "visibilitychange",
+          verificarAoVoltar,
+        );
+      };
     },
-    [navigate],
+    [
+      user,
+      podeAcessarPedidos,
+      atualizarQuantidadePedidosNovos,
+    ],
   );
 
-  /* =======================================================
-     DESKTOP
-  ======================================================= */
-
-  const toggleDesktopMenu = useCallback((id) => {
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen((atual) =>
-      atual === id
-        ? null
-        : id,
-    );
-  }, []);
-
-  /* =======================================================
-     MOBILE
-  ======================================================= */
-
-  const abrirMenuMobile = useCallback(() => {
-    const grupoAtual =
-      navigationGroupsVisiveis.find(
-        (item) =>
-          item.type === "group" &&
-          grupoAtivo(item),
-      );
-
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen(null);
-
-    setMobileGroupOpen(
-      grupoAtual?.id || null,
-    );
-
-    setMobileMenuOpen(true);
-  }, [
-    navigationGroupsVisiveis,
-    grupoAtivo,
-  ]);
-
-  const fecharMenuMobile = useCallback(() => {
-    setMobileMenuOpen(false);
-
-    setMobileGroupOpen(null);
-  }, []);
-
-  const toggleMobileGroup = useCallback((id) => {
-    setMobileGroupOpen((atual) =>
-      atual === id
-        ? null
-        : id,
-    );
-  }, []);
-
-  /* =======================================================
-     ALERTA
-  ======================================================= */
-
-  const abrirPedidosPeloAlerta = useCallback(() => {
-    setMostrarAlertaPedido(false);
-
-    goTo("/pedidos");
-  }, [
-    goTo,
-  ]);
-
-  const fecharAlertaPedido = useCallback(
-    (event) => {
-      event?.stopPropagation?.();
-
-      setMostrarAlertaPedido(false);
-
-      if (alertaTimeoutRef.current) {
-        window.clearTimeout(
-          alertaTimeoutRef.current,
+  const goTo =
+    useCallback(
+      (
+        path,
+      ) => {
+        setUserMenuOpen(
+          false,
         );
 
-        alertaTimeoutRef.current = null;
-      }
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+
+        navigate(
+          normalizarCaminho(
+            path,
+          ),
+        );
+      },
+      [
+        navigate,
+      ],
+    );
+
+  const toggleDesktopMenu =
+    useCallback(
+      (
+        id,
+      ) => {
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          (
+            atual,
+          ) =>
+            atual ===
+            id
+              ? null
+              : id,
+        );
+      },
+      [],
+    );
+
+  const abrirMenuMobile =
+    useCallback(
+      () => {
+        const grupoAtual =
+          navigationGroupsVisiveis.find(
+            (
+              item,
+            ) =>
+              item.type ===
+                "group" &&
+              grupoAtivo(
+                item,
+              ),
+          );
+
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileGroupOpen(
+          grupoAtual
+            ?.id ||
+            null,
+        );
+
+        setMobileMenuOpen(
+          true,
+        );
+      },
+      [
+        navigationGroupsVisiveis,
+        grupoAtivo,
+      ],
+    );
+
+  const fecharMenuMobile =
+    useCallback(
+      () => {
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+      },
+      [],
+    );
+
+  const toggleMobileGroup =
+    useCallback(
+      (
+        id,
+      ) => {
+        setMobileGroupOpen(
+          (
+            atual,
+          ) =>
+            atual ===
+            id
+              ? null
+              : id,
+        );
+      },
+      [],
+    );
+
+  const abrirPedidosPeloAlerta =
+    useCallback(
+      () => {
+        setMostrarAlertaPedido(
+          false,
+        );
+
+        goTo(
+          "/pedidos",
+        );
+      },
+      [
+        goTo,
+      ],
+    );
+
+  const fecharAlertaPedido =
+    useCallback(
+      (
+        event,
+      ) => {
+        event
+          ?.stopPropagation
+          ?.();
+
+        setMostrarAlertaPedido(
+          false,
+        );
+
+        if (
+          alertaTimeoutRef
+            .current
+        ) {
+          window.clearTimeout(
+            alertaTimeoutRef
+              .current,
+          );
+
+          alertaTimeoutRef.current =
+            null;
+        }
+      },
+      [],
+    );
+
+  const handleLogout =
+    useCallback(
+      async () => {
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+
+        if (
+          typeof window !==
+          "undefined"
+        ) {
+          window
+            .localStorage
+            .removeItem(
+              "expiracao_login",
+            );
+        }
+
+        try {
+          const {
+            error,
+          } =
+            await supabase
+              .auth
+              .signOut();
+
+          if (
+            error
+          ) {
+            console.error(
+              "Erro ao encerrar a sessão:",
+              error,
+            );
+          }
+        } catch (
+          error
+        ) {
+          console.error(
+            "Erro inesperado ao encerrar a sessão:",
+            error,
+          );
+        } finally {
+          navigate(
+            "/",
+          );
+        }
+      },
+      [
+        navigate,
+      ],
+    );
+
+  const toggleUserMenu =
+    useCallback(
+      () => {
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setUserMenuOpen(
+          (
+            aberto,
+          ) =>
+            !aberto,
+        );
+      },
+      [],
+    );
+
+  useEffect(
+    () => {
+      const fecharAoClicarFora =
+        (
+          event,
+        ) => {
+          if (
+            userMenuOpen &&
+            menuRef
+              .current &&
+            !menuRef
+              .current
+              .contains(
+                event
+                  .target,
+              )
+          ) {
+            setUserMenuOpen(
+              false,
+            );
+          }
+
+          if (
+            desktopMenuOpen &&
+            navigationRef
+              .current &&
+            !navigationRef
+              .current
+              .contains(
+                event
+                  .target,
+              )
+          ) {
+            setDesktopMenuOpen(
+              null,
+            );
+          }
+        };
+
+      document.addEventListener(
+        "mousedown",
+        fecharAoClicarFora,
+      );
+
+      return () => {
+        document.removeEventListener(
+          "mousedown",
+          fecharAoClicarFora,
+        );
+      };
+    },
+    [
+      userMenuOpen,
+      desktopMenuOpen,
+    ],
+  );
+
+  useEffect(
+    () => {
+      const fecharComEscape =
+        (
+          event,
+        ) => {
+          if (
+            event.key !==
+            "Escape"
+          ) {
+            return;
+          }
+
+          setUserMenuOpen(
+            false,
+          );
+
+          setDesktopMenuOpen(
+            null,
+          );
+
+          setMobileMenuOpen(
+            false,
+          );
+
+          setMobileGroupOpen(
+            null,
+          );
+        };
+
+      document.addEventListener(
+        "keydown",
+        fecharComEscape,
+      );
+
+      return () => {
+        document.removeEventListener(
+          "keydown",
+          fecharComEscape,
+        );
+      };
     },
     [],
   );
 
-  /* =======================================================
-     LOGOUT
-  ======================================================= */
-
-  const handleLogout = useCallback(async () => {
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen(null);
-
-    setMobileMenuOpen(false);
-
-    setMobileGroupOpen(null);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(
-        "expiracao_login",
-      );
-    }
-
-    try {
-      const { error } =
-        await supabase.auth.signOut();
-
-      if (error) {
-        console.error(
-          "Erro ao encerrar a sessão:",
-          error,
-        );
-      }
-    } catch (error) {
-      console.error(
-        "Erro inesperado ao encerrar a sessão:",
-        error,
-      );
-    } finally {
-      navigate("/");
-    }
-  }, [
-    navigate,
-  ]);
-
-  /* =======================================================
-     MENU USUÁRIO
-  ======================================================= */
-
-  const toggleUserMenu = useCallback(() => {
-    setDesktopMenuOpen(null);
-
-    setUserMenuOpen(
-      (aberto) => !aberto,
-    );
-  }, []);
-
-  /* =======================================================
-     FECHAR FORA / ESC
-  ======================================================= */
-
-  useEffect(() => {
-    const fecharAoClicarFora = (event) => {
+  useEffect(
+    () => {
       if (
-        userMenuOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
+        !mobileMenuOpen
       ) {
-        setUserMenuOpen(false);
+        return undefined;
       }
 
-      if (
-        desktopMenuOpen &&
-        navigationRef.current &&
-        !navigationRef.current.contains(event.target)
-      ) {
-        setDesktopMenuOpen(null);
-      }
-    };
+      const overflowAnterior =
+        document
+          .body
+          .style
+          .overflow;
 
-    document.addEventListener(
-      "mousedown",
-      fecharAoClicarFora,
-    );
+      document
+        .body
+        .style
+        .overflow =
+        "hidden";
 
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        fecharAoClicarFora,
-      );
-    };
-  }, [
-    userMenuOpen,
-    desktopMenuOpen,
-  ]);
-
-  useEffect(() => {
-    const fecharComEscape = (event) => {
-      if (event.key !== "Escape") {
-        return;
-      }
-
-      setUserMenuOpen(false);
-
-      setDesktopMenuOpen(null);
-
-      setMobileMenuOpen(false);
-
-      setMobileGroupOpen(null);
-    };
-
-    document.addEventListener(
-      "keydown",
-      fecharComEscape,
-    );
-
-    return () => {
-      document.removeEventListener(
-        "keydown",
-        fecharComEscape,
-      );
-    };
-  }, []);
-
-  /* =======================================================
-     BLOQUEAR SCROLL MOBILE
-  ======================================================= */
-
-  useEffect(() => {
-    if (!mobileMenuOpen) {
-      return undefined;
-    }
-
-    const overflowAnterior =
-      document.body.style.overflow;
-
-    document.body.style.overflow =
-      "hidden";
-
-    return () => {
-      document.body.style.overflow =
-        overflowAnterior;
-    };
-  }, [
-    mobileMenuOpen,
-  ]);
+      return () => {
+        document
+          .body
+          .style
+          .overflow =
+          overflowAnterior;
+      };
+    },
+    [
+      mobileMenuOpen,
+    ],
+  );
 
   const alertaPedidoAlterado =
-    ultimaNotificacaoPedido?.tipo ===
+    ultimaNotificacaoPedido
+      ?.tipo ===
     "alterado";
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
 
   return (
     <>
@@ -975,7 +1552,12 @@ function Navbar({ user, isAdmin }) {
           <button
             type="button"
             className="navbar-brand"
-            onClick={() => goTo("/")}
+            onClick={
+              () =>
+                goTo(
+                  "/",
+                )
+            }
             aria-label="Ir para o início"
           >
             <img
@@ -985,35 +1567,46 @@ function Navbar({ user, isAdmin }) {
             />
           </button>
 
-          {/* ===============================================
-              DESKTOP
-          =============================================== */}
-
           {user && (
             <nav
-              ref={navigationRef}
+              ref={
+                navigationRef
+              }
               className="navbar-navigation navbar-navigation-modulos"
               aria-label="Navegação principal"
             >
               {navigationGroupsVisiveis.map(
-                (item) => {
-                  const Icon = item.icon;
+                (
+                  item,
+                ) => {
+                  const Icon =
+                    item.icon;
 
-                  if (item.type === "link") {
+                  if (
+                    item.type ===
+                    "link"
+                  ) {
                     const active =
-                      caminhoAtivo(item.path);
+                      caminhoAtivo(
+                        item.path,
+                      );
 
                     return (
                       <button
-                        key={item.id}
+                        key={
+                          item.id
+                        }
                         type="button"
                         className={
                           active
                             ? "navbar-navigation-link active"
                             : "navbar-navigation-link"
                         }
-                        onClick={() =>
-                          goTo(item.path)
+                        onClick={
+                          () =>
+                            goTo(
+                              item.path,
+                            )
                         }
                         aria-current={
                           active
@@ -1030,25 +1623,32 @@ function Navbar({ user, isAdmin }) {
                         </span>
 
                         <span className="navbar-label-desktop">
-                          {item.label}
+                          {
+                            item.label
+                          }
                         </span>
                       </button>
                     );
                   }
 
                   const active =
-                    grupoAtivo(item);
+                    grupoAtivo(
+                      item,
+                    );
 
                   const aberto =
                     desktopMenuOpen ===
                     item.id;
 
                   const ehPedidos =
-                    item.id === "pedidos";
+                    item.id ===
+                    "pedidos";
 
                   return (
                     <div
-                      key={item.id}
+                      key={
+                        item.id
+                      }
                       className="navbar-modulo"
                     >
                       <button
@@ -1058,10 +1658,11 @@ function Navbar({ user, isAdmin }) {
                             ? "navbar-navigation-link navbar-modulo-trigger active"
                             : "navbar-navigation-link navbar-modulo-trigger"
                         }
-                        onClick={() =>
-                          toggleDesktopMenu(
-                            item.id,
-                          )
+                        onClick={
+                          () =>
+                            toggleDesktopMenu(
+                              item.id,
+                            )
                         }
                         aria-expanded={
                           aberto
@@ -1077,7 +1678,9 @@ function Navbar({ user, isAdmin }) {
                         </span>
 
                         <span className="navbar-label-desktop">
-                          {item.label}
+                          {
+                            item.label
+                          }
                         </span>
 
                         {ehPedidos &&
@@ -1107,7 +1710,9 @@ function Navbar({ user, isAdmin }) {
                           role="menu"
                         >
                           {item.children.map(
-                            (child) => {
+                            (
+                              child,
+                            ) => {
                               const ChildIcon =
                                 child.icon;
 
@@ -1117,7 +1722,8 @@ function Navbar({ user, isAdmin }) {
                                 );
 
                               const childPedidos =
-                                child.notificationKey ===
+                                child
+                                  .notificationKey ===
                                 "pedidos";
 
                               return (
@@ -1131,21 +1737,18 @@ function Navbar({ user, isAdmin }) {
                                       ? "navbar-modulo-dropdown-item active"
                                       : "navbar-modulo-dropdown-item"
                                   }
-                                  onClick={() =>
-                                    goTo(
-                                      child.path,
-                                    )
+                                  onClick={
+                                    () =>
+                                      goTo(
+                                        child.path,
+                                      )
                                   }
                                   role="menuitem"
                                 >
                                   <span className="navbar-modulo-dropdown-icon">
                                     <ChildIcon
-                                      size={
-                                        17
-                                      }
-                                      strokeWidth={
-                                        2
-                                      }
+                                      size={17}
+                                      strokeWidth={2}
                                       aria-hidden="true"
                                     />
                                   </span>
@@ -1177,17 +1780,15 @@ function Navbar({ user, isAdmin }) {
             </nav>
           )}
 
-          {/* ===============================================
-              AUTENTICAÇÃO / MOBILE
-          =============================================== */}
-
           <div className="navbar-auth-section">
             {user ? (
               <>
                 <button
                   type="button"
                   className="navbar-hamburger"
-                  onClick={abrirMenuMobile}
+                  onClick={
+                    abrirMenuMobile
+                  }
                   aria-expanded={
                     mobileMenuOpen
                   }
@@ -1202,14 +1803,18 @@ function Navbar({ user, isAdmin }) {
 
                   {badgePedidos && (
                     <span className="navbar-hamburger-badge">
-                      {badgePedidos}
+                      {
+                        badgePedidos
+                      }
                     </span>
                   )}
                 </button>
 
                 <div className="navbar-user-controls">
                   <div
-                    ref={menuRef}
+                    ref={
+                      menuRef
+                    }
                     className="navbar-user-area"
                   >
                     <button
@@ -1236,7 +1841,9 @@ function Navbar({ user, isAdmin }) {
 
                       <span className="user-information">
                         <strong className="user-name">
-                          {userName}
+                          {
+                            userName
+                          }
                         </strong>
 
                         <span className="user-role">
@@ -1290,8 +1897,11 @@ function Navbar({ user, isAdmin }) {
                         <button
                           type="button"
                           className="user-menu-item"
-                          onClick={() =>
-                            goTo("/")
+                          onClick={
+                            () =>
+                              goTo(
+                                "/",
+                              )
                           }
                           role="menuitem"
                         >
@@ -1299,6 +1909,7 @@ function Navbar({ user, isAdmin }) {
                             size={17}
                             aria-hidden="true"
                           />
+
                           Página inicial
                         </button>
 
@@ -1306,19 +1917,19 @@ function Navbar({ user, isAdmin }) {
                           <button
                             type="button"
                             className="user-menu-item"
-                            onClick={() =>
-                              goTo(
-                                "/importar",
-                              )
+                            onClick={
+                              () =>
+                                goTo(
+                                  "/importar",
+                                )
                             }
                             role="menuitem"
                           >
                             <Upload
-                              size={
-                                17
-                              }
+                              size={17}
                               aria-hidden="true"
                             />
+
                             Importar dados
                           </button>
                         )}
@@ -1328,41 +1939,39 @@ function Navbar({ user, isAdmin }) {
                             <button
                               type="button"
                               className="user-menu-item"
-                              onClick={() =>
-                                goTo(
-                                  "/administracao",
-                                )
+                              onClick={
+                                () =>
+                                  goTo(
+                                    "/administracao",
+                                  )
                               }
                               role="menuitem"
                             >
                               <ShieldCheck
-                                size={
-                                  17
-                                }
+                                size={17}
                                 aria-hidden="true"
                               />
-                              Calendario
-                              Industrial
+
+                              Calendario Industrial
                             </button>
 
                             <button
                               type="button"
                               className="user-menu-item"
-                              onClick={() =>
-                                goTo(
-                                  "/usuarios",
-                                )
+                              onClick={
+                                () =>
+                                  goTo(
+                                    "/usuarios",
+                                  )
                               }
                               role="menuitem"
                             >
                               <Users
-                                size={
-                                  17
-                                }
+                                size={17}
                                 aria-hidden="true"
                               />
-                              Gerenciar
-                              usuários
+
+                              Gerenciar usuários
                             </button>
                           </>
                         )}
@@ -1373,7 +1982,9 @@ function Navbar({ user, isAdmin }) {
                   <button
                     type="button"
                     className="navbar-logout-button"
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                     aria-label="Sair da conta"
                   >
                     <LogOut
@@ -1382,7 +1993,9 @@ function Navbar({ user, isAdmin }) {
                       aria-hidden="true"
                     />
 
-                    <span>Sair</span>
+                    <span>
+                      Sair
+                    </span>
                   </button>
                 </div>
               </>
@@ -1390,14 +2003,18 @@ function Navbar({ user, isAdmin }) {
               <button
                 type="button"
                 className="btn-login"
-                onClick={() =>
-                  goTo("/login")
+                onClick={
+                  () =>
+                    goTo(
+                      "/login",
+                    )
                 }
               >
                 <LogIn
                   size={17}
                   aria-hidden="true"
                 />
+
                 Entrar
               </button>
             )}
@@ -1405,356 +2022,363 @@ function Navbar({ user, isAdmin }) {
         </div>
       </header>
 
-      {/* ===================================================
-          MOBILE DRAWER
-      =================================================== */}
+      {user &&
+        mobileMenuOpen && (
+          <>
+            <button
+              type="button"
+              className="navbar-mobile-overlay"
+              onClick={
+                fecharMenuMobile
+              }
+              aria-label="Fechar menu principal"
+            />
 
-      {user && mobileMenuOpen && (
-        <>
-          <button
-            type="button"
-            className="navbar-mobile-overlay"
-            onClick={fecharMenuMobile}
-            aria-label="Fechar menu principal"
-          />
-
-          <aside
-            id="navbar-mobile-drawer"
-            className="navbar-mobile-drawer"
-            aria-label="Menu principal"
-          >
-            <div className="navbar-mobile-header">
-              <div>
-                <span className="navbar-mobile-eyebrow">
-                  Navegação
-                </span>
-
-                <strong>Menu</strong>
-              </div>
-
-              <button
-                type="button"
-                className="navbar-mobile-close"
-                onClick={
-                  fecharMenuMobile
-                }
-                aria-label="Fechar menu"
-              >
-                <X
-                  size={20}
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-
-            <div className="navbar-mobile-user">
-              <span className="navbar-mobile-avatar">
-                {userInitials}
-              </span>
-
-              <div>
-                <strong>
-                  {userName}
-                </strong>
-
-                <span>
-                  {isAdmin
-                    ? "Administrador"
-                    : "Operador"}
-                </span>
-              </div>
-            </div>
-
-            <nav
-              className="navbar-mobile-nav"
-              aria-label="Navegação mobile"
+            <aside
+              id="navbar-mobile-drawer"
+              className="navbar-mobile-drawer"
+              aria-label="Menu principal"
             >
-              {navigationGroupsVisiveis.map(
-                (item) => {
-                  const Icon =
-                    item.icon;
+              <div className="navbar-mobile-header">
+                <div>
+                  <span className="navbar-mobile-eyebrow">
+                    Navegação
+                  </span>
 
-                  if (
-                    item.type ===
-                    "link"
-                  ) {
+                  <strong>
+                    Menu
+                  </strong>
+                </div>
+
+                <button
+                  type="button"
+                  className="navbar-mobile-close"
+                  onClick={
+                    fecharMenuMobile
+                  }
+                  aria-label="Fechar menu"
+                >
+                  <X
+                    size={20}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+
+              <div className="navbar-mobile-user">
+                <span className="navbar-mobile-avatar">
+                  {
+                    userInitials
+                  }
+                </span>
+
+                <div>
+                  <strong>
+                    {
+                      userName
+                    }
+                  </strong>
+
+                  <span>
+                    {isAdmin
+                      ? "Administrador"
+                      : "Operador"}
+                  </span>
+                </div>
+              </div>
+
+              <nav
+                className="navbar-mobile-nav"
+                aria-label="Navegação mobile"
+              >
+                {navigationGroupsVisiveis.map(
+                  (
+                    item,
+                  ) => {
+                    const Icon =
+                      item.icon;
+
+                    if (
+                      item.type ===
+                      "link"
+                    ) {
+                      const active =
+                        caminhoAtivo(
+                          item.path,
+                        );
+
+                      return (
+                        <button
+                          key={
+                            item.id
+                          }
+                          type="button"
+                          className={
+                            active
+                              ? "navbar-mobile-link active"
+                              : "navbar-mobile-link"
+                          }
+                          onClick={
+                            () =>
+                              goTo(
+                                item.path,
+                              )
+                          }
+                        >
+                          <span className="navbar-mobile-link-icon">
+                            <Icon
+                              size={19}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                            />
+                          </span>
+
+                          <span className="navbar-mobile-link-label">
+                            {
+                              item.label
+                            }
+                          </span>
+                        </button>
+                      );
+                    }
+
                     const active =
-                      caminhoAtivo(
-                        item.path,
+                      grupoAtivo(
+                        item,
                       );
 
+                    const aberto =
+                      mobileGroupOpen ===
+                      item.id;
+
+                    const ehPedidos =
+                      item.id ===
+                      "pedidos";
+
                     return (
-                      <button
+                      <div
                         key={
                           item.id
                         }
-                        type="button"
-                        className={
-                          active
-                            ? "navbar-mobile-link active"
-                            : "navbar-mobile-link"
-                        }
-                        onClick={() =>
-                          goTo(
-                            item.path,
-                          )
-                        }
+                        className="navbar-mobile-group"
                       >
-                        <span className="navbar-mobile-link-icon">
-                          <Icon
-                            size={19}
-                            strokeWidth={
-                              2
+                        <button
+                          type="button"
+                          className={
+                            active
+                              ? "navbar-mobile-group-trigger active"
+                              : "navbar-mobile-group-trigger"
+                          }
+                          onClick={
+                            () =>
+                              toggleMobileGroup(
+                                item.id,
+                              )
+                          }
+                          aria-expanded={
+                            aberto
+                          }
+                        >
+                          <span className="navbar-mobile-link-icon">
+                            <Icon
+                              size={19}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                            />
+                          </span>
+
+                          <span className="navbar-mobile-link-label">
+                            {
+                              item.label
+                            }
+                          </span>
+
+                          {ehPedidos &&
+                            badgePedidos && (
+                              <span className="navbar-mobile-count">
+                                {
+                                  badgePedidos
+                                }
+                              </span>
+                            )}
+
+                          <ChevronDown
+                            size={17}
+                            strokeWidth={2.2}
+                            className={
+                              aberto
+                                ? "navbar-mobile-chevron open"
+                                : "navbar-mobile-chevron"
                             }
                             aria-hidden="true"
                           />
-                        </span>
+                        </button>
 
-                        <span className="navbar-mobile-link-label">
-                          {
-                            item.label
-                          }
-                        </span>
-                      </button>
+                        {aberto && (
+                          <div className="navbar-mobile-submenu">
+                            {item.children.map(
+                              (
+                                child,
+                              ) => {
+                                const ChildIcon =
+                                  child.icon;
+
+                                const childActive =
+                                  caminhoAtivo(
+                                    child.path,
+                                  );
+
+                                const childPedidos =
+                                  child
+                                    .notificationKey ===
+                                  "pedidos";
+
+                                return (
+                                  <button
+                                    key={
+                                      child.path
+                                    }
+                                    type="button"
+                                    className={
+                                      childActive
+                                        ? "navbar-mobile-submenu-item active"
+                                        : "navbar-mobile-submenu-item"
+                                    }
+                                    onClick={
+                                      () =>
+                                        goTo(
+                                          child.path,
+                                        )
+                                    }
+                                  >
+                                    <ChildIcon
+                                      size={17}
+                                      strokeWidth={2}
+                                      aria-hidden="true"
+                                    />
+
+                                    <span>
+                                      {
+                                        child.label
+                                      }
+                                    </span>
+
+                                    {childPedidos &&
+                                      badgePedidos && (
+                                        <span className="navbar-mobile-count">
+                                          {
+                                            badgePedidos
+                                          }
+                                        </span>
+                                      )}
+                                  </button>
+                                );
+                              },
+                            )}
+                          </div>
+                        )}
+                      </div>
                     );
-                  }
+                  },
+                )}
+              </nav>
 
-                  const active =
-                    grupoAtivo(item);
+              {(podeImportar ||
+                isAdmin) && (
+                <div className="navbar-mobile-admin">
+                  <span className="navbar-mobile-section-label">
+                    Administração
+                  </span>
 
-                  const aberto =
-                    mobileGroupOpen ===
-                    item.id;
-
-                  const ehPedidos =
-                    item.id ===
-                    "pedidos";
-
-                  return (
-                    <div
-                      key={
-                        item.id
+                  {podeImportar && (
+                    <button
+                      type="button"
+                      className="navbar-mobile-admin-link"
+                      onClick={
+                        () =>
+                          goTo(
+                            "/importar",
+                          )
                       }
-                      className="navbar-mobile-group"
                     >
+                      <Upload
+                        size={18}
+                        aria-hidden="true"
+                      />
+
+                      <span>
+                        Importar dados
+                      </span>
+                    </button>
+                  )}
+
+                  {isAdmin && (
+                    <>
                       <button
                         type="button"
-                        className={
-                          active
-                            ? "navbar-mobile-group-trigger active"
-                            : "navbar-mobile-group-trigger"
-                        }
-                        onClick={() =>
-                          toggleMobileGroup(
-                            item.id,
-                          )
-                        }
-                        aria-expanded={
-                          aberto
+                        className="navbar-mobile-admin-link"
+                        onClick={
+                          () =>
+                            goTo(
+                              "/administracao",
+                            )
                         }
                       >
-                        <span className="navbar-mobile-link-icon">
-                          <Icon
-                            size={19}
-                            strokeWidth={
-                              2
-                            }
-                            aria-hidden="true"
-                          />
-                        </span>
-
-                        <span className="navbar-mobile-link-label">
-                          {
-                            item.label
-                          }
-                        </span>
-
-                        {ehPedidos &&
-                          badgePedidos && (
-                            <span className="navbar-mobile-count">
-                              {
-                                badgePedidos
-                              }
-                            </span>
-                          )}
-
-                        <ChevronDown
-                          size={17}
-                          strokeWidth={2.2}
-                          className={
-                            aberto
-                              ? "navbar-mobile-chevron open"
-                              : "navbar-mobile-chevron"
-                          }
+                        <ShieldCheck
+                          size={18}
                           aria-hidden="true"
                         />
+
+                        <span>
+                          Administração
+                        </span>
                       </button>
 
-                      {aberto && (
-                        <div className="navbar-mobile-submenu">
-                          {item.children.map(
-                            (child) => {
-                              const ChildIcon =
-                                child.icon;
+                      <button
+                        type="button"
+                        className="navbar-mobile-admin-link"
+                        onClick={
+                          () =>
+                            goTo(
+                              "/usuarios",
+                            )
+                        }
+                      >
+                        <Users
+                          size={18}
+                          aria-hidden="true"
+                        />
 
-                              const childActive =
-                                caminhoAtivo(
-                                  child.path,
-                                );
-
-                              const childPedidos =
-                                child.notificationKey ===
-                                "pedidos";
-
-                              return (
-                                <button
-                                  key={
-                                    child.path
-                                  }
-                                  type="button"
-                                  className={
-                                    childActive
-                                      ? "navbar-mobile-submenu-item active"
-                                      : "navbar-mobile-submenu-item"
-                                  }
-                                  onClick={() =>
-                                    goTo(
-                                      child.path,
-                                    )
-                                  }
-                                >
-                                  <ChildIcon
-                                    size={
-                                      17
-                                    }
-                                    strokeWidth={
-                                      2
-                                    }
-                                    aria-hidden="true"
-                                  />
-
-                                  <span>
-                                    {
-                                      child.label
-                                    }
-                                  </span>
-
-                                  {childPedidos &&
-                                    badgePedidos && (
-                                      <span className="navbar-mobile-count">
-                                        {
-                                          badgePedidos
-                                        }
-                                      </span>
-                                    )}
-                                </button>
-                              );
-                            },
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                },
+                        <span>
+                          Gerenciar usuários
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
-            </nav>
 
-            {(podeImportar ||
-              isAdmin) && (
-              <div className="navbar-mobile-admin">
-                <span className="navbar-mobile-section-label">
-                  Administração
-                </span>
+              <div className="navbar-mobile-footer">
+                <button
+                  type="button"
+                  className="navbar-mobile-logout"
+                  onClick={
+                    handleLogout
+                  }
+                >
+                  <LogOut
+                    size={18}
+                    aria-hidden="true"
+                  />
 
-                {podeImportar && (
-                  <button
-                    type="button"
-                    className="navbar-mobile-admin-link"
-                    onClick={() =>
-                      goTo(
-                        "/importar",
-                      )
-                    }
-                  >
-                    <Upload
-                      size={18}
-                      aria-hidden="true"
-                    />
-
-                    <span>
-                      Importar dados
-                    </span>
-                  </button>
-                )}
-
-                {isAdmin && (
-                  <>
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() =>
-                        goTo(
-                          "/administracao",
-                        )
-                      }
-                    >
-                      <ShieldCheck
-                        size={18}
-                        aria-hidden="true"
-                      />
-
-                      <span>
-                        Administração
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() =>
-                        goTo(
-                          "/usuarios",
-                        )
-                      }
-                    >
-                      <Users
-                        size={18}
-                        aria-hidden="true"
-                      />
-
-                      <span>
-                        Gerenciar
-                        usuários
-                      </span>
-                    </button>
-                  </>
-                )}
+                  <span>
+                    Sair
+                  </span>
+                </button>
               </div>
-            )}
-
-            <div className="navbar-mobile-footer">
-              <button
-                type="button"
-                className="navbar-mobile-logout"
-                onClick={
-                  handleLogout
-                }
-              >
-                <LogOut
-                  size={18}
-                  aria-hidden="true"
-                />
-
-                <span>Sair</span>
-              </button>
-            </div>
-          </aside>
-        </>
-      )}
-
-      {/* ===================================================
-          ALERTA DE PEDIDO
-      =================================================== */}
+            </aside>
+          </>
+        )}
 
       {mostrarAlertaPedido &&
         ultimaNotificacaoPedido && (
@@ -1765,7 +2389,9 @@ function Navbar({ user, isAdmin }) {
               alertaPedidoAlterado
                 ? "novo-pedido-alerta-alterado"
                 : "novo-pedido-alerta-novo",
-            ].join(" ")}
+            ].join(
+              " ",
+            )}
             role="status"
           >
             <button
@@ -1793,27 +2419,31 @@ function Navbar({ user, isAdmin }) {
                 <span>
                   Pedido{" "}
                   <b>
-                    {ultimaNotificacaoPedido.numeroPedido ||
-                      ultimaNotificacaoPedido.codigoPedidoOmie}
+                    {ultimaNotificacaoPedido
+                      .numeroPedido ||
+                      ultimaNotificacaoPedido
+                        .codigoPedidoOmie}
                   </b>
 
-                  {ultimaNotificacaoPedido.cliente
+                  {ultimaNotificacaoPedido
+                    .cliente
                     ? ` • ${ultimaNotificacaoPedido.cliente}`
                     : ""}
                 </span>
 
                 {alertaPedidoAlterado &&
-                  ultimaNotificacaoPedido.resumo && (
+                  ultimaNotificacaoPedido
+                    .resumo && (
                     <small className="novo-pedido-alerta-resumo">
                       {
-                        ultimaNotificacaoPedido.resumo
+                        ultimaNotificacaoPedido
+                          .resumo
                       }
                     </small>
                   )}
 
                 <small>
-                  Clique para abrir
-                  Pedidos
+                  Clique para abrir Pedidos
                 </small>
               </span>
             </button>
@@ -1837,4 +2467,6 @@ function Navbar({ user, isAdmin }) {
   );
 }
 
-export default memo(Navbar);
+export default memo(
+  Navbar,
+);

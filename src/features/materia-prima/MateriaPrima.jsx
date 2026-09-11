@@ -11,8 +11,6 @@ import MateriaPrimaNavegacao, {
 
 import ComprasFuturas from "./compras-futuras/ComprasFuturas";
 import Entradas from "./entradas/Entradas";
-import Fornecedores from "./fornecedores/Fornecedores";
-import ProdutosPP from "./produtos/ProdutosPP";
 import Programacao from "./programacao/Programacao";
 import Projecao from "./projecao/Projecao";
 import Receitas from "./receitas/Receitas";
@@ -66,18 +64,6 @@ export default function MateriaPrima() {
       case "visao-geral":
         return (
           <VisaoGeral />
-        );
-
-
-      case "produtos":
-        return (
-          <ProdutosPP />
-        );
-
-
-      case "fornecedores":
-        return (
-          <Fornecedores />
         );
 
 

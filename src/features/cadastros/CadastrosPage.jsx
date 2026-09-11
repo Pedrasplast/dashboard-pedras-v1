@@ -1,0 +1,901 @@
+import {
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  Boxes,
+  CheckCircle2,
+  ClipboardList,
+  Factory,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Search,
+  Truck,
+} from "lucide-react";
+
+import PageHeader from "@/components/layout/PageHeader";
+
+import CadastroFornecedorModal from "./CadastroFornecedorModal";
+import CadastroProdutoModal from "./CadastroProdutoModal";
+import useCadastros from "./useCadastros";
+
+import "./CadastrosPage.css";
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function normalizarTexto(valor) {
+  return String(valor ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    );
+}
+
+function formatarNumero(
+  valor,
+  casas = 3,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return "-";
+  }
+
+  const convertido =
+    Number(valor);
+
+  if (
+    !Number.isFinite(
+      convertido,
+    )
+  ) {
+    return "-";
+  }
+
+  return convertido.toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits:
+        casas,
+    },
+  );
+}
+
+/* =========================================================
+   KPI
+========================================================= */
+
+function CardResumo({
+  titulo,
+  valor,
+  subtitulo,
+  icone: Icone,
+}) {
+  return (
+    <article className="cadastros-resumo-card">
+      <div className="cadastros-resumo-card__topo">
+        <span>
+          {titulo}
+        </span>
+
+        <Icone size={19} />
+      </div>
+
+      <strong>
+        {valor}
+      </strong>
+
+      <small>
+        {subtitulo}
+      </small>
+    </article>
+  );
+}
+
+/* =========================================================
+   PÁGINA
+========================================================= */
+
+export default function CadastrosPage() {
+  const [
+    aba,
+    setAba,
+  ] = useState(
+    "produtos",
+  );
+
+  const [
+    pesquisa,
+    setPesquisa,
+  ] = useState("");
+
+  const [
+    modalProdutoAberto,
+    setModalProdutoAberto,
+  ] = useState(false);
+
+  const [
+    produtoEdicao,
+    setProdutoEdicao,
+  ] = useState(null);
+
+  const [
+    modalFornecedorAberto,
+    setModalFornecedorAberto,
+  ] = useState(false);
+
+  const [
+    fornecedorEdicao,
+    setFornecedorEdicao,
+  ] = useState(null);
+
+  const [
+    mensagemSucesso,
+    setMensagemSucesso,
+  ] = useState("");
+
+  const {
+    produtos,
+    fornecedores,
+    carregando,
+    atualizando,
+    salvandoProduto,
+    salvandoFornecedor,
+    erro,
+    recarregar,
+    salvarProduto,
+    salvarFornecedor,
+  } =
+    useCadastros();
+
+  /* =======================================================
+     RESUMO
+  ======================================================= */
+
+  const resumo =
+    useMemo(
+      () => ({
+        produtosAtivos:
+          produtos.filter(
+            (produto) =>
+              produto.ativo,
+          ).length,
+
+        produtosComParametros:
+          produtos.filter(
+            (produto) =>
+              produto.temParametros &&
+              produto.parametroAtivo,
+          ).length,
+
+        produtosSemParametros:
+          produtos.filter(
+            (produto) =>
+              !produto.temParametros,
+          ).length,
+
+        fornecedoresAtivos:
+          fornecedores.filter(
+            (fornecedor) =>
+              fornecedor.ativo,
+          ).length,
+      }),
+      [
+        produtos,
+        fornecedores,
+      ],
+    );
+
+  /* =======================================================
+     FILTROS
+  ======================================================= */
+
+  const produtosFiltrados =
+    useMemo(
+      () => {
+        const termo =
+          normalizarTexto(
+            pesquisa,
+          );
+
+        if (!termo) {
+          return produtos;
+        }
+
+        return produtos.filter(
+          (produto) =>
+            normalizarTexto(
+              `${produto.codigoProduto} ${produto.nomeProduto} ${produto.descricaoParametro}`,
+            ).includes(
+              termo,
+            ),
+        );
+      },
+      [
+        produtos,
+        pesquisa,
+      ],
+    );
+
+  const fornecedoresFiltrados =
+    useMemo(
+      () => {
+        const termo =
+          normalizarTexto(
+            pesquisa,
+          );
+
+        if (!termo) {
+          return fornecedores;
+        }
+
+        return fornecedores.filter(
+          (fornecedor) =>
+            normalizarTexto(
+              fornecedor.nome,
+            ).includes(
+              termo,
+            ),
+        );
+      },
+      [
+        fornecedores,
+        pesquisa,
+      ],
+    );
+
+  /* =======================================================
+     PRODUTO
+  ======================================================= */
+
+  function abrirNovoProduto() {
+    setMensagemSucesso("");
+    setProdutoEdicao(null);
+    setModalProdutoAberto(true);
+  }
+
+  function abrirEdicaoProduto(
+    produto,
+  ) {
+    setMensagemSucesso("");
+    setProdutoEdicao(produto);
+    setModalProdutoAberto(true);
+  }
+
+  function fecharModalProduto() {
+    if (
+      salvandoProduto
+    ) {
+      return;
+    }
+
+    setModalProdutoAberto(false);
+    setProdutoEdicao(null);
+  }
+
+  async function handleSalvarProduto(
+    dados,
+  ) {
+    const resultado =
+      await salvarProduto(
+        dados,
+      );
+
+    setMensagemSucesso(
+      resultado?.acao ===
+        "criado"
+        ? "Produto cadastrado com sucesso."
+        : "Produto atualizado com sucesso.",
+    );
+
+    setModalProdutoAberto(false);
+    setProdutoEdicao(null);
+
+    return resultado;
+  }
+
+  /* =======================================================
+     FORNECEDOR
+  ======================================================= */
+
+  function abrirNovoFornecedor() {
+    setMensagemSucesso("");
+    setFornecedorEdicao(null);
+    setModalFornecedorAberto(true);
+  }
+
+  function abrirEdicaoFornecedor(
+    fornecedor,
+  ) {
+    setMensagemSucesso("");
+    setFornecedorEdicao(
+      fornecedor,
+    );
+    setModalFornecedorAberto(true);
+  }
+
+  function fecharModalFornecedor() {
+    if (
+      salvandoFornecedor
+    ) {
+      return;
+    }
+
+    setModalFornecedorAberto(false);
+    setFornecedorEdicao(null);
+  }
+
+  async function handleSalvarFornecedor(
+    dados,
+  ) {
+    const resultado =
+      await salvarFornecedor(
+        dados,
+      );
+
+    setMensagemSucesso(
+      resultado?.acao ===
+        "criado"
+        ? "Fornecedor cadastrado com sucesso."
+        : "Fornecedor atualizado com sucesso.",
+    );
+
+    setModalFornecedorAberto(false);
+    setFornecedorEdicao(null);
+
+    return resultado;
+  }
+
+  /* =======================================================
+     ABA
+  ======================================================= */
+
+  function selecionarAba(
+    novaAba,
+  ) {
+    setAba(novaAba);
+    setPesquisa("");
+    setMensagemSucesso("");
+  }
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
+  return (
+    <>
+      <main className="cadastros-page">
+        <div className="cadastros-container">
+          <PageHeader
+            eyebrow="Cadastro"
+            title="Cadastro"
+            description="Cadastro centralizado de produtos, parâmetros de produção e fornecedores utilizados pelo sistema."
+            icon={ClipboardList}
+            className="cadastros-header"
+            actions={
+              <div className="cadastros-header-actions">
+                <button
+                  type="button"
+                  className="cadastros-atualizar"
+                  onClick={() =>
+                    void recarregar()
+                  }
+                  disabled={
+                    atualizando
+                  }
+                >
+                  <RefreshCw
+                    size={17}
+                    className={
+                      atualizando
+                        ? "girando"
+                        : ""
+                    }
+                  />
+
+                  {atualizando
+                    ? "Atualizando..."
+                    : "Atualizar"}
+                </button>
+              </div>
+            }
+          />
+
+          <section className="cadastros-resumo">
+            <CardResumo
+              titulo="Produtos ativos"
+              valor={
+                carregando
+                  ? "-"
+                  : resumo.produtosAtivos
+              }
+              subtitulo="Produtos cadastrados no sistema"
+              icone={Boxes}
+            />
+
+            <CardResumo
+              titulo="Com parâmetros"
+              valor={
+                carregando
+                  ? "-"
+                  : resumo.produtosComParametros
+              }
+              subtitulo="Ciclo e dados técnicos cadastrados"
+              icone={Factory}
+            />
+
+            <CardResumo
+              titulo="Sem parâmetros"
+              valor={
+                carregando
+                  ? "-"
+                  : resumo.produtosSemParametros
+              }
+              subtitulo="Produtos que precisam de dados técnicos"
+              icone={CheckCircle2}
+            />
+
+            <CardResumo
+              titulo="Fornecedores ativos"
+              valor={
+                carregando
+                  ? "-"
+                  : resumo.fornecedoresAtivos
+              }
+              subtitulo="Fornecedores disponíveis"
+              icone={Truck}
+            />
+          </section>
+
+          {mensagemSucesso && (
+            <div className="cadastros-sucesso">
+              {mensagemSucesso}
+            </div>
+          )}
+
+          <section className="cadastros-conteudo">
+            <div className="cadastros-abas">
+              <button
+                type="button"
+                className={
+                  aba === "produtos"
+                    ? "cadastros-aba cadastros-aba--ativa"
+                    : "cadastros-aba"
+                }
+                onClick={() =>
+                  selecionarAba(
+                    "produtos",
+                  )
+                }
+              >
+                <Boxes size={17} />
+
+                Produtos
+
+                <span>
+                  {produtos.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className={
+                  aba === "fornecedores"
+                    ? "cadastros-aba cadastros-aba--ativa"
+                    : "cadastros-aba"
+                }
+                onClick={() =>
+                  selecionarAba(
+                    "fornecedores",
+                  )
+                }
+              >
+                <Truck size={17} />
+
+                Fornecedores
+
+                <span>
+                  {fornecedores.length}
+                </span>
+              </button>
+            </div>
+
+            <div className="cadastros-toolbar">
+              <div className="cadastros-pesquisa">
+                <Search size={18} />
+
+                <input
+                  type="text"
+                  value={pesquisa}
+                  onChange={(evento) =>
+                    setPesquisa(
+                      evento.target.value,
+                    )
+                  }
+                  placeholder={
+                    aba === "produtos"
+                      ? "Buscar código ou produto..."
+                      : "Buscar fornecedor..."
+                  }
+                />
+              </div>
+
+              {aba === "produtos" ? (
+                <button
+                  type="button"
+                  className="cadastros-botao-primario"
+                  onClick={
+                    abrirNovoProduto
+                  }
+                >
+                  <Plus size={17} />
+
+                  Novo produto
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="cadastros-botao-primario"
+                  onClick={
+                    abrirNovoFornecedor
+                  }
+                >
+                  <Plus size={17} />
+
+                  Novo fornecedor
+                </button>
+              )}
+            </div>
+
+            {erro && (
+              <div
+                className="cadastros-erro"
+                role="alert"
+              >
+                {erro}
+              </div>
+            )}
+
+            {aba === "produtos" && (
+              <div className="cadastros-tabela-scroll">
+                <table className="cadastros-tabela">
+                  <thead>
+                    <tr>
+                      <th>Código</th>
+                      <th>Produto</th>
+                      <th>PP</th>
+                      <th className="numero">
+                        Peso
+                      </th>
+                      <th className="numero">
+                        Cavidades
+                      </th>
+                      <th className="numero">
+                        Ciclo
+                      </th>
+                      <th className="numero">
+                        Kg/un.
+                      </th>
+                      <th className="numero">
+                        Kg/haste
+                      </th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {carregando ? (
+                      <tr>
+                        <td
+                          colSpan={10}
+                          className="cadastros-vazio"
+                        >
+                          Carregando produtos...
+                        </td>
+                      </tr>
+                    ) : produtosFiltrados.length ===
+                      0 ? (
+                      <tr>
+                        <td
+                          colSpan={10}
+                          className="cadastros-vazio"
+                        >
+                          Nenhum produto encontrado.
+                        </td>
+                      </tr>
+                    ) : (
+                      produtosFiltrados.map(
+                        (produto) => (
+                          <tr
+                            key={
+                              produto.codigoProduto
+                            }
+                          >
+                            <td>
+                              <span className="cadastros-codigo">
+                                {
+                                  produto.codigoProduto
+                                }
+                              </span>
+                            </td>
+
+                            <td>
+                              <strong className="cadastros-produto-nome">
+                                {
+                                  produto.nomeProduto
+                                }
+                              </strong>
+                            </td>
+
+                            <td>
+                              {produto.usaPp
+                                ? "Sim"
+                                : "Não"}
+                            </td>
+
+                            <td className="numero">
+                              {formatarNumero(
+                                produto.pesoKg,
+                              )}
+                            </td>
+
+                            <td className="numero">
+                              {formatarNumero(
+                                produto.cavidadeMolde,
+                                0,
+                              )}
+                            </td>
+
+                            <td className="numero">
+                              {produto.cicloSegundos ===
+                              null
+                                ? "-"
+                                : `${formatarNumero(
+                                    produto.cicloSegundos,
+                                    2,
+                                  )} s`}
+                            </td>
+
+                            <td className="numero">
+                              {formatarNumero(
+                                produto.kgUn,
+                                4,
+                              )}
+                            </td>
+
+                            <td className="numero">
+                              {formatarNumero(
+                                produto.kgHaste,
+                                4,
+                              )}
+                            </td>
+
+                            <td>
+                              <span
+                                className={
+                                  produto.ativo
+                                    ? "cadastros-status cadastros-status--ativo"
+                                    : "cadastros-status cadastros-status--inativo"
+                                }
+                              >
+                                {produto.ativo
+                                  ? "Ativo"
+                                  : "Inativo"}
+                              </span>
+                            </td>
+
+                            <td>
+                              <button
+                                type="button"
+                                className="cadastros-editar"
+                                onClick={() =>
+                                  abrirEdicaoProduto(
+                                    produto,
+                                  )
+                                }
+                              >
+                                <Pencil
+                                  size={15}
+                                />
+
+                                Editar
+                              </button>
+                            </td>
+                          </tr>
+                        ),
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {aba === "fornecedores" && (
+              <div className="cadastros-tabela-scroll">
+                <table className="cadastros-tabela cadastros-tabela--fornecedores">
+                  <thead>
+                    <tr>
+                      <th>
+                        Fornecedor
+                      </th>
+
+                      <th className="numero">
+                        Estoque mínimo
+                      </th>
+
+                      <th className="numero">
+                        Estoque alvo
+                      </th>
+
+                      <th className="numero">
+                        Lead time
+                      </th>
+
+                      <th>
+                        Status
+                      </th>
+
+                      <th>
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {carregando ? (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="cadastros-vazio"
+                        >
+                          Carregando fornecedores...
+                        </td>
+                      </tr>
+                    ) : fornecedoresFiltrados.length ===
+                      0 ? (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="cadastros-vazio"
+                        >
+                          Nenhum fornecedor encontrado.
+                        </td>
+                      </tr>
+                    ) : (
+                      fornecedoresFiltrados.map(
+                        (fornecedor) => (
+                          <tr
+                            key={
+                              fornecedor.id
+                            }
+                          >
+                            <td>
+                              <strong>
+                                {
+                                  fornecedor.nome
+                                }
+                              </strong>
+                            </td>
+
+                            <td className="numero">
+                              {fornecedor.estoqueMinimoKg ===
+                              null
+                                ? "-"
+                                : `${formatarNumero(
+                                    fornecedor.estoqueMinimoKg,
+                                    3,
+                                  )} kg`}
+                            </td>
+
+                            <td className="numero">
+                              {fornecedor.estoqueAlvoKg ===
+                              null
+                                ? "-"
+                                : `${formatarNumero(
+                                    fornecedor.estoqueAlvoKg,
+                                    3,
+                                  )} kg`}
+                            </td>
+
+                            <td className="numero">
+                              {fornecedor.leadTimeDias ===
+                              null
+                                ? "-"
+                                : `${formatarNumero(
+                                    fornecedor.leadTimeDias,
+                                    0,
+                                  )} dias`}
+                            </td>
+
+                            <td>
+                              <span
+                                className={
+                                  fornecedor.ativo
+                                    ? "cadastros-status cadastros-status--ativo"
+                                    : "cadastros-status cadastros-status--inativo"
+                                }
+                              >
+                                {fornecedor.ativo
+                                  ? "Ativo"
+                                  : "Inativo"}
+                              </span>
+                            </td>
+
+                            <td>
+                              <button
+                                type="button"
+                                className="cadastros-editar"
+                                onClick={() =>
+                                  abrirEdicaoFornecedor(
+                                    fornecedor,
+                                  )
+                                }
+                              >
+                                <Pencil
+                                  size={15}
+                                />
+
+                                Editar
+                              </button>
+                            </td>
+                          </tr>
+                        ),
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+
+      <CadastroProdutoModal
+        aberto={
+          modalProdutoAberto
+        }
+        item={
+          produtoEdicao
+        }
+        salvando={
+          salvandoProduto
+        }
+        onCancelar={
+          fecharModalProduto
+        }
+        onSalvar={
+          handleSalvarProduto
+        }
+      />
+
+      <CadastroFornecedorModal
+        aberto={
+          modalFornecedorAberto
+        }
+        item={
+          fornecedorEdicao
+        }
+        salvando={
+          salvandoFornecedor
+        }
+        onCancelar={
+          fecharModalFornecedor
+        }
+        onSalvar={
+          handleSalvarFornecedor
+        }
+      />
+    </>
+  );
+}

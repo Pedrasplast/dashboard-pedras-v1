@@ -1,0 +1,831 @@
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.produto-pp-modal-overlay {
+  position: fixed;
+  z-index: 9999;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(
+      15,
+      23,
+      42,
+      0.52
+    );
+
+  backdrop-filter:
+    blur(2px);
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.produto-pp-modal {
+  width: min(
+    680px,
+    100%
+  );
+
+  max-height:
+    calc(
+      100vh - 40px
+    );
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    16px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0
+    24px
+    60px
+    rgba(
+      15,
+      23,
+      42,
+      0.24
+    );
+}
+
+
+.cadastro-produto-modal {
+  width: min(
+    760px,
+    100%
+  );
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.produto-pp-modal-header {
+  flex:
+    0
+    0
+    auto;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  padding:
+    20px
+    22px;
+
+  border-bottom:
+    1px solid
+    #e2e8f0;
+
+  background:
+    #ffffff;
+}
+
+
+.produto-pp-modal-header-icone {
+  flex:
+    0
+    0
+    auto;
+
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #bfdbfe;
+
+  border-radius:
+    11px;
+
+  background:
+    #eff6ff;
+
+  color:
+    #2563eb;
+}
+
+
+.produto-pp-modal-header-texto {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.produto-pp-modal-header-texto > span {
+  display: block;
+
+  margin-bottom:
+    3px;
+
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.06em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.produto-pp-modal-header-texto h3 {
+  margin: 0;
+
+  color:
+    #0f172a;
+
+  font-size:
+    20px;
+
+  font-weight:
+    850;
+
+  line-height:
+    1.2;
+}
+
+
+.produto-pp-modal-header-texto p {
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    #64748b;
+
+  font-size:
+    12px;
+
+  line-height:
+    1.45;
+}
+
+
+/* =========================================================
+   FECHAR
+========================================================= */
+
+.produto-pp-modal-fechar {
+  flex:
+    0
+    0
+    auto;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius:
+    9px;
+
+  background:
+    transparent;
+
+  color:
+    #64748b;
+
+  cursor:
+    pointer;
+
+  transition:
+    background-color
+    0.15s
+    ease,
+    color
+    0.15s
+    ease;
+}
+
+
+.produto-pp-modal-fechar:hover:not(:disabled) {
+  background:
+    #f1f5f9;
+
+  color:
+    #0f172a;
+}
+
+
+.produto-pp-modal-fechar:disabled {
+  opacity:
+    0.5;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+.produto-pp-modal-form {
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+
+  padding:
+    22px;
+
+  overflow-y:
+    auto;
+
+  scrollbar-width:
+    thin;
+
+  scrollbar-color:
+    #cbd5e1
+    transparent;
+}
+
+
+.produto-pp-modal-form::-webkit-scrollbar {
+  width: 7px;
+}
+
+
+.produto-pp-modal-form::-webkit-scrollbar-thumb {
+  border-radius:
+    20px;
+
+  background:
+    #cbd5e1;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.produto-pp-modal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 16px;
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.produto-pp-modal-campo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin: 0;
+}
+
+
+.produto-pp-modal-campo > span {
+  color:
+    #475569;
+
+  font-size:
+    11px;
+
+  font-weight:
+    750;
+}
+
+
+.produto-pp-modal-campo > input,
+.produto-pp-modal-peso {
+  width: 100%;
+
+  min-width: 0;
+
+  height: 42px;
+
+  box-sizing:
+    border-box;
+
+  border:
+    1px solid
+    #cbd5e1;
+
+  border-radius:
+    9px;
+
+  background:
+    #ffffff;
+
+  transition:
+    border-color
+    0.15s
+    ease,
+    box-shadow
+    0.15s
+    ease;
+}
+
+
+.produto-pp-modal-campo > input {
+  padding:
+    0
+    12px;
+
+  outline: 0;
+
+  color:
+    #0f172a;
+
+  font:
+    inherit;
+
+  font-size:
+    13px;
+}
+
+
+.produto-pp-modal-campo > input:focus {
+  border-color:
+    #3b82f6;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(
+      37,
+      99,
+      235,
+      0.1
+    );
+}
+
+
+.produto-pp-modal-campo > input:disabled {
+  background:
+    #f1f5f9;
+
+  color:
+    #64748b;
+
+  cursor:
+    not-allowed;
+}
+
+
+.produto-pp-modal-campo input::placeholder {
+  color:
+    #94a3b8;
+}
+
+
+/* =========================================================
+   INPUT COM UNIDADE
+========================================================= */
+
+.produto-pp-modal-peso {
+  display: flex;
+  align-items: stretch;
+
+  overflow: hidden;
+}
+
+
+.produto-pp-modal-peso:focus-within {
+  border-color:
+    #3b82f6;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(
+      37,
+      99,
+      235,
+      0.1
+    );
+}
+
+
+.produto-pp-modal-peso input {
+  flex: 1;
+
+  width: 0;
+  min-width: 0;
+
+  padding:
+    0
+    12px;
+
+  border: 0;
+  outline: 0;
+
+  background:
+    transparent;
+
+  color:
+    #0f172a;
+
+  font:
+    inherit;
+
+  font-size:
+    13px;
+}
+
+
+.produto-pp-modal-peso input:disabled {
+  background:
+    #f8fafc;
+
+  color:
+    #94a3b8;
+}
+
+
+.produto-pp-modal-peso > span {
+  flex:
+    0
+    0
+    auto;
+
+  min-width:
+    48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    10px;
+
+  border-left:
+    1px solid
+    #e2e8f0;
+
+  background:
+    #f8fafc;
+
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.cadastro-produto-modal-status-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+}
+
+
+.produto-pp-modal-status {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  padding:
+    13px
+    14px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    10px;
+
+  background:
+    #f8fafc;
+
+  cursor:
+    pointer;
+}
+
+
+.produto-pp-modal-status input {
+  flex:
+    0
+    0
+    auto;
+
+  width: 16px;
+  height: 16px;
+
+  margin-top:
+    2px;
+
+  accent-color:
+    #2563eb;
+}
+
+
+.produto-pp-modal-status > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.produto-pp-modal-status strong {
+  color:
+    #334155;
+
+  font-size:
+    12px;
+}
+
+
+.produto-pp-modal-status span {
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+
+  line-height:
+    1.4;
+}
+
+
+/* =========================================================
+   ERRO
+========================================================= */
+
+.produto-pp-modal-erro {
+  padding:
+    11px
+    13px;
+
+  border:
+    1px solid
+    #fecaca;
+
+  border-radius:
+    9px;
+
+  background:
+    #fef2f2;
+
+  color:
+    #b91c1c;
+
+  font-size:
+    11px;
+
+  font-weight:
+    650;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.produto-pp-modal-acoes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  padding-top:
+    17px;
+
+  border-top:
+    1px solid
+    #e2e8f0;
+}
+
+
+.produto-pp-modal-cancelar,
+.produto-pp-modal-salvar {
+  min-height:
+    38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0
+    14px;
+
+  border-radius:
+    8px;
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  font-weight:
+    750;
+
+  cursor:
+    pointer;
+
+  transition:
+    background-color
+    0.15s
+    ease,
+    border-color
+    0.15s
+    ease,
+    color
+    0.15s
+    ease;
+}
+
+
+.produto-pp-modal-cancelar {
+  border:
+    1px solid
+    #cbd5e1;
+
+  background:
+    #ffffff;
+
+  color:
+    #475569;
+}
+
+
+.produto-pp-modal-cancelar:hover:not(:disabled) {
+  background:
+    #f8fafc;
+
+  border-color:
+    #94a3b8;
+}
+
+
+.produto-pp-modal-salvar {
+  border:
+    1px solid
+    #2563eb;
+
+  background:
+    #2563eb;
+
+  color:
+    #ffffff;
+}
+
+
+.produto-pp-modal-salvar:hover:not(:disabled) {
+  border-color:
+    #1d4ed8;
+
+  background:
+    #1d4ed8;
+}
+
+
+.produto-pp-modal-cancelar:disabled,
+.produto-pp-modal-salvar:disabled {
+  opacity:
+    0.6;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (
+  max-width: 700px
+) {
+  .produto-pp-modal-overlay {
+    align-items:
+      flex-start;
+
+    padding:
+      12px;
+  }
+
+
+  .produto-pp-modal {
+    max-height:
+      calc(
+        100vh - 24px
+      );
+
+    margin-top:
+      0;
+
+    border-radius:
+      13px;
+  }
+
+
+  .produto-pp-modal-header {
+    padding:
+      16px;
+  }
+
+
+  .produto-pp-modal-form {
+    padding:
+      16px;
+  }
+
+
+  .produto-pp-modal-grid,
+  .cadastro-produto-modal-status-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .produto-pp-modal-acoes {
+    flex-direction:
+      column-reverse;
+  }
+
+
+  .produto-pp-modal-cancelar,
+  .produto-pp-modal-salvar {
+    width:
+      100%;
+  }
+}
