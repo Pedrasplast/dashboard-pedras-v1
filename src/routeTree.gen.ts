@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as CadastroProdutoRouteImport } from './routes/cadastro-produto'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
 import { Route as DashboardParadasRouteImport } from './routes/dashboard-paradas'
 import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
+import { Route as EstoqueRouteImport } from './routes/estoque'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as FinanceiroEvolucaoMensalRouteImport } from './routes/financeiro-evolucao-mensal'
 import { Route as ImportarRouteImport } from './routes/importar'
@@ -39,6 +41,11 @@ const AdministracaoRoute = AdministracaoRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroProdutoRoute = CadastroProdutoRouteImport.update({
+  id: '/cadastro-produto',
+  path: '/cadastro-produto',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -64,6 +71,11 @@ const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
 const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
   id: '/definir-senha',
   path: '/definir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueRoute = EstoqueRouteImport.update({
+  id: '/estoque',
+  path: '/estoque',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FinanceiroRoute = FinanceiroRouteImport.update({
@@ -112,11 +124,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/estoque': typeof EstoqueRoute
   '/financeiro': typeof FinanceiroRoute
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
@@ -130,11 +144,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/estoque': typeof EstoqueRoute
   '/financeiro': typeof FinanceiroRoute
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
@@ -149,11 +165,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
   '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
+  '/estoque': typeof EstoqueRoute
   '/financeiro': typeof FinanceiroRoute
   '/financeiro-evolucao-mensal': typeof FinanceiroEvolucaoMensalRoute
   '/importar': typeof ImportarRoute
@@ -169,11 +187,13 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/estoque'
     | '/financeiro'
     | '/financeiro-evolucao-mensal'
     | '/importar'
@@ -187,11 +207,13 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/estoque'
     | '/financeiro'
     | '/financeiro-evolucao-mensal'
     | '/importar'
@@ -205,11 +227,13 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
     | '/dashboard-produtividade'
     | '/definir-senha'
+    | '/estoque'
     | '/financeiro'
     | '/financeiro-evolucao-mensal'
     | '/importar'
@@ -224,11 +248,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdministracaoRoute: typeof AdministracaoRoute
   CadastroRoute: typeof CadastroRoute
+  CadastroProdutoRoute: typeof CadastroProdutoRoute
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
   DashboardParadasRoute: typeof DashboardParadasRoute
   DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
+  EstoqueRoute: typeof EstoqueRoute
   FinanceiroRoute: typeof FinanceiroRoute
   FinanceiroEvolucaoMensalRoute: typeof FinanceiroEvolucaoMensalRoute
   ImportarRoute: typeof ImportarRoute
@@ -260,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-produto': {
+      id: '/cadastro-produto'
+      path: '/cadastro-produto'
+      fullPath: '/cadastro-produto'
+      preLoaderRoute: typeof CadastroProdutoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -295,6 +328,13 @@ declare module '@tanstack/react-router' {
       path: '/definir-senha'
       fullPath: '/definir-senha'
       preLoaderRoute: typeof DefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque': {
+      id: '/estoque'
+      path: '/estoque'
+      fullPath: '/estoque'
+      preLoaderRoute: typeof EstoqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/financeiro': {
@@ -360,11 +400,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdministracaoRoute: AdministracaoRoute,
   CadastroRoute: CadastroRoute,
+  CadastroProdutoRoute: CadastroProdutoRoute,
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
   DashboardParadasRoute: DashboardParadasRoute,
   DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
+  EstoqueRoute: EstoqueRoute,
   FinanceiroRoute: FinanceiroRoute,
   FinanceiroEvolucaoMensalRoute: FinanceiroEvolucaoMensalRoute,
   ImportarRoute: ImportarRoute,

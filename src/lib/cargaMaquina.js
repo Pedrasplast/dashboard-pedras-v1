@@ -2,10 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "./supabaseClient";
 import { logDesenvolvimento } from "./logger";
 
-
-/* =========================================================
+/* =====================================================
    CONFIGURAÇÕES
-========================================================= */
+===================================================== */
 
 const TAMANHO_PAGINA = 1000;
 
@@ -21,478 +20,281 @@ const META_ULTIMA_ATUALIZACAO =
 const DADOS_VAZIOS = Object.freeze([]);
 const DESCRICOES_VAZIAS = Object.freeze({});
 
-export const chaveCargaMaquina = [
-  "carga_maquina",
-];
+export const chaveCargaMaquina = ["carga_maquina"];
 
-
-/* =========================================================
+/* =====================================================
    NORMALIZAR CÓDIGO DO PRODUTO
-
-   Usado exclusivamente para relacionar
-   carga_maquina com parametros_produto.
 
    Exemplos:
 
    11.01.0035 -> 11010035
-   4179       -> 4179
    09122      -> 9122
    9122.0     -> 9122
-   10469      -> 10469
    REUSO3924  -> REUSO3924
-========================================================= */
+===================================================== */
 
-export function normalizarCodigoProduto(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
+export function normalizarCodigoProduto(valor) {
+  if (valor === null || valor === undefined) {
     return "";
   }
 
-  let texto =
-    String(valor)
-      .trim()
-      .toUpperCase();
+  let texto = String(valor).trim().toUpperCase();
 
-  /*
-   * Caso o código tenha vindo como
-   * número decimal sem necessidade:
-   *
-   * 9122.0
-   * 9122,0
-   *
-   * converte para:
-   *
-   * 9122
-   */
-  if (
-    /^\d+[.,]0+$/.test(
-      texto,
-    )
-  ) {
-    texto =
-      texto.replace(
-        /[.,]0+$/,
-        "",
-      );
+  // Remove decimal desnecessário.
+  if (/^\d+[.,]0+$/.test(texto)) {
+    texto = texto.replace(/[.,]0+$/, "");
   }
 
-  /*
-   * Remove pontos,
-   * espaços, barras,
-   * hífens etc.
-   */
-  const codigo =
-    texto.replace(
-      /[^A-Z0-9]/g,
-      "",
-    );
+  // Remove pontuação.
+  const codigo = texto.replace(/[^A-Z0-9]/g, "");
 
   if (!codigo) {
     return "";
   }
 
-  /*
-   * Se for composto somente
-   * por números, remove zeros
-   * desnecessários à esquerda.
-   *
-   * 09122 -> 9122
-   */
-  if (
-    /^\d+$/.test(
-      codigo,
-    )
-  ) {
-    return codigo.replace(
-      /^0+(?=\d)/,
-      "",
-    );
+  // Remove zeros à esquerda apenas em códigos numéricos.
+  if (/^\d+$/.test(codigo)) {
+    return codigo.replace(/^0+(?=\d)/, "");
   }
 
   return codigo;
 }
 
-
-/* =========================================================
+/* =====================================================
    ABRIR INDEXEDDB
-========================================================= */
+===================================================== */
 
 function abrirBancoLocal() {
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const request =
-        indexedDB.open(
-          DB_NAME,
-          DB_VERSION,
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(
+      DB_NAME,
+      DB_VERSION,
+    );
+
+    request.onerror = () => {
+      reject(request.error);
+    };
+
+    request.onsuccess = () => {
+      resolve(request.result);
+    };
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      /* STORE DOS DADOS */
+
+      if (!db.objectStoreNames.contains(STORE_DADOS)) {
+        const store = db.createObjectStore(
+          STORE_DADOS,
+          {
+            keyPath: "id",
+          },
         );
 
-      request.onerror =
-        () => {
-          reject(
-            request.error,
-          );
-        };
+        store.createIndex(
+          "criado_em",
+          "criado_em",
+          {
+            unique: false,
+          },
+        );
+      }
 
-      request.onsuccess =
-        () => {
-          resolve(
-            request.result,
-          );
-        };
+      /* STORE DE METADADOS */
 
-      request.onupgradeneeded =
-        (
-          event,
-        ) => {
-          const db =
-            event.target.result;
-
-
-          /* STORE DOS DADOS */
-
-          if (
-            !db.objectStoreNames.contains(
-              STORE_DADOS,
-            )
-          ) {
-            const store =
-              db.createObjectStore(
-                STORE_DADOS,
-                {
-                  keyPath:
-                    "id",
-                },
-              );
-
-            store.createIndex(
-              "criado_em",
-              "criado_em",
-              {
-                unique:
-                  false,
-              },
-            );
-          }
-
-
-          /* STORE DE METADADOS */
-
-          if (
-            !db.objectStoreNames.contains(
-              STORE_META,
-            )
-          ) {
-            db.createObjectStore(
-              STORE_META,
-              {
-                keyPath:
-                  "chave",
-              },
-            );
-          }
-        };
-    },
-  );
+      if (!db.objectStoreNames.contains(STORE_META)) {
+        db.createObjectStore(
+          STORE_META,
+          {
+            keyPath: "chave",
+          },
+        );
+      }
+    };
+  });
 }
 
-
-/* =========================================================
-   LER TODOS OS DADOS DO INDEXEDDB
-========================================================= */
+/* =====================================================
+   LER DADOS DO INDEXEDDB
+===================================================== */
 
 async function lerDadosIndexedDB() {
-  const db =
-    await abrirBancoLocal();
+  const db = await abrirBancoLocal();
 
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const transaction =
-        db.transaction(
-          STORE_DADOS,
-          "readonly",
-        );
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      STORE_DADOS,
+      "readonly",
+    );
 
-      const store =
-        transaction.objectStore(
-          STORE_DADOS,
-        );
+    const store = transaction.objectStore(STORE_DADOS);
 
-      const request =
-        store.getAll();
+    const request = store.getAll();
 
-      request.onsuccess =
-        () => {
-          resolve(
-            request.result ||
-              [],
-          );
-        };
+    request.onsuccess = () => {
+      resolve(request.result || []);
+    };
 
-      request.onerror =
-        () => {
-          reject(
-            request.error,
-          );
-        };
+    request.onerror = () => {
+      reject(request.error);
+    };
 
-      transaction.oncomplete =
-        () => {
-          db.close();
-        };
-    },
-  );
+    transaction.oncomplete = () => {
+      db.close();
+    };
+  });
 }
 
+/* =====================================================
+   SALVAR REGISTROS NO INDEXEDDB
+===================================================== */
 
-/* =========================================================
-   SALVAR / ATUALIZAR VÁRIOS REGISTROS
-========================================================= */
-
-async function salvarDadosIndexedDB(
-  dados,
-) {
-  if (
-    !Array.isArray(
-      dados,
-    ) ||
-    dados.length === 0
-  ) {
+async function salvarDadosIndexedDB(dados) {
+  if (!Array.isArray(dados) || dados.length === 0) {
     return;
   }
 
-  const db =
-    await abrirBancoLocal();
+  const db = await abrirBancoLocal();
 
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const transaction =
-        db.transaction(
-          STORE_DADOS,
-          "readwrite",
-        );
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      STORE_DADOS,
+      "readwrite",
+    );
 
-      const store =
-        transaction.objectStore(
-          STORE_DADOS,
-        );
+    const store = transaction.objectStore(STORE_DADOS);
 
-      dados.forEach(
-        (
-          item,
-        ) => {
-          if (
-            item &&
-            item.id !==
-              undefined &&
-            item.id !==
-              null
-          ) {
-            store.put(
-              item,
-            );
-          }
-        },
-      );
+    dados.forEach((item) => {
+      if (
+        item &&
+        item.id !== undefined &&
+        item.id !== null
+      ) {
+        store.put(item);
+      }
+    });
 
-      transaction.oncomplete =
-        () => {
-          db.close();
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
 
-          resolve();
-        };
+    transaction.onerror = () => {
+      reject(transaction.error);
+    };
 
-      transaction.onerror =
-        () => {
-          reject(
-            transaction.error,
-          );
-        };
-
-      transaction.onabort =
-        () => {
-          reject(
-            transaction.error,
-          );
-        };
-    },
-  );
+    transaction.onabort = () => {
+      reject(transaction.error);
+    };
+  });
 }
 
-
-/* =========================================================
-   LIMPAR SOMENTE DADOS DA CARGA_MAQUINA
-========================================================= */
+/* =====================================================
+   LIMPAR DADOS DO INDEXEDDB
+===================================================== */
 
 async function limparDadosIndexedDB() {
-  const db =
-    await abrirBancoLocal();
+  const db = await abrirBancoLocal();
 
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const transaction =
-        db.transaction(
-          STORE_DADOS,
-          "readwrite",
-        );
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      STORE_DADOS,
+      "readwrite",
+    );
 
-      const store =
-        transaction.objectStore(
-          STORE_DADOS,
-        );
+    const store = transaction.objectStore(STORE_DADOS);
 
-      const request =
-        store.clear();
+    const request = store.clear();
 
-      request.onsuccess =
-        () => {
-          resolve();
-        };
+    request.onerror = () => {
+      reject(request.error);
+    };
 
-      request.onerror =
-        () => {
-          reject(
-            request.error,
-          );
-        };
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
 
-      transaction.oncomplete =
-        () => {
-          db.close();
-        };
-    },
-  );
+    transaction.onerror = () => {
+      reject(transaction.error);
+    };
+
+    transaction.onabort = () => {
+      reject(transaction.error);
+    };
+  });
 }
 
+/* =====================================================
+   LER METADADOS
+===================================================== */
 
-/* =========================================================
-   METADADOS
-========================================================= */
+async function lerMeta(chave) {
+  const db = await abrirBancoLocal();
 
-async function lerMeta(
-  chave,
-) {
-  const db =
-    await abrirBancoLocal();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      STORE_META,
+      "readonly",
+    );
 
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const transaction =
-        db.transaction(
-          STORE_META,
-          "readonly",
-        );
+    const store = transaction.objectStore(STORE_META);
 
-      const store =
-        transaction.objectStore(
-          STORE_META,
-        );
+    const request = store.get(chave);
 
-      const request =
-        store.get(
-          chave,
-        );
+    request.onsuccess = () => {
+      resolve(request.result?.valor ?? null);
+    };
 
-      request.onsuccess =
-        () => {
-          resolve(
-            request.result
-              ?.valor ??
-              null,
-          );
-        };
+    request.onerror = () => {
+      reject(request.error);
+    };
 
-      request.onerror =
-        () => {
-          reject(
-            request.error,
-          );
-        };
-
-      transaction.oncomplete =
-        () => {
-          db.close();
-        };
-    },
-  );
+    transaction.oncomplete = () => {
+      db.close();
+    };
+  });
 }
 
+/* =====================================================
+   SALVAR METADADOS
+===================================================== */
 
-async function salvarMeta(
-  chave,
-  valor,
-) {
-  const db =
-    await abrirBancoLocal();
+async function salvarMeta(chave, valor) {
+  const db = await abrirBancoLocal();
 
-  return new Promise(
-    (
-      resolve,
-      reject,
-    ) => {
-      const transaction =
-        db.transaction(
-          STORE_META,
-          "readwrite",
-        );
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      STORE_META,
+      "readwrite",
+    );
 
-      const store =
-        transaction.objectStore(
-          STORE_META,
-        );
+    const store = transaction.objectStore(STORE_META);
 
-      store.put({
-        chave,
-        valor,
-      });
+    store.put({
+      chave,
+      valor,
+    });
 
-      transaction.oncomplete =
-        () => {
-          db.close();
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
 
-          resolve();
-        };
+    transaction.onerror = () => {
+      reject(transaction.error);
+    };
 
-      transaction.onerror =
-        () => {
-          reject(
-            transaction.error,
-          );
-        };
-    },
-  );
+    transaction.onabort = () => {
+      reject(transaction.error);
+    };
+  });
 }
 
-
-/* =========================================================
-   LIMPAR CACHE COMPLETO DA CARGA_MAQUINA
-
-   Limpa:
-   - registros salvos no IndexedDB;
-   - referência da última sincronização.
-
-   A próxima consulta será tratada como
-   uma primeira carga e buscará novamente
-   toda a tabela carga_maquina no Supabase.
-========================================================= */
+/* =====================================================
+   LIMPAR CACHE DA CARGA MÁQUINA
+===================================================== */
 
 export async function limparCacheCargaMaquina() {
   await limparDadosIndexedDB();
@@ -503,120 +305,65 @@ export async function limparCacheCargaMaquina() {
   );
 }
 
-
-/* =========================================================
-   ÚLTIMA ATUALIZAÇÃO EXISTENTE NO BANCO
-========================================================= */
+/* =====================================================
+   ÚLTIMA ATUALIZAÇÃO NO SUPABASE
+===================================================== */
 
 async function buscarUltimaAtualizacaoBanco() {
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "carga_maquina",
-      )
-      .select(
-        "criado_em",
-      )
-      .not(
-        "criado_em",
-        "is",
-        null,
-      )
-      .order(
-        "criado_em",
-        {
-          ascending:
-            false,
-        },
-      )
-      .limit(1)
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from("carga_maquina")
+    .select("criado_em")
+    .not("criado_em", "is", null)
+    .order("criado_em", {
+      ascending: false,
+    })
+    .limit(1)
+    .maybeSingle();
 
-  if (
-    error
-  ) {
+  if (error) {
     throw error;
   }
 
-  return (
-    data?.criado_em ||
-    null
-  );
+  return data?.criado_em || null;
 }
 
-
-/* =========================================================
-   BUSCAR TODOS OS REGISTROS DO SUPABASE
-========================================================= */
+/* =====================================================
+   BUSCAR TODOS OS REGISTROS
+===================================================== */
 
 async function buscarTodosOsRegistros() {
-  const todosOsDados =
-    [];
+  const todosOsDados = [];
 
   let pagina = 0;
 
   for (;;) {
-    const inicioPagina =
-      pagina *
-      TAMANHO_PAGINA;
+    const inicioPagina = pagina * TAMANHO_PAGINA;
 
     const fimPagina =
-      inicioPagina +
-      TAMANHO_PAGINA -
-      1;
+      inicioPagina + TAMANHO_PAGINA - 1;
 
-    const {
-      data,
-      error,
-    } =
-      await supabase
-        .from(
-          "carga_maquina",
-        )
-        .select("*")
-        .order(
-          "criado_em",
-          {
-            ascending:
-              true,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending:
-              true,
-          },
-        )
-        .range(
-          inicioPagina,
-          fimPagina,
-        );
+    const { data, error } = await supabase
+      .from("carga_maquina")
+      .select("*")
+      .order("criado_em", {
+        ascending: true,
+      })
+      .order("id", {
+        ascending: true,
+      })
+      .range(inicioPagina, fimPagina);
 
-    if (
-      error
-    ) {
+    if (error) {
       throw error;
     }
 
-    if (
-      !data ||
-      data.length === 0
-    ) {
+    if (!data || data.length === 0) {
       break;
     }
 
-    todosOsDados.push(
-      ...data,
-    );
+    todosOsDados.push(...data);
 
-    if (
-      data.length <
-      TAMANHO_PAGINA
-    ) {
+    if (data.length < TAMANHO_PAGINA) {
       break;
     }
 
@@ -626,90 +373,54 @@ async function buscarTodosOsRegistros() {
   return todosOsDados;
 }
 
+/* =====================================================
+   BUSCAR REGISTROS NOVOS
+===================================================== */
 
-/* =========================================================
-   BUSCAR SOMENTE REGISTROS NOVOS
-========================================================= */
-
-async function buscarNovosRegistros(
-  ultimaAtualizacao,
-) {
-  const novosDados =
-    [];
+async function buscarNovosRegistros(ultimaAtualizacao) {
+  const novosDados = [];
 
   let pagina = 0;
 
   for (;;) {
-    const inicioPagina =
-      pagina *
-      TAMANHO_PAGINA;
+    const inicioPagina = pagina * TAMANHO_PAGINA;
 
     const fimPagina =
-      inicioPagina +
-      TAMANHO_PAGINA -
-      1;
+      inicioPagina + TAMANHO_PAGINA - 1;
 
-    let consulta =
-      supabase
-        .from(
-          "carga_maquina",
-        )
-        .select("*")
-        .order(
-          "criado_em",
-          {
-            ascending:
-              true,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending:
-              true,
-          },
-        );
+    let consulta = supabase
+      .from("carga_maquina")
+      .select("*")
+      .order("criado_em", {
+        ascending: true,
+      })
+      .order("id", {
+        ascending: true,
+      });
 
-    if (
-      ultimaAtualizacao
-    ) {
-      consulta =
-        consulta.gte(
-          "criado_em",
-          ultimaAtualizacao,
-        );
+    if (ultimaAtualizacao) {
+      consulta = consulta.gte(
+        "criado_em",
+        ultimaAtualizacao,
+      );
     }
 
-    const {
-      data,
-      error,
-    } =
-      await consulta.range(
-        inicioPagina,
-        fimPagina,
-      );
+    const { data, error } = await consulta.range(
+      inicioPagina,
+      fimPagina,
+    );
 
-    if (
-      error
-    ) {
+    if (error) {
       throw error;
     }
 
-    if (
-      !data ||
-      data.length === 0
-    ) {
+    if (!data || data.length === 0) {
       break;
     }
 
-    novosDados.push(
-      ...data,
-    );
+    novosDados.push(...data);
 
-    if (
-      data.length <
-      TAMANHO_PAGINA
-    ) {
+    if (data.length < TAMANHO_PAGINA) {
       break;
     }
 
@@ -719,47 +430,30 @@ async function buscarNovosRegistros(
   return novosDados;
 }
 
-
-/* =========================================================
+/* =====================================================
    SINCRONIZAÇÃO PRINCIPAL
 
-   Sincronização normal/incremental.
-
-   IMPORTANTE:
-   Esta estratégia detecta novos registros
-   usando criado_em.
-
-   Por isso, UPDATEs feitos diretamente em
-   registros antigos não são necessariamente
-   detectados aqui.
-
-   Para isso existe recarregarCompleto().
-========================================================= */
+   Mantém:
+   - IndexedDB
+   - Sincronização incremental
+   - Consulta paginada
+   - Atualização completa
+===================================================== */
 
 export async function buscarCargaMaquina() {
-  /* =====================================================
-     1. LÊ O INDEXEDDB
-  ===================================================== */
+  /* 1. LER CACHE */
 
   const [
     dadosCache,
     ultimaAtualizacaoCache,
   ] = await Promise.all([
     lerDadosIndexedDB(),
-    lerMeta(
-      META_ULTIMA_ATUALIZACAO,
-    ),
+    lerMeta(META_ULTIMA_ATUALIZACAO),
   ]);
 
+  /* 2. PRIMEIRA CARGA */
 
-  /* =====================================================
-     2. PRIMEIRA CARGA
-  ===================================================== */
-
-  if (
-    dadosCache.length ===
-    0
-  ) {
+  if (dadosCache.length === 0) {
     logDesenvolvimento(
       "[Carga Máquina] IndexedDB vazio. Fazendo primeira carga completa...",
     );
@@ -767,9 +461,7 @@ export async function buscarCargaMaquina() {
     const todosOsDados =
       await buscarTodosOsRegistros();
 
-    await salvarDadosIndexedDB(
-      todosOsDados,
-    );
+    await salvarDadosIndexedDB(todosOsDados);
 
     const ultimaAtualizacaoBanco =
       await buscarUltimaAtualizacaoBanco();
@@ -786,10 +478,7 @@ export async function buscarCargaMaquina() {
     return todosOsDados;
   }
 
-
-  /* =====================================================
-     3. JÁ TEM CACHE
-  ===================================================== */
+  /* 3. CACHE EXISTENTE */
 
   logDesenvolvimento(
     `[Carga Máquina] IndexedDB encontrado: ${dadosCache.length} registros.`,
@@ -798,10 +487,7 @@ export async function buscarCargaMaquina() {
   const ultimaAtualizacaoBanco =
     await buscarUltimaAtualizacaoBanco();
 
-
-  /* =====================================================
-     4. NÃO HOUVE NOVOS REGISTROS
-  ===================================================== */
+  /* 4. SEM NOVOS REGISTROS */
 
   if (
     ultimaAtualizacaoBanco ===
@@ -814,27 +500,17 @@ export async function buscarCargaMaquina() {
     return dadosCache;
   }
 
-
-  /* =====================================================
-     5. EXISTEM REGISTROS NOVOS
-  ===================================================== */
+  /* 5. SINCRONIZAÇÃO INCREMENTAL */
 
   logDesenvolvimento(
     "[Carga Máquina] Novos registros detectados. Sincronizando...",
   );
 
   const novosRegistros =
-    await buscarNovosRegistros(
-      ultimaAtualizacaoCache,
-    );
+    await buscarNovosRegistros(ultimaAtualizacaoCache);
 
-  if (
-    novosRegistros.length >
-    0
-  ) {
-    await salvarDadosIndexedDB(
-      novosRegistros,
-    );
+  if (novosRegistros.length > 0) {
+    await salvarDadosIndexedDB(novosRegistros);
   }
 
   await salvarMeta(
@@ -842,10 +518,7 @@ export async function buscarCargaMaquina() {
     ultimaAtualizacaoBanco,
   );
 
-
-  /* =====================================================
-     6. LÊ A BASE ATUALIZADA
-  ===================================================== */
+  /* 6. DADOS ATUALIZADOS */
 
   const dadosAtualizados =
     await lerDadosIndexedDB();
@@ -857,354 +530,292 @@ export async function buscarCargaMaquina() {
   return dadosAtualizados;
 }
 
-
-/* =========================================================
+/* =====================================================
    DESCRIÇÕES DOS PRODUTOS
 
-   SOMENTE:
+   FONTE 1:
+   estoque_produto_acabado_omie
+
+   FONTE 2:
+   parametros_produto
+
+   RELACIONAMENTO:
 
    carga_maquina.cod_prod
-            ↓
-   parametros_produto.cod_prod
-            ↓
-   parametros_produto.descricao
-========================================================= */
+              ↓
+   estoque_produto_acabado_omie.codigo_produto
+              ↓
+   estoque_produto_acabado_omie.descricao
+
+   Se não encontrar, busca em parametros_produto.
+
+   A consulta é separada para não duplicar
+   os apontamentos de produção.
+===================================================== */
 
 /*
- * Nova chave para garantir que nenhum
- * cache da consulta anterior seja utilizado.
+ * Nova chave para invalidar o cache antigo
+ * que consultava somente parâmetros.
  */
+
 export const chaveDescricoesProdutos = [
-  "descricoes_parametros_produto_v3",
+  "descricoes_produtos_estoque_parametros_v4",
 ];
 
+/* =====================================================
+   BUSCAR DESCRIÇÕES PAGINADAS
+===================================================== */
 
-/* =========================================================
-   BUSCAR DESCRIÇÕES EM PARAMETROS_PRODUTO
-========================================================= */
-
-async function buscarDescricoesProdutos() {
-  const registros =
-    [];
+async function buscarRegistrosDescricoes(
+  tabela,
+  campoCodigo,
+) {
+  const registros = [];
 
   let pagina = 0;
 
-
   for (;;) {
-    const inicioPagina =
-      pagina *
-      TAMANHO_PAGINA;
+    const inicioPagina = pagina * TAMANHO_PAGINA;
 
     const fimPagina =
-      inicioPagina +
-      TAMANHO_PAGINA -
-      1;
+      inicioPagina + TAMANHO_PAGINA - 1;
 
+    const { data, error } = await supabase
+      .from(tabela)
+      .select(`${campoCodigo}, descricao`)
+      .order(campoCodigo, {
+        ascending: true,
+      })
+      .order("descricao", {
+        ascending: true,
+      })
+      .range(inicioPagina, fimPagina);
 
-    const {
-      data,
-      error,
-    } =
-      await supabase
-        .from(
-          "parametros_produto",
-        )
-        .select(
-          "cod_prod, descricao",
-        )
-        .range(
-          inicioPagina,
-          fimPagina,
-        );
-
-
-    if (
-      error
-    ) {
-      console.error(
-        "[Descrições Produtos] Erro ao consultar parametros_produto:",
-        error,
-      );
-
+    if (error) {
       throw error;
     }
 
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
+    if (!data || data.length === 0) {
       break;
     }
 
+    registros.push(...data);
 
-    registros.push(
-      ...data,
-    );
-
-
-    if (
-      data.length <
-      TAMANHO_PAGINA
-    ) {
+    if (data.length < TAMANHO_PAGINA) {
       break;
     }
-
 
     pagina += 1;
   }
 
+  return registros;
+}
 
-  /* =====================================================
-     MONTA O MAPA DE DESCRIÇÕES
-  ===================================================== */
+/* =====================================================
+   CONSTRUIR MAPA DE DESCRIÇÕES
 
-  const descricoes =
-    {};
+   Mantém a primeira descrição válida.
 
+   Como o estoque é processado primeiro,
+   possui prioridade sobre os parâmetros.
 
-  registros.forEach(
-    (
-      item,
-    ) => {
+   Não duplica registros de produção.
+===================================================== */
 
-      const codigoOriginal =
-        String(
-          item.cod_prod ??
-            "",
-        ).trim();
+function adicionarDescricoesAoMapa(
+  mapa,
+  registros,
+  campoCodigo,
+) {
+  for (const item of registros) {
+    const codigo = normalizarCodigoProduto(
+      item?.[campoCodigo],
+    );
 
+    const descricao = String(
+      item?.descricao ?? "",
+    ).trim();
 
-      const codigoNormalizado =
-        normalizarCodigoProduto(
-          codigoOriginal,
-        );
+    if (
+      !codigo ||
+      !descricao ||
+      descricao === "-"
+    ) {
+      continue;
+    }
 
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        mapa,
+        codigo,
+      )
+    ) {
+      mapa[codigo] = descricao;
+    }
+  }
+}
 
-      const descricao =
-        String(
-          item.descricao ??
-            "",
-        ).trim();
+/* =====================================================
+   BUSCAR DESCRIÇÕES NAS DUAS FONTES
+===================================================== */
 
+async function buscarDescricoesProdutos() {
+  const [
+    resultadoEstoque,
+    resultadoParametros,
+  ] = await Promise.allSettled([
+    buscarRegistrosDescricoes(
+      "estoque_produto_acabado_omie",
+      "codigo_produto",
+    ),
 
-      if (
-        !codigoNormalizado ||
-        !descricao
-      ) {
-        return;
-      }
+    buscarRegistrosDescricoes(
+      "parametros_produto",
+      "cod_prod",
+    ),
+  ]);
 
+  /* =================================================
+     VERIFICAR FALHAS
+  ================================================= */
 
-      /*
-       * Chave principal:
-       * código normalizado.
-       */
-      descricoes[
-        codigoNormalizado
-      ] =
-        descricao;
+  if (
+    resultadoEstoque.status === "rejected" &&
+    resultadoParametros.status === "rejected"
+  ) {
+    console.error(
+      "[Descrições Produtos] Falha ao consultar as duas fontes:",
+      resultadoEstoque.reason,
+      resultadoParametros.reason,
+    );
 
+    throw new Error(
+      "Não foi possível consultar as descrições dos produtos.",
+    );
+  }
 
-      /*
-       * Segurança:
-       * também mantém exatamente
-       * como veio do cadastro.
-       */
-      if (
-        codigoOriginal
-      ) {
-        descricoes[
-          codigoOriginal
-        ] =
-          descricao;
-      }
+  const descricoes = Object.create(null);
 
+  /* =================================================
+     PRIMEIRA FONTE: ESTOQUE OMIE
+  ================================================= */
 
-      /*
-       * Segurança adicional:
-       * código original em maiúsculas.
-       */
-      const codigoOriginalMaiusculo =
-        codigoOriginal.toUpperCase();
-
-
-      if (
-        codigoOriginalMaiusculo
-      ) {
-        descricoes[
-          codigoOriginalMaiusculo
-        ] =
-          descricao;
-      }
-    },
-  );
-
-
-  logDesenvolvimento(
-    "[Descrições Produtos] parametros_produto carregado:",
-    registros.length,
-  );
-
-
-  logDesenvolvimento(
-    "[Descrições Produtos] códigos disponíveis:",
-    Object.keys(
+  if (resultadoEstoque.status === "fulfilled") {
+    adicionarDescricoesAoMapa(
       descricoes,
-    ).length,
-  );
+      resultadoEstoque.value,
+      "codigo_produto",
+    );
 
+    logDesenvolvimento(
+      `[Descrições Produtos] Estoque OMIE: ${resultadoEstoque.value.length} registros consultados.`,
+    );
+  } else {
+    console.warn(
+      "[Descrições Produtos] Estoque indisponível; usando parâmetros:",
+      resultadoEstoque.reason,
+    );
+  }
+
+  /* =================================================
+     SEGUNDA FONTE: PARÂMETROS
+  ================================================= */
+
+  if (resultadoParametros.status === "fulfilled") {
+    adicionarDescricoesAoMapa(
+      descricoes,
+      resultadoParametros.value,
+      "cod_prod",
+    );
+
+    logDesenvolvimento(
+      `[Descrições Produtos] Parâmetros: ${resultadoParametros.value.length} registros consultados.`,
+    );
+  } else {
+    console.warn(
+      "[Descrições Produtos] Parâmetros indisponíveis; usando estoque:",
+      resultadoParametros.reason,
+    );
+  }
+
+  logDesenvolvimento(
+    `[Descrições Produtos] ${Object.keys(descricoes).length} códigos com descrição.`,
+  );
 
   return descricoes;
 }
 
+/* =====================================================
+   HOOK DAS DESCRIÇÕES
+===================================================== */
 
-/* =========================================================
-   HOOK DAS DESCRIÇÕES DOS PRODUTOS
-========================================================= */
+export function useDescricoesProdutos(opcoes = {}) {
+  const consulta = useQuery({
+    queryKey: chaveDescricoesProdutos,
 
-export function useDescricoesProdutos(
-  opcoes = {},
-) {
-  const consulta =
-    useQuery({
-      queryKey:
-        chaveDescricoesProdutos,
+    queryFn: buscarDescricoesProdutos,
 
-      queryFn:
-        buscarDescricoesProdutos,
+    staleTime: 0,
 
+    gcTime: 30 * 60 * 1000,
 
-      /*
-       * Durante a validação,
-       * consulta novamente ao abrir
-       * o relatório.
-       */
-      staleTime:
-        0,
+    refetchOnWindowFocus: false,
 
+    refetchOnMount: "always",
 
-      gcTime:
-        30 *
-        60 *
-        1000,
+    retry: 1,
 
-
-      refetchOnWindowFocus:
-        false,
-
-
-      refetchOnMount:
-        "always",
-
-
-      retry:
-        1,
-
-
-      ...opcoes,
-    });
-
+    ...opcoes,
+  });
 
   return {
     descricoesProdutos:
-      consulta.data ??
-      DESCRICOES_VAZIAS,
+      consulta.data ?? DESCRICOES_VAZIAS,
 
+    loadingDescricoes: consulta.isPending,
 
-    loadingDescricoes:
-      consulta.isPending,
+    atualizandoDescricoes: consulta.isFetching,
 
+    erroDescricoes: consulta.error
+      ? consulta.error.message ||
+        "Não foi possível carregar as descrições dos produtos."
+      : "",
 
-    atualizandoDescricoes:
-      consulta.isFetching,
-
-
-    erroDescricoes:
-      consulta.error
-        ? consulta.error
-            .message ||
-          "Não foi possível carregar as descrições dos produtos."
-        : "",
-
-
-    recarregarDescricoes:
-      consulta.refetch,
+    recarregarDescricoes: consulta.refetch,
   };
 }
 
-
-/* =========================================================
+/* =====================================================
    HOOK PRINCIPAL DA CARGA MÁQUINA
-========================================================= */
+===================================================== */
 
-export function useCargaMaquina(
-  opcoes = {},
-) {
-  const consulta =
-    useQuery({
-      queryKey:
-        chaveCargaMaquina,
+export function useCargaMaquina(opcoes = {}) {
+  const consulta = useQuery({
+    queryKey: chaveCargaMaquina,
 
-      queryFn:
-        buscarCargaMaquina,
+    queryFn: buscarCargaMaquina,
 
+    staleTime: 5 * 60 * 1000,
 
-      /*
-       * Enquanto estiver navegando pelo sistema,
-       * considera os dados válidos por 5 minutos.
-       */
-      staleTime:
-        5 *
-        60 *
-        1000,
+    gcTime: 30 * 60 * 1000,
 
+    refetchOnWindowFocus: false,
 
-      /*
-       * Mantém o cache do React Query em memória
-       * durante 30 minutos.
-       */
-      gcTime:
-        30 *
-        60 *
-        1000,
+    refetchOnMount: true,
 
+    retry: 1,
 
-      refetchOnWindowFocus:
-        false,
+    ...opcoes,
+  });
 
-
-      /*
-       * Após F5 executa buscarCargaMaquina,
-       * mas primeiro consulta o IndexedDB.
-       */
-      refetchOnMount:
-        true,
-
-
-      retry:
-        1,
-
-
-      ...opcoes,
-    });
-
-
-  /* =======================================================
+  /* =================================================
      ATUALIZAÇÃO COMPLETA
 
-     Diferente do refetch normal.
-
-     Fluxo:
-     1. limpa somente o cache local da carga_maquina;
-     2. limpa o marcador da última sincronização;
-     3. executa novamente buscarCargaMaquina();
-     4. como o IndexedDB estará vazio, a função baixa
-        novamente toda a tabela do Supabase.
-
-     Isso permite capturar também UPDATEs feitos em
-     registros antigos.
-  ======================================================= */
+     1. Limpa cache local.
+     2. Limpa marcador de sincronização.
+     3. Executa consulta.
+     4. Recarrega toda a tabela.
+  ================================================= */
 
   async function recarregarCompleto() {
     logDesenvolvimento(
@@ -1217,8 +828,7 @@ export function useCargaMaquina(
       "[Carga Máquina] Cache local limpo. Buscando base completa novamente...",
     );
 
-    const resultado =
-      await consulta.refetch();
+    const resultado = await consulta.refetch();
 
     logDesenvolvimento(
       "[Carga Máquina] Atualização completa finalizada.",
@@ -1227,41 +837,20 @@ export function useCargaMaquina(
     return resultado;
   }
 
-
   return {
-    dados:
-      consulta.data ??
-      DADOS_VAZIOS,
+    dados: consulta.data ?? DADOS_VAZIOS,
 
+    loading: consulta.isPending,
 
-    loading:
-      consulta.isPending,
+    atualizando: consulta.isFetching,
 
+    erro: consulta.error
+      ? consulta.error.message ||
+        "Não foi possível carregar os dados de produção."
+      : "",
 
-    atualizando:
-      consulta.isFetching,
+    recarregar: consulta.refetch,
 
-
-    erro:
-      consulta.error
-        ? consulta.error
-            .message ||
-          "Não foi possível carregar os dados de produção."
-        : "",
-
-
-    /*
-     * Refetch normal:
-     * usa a sincronização incremental.
-     */
-    recarregar:
-      consulta.refetch,
-
-
-    /*
-     * Refetch completo:
-     * limpa o IndexedDB e baixa novamente do Supabase.
-     */
     recarregarCompleto,
   };
 }

@@ -5,25 +5,16 @@ const DATA_FIM_ORDENACAO = "9999-12-31";
 const SEM_DATA = "Sem data";
 
 export function normalizarDataPedido(valor) {
-  if (!valor) {
-    return null;
-  }
+  if (!valor) return null;
 
   const texto = String(valor).trim();
-
-  if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
-    return texto.slice(0, 10);
-  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(texto)) return texto.slice(0, 10);
 
   const formatoBr = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-  if (formatoBr) {
-    return `${formatoBr[3]}-${formatoBr[2]}-${formatoBr[1]}`;
-  }
+  if (formatoBr) return `${formatoBr[3]}-${formatoBr[2]}-${formatoBr[1]}`;
 
   const data = new Date(texto);
-  if (Number.isNaN(data.getTime())) {
-    return null;
-  }
+  if (Number.isNaN(data.getTime())) return null;
 
   const ano = data.getFullYear();
   const mes = String(data.getMonth() + 1).padStart(2, "0");
@@ -47,18 +38,13 @@ function obterHojeIso() {
 
 export function calcularDiasAtrasoPedido(previsao) {
   const dataIso = normalizarDataPedido(previsao);
-  if (!dataIso) {
-    return 0;
-  }
+  if (!dataIso) return 0;
 
   const hojeIso = obterHojeIso();
-  if (dataIso >= hojeIso) {
-    return 0;
-  }
+  if (dataIso >= hojeIso) return 0;
 
   const [anoPrevisao, mesPrevisao, diaPrevisao] = dataIso.split("-").map(Number);
   const [anoHoje, mesHoje, diaHoje] = hojeIso.split("-").map(Number);
-
   const dataPrevisao = new Date(anoPrevisao, mesPrevisao - 1, diaPrevisao);
   const dataHoje = new Date(anoHoje, mesHoje - 1, diaHoje);
 
@@ -74,17 +60,7 @@ export function pedidoEstaAtrasadoRelatorio(item) {
   );
 }
 
-function obterChavePedido(item) {
-  return String(
-    item?.codigoPedido ??
-      item?.codigo_pedido ??
-      item?.pedido ??
-      item?.numero_pedido ??
-      item?.id ??
-      "",
-  );
-}
-
+// Usa o número comercial; nunca utiliza item.id (ID interno da linha).
 function obterNumeroPedidoVisivel(item) {
   return String(
     item?.pedido ??
@@ -149,9 +125,7 @@ export function prepararPedidosDetalhados(dados = []) {
 }
 
 export function prepararPedidosAtrasados(dados = []) {
-  if (!Array.isArray(dados)) {
-    return [];
-  }
+  if (!Array.isArray(dados)) return [];
 
   return dados
     .filter(pedidoEstaAtrasadoRelatorio)
@@ -174,10 +148,15 @@ function criarGrupoProduto(item, codigo, previsao) {
   };
 }
 
+function ordenarPedidos(pedidos) {
+  return [...pedidos].sort((a, b) =>
+    String(a).localeCompare(String(b), "pt-BR", { numeric: true }),
+  );
+}
+
+// RELATÓRIO POR CÓDIGO: mantém a contagem e pedidos_atendidos originais.
 export function agruparPedidosPorCodigoProduto(dados = []) {
-  if (!Array.isArray(dados)) {
-    return [];
-  }
+  if (!Array.isArray(dados)) return [];
 
   const mapa = new Map();
 
@@ -191,18 +170,12 @@ export function agruparPedidosPorCodigoProduto(dados = []) {
 
     const grupo = mapa.get(codigo);
     grupo.quantidade += converterNumero(item?.quantidade);
-
-    if (numeroPedido) {
-      grupo._pedidos.add(numeroPedido);
-    }
+    if (numeroPedido) grupo._pedidos.add(numeroPedido);
   }
 
   return [...mapa.values()]
     .map((grupo) => {
-      const pedidosOrdenados = [...grupo._pedidos].sort((a, b) =>
-        String(a).localeCompare(String(b), "pt-BR", { numeric: true }),
-      );
-
+      const pedidosOrdenados = ordenarPedidos(grupo._pedidos);
       return {
         codigo_produto: grupo.codigo_produto,
         produto_pedido: grupo.produto_pedido,
@@ -215,17 +188,16 @@ export function agruparPedidosPorCodigoProduto(dados = []) {
     .sort((a, b) => b.quantidade - a.quantidade);
 }
 
+// RELATÓRIO POR DATA: campo pedidos agora é TEXTO com TODOS os números comerciais.
 export function agruparPedidosPorDataProduto(dados = []) {
-  if (!Array.isArray(dados)) {
-    return [];
-  }
+  if (!Array.isArray(dados)) return [];
 
   const mapa = new Map();
 
   for (const item of dados) {
     const previsao = obterDataPedidoRelatorio(item) || SEM_DATA;
     const codigo = obterCodigoProduto(item);
-    const chavePedido = obterChavePedido(item);
+    const numeroPedido = obterNumeroPedidoVisivel(item);
     const chave = `${previsao}||${codigo}`;
 
     if (!mapa.has(chave)) {
@@ -235,30 +207,31 @@ export function agruparPedidosPorDataProduto(dados = []) {
     const grupo = mapa.get(chave);
     grupo.quantidade += converterNumero(item?.quantidade);
 
-    if (chavePedido) {
-      grupo._pedidos.add(chavePedido);
-    }
+    // Set evita duplicar o pedido quando ele possui mais de um item do produto.
+    if (numeroPedido) grupo._pedidos.add(numeroPedido);
   }
 
   return [...mapa.values()]
-    .map((grupo) => ({
-      previsao: grupo.previsao,
-      codigo_produto: grupo.codigo_produto,
-      produto_pedido: grupo.produto_pedido,
-      unidade: grupo.unidade,
-      quantidade: grupo.quantidade,
-      pedidos: grupo._pedidos.size,
-    }))
+    .map((grupo) => {
+      const pedidosOrdenados = ordenarPedidos(grupo._pedidos);
+      return {
+        previsao: grupo.previsao,
+        codigo_produto: grupo.codigo_produto,
+        produto_pedido: grupo.produto_pedido,
+        unidade: grupo.unidade,
+        quantidade: grupo.quantidade,
+        pedidos: pedidosOrdenados.join(", ") || "-",
+        quantidade_pedidos: pedidosOrdenados.length,
+      };
+    })
     .sort((a, b) => {
       const dataA = a.previsao === SEM_DATA ? DATA_FIM_ORDENACAO : a.previsao;
       const dataB = b.previsao === SEM_DATA ? DATA_FIM_ORDENACAO : b.previsao;
-
-      if (dataA !== dataB) {
-        return dataA.localeCompare(dataB);
-      }
-
-      return String(a.codigo_produto).localeCompare(String(b.codigo_produto), "pt-BR", {
-        numeric: true,
-      });
+      if (dataA !== dataB) return dataA.localeCompare(dataB);
+      return String(a.codigo_produto).localeCompare(
+        String(b.codigo_produto),
+        "pt-BR",
+        { numeric: true },
+      );
     });
 }

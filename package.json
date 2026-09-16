@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "test": "vitest run",
     "validate:static": "node scripts/validar-codigo.mjs",
     "validate": "npm run validate:static && npm run build"
   },
@@ -89,7 +90,8 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^8.1.5"
+    "vite": "^8.1.5",
+    "vitest": "^3.2.4"
   },
   "packageManager": "npm@10.9.2",
   "engines": {

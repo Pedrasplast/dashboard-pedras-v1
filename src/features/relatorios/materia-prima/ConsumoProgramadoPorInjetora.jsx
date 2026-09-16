@@ -1,8 +1,4 @@
-import {
-  Fragment,
-  useMemo,
-  useState,
-} from "react";
+import { Fragment, useMemo, useState } from "react";
 
 import {
   FiActivity,
@@ -16,15 +12,21 @@ import {
   FiX,
 } from "react-icons/fi";
 
-import useConsumoProgramado
-  from "./useConsumoProgramado";
+import Paginacao from "@/components/paginacao/Paginacao";
+
+import useConsumoProgramado from "./useConsumoProgramado";
 
 import "./ConsumoProgramadoPorInjetora.css";
 
+/* =====================================================
+   PAGINAÇÃO PADRÃO
+===================================================== */
 
-/* =========================================================
+const ITENS_POR_PAGINA = 8;
+
+/* =====================================================
    DATAS
-========================================================= */
+===================================================== */
 
 function dataHojeLocal() {
   const agora = new Date();
@@ -36,420 +38,193 @@ function dataHojeLocal() {
   ].join("-");
 }
 
-
-function adicionarDiasLocal(
-  valor,
-  dias,
-) {
-  const [
-    ano,
-    mes,
-    dia,
-  ] = String(
-    valor,
-  )
+function adicionarDiasLocal(valor, dias) {
+  const [ano, mes, dia] = String(valor)
     .split("-")
     .map(Number);
 
-
-  const data =
-    new Date(
-      ano,
-      mes - 1,
-      dia + dias,
-      12,
-      0,
-      0,
-    );
-
+  const data = new Date(
+    ano,
+    mes - 1,
+    dia + dias,
+    12,
+    0,
+    0,
+  );
 
   return [
     data.getFullYear(),
-
-    String(
-      data.getMonth() + 1,
-    ).padStart(
-      2,
-      "0",
-    ),
-
-    String(
-      data.getDate(),
-    ).padStart(
-      2,
-      "0",
-    ),
+    String(data.getMonth() + 1).padStart(2, "0"),
+    String(data.getDate()).padStart(2, "0"),
   ].join("-");
 }
 
-
 function obterPeriodoInicial() {
-  const hoje =
-    dataHojeLocal();
-
+  const hoje = dataHojeLocal();
 
   return {
-    inicio:
-      hoje,
-
-    fim:
-      adicionarDiasLocal(
-        hoje,
-        7,
-      ),
+    inicio: hoje,
+    fim: adicionarDiasLocal(hoje, 7),
   };
 }
 
-
-/* =========================================================
+/* =====================================================
    FORMATADORES
-========================================================= */
+===================================================== */
 
-function formatarData(
-  valor,
-) {
-  if (!valor) {
-    return "-";
+function formatarData(valor) {
+  if (!valor) return "-";
+
+  const partes = String(valor).split("-");
+
+  if (partes.length !== 3) {
+    return String(valor);
   }
-
-
-  const partes =
-    String(
-      valor,
-    ).split("-");
-
-
-  if (
-    partes.length !==
-    3
-  ) {
-    return String(
-      valor,
-    );
-  }
-
 
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
-
-function formatarDataHora(
-  data,
-  hora,
-) {
+function formatarDataHora(data, hora) {
   return hora
-    ? `${formatarData(
-        data,
-      )} ${String(
-        hora,
-      ).slice(
-        0,
-        5,
-      )}`
-    : formatarData(
-        data,
-      );
+    ? `${formatarData(data)} ${String(hora).slice(0, 5)}`
+    : formatarData(data);
 }
 
+function formatarNumero(valor, casas = 0) {
+  const numero = Number(valor);
 
-function formatarNumero(
-  valor,
-  casas = 0,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "-";
   }
 
-
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
-
-      maximumFractionDigits:
-        casas,
-    },
-  );
+  return numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  });
 }
 
+function formatarKg(valor) {
+  const numero = Number(valor);
 
-function formatarKg(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0,000 kg";
   }
 
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        3,
-
-      maximumFractionDigits:
-        3,
-    },
-  )} kg`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })} kg`;
 }
 
-
-function formatarHoras(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
+function formatarHoras(valor) {
+  if (valor === null || valor === undefined) {
     return "Legado";
   }
 
-
-  return `${formatarNumero(
-    valor,
-    2,
-  )} h`;
+  return `${formatarNumero(valor, 2)} h`;
 }
 
+function formatarPercentual(valor) {
+  const numero = Number(valor);
 
-function formatarPercentual(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0%";
   }
 
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        0,
-
-      maximumFractionDigits:
-        4,
-    },
-  )}%`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  })}%`;
 }
 
-
-function montarTextoPeriodo(
-  dataInicial,
-  dataFinal,
-) {
-  if (
-    dataInicial &&
-    dataFinal
-  ) {
-    return `De: ${formatarData(
-      dataInicial,
-    )} | Até: ${formatarData(
-      dataFinal,
-    )}`;
+function montarTextoPeriodo(dataInicial, dataFinal) {
+  if (dataInicial && dataFinal) {
+    return `De: ${formatarData(dataInicial)} | Até: ${formatarData(dataFinal)}`;
   }
-
 
   if (dataInicial) {
-    return `De: ${formatarData(
-      dataInicial,
-    )}`;
+    return `De: ${formatarData(dataInicial)}`;
   }
-
 
   if (dataFinal) {
-    return `Até: ${formatarData(
-      dataFinal,
-    )}`;
+    return `Até: ${formatarData(dataFinal)}`;
   }
-
 
   return "Sem período informado";
 }
 
+/* =====================================================
+   PRODUTO
+===================================================== */
 
-/* =========================================================
-   PRODUTO / CICLO POR INJETORA
-========================================================= */
+function montarProduto(codigo, descricao) {
+  const codigoLimpo = String(codigo ?? "").trim();
+  const descricaoLimpa = String(descricao ?? "").trim();
 
-function montarProduto(
-  codigo,
-  descricao,
-) {
-  const codigoLimpo =
-    String(
-      codigo ?? "",
-    ).trim();
-
-
-  const descricaoLimpa =
-    String(
-      descricao ?? "",
-    ).trim();
-
-
-  if (
-    codigoLimpo &&
-    descricaoLimpa
-  ) {
+  if (codigoLimpo && descricaoLimpa) {
     return `${codigoLimpo} - ${descricaoLimpa}`;
   }
 
+  if (codigoLimpo) return codigoLimpo;
 
-  if (
-    codigoLimpo
-  ) {
-    return codigoLimpo;
-  }
-
-
-  if (
-    descricaoLimpa
-  ) {
-    return descricaoLimpa;
-  }
-
+  if (descricaoLimpa) return descricaoLimpa;
 
   return "-";
 }
 
+/* =====================================================
+   PRODUTOS DO GRUPO
+===================================================== */
 
-function obterProdutosGrupo(
-  grupo,
-) {
-  const produtos =
-    [];
+function obterProdutosGrupo(grupo) {
+  const produtos = [];
+  const encontrados = new Set();
 
+  for (const programacao of grupo?.programacoes || []) {
+    const produto = montarProduto(
+      programacao?.codigoProduto,
+      programacao?.descricao,
+    );
 
-  const encontrados =
-    new Set();
-
-
-  for (
-    const programacao
-    of grupo?.programacoes ||
-    []
-  ) {
-    const produto =
-      montarProduto(
-        programacao?.codigoProduto,
-        programacao?.descricao,
-      );
-
-
-    if (
-      produto === "-" ||
-      encontrados.has(
-        produto,
-      )
-    ) {
+    if (produto === "-" || encontrados.has(produto)) {
       continue;
     }
 
-
-    encontrados.add(
-      produto,
-    );
-
-
-    produtos.push(
-      produto,
-    );
+    encontrados.add(produto);
+    produtos.push(produto);
   }
-
 
   return produtos.length > 0
     ? produtos.join(" / ")
     : "-";
 }
 
+/* =====================================================
+   CICLOS DOS PRODUTOS
+===================================================== */
 
-function obterCiclosProdutosGrupo(
-  grupo,
-) {
-  const pares =
-    [];
+function obterCiclosProdutosGrupo(grupo) {
+  const pares = [];
+  const chaves = new Set();
 
+  for (const programacao of grupo?.programacoes || []) {
+    const codigo = String(
+      programacao?.codigoProduto ?? "",
+    ).trim();
 
-  const chaves =
-    new Set();
+    const ciclo = Number(programacao?.cicloSegundos);
 
-
-  for (
-    const programacao
-    of grupo?.programacoes ||
-    []
-  ) {
-    const codigo =
-      String(
-        programacao?.codigoProduto ??
-        "",
-      ).trim();
-
-
-    const ciclo =
-      Number(
-        programacao?.cicloSegundos,
-      );
-
-
-    if (
-      !Number.isFinite(
-        ciclo,
-      ) ||
-      ciclo <= 0
-    ) {
+    if (!Number.isFinite(ciclo) || ciclo <= 0) {
       continue;
     }
 
+    const chave = `${codigo}|${ciclo}`;
 
-    const chave =
-      `${codigo}|${ciclo}`;
-
-
-    if (
-      chaves.has(
-        chave,
-      )
-    ) {
+    if (chaves.has(chave)) {
       continue;
     }
 
-
-    chaves.add(
-      chave,
-    );
-
+    chaves.add(chave);
 
     pares.push({
       codigo,
@@ -457,56 +232,32 @@ function obterCiclosProdutosGrupo(
     });
   }
 
-
-  if (
-    pares.length ===
-    0
-  ) {
+  if (pares.length === 0) {
     return "-";
   }
 
-
-  if (
-    pares.length ===
-    1
-  ) {
-    return `${formatarNumero(
-      pares[0].ciclo,
-      2,
-    )} s`;
+  if (pares.length === 1) {
+    return `${formatarNumero(pares[0].ciclo, 2)} s`;
   }
 
-
   return pares
-    .map(
-      (
-        item,
-      ) =>
-        item.codigo
-          ? `${item.codigo}: ${formatarNumero(
-              item.ciclo,
-              2,
-            )} s`
-          : `${formatarNumero(
-              item.ciclo,
-              2,
-            )} s`,
+    .map((item) =>
+      item.codigo
+        ? `${item.codigo}: ${formatarNumero(item.ciclo, 2)} s`
+        : `${formatarNumero(item.ciclo, 2)} s`,
     )
     .join(" | ");
 }
 
+/* =====================================================
+   EXPORTAÇÃO ORIGINAL
 
-/* =========================================================
-   EXPORTAÇÃO CENTRAL
+   PDF E EXCEL UTILIZAM A BASE COMPLETA.
 
-   PDF e Excel utilizam os mesmos geradores dos demais
-   relatórios do sistema.
-========================================================= */
+   A PAGINAÇÃO NÃO INTERFERE NESTA FUNÇÃO.
+===================================================== */
 
-function prepararExportacaoInjetora(
-  relatorio,
-  dados,
-) {
+function prepararExportacaoInjetora(relatorio, dados) {
   const relatorioExportacao = {
     ...relatorio,
 
@@ -528,130 +279,75 @@ function prepararExportacaoInjetora(
     ],
   };
 
+  const linhas = [];
 
-  const linhas =
-    [];
-
-
-  for (
-    const grupo
-    of dados?.porInjetora ||
-    []
-  ) {
-    for (
-      const programacao
-      of grupo?.programacoes ||
-      []
-    ) {
+  for (const grupo of dados?.porInjetora || []) {
+    for (const programacao of grupo?.programacoes || []) {
       linhas.push({
-        injetora:
-          `Injetora ${grupo.injetora}`,
+        injetora: `Injetora ${grupo.injetora}`,
 
-        produto:
-          montarProduto(
-            programacao?.codigoProduto,
-            programacao?.descricao,
-          ),
+        produto: montarProduto(
+          programacao?.codigoProduto,
+          programacao?.descricao,
+        ),
 
-        horas:
-          formatarHoras(
-            programacao?.horasProgramadas,
-          ),
+        horas: formatarHoras(
+          programacao?.horasProgramadas,
+        ),
 
         ciclo:
-          Number.isFinite(
-            Number(
-              programacao?.cicloSegundos,
-            ),
-          ) &&
-          Number(
-            programacao?.cicloSegundos,
-          ) > 0
-            ? `${formatarNumero(
-                programacao.cicloSegundos,
-                2,
-              )} s`
+          Number.isFinite(Number(programacao?.cicloSegundos)) &&
+          Number(programacao?.cicloSegundos) > 0
+            ? `${formatarNumero(programacao.cicloSegundos, 2)} s`
             : "-",
 
-        pecas:
-          formatarNumero(
-            programacao?.pecasPrevistas,
-          ),
+        pecas: formatarNumero(
+          programacao?.pecasPrevistas,
+        ),
 
-        consumo_pp:
-          formatarKg(
-            programacao?.consumoTotalKg,
-          ),
+        consumo_pp: formatarKg(
+          programacao?.consumoTotalKg,
+        ),
       });
     }
   }
 
+  /* TOTAL GERAL */
 
-  /*
-   * TOTAL GERAL
-   *
-   * Somente o consumo de PP é totalizado.
-   *
-   * Não totalizamos:
-   * - horas;
-   * - ciclo;
-   * - peças.
-   */
-  if (
-    linhas.length >
-    0
-  ) {
+  if (linhas.length > 0) {
     linhas.push({
-      injetora:
-        "TOTAL GERAL",
+      injetora: "TOTAL GERAL",
+      produto: "-",
+      horas: "-",
+      ciclo: "-",
+      pecas: "-",
 
-      produto:
-        "-",
-
-      horas:
-        "-",
-
-      ciclo:
-        "-",
-
-      pecas:
-        "-",
-
-      consumo_pp:
-        formatarKg(
-          dados?.resumo?.consumoTotalKg,
-        ),
+      consumo_pp: formatarKg(
+        dados?.resumo?.consumoTotalKg,
+      ),
     });
   }
 
-
   return {
     relatorioExportacao,
-
-    dadosExportacao:
-      linhas,
+    dadosExportacao: linhas,
   };
 }
 
-
-/* =========================================================
+/* =====================================================
    DETALHE DA PROGRAMAÇÃO
-========================================================= */
+===================================================== */
 
-function DetalheProgramacao({
-  programacao,
-}) {
+function DetalheProgramacao({ programacao }) {
   return (
     <article className="mpi-programacao">
 
       <div className="mpi-programacao-topo">
 
         <div>
-
           <span>
             Programação #{programacao.id}
           </span>
-
 
           <strong>
             {montarProduto(
@@ -659,30 +355,20 @@ function DetalheProgramacao({
               programacao.descricao,
             )}
           </strong>
-
         </div>
 
-
         <strong className="mpi-programacao-consumo">
-          {formatarKg(
-            programacao.consumoTotalKg,
-          )}
+          {formatarKg(programacao.consumoTotalKg)}
         </strong>
 
       </div>
 
-
       <div className="mpi-programacao-grid">
 
         <div>
-
-          <span>
-            Período considerado
-          </span>
-
+          <span>Período considerado</span>
 
           <strong>
-
             {formatarDataHora(
               programacao.dataInicioConsiderada,
               programacao.horaInicioConsiderada,
@@ -694,124 +380,76 @@ function DetalheProgramacao({
               programacao.dataFimConsiderada,
               programacao.horaFimConsiderada,
             )}
-
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Horas
-          </span>
-
+          <span>Horas</span>
 
           <strong>
             {formatarHoras(
               programacao.horasProgramadas,
             )}
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Ciclo
-          </span>
-
+          <span>Ciclo</span>
 
           <strong>
-
             {programacao.cicloSegundos
               ? `${formatarNumero(
                   programacao.cicloSegundos,
                   2,
                 )} s`
               : "-"}
-
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Cavidades
-          </span>
-
+          <span>Cavidades</span>
 
           <strong>
             {formatarNumero(
               programacao.cavidadeMolde,
             )}
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Ciclos completos
-          </span>
-
+          <span>Ciclos completos</span>
 
           <strong>
-
-            {programacao.ciclosCompletos ===
-            null
+            {programacao.ciclosCompletos === null
               ? "Legado"
               : formatarNumero(
                   programacao.ciclosCompletos,
                 )}
-
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Peças previstas
-          </span>
-
+          <span>Peças previstas</span>
 
           <strong>
             {formatarNumero(
               programacao.pecasPrevistas,
             )}
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Peso da peça
-          </span>
-
+          <span>Peso da peça</span>
 
           <strong>
             {formatarKg(
               programacao.pesoKg,
             )}
           </strong>
-
         </div>
 
-
         <div>
-
-          <span>
-            Receita
-          </span>
-
+          <span>Receita</span>
 
           <strong
             className={
@@ -820,39 +458,28 @@ function DetalheProgramacao({
                 : "mpi-texto-aviso"
             }
           >
-
             {programacao.receitaConfigurada
               ? "100% configurada"
               : `${formatarPercentual(
                   programacao.receitaPercentualTotal,
                 )} configurado`}
-
           </strong>
-
         </div>
 
       </div>
 
-
       {!programacao.parametrosValidos && (
-
         <div className="mpi-aviso-inline">
-
           <FiAlertTriangle />
-
 
           <span>
             Esta programação possui parâmetros técnicos inválidos e não pôde ter o consumo calculado.
           </span>
-
         </div>
-
       )}
 
-
       {programacao.receitaConfigurada &&
-      programacao.consumosFornecedores.length >
-        0 ? (
+      programacao.consumosFornecedores.length > 0 ? (
 
         <div className="mpi-receita">
 
@@ -860,18 +487,13 @@ function DetalheProgramacao({
             Receita por fornecedor
           </div>
 
-
           <div className="mpi-receita-tabela-wrapper">
 
             <table className="mpi-receita-tabela">
 
               <thead>
-
                 <tr>
-
-                  <th>
-                    Fornecedor
-                  </th>
+                  <th>Fornecedor</th>
 
                   <th className="coluna-numerica">
                     Participação
@@ -880,83 +502,56 @@ function DetalheProgramacao({
                   <th className="coluna-numerica">
                     Consumo
                   </th>
-
                 </tr>
-
               </thead>
 
-
               <tbody>
-
                 {programacao.consumosFornecedores.map(
-                  (
-                    fornecedor,
-                  ) => (
+                  (fornecedor) => (
+                    <tr
+                      key={`${programacao.id}-${fornecedor.fornecedorId}-${fornecedor.fornecedorNome}`}
+                    >
+                      <td>
+                        {fornecedor.fornecedorNome}
+                      </td>
 
-                  <tr
-                    key={`${programacao.id}-${fornecedor.fornecedorId}-${fornecedor.fornecedorNome}`}
-                  >
+                      <td className="coluna-numerica">
+                        {formatarPercentual(
+                          fornecedor.percentual,
+                        )}
+                      </td>
 
-                    <td>
-                      {fornecedor.fornecedorNome}
-                    </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {formatarPercentual(
-                        fornecedor.percentual,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica mpi-receita-consumo">
-
-                      {formatarKg(
-                        fornecedor.consumoKg,
-                      )}
-
-                    </td>
-
-                  </tr>
-
+                      <td className="coluna-numerica mpi-receita-consumo">
+                        {formatarKg(
+                          fornecedor.consumoKg,
+                        )}
+                      </td>
+                    </tr>
                   ),
                 )}
-
               </tbody>
 
             </table>
-
           </div>
 
         </div>
 
-      ) : Number(
-          programacao.consumoSemReceitaKg ||
-            0,
-        ) > 0 ? (
+      ) : Number(programacao.consumoSemReceitaKg || 0) > 0 ? (
 
         <div className="mpi-receita-pendente">
 
           <FiAlertTriangle />
 
-
           <div>
-
             <strong>
               Receita pendente
             </strong>
 
-
             <span>
-
               {formatarKg(
                 programacao.consumoSemReceitaKg,
               )} não distribuído entre fornecedores.
-
             </span>
-
           </div>
 
         </div>
@@ -967,10 +562,13 @@ function DetalheProgramacao({
   );
 }
 
-
-/* =========================================================
+/* =====================================================
    TABELA PRINCIPAL
-========================================================= */
+
+   MANTÉM A ESTRUTURA ORIGINAL.
+
+   RECEBE SOMENTE AS INJETORAS DA PÁGINA ATUAL.
+===================================================== */
 
 function TabelaInjetoras({
   dados,
@@ -983,16 +581,9 @@ function TabelaInjetoras({
       <table className="relatorio-visualizacao-tabela mpi-tabela">
 
         <thead>
-
           <tr>
-
-            <th>
-              Injetora
-            </th>
-
-            <th>
-              Produto
-            </th>
+            <th>Injetora</th>
+            <th>Produto</th>
 
             <th className="coluna-numerica">
               Horas
@@ -1010,367 +601,295 @@ function TabelaInjetoras({
               Consumo PP
             </th>
 
-            <th>
-              Detalhes
-            </th>
-
+            <th>Detalhes</th>
           </tr>
-
         </thead>
-
 
         <tbody>
 
-          {dados.porInjetora.map(
-            (
-              grupo,
-            ) => {
-              const expandida =
-                expandidas.has(
-                  grupo.injetora,
-                );
+          {dados.porInjetora.map((grupo) => {
+            const expandida = expandidas.has(
+              grupo.injetora,
+            );
 
+            return (
+              <Fragment key={grupo.injetora}>
 
-              return (
-                <Fragment
-                  key={
-                    grupo.injetora
-                  }
-                >
+                <tr>
 
-                  <tr>
+                  <td>
+                    <strong className="mpi-injetora">
+                      Injetora {grupo.injetora}
+                    </strong>
+                  </td>
 
-                    <td>
+                  <td>
+                    <strong>
+                      {obterProdutosGrupo(grupo)}
+                    </strong>
+                  </td>
 
-                      <strong className="mpi-injetora">
-                        Injetora{" "}
-                        {grupo.injetora}
-                      </strong>
+                  <td className="coluna-numerica">
+                    {formatarHoras(
+                      grupo.horasProgramadas,
+                    )}
 
-                    </td>
+                    {grupo.possuiCalculoLegado && (
+                      <span className="mpi-legado">
+                        Legado
+                      </span>
+                    )}
+                  </td>
 
+                  <td className="coluna-numerica">
+                    {obterCiclosProdutosGrupo(grupo)}
+                  </td>
 
-                    <td>
+                  <td className="coluna-numerica">
+                    {formatarNumero(
+                      grupo.pecasPrevistas,
+                    )}
+                  </td>
 
-                      <strong>
-                        {obterProdutosGrupo(
-                          grupo,
-                        )}
-                      </strong>
+                  <td className="coluna-numerica mpi-total">
+                    {formatarKg(
+                      grupo.consumoTotalKg,
+                    )}
+                  </td>
 
-                    </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="mpi-expandir"
+                      onClick={() =>
+                        onAlternar(grupo.injetora)
+                      }
+                      aria-expanded={expandida}
+                    >
+                      {expandida
+                        ? <FiChevronUp />
+                        : <FiChevronDown />}
 
+                      {expandida ? "Fechar" : "Ver"}
+                    </button>
+                  </td>
 
-                    <td className="coluna-numerica">
+                </tr>
 
-                      {formatarHoras(
-                        grupo.horasProgramadas,
-                      )}
+                {expandida && (
+                  <tr className="mpi-linha-detalhe">
+                    <td colSpan={7}>
+                      <div className="mpi-programacoes-lista">
 
-
-                      {grupo.possuiCalculoLegado && (
-
-                        <span className="mpi-legado">
-                          Legado
-                        </span>
-
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {obterCiclosProdutosGrupo(
-                        grupo,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {formatarNumero(
-                        grupo.pecasPrevistas,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica mpi-total">
-
-                      {formatarKg(
-                        grupo.consumoTotalKg,
-                      )}
-
-                    </td>
-
-
-                    <td>
-
-                      <button
-                        type="button"
-                        className="mpi-expandir"
-                        onClick={
-                          () =>
-                            onAlternar(
-                              grupo.injetora,
-                            )
-                        }
-                        aria-expanded={
-                          expandida
-                        }
-                      >
-
-                        {expandida
-                          ? <FiChevronUp />
-                          : <FiChevronDown />}
-
-
-                        {expandida
-                          ? "Fechar"
-                          : "Ver"}
-
-                      </button>
-
-                    </td>
-
-                  </tr>
-
-
-                  {expandida && (
-
-                    <tr className="mpi-linha-detalhe">
-
-                      <td colSpan={7}>
-
-                        <div className="mpi-programacoes-lista">
-
-                          {grupo.programacoes.map(
-                            (
-                              programacao,
-                            ) => (
-
+                        {grupo.programacoes.map(
+                          (programacao) => (
                             <DetalheProgramacao
-                              key={
-                                programacao.id
-                              }
-                              programacao={
-                                programacao
-                              }
+                              key={programacao.id}
+                              programacao={programacao}
                             />
+                          ),
+                        )}
 
-                            ),
-                          )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
 
-                        </div>
-
-                      </td>
-
-                    </tr>
-
-                  )}
-
-                </Fragment>
-              );
-            },
-          )}
+              </Fragment>
+            );
+          })}
 
         </tbody>
 
       </table>
-
     </div>
   );
 }
 
-
-/* =========================================================
-   RELATÓRIO
-========================================================= */
+/* =====================================================
+   COMPONENTE PRINCIPAL
+===================================================== */
 
 export default function ConsumoProgramadoPorInjetora({
   relatorio,
 }) {
-  const periodoInicial =
-    useMemo(
-      () =>
-        obterPeriodoInicial(),
-      [],
-    );
+  const periodoInicial = useMemo(
+    () => obterPeriodoInicial(),
+    [],
+  );
 
+  const [dataInicial, setDataInicial] = useState(
+    periodoInicial.inicio,
+  );
 
-  const [
-    dataInicial,
-    setDataInicial,
-  ] =
-    useState(
-      periodoInicial.inicio,
-    );
-
-
-  const [
-    dataFinal,
-    setDataFinal,
-  ] =
-    useState(
-      periodoInicial.fim,
-    );
-
+  const [dataFinal, setDataFinal] = useState(
+    periodoInicial.fim,
+  );
 
   const [
     injetorasExpandidas,
     setInjetorasExpandidas,
-  ] =
-    useState(
-      () =>
-        new Set(),
-    );
-
+  ] = useState(() => new Set());
 
   const [
     visualizacaoAberta,
     setVisualizacaoAberta,
-  ] =
-    useState(
-      false,
-    );
+  ] = useState(false);
 
+  const [exportando, setExportando] = useState(null);
 
-  const [
-    exportando,
-    setExportando,
-  ] =
-    useState(
-      null,
-    );
+  /* =================================================
+     ESTADO DA PAGINAÇÃO
+  ================================================= */
 
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
-  const periodoInvalido =
-    Boolean(
-      dataInicial &&
-      dataFinal &&
-      dataFinal <
-        dataInicial,
-    );
+  const periodoInvalido = Boolean(
+    dataInicial &&
+    dataFinal &&
+    dataFinal < dataInicial,
+  );
 
+  /* =================================================
+     DADOS ORIGINAIS
+  ================================================= */
 
   const {
     dados,
     carregando,
     atualizando,
     erro,
-  } =
-    useConsumoProgramado({
-      dataInicial,
+  } = useConsumoProgramado({
+    dataInicial,
+    dataFinal,
+    habilitado: !periodoInvalido,
+  });
 
-      dataFinal,
+  const possuiDados = dados.porInjetora.length > 0;
 
-      habilitado:
-        !periodoInvalido,
-    });
+  const textoFiltros = montarTextoPeriodo(
+    dataInicial,
+    dataFinal,
+  );
 
+  /* =================================================
+     PAGINAÇÃO DA VISUALIZAÇÃO
 
-  const possuiDados =
-    dados.porInjetora.length >
-    0;
+     NÃO ALTERA A BASE ORIGINAL.
 
+     10 INJETORAS POR PÁGINA.
+  ================================================= */
 
-  const textoFiltros =
-    montarTextoPeriodo(
-      dataInicial,
-      dataFinal,
-    );
+  const totalItens = dados.porInjetora.length;
 
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(totalItens / ITENS_POR_PAGINA),
+  );
 
-  const exportacao =
-    useMemo(
-      () =>
-        prepararExportacaoInjetora(
-          relatorio,
-          dados,
-        ),
-      [
+  const paginaValida = Math.max(
+    1,
+    Math.min(paginaAtual, totalPaginas),
+  );
+
+  const inicioPagina =
+    (paginaValida - 1) * ITENS_POR_PAGINA;
+
+  const injetorasPagina = useMemo(
+    () =>
+      dados.porInjetora.slice(
+        inicioPagina,
+        inicioPagina + ITENS_POR_PAGINA,
+      ),
+    [
+      dados.porInjetora,
+      inicioPagina,
+    ],
+  );
+
+  const inicioExibicao =
+    totalItens > 0 ? inicioPagina + 1 : 0;
+
+  const fimExibicao = Math.min(
+    inicioPagina + ITENS_POR_PAGINA,
+    totalItens,
+  );
+
+  /* =================================================
+     EXPORTAÇÃO
+
+     SEM PAGINAÇÃO.
+  ================================================= */
+
+  const exportacao = useMemo(
+    () =>
+      prepararExportacaoInjetora(
         relatorio,
         dados,
-      ],
-    );
+      ),
+    [
+      relatorio,
+      dados,
+    ],
+  );
 
-
-  /* =======================================================
+  /* =================================================
      EXPANSÃO
-  ======================================================= */
+  ================================================= */
 
-  function alternarInjetora(
-    injetora,
-  ) {
-    setInjetorasExpandidas(
-      (
-        atuais,
-      ) => {
-        const proximo =
-          new Set(
-            atuais,
-          );
+  function alternarInjetora(injetora) {
+    setInjetorasExpandidas((atuais) => {
+      const proximo = new Set(atuais);
 
+      if (proximo.has(injetora)) {
+        proximo.delete(injetora);
+      } else {
+        proximo.add(injetora);
+      }
 
-        if (
-          proximo.has(
-            injetora,
-          )
-        ) {
-          proximo.delete(
-            injetora,
-          );
-        } else {
-          proximo.add(
-            injetora,
-          );
-        }
-
-
-        return proximo;
-      },
-    );
+      return proximo;
+    });
   }
 
+  /* =================================================
+     ALTERAÇÃO DE FILTROS
+  ================================================= */
 
-  /* =======================================================
-     PDF
-  ======================================================= */
+  function alterarDataInicial(valor) {
+    setDataInicial(valor);
+    setPaginaAtual(1);
+    setInjetorasExpandidas(new Set());
+  }
+
+  function alterarDataFinal(valor) {
+    setDataFinal(valor);
+    setPaginaAtual(1);
+    setInjetorasExpandidas(new Set());
+  }
+
+  /* =================================================
+     PDF ORIGINAL
+  ================================================= */
 
   async function exportarPDF() {
     if (
       !possuiDados ||
       exportando ||
-      exportacao.dadosExportacao.length ===
-        0
+      exportacao.dadosExportacao.length === 0
     ) {
       return;
     }
 
-
     try {
-      setExportando(
-        "pdf",
+      setExportando("pdf");
+
+      const { gerarPdfRelatorio } = await import(
+        "../exportacao/GerarPDF"
       );
 
-
-      const {
-        gerarPdfRelatorio,
-      } =
-        await import(
-          "../exportacao/GerarPDF"
-        );
-
-
       await gerarPdfRelatorio({
-        relatorio:
-          exportacao.relatorioExportacao,
-
-        dados:
-          exportacao.dadosExportacao,
-
+        relatorio: exportacao.relatorioExportacao,
+        dados: exportacao.dadosExportacao,
         textoFiltros,
       });
 
@@ -1380,54 +899,36 @@ export default function ConsumoProgramadoPorInjetora({
         error,
       );
 
-
-      window.alert(
-        "Não foi possível gerar o PDF.",
-      );
+      window.alert("Não foi possível gerar o PDF.");
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
-
-  /* =======================================================
-     EXCEL
-  ======================================================= */
+  /* =================================================
+     EXCEL ORIGINAL
+  ================================================= */
 
   async function exportarExcel() {
     if (
       !possuiDados ||
       exportando ||
-      exportacao.dadosExportacao.length ===
-        0
+      exportacao.dadosExportacao.length === 0
     ) {
       return;
     }
 
-
     try {
-      setExportando(
-        "excel",
+      setExportando("excel");
+
+      const { gerarExcelRelatorio } = await import(
+        "../exportacao/GerarExcel"
       );
 
-
-      const {
-        gerarExcelRelatorio,
-      } =
-        await import(
-          "../exportacao/GerarExcel"
-        );
-
-
       await gerarExcelRelatorio({
-        relatorio:
-          exportacao.relatorioExportacao,
-
-        dados:
-          exportacao.dadosExportacao,
+        relatorio: exportacao.relatorioExportacao,
+        dados: exportacao.dadosExportacao,
       });
 
     } catch (error) {
@@ -1436,28 +937,21 @@ export default function ConsumoProgramadoPorInjetora({
         error,
       );
 
-
-      window.alert(
-        "Não foi possível gerar o Excel.",
-      );
+      window.alert("Não foi possível gerar o Excel.");
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* =====================================================
+     RENDERIZAÇÃO
+  ===================================================== */
 
   return (
     <>
-      {/* =================================================
-          CABEÇALHO
-      ================================================= */}
+
+      {/* CABEÇALHO */}
 
       <div className="relatorio-selecionado-header">
 
@@ -1465,358 +959,198 @@ export default function ConsumoProgramadoPorInjetora({
           <FiActivity />
         </div>
 
-
         <div>
-
           <span className="relatorio-selecionado-categoria">
-            {relatorio?.categoria ||
-              "Matéria-Prima"}
+            {relatorio?.categoria || "Matéria-Prima"}
           </span>
-
 
           <h2>
             {relatorio?.titulo ||
               "Consumo Programado por Injetora"}
           </h2>
 
-
           <p>
             {relatorio?.descricao ||
               "Consumo previsto de PP por injetora, com detalhamento das programações e da receita por fornecedor."}
           </p>
-
         </div>
 
       </div>
 
-
-      {/* =================================================
-          AÇÕES
-      ================================================= */}
+      {/* AÇÕES */}
 
       <div className="relatorio-acoes">
 
         <button
           type="button"
           className="btn-relatorio"
-          onClick={
-            () =>
-              setVisualizacaoAberta(
-                true,
-              )
-          }
-          disabled={
-            !possuiDados
-          }
+          onClick={() => {
+            setPaginaAtual(1);
+            setVisualizacaoAberta(true);
+          }}
+          disabled={!possuiDados}
         >
-
           <FiEye />
 
-
           <div>
-
-            <strong>
-              Visualizar
-            </strong>
-
-            <span>
-              Conferir antes de exportar
-            </span>
-
+            <strong>Visualizar</strong>
+            <span>Conferir antes de exportar</span>
           </div>
-
         </button>
-
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-pdf"
-          onClick={
-            exportarPDF
-          }
-          disabled={
-            !possuiDados ||
-            Boolean(
-              exportando,
-            )
-          }
+          onClick={exportarPDF}
+          disabled={!possuiDados || Boolean(exportando)}
         >
-
-          {exportando ===
-          "pdf" ? (
-
+          {exportando === "pdf" ? (
             <FiRefreshCw className="mpi-girando" />
-
           ) : (
-
             <FiFileText />
-
           )}
 
-
           <div>
-
-            <strong>
-              Baixar PDF
-            </strong>
-
-            <span>
-              Relatório formatado
-            </span>
-
+            <strong>Baixar PDF</strong>
+            <span>Relatório formatado</span>
           </div>
-
         </button>
-
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-csv"
-          onClick={
-            exportarExcel
-          }
-          disabled={
-            !possuiDados ||
-            Boolean(
-              exportando,
-            )
-          }
+          onClick={exportarExcel}
+          disabled={!possuiDados || Boolean(exportando)}
         >
-
-          {exportando ===
-          "excel" ? (
-
+          {exportando === "excel" ? (
             <FiRefreshCw className="mpi-girando" />
-
           ) : (
-
             <FiDownload />
-
           )}
 
-
           <div>
-
-            <strong>
-              Exportar Excel
-            </strong>
-
-            <span>
-              Tabela XLSX
-            </span>
-
+            <strong>Exportar Excel</strong>
+            <span>Tabela XLSX</span>
           </div>
-
         </button>
 
       </div>
 
-
-      {/* =================================================
-          FILTROS
-      ================================================= */}
+      {/* FILTROS */}
 
       <div className="relatorio-filtros-card">
 
         <div className="relatorio-filtros-header">
-
           <div>
-
-            <h3>
-              Parâmetros do relatório
-            </h3>
+            <h3>Parâmetros do relatório</h3>
 
             <p>
               Refine os dados antes de visualizar ou exportar.
             </p>
-
           </div>
-
         </div>
-
 
         <div className="mpi-filtros">
 
           <label>
-
-            <span>
-              De
-            </span>
-
+            <span>De</span>
 
             <input
               type="date"
-              value={
-                dataInicial
-              }
-              max={
-                dataFinal ||
-                undefined
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setDataInicial(
-                    event.target.value,
-                  )
+              value={dataInicial}
+              max={dataFinal || undefined}
+              onChange={(event) =>
+                alterarDataInicial(event.target.value)
               }
             />
-
           </label>
-
 
           <label>
-
-            <span>
-              Até
-            </span>
-
+            <span>Até</span>
 
             <input
               type="date"
-              value={
-                dataFinal
-              }
-              min={
-                dataInicial ||
-                undefined
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setDataFinal(
-                    event.target.value,
-                  )
+              value={dataFinal}
+              min={dataInicial || undefined}
+              onChange={(event) =>
+                alterarDataFinal(event.target.value)
               }
             />
-
           </label>
 
-
           {atualizando && (
-
             <span className="mpi-atualizando">
-
               <FiRefreshCw className="mpi-girando" />
 
               Atualizando dados...
-
             </span>
-
           )}
 
         </div>
 
       </div>
 
-
-      {/* =================================================
-          ERROS / AVISOS
-      ================================================= */}
+      {/* ERROS */}
 
       {periodoInvalido && (
-
         <div className="mpi-mensagem mpi-mensagem-erro">
-
           <FiAlertTriangle />
 
           <span>
             A data final não pode ser anterior à data inicial.
           </span>
-
         </div>
-
       )}
-
 
       {erro && (
-
         <div className="mpi-mensagem mpi-mensagem-erro">
-
           <FiAlertTriangle />
-
-          <span>
-            {erro}
-          </span>
-
+          <span>{erro}</span>
         </div>
-
       )}
 
-
-      {/* =================================================
-          RESUMO
-      ================================================= */}
+      {/* RESUMO ORIGINAL */}
 
       <div className="relatorio-resumo-grid">
 
         <div className="relatorio-resumo-card">
-
-          <span>
-            Registros no relatório
-          </span>
-
+          <span>Registros no relatório</span>
 
           <strong>
-
             {carregando
               ? "..."
               : formatarNumero(
                   dados.resumo.injetorasProgramadas,
                 )}
-
           </strong>
-
         </div>
 
-
         <div className="relatorio-resumo-card">
-
-          <span>
-            Relatório selecionado
-          </span>
-
+          <span>Relatório selecionado</span>
 
           <strong className="relatorio-resumo-texto">
-
             {relatorio?.titulo ||
               "Consumo Programado por Injetora"}
-
           </strong>
-
         </div>
 
-
         <div className="relatorio-resumo-card">
-
-          <span>
-            Filtros aplicados
-          </span>
-
+          <span>Filtros aplicados</span>
 
           <strong className="relatorio-resumo-texto">
             {textoFiltros}
           </strong>
-
         </div>
 
       </div>
 
+      {/* AVISO ORIGINAL */}
 
-      {Number(
-        dados.resumo.consumoSemReceitaKg ||
-          0,
-      ) > 0 && (
-
+      {Number(dados.resumo.consumoSemReceitaKg || 0) > 0 && (
         <div className="mpi-mensagem mpi-mensagem-aviso">
-
           <FiAlertTriangle />
 
-
           <span>
-
             <strong>
               {formatarKg(
                 dados.resumo.consumoSemReceitaKg,
@@ -1826,124 +1160,85 @@ export default function ConsumoProgramadoPorInjetora({
             ainda não está distribuído entre fornecedores porque{" "}
             {dados.resumo.programacoesSemReceita} programação(ões)
             possui(em) receita pendente.
-
           </span>
-
         </div>
-
       )}
 
-
-      {/* =================================================
-          VISUALIZAÇÃO
-      ================================================= */}
+      {/* PRÉ-VISUALIZAÇÃO */}
 
       {visualizacaoAberta && (
-
         <section className="relatorio-visualizacao">
 
           <div className="relatorio-visualizacao-header">
 
             <div>
-
               <span className="relatorio-visualizacao-eyebrow">
                 Pré-visualização
               </span>
-
 
               <h3>
                 {relatorio?.titulo ||
                   "Consumo Programado por Injetora"}
               </h3>
-
             </div>
-
 
             <button
               type="button"
               className="relatorio-visualizacao-fechar"
-              onClick={
-                () =>
-                  setVisualizacaoAberta(
-                    false,
-                  )
-              }
+              onClick={() => setVisualizacaoAberta(false)}
               aria-label="Fechar visualização"
             >
-
               <FiX />
-
             </button>
 
           </div>
 
+          {/* INDICADORES COMPLETOS */}
 
           <div className="relatorio-visualizacao-info mpi-visualizacao-info">
 
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                Filtros
-              </span>
-
-              <strong>
-                {textoFiltros}
-              </strong>
-
+              <span>Filtros</span>
+              <strong>{textoFiltros}</strong>
             </div>
 
-
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                Programações
-              </span>
+              <span>Programações</span>
 
               <strong>
                 {formatarNumero(
                   dados.resumo.programacoes,
                 )}
               </strong>
-
             </div>
 
-
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                Peças previstas
-              </span>
+              <span>Peças previstas</span>
 
               <strong>
                 {formatarNumero(
                   dados.resumo.pecasPrevistas,
                 )}
               </strong>
-
             </div>
 
-
             <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-
-              <span>
-                Consumo PP
-              </span>
+              <span>Consumo PP</span>
 
               <strong>
                 {formatarKg(
                   dados.resumo.consumoTotalKg,
                 )}
               </strong>
-
             </div>
 
           </div>
 
+          {/* TABELA PAGINADA */}
 
           {carregando ? (
 
             <div className="relatorio-visualizacao-vazia">
-
               <FiRefreshCw className="mpi-girando" />
 
               <strong>
@@ -1953,27 +1248,22 @@ export default function ConsumoProgramadoPorInjetora({
               <span>
                 Aguarde enquanto o consumo programado é calculado.
               </span>
-
             </div>
 
           ) : possuiDados ? (
 
             <TabelaInjetoras
-              dados={
-                dados
-              }
-              expandidas={
-                injetorasExpandidas
-              }
-              onAlternar={
-                alternarInjetora
-              }
+              dados={{
+                ...dados,
+                porInjetora: injetorasPagina,
+              }}
+              expandidas={injetorasExpandidas}
+              onAlternar={alternarInjetora}
             />
 
           ) : (
 
             <div className="relatorio-visualizacao-vazia">
-
               <FiFileText />
 
               <strong>
@@ -1983,20 +1273,19 @@ export default function ConsumoProgramadoPorInjetora({
               <span>
                 Ajuste o período para visualizar os dados.
               </span>
-
             </div>
 
           )}
 
+          {/* RODAPÉ */}
 
           <div className="relatorio-visualizacao-footer">
 
             <span>
-              {formatarNumero(
-                dados.porInjetora.length,
-              )} injetora(s) exibida(s)
+              Exibindo {inicioExibicao} a{" "}
+              {fimExibicao} de{" "}
+              {totalItens} injetora(s)
             </span>
-
 
             <span>
               Visualização atualizada conforme os filtros
@@ -2004,8 +1293,21 @@ export default function ConsumoProgramadoPorInjetora({
 
           </div>
 
-        </section>
+          {/* PAGINAÇÃO PADRÃO */}
 
+          {!carregando &&
+            totalItens > ITENS_POR_PAGINA && (
+
+              <Paginacao
+                paginaAtual={paginaValida}
+                totalItens={totalItens}
+                itensPorPagina={ITENS_POR_PAGINA}
+                onChangePagina={setPaginaAtual}
+              />
+
+            )}
+
+        </section>
       )}
 
     </>
