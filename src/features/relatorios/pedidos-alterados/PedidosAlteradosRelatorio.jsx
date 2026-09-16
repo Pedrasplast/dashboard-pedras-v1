@@ -1,5 +1,6 @@
 import {
   Fragment,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -15,303 +16,130 @@ import {
   FiSearch,
 } from "react-icons/fi";
 
-import {
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
+
+// Paginação padrão já utilizada no sistema.
+import Paginacao from "@/components/paginacao/Paginacao";
 
 import "./PedidosAlteradosRelatorio.css";
 
-
-/* =========================================================
+/* =====================================================
    CONFIGURAÇÕES
-========================================================= */
+===================================================== */
 
-const ITENS_POR_PAGINA =
-  12;
+const ITENS_POR_PAGINA = 8;
 
+/* =====================================================
+   FORMATAR DATA E HORA
+===================================================== */
 
-/* =========================================================
-   DATAS
-========================================================= */
-
-function formatarDataHora(
-  valor,
-) {
+function formatarDataHora(valor) {
   if (!valor) {
     return "-";
   }
 
-  const data =
-    new Date(
-      valor,
-    );
+  const data = new Date(valor);
 
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return "-";
   }
 
-  return data.toLocaleString(
-    "pt-BR",
-    {
-      day:
-        "2-digit",
-
-      month:
-        "2-digit",
-
-      year:
-        "numeric",
-
-      hour:
-        "2-digit",
-
-      minute:
-        "2-digit",
-    },
-  );
+  return data.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
+/* =====================================================
+   FORMATAR DATA PARA INPUT
+===================================================== */
 
-/* =========================================================
-   DATA SEM CONVERSÃO DE FUSO HORÁRIO
+function formatarDataInput(data) {
+  const ano = data.getFullYear();
 
-   Campos DATE do PostgreSQL chegam normalmente como:
-   2026-09-14
+  const mes = String(
+    data.getMonth() + 1,
+  ).padStart(2, "0");
 
-   Não devemos usar:
-   new Date("2026-09-14")
-
-   porque o JavaScript interpreta essa data em UTC e,
-   no horário do Brasil, pode exibir 13/09/2026.
-
-   Aqui a data é tratada como calendário, sem timezone.
-========================================================= */
-
-function formatarDataCalendario(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
-    return "-";
-  }
-
-
-  const texto =
-    String(
-      valor,
-    ).trim();
-
-
-  const correspondencia =
-    texto.match(
-      /^(\d{4})-(\d{2})-(\d{2})$/,
-    );
-
-
-  if (
-    correspondencia
-  ) {
-    const [
-      ,
-      ano,
-      mes,
-      dia,
-    ] =
-      correspondencia;
-
-
-    return `${dia}/${mes}/${ano}`;
-  }
-
-
-  /*
-   * Segurança para algum campo antigo que eventualmente
-   * tenha sido salvo como timestamp em vez de DATE.
-   */
-  const data =
-    new Date(
-      texto,
-    );
-
-
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
-    return texto;
-  }
-
-
-  return data.toLocaleDateString(
-    "pt-BR",
-  );
-}
-
-
-function formatarDataInput(
-  data,
-) {
-  const ano =
-    data.getFullYear();
-
-  const mes =
-    String(
-      data.getMonth() + 1,
-    ).padStart(
-      2,
-      "0",
-    );
-
-  const dia =
-    String(
-      data.getDate(),
-    ).padStart(
-      2,
-      "0",
-    );
+  const dia = String(
+    data.getDate(),
+  ).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
 }
 
+/* =====================================================
+   PERÍODO PADRÃO
+
+   Primeiro dia do mês até hoje.
+===================================================== */
 
 function obterPeriodoPadrao() {
-  /*
-   * O relatório abre automaticamente
-   * do primeiro dia do mês atual até hoje.
-   *
-   * Ao alterar qualquer uma das datas,
-   * o React Query consulta o banco novamente.
-   */
-  const hoje =
-    new Date();
+  const hoje = new Date();
 
-  const inicio =
-    new Date(
-      hoje.getFullYear(),
-      hoje.getMonth(),
-      1,
-    );
+  const inicio = new Date(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    1,
+  );
 
   return {
-    inicio:
-      formatarDataInput(
-        inicio,
-      ),
-
-    fim:
-      formatarDataInput(
-        hoje,
-      ),
+    inicio: formatarDataInput(inicio),
+    fim: formatarDataInput(hoje),
   };
 }
 
+/* =====================================================
+   NORMALIZAR TEXTO
+===================================================== */
 
-/* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(
-  valor,
-) {
-  return String(
-    valor ?? "",
-  )
+function normalizarTexto(valor) {
+  return String(valor ?? "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
+/* =====================================================
+   RÓTULOS DOS CAMPOS
+===================================================== */
 
-/* =========================================================
-   CAMPOS
-========================================================= */
+const ROTULOS_DETALHES = Object.freeze({
+  numero_pedido: "Número do pedido",
+  cliente: "Cliente",
+  data_pedido: "Data do pedido",
+  previsao: "Previsão de faturamento",
+  codigo_produto: "Código do produto",
+  produto: "Produto",
+  quantidade: "Quantidade",
+  unidade: "Unidade",
+  vendedor: "Vendedor",
+  valor: "Valor",
+  item_adicionado: "Item adicionado",
+});
 
-const ROTULOS_DETALHES =
-  Object.freeze({
-    numero_pedido:
-      "Número do pedido",
-
-    cliente:
-      "Cliente",
-
-    data_pedido:
-      "Data do pedido",
-
-    previsao:
-      "Previsão de faturamento",
-
-    codigo_produto:
-      "Código do produto",
-
-    produto:
-      "Produto",
-
-    quantidade:
-      "Quantidade",
-
-    unidade:
-      "Unidade",
-
-    vendedor:
-      "Vendedor",
-
-    valor:
-      "Valor",
-
-    item_adicionado:
-      "Item adicionado",
-  });
-
-
-function obterRotuloCampo(
-  chave,
-) {
+function obterRotuloCampo(chave) {
   return (
-    ROTULOS_DETALHES[
-      chave
-    ] ||
-    String(
-      chave ?? "",
-    )
-      .replace(
-        /_/g,
-        " ",
-      )
-      .replace(
-        /^\w/,
-        (
-          letra,
-        ) =>
-          letra.toUpperCase(),
+    ROTULOS_DETALHES[chave] ||
+    String(chave ?? "")
+      .replace(/_/g, " ")
+      .replace(/^\w/, (letra) =>
+        letra.toUpperCase(),
       )
   );
 }
 
+/* =====================================================
+   FORMATAR VALORES DO HISTÓRICO
+===================================================== */
 
-/* =========================================================
-   VALORES
-========================================================= */
-
-function formatarValorGenerico(
-  valor,
-  chave = "",
-) {
+function formatarValorGenerico(valor, chave = "") {
   if (
     valor === null ||
     valor === undefined ||
@@ -320,572 +148,402 @@ function formatarValorGenerico(
     return "-";
   }
 
-  if (
-    typeof valor ===
-    "object"
-  ) {
-    return JSON.stringify(
-      valor,
-    );
+  if (typeof valor === "object") {
+    return JSON.stringify(valor);
   }
 
-  const chaveNormalizada =
-    normalizarTexto(
-      chave,
-    );
-
-
-  /* =======================================================
-     DATAS
-
-     IMPORTANTE:
-     campos DATE são tratados sem new Date() para evitar
-     deslocamento de um dia por causa do fuso horário.
-  ======================================================= */
+  const chaveNormalizada = normalizarTexto(chave);
 
   if (
-    chaveNormalizada.includes(
-      "data",
-    ) ||
-    chaveNormalizada.includes(
-      "previsao",
-    )
+    chaveNormalizada.includes("data") ||
+    chaveNormalizada.includes("previsao")
   ) {
-    return formatarDataCalendario(
-      valor,
-    );
+    const data = new Date(String(valor));
+
+    if (!Number.isNaN(data.getTime())) {
+      return data.toLocaleDateString("pt-BR");
+    }
   }
-
-
-  /* =======================================================
-     VALOR
-  ======================================================= */
 
   if (
-    chaveNormalizada ===
-      "valor" &&
-    Number.isFinite(
-      Number(
-        valor,
-      ),
-    )
+    chaveNormalizada === "valor" &&
+    Number.isFinite(Number(valor))
   ) {
-    return Number(
-      valor,
-    ).toLocaleString(
-      "pt-BR",
-      {
-        style:
-          "currency",
-
-        currency:
-          "BRL",
-      },
-    );
+    return Number(valor).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   }
 
-  return String(
-    valor,
-  );
+  return String(valor);
 }
 
+/* =====================================================
+   EXTRAIR ALTERAÇÕES DE UMA OCORRÊNCIA
+===================================================== */
 
-/* =========================================================
-   DETALHES DE UMA OCORRÊNCIA
-========================================================= */
-
-function extrairMudancas(
-  ocorrencia,
-) {
-  const detalhes =
-    ocorrencia
-      ?.detalhes;
+function extrairMudancas(ocorrencia) {
+  const detalhes = ocorrencia?.detalhes;
 
   if (
     !detalhes ||
-    typeof detalhes !==
-      "object"
+    typeof detalhes !== "object"
   ) {
     return [];
   }
 
-  return Object.entries(
-    detalhes,
-  ).map(
-    (
-      [
-        chave,
-        valor,
-      ],
-    ) => {
+  return Object.entries(detalhes).map(
+    ([chave, valor]) => {
+
+      /* ITEM ADICIONADO */
+
       if (
-        chave ===
-          "item_adicionado" &&
+        chave === "item_adicionado" &&
         valor &&
-        typeof valor ===
-          "object"
+        typeof valor === "object"
       ) {
-        const descricao =
-          [
-            valor.codigo_produto,
-            valor.produto,
-            valor.quantidade !==
-              undefined
-              ? `${valor.quantidade} ${valor.unidade || ""}`.trim()
-              : null,
-          ]
-            .filter(
-              Boolean,
-            )
-            .join(
-              " • ",
-            );
+        const descricao = [
+          valor.codigo_produto,
+
+          valor.produto,
+
+          valor.quantidade !== undefined
+            ? `${valor.quantidade} ${
+                valor.unidade || ""
+              }`.trim()
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" • ");
 
         return {
           chave,
-
-          campo:
-            "Item adicionado",
-
-          anterior:
-            "-",
-
-          novo:
-            descricao ||
-            "Novo item incluído",
+          campo: "Item adicionado",
+          anterior: "-",
+          novo: descricao || "Novo item incluído",
         };
       }
 
+      /* ALTERAÇÃO NORMAL */
 
       const anterior =
-        valor &&
-        typeof valor ===
-          "object"
+        valor && typeof valor === "object"
           ? valor.anterior
           : null;
 
       const novo =
-        valor &&
-        typeof valor ===
-          "object"
+        valor && typeof valor === "object"
           ? valor.novo
           : valor;
-
 
       return {
         chave,
 
-        campo:
-          obterRotuloCampo(
-            chave,
-          ),
+        campo: obterRotuloCampo(chave),
 
-        anterior:
-          formatarValorGenerico(
-            anterior,
-            chave,
-          ),
+        anterior: formatarValorGenerico(
+          anterior,
+          chave,
+        ),
 
-        novo:
-          formatarValorGenerico(
-            novo,
-            chave,
-          ),
+        novo: formatarValorGenerico(
+          novo,
+          chave,
+        ),
       };
     },
   );
 }
 
-
-/* =========================================================
-   COMPONENTE
-========================================================= */
+/* =====================================================
+   COMPONENTE PRINCIPAL
+===================================================== */
 
 export default function PedidosAlteradosRelatorio() {
-  const periodoPadrao =
-    useMemo(
-      () =>
-        obterPeriodoPadrao(),
-      [],
-    );
 
+  /* =================================================
+     PERÍODO INICIAL
+  ================================================= */
 
-  /* =======================================================
-     FILTROS
-  ======================================================= */
+  const periodoPadrao = useMemo(
+    () => obterPeriodoPadrao(),
+    [],
+  );
 
-  const [
-    dataInicial,
-    setDataInicial,
-  ] =
-    useState(
-      periodoPadrao
-        .inicio,
-    );
+  /* =================================================
+     ESTADOS DOS FILTROS
+  ================================================= */
 
+  const [dataInicial, setDataInicial] = useState(
+    periodoPadrao.inicio,
+  );
 
-  const [
-    dataFinal,
-    setDataFinal,
-  ] =
-    useState(
-      periodoPadrao
-        .fim,
-    );
+  const [dataFinal, setDataFinal] = useState(
+    periodoPadrao.fim,
+  );
 
+  const [pesquisa, setPesquisa] = useState("");
 
-  const [
-    pesquisa,
-    setPesquisa,
-  ] =
-    useState("");
+  /* =================================================
+     PAGINAÇÃO
+  ================================================= */
 
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
-  const [
-    paginaAtual,
-    setPaginaAtual,
-  ] =
-    useState(1);
-
+  /* =================================================
+     HISTÓRICO EXPANDIDO
+  ================================================= */
 
   const [
     pedidosExpandidos,
     setPedidosExpandidos,
-  ] =
-    useState(
-      () =>
-        new Set(),
-    );
+  ] = useState(() => new Set());
 
+  /* =================================================
+     EXPORTAÇÃO
+  ================================================= */
 
-  const [
-    exportando,
-    setExportando,
-  ] =
-    useState(
-      null,
-    );
+  const [exportando, setExportando] = useState(null);
 
+  /* =================================================
+     CONSULTA SUPABASE
 
-  /* =======================================================
-     CONSULTA
-
-     NÃO existe botão Atualizar.
-
-     A consulta acontece automaticamente:
-     - ao abrir;
-     - ao trocar "De";
-     - ao trocar "Até";
-     - ao voltar para a aba do navegador.
-  ======================================================= */
+     Mantém a consulta original da auditoria.
+  ================================================= */
 
   const {
-    data:
-      relatorio = [],
-
+    data: relatorio = [],
     isLoading,
-
     error,
-  } =
-    useQuery({
-      queryKey: [
-        "relatorio-pedidos-alterados",
-        dataInicial,
-        dataFinal,
-      ],
+  } = useQuery({
+    queryKey: [
+      "relatorio-pedidos-alterados",
+      dataInicial,
+      dataFinal,
+    ],
 
-      queryFn:
-        async () => {
-          const {
-            data,
-            error:
-              erroRpc,
-          } =
-            await supabase.rpc(
-              "listar_relatorio_pedidos_alterados",
-              {
-                p_data_inicial:
-                  dataInicial ||
-                  null,
+    queryFn: async () => {
+      const {
+        data,
+        error: erroRpc,
+      } = await supabase.rpc(
+        "listar_relatorio_pedidos_alterados",
+        {
+          p_data_inicial: dataInicial || null,
 
-                p_data_final:
-                  dataFinal ||
-                  null,
+          p_data_final: dataFinal || null,
 
-                p_limite:
-                  2000,
-              },
-            );
-
-          if (
-            erroRpc
-          ) {
-            throw erroRpc;
-          }
-
-          return Array.isArray(
-            data,
-          )
-            ? data
-            : [];
+          p_limite: 2000,
         },
+      );
 
-      staleTime:
-        30 * 1000,
+      if (erroRpc) {
+        throw erroRpc;
+      }
 
-      refetchOnWindowFocus:
-        true,
+      return Array.isArray(data) ? data : [];
+    },
 
-      retry:
-        1,
+    staleTime: 30 * 1000,
+
+    refetchOnWindowFocus: true,
+
+    retry: 1,
+  });
+
+  /* =================================================
+     FILTRAGEM LOCAL
+  ================================================= */
+
+  const pedidosFiltrados = useMemo(() => {
+    const termo = normalizarTexto(pesquisa);
+
+    if (!termo) {
+      return relatorio;
+    }
+
+    return relatorio.filter((pedido) => {
+      const campos = Array.isArray(
+        pedido?.campos_alterados,
+      )
+        ? pedido.campos_alterados.join(" ")
+        : "";
+
+      return [
+        pedido?.numero_pedido,
+        pedido?.cliente,
+        pedido?.vendedor,
+        campos,
+        pedido?.ultimo_resumo,
+      ].some((valor) =>
+        normalizarTexto(valor).includes(termo),
+      );
     });
 
+  }, [relatorio, pesquisa]);
 
-  /* =======================================================
-     FILTRO LOCAL
-  ======================================================= */
+  /* =================================================
+     TOTAL DE ALTERAÇÕES
 
-  const pedidosFiltrados =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            pesquisa,
-          );
+     Calculado sobre todos os registros filtrados,
+     independentemente da página atual.
+  ================================================= */
 
-        if (
-          !termo
-        ) {
-          return relatorio;
-        }
-
-        return relatorio.filter(
-          (
-            pedido,
-          ) => {
-            const campos =
-              Array.isArray(
-                pedido
-                  ?.campos_alterados,
-              )
-                ? pedido
-                    .campos_alterados
-                    .join(
-                      " ",
-                    )
-                : "";
-
-            return [
-              pedido
-                ?.numero_pedido,
-
-              pedido
-                ?.cliente,
-
-              pedido
-                ?.vendedor,
-
-              campos,
-
-              pedido
-                ?.ultimo_resumo,
-            ].some(
-              (
-                valor,
-              ) =>
-                normalizarTexto(
-                  valor,
-                ).includes(
-                  termo,
-                ),
-            );
-          },
-        );
-      },
-      [
-        relatorio,
-        pesquisa,
-      ],
-    );
-
-
-  /* =======================================================
-     INDICADORES
-  ======================================================= */
-
-  const totalAlteracoes =
-    useMemo(
-      () =>
-        pedidosFiltrados.reduce(
-          (
-            total,
-            pedido,
-          ) =>
-            total +
-            Number(
-              pedido
-                ?.quantidade_alteracoes ??
-              0,
-            ),
-          0,
-        ),
-      [
-        pedidosFiltrados,
-      ],
-    );
-
-
-  /* =======================================================
-     PAGINAÇÃO
-  ======================================================= */
-
-  const totalPaginas =
-    Math.max(
-      1,
-      Math.ceil(
-        pedidosFiltrados
-          .length /
-          ITENS_POR_PAGINA,
+  const totalAlteracoes = useMemo(
+    () =>
+      pedidosFiltrados.reduce(
+        (total, pedido) =>
+          total +
+          Number(
+            pedido?.quantidade_alteracoes ?? 0,
+          ),
+        0,
       ),
+
+    [pedidosFiltrados],
+  );
+
+  /* =================================================
+     PAGINAÇÃO PADRÃO
+
+     10 pedidos por página.
+  ================================================= */
+
+  const totalItens = pedidosFiltrados.length;
+
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(totalItens / ITENS_POR_PAGINA),
+  );
+
+  /* =================================================
+     GARANTIR PÁGINA VÁLIDA
+  ================================================= */
+
+  const paginaValida = Math.max(
+    1,
+    Math.min(paginaAtual, totalPaginas),
+  );
+
+  useEffect(() => {
+    if (paginaAtual !== paginaValida) {
+      setPaginaAtual(paginaValida);
+    }
+  }, [
+    paginaAtual,
+    paginaValida,
+  ]);
+
+  /* =================================================
+     PEDIDOS DA PÁGINA ATUAL
+
+     Somente a tabela recebe paginação.
+  ================================================= */
+
+  const pedidosPagina = useMemo(() => {
+    const inicio =
+      (paginaValida - 1) * ITENS_POR_PAGINA;
+
+    return pedidosFiltrados.slice(
+      inicio,
+      inicio + ITENS_POR_PAGINA,
     );
 
+  }, [
+    pedidosFiltrados,
+    paginaValida,
+  ]);
 
-  const pedidosPagina =
-    useMemo(
-      () => {
-        const pagina =
-          Math.min(
-            paginaAtual,
-            totalPaginas,
-          );
+  /* =================================================
+     INTERVALO EXIBIDO
+  ================================================= */
 
-        const inicio =
-          (
-            pagina - 1
-          ) *
-          ITENS_POR_PAGINA;
+  const inicioExibicao =
+    totalItens > 0
+      ? (paginaValida - 1) *
+          ITENS_POR_PAGINA +
+        1
+      : 0;
 
-        return pedidosFiltrados.slice(
-          inicio,
-          inicio +
-            ITENS_POR_PAGINA,
-        );
-      },
-      [
-        pedidosFiltrados,
-        paginaAtual,
-        totalPaginas,
-      ],
-    );
+  const fimExibicao = Math.min(
+    paginaValida * ITENS_POR_PAGINA,
+    totalItens,
+  );
 
+  /* =================================================
+     EXPANDIR HISTÓRICO DO PEDIDO
+  ================================================= */
 
-  /* =======================================================
-     EXPANDIR
-  ======================================================= */
+  function alternarPedido(codigo) {
+    setPedidosExpandidos((atual) => {
+      const proximo = new Set(atual);
 
-  function alternarPedido(
-    codigo,
-  ) {
-    setPedidosExpandidos(
-      (
-        atual,
-      ) => {
-        const proximo =
-          new Set(
-            atual,
-          );
+      if (proximo.has(codigo)) {
+        proximo.delete(codigo);
+      } else {
+        proximo.add(codigo);
+      }
 
-        if (
-          proximo.has(
-            codigo,
-          )
-        ) {
-          proximo.delete(
-            codigo,
-          );
-        } else {
-          proximo.add(
-            codigo,
-          );
-        }
-
-        return proximo;
-      },
-    );
+      return proximo;
+    });
   }
 
+  /* =================================================
+     ALTERAR DATA INICIAL
+  ================================================= */
 
-  /* =======================================================
-     FILTROS
-  ======================================================= */
+  function alterarDataInicial(valor) {
+    setDataInicial(valor);
 
-  function alterarDataInicial(
-    valor,
-  ) {
-    setDataInicial(
-      valor,
-    );
-
-    setPaginaAtual(
-      1,
-    );
+    setPaginaAtual(1);
   }
 
+  /* =================================================
+     ALTERAR DATA FINAL
+  ================================================= */
 
-  function alterarDataFinal(
-    valor,
-  ) {
-    setDataFinal(
-      valor,
-    );
+  function alterarDataFinal(valor) {
+    setDataFinal(valor);
 
-    setPaginaAtual(
-      1,
-    );
+    setPaginaAtual(1);
   }
 
+  /* =================================================
+     ALTERAR PESQUISA
+  ================================================= */
 
-  function alterarPesquisa(
-    valor,
-  ) {
-    setPesquisa(
-      valor,
-    );
+  function alterarPesquisa(valor) {
+    setPesquisa(valor);
 
-    setPaginaAtual(
-      1,
-    );
+    setPaginaAtual(1);
   }
 
+  /* =================================================
+     EXPORTAR PDF
 
-  /* =======================================================
-     EXPORTAÇÃO PDF
-  ======================================================= */
+     Exporta todos os pedidos filtrados.
+     Não utiliza pedidosPagina.
+  ================================================= */
 
   async function exportarPDF() {
     if (
-      pedidosFiltrados
-        .length ===
-      0
+      pedidosFiltrados.length === 0 ||
+      exportando
     ) {
       return;
     }
 
     try {
-      setExportando(
-        "pdf",
-      );
+      setExportando("pdf");
 
       const {
         exportarPdfPedidosAlterados,
-      } =
-        await import(
-          "./ExportarPedidosAlteradosPDF.js"
-        );
+      } = await import(
+        "./ExportarPedidosAlteradosPDF.js"
+      );
 
       await exportarPdfPedidosAlterados({
-        pedidos:
-          pedidosFiltrados,
+        pedidos: pedidosFiltrados,
 
         dataInicial,
 
@@ -909,41 +567,36 @@ export default function PedidosAlteradosRelatorio() {
       );
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
+  /* =================================================
+     EXPORTAR EXCEL
 
-  /* =======================================================
-     EXPORTAÇÃO EXCEL
-  ======================================================= */
+     Exporta todos os pedidos filtrados.
+     Não utiliza pedidosPagina.
+  ================================================= */
 
   async function exportarExcel() {
     if (
-      pedidosFiltrados
-        .length ===
-      0
+      pedidosFiltrados.length === 0 ||
+      exportando
     ) {
       return;
     }
 
     try {
-      setExportando(
-        "excel",
-      );
+      setExportando("excel");
 
       const {
         exportarExcelPedidosAlterados,
-      } =
-        await import(
-          "./ExportarPedidosAlteradosExcel.js"
-        );
+      } = await import(
+        "./ExportarPedidosAlteradosExcel.js"
+      );
 
       await exportarExcelPedidosAlterados({
-        pedidos:
-          pedidosFiltrados,
+        pedidos: pedidosFiltrados,
 
         dataInicial,
 
@@ -967,24 +620,23 @@ export default function PedidosAlteradosRelatorio() {
       );
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* =====================================================
+     RENDERIZAÇÃO
+  ===================================================== */
 
   return (
     <>
-      {/* =================================================
-          CABEÇALHO — MESMO PADRÃO DOS RELATÓRIOS
-      ================================================= */}
+
+      {/* ===============================================
+          CABEÇALHO DO RELATÓRIO
+      =============================================== */}
 
       <div className="relatorio-selecionado-header">
+
         <div className="relatorio-selecionado-icone">
           <FiEdit3 />
         </div>
@@ -1003,23 +655,27 @@ export default function PedidosAlteradosRelatorio() {
             sem considerar o avanço normal de status ou etapa.
           </p>
         </div>
+
       </div>
 
-
-      {/* =================================================
-          AÇÕES — MESMO PADRÃO PDF / EXCEL
-      ================================================= */}
+      {/* ===============================================
+          AÇÕES
+      =============================================== */}
 
       <div className="relatorio-acoes">
+
+        {/* PDF */}
+
         <button
           type="button"
           className="btn-relatorio btn-relatorio-pdf"
           onClick={exportarPDF}
           disabled={
-            pedidosFiltrados.length === 0 ||
+            totalItens === 0 ||
             Boolean(exportando)
           }
         >
+
           {exportando === "pdf" ? (
             <FiRefreshCw className="pedidos-alterados-girando" />
           ) : (
@@ -1035,18 +691,21 @@ export default function PedidosAlteradosRelatorio() {
               Histórico expandido por pedido
             </span>
           </div>
+
         </button>
 
+        {/* EXCEL */}
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-csv"
           onClick={exportarExcel}
           disabled={
-            pedidosFiltrados.length === 0 ||
+            totalItens === 0 ||
             Boolean(exportando)
           }
         >
+
           {exportando === "excel" ? (
             <FiRefreshCw className="pedidos-alterados-girando" />
           ) : (
@@ -1062,15 +721,17 @@ export default function PedidosAlteradosRelatorio() {
               Resumo + histórico expandido
             </span>
           </div>
+
         </button>
+
       </div>
 
-
-      {/* =================================================
-          FILTROS — MESMO CARD DOS RELATÓRIOS
-      ================================================= */}
+      {/* ===============================================
+          FILTROS
+      =============================================== */}
 
       <div className="relatorio-filtros-card">
+
         <div className="relatorio-filtros-header">
           <div>
             <h3>
@@ -1078,14 +739,18 @@ export default function PedidosAlteradosRelatorio() {
             </h3>
 
             <p>
-              O período é atualizado automaticamente ao alterar as datas.
+              O período é atualizado automaticamente
+              ao alterar as datas.
             </p>
           </div>
         </div>
 
-
         <div className="pedidos-alterados-filtros">
+
+          {/* DATA INICIAL */}
+
           <label className="pedidos-alterados-campo">
+
             <span>
               De
             </span>
@@ -1100,10 +765,13 @@ export default function PedidosAlteradosRelatorio() {
                 )
               }
             />
+
           </label>
 
+          {/* DATA FINAL */}
 
           <label className="pedidos-alterados-campo">
+
             <span>
               Até
             </span>
@@ -1118,15 +786,19 @@ export default function PedidosAlteradosRelatorio() {
                 )
               }
             />
+
           </label>
 
+          {/* PESQUISA */}
 
           <label className="pedidos-alterados-campo pedidos-alterados-pesquisa-campo">
+
             <span>
               Buscar
             </span>
 
             <div className="pedidos-alterados-pesquisa">
+
               <FiSearch />
 
               <input
@@ -1139,441 +811,551 @@ export default function PedidosAlteradosRelatorio() {
                 }
                 placeholder="Pedido, cliente, vendedor ou campo alterado..."
               />
+
             </div>
+
           </label>
+
         </div>
+
       </div>
 
-
-      {/* =================================================
-          ERRO
-      ================================================= */}
+      {/* ===============================================
+          ERRO DA CONSULTA
+      =============================================== */}
 
       {error && (
         <div className="relatorios-erro pedidos-alterados-erro">
+
           <FiAlertTriangle />
 
           <span>
             {error.message ||
               "Não foi possível carregar as alterações dos pedidos."}
           </span>
+
         </div>
       )}
 
+      {/* ===============================================
+          CARREGAMENTO
+      =============================================== */}
 
-      {/* =================================================
-          CARREGANDO
-      ================================================= */}
+      {!error && isLoading && (
+
+        <div className="relatorios-loading pedidos-alterados-loading">
+
+          <div className="relatorios-loading-card">
+
+            <div className="relatorios-spinner" />
+
+            <p>
+              Carregando alterações dos pedidos...
+            </p>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* ===============================================
+          TABELA DE AUDITORIA
+      =============================================== */}
 
       {!error &&
-        isLoading && (
-          <div className="relatorios-loading pedidos-alterados-loading">
-            <div className="relatorios-loading-card">
-              <div className="relatorios-spinner" />
+        !isLoading &&
+        totalItens > 0 && (
 
-              <p>
-                Carregando alterações dos pedidos...
-              </p>
+        <>
+
+          <section className="relatorio-visualizacao pedidos-alterados-visualizacao">
+
+            {/* CABEÇALHO */}
+
+            <div className="relatorio-visualizacao-header">
+
+              <div>
+
+                <span className="relatorio-visualizacao-eyebrow">
+                  Auditoria
+                </span>
+
+                <h3>
+                  Alterações encontradas
+                </h3>
+
+              </div>
+
             </div>
-          </div>
-        )}
 
+            {/* INFORMAÇÕES */}
 
-      {/* =================================================
-          TABELA — MESMO PADRÃO DA VISUALIZAÇÃO
-      ================================================= */}
+            <div className="relatorio-visualizacao-info">
 
-      {!error &&
-        !isLoading &&
-        pedidosFiltrados.length > 0 && (
-          <>
-            <section className="relatorio-visualizacao pedidos-alterados-visualizacao">
-              <div className="relatorio-visualizacao-header">
-                <div>
-                  <span className="relatorio-visualizacao-eyebrow">
-                    Auditoria
-                  </span>
+              <div className="relatorio-visualizacao-info-item">
 
-                  <h3>
-                    Alterações encontradas
-                  </h3>
-                </div>
+                <span>
+                  Período
+                </span>
+
+                <strong>
+                  {dataInicial
+                    ? dataInicial.split("-").reverse().join("/")
+                    : "Sem data inicial"}
+
+                  {" até "}
+
+                  {dataFinal
+                    ? dataFinal.split("-").reverse().join("/")
+                    : "Sem data final"}
+                </strong>
+
               </div>
 
+              <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
 
-              <div className="relatorio-visualizacao-info">
-                <div className="relatorio-visualizacao-info-item">
-                  <span>
-                    Período
-                  </span>
+                <span>
+                  Pedidos
+                </span>
 
-                  <strong>
-                    {dataInicial
-                      ? dataInicial.split("-").reverse().join("/")
-                      : "Sem data inicial"}
-                    {" até "}
-                    {dataFinal
-                      ? dataFinal.split("-").reverse().join("/")
-                      : "Sem data final"}
-                  </strong>
-                </div>
+                <strong>
+                  {totalItens}
+                </strong>
 
-                <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-                  <span>
-                    Pedidos
-                  </span>
-
-                  <strong>
-                    {pedidosFiltrados.length}
-                  </strong>
-                </div>
               </div>
 
+            </div>
 
-              <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
-                <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
-                  <thead>
-                    <tr>
-                      <th>
-                        Pedido
-                      </th>
+            {/* =====================================
+                TABELA
+            ===================================== */}
 
-                      <th>
-                        Cliente
-                      </th>
+            <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
 
-                      <th>
-                        Vendedor
-                      </th>
+              <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
 
-                      <th>
-                        Última alteração
-                      </th>
+                <thead>
 
-                      <th>
-                        Nº alterações
-                      </th>
+                  <tr>
 
-                      <th>
-                        O que foi alterado
-                      </th>
+                    <th>Pedido</th>
 
-                      <th>
-                        Histórico
-                      </th>
-                    </tr>
-                  </thead>
+                    <th>Cliente</th>
 
+                    <th>Vendedor</th>
 
-                  <tbody>
-                    {pedidosPagina.map(
-                      (pedido) => {
-                        const codigo =
-                          pedido.codigo_pedido_omie;
+                    <th>Última alteração</th>
 
-                        const expandido =
-                          pedidosExpandidos.has(
-                            codigo,
-                          );
+                    <th>Nº alterações</th>
 
-                        const campos =
-                          Array.isArray(
-                            pedido.campos_alterados,
-                          )
-                            ? pedido.campos_alterados
-                            : [];
+                    <th>O que foi alterado</th>
 
-                        const ocorrencias =
-                          Array.isArray(
-                            pedido.detalhes_alteracoes,
-                          )
-                            ? pedido.detalhes_alteracoes
-                            : [];
+                    <th>Histórico</th>
 
+                  </tr>
 
-                        return (
-                          <Fragment
-                            key={`pedido-${codigo}`}
-                          >
-                            <tr>
-                              <td>
-                                <strong className="pedidos-alterados-numero">
-                                  {pedido.numero_pedido ||
-                                    codigo}
-                                </strong>
-                              </td>
+                </thead>
 
-                              <td>
-                                {pedido.cliente ||
-                                  "-"}
-                              </td>
+                {/* =================================
+                    CORPO DA TABELA
 
-                              <td>
-                                {pedido.vendedor ||
-                                  "-"}
-                              </td>
+                    Usa pedidosPagina.
+                ================================= */}
 
-                              <td>
-                                {formatarDataHora(
-                                  pedido.ultima_alteracao,
-                                )}
-                              </td>
+                <tbody>
 
-                              <td>
-                                <span className="pedidos-alterados-contador">
-                                  {pedido.quantidade_alteracoes}
-                                </span>
-                              </td>
+                  {pedidosPagina.map((pedido) => {
 
-                              <td>
-                                <div className="pedidos-alterados-campos">
-                                  {campos.map(
-                                    (campo) => (
-                                      <span
-                                        key={campo}
-                                      >
-                                        {campo}
-                                      </span>
-                                    ),
-                                  )}
-                                </div>
-                              </td>
+                    const codigo =
+                      pedido.codigo_pedido_omie;
 
-                              <td>
-                                <button
-                                  type="button"
-                                  className="pedidos-alterados-ver"
-                                  onClick={() =>
-                                    alternarPedido(
-                                      codigo,
-                                    )
-                                  }
-                                  aria-expanded={expandido}
-                                >
-                                  {expandido ? (
-                                    <FiChevronUp />
-                                  ) : (
-                                    <FiChevronDown />
-                                  )}
+                    const expandido =
+                      pedidosExpandidos.has(codigo);
 
-                                  {expandido
-                                    ? "Fechar"
-                                    : "Ver"}
-                                </button>
-                              </td>
-                            </tr>
+                    const campos = Array.isArray(
+                      pedido.campos_alterados,
+                    )
+                      ? pedido.campos_alterados
+                      : [];
 
+                    const ocorrencias = Array.isArray(
+                      pedido.detalhes_alteracoes,
+                    )
+                      ? pedido.detalhes_alteracoes
+                      : [];
 
-                            {expandido && (
-                              <tr className="pedidos-alterados-historico-linha">
-                                <td colSpan={7}>
-                                  <div className="pedidos-alterados-historico">
-                                    <div className="pedidos-alterados-historico-titulo">
-                                      <FiEdit3 />
+                    return (
 
-                                      <div>
-                                        <strong>
-                                          Histórico do pedido{" "}
-                                          {pedido.numero_pedido ||
-                                            codigo}
-                                        </strong>
+                      <Fragment key={`pedido-${codigo}`}>
 
-                                        <span>
-                                          {ocorrencias.length} ocorrência
-                                          {ocorrencias.length !== 1
-                                            ? "s"
-                                            : ""}
-                                        </span>
-                                      </div>
-                                    </div>
+                        {/* =========================
+                            LINHA DO PEDIDO
+                        ========================= */}
 
+                        <tr>
 
-                                    <div className="pedidos-alterados-ocorrencias">
-                                      {ocorrencias.map(
-                                        (
-                                          ocorrencia,
-                                          indice,
-                                        ) => {
-                                          const mudancas =
-                                            extrairMudancas(
-                                              ocorrencia,
-                                            );
+                          {/* PEDIDO */}
 
-                                          return (
-                                            <article
-                                              key={
-                                                ocorrencia.id ||
-                                                `${codigo}-${indice}`
-                                              }
-                                              className="pedidos-alterados-ocorrencia"
-                                            >
-                                              <div className="pedidos-alterados-ocorrencia-topo">
-                                                <strong>
-                                                  Alteração #
-                                                  {ocorrencias.length -
-                                                    indice}
-                                                </strong>
+                          <td>
 
-                                                <span>
-                                                  {formatarDataHora(
-                                                    ocorrencia.alterado_em,
-                                                  )}
-                                                </span>
-                                              </div>
+                            <strong className="pedidos-alterados-numero">
 
+                              {pedido.numero_pedido || codigo}
 
-                                              {mudancas.length > 0 ? (
-                                                <div className="pedidos-alterados-mudancas">
-                                                  {mudancas.map(
-                                                    (mudanca) => (
-                                                      <div
-                                                        key={`${ocorrencia.id}-${mudanca.chave}`}
-                                                        className="pedidos-alterados-mudanca"
-                                                      >
-                                                        <strong>
-                                                          {mudanca.campo}
-                                                        </strong>
+                            </strong>
 
-                                                        <div className="pedidos-alterados-antes-depois">
-                                                          <span>
-                                                            <small>
-                                                              Antes
-                                                            </small>
+                          </td>
 
-                                                            <b>
-                                                              {mudanca.anterior}
-                                                            </b>
-                                                          </span>
+                          {/* CLIENTE */}
 
-                                                          <span className="pedidos-alterados-seta">
-                                                            →
-                                                          </span>
+                          <td>
+                            {pedido.cliente || "-"}
+                          </td>
 
-                                                          <span>
-                                                            <small>
-                                                              Depois
-                                                            </small>
+                          {/* VENDEDOR */}
 
-                                                            <b>
-                                                              {mudanca.novo}
-                                                            </b>
-                                                          </span>
-                                                        </div>
-                                                      </div>
-                                                    ),
-                                                  )}
-                                                </div>
-                                              ) : (
-                                                <p className="pedidos-alterados-sem-detalhe">
-                                                  {ocorrencia.resumo ||
-                                                    "Alteração registrada sem detalhamento disponível."}
-                                                </p>
-                                              )}
-                                            </article>
-                                          );
-                                        },
-                                      )}
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
+                          <td>
+                            {pedido.vendedor || "-"}
+                          </td>
+
+                          {/* ÚLTIMA ALTERAÇÃO */}
+
+                          <td>
+                            {formatarDataHora(
+                              pedido.ultima_alteracao,
                             )}
-                          </Fragment>
-                        );
-                      },
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                          </td>
 
+                          {/* QUANTIDADE DE ALTERAÇÕES */}
 
-              <div className="relatorio-visualizacao-footer">
-                <span>
-                  {pedidosFiltrados.length} pedido(s) alterado(s)
-                </span>
+                          <td>
 
-                <span>
-                  {totalAlteracoes} alteração(ões) no período
-                </span>
-              </div>
-            </section>
+                            <span className="pedidos-alterados-contador">
 
+                              {pedido.quantidade_alteracoes}
 
-            {totalPaginas > 1 && (
-              <div className="pedidos-alterados-paginacao">
-                <button
-                  type="button"
-                  disabled={paginaAtual <= 1}
-                  onClick={() =>
-                    setPaginaAtual(
-                      (pagina) =>
-                        Math.max(
-                          1,
-                          pagina - 1,
-                        ),
-                    )
-                  }
-                >
-                  Anterior
-                </button>
+                            </span>
 
-                <span>
-                  Página{" "}
-                  <strong>
-                    {Math.min(
-                      paginaAtual,
-                      totalPaginas,
-                    )}
-                  </strong>{" "}
-                  de{" "}
-                  <strong>
-                    {totalPaginas}
-                  </strong>
-                </span>
+                          </td>
 
-                <button
-                  type="button"
-                  disabled={
-                    paginaAtual >=
-                    totalPaginas
-                  }
-                  onClick={() =>
-                    setPaginaAtual(
-                      (pagina) =>
-                        Math.min(
-                          totalPaginas,
-                          pagina + 1,
-                        ),
-                    )
-                  }
-                >
-                  Próxima
-                </button>
-              </div>
-            )}
-          </>
-        )}
+                          {/* CAMPOS ALTERADOS */}
 
+                          <td>
 
-      {/* =================================================
-          VAZIO
-      ================================================= */}
+                            <div className="pedidos-alterados-campos">
+
+                              {campos.map((campo) => (
+
+                                <span key={campo}>
+
+                                  {campo}
+
+                                </span>
+
+                              ))}
+
+                            </div>
+
+                          </td>
+
+                          {/* BOTÃO HISTÓRICO */}
+
+                          <td>
+
+                            <button
+                              type="button"
+                              className="pedidos-alterados-ver"
+                              onClick={() =>
+                                alternarPedido(codigo)
+                              }
+                              aria-expanded={expandido}
+                            >
+
+                              {expandido ? (
+                                <FiChevronUp />
+                              ) : (
+                                <FiChevronDown />
+                              )}
+
+                              {expandido ? "Fechar" : "Ver"}
+
+                            </button>
+
+                          </td>
+
+                        </tr>
+
+                        {/* =========================
+                            HISTÓRICO EXPANDIDO
+                        ========================= */}
+
+                        {expandido && (
+
+                          <tr className="pedidos-alterados-historico-linha">
+
+                            <td colSpan={7}>
+
+                              <div className="pedidos-alterados-historico">
+
+                                {/* TÍTULO */}
+
+                                <div className="pedidos-alterados-historico-titulo">
+
+                                  <FiEdit3 />
+
+                                  <div>
+
+                                    <strong>
+
+                                      Histórico do pedido{" "}
+
+                                      {pedido.numero_pedido || codigo}
+
+                                    </strong>
+
+                                    <span>
+
+                                      {ocorrencias.length} ocorrência
+
+                                      {ocorrencias.length !== 1
+                                        ? "s"
+                                        : ""}
+
+                                    </span>
+
+                                  </div>
+
+                                </div>
+
+                                {/* OCORRÊNCIAS */}
+
+                                <div className="pedidos-alterados-ocorrencias">
+
+                                  {ocorrencias.map(
+                                    (ocorrencia, indice) => {
+
+                                      const mudancas =
+                                        extrairMudancas(
+                                          ocorrencia,
+                                        );
+
+                                      return (
+
+                                        <article
+                                          key={
+                                            ocorrencia.id ||
+                                            `${codigo}-${indice}`
+                                          }
+                                          className="pedidos-alterados-ocorrencia"
+                                        >
+
+                                          {/* TOPO */}
+
+                                          <div className="pedidos-alterados-ocorrencia-topo">
+
+                                            <strong>
+
+                                              Alteração #
+
+                                              {ocorrencias.length - indice}
+
+                                            </strong>
+
+                                            <span>
+
+                                              {formatarDataHora(
+                                                ocorrencia.alterado_em,
+                                              )}
+
+                                            </span>
+
+                                          </div>
+
+                                          {/* MUDANÇAS */}
+
+                                          {mudancas.length > 0 ? (
+
+                                            <div className="pedidos-alterados-mudancas">
+
+                                              {mudancas.map((mudanca) => (
+
+                                                <div
+                                                  key={`${ocorrencia.id}-${mudanca.chave}`}
+                                                  className="pedidos-alterados-mudanca"
+                                                >
+
+                                                  <strong>
+
+                                                    {mudanca.campo}
+
+                                                  </strong>
+
+                                                  <div className="pedidos-alterados-antes-depois">
+
+                                                    {/* ANTES */}
+
+                                                    <span>
+
+                                                      <small>
+                                                        Antes
+                                                      </small>
+
+                                                      <b>
+
+                                                        {mudanca.anterior}
+
+                                                      </b>
+
+                                                    </span>
+
+                                                    {/* SETA */}
+
+                                                    <span className="pedidos-alterados-seta">
+
+                                                      →
+
+                                                    </span>
+
+                                                    {/* DEPOIS */}
+
+                                                    <span>
+
+                                                      <small>
+                                                        Depois
+                                                      </small>
+
+                                                      <b>
+
+                                                        {mudanca.novo}
+
+                                                      </b>
+
+                                                    </span>
+
+                                                  </div>
+
+                                                </div>
+
+                                              ))}
+
+                                            </div>
+
+                                          ) : (
+
+                                            <p className="pedidos-alterados-sem-detalhe">
+
+                                              {ocorrencia.resumo ||
+                                                "Alteração registrada sem detalhamento disponível."}
+
+                                            </p>
+
+                                          )}
+
+                                        </article>
+
+                                      );
+
+                                    },
+                                  )}
+
+                                </div>
+
+                              </div>
+
+                            </td>
+
+                          </tr>
+
+                        )}
+
+                      </Fragment>
+
+                    );
+
+                  })}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            {/* =====================================
+                RODAPÉ
+
+                Mantém totais gerais, mas exibe
+                o intervalo da página.
+            ===================================== */}
+
+            <div className="relatorio-visualizacao-footer">
+
+              <span>
+
+                Exibindo {inicioExibicao} a{" "}
+
+                {fimExibicao} de{" "}
+
+                {totalItens} pedido(s)
+
+              </span>
+
+              <span>
+
+                {totalAlteracoes} alteração(ões) no período
+
+              </span>
+
+            </div>
+
+          </section>
+
+          {/* =====================================
+              PAGINAÇÃO PADRÃO DO SISTEMA
+
+              Substitui os botões antigos.
+          ===================================== */}
+
+          {totalPaginas > 1 && (
+
+            <Paginacao
+              paginaAtual={paginaValida}
+              totalItens={totalItens}
+              itensPorPagina={ITENS_POR_PAGINA}
+              onChangePagina={setPaginaAtual}
+            />
+
+          )}
+
+        </>
+
+      )}
+
+      {/* ===============================================
+          NENHUMA ALTERAÇÃO
+      =============================================== */}
 
       {!error &&
         !isLoading &&
-        pedidosFiltrados.length === 0 && (
-          <div className="relatorio-visualizacao-vazia pedidos-alterados-vazio">
-            <FiEdit3 />
+        totalItens === 0 && (
 
-            <strong>
-              Nenhuma alteração encontrada
-            </strong>
+        <div className="relatorio-visualizacao-vazia pedidos-alterados-vazio">
 
-            <span>
-              Não existem pedidos com alterações reais no período selecionado.
-            </span>
-          </div>
-        )}
+          <FiEdit3 />
+
+          <strong>
+            Nenhuma alteração encontrada
+          </strong>
+
+          <span>
+            Não existem pedidos com alterações reais
+            no período selecionado.
+          </span>
+
+        </div>
+
+      )}
+
     </>
   );
 }

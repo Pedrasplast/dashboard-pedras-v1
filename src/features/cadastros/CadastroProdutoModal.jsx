@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -11,84 +12,42 @@ import {
 
 import "./CadastroProdutoModal.css";
 
-/* =========================================================
+/* =====================================================
    NÚMEROS
-========================================================= */
+===================================================== */
 
-function valorParaCampo(
-  valor,
-) {
-  if (
-    valor === null ||
+function valorParaCampo(valor) {
+  return valor === null ||
     valor === undefined ||
     valor === ""
-  ) {
-    return "";
-  }
-
-  return String(
-    valor,
-  ).replace(
-    ".",
-    ",",
-  );
+    ? ""
+    : String(valor).replace(".", ",");
 }
 
-function normalizarNumero(
-  valor,
-) {
-  const texto =
-    String(
-      valor ?? "",
-    ).trim();
+function normalizarNumero(valor) {
+  const texto = String(valor ?? "")
+    .trim()
+    .replace(/\s/g, "");
 
   if (!texto) {
     return null;
   }
 
-  let normalizado =
-    texto.replace(
-      /\s/g,
-      "",
-    );
+  const normalizado =
+    texto.includes(",") && texto.includes(".")
+      ? texto.replace(/\./g, "").replace(",", ".")
+      : texto.replace(",", ".");
 
-  if (
-    normalizado.includes(",") &&
-    normalizado.includes(".")
-  ) {
-    normalizado =
-      normalizado
-        .replace(
-          /\./g,
-          "",
-        )
-        .replace(
-          ",",
-          ".",
-        );
-  } else {
-    normalizado =
-      normalizado.replace(
-        ",",
-        ".",
-      );
-  }
+  const numero = Number(normalizado);
 
-  const numero =
-    Number(
-      normalizado,
-    );
-
-  return Number.isFinite(
-    numero,
-  )
+  return Number.isFinite(numero)
     ? numero
     : null;
 }
 
-/* =========================================================
-   MODAL
-========================================================= */
+/* =====================================================
+   COMPONENTE
+===================================================== */
 
 export default function CadastroProdutoModal({
   aberto,
@@ -96,7 +55,12 @@ export default function CadastroProdutoModal({
   salvando = false,
   onCancelar,
   onSalvar,
+  buscarDescricaoEstoque,
 }) {
+  /* =================================================
+     CAMPOS
+  ================================================= */
+
   const [
     codigoProduto,
     setCodigoProduto,
@@ -105,11 +69,6 @@ export default function CadastroProdutoModal({
   const [
     nomeProduto,
     setNomeProduto,
-  ] = useState("");
-
-  const [
-    pesoKg,
-    setPesoKg,
   ] = useState("");
 
   const [
@@ -142,14 +101,12 @@ export default function CadastroProdutoModal({
     setAtivo,
   ] = useState(true);
 
-  /*
-   * Estes dois valores não aparecem
-   * mais na interface.
-   *
-   * Continuam armazenados no estado
-   * somente para preservar o que já
-   * existe no banco ao editar.
-   */
+  /* =================================================
+     CAMPOS TÉCNICOS OCULTOS
+
+     Preservados para não perder dados existentes.
+  ================================================= */
+
   const [
     tempoInjecaoSegundos,
     setTempoInjecaoSegundos,
@@ -160,313 +117,328 @@ export default function CadastroProdutoModal({
     setTempoResfriamentoSegundos,
   ] = useState("");
 
+  /* =================================================
+     CONSULTA OMIE
+  ================================================= */
+
   const [
-    erro,
-    setErro,
+    descricaoEstoque,
+    setDescricaoEstoque,
   ] = useState("");
 
-  /* =======================================================
+  const [
+    buscandoDescricao,
+    setBuscandoDescricao,
+  ] = useState(false);
+
+  const [
+    avisoDescricao,
+    setAvisoDescricao,
+  ] = useState("");
+
+  const [erro, setErro] = useState("");
+
+  const consultaRef = useRef(0);
+
+  const codigoRef = useRef("");
+
+  const nomeAutomaticoRef = useRef("");
+
+  /* =================================================
      CARREGAR PRODUTO
-  ======================================================= */
+  ================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return;
-      }
+  useEffect(() => {
+    ++consultaRef.current;
 
-      if (item) {
-        setCodigoProduto(
-          item.codigoProduto ||
-            "",
-        );
+    if (!aberto) {
+      return;
+    }
 
-        setNomeProduto(
-          item.nomeProduto ||
-            "",
-        );
+    const codigo = item?.codigoProduto ?? "";
 
-        setPesoKg(
-          valorParaCampo(
-            item.pesoKg,
-          ),
-        );
+    codigoRef.current = codigo;
 
-        setCavidadeMolde(
-          valorParaCampo(
-            item.cavidadeMolde ??
-              1,
-          ),
-        );
+    nomeAutomaticoRef.current = "";
 
-        setCicloSegundos(
-          valorParaCampo(
-            item.cicloSegundos,
-          ),
-        );
+    setCodigoProduto(codigo);
 
-        setKgUn(
-          valorParaCampo(
-            item.kgUn,
-          ),
-        );
+    setNomeProduto(item?.nomeProduto ?? "");
 
-        setKgHaste(
-          valorParaCampo(
-            item.kgHaste,
-          ),
-        );
+    setCavidadeMolde(
+      valorParaCampo(item?.cavidadeMolde ?? 1),
+    );
 
-        setUsaPp(
-          item.usaPp ===
-            true,
-        );
+    setCicloSegundos(
+      valorParaCampo(item?.cicloSegundos),
+    );
 
-        setAtivo(
-          item.ativo !==
-            false,
-        );
+    setKgUn(
+      valorParaCampo(item?.kgUn),
+    );
 
-        setTempoInjecaoSegundos(
-          valorParaCampo(
-            item.tempoInjecaoSegundos,
-          ),
-        );
+    setKgHaste(
+      valorParaCampo(item?.kgHaste),
+    );
 
-        setTempoResfriamentoSegundos(
-          valorParaCampo(
-            item.tempoResfriamentoSegundos,
-          ),
-        );
-      } else {
-        setCodigoProduto(
-          "",
-        );
+    setUsaPp(
+      item ? item.usaPp === true : true,
+    );
 
-        setNomeProduto(
-          "",
-        );
+    setAtivo(item?.ativo !== false);
 
-        setPesoKg(
-          "",
-        );
+    setTempoInjecaoSegundos(
+      valorParaCampo(item?.tempoInjecaoSegundos),
+    );
 
-        setCavidadeMolde(
-          "1",
-        );
+    setTempoResfriamentoSegundos(
+      valorParaCampo(item?.tempoResfriamentoSegundos),
+    );
 
-        setCicloSegundos(
-          "",
-        );
+    setDescricaoEstoque(
+      item?.descricaoEstoque ?? "",
+    );
 
-        setKgUn(
-          "",
-        );
+    setBuscandoDescricao(false);
 
-        setKgHaste(
-          "",
-        );
+    setAvisoDescricao("");
 
-        setUsaPp(
-          true,
-        );
+    setErro("");
 
-        setAtivo(
-          true,
-        );
+  }, [aberto, item]);
 
-        setTempoInjecaoSegundos(
-          "",
-        );
+  /* =================================================
+     FECHAR COM ESC
+  ================================================= */
 
-        setTempoResfriamentoSegundos(
-          "",
-        );
-      }
+  useEffect(() => {
+    if (!aberto) {
+      return undefined;
+    }
 
-      setErro(
-        "",
-      );
-    },
-    [
-      aberto,
-      item,
-    ],
-  );
-
-  /* =======================================================
-     ESC
-  ======================================================= */
-
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
-
-      function fecharEscape(
-        event,
+    const fecharEscape = (evento) => {
+      if (
+        evento.key === "Escape" &&
+        !salvando
       ) {
-        if (
-          event.key ===
-            "Escape" &&
-          !salvando
-        ) {
-          onCancelar?.();
-        }
+        onCancelar?.();
       }
+    };
 
-      document.addEventListener(
+    document.addEventListener(
+      "keydown",
+      fecharEscape,
+    );
+
+    return () => {
+      document.removeEventListener(
         "keydown",
         fecharEscape,
       );
+    };
 
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
+  }, [
+    aberto,
+    salvando,
+    onCancelar,
+  ]);
 
-  /* =======================================================
-     BLOQUEAR SCROLL DO FUNDO
-  ======================================================= */
+  /* =================================================
+     BLOQUEAR ROLAGEM
+  ================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
+  useEffect(() => {
+    if (!aberto) {
+      return undefined;
+    }
+
+    const anterior = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = anterior;
+    };
+
+  }, [aberto]);
+
+  /* =================================================
+     ALTERAR CÓDIGO
+  ================================================= */
+
+  function alterarCodigo(valor) {
+    ++consultaRef.current;
+
+    codigoRef.current = valor;
+
+    setCodigoProduto(valor);
+
+    setDescricaoEstoque("");
+
+    setAvisoDescricao("");
+
+    setBuscandoDescricao(false);
+
+    /* Remove apenas nomes preenchidos automaticamente. */
+
+    setNomeProduto((atual) => {
+      if (
+        nomeAutomaticoRef.current &&
+        atual === nomeAutomaticoRef.current
+      ) {
+        nomeAutomaticoRef.current = "";
+
+        return "";
       }
 
-      const overflowAnterior =
-        document
-          .body
-          .style
-          .overflow;
+      nomeAutomaticoRef.current = "";
 
-      document
-        .body
-        .style
-        .overflow =
-        "hidden";
+      return atual;
+    });
 
-      return () => {
-        document
-          .body
-          .style
-          .overflow =
-          overflowAnterior;
-      };
-    },
-    [
-      aberto,
-    ],
-  );
+    setErro("");
+  }
 
-  /* =======================================================
-     SALVAR
-  ======================================================= */
+  /* =================================================
+     BUSCAR DESCRIÇÃO NO ESTOQUE
 
-  async function enviar(
-    event,
-  ) {
-    event.preventDefault();
+     Executado quando o usuário sai
+     do campo Código.
 
-    setErro(
-      "",
-    );
+     Não substitui nomes digitados manualmente.
+  ================================================= */
 
-    const codigoFinal =
-      codigoProduto.trim();
+  async function consultarEstoque() {
+    const codigo = codigoProduto.trim();
 
-    const nomeFinal =
-      nomeProduto.trim();
+    if (
+      item ||
+      !codigo ||
+      typeof buscarDescricaoEstoque !== "function"
+    ) {
+      return;
+    }
 
-    if (!codigoFinal) {
-      setErro(
-        "Informe o código do produto.",
+    const consulta = ++consultaRef.current;
+
+    setBuscandoDescricao(true);
+
+    setAvisoDescricao("");
+
+    try {
+      const descricao = await buscarDescricaoEstoque(
+        codigo,
       );
 
+      if (
+        consulta !== consultaRef.current ||
+        codigoRef.current.trim() !== codigo
+      ) {
+        return;
+      }
+
+      const encontrada = String(
+        descricao ?? "",
+      ).trim();
+
+      setDescricaoEstoque(encontrada);
+
+      if (encontrada) {
+        setNomeProduto((atual) => {
+          /* Preserva o nome digitado manualmente. */
+
+          if (atual.trim()) {
+            return atual;
+          }
+
+          nomeAutomaticoRef.current = encontrada;
+
+          return encontrada;
+        });
+      } else {
+        setAvisoDescricao(
+          "Código não encontrado no estoque Omie. Informe o nome manualmente.",
+        );
+      }
+
+    } catch (error) {
+      if (consulta === consultaRef.current) {
+        setAvisoDescricao(
+          `Consulta ao estoque indisponível: ${
+            error?.message || "tente novamente"
+          }. Informe o nome manualmente.`,
+        );
+      }
+
+    } finally {
+      if (consulta === consultaRef.current) {
+        setBuscandoDescricao(false);
+      }
+    }
+  }
+
+  /* =================================================
+     SALVAR
+  ================================================= */
+
+  async function enviar(evento) {
+    evento.preventDefault();
+
+    setErro("");
+
+    if (buscandoDescricao) {
+      setErro(
+        "Aguarde a consulta da descrição do produto.",
+      );
+
+      return;
+    }
+
+    const codigoFinal = codigoProduto.trim();
+
+    const nomeFinal = nomeProduto.trim();
+
+    if (!codigoFinal) {
+      setErro("Informe o código do produto.");
       return;
     }
 
     if (!nomeFinal) {
-      setErro(
-        "Informe o nome do produto.",
-      );
-
+      setErro("Informe o nome do produto.");
       return;
     }
 
-    const pesoFinal =
-      normalizarNumero(
-        pesoKg,
-      );
+    /* CONVERSÃO */
 
-    const cavidadeFinal =
-      normalizarNumero(
-        cavidadeMolde,
-      );
+    const cavidadeFinal = normalizarNumero(
+      cavidadeMolde,
+    );
 
-    const cicloFinal =
-      normalizarNumero(
-        cicloSegundos,
-      );
+    const cicloFinal = normalizarNumero(
+      cicloSegundos,
+    );
 
-    const kgUnFinal =
-      normalizarNumero(
-        kgUn,
-      );
+    const kgUnFinal = normalizarNumero(
+      kgUn,
+    );
 
-    const kgHasteFinal =
-      normalizarNumero(
-        kgHaste,
-      );
+    const kgHasteFinal = normalizarNumero(
+      kgHaste,
+    );
 
-    const injecaoFinal =
-      normalizarNumero(
-        tempoInjecaoSegundos,
-      );
+    const injecaoFinal = normalizarNumero(
+      tempoInjecaoSegundos,
+    );
 
-    const resfriamentoFinal =
-      normalizarNumero(
-        tempoResfriamentoSegundos,
-      );
+    const resfriamentoFinal = normalizarNumero(
+      tempoResfriamentoSegundos,
+    );
 
-    if (
-      pesoKg.trim() &&
-      pesoFinal === null
-    ) {
-      setErro(
-        "Informe um peso válido.",
-      );
-
-      return;
-    }
-
-    if (
-      pesoFinal !== null &&
-      pesoFinal < 0
-    ) {
-      setErro(
-        "O peso não pode ser negativo.",
-      );
-
-      return;
-    }
+    /* VALIDAÇÕES */
 
     if (
       cavidadeFinal === null ||
-      !Number.isInteger(
-        cavidadeFinal,
-      ) ||
+      !Number.isInteger(cavidadeFinal) ||
       cavidadeFinal <= 0
     ) {
       setErro(
@@ -518,81 +490,77 @@ export default function CadastroProdutoModal({
       return;
     }
 
+    /* =================================================
+       ENVIAR PARA O SERVIÇO
+
+       Peso duplicado:
+       preserva o valor antigo para compatibilidade.
+
+       KG/UN:
+       continua sendo o peso utilizado nos cálculos.
+    ================================================= */
+
     try {
       await onSalvar?.({
-        codigoProduto:
-          codigoFinal,
+        codigoProduto: codigoFinal,
 
         codigoOriginal:
-          item
-            ?.codigoProduto ??
-          null,
+          item?.codigoProduto ?? null,
 
-        nomeProduto:
-          nomeFinal,
+        nomeProduto: nomeFinal,
 
         usaPp,
 
         pesoKg:
-          pesoFinal,
+          item?.pesoKg ?? null,
 
         ativo,
 
-        cavidadeMolde:
-          cavidadeFinal,
+        cavidadeMolde: cavidadeFinal,
 
-        cicloSegundos:
-          cicloFinal,
+        cicloSegundos: cicloFinal,
 
-        /*
-         * Preserva silenciosamente
-         * os campos removidos da UI.
-         */
         tempoInjecaoSegundos:
           injecaoFinal,
 
         tempoResfriamentoSegundos:
           resfriamentoFinal,
 
-        kgUn:
-          kgUnFinal,
+        kgUn: kgUnFinal,
 
-        kgHaste:
-          kgHasteFinal,
+        kgHaste: kgHasteFinal,
       });
+
     } catch (error) {
       setErro(
         error?.message ||
-          "Não foi possível salvar o produto.",
+        "Não foi possível salvar o produto.",
       );
     }
   }
-
-  /* =======================================================
-     NÃO RENDERIZAR
-  ======================================================= */
 
   if (!aberto) {
     return null;
   }
 
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* =====================================================
+     INTERFACE
+  ===================================================== */
 
   return (
     <div className="produto-pp-modal-overlay">
+
       <div
         className="produto-pp-modal cadastro-produto-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadastro-produto-modal-titulo"
       >
-        {/* ===============================================
-            CABEÇALHO
-        =============================================== */}
+
+        {/* CABEÇALHO */}
 
         <div className="produto-pp-modal-header">
+
           <div className="produto-pp-modal-header-icone">
             <Boxes
               size={22}
@@ -601,9 +569,8 @@ export default function CadastroProdutoModal({
           </div>
 
           <div className="produto-pp-modal-header-texto">
-            <span>
-              Cadastro
-            </span>
+
+            <span>Cadastro</span>
 
             <h3 id="cadastro-produto-modal-titulo">
               {item
@@ -615,404 +582,304 @@ export default function CadastroProdutoModal({
               Dados gerais e parâmetros utilizados
               no planejamento de produção.
             </p>
+
           </div>
 
           <button
             type="button"
             className="produto-pp-modal-fechar"
-            onClick={
-              onCancelar
-            }
-            disabled={
-              salvando
-            }
+            onClick={onCancelar}
+            disabled={salvando}
             aria-label="Fechar"
           >
-            <X
-              size={19}
-            />
+            <X size={19} />
           </button>
+
         </div>
 
-        {/* ===============================================
-            FORMULÁRIO
-        =============================================== */}
+        {/* FORMULÁRIO */}
 
         <form
           className="produto-pp-modal-form"
-          onSubmit={
-            enviar
-          }
+          onSubmit={enviar}
         >
-          {/* =============================================
-              CÓDIGO / PESO
-          ============================================= */}
 
-          <div className="produto-pp-modal-grid">
-            <label className="produto-pp-modal-campo">
-              <span>
-                Código
-              </span>
-
-              <input
-                type="text"
-                value={
-                  codigoProduto
-                }
-                onChange={(
-                  event,
-                ) => {
-                  setCodigoProduto(
-                    event
-                      .target
-                      .value,
-                  );
-
-                  setErro(
-                    "",
-                  );
-                }}
-                placeholder="Ex.: 11374"
-                autoComplete="off"
-                disabled={
-                  salvando ||
-                  Boolean(
-                    item,
-                  )
-                }
-              />
-            </label>
-
-            <label className="produto-pp-modal-campo">
-              <span>
-                Peso por peça
-              </span>
-
-              <div className="produto-pp-modal-peso">
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={
-                    pesoKg
-                  }
-                  onChange={(
-                    event,
-                  ) => {
-                    setPesoKg(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
-                  }}
-                  placeholder="Ex.: 0,300"
-                  autoComplete="off"
-                  disabled={
-                    salvando
-                  }
-                />
-
-                <span>
-                  kg
-                </span>
-              </div>
-            </label>
-          </div>
-
-          {/* =============================================
-              NOME
-          ============================================= */}
+          {/* CÓDIGO */}
 
           <label className="produto-pp-modal-campo">
-            <span>
-              Nome do produto
-            </span>
+
+            <span>Código</span>
 
             <input
               type="text"
-              value={
-                nomeProduto
+              value={codigoProduto}
+              onChange={(evento) =>
+                alterarCodigo(evento.target.value)
               }
-              onChange={(
-                event,
-              ) => {
-                setNomeProduto(
-                  event
-                    .target
-                    .value,
-                );
+              onBlur={() => {
+                void consultarEstoque();
+              }}
+              placeholder="Ex.: 11374"
+              autoComplete="off"
+              disabled={
+                salvando ||
+                Boolean(item)
+              }
+            />
 
-                setErro(
-                  "",
-                );
+          </label>
+
+          {/* DESCRIÇÃO OMIE */}
+
+          {descricaoEstoque && (
+            <div
+              className="produto-pp-modal-campo"
+              style={{
+                padding: "10px 12px",
+                background: "#eff6ff",
+                borderRadius: 8,
+              }}
+            >
+
+              <span>
+                Descrição encontrada no estoque Omie
+              </span>
+
+              <strong
+                style={{
+                  display: "block",
+                  marginTop: 4,
+                }}
+              >
+                {descricaoEstoque}
+              </strong>
+
+              {item &&
+                descricaoEstoque !== item.nomeProduto && (
+                  <small>
+                    O nome cadastrado permanece inalterado
+                    até você decidir editá-lo.
+                  </small>
+                )}
+
+            </div>
+          )}
+
+          {/* CARREGAMENTO DA CONSULTA */}
+
+          {buscandoDescricao && (
+            <small role="status">
+              Consultando descrição no estoque Omie...
+            </small>
+          )}
+
+          {avisoDescricao && (
+            <small role="status">
+              {avisoDescricao}
+            </small>
+          )}
+
+          {/* NOME */}
+
+          <label className="produto-pp-modal-campo">
+
+            <span>Nome do produto</span>
+
+            <input
+              type="text"
+              value={nomeProduto}
+              onChange={(evento) => {
+                nomeAutomaticoRef.current = "";
+
+                setNomeProduto(evento.target.value);
+
+                setErro("");
               }}
               placeholder="Ex.: Suporte 90x90"
               autoComplete="off"
-              disabled={
-                salvando
-              }
+              disabled={salvando}
             />
+
           </label>
 
-          {/* =============================================
-              CICLO / CAVIDADES
-          ============================================= */}
+          {/* CAVIDADES E CICLO */}
 
           <div className="produto-pp-modal-grid">
+
             <label className="produto-pp-modal-campo">
-              <span>
-                Cavidades
-              </span>
+
+              <span>Cavidades</span>
 
               <input
                 type="number"
                 min="1"
                 step="1"
-                value={
-                  cavidadeMolde
-                }
-                onChange={(
-                  event,
-                ) => {
-                  setCavidadeMolde(
-                    event
-                      .target
-                      .value,
-                  );
-
-                  setErro(
-                    "",
-                  );
+                value={cavidadeMolde}
+                onChange={(evento) => {
+                  setCavidadeMolde(evento.target.value);
+                  setErro("");
                 }}
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               />
+
             </label>
 
             <label className="produto-pp-modal-campo">
-              <span>
-                Ciclo
-              </span>
+
+              <span>Ciclo</span>
 
               <div className="produto-pp-modal-peso">
+
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    cicloSegundos
-                  }
-                  onChange={(
-                    event,
-                  ) => {
-                    setCicloSegundos(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
+                  value={cicloSegundos}
+                  onChange={(evento) => {
+                    setCicloSegundos(evento.target.value);
+                    setErro("");
                   }}
                   placeholder="Ex.: 45"
-                  disabled={
-                    salvando
-                  }
+                  disabled={salvando}
                 />
 
-                <span>
-                  s
-                </span>
+                <span>s</span>
+
               </div>
+
             </label>
+
           </div>
 
-          {/* =============================================
-              KG UNIDADE / KG HASTE
-          ============================================= */}
+          {/* KG/UN E KG/HASTE */}
 
           <div className="produto-pp-modal-grid">
+
             <label className="produto-pp-modal-campo">
-              <span>
-                Kg/unidade
-              </span>
+
+              <span>Kg/unidade</span>
 
               <div className="produto-pp-modal-peso">
+
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    kgUn
-                  }
-                  onChange={(
-                    event,
-                  ) => {
-                    setKgUn(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
+                  value={kgUn}
+                  onChange={(evento) => {
+                    setKgUn(evento.target.value);
+                    setErro("");
                   }}
                   placeholder="Ex.: 0,2470"
-                  disabled={
-                    salvando
-                  }
+                  disabled={salvando}
                 />
 
-                <span>
-                  kg
-                </span>
+                <span>kg</span>
+
               </div>
+
             </label>
 
             <label className="produto-pp-modal-campo">
-              <span>
-                Kg/haste
-              </span>
+
+              <span>Kg/haste</span>
 
               <div className="produto-pp-modal-peso">
+
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    kgHaste
-                  }
-                  onChange={(
-                    event,
-                  ) => {
-                    setKgHaste(
-                      event
-                        .target
-                        .value,
-                    );
-
-                    setErro(
-                      "",
-                    );
+                  value={kgHaste}
+                  onChange={(evento) => {
+                    setKgHaste(evento.target.value);
+                    setErro("");
                   }}
                   placeholder="Ex.: 0,1040"
-                  disabled={
-                    salvando
-                  }
+                  disabled={salvando}
                 />
 
-                <span>
-                  kg
-                </span>
+                <span>kg</span>
+
               </div>
+
             </label>
+
           </div>
 
-          {/* =============================================
-              OPÇÕES
-          ============================================= */}
+          {/* OPÇÕES */}
 
           <div className="cadastro-produto-modal-status-grid">
+
             <label className="produto-pp-modal-status">
+
               <input
                 type="checkbox"
-                checked={
-                  usaPp
-                }
-                onChange={(
-                  event,
-                ) => {
-                  setUsaPp(
-                    event
-                      .target
-                      .checked,
-                  );
-
-                  setErro(
-                    "",
-                  );
+                checked={usaPp}
+                onChange={(evento) => {
+                  setUsaPp(evento.target.checked);
+                  setErro("");
                 }}
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               />
 
               <div>
-                <strong>
-                  Usa PP
-                </strong>
+
+                <strong>Usa PP</strong>
 
                 <span>
                   Produto utiliza PP no cálculo
                   de matéria-prima.
                 </span>
+
               </div>
+
             </label>
 
             <label className="produto-pp-modal-status">
+
               <input
                 type="checkbox"
-                checked={
-                  ativo
-                }
-                onChange={(
-                  event,
-                ) => {
-                  setAtivo(
-                    event
-                      .target
-                      .checked,
-                  );
-
-                  setErro(
-                    "",
-                  );
+                checked={ativo}
+                onChange={(evento) => {
+                  setAtivo(evento.target.checked);
+                  setErro("");
                 }}
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               />
 
               <div>
-                <strong>
-                  Produto ativo
-                </strong>
+
+                <strong>Produto ativo</strong>
 
                 <span>
                   Produtos inativos permanecem
                   no histórico do sistema.
                 </span>
+
               </div>
+
             </label>
+
           </div>
 
-          {/* =============================================
-              ERRO
-          ============================================= */}
+          {/* ERRO */}
 
           {erro && (
-            <div className="produto-pp-modal-erro">
+            <div
+              className="produto-pp-modal-erro"
+              role="alert"
+            >
               {erro}
             </div>
           )}
 
-          {/* =============================================
-              AÇÕES
-          ============================================= */}
+          {/* AÇÕES */}
 
           <div className="produto-pp-modal-acoes">
+
             <button
               type="button"
               className="produto-pp-modal-cancelar"
-              onClick={
-                onCancelar
-              }
-              disabled={
-                salvando
-              }
+              onClick={onCancelar}
+              disabled={salvando}
             >
               Cancelar
             </button>
@@ -1021,20 +888,25 @@ export default function CadastroProdutoModal({
               type="submit"
               className="produto-pp-modal-salvar"
               disabled={
-                salvando
+                salvando ||
+                buscandoDescricao
               }
             >
-              <Save
-                size={17}
-              />
+
+              <Save size={17} />
 
               {salvando
                 ? "Salvando..."
                 : "Salvar produto"}
+
             </button>
+
           </div>
+
         </form>
+
       </div>
+
     </div>
   );
 }

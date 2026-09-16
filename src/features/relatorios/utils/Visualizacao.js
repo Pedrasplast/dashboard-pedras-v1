@@ -1,6 +1,8 @@
-import { converterNumeroFlexivel } from "@/lib/numeros";
+/* =========================================================
+   COLUNAS DA PRÉ-VISUALIZAÇÃO
+========================================================= */
 
-export const TITULOS_COLUNAS_VISUALIZACAO = Object.freeze({
+export const TITULOS_COLUNAS_VISUALIZACAO = {
   data: "Data",
   injetora: "Injetora",
   produto: "Produto",
@@ -38,8 +40,9 @@ export const TITULOS_COLUNAS_VISUALIZACAO = Object.freeze({
   status: "Status",
   pedidos: "Pedidos",
   pedidos_atendidos: "Pedidos Atendidos",
-});
+};
 
+// "pedidos" não é numérico: pode ser uma lista "3036, 3109".
 export const COLUNAS_NUMERICAS = new Set([
   "conforme",
   "danificada",
@@ -54,49 +57,49 @@ export const COLUNAS_NUMERICAS = new Set([
   "gasto_unidade",
   "dias_atraso",
   "quantidade",
-  "pedidos",
 ]);
 
-export function formatarDataVisualizacao(valor) {
-  if (!valor) {
-    return "-";
-  }
+const converterNumeroVisualizacao = (valor) => {
+  if (valor === null || valor === undefined || valor === "") return 0;
+  if (typeof valor === "number") return Number.isFinite(valor) ? valor : 0;
 
+  let texto = String(valor).trim().replace(/\s/g, "");
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
+  } else {
+    texto = texto.replace(",", ".");
+  }
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : 0;
+};
+
+const formatarDataVisualizacao = (valor) => {
+  if (!valor) return "-";
   const texto = String(valor).trim();
   const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return iso ? `${iso[3]}/${iso[2]}/${iso[1]}` : texto;
-}
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+  return texto;
+};
 
-export function formatarTempoComMilhar(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
+const formatarTempoComMilhar = (valor) => {
+  if (valor === null || valor === undefined || valor === "") return "-";
   const texto = String(valor).trim();
   const partes = texto.split(":");
-
-  if (partes.length < 2) {
-    return texto;
-  }
-
+  if (partes.length < 2) return texto;
   const horas = Number(partes[0]);
-  if (!Number.isFinite(horas)) {
-    return texto;
-  }
-
+  if (!Number.isFinite(horas)) return texto;
   return [
     horas.toLocaleString("pt-BR", { maximumFractionDigits: 0 }),
     ...partes.slice(1),
   ].join(":");
-}
+};
 
-export function criarTituloAutomatico(chave) {
-  return String(chave || "")
+export const criarTituloAutomatico = (chave) =>
+  String(chave || "")
     .replace(/_/g, " ")
     .replace(/\b\w/g, (letra) => letra.toUpperCase());
-}
 
-export function obterValorVisualizacao(item, chave) {
+export const obterValorVisualizacao = (item, chave) => {
   switch (chave) {
     case "data":
       return formatarDataVisualizacao(item.inicio_dia || item.inicio || item.data);
@@ -117,15 +120,17 @@ export function obterValorVisualizacao(item, chave) {
     case "conforme":
     case "danificada":
     case "total_produzido":
-      return converterNumeroFlexivel(item[chave]).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item[chave]).toLocaleString("pt-BR", {
         maximumFractionDigits: 2,
       });
     case "duracao":
       return formatarTempoComMilhar(item.duracao || item.tempo);
     case "produtividade_hora":
-      return Math.round(converterNumeroFlexivel(item.produtividade_hora)).toLocaleString("pt-BR");
+      return Math.round(
+        converterNumeroVisualizacao(item.produtividade_hora),
+      ).toLocaleString("pt-BR");
     case "qualidade":
-      return `${converterNumeroFlexivel(item.qualidade).toLocaleString("pt-BR", {
+      return `${converterNumeroVisualizacao(item.qualidade).toLocaleString("pt-BR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}%`;
@@ -134,14 +139,14 @@ export function obterValorVisualizacao(item, chave) {
     case "justificativa":
       return item.justificativa || "-";
     case "ocorrencias":
-      return converterNumeroFlexivel(item.ocorrencias).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.ocorrencias).toLocaleString("pt-BR", {
         maximumFractionDigits: 0,
       });
     case "tempo_total":
     case "tempo_medio":
       return formatarTempoComMilhar(item[chave]);
     case "percentual_impacto":
-      return `${converterNumeroFlexivel(item.percentual_impacto).toLocaleString("pt-BR", {
+      return `${converterNumeroVisualizacao(item.percentual_impacto).toLocaleString("pt-BR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}%`;
@@ -150,21 +155,21 @@ export function obterValorVisualizacao(item, chave) {
     case "descricao":
       return item.descricao || item.justificativa || item.natureza || item.motivo || "-";
     case "quantidade_mp":
-      return converterNumeroFlexivel(item.quantidade_mp).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.quantidade_mp).toLocaleString("pt-BR", {
         maximumFractionDigits: 2,
       });
     case "peso_unitario":
-      return converterNumeroFlexivel(item.peso_unitario).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.peso_unitario).toLocaleString("pt-BR", {
         minimumFractionDigits: 4,
         maximumFractionDigits: 4,
       });
     case "consumo_total":
-      return converterNumeroFlexivel(item.consumo_total).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.consumo_total).toLocaleString("pt-BR", {
         minimumFractionDigits: 4,
         maximumFractionDigits: 4,
       });
     case "gasto_unidade":
-      return converterNumeroFlexivel(item.gasto_unidade).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.gasto_unidade).toLocaleString("pt-BR", {
         minimumFractionDigits: 4,
         maximumFractionDigits: 6,
       });
@@ -173,7 +178,7 @@ export function obterValorVisualizacao(item, chave) {
     case "cliente":
       return item.cliente || "-";
     case "dias_atraso":
-      return converterNumeroFlexivel(item.dias_atraso).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.dias_atraso).toLocaleString("pt-BR", {
         maximumFractionDigits: 0,
       });
     case "codigo_produto":
@@ -181,13 +186,16 @@ export function obterValorVisualizacao(item, chave) {
     case "produto_pedido":
       return item.produto_pedido || item.produto || "-";
     case "quantidade":
-      return converterNumeroFlexivel(item.quantidade).toLocaleString("pt-BR", {
+      return converterNumeroVisualizacao(item.quantidade).toLocaleString("pt-BR", {
         maximumFractionDigits: 3,
       });
-    case "pedidos":
-      return converterNumeroFlexivel(item.pedidos).toLocaleString("pt-BR", {
-        maximumFractionDigits: 0,
-      });
+    case "pedidos": {
+      // Exibe texto integral, sem converter para número e sem separador de milhar.
+      const pedidos = item?.pedidos;
+      return pedidos === null || pedidos === undefined || String(pedidos).trim() === ""
+        ? "-"
+        : String(pedidos);
+    }
     case "unidade":
       return item.unidade || "-";
     case "vendedor":
@@ -196,7 +204,8 @@ export function obterValorVisualizacao(item, chave) {
       return item.status || "-";
     default: {
       const valor = item?.[chave];
-      return valor === null || valor === undefined || valor === "" ? "-" : String(valor);
+      if (valor === null || valor === undefined || valor === "") return "-";
+      return String(valor);
     }
   }
-}
+};

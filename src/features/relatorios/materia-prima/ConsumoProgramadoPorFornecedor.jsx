@@ -1,8 +1,4 @@
-import {
-  Fragment,
-  useMemo,
-  useState,
-} from "react";
+import { Fragment, useMemo, useState } from "react";
 
 import {
   FiAlertTriangle,
@@ -16,405 +12,198 @@ import {
   FiX,
 } from "react-icons/fi";
 
-import useConsumoProgramado
-  from "./useConsumoProgramado";
+import Paginacao from "@/components/paginacao/Paginacao";
+
+import useConsumoProgramado from "./useConsumoProgramado";
 
 import "./ConsumoProgramadoPorFornecedor.css";
 
+/* =====================================================
+   PAGINAÇÃO PADRÃO
+===================================================== */
 
-/* ==============================================================
+const ITENS_POR_PAGINA = 8;
+
+/* =====================================================
    DATAS
-================================================================= */
+===================================================== */
 
 function dataHojeLocal() {
-  const agora =
-    new Date();
+  const agora = new Date();
 
   return [
     agora.getFullYear(),
-
-    String(
-      agora.getMonth() + 1,
-    ).padStart(
-      2,
-      "0",
-    ),
-
-    String(
-      agora.getDate(),
-    ).padStart(
-      2,
-      "0",
-    ),
+    String(agora.getMonth() + 1).padStart(2, "0"),
+    String(agora.getDate()).padStart(2, "0"),
   ].join("-");
 }
 
+function adicionarDiasLocal(valor, dias) {
+  const [ano, mes, dia] = String(valor)
+    .split("-")
+    .map(Number);
 
-function adicionarDiasLocal(
-  valor,
-  dias,
-) {
-  const [
+  const data = new Date(
     ano,
-    mes,
-    dia,
-  ] =
-    String(
-      valor,
-    )
-      .split("-")
-      .map(Number);
-
-
-  const data =
-    new Date(
-      ano,
-      mes - 1,
-      dia + dias,
-      12,
-      0,
-      0,
-    );
-
+    mes - 1,
+    dia + dias,
+    12,
+    0,
+    0,
+  );
 
   return [
     data.getFullYear(),
-
-    String(
-      data.getMonth() + 1,
-    ).padStart(
-      2,
-      "0",
-    ),
-
-    String(
-      data.getDate(),
-    ).padStart(
-      2,
-      "0",
-    ),
+    String(data.getMonth() + 1).padStart(2, "0"),
+    String(data.getDate()).padStart(2, "0"),
   ].join("-");
 }
 
-
 function obterPeriodoInicial() {
-  const hoje =
-    dataHojeLocal();
-
+  const hoje = dataHojeLocal();
 
   return {
-    inicio:
-      hoje,
-
-    fim:
-      adicionarDiasLocal(
-        hoje,
-        7,
-      ),
+    inicio: hoje,
+    fim: adicionarDiasLocal(hoje, 7),
   };
 }
 
-
-/* =========================================================
+/* =====================================================
    FORMATADORES
-========================================================= */
+===================================================== */
 
-function formatarData(
-  valor,
-) {
-  if (!valor) {
-    return "-";
+function formatarData(valor) {
+  if (!valor) return "-";
+
+  const partes = String(valor).split("-");
+
+  if (partes.length !== 3) {
+    return String(valor);
   }
-
-
-  const partes =
-    String(
-      valor,
-    ).split("-");
-
-
-  if (
-    partes.length !==
-    3
-  ) {
-    return String(
-      valor,
-    );
-  }
-
 
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
-
-function formatarDataHora(
-  data,
-  hora,
-) {
+function formatarDataHora(data, hora) {
   return hora
-    ? `${formatarData(
-        data,
-      )} ${String(
-        hora,
-      ).slice(
-        0,
-        5,
-      )}`
-    : formatarData(
-        data,
-      );
+    ? `${formatarData(data)} ${String(hora).slice(0, 5)}`
+    : formatarData(data);
 }
 
+function formatarNumero(valor, casas = 0) {
+  const numero = Number(valor);
 
-function formatarNumero(
-  valor,
-  casas = 0,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "-";
   }
 
-
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
-
-      maximumFractionDigits:
-        casas,
-    },
-  );
+  return numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  });
 }
 
+function formatarKg(valor) {
+  const numero = Number(valor);
 
-function formatarKg(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0,000 kg";
   }
 
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        3,
-
-      maximumFractionDigits:
-        3,
-    },
-  )} kg`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })} kg`;
 }
 
+function formatarPercentual(valor) {
+  const numero = Number(valor);
 
-function formatarPercentual(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0%";
   }
 
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        0,
-
-      maximumFractionDigits:
-        4,
-    },
-  )}%`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  })}%`;
 }
 
-
-function montarTextoPeriodo(
-  dataInicial,
-  dataFinal,
-) {
-  if (
-    dataInicial &&
-    dataFinal
-  ) {
-    return `De: ${formatarData(
-      dataInicial,
-    )} | Até: ${formatarData(
-      dataFinal,
-    )}`;
+function montarTextoPeriodo(dataInicial, dataFinal) {
+  if (dataInicial && dataFinal) {
+    return `De: ${formatarData(dataInicial)} | Até: ${formatarData(dataFinal)}`;
   }
-
 
   if (dataInicial) {
-    return `De: ${formatarData(
-      dataInicial,
-    )}`;
+    return `De: ${formatarData(dataInicial)}`;
   }
-
 
   if (dataFinal) {
-    return `Até: ${formatarData(
-      dataFinal,
-    )}`;
+    return `Até: ${formatarData(dataFinal)}`;
   }
-
 
   return "Sem período informado";
 }
 
-
-/* =========================================================
+/* =====================================================
    PRODUTO
-========================================================= */
+===================================================== */
 
-function montarProduto(
-  codigo,
-  descricao,
-) {
-  const codigoLimpo =
-    String(
-      codigo ?? "",
-    ).trim();
+function montarProduto(codigo, descricao) {
+  const codigoLimpo = String(codigo ?? "").trim();
+  const descricaoLimpa = String(descricao ?? "").trim();
 
-
-  const descricaoLimpa =
-    String(
-      descricao ?? "",
-    ).trim();
-
-
-  if (
-    codigoLimpo &&
-    descricaoLimpa
-  ) {
+  if (codigoLimpo && descricaoLimpa) {
     return `${codigoLimpo} - ${descricaoLimpa}`;
   }
 
-
-  if (
-    codigoLimpo
-  ) {
+  if (codigoLimpo) {
     return codigoLimpo;
   }
 
-
-  if (
-    descricaoLimpa
-  ) {
+  if (descricaoLimpa) {
     return descricaoLimpa;
   }
-
 
   return "-";
 }
 
-
-/* =========================================================
+/* =====================================================
    TOTAL DE PEÇAS POR FORNECEDOR
-========================================================= */
+===================================================== */
 
-function obterTotalPecasFornecedor(
-  grupo,
-) {
-  return (
-    grupo?.detalhes ||
-    []
-  ).reduce(
-    (
-      total,
-      detalhe,
-    ) =>
-      total +
-      Number(
-        detalhe?.pecasPrevistas ||
-        0,
-      ),
+function obterTotalPecasFornecedor(grupo) {
+  return (grupo?.detalhes || []).reduce(
+    (total, detalhe) =>
+      total + Number(detalhe?.pecasPrevistas || 0),
     0,
   );
 }
 
-
-/* =========================================================
+/* =====================================================
    TOTAL DE PEÇAS SEM RECEITA
-========================================================= */
+===================================================== */
 
-function obterTotalPecasSemReceita(
-  dados,
-) {
-  return (
-    dados?.semReceita ||
-    []
-  ).reduce(
-    (
-      total,
-      item,
-    ) =>
-      total +
-      Number(
-        item?.pecasPrevistas ||
-        0,
-      ),
+function obterTotalPecasSemReceita(dados) {
+  return (dados?.semReceita || []).reduce(
+    (total, item) =>
+      total + Number(item?.pecasPrevistas || 0),
     0,
   );
 }
 
+/* =====================================================
+   EXPORTAÇÃO ORIGINAL
 
-/* =========================================================
-   EXPORTAÇÃO AGRUPADA
-
-   ESTA MESMA ESTRUTURA É UTILIZADA EM:
-   - PDF
-   - EXCEL
+   PDF E EXCEL UTILIZAM A MESMA BASE.
 
    UMA LINHA POR FORNECEDOR.
 
-   COLUNAS:
-   - Fornecedor
-   - Período
-   - Peças
-   - Consumo
-
-   REMOVIDOS:
-   - Injetora
-   - Programação
-   - Produto
-   - Participação
-
    TOTAL GERAL:
-   - não soma peças;
-   - somente consumo PP.
-========================================================= */
+   SOMENTE CONSUMO PP.
+
+   NÃO ALTERADO PELA PAGINAÇÃO.
+===================================================== */
 
 function prepararExportacaoFornecedor(
   relatorio,
@@ -441,147 +230,82 @@ function prepararExportacaoFornecedor(
     ],
   };
 
-
-  const linhas =
-    [];
-
+  const linhas = [];
 
   const periodo =
-    dataInicial &&
-    dataFinal
-      ? `${formatarData(
-          dataInicial,
-        )} até ${formatarData(
-          dataFinal,
-        )}`
-      : montarTextoPeriodo(
-          dataInicial,
-          dataFinal,
-        );
+    dataInicial && dataFinal
+      ? `${formatarData(dataInicial)} até ${formatarData(dataFinal)}`
+      : montarTextoPeriodo(dataInicial, dataFinal);
 
+  /* FORNECEDORES */
 
-  /* =====================================================
-     FORNECEDORES
-  ===================================================== */
-
-  for (
-    const grupo
-    of dados?.porFornecedor ||
-    []
-  ) {
+  for (const grupo of dados?.porFornecedor || []) {
     linhas.push({
-      fornecedor:
-        grupo.fornecedorNome,
+      fornecedor: grupo.fornecedorNome,
 
       periodo,
 
-      pecas:
-        formatarNumero(
-          obterTotalPecasFornecedor(
-            grupo,
-          ),
-        ),
+      pecas: formatarNumero(
+        obterTotalPecasFornecedor(grupo),
+      ),
 
-      consumo:
-        formatarKg(
-          grupo.consumoKg,
-        ),
+      consumo: formatarKg(
+        grupo.consumoKg,
+      ),
     });
   }
 
-
-  /* =====================================================
-     SEM RECEITA
-
-     APARECE SOMENTE QUANDO EXISTIR CONSUMO NÃO
-     DISTRIBUÍDO ENTRE FORNECEDORES.
-  ===================================================== */
+  /* SEM RECEITA */
 
   if (
     Number(
-      dados?.resumo
-        ?.consumoSemReceitaKg ||
-        0,
+      dados?.resumo?.consumoSemReceitaKg || 0,
     ) > 0
   ) {
     linhas.push({
-      fornecedor:
-        "SEM RECEITA",
+      fornecedor: "SEM RECEITA",
 
       periodo,
 
-      pecas:
-        formatarNumero(
-          obterTotalPecasSemReceita(
-            dados,
-          ),
-        ),
+      pecas: formatarNumero(
+        obterTotalPecasSemReceita(dados),
+      ),
 
-      consumo:
-        formatarKg(
-          dados?.resumo
-            ?.consumoSemReceitaKg,
-        ),
+      consumo: formatarKg(
+        dados?.resumo?.consumoSemReceitaKg,
+      ),
     });
   }
 
+  /* TOTAL GERAL */
 
-  /* =====================================================
-     TOTAL GERAL
-
-     SOMENTE O CONSUMO PP É TOTALIZADO.
-
-     NÃO SOMAMOS PEÇAS PORQUE UMA MESMA PEÇA PODE
-     CONSUMIR MATERIAL DE MAIS DE UM FORNECEDOR.
-  ===================================================== */
-
-  if (
-    linhas.length >
-    0
-  ) {
+  if (linhas.length > 0) {
     linhas.push({
-      fornecedor:
-        "TOTAL GERAL",
+      fornecedor: "TOTAL GERAL",
+      periodo: "-",
+      pecas: "-",
 
-      periodo:
-        "-",
-
-      pecas:
-        "-",
-
-      consumo:
-        formatarKg(
-          dados?.resumo
-            ?.consumoTotalKg,
-        ),
+      consumo: formatarKg(
+        dados?.resumo?.consumoTotalKg,
+      ),
     });
   }
-
 
   return {
     relatorioExportacao,
-
-    dadosExportacao:
-      linhas,
+    dadosExportacao: linhas,
   };
 }
 
-
-/* =========================================================
+/* =====================================================
    DETALHES DO FORNECEDOR
-========================================================= */
+===================================================== */
 
-function DetalhesFornecedor({
-  grupo,
-}) {
+function DetalhesFornecedor({ grupo }) {
   return (
     <div className="mpf-detalhes-lista">
 
-      {grupo.detalhes.map(
-        (
-          detalhe,
-          indice,
-        ) => (
+      {grupo.detalhes.map((detalhe, indice) => (
 
         <article
           key={`${grupo.fornecedorId}-${detalhe.programacaoId}-${detalhe.codigoProduto}-${indice}`}
@@ -591,16 +315,11 @@ function DetalhesFornecedor({
           <div className="mpf-detalhe-topo">
 
             <div>
-
               <span>
-                Injetora{" "}
-                {detalhe.injetora}
+                Injetora {detalhe.injetora}
                 {" • "}
-                Programação #{
-                  detalhe.programacaoId
-                }
+                Programação #{detalhe.programacaoId}
               </span>
-
 
               <strong>
                 {montarProduto(
@@ -608,9 +327,7 @@ function DetalhesFornecedor({
                   detalhe.descricao,
                 )}
               </strong>
-
             </div>
-
 
             <strong className="mpf-detalhe-consumo">
               {formatarKg(
@@ -620,18 +337,12 @@ function DetalhesFornecedor({
 
           </div>
 
-
           <div className="mpf-detalhe-grid">
 
             <div>
-
-              <span>
-                Período considerado
-              </span>
-
+              <span>Período considerado</span>
 
               <strong>
-
                 {formatarDataHora(
                   detalhe.dataInicioConsiderada,
                   detalhe.horaInicioConsiderada,
@@ -643,74 +354,52 @@ function DetalhesFornecedor({
                   detalhe.dataFimConsiderada,
                   detalhe.horaFimConsiderada,
                 )}
-
               </strong>
-
             </div>
 
-
             <div>
-
-              <span>
-                Receita
-              </span>
-
+              <span>Receita</span>
 
               <strong>
                 {formatarPercentual(
                   detalhe.percentual,
                 )}
               </strong>
-
             </div>
 
-
             <div>
-
-              <span>
-                Peças previstas
-              </span>
-
+              <span>Peças previstas</span>
 
               <strong>
                 {formatarNumero(
                   detalhe.pecasPrevistas,
                 )}
               </strong>
-
             </div>
 
-
             <div>
-
-              <span>
-                PP total do programa
-              </span>
-
+              <span>PP total do programa</span>
 
               <strong>
                 {formatarKg(
                   detalhe.consumoProgramaKg,
                 )}
               </strong>
-
             </div>
 
           </div>
 
         </article>
 
-        ),
-      )}
+      ))}
 
     </div>
   );
 }
 
-
-/* =========================================================
-   TABELA DA TELA
-========================================================= */
+/* =====================================================
+   TABELA ORIGINAL DOS FORNECEDORES
+===================================================== */
 
 function TabelaFornecedores({
   dados,
@@ -723,12 +412,8 @@ function TabelaFornecedores({
       <table className="relatorio-visualizacao-tabela mpf-tabela">
 
         <thead>
-
           <tr>
-
-            <th>
-              Fornecedor
-            </th>
+            <th>Fornecedor</th>
 
             <th className="coluna-numerica">
               Injetoras
@@ -746,142 +431,84 @@ function TabelaFornecedores({
               Consumo PP
             </th>
 
-            <th>
-              Detalhes
-            </th>
-
+            <th>Detalhes</th>
           </tr>
-
         </thead>
-
 
         <tbody>
 
-          {dados.porFornecedor.map(
-            (
-              grupo,
-            ) => {
-              const chave =
-                String(
-                  grupo.fornecedorId ??
-                  grupo.fornecedorNome,
-                );
+          {dados.porFornecedor.map((grupo) => {
+            const chave = String(
+              grupo.fornecedorId ?? grupo.fornecedorNome,
+            );
 
+            const expandido = expandidos.has(chave);
 
-              const expandido =
-                expandidos.has(
-                  chave,
-                );
+            return (
+              <Fragment key={chave}>
 
+                <tr>
 
-              return (
-                <Fragment
-                  key={
-                    chave
-                  }
-                >
+                  <td>
+                    <strong className="mpf-fornecedor">
+                      {grupo.fornecedorNome}
+                    </strong>
+                  </td>
 
-                  <tr>
+                  <td className="coluna-numerica">
+                    {formatarNumero(
+                      grupo.quantidadeInjetoras,
+                    )}
+                  </td>
 
-                    <td>
+                  <td className="coluna-numerica">
+                    {formatarNumero(
+                      grupo.quantidadeProdutos,
+                    )}
+                  </td>
 
-                      <strong className="mpf-fornecedor">
-                        {grupo.fornecedorNome}
-                      </strong>
+                  <td className="coluna-numerica">
+                    {formatarNumero(
+                      grupo.quantidadeProgramacoes,
+                    )}
+                  </td>
 
+                  <td className="coluna-numerica mpf-total">
+                    {formatarKg(
+                      grupo.consumoKg,
+                    )}
+                  </td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="mpf-expandir"
+                      onClick={() => onAlternar(chave)}
+                      aria-expanded={expandido}
+                    >
+                      {expandido
+                        ? <FiChevronUp />
+                        : <FiChevronDown />}
+
+                      {expandido ? "Fechar" : "Ver"}
+                    </button>
+                  </td>
+
+                </tr>
+
+                {expandido && (
+                  <tr className="mpf-linha-detalhe">
+                    <td colSpan={6}>
+                      <DetalhesFornecedor
+                        grupo={grupo}
+                      />
                     </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {formatarNumero(
-                        grupo.quantidadeInjetoras,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {formatarNumero(
-                        grupo.quantidadeProdutos,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica">
-
-                      {formatarNumero(
-                        grupo.quantidadeProgramacoes,
-                      )}
-
-                    </td>
-
-
-                    <td className="coluna-numerica mpf-total">
-
-                      {formatarKg(
-                        grupo.consumoKg,
-                      )}
-
-                    </td>
-
-
-                    <td>
-
-                      <button
-                        type="button"
-                        className="mpf-expandir"
-                        onClick={
-                          () =>
-                            onAlternar(
-                              chave,
-                            )
-                        }
-                        aria-expanded={
-                          expandido
-                        }
-                      >
-
-                        {expandido
-                          ? <FiChevronUp />
-                          : <FiChevronDown />}
-
-
-                        {expandido
-                          ? "Fechar"
-                          : "Ver"}
-
-                      </button>
-
-                    </td>
-
                   </tr>
+                )}
 
-
-                  {expandido && (
-
-                    <tr className="mpf-linha-detalhe">
-
-                      <td colSpan={6}>
-
-                        <DetalhesFornecedor
-                          grupo={
-                            grupo
-                          }
-                        />
-
-                      </td>
-
-                    </tr>
-
-                  )}
-
-                </Fragment>
-              );
-            },
-          )}
+              </Fragment>
+            );
+          })}
 
         </tbody>
 
@@ -891,20 +518,18 @@ function TabelaFornecedores({
   );
 }
 
+/* =====================================================
+   BLOCO SEM RECEITA
 
-/* =========================================================
-   SEM RECEITA
-========================================================= */
+   MANTÉM O TOTAL GERAL DO CONSUMO SEM RECEITA.
 
-function BlocoSemReceita({
-  dados,
-}) {
-  if (
-    !dados.semReceita.length
-  ) {
+   EXIBE SOMENTE OS ITENS DA PÁGINA ATUAL.
+===================================================== */
+
+function BlocoSemReceita({ dados }) {
+  if (!dados.semReceita.length) {
     return null;
   }
-
 
   return (
     <section className="mpf-sem-receita">
@@ -912,25 +537,18 @@ function BlocoSemReceita({
       <div className="mpf-sem-receita-header">
 
         <div>
-
           <FiAlertTriangle />
 
-
           <div>
-
             <strong>
               Sem receita configurada
             </strong>
 
-
             <span>
               Consumo ainda não distribuído entre fornecedores.
             </span>
-
           </div>
-
         </div>
-
 
         <b>
           {formatarKg(
@@ -940,25 +558,14 @@ function BlocoSemReceita({
 
       </div>
 
-
       <div className="mpf-sem-receita-lista">
 
-        {dados.semReceita.map(
-          (
-            item,
-          ) => (
-
-          <div
-            key={
-              item.id
-            }
-          >
+        {dados.semReceita.map((item) => (
+          <div key={item.id}>
 
             <span>
-              Injetora{" "}
-              {item.injetora}
+              Injetora {item.injetora}
             </span>
-
 
             <strong>
               {montarProduto(
@@ -967,7 +574,6 @@ function BlocoSemReceita({
               )}
             </strong>
 
-
             <b>
               {formatarKg(
                 item.consumoSemReceitaKg,
@@ -975,9 +581,7 @@ function BlocoSemReceita({
             </b>
 
           </div>
-
-          ),
-        )}
+        ))}
 
       </div>
 
@@ -985,205 +589,231 @@ function BlocoSemReceita({
   );
 }
 
-
-/* =========================================================
-   RELATÓRIO
-========================================================= */
+/* =====================================================
+   COMPONENTE PRINCIPAL
+===================================================== */
 
 export default function ConsumoProgramadoPorFornecedor({
   relatorio,
 }) {
-  const periodoInicial =
-    useMemo(
-      () =>
-        obterPeriodoInicial(),
-      [],
-    );
+  const periodoInicial = useMemo(
+    () => obterPeriodoInicial(),
+    [],
+  );
 
+  const [dataInicial, setDataInicial] = useState(
+    periodoInicial.inicio,
+  );
 
-  const [
-    dataInicial,
-    setDataInicial,
-  ] =
-    useState(
-      periodoInicial.inicio,
-    );
-
-
-  const [
-    dataFinal,
-    setDataFinal,
-  ] =
-    useState(
-      periodoInicial.fim,
-    );
-
+  const [dataFinal, setDataFinal] = useState(
+    periodoInicial.fim,
+  );
 
   const [
     fornecedoresExpandidos,
     setFornecedoresExpandidos,
-  ] =
-    useState(
-      () =>
-        new Set(),
-    );
-
+  ] = useState(() => new Set());
 
   const [
     visualizacaoAberta,
     setVisualizacaoAberta,
-  ] =
-    useState(
-      false,
-    );
+  ] = useState(false);
 
+  const [exportando, setExportando] = useState(null);
 
-  const [
-    exportando,
-    setExportando,
-  ] =
-    useState(
-      null,
-    );
+  /* =================================================
+     ESTADO DA PAGINAÇÃO
+  ================================================= */
 
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
-  const periodoInvalido =
-    Boolean(
-      dataInicial &&
-      dataFinal &&
-      dataFinal <
-        dataInicial,
-    );
+  const periodoInvalido = Boolean(
+    dataInicial &&
+    dataFinal &&
+    dataFinal < dataInicial,
+  );
 
+  /* =================================================
+     DADOS ORIGINAIS
+  ================================================= */
 
   const {
     dados,
     carregando,
     atualizando,
     erro,
-  } =
-    useConsumoProgramado({
-      dataInicial,
-
-      dataFinal,
-
-      habilitado:
-        !periodoInvalido,
-    });
-
+  } = useConsumoProgramado({
+    dataInicial,
+    dataFinal,
+    habilitado: !periodoInvalido,
+  });
 
   const possuiDados =
-    dados.porFornecedor.length >
-      0 ||
-    dados.semReceita.length >
-      0;
+    dados.porFornecedor.length > 0 ||
+    dados.semReceita.length > 0;
 
+  const textoFiltros = montarTextoPeriodo(
+    dataInicial,
+    dataFinal,
+  );
 
-  const textoFiltros =
-    montarTextoPeriodo(
-      dataInicial,
-      dataFinal,
-    );
+  /* =================================================
+     PAGINAÇÃO
 
+     10 REGISTROS POR PÁGINA.
 
-  /* =======================================================
-     EXPORTAÇÃO
+     PRIMEIRO FORNECEDORES.
+     DEPOIS PROGRAMAÇÕES SEM RECEITA.
 
-     PDF E EXCEL UTILIZAM EXATAMENTE A MESMA BASE.
-  ======================================================= */
+     NÃO MODIFICA A BASE ORIGINAL.
+  ================================================= */
 
-  const exportacao =
-    useMemo(
-      () =>
-        prepararExportacaoFornecedor(
-          relatorio,
-          dados,
-          dataInicial,
-          dataFinal,
+  const totalFornecedores = dados.porFornecedor.length;
+
+  const totalItens =
+    totalFornecedores + dados.semReceita.length;
+
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(totalItens / ITENS_POR_PAGINA),
+  );
+
+  const paginaValida = Math.max(
+    1,
+    Math.min(paginaAtual, totalPaginas),
+  );
+
+  const inicioPagina =
+    (paginaValida - 1) * ITENS_POR_PAGINA;
+
+  const fimPagina =
+    inicioPagina + ITENS_POR_PAGINA;
+
+  /* FORNECEDORES DA PÁGINA */
+
+  const fornecedoresPagina = useMemo(
+    () =>
+      dados.porFornecedor.slice(
+        inicioPagina,
+        fimPagina,
+      ),
+    [
+      dados.porFornecedor,
+      inicioPagina,
+      fimPagina,
+    ],
+  );
+
+  /* ITENS SEM RECEITA DA PÁGINA */
+
+  const semReceitaPagina = useMemo(
+    () =>
+      dados.semReceita.slice(
+        Math.max(
+          0,
+          inicioPagina - totalFornecedores,
         ),
-      [
+
+        Math.max(
+          0,
+          fimPagina - totalFornecedores,
+        ),
+      ),
+    [
+      dados.semReceita,
+      inicioPagina,
+      fimPagina,
+      totalFornecedores,
+    ],
+  );
+
+  const inicioExibicao =
+    totalItens > 0 ? inicioPagina + 1 : 0;
+
+  const fimExibicao = Math.min(
+    fimPagina,
+    totalItens,
+  );
+
+  /* =================================================
+     EXPORTAÇÃO ORIGINAL
+
+     RECEBE TODOS OS DADOS.
+  ================================================= */
+
+  const exportacao = useMemo(
+    () =>
+      prepararExportacaoFornecedor(
         relatorio,
         dados,
         dataInicial,
         dataFinal,
-      ],
-    );
+      ),
+    [
+      relatorio,
+      dados,
+      dataInicial,
+      dataFinal,
+    ],
+  );
 
-
-  /* =======================================================
+  /* =================================================
      EXPANSÃO
-  ======================================================= */
+  ================================================= */
 
-  function alternarFornecedor(
-    chave,
-  ) {
-    setFornecedoresExpandidos(
-      (
-        atuais,
-      ) => {
-        const proximo =
-          new Set(
-            atuais,
-          );
+  function alternarFornecedor(chave) {
+    setFornecedoresExpandidos((atuais) => {
+      const proximo = new Set(atuais);
 
+      if (proximo.has(chave)) {
+        proximo.delete(chave);
+      } else {
+        proximo.add(chave);
+      }
 
-        if (
-          proximo.has(
-            chave,
-          )
-        ) {
-          proximo.delete(
-            chave,
-          );
-        } else {
-          proximo.add(
-            chave,
-          );
-        }
-
-
-        return proximo;
-      },
-    );
+      return proximo;
+    });
   }
 
+  /* =================================================
+     ALTERAÇÃO DOS FILTROS
+  ================================================= */
 
-  /* =======================================================
-     PDF
-  ======================================================= */
+  function alterarDataInicial(valor) {
+    setDataInicial(valor);
+    setPaginaAtual(1);
+    setFornecedoresExpandidos(new Set());
+  }
+
+  function alterarDataFinal(valor) {
+    setDataFinal(valor);
+    setPaginaAtual(1);
+    setFornecedoresExpandidos(new Set());
+  }
+
+  /* =================================================
+     PDF ORIGINAL
+  ================================================= */
 
   async function exportarPDF() {
     if (
       !possuiDados ||
       exportando ||
-      exportacao.dadosExportacao.length ===
-        0
+      exportacao.dadosExportacao.length === 0
     ) {
       return;
     }
 
-
     try {
-      setExportando(
-        "pdf",
+      setExportando("pdf");
+
+      const { gerarPdfRelatorio } = await import(
+        "../exportacao/GerarPDF"
       );
 
-
-      const {
-        gerarPdfRelatorio,
-      } =
-        await import(
-          "../exportacao/GerarPDF"
-        );
-
-
       await gerarPdfRelatorio({
-        relatorio:
-          exportacao.relatorioExportacao,
-
-        dados:
-          exportacao.dadosExportacao,
-
+        relatorio: exportacao.relatorioExportacao,
+        dados: exportacao.dadosExportacao,
         textoFiltros,
       });
 
@@ -1193,56 +823,36 @@ export default function ConsumoProgramadoPorFornecedor({
         error,
       );
 
-
-      window.alert(
-        "Não foi possível gerar o PDF.",
-      );
+      window.alert("Não foi possível gerar o PDF.");
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
-
-  /* =======================================================
-     EXCEL
-
-     MESMAS COLUNAS, AGRUPAMENTO E TOTAL DO PDF.
-  ======================================================= */
+  /* =================================================
+     EXCEL ORIGINAL
+  ================================================= */
 
   async function exportarExcel() {
     if (
       !possuiDados ||
       exportando ||
-      exportacao.dadosExportacao.length ===
-        0
+      exportacao.dadosExportacao.length === 0
     ) {
       return;
     }
 
-
     try {
-      setExportando(
-        "excel",
+      setExportando("excel");
+
+      const { gerarExcelRelatorio } = await import(
+        "../exportacao/GerarExcel"
       );
 
-
-      const {
-        gerarExcelRelatorio,
-      } =
-        await import(
-          "../exportacao/GerarExcel"
-        );
-
-
       await gerarExcelRelatorio({
-        relatorio:
-          exportacao.relatorioExportacao,
-
-        dados:
-          exportacao.dadosExportacao,
+        relatorio: exportacao.relatorioExportacao,
+        dados: exportacao.dadosExportacao,
       });
 
     } catch (error) {
@@ -1251,28 +861,21 @@ export default function ConsumoProgramadoPorFornecedor({
         error,
       );
 
-
-      window.alert(
-        "Não foi possível gerar o Excel.",
-      );
+      window.alert("Não foi possível gerar o Excel.");
 
     } finally {
-      setExportando(
-        null,
-      );
+      setExportando(null);
     }
   }
 
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* =====================================================
+     RENDERIZAÇÃO
+  ===================================================== */
 
   return (
     <>
-      {/* =================================================
-          CABEÇALHO
-      ================================================= */}
+
+      {/* CABEÇALHO */}
 
       <div className="relatorio-selecionado-header">
 
@@ -1280,359 +883,198 @@ export default function ConsumoProgramadoPorFornecedor({
           <FiPackage />
         </div>
 
-
         <div>
-
           <span className="relatorio-selecionado-categoria">
-            {relatorio?.categoria ||
-              "Matéria-Prima"}
+            {relatorio?.categoria || "Matéria-Prima"}
           </span>
-
 
           <h2>
             {relatorio?.titulo ||
               "Consumo Programado por Fornecedor"}
           </h2>
 
-
           <p>
             {relatorio?.descricao ||
               "Necessidade total de PP por fornecedor conforme as receitas e a programação das injetoras no período."}
           </p>
-
         </div>
 
       </div>
 
-
-      {/* =================================================
-          AÇÕES
-      ================================================= */}
+      {/* AÇÕES */}
 
       <div className="relatorio-acoes">
 
         <button
           type="button"
           className="btn-relatorio"
-          onClick={
-            () =>
-              setVisualizacaoAberta(
-                true,
-              )
-          }
-          disabled={
-            !possuiDados
-          }
+          onClick={() => {
+            setPaginaAtual(1);
+            setVisualizacaoAberta(true);
+          }}
+          disabled={!possuiDados}
         >
-
           <FiEye />
 
-
           <div>
-
-            <strong>
-              Visualizar
-            </strong>
-
-            <span>
-              Conferir antes de exportar
-            </span>
-
+            <strong>Visualizar</strong>
+            <span>Conferir antes de exportar</span>
           </div>
-
         </button>
-
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-pdf"
-          onClick={
-            exportarPDF
-          }
-          disabled={
-            !possuiDados ||
-            Boolean(
-              exportando,
-            )
-          }
+          onClick={exportarPDF}
+          disabled={!possuiDados || Boolean(exportando)}
         >
-
-          {exportando ===
-          "pdf" ? (
-
+          {exportando === "pdf" ? (
             <FiRefreshCw className="mpf-girando" />
-
           ) : (
-
             <FiFileText />
-
           )}
 
-
           <div>
-
-            <strong>
-              Baixar PDF
-            </strong>
-
-            <span>
-              Relatório formatado
-            </span>
-
+            <strong>Baixar PDF</strong>
+            <span>Relatório formatado</span>
           </div>
-
         </button>
-
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-csv"
-          onClick={
-            exportarExcel
-          }
-          disabled={
-            !possuiDados ||
-            Boolean(
-              exportando,
-            )
-          }
+          onClick={exportarExcel}
+          disabled={!possuiDados || Boolean(exportando)}
         >
-
-          {exportando ===
-          "excel" ? (
-
+          {exportando === "excel" ? (
             <FiRefreshCw className="mpf-girando" />
-
           ) : (
-
             <FiDownload />
-
           )}
 
-
           <div>
-
-            <strong>
-              Exportar Excel
-            </strong>
-
-            <span>
-              Tabela XLSX
-            </span>
-
+            <strong>Exportar Excel</strong>
+            <span>Tabela XLSX</span>
           </div>
-
         </button>
 
       </div>
 
-
-      {/* =================================================
-          FILTROS
-      ================================================= */}
+      {/* FILTROS */}
 
       <div className="relatorio-filtros-card">
 
         <div className="relatorio-filtros-header">
-
           <div>
-
-            <h3>
-              Parâmetros do relatório
-            </h3>
-
+            <h3>Parâmetros do relatório</h3>
 
             <p>
               Refine os dados antes de visualizar ou exportar.
             </p>
-
           </div>
-
         </div>
-
 
         <div className="mpf-filtros">
 
           <label>
-
-            <span>
-              De
-            </span>
-
+            <span>De</span>
 
             <input
               type="date"
-              value={
-                dataInicial
-              }
-              max={
-                dataFinal ||
-                undefined
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setDataInicial(
-                    event.target.value,
-                  )
+              value={dataInicial}
+              max={dataFinal || undefined}
+              onChange={(event) =>
+                alterarDataInicial(event.target.value)
               }
             />
-
           </label>
-
 
           <label>
-
-            <span>
-              Até
-            </span>
-
+            <span>Até</span>
 
             <input
               type="date"
-              value={
-                dataFinal
-              }
-              min={
-                dataInicial ||
-                undefined
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setDataFinal(
-                    event.target.value,
-                  )
+              value={dataFinal}
+              min={dataInicial || undefined}
+              onChange={(event) =>
+                alterarDataFinal(event.target.value)
               }
             />
-
           </label>
 
-
           {atualizando && (
-
             <span className="mpf-atualizando">
-
               <FiRefreshCw className="mpf-girando" />
 
               Atualizando dados...
-
             </span>
-
           )}
 
         </div>
 
       </div>
 
-
-      {/* =================================================
-          ERROS
-      ================================================= */}
+      {/* ERROS */}
 
       {periodoInvalido && (
-
         <div className="mpf-mensagem mpf-mensagem-erro">
-
           <FiAlertTriangle />
 
           <span>
             A data final não pode ser anterior à data inicial.
           </span>
-
         </div>
-
       )}
-
 
       {erro && (
-
         <div className="mpf-mensagem mpf-mensagem-erro">
-
           <FiAlertTriangle />
-
-          <span>
-            {erro}
-          </span>
-
+          <span>{erro}</span>
         </div>
-
       )}
 
-
-      {/* =================================================
-          RESUMO
-      ================================================= */}
+      {/* RESUMO ORIGINAL */}
 
       <div className="relatorio-resumo-grid">
 
         <div className="relatorio-resumo-card">
-
-          <span>
-            Registros no relatório
-          </span>
-
+          <span>Registros no relatório</span>
 
           <strong>
-
             {carregando
               ? "..."
               : formatarNumero(
                   dados.resumo.fornecedoresEnvolvidos,
                 )}
-
           </strong>
-
         </div>
 
-
         <div className="relatorio-resumo-card">
-
-          <span>
-            Relatório selecionado
-          </span>
-
+          <span>Relatório selecionado</span>
 
           <strong className="relatorio-resumo-texto">
-
             {relatorio?.titulo ||
               "Consumo Programado por Fornecedor"}
-
           </strong>
-
         </div>
 
-
         <div className="relatorio-resumo-card">
-
-          <span>
-            Filtros aplicados
-          </span>
-
+          <span>Filtros aplicados</span>
 
           <strong className="relatorio-resumo-texto">
             {textoFiltros}
           </strong>
-
         </div>
 
       </div>
 
+      {/* AVISO ORIGINAL */}
 
-      {Number(
-        dados.resumo.consumoSemReceitaKg ||
-          0,
-      ) > 0 && (
-
+      {Number(dados.resumo.consumoSemReceitaKg || 0) > 0 && (
         <div className="mpf-mensagem mpf-mensagem-aviso">
-
           <FiAlertTriangle />
 
-
           <span>
-
             <strong>
               {formatarKg(
                 dados.resumo.consumoSemReceitaKg,
@@ -1642,124 +1084,85 @@ export default function ConsumoProgramadoPorFornecedor({
             ainda não pode ser atribuído a fornecedores porque{" "}
             {dados.resumo.programacoesSemReceita} programação(ões)
             possui(em) receita pendente.
-
           </span>
-
         </div>
-
       )}
 
-
-      {/* =================================================
-          VISUALIZAÇÃO
-      ================================================= */}
+      {/* PRÉ-VISUALIZAÇÃO */}
 
       {visualizacaoAberta && (
-
         <section className="relatorio-visualizacao">
 
           <div className="relatorio-visualizacao-header">
 
             <div>
-
               <span className="relatorio-visualizacao-eyebrow">
                 Pré-visualização
               </span>
-
 
               <h3>
                 {relatorio?.titulo ||
                   "Consumo Programado por Fornecedor"}
               </h3>
-
             </div>
-
 
             <button
               type="button"
               className="relatorio-visualizacao-fechar"
-              onClick={
-                () =>
-                  setVisualizacaoAberta(
-                    false,
-                  )
-              }
+              onClick={() => setVisualizacaoAberta(false)}
               aria-label="Fechar visualização"
             >
-
               <FiX />
-
             </button>
 
           </div>
 
+          {/* INDICADORES COMPLETOS */}
 
           <div className="relatorio-visualizacao-info mpf-visualizacao-info">
 
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                Filtros
-              </span>
-
-              <strong>
-                {textoFiltros}
-              </strong>
-
+              <span>Filtros</span>
+              <strong>{textoFiltros}</strong>
             </div>
 
-
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                PP distribuído
-              </span>
+              <span>PP distribuído</span>
 
               <strong>
                 {formatarKg(
                   dados.resumo.consumoDistribuidoKg,
                 )}
               </strong>
-
             </div>
 
-
             <div className="relatorio-visualizacao-info-item">
-
-              <span>
-                Sem receita
-              </span>
+              <span>Sem receita</span>
 
               <strong>
                 {formatarKg(
                   dados.resumo.consumoSemReceitaKg,
                 )}
               </strong>
-
             </div>
 
-
             <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-
-              <span>
-                Consumo total
-              </span>
+              <span>Consumo total</span>
 
               <strong>
                 {formatarKg(
                   dados.resumo.consumoTotalKg,
                 )}
               </strong>
-
             </div>
 
           </div>
 
+          {/* CONTEÚDO PAGINADO */}
 
           {carregando ? (
 
             <div className="relatorio-visualizacao-vazia">
-
               <FiRefreshCw className="mpf-girando" />
 
               <strong>
@@ -1769,35 +1172,32 @@ export default function ConsumoProgramadoPorFornecedor({
               <span>
                 Aguarde enquanto o consumo por fornecedor é calculado.
               </span>
-
             </div>
 
           ) : possuiDados ? (
 
             <>
 
-              {dados.porFornecedor.length >
-                0 && (
+              {/* FORNECEDORES DA PÁGINA */}
 
+              {fornecedoresPagina.length > 0 && (
                 <TabelaFornecedores
-                  dados={
-                    dados
-                  }
-                  expandidos={
-                    fornecedoresExpandidos
-                  }
-                  onAlternar={
-                    alternarFornecedor
-                  }
+                  dados={{
+                    ...dados,
+                    porFornecedor: fornecedoresPagina,
+                  }}
+                  expandidos={fornecedoresExpandidos}
+                  onAlternar={alternarFornecedor}
                 />
-
               )}
 
+              {/* SEM RECEITA DA PÁGINA */}
 
               <BlocoSemReceita
-                dados={
-                  dados
-                }
+                dados={{
+                  ...dados,
+                  semReceita: semReceitaPagina,
+                }}
               />
 
             </>
@@ -1805,7 +1205,6 @@ export default function ConsumoProgramadoPorFornecedor({
           ) : (
 
             <div className="relatorio-visualizacao-vazia">
-
               <FiFileText />
 
               <strong>
@@ -1815,22 +1214,19 @@ export default function ConsumoProgramadoPorFornecedor({
               <span>
                 Ajuste o período para visualizar os dados.
               </span>
-
             </div>
 
           )}
 
+          {/* RODAPÉ */}
 
           <div className="relatorio-visualizacao-footer">
 
             <span>
-
-              {formatarNumero(
-                dados.porFornecedor.length,
-              )} fornecedor(es) exibido(s)
-
+              Exibindo {inicioExibicao} a{" "}
+              {fimExibicao} de{" "}
+              {totalItens} registro(s)
             </span>
-
 
             <span>
               Visualização atualizada conforme os filtros
@@ -1838,8 +1234,21 @@ export default function ConsumoProgramadoPorFornecedor({
 
           </div>
 
-        </section>
+          {/* PAGINAÇÃO PADRÃO */}
 
+          {!carregando &&
+            totalItens > ITENS_POR_PAGINA && (
+
+              <Paginacao
+                paginaAtual={paginaValida}
+                totalItens={totalItens}
+                itensPorPagina={ITENS_POR_PAGINA}
+                onChangePagina={setPaginaAtual}
+              />
+
+            )}
+
+        </section>
       )}
 
     </>

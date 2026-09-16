@@ -23,25 +23,19 @@ import useCadastros from "./useCadastros";
 
 import "./CadastrosPage.css";
 
-/* =========================================================
+/* =====================================================
    UTILITÁRIOS
-========================================================= */
+===================================================== */
 
 function normalizarTexto(valor) {
   return String(valor ?? "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
-function formatarNumero(
-  valor,
-  casas = 3,
-) {
+function formatarNumero(valor, casas = 3) {
   if (
     valor === null ||
     valor === undefined ||
@@ -50,30 +44,21 @@ function formatarNumero(
     return "-";
   }
 
-  const convertido =
-    Number(valor);
+  const numero = Number(valor);
 
-  if (
-    !Number.isFinite(
-      convertido,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "-";
   }
 
-  return convertido.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits: 0,
-      maximumFractionDigits:
-        casas,
-    },
-  );
+  return numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: casas,
+  });
 }
 
-/* =========================================================
-   KPI
-========================================================= */
+/* =====================================================
+   CARD DE RESUMO
+===================================================== */
 
 function CardResumo({
   titulo,
@@ -83,41 +68,33 @@ function CardResumo({
 }) {
   return (
     <article className="cadastros-resumo-card">
-      <div className="cadastros-resumo-card__topo">
-        <span>
-          {titulo}
-        </span>
 
+      <div className="cadastros-resumo-card__topo">
+        <span>{titulo}</span>
         <Icone size={19} />
       </div>
 
-      <strong>
-        {valor}
-      </strong>
+      <strong>{valor}</strong>
 
-      <small>
-        {subtitulo}
-      </small>
+      <small>{subtitulo}</small>
+
     </article>
   );
 }
 
-/* =========================================================
-   PÁGINA
-========================================================= */
+/* =====================================================
+   COMPONENTE PRINCIPAL
+===================================================== */
 
 export default function CadastrosPage() {
-  const [
-    aba,
-    setAba,
-  ] = useState(
-    "produtos",
-  );
 
-  const [
-    pesquisa,
-    setPesquisa,
-  ] = useState("");
+  /* =================================================
+     ESTADOS
+  ================================================= */
+
+  const [aba, setAba] = useState("produtos");
+
+  const [pesquisa, setPesquisa] = useState("");
 
   const [
     modalProdutoAberto,
@@ -144,238 +121,244 @@ export default function CadastrosPage() {
     setMensagemSucesso,
   ] = useState("");
 
+  /* =================================================
+     DADOS DOS CADASTROS
+  ================================================= */
+
   const {
     produtos,
     fornecedores,
+
     carregando,
     atualizando,
+
     salvandoProduto,
     salvandoFornecedor,
+
     erro,
+    erroDescricoesEstoque,
+
     recarregar,
+
     salvarProduto,
     salvarFornecedor,
-  } =
-    useCadastros();
 
-  /* =======================================================
-     RESUMO
-  ======================================================= */
+    buscarDescricaoEstoque,
+  } = useCadastros();
 
-  const resumo =
-    useMemo(
-      () => ({
-        produtosAtivos:
-          produtos.filter(
-            (produto) =>
-              produto.ativo,
-          ).length,
+  /* =================================================
+     INDICADORES
+  ================================================= */
 
-        produtosComParametros:
-          produtos.filter(
-            (produto) =>
-              produto.temParametros &&
-              produto.parametroAtivo,
-          ).length,
+  const resumo = useMemo(
+    () => ({
+      produtosAtivos: produtos.filter(
+        (produto) => produto.ativo,
+      ).length,
 
-        produtosSemParametros:
-          produtos.filter(
-            (produto) =>
-              !produto.temParametros,
-          ).length,
+      produtosComParametros: produtos.filter(
+        (produto) =>
+          produto.temParametros &&
+          produto.parametroAtivo,
+      ).length,
 
-        fornecedoresAtivos:
-          fornecedores.filter(
-            (fornecedor) =>
-              fornecedor.ativo,
-          ).length,
-      }),
-      [
-        produtos,
-        fornecedores,
-      ],
+      produtosSemParametros: produtos.filter(
+        (produto) => !produto.temParametros,
+      ).length,
+
+      fornecedoresAtivos: fornecedores.filter(
+        (fornecedor) => fornecedor.ativo,
+      ).length,
+    }),
+    [produtos, fornecedores],
+  );
+
+  /* =================================================
+     FILTRO DE PRODUTOS
+
+     Busca pelo código ou nome cadastrado.
+
+     O nome já foi atualizado no banco
+     utilizando a descrição do estoque Omie.
+  ================================================= */
+
+  const produtosFiltrados = useMemo(() => {
+    const termo = normalizarTexto(pesquisa);
+
+    if (!termo) {
+      return produtos;
+    }
+
+    return produtos.filter((produto) =>
+      normalizarTexto(
+        `${produto.codigoProduto} ${produto.nomeProduto}`,
+      ).includes(termo),
     );
 
-  /* =======================================================
-     FILTROS
-  ======================================================= */
+  }, [produtos, pesquisa]);
 
-  const produtosFiltrados =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            pesquisa,
-          );
+  /* =================================================
+     FILTRO DE FORNECEDORES
+  ================================================= */
 
-        if (!termo) {
-          return produtos;
-        }
+  const fornecedoresFiltrados = useMemo(() => {
+    const termo = normalizarTexto(pesquisa);
 
-        return produtos.filter(
-          (produto) =>
-            normalizarTexto(
-              `${produto.codigoProduto} ${produto.nomeProduto} ${produto.descricaoParametro}`,
-            ).includes(
-              termo,
-            ),
-        );
-      },
-      [
-        produtos,
-        pesquisa,
-      ],
+    if (!termo) {
+      return fornecedores;
+    }
+
+    return fornecedores.filter((fornecedor) =>
+      normalizarTexto(
+        fornecedor.nome,
+      ).includes(termo),
     );
 
-  const fornecedoresFiltrados =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            pesquisa,
-          );
+  }, [fornecedores, pesquisa]);
 
-        if (!termo) {
-          return fornecedores;
-        }
-
-        return fornecedores.filter(
-          (fornecedor) =>
-            normalizarTexto(
-              fornecedor.nome,
-            ).includes(
-              termo,
-            ),
-        );
-      },
-      [
-        fornecedores,
-        pesquisa,
-      ],
-    );
-
-  /* =======================================================
-     PRODUTO
-  ======================================================= */
+  /* =================================================
+     NOVO PRODUTO
+  ================================================= */
 
   function abrirNovoProduto() {
     setMensagemSucesso("");
+
     setProdutoEdicao(null);
+
     setModalProdutoAberto(true);
   }
 
-  function abrirEdicaoProduto(
-    produto,
-  ) {
+  /* =================================================
+     EDITAR PRODUTO
+  ================================================= */
+
+  function abrirEdicaoProduto(produto) {
     setMensagemSucesso("");
+
     setProdutoEdicao(produto);
+
     setModalProdutoAberto(true);
   }
+
+  /* =================================================
+     FECHAR MODAL PRODUTO
+  ================================================= */
 
   function fecharModalProduto() {
-    if (
-      salvandoProduto
-    ) {
+    if (salvandoProduto) {
       return;
     }
 
     setModalProdutoAberto(false);
+
     setProdutoEdicao(null);
   }
 
-  async function handleSalvarProduto(
-    dados,
-  ) {
-    const resultado =
-      await salvarProduto(
-        dados,
-      );
+  /* =================================================
+     SALVAR PRODUTO
+  ================================================= */
+
+  async function handleSalvarProduto(dados) {
+    const resultado = await salvarProduto(dados);
 
     setMensagemSucesso(
-      resultado?.acao ===
-        "criado"
+      resultado?.acao === "criado"
         ? "Produto cadastrado com sucesso."
         : "Produto atualizado com sucesso.",
     );
 
     setModalProdutoAberto(false);
+
     setProdutoEdicao(null);
 
     return resultado;
   }
 
-  /* =======================================================
-     FORNECEDOR
-  ======================================================= */
+  /* =================================================
+     NOVO FORNECEDOR
+  ================================================= */
 
   function abrirNovoFornecedor() {
     setMensagemSucesso("");
+
     setFornecedorEdicao(null);
+
     setModalFornecedorAberto(true);
   }
 
-  function abrirEdicaoFornecedor(
-    fornecedor,
-  ) {
+  /* =================================================
+     EDITAR FORNECEDOR
+  ================================================= */
+
+  function abrirEdicaoFornecedor(fornecedor) {
     setMensagemSucesso("");
-    setFornecedorEdicao(
-      fornecedor,
-    );
+
+    setFornecedorEdicao(fornecedor);
+
     setModalFornecedorAberto(true);
   }
+
+  /* =================================================
+     FECHAR MODAL FORNECEDOR
+  ================================================= */
 
   function fecharModalFornecedor() {
-    if (
-      salvandoFornecedor
-    ) {
+    if (salvandoFornecedor) {
       return;
     }
 
     setModalFornecedorAberto(false);
+
     setFornecedorEdicao(null);
   }
 
-  async function handleSalvarFornecedor(
-    dados,
-  ) {
-    const resultado =
-      await salvarFornecedor(
-        dados,
-      );
+  /* =================================================
+     SALVAR FORNECEDOR
+  ================================================= */
+
+  async function handleSalvarFornecedor(dados) {
+    const resultado = await salvarFornecedor(dados);
 
     setMensagemSucesso(
-      resultado?.acao ===
-        "criado"
+      resultado?.acao === "criado"
         ? "Fornecedor cadastrado com sucesso."
         : "Fornecedor atualizado com sucesso.",
     );
 
     setModalFornecedorAberto(false);
+
     setFornecedorEdicao(null);
 
     return resultado;
   }
 
-  /* =======================================================
-     ABA
-  ======================================================= */
+  /* =================================================
+     SELECIONAR ABA
+  ================================================= */
 
-  function selecionarAba(
-    novaAba,
-  ) {
+  function selecionarAba(novaAba) {
     setAba(novaAba);
+
     setPesquisa("");
+
     setMensagemSucesso("");
   }
 
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* =====================================================
+     RENDERIZAÇÃO
+  ===================================================== */
 
   return (
     <>
+
       <main className="cadastros-page">
+
         <div className="cadastros-container">
+
+          {/* =====================================
+              CABEÇALHO
+          ===================================== */}
+
           <PageHeader
             eyebrow="Cadastro"
             title="Cadastro"
@@ -384,16 +367,14 @@ export default function CadastrosPage() {
             className="cadastros-header"
             actions={
               <div className="cadastros-header-actions">
+
                 <button
                   type="button"
                   className="cadastros-atualizar"
-                  onClick={() =>
-                    void recarregar()
-                  }
-                  disabled={
-                    atualizando
-                  }
+                  onClick={() => void recarregar()}
+                  disabled={atualizando}
                 >
+
                   <RefreshCw
                     size={17}
                     className={
@@ -406,12 +387,19 @@ export default function CadastrosPage() {
                   {atualizando
                     ? "Atualizando..."
                     : "Atualizar"}
+
                 </button>
+
               </div>
             }
           />
 
+          {/* =====================================
+              INDICADORES
+          ===================================== */}
+
           <section className="cadastros-resumo">
+
             <CardResumo
               titulo="Produtos ativos"
               valor={
@@ -455,7 +443,12 @@ export default function CadastrosPage() {
               subtitulo="Fornecedores disponíveis"
               icone={Truck}
             />
+
           </section>
+
+          {/* =====================================
+              SUCESSO
+          ===================================== */}
 
           {mensagemSucesso && (
             <div className="cadastros-sucesso">
@@ -463,8 +456,16 @@ export default function CadastrosPage() {
             </div>
           )}
 
+          {/* =====================================
+              CONTEÚDO
+          ===================================== */}
+
           <section className="cadastros-conteudo">
+
+            {/* ABAS */}
+
             <div className="cadastros-abas">
+
               <button
                 type="button"
                 className={
@@ -473,18 +474,16 @@ export default function CadastrosPage() {
                     : "cadastros-aba"
                 }
                 onClick={() =>
-                  selecionarAba(
-                    "produtos",
-                  )
+                  selecionarAba("produtos")
                 }
               >
+
                 <Boxes size={17} />
 
                 Produtos
 
-                <span>
-                  {produtos.length}
-                </span>
+                <span>{produtos.length}</span>
+
               </button>
 
               <button
@@ -495,32 +494,35 @@ export default function CadastrosPage() {
                     : "cadastros-aba"
                 }
                 onClick={() =>
-                  selecionarAba(
-                    "fornecedores",
-                  )
+                  selecionarAba("fornecedores")
                 }
               >
+
                 <Truck size={17} />
 
                 Fornecedores
 
-                <span>
-                  {fornecedores.length}
-                </span>
+                <span>{fornecedores.length}</span>
+
               </button>
+
             </div>
 
+            {/* =====================================
+                PESQUISA E NOVO CADASTRO
+            ===================================== */}
+
             <div className="cadastros-toolbar">
+
               <div className="cadastros-pesquisa">
+
                 <Search size={18} />
 
                 <input
                   type="text"
                   value={pesquisa}
                   onChange={(evento) =>
-                    setPesquisa(
-                      evento.target.value,
-                    )
+                    setPesquisa(evento.target.value)
                   }
                   placeholder={
                     aba === "produtos"
@@ -528,34 +530,44 @@ export default function CadastrosPage() {
                       : "Buscar fornecedor..."
                   }
                 />
+
               </div>
 
               {aba === "produtos" ? (
+
                 <button
                   type="button"
                   className="cadastros-botao-primario"
-                  onClick={
-                    abrirNovoProduto
-                  }
+                  onClick={abrirNovoProduto}
                 >
+
                   <Plus size={17} />
 
                   Novo produto
+
                 </button>
+
               ) : (
+
                 <button
                   type="button"
                   className="cadastros-botao-primario"
-                  onClick={
-                    abrirNovoFornecedor
-                  }
+                  onClick={abrirNovoFornecedor}
                 >
+
                   <Plus size={17} />
 
                   Novo fornecedor
+
                 </button>
+
               )}
+
             </div>
+
+            {/* =====================================
+                ERROS
+            ===================================== */}
 
             {erro && (
               <div
@@ -566,169 +578,237 @@ export default function CadastrosPage() {
               </div>
             )}
 
+            {aba === "produtos" &&
+              erroDescricoesEstoque && (
+                <div
+                  className="cadastros-erro"
+                  role="status"
+                >
+                  Não foi possível consultar o estoque
+                  Omie: {erroDescricoesEstoque}.
+                  O cadastro permanece disponível.
+                </div>
+              )}
+
+            {/* =====================================
+                TABELA DE PRODUTOS
+
+                ALTERAÇÕES:
+
+                1. Peso duplicado removido.
+                2. Mantido KG/UN.
+                3. Descrição secundária removida.
+                4. Exibe somente nomeProduto,
+                   atualizado no banco pelo Omie.
+            ===================================== */}
+
             {aba === "produtos" && (
+
               <div className="cadastros-tabela-scroll">
+
                 <table className="cadastros-tabela">
+
+                  {/* CABEÇALHO */}
+
                   <thead>
                     <tr>
+
                       <th>Código</th>
+
                       <th>Produto</th>
+
                       <th>PP</th>
-                      <th className="numero">
-                        Peso
-                      </th>
+
                       <th className="numero">
                         Cavidades
                       </th>
+
                       <th className="numero">
                         Ciclo
                       </th>
+
                       <th className="numero">
                         Kg/un.
                       </th>
+
                       <th className="numero">
                         Kg/haste
                       </th>
+
                       <th>Status</th>
+
                       <th>Ações</th>
+
                     </tr>
                   </thead>
 
+                  {/* CORPO */}
+
                   <tbody>
+
                     {carregando ? (
+
                       <tr>
                         <td
-                          colSpan={10}
+                          colSpan={9}
                           className="cadastros-vazio"
                         >
                           Carregando produtos...
                         </td>
                       </tr>
-                    ) : produtosFiltrados.length ===
-                      0 ? (
+
+                    ) : produtosFiltrados.length === 0 ? (
+
                       <tr>
                         <td
-                          colSpan={10}
+                          colSpan={9}
                           className="cadastros-vazio"
                         >
                           Nenhum produto encontrado.
                         </td>
                       </tr>
+
                     ) : (
-                      produtosFiltrados.map(
-                        (produto) => (
-                          <tr
-                            key={
-                              produto.codigoProduto
-                            }
-                          >
-                            <td>
-                              <span className="cadastros-codigo">
-                                {
-                                  produto.codigoProduto
-                                }
-                              </span>
-                            </td>
 
-                            <td>
-                              <strong className="cadastros-produto-nome">
-                                {
-                                  produto.nomeProduto
-                                }
-                              </strong>
-                            </td>
+                      produtosFiltrados.map((produto) => (
 
-                            <td>
-                              {produto.usaPp
-                                ? "Sim"
-                                : "Não"}
-                            </td>
+                        <tr key={produto.codigoProduto}>
 
-                            <td className="numero">
-                              {formatarNumero(
-                                produto.pesoKg,
-                              )}
-                            </td>
+                          {/* CÓDIGO */}
 
-                            <td className="numero">
-                              {formatarNumero(
-                                produto.cavidadeMolde,
-                                0,
-                              )}
-                            </td>
+                          <td>
+                            <span className="cadastros-codigo">
+                              {produto.codigoProduto}
+                            </span>
+                          </td>
 
-                            <td className="numero">
-                              {produto.cicloSegundos ===
-                              null
-                                ? "-"
-                                : `${formatarNumero(
-                                    produto.cicloSegundos,
-                                    2,
-                                  )} s`}
-                            </td>
+                          {/* =================================
+                              NOME DO PRODUTO
 
-                            <td className="numero">
-                              {formatarNumero(
-                                produto.kgUn,
-                                4,
-                              )}
-                            </td>
+                              Exibe somente uma descrição.
 
-                            <td className="numero">
-                              {formatarNumero(
-                                produto.kgHaste,
-                                4,
-                              )}
-                            </td>
+                              O nome já foi atualizado
+                              no banco pelo estoque Omie.
+                          ================================= */}
 
-                            <td>
-                              <span
-                                className={
-                                  produto.ativo
-                                    ? "cadastros-status cadastros-status--ativo"
-                                    : "cadastros-status cadastros-status--inativo"
-                                }
-                              >
-                                {produto.ativo
-                                  ? "Ativo"
-                                  : "Inativo"}
-                              </span>
-                            </td>
+                          <td>
+                            <strong className="cadastros-produto-nome">
+                              {produto.nomeProduto}
+                            </strong>
+                          </td>
 
-                            <td>
-                              <button
-                                type="button"
-                                className="cadastros-editar"
-                                onClick={() =>
-                                  abrirEdicaoProduto(
-                                    produto,
-                                  )
-                                }
-                              >
-                                <Pencil
-                                  size={15}
-                                />
+                          {/* UTILIZA PP */}
 
-                                Editar
-                              </button>
-                            </td>
-                          </tr>
-                        ),
-                      )
+                          <td>
+                            {produto.usaPp
+                              ? "Sim"
+                              : "Não"}
+                          </td>
+
+                          {/* CAVIDADES */}
+
+                          <td className="numero">
+                            {formatarNumero(
+                              produto.cavidadeMolde,
+                              0,
+                            )}
+                          </td>
+
+                          {/* CICLO */}
+
+                          <td className="numero">
+
+                            {produto.cicloSegundos === null
+                              ? "-"
+                              : `${formatarNumero(
+                                  produto.cicloSegundos,
+                                  2,
+                                )} s`}
+
+                          </td>
+
+                          {/* KG/UNIDADE */}
+
+                          <td className="numero">
+                            {formatarNumero(
+                              produto.kgUn,
+                              4,
+                            )}
+                          </td>
+
+                          {/* KG/HASTE */}
+
+                          <td className="numero">
+                            {formatarNumero(
+                              produto.kgHaste,
+                              4,
+                            )}
+                          </td>
+
+                          {/* STATUS */}
+
+                          <td>
+                            <span
+                              className={
+                                produto.ativo
+                                  ? "cadastros-status cadastros-status--ativo"
+                                  : "cadastros-status cadastros-status--inativo"
+                              }
+                            >
+                              {produto.ativo
+                                ? "Ativo"
+                                : "Inativo"}
+                            </span>
+                          </td>
+
+                          {/* EDITAR */}
+
+                          <td>
+
+                            <button
+                              type="button"
+                              className="cadastros-editar"
+                              onClick={() =>
+                                abrirEdicaoProduto(produto)
+                              }
+                            >
+
+                              <Pencil size={15} />
+
+                              Editar
+
+                            </button>
+
+                          </td>
+
+                        </tr>
+
+                      ))
                     )}
+
                   </tbody>
+
                 </table>
+
               </div>
+
             )}
 
+            {/* =====================================
+                TABELA DE FORNECEDORES
+                PRESERVADA
+            ===================================== */}
+
             {aba === "fornecedores" && (
+
               <div className="cadastros-tabela-scroll">
+
                 <table className="cadastros-tabela cadastros-tabela--fornecedores">
+
                   <thead>
                     <tr>
-                      <th>
-                        Fornecedor
-                      </th>
+
+                      <th>Fornecedor</th>
 
                       <th className="numero">
                         Estoque mínimo
@@ -742,18 +822,17 @@ export default function CadastrosPage() {
                         Lead time
                       </th>
 
-                      <th>
-                        Status
-                      </th>
+                      <th>Status</th>
 
-                      <th>
-                        Ações
-                      </th>
+                      <th>Ações</th>
+
                     </tr>
                   </thead>
 
                   <tbody>
+
                     {carregando ? (
+
                       <tr>
                         <td
                           colSpan={6}
@@ -762,8 +841,9 @@ export default function CadastrosPage() {
                           Carregando fornecedores...
                         </td>
                       </tr>
-                    ) : fornecedoresFiltrados.length ===
-                      0 ? (
+
+                    ) : fornecedoresFiltrados.length === 0 ? (
+
                       <tr>
                         <td
                           colSpan={6}
@@ -772,130 +852,136 @@ export default function CadastrosPage() {
                           Nenhum fornecedor encontrado.
                         </td>
                       </tr>
+
                     ) : (
-                      fornecedoresFiltrados.map(
-                        (fornecedor) => (
-                          <tr
-                            key={
-                              fornecedor.id
-                            }
-                          >
-                            <td>
-                              <strong>
-                                {
-                                  fornecedor.nome
-                                }
-                              </strong>
-                            </td>
 
-                            <td className="numero">
-                              {fornecedor.estoqueMinimoKg ===
-                              null
-                                ? "-"
-                                : `${formatarNumero(
-                                    fornecedor.estoqueMinimoKg,
-                                    3,
-                                  )} kg`}
-                            </td>
+                      fornecedoresFiltrados.map((fornecedor) => (
 
-                            <td className="numero">
-                              {fornecedor.estoqueAlvoKg ===
-                              null
-                                ? "-"
-                                : `${formatarNumero(
-                                    fornecedor.estoqueAlvoKg,
-                                    3,
-                                  )} kg`}
-                            </td>
+                        <tr key={fornecedor.id}>
 
-                            <td className="numero">
-                              {fornecedor.leadTimeDias ===
-                              null
-                                ? "-"
-                                : `${formatarNumero(
-                                    fornecedor.leadTimeDias,
-                                    0,
-                                  )} dias`}
-                            </td>
+                          {/* FORNECEDOR */}
 
-                            <td>
-                              <span
-                                className={
-                                  fornecedor.ativo
-                                    ? "cadastros-status cadastros-status--ativo"
-                                    : "cadastros-status cadastros-status--inativo"
-                                }
-                              >
-                                {fornecedor.ativo
-                                  ? "Ativo"
-                                  : "Inativo"}
-                              </span>
-                            </td>
+                          <td>
+                            <strong>
+                              {fornecedor.nome}
+                            </strong>
+                          </td>
 
-                            <td>
-                              <button
-                                type="button"
-                                className="cadastros-editar"
-                                onClick={() =>
-                                  abrirEdicaoFornecedor(
-                                    fornecedor,
-                                  )
-                                }
-                              >
-                                <Pencil
-                                  size={15}
-                                />
+                          {/* ESTOQUE MÍNIMO */}
 
-                                Editar
-                              </button>
-                            </td>
-                          </tr>
-                        ),
-                      )
+                          <td className="numero">
+
+                            {fornecedor.estoqueMinimoKg === null
+                              ? "-"
+                              : `${formatarNumero(
+                                  fornecedor.estoqueMinimoKg,
+                                  3,
+                                )} kg`}
+
+                          </td>
+
+                          {/* ESTOQUE ALVO */}
+
+                          <td className="numero">
+
+                            {fornecedor.estoqueAlvoKg === null
+                              ? "-"
+                              : `${formatarNumero(
+                                  fornecedor.estoqueAlvoKg,
+                                  3,
+                                )} kg`}
+
+                          </td>
+
+                          {/* LEAD TIME */}
+
+                          <td className="numero">
+
+                            {fornecedor.leadTimeDias === null
+                              ? "-"
+                              : `${formatarNumero(
+                                  fornecedor.leadTimeDias,
+                                  0,
+                                )} dias`}
+
+                          </td>
+
+                          {/* STATUS */}
+
+                          <td>
+                            <span
+                              className={
+                                fornecedor.ativo
+                                  ? "cadastros-status cadastros-status--ativo"
+                                  : "cadastros-status cadastros-status--inativo"
+                              }
+                            >
+                              {fornecedor.ativo
+                                ? "Ativo"
+                                : "Inativo"}
+                            </span>
+                          </td>
+
+                          {/* EDITAR */}
+
+                          <td>
+
+                            <button
+                              type="button"
+                              className="cadastros-editar"
+                              onClick={() =>
+                                abrirEdicaoFornecedor(fornecedor)
+                              }
+                            >
+
+                              <Pencil size={15} />
+
+                              Editar
+
+                            </button>
+
+                          </td>
+
+                        </tr>
+
+                      ))
                     )}
+
                   </tbody>
+
                 </table>
+
               </div>
+
             )}
+
           </section>
+
         </div>
+
       </main>
 
+      {/* =====================================
+          MODAIS
+      ===================================== */}
+
       <CadastroProdutoModal
-        aberto={
-          modalProdutoAberto
-        }
-        item={
-          produtoEdicao
-        }
-        salvando={
-          salvandoProduto
-        }
-        onCancelar={
-          fecharModalProduto
-        }
-        onSalvar={
-          handleSalvarProduto
-        }
+        aberto={modalProdutoAberto}
+        item={produtoEdicao}
+        salvando={salvandoProduto}
+        onCancelar={fecharModalProduto}
+        onSalvar={handleSalvarProduto}
+        buscarDescricaoEstoque={buscarDescricaoEstoque}
       />
 
       <CadastroFornecedorModal
-        aberto={
-          modalFornecedorAberto
-        }
-        item={
-          fornecedorEdicao
-        }
-        salvando={
-          salvandoFornecedor
-        }
-        onCancelar={
-          fecharModalFornecedor
-        }
-        onSalvar={
-          handleSalvarFornecedor
-        }
+        aberto={modalFornecedorAberto}
+        item={fornecedorEdicao}
+        salvando={salvandoFornecedor}
+        onCancelar={fecharModalFornecedor}
+        onSalvar={handleSalvarFornecedor}
       />
+
     </>
   );
 }

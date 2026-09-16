@@ -25,7 +25,6 @@ import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MateriaPrimaRouteImport } from './routes/materia-prima'
 import { Route as PedidosRouteImport } from './routes/pedidos'
-import { Route as ProgramacaoProducaoRouteImport } from './routes/programacao-producao'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 
@@ -110,11 +109,6 @@ const PedidosRoute = PedidosRouteImport.update({
   path: '/pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProgramacaoProducaoRoute = ProgramacaoProducaoRouteImport.update({
-  id: '/programacao-producao',
-  path: '/programacao-producao',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RelatoriosRoute = RelatoriosRouteImport.update({
   id: '/relatorios',
   path: '/relatorios',
@@ -143,7 +137,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
-  '/programacao-producao': typeof ProgramacaoProducaoRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -164,7 +157,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
-  '/programacao-producao': typeof ProgramacaoProducaoRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -186,7 +178,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
-  '/programacao-producao': typeof ProgramacaoProducaoRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -209,7 +200,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
-    | '/programacao-producao'
     | '/relatorios'
     | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
@@ -230,7 +220,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
-    | '/programacao-producao'
     | '/relatorios'
     | '/usuarios'
   id:
@@ -251,7 +240,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
-    | '/programacao-producao'
     | '/relatorios'
     | '/usuarios'
   fileRoutesById: FileRoutesById
@@ -273,7 +261,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MateriaPrimaRoute: typeof MateriaPrimaRoute
   PedidosRoute: typeof PedidosRoute
-  ProgramacaoProducaoRoute: typeof ProgramacaoProducaoRoute
   RelatoriosRoute: typeof RelatoriosRoute
   UsuariosRoute: typeof UsuariosRoute
 }
@@ -392,13 +379,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/programacao-producao': {
-      id: '/programacao-producao'
-      path: '/programacao-producao'
-      fullPath: '/programacao-producao'
-      preLoaderRoute: typeof ProgramacaoProducaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/relatorios': {
       id: '/relatorios'
       path: '/relatorios'
@@ -433,7 +413,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MateriaPrimaRoute: MateriaPrimaRoute,
   PedidosRoute: PedidosRoute,
-  ProgramacaoProducaoRoute: ProgramacaoProducaoRoute,
   RelatoriosRoute: RelatoriosRoute,
   UsuariosRoute: UsuariosRoute,
 }
