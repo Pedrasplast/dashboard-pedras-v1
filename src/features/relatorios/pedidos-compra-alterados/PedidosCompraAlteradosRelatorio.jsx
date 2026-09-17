@@ -1362,15 +1362,7 @@ export default function PedidosCompraAlteradosRelatorio({
                                 {pedido.numero_pedido ||
                                   codigo}
                               </strong>
-
-                              <small
-                                style={{
-                                  display: "block",
-                                  opacity: 0.6,
-                                }}
-                              >
-                                Omie: {codigo}
-                              </small>
+                              
                             </td>
 
                             {/* ===========================
