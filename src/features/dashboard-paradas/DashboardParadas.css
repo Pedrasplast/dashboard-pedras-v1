@@ -1,9 +1,62 @@
+
 /* =========================================================
    DASHBOARD DE PARADAS
-   Escopo visual isolado com prefixo dp-
+   Responsividade completa e isolada nesta página.
+
+   A Navbar já define --navbar-height e reserva seu espaço
+   no body. Este arquivo não acrescenta outra margem superior.
 ========================================================= */
 
-.dp-page {
+/* =========================================================
+   ESTRUTURA EXTERNA — SOMENTE NA ROTA DE PARADAS
+========================================================= */
+
+@media (min-width: 761px) {
+  html:has(.dp-page),
+  body:has(.dp-page) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body:has(.dp-page) {
+    height: 100dvh;
+    min-height: 0;
+    padding-top: var(--navbar-height, 76px);
+    box-sizing: border-box;
+  }
+
+  body:has(.dp-page) #root {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.dp-page) .app-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.dp-page)
+  .app-layout > .main-content:has(> .dp-page) {
+    display: block;
+    flex: 1 1 auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+/* =========================================================
+   PÁGINA
+========================================================= */
+
+.dashboard-container.dp-page {
   --dp-bg-top: #f8fbff;
   --dp-bg-bottom: #eef4fb;
 
@@ -32,107 +85,184 @@
   --dp-danger-soft: #fef2f2;
 
   --dp-shadow:
-    0 8px 24px
-    rgba(15, 23, 42, 0.055);
+    0 8px 24px rgba(15, 23, 42, 0.055);
 
   --dp-shadow-hover:
-    0 14px 34px
-    rgba(15, 23, 42, 0.09);
+    0 14px 34px rgba(15, 23, 42, 0.09);
 
   display: grid;
 
   grid-template-columns:
-    296px
+    296px minmax(0, 1fr);
+
+  grid-template-rows:
     minmax(0, 1fr);
 
   align-items: stretch;
 
-  /*
-   * Navbar desktop = 76px.
-   * O Dashboard ocupa somente o restante do viewport.
-   */
-  height:
-    calc(
-      100dvh - 76px
-    );
+  width: 100%;
+  height: 100%;
 
-  min-height: 0;
-
-  padding-top: 16px;
-
-  margin-top: 30px;
-
-  box-sizing: border-box;
-
-  overflow: hidden;
-
-  background:
-    linear-gradient(
-      180deg,
-      var(--dp-bg-top) 0%,
-      var(--dp-bg-bottom) 100%
-    );
-}
-
-
-/* =========================================================
-   SIDEBAR — RESPIRO LATERAL
-========================================================= */
-
-.dp-sidebar-shell {
   min-width: 0;
   min-height: 0;
 
-  /*
-   * 12px de respiro no topo
-   * + 16px de respiro no rodapé.
-   */
-  height:
-    calc(
-      100% - 28px
-    );
+  margin: 0;
 
-  align-self: start;
+  padding:
+    12px 12px 12px 0;
 
-  margin-top: 12px;
+  box-sizing: border-box;
 
-  padding-left: 16px;
+  overflow: hidden;
+
+  background: linear-gradient(
+    180deg,
+    var(--dp-bg-top),
+    var(--dp-bg-bottom)
+  );
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.dp-page .dp-sidebar-shell {
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  margin: 0;
+
+  padding:
+    0 0 0 12px;
 
   box-sizing: border-box;
 
   overflow: hidden;
 }
 
-.dp-sidebar-shell > * {
+.dp-page .dp-sidebar-shell > .sidebar {
+  position: static;
+
+  top: auto;
+
   width: 100%;
+  height: 100%;
 
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: 100% !important;
+  min-height: 0;
+  max-height: none;
 
-  /*
-   * O Sidebar permanece parado.
-   * Não existe mais rolagem interna na lateral.
-   */
-  position: static !important;
+  margin: 0;
 
-  top: auto !important;
+  overflow-x: hidden;
+  overflow-y: auto;
 
-  overflow: hidden !important;
+  overscroll-behavior: contain;
 
   box-sizing: border-box;
 
-  scrollbar-gutter: auto;
+  scrollbar-gutter: stable;
 }
 
-
 /* =========================================================
-   SIDEBAR — FILTROS COMPACTOS SEM ROLAGEM
+   CONTEÚDO PRINCIPAL
+
+   A classe main-content também existe no layout externo.
+   Este seletor afeta SOMENTE o painel interno de Paradas.
 ========================================================= */
 
-@media (
-  min-width: 761px
-) {
+.dp-page > .main-content.dp-main {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  margin: 0;
+
+  padding:
+    0 12px 0 20px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CABEÇALHO E ÁREA ROLÁVEL
+========================================================= */
+
+.dp-page .dp-main-fixed {
+  position: relative;
+
+  z-index: 2;
+
+  flex: 0 0 auto;
+
+  min-width: 0;
+
+  background: linear-gradient(
+    180deg,
+    rgba(248, 251, 255, 0.98),
+    rgba(248, 251, 255, 0.94)
+  );
+}
+
+.dp-page .dp-data-scroll {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  padding:
+    0 4px 32px 0;
+
+  box-sizing: border-box;
+
+  overscroll-behavior: contain;
+
+  scrollbar-gutter: stable;
+}
+
+.dp-page .page-header.dp-header {
+  min-width: 0;
+
+  margin:
+    0 0 12px;
+
+  padding:
+    16px 18px;
+}
+
+.dp-page .page-header__main,
+.dp-page .page-header__content {
+  min-width: 0;
+}
+
+.dp-page .page-header__title,
+.dp-page .page-header__description {
+  overflow-wrap: anywhere;
+}
+
+.dp-page .dp-dashboard-actions {
+  flex-wrap: wrap;
+
+  margin:
+    0 0 12px;
+}
+
+/* =========================================================
+   FILTROS DA SIDEBAR — DESKTOP
+========================================================= */
+
+@media (min-width: 761px) {
   .dp-sidebar-shell .filter-section {
     gap: 8px;
   }
@@ -141,7 +271,6 @@
   .filter-section
   .filter-header-row {
     gap: 8px;
-
     margin-top: 0;
   }
 
@@ -151,12 +280,9 @@
   .filter-section
   .filter-header-row > label {
     margin:
-      14px
-      0
-      0;
+      14px 0 0;
 
-    font-size:
-      0.66rem;
+    font-size: 0.66rem;
   }
 
   .dp-sidebar-shell
@@ -169,11 +295,9 @@
   .filter-section
   .clear-date-btn {
     padding:
-      3px
-      5px;
+      3px 5px;
 
-    font-size:
-      0.62rem;
+    font-size: 0.62rem;
   }
 
   .dp-sidebar-shell
@@ -182,52 +306,40 @@
     gap: 6px;
   }
 
-  .dp-sidebar-shell
-  .calendar-trigger {
-    min-height:
-      40px;
+  .dp-sidebar-shell .calendar-trigger {
+    min-height: 40px;
 
     padding:
-      6px
-      10px;
+      6px 10px;
   }
 
   .dp-sidebar-shell
   .calendar-trigger strong {
-    font-size:
-      0.82rem;
+    font-size: 0.82rem;
   }
 
   .dp-sidebar-shell
   .filter-section select {
-    min-height:
-      42px;
+    min-height: 42px;
 
     padding:
-      7px
-      34px
-      7px
-      10px;
+      7px 34px 7px 10px;
 
-    font-size:
-      0.79rem;
+    font-size: 0.79rem;
   }
 
   .dp-sidebar-shell
   .filter-section
   .checkbox-group {
-    max-height:
-      none;
+    max-height: none;
 
     gap: 2px;
 
     padding: 0;
 
-    overflow:
-      visible;
+    overflow: visible;
 
-    scrollbar-width:
-      none;
+    scrollbar-width: none;
   }
 
   .dp-sidebar-shell
@@ -239,25 +351,20 @@
   .dp-sidebar-shell
   .filter-section
   .tipo-checkbox-label {
-    min-height:
-      32px;
+    min-height: 32px;
 
     gap: 6px;
 
     padding:
-      4px
-      5px;
+      4px 5px;
   }
 
   .dp-sidebar-shell
   .filter-section
   .tipo-checkbox-label
   input[type="checkbox"] {
-    width:
-      15px;
-
-    height:
-      15px;
+    width: 15px;
+    height: 15px;
   }
 
   .dp-sidebar-shell
@@ -269,179 +376,64 @@
   .dp-sidebar-shell
   .filter-section
   .tipo-label-numero {
-    width:
-      21px;
+    width: 21px;
+    height: 21px;
 
-    height:
-      21px;
-
-    font-size:
-      0.65rem;
+    font-size: 0.65rem;
   }
 
   .dp-sidebar-shell
   .filter-section
   .tipo-label-descricao {
-    font-size:
-      0.65rem;
-
-    line-height:
-      1.16;
+    font-size: 0.65rem;
+    line-height: 1.16;
   }
 }
 
-
 /* =========================================================
-   SIDEBAR — NOTEBOOK COM POUCA ALTURA
+   FILTROS — NOTEBOOK COM POUCA ALTURA
 ========================================================= */
 
-@media (
-  max-height: 760px
-) and (
-  min-width: 761px
-) {
+@media (max-height: 760px) and (min-width: 761px) {
   .dp-sidebar-shell .filter-section {
     gap: 5px;
   }
 
   .dp-sidebar-shell
   .filter-section > label {
-    margin-top:
-      9px;
+    margin-top: 9px;
   }
 
-  .dp-sidebar-shell
-  .calendar-trigger {
-    min-height:
-      37px;
-
-    padding:
-      5px
-      9px;
+  .dp-sidebar-shell .calendar-trigger {
+    min-height: 37px;
+    padding: 5px 9px;
   }
 
   .dp-sidebar-shell
   .filter-section select {
-    min-height:
-      39px;
+    min-height: 39px;
   }
 
   .dp-sidebar-shell
   .filter-section
   .tipo-checkbox-label {
-    min-height:
-      29px;
-
-    padding:
-      3px
-      4px;
+    min-height: 29px;
+    padding: 3px 4px;
   }
 
   .dp-sidebar-shell
   .filter-section
   .tipo-label-numero {
-    width:
-      19px;
-
-    height:
-      19px;
+    width: 19px;
+    height: 19px;
   }
 
   .dp-sidebar-shell
   .filter-section
   .tipo-label-descricao {
-    font-size:
-      0.62rem;
+    font-size: 0.62rem;
   }
 }
-
-
-/* =========================================================
-   CONTEÚDO PRINCIPAL
-========================================================= */
-
-.dp-main {
-  min-width: 0;
-  min-height: 0;
-
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  margin-top: 0;
-
-  padding:
-    32px
-    36px
-    0;
-
-  box-sizing: border-box;
-
-  overflow: hidden;
-}
-
-
-/* =========================================================
-   CABEÇALHO FIXO DA ÁREA PRINCIPAL
-========================================================= */
-
-.dp-main-fixed {
-  flex: 0 0 auto;
-
-  min-width: 0;
-
-  position: relative;
-
-  z-index: 4;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(
-        248,
-        251,
-        255,
-        0.98
-      ) 0%,
-      rgba(
-        248,
-        251,
-        255,
-        0.94
-      ) 100%
-    );
-}
-
-
-/* =========================================================
-   ÁREA ROLÁVEL DOS DADOS
-========================================================= */
-
-.dp-data-scroll {
-  flex: 1 1 auto;
-
-  min-width: 0;
-  min-height: 0;
-
-  overflow-x: clip;
-  overflow-y: auto;
-
-  padding:
-    0
-    4px
-    44px
-    0;
-
-  box-sizing: border-box;
-
-  overscroll-behavior:
-    contain;
-
-  scrollbar-gutter:
-    stable;
-}
-
 
 /* =========================================================
    CABEÇALHO
@@ -451,38 +443,30 @@
   margin-bottom: 18px;
 }
 
-
 /* =========================================================
-   ATUALIZAÇÃO
+   INDICADOR DE ATUALIZAÇÃO
 ========================================================= */
 
 .dp-updating {
   width: fit-content;
 
   margin:
-    -6px
-    0
-    12px
-    auto;
+    -6px 0 12px auto;
 
   padding:
-    5px
-    9px;
+    5px 9px;
 
   color: #1d4ed8;
-
   background: #eff6ff;
 
   border:
-    1px solid
-    #dbeafe;
+    1px solid #dbeafe;
 
   border-radius: 999px;
 
   font-size: 0.68rem;
   font-weight: 700;
 }
-
 
 /* =========================================================
    INSIGHTS
@@ -492,10 +476,7 @@
   display: grid;
 
   grid-template-columns:
-    repeat(
-      3,
-      minmax(0, 1fr)
-    );
+    repeat(3, minmax(0, 1fr));
 
   gap: 12px;
 
@@ -506,37 +487,23 @@
   min-width: 0;
 
   display: flex;
-
   align-items: center;
 
   gap: 12px;
 
   padding:
-    12px
-    14px;
+    12px 14px;
 
   background:
-    rgba(
-      255,
-      255,
-      255,
-      0.9
-    );
+    rgba(255, 255, 255, 0.9);
 
   border:
-    1px solid
-    var(--dp-border);
+    1px solid var(--dp-border);
 
   border-radius: 11px;
 
   box-shadow:
-    0 3px 12px
-    rgba(
-      15,
-      23,
-      42,
-      0.035
-    );
+    0 3px 12px rgba(15, 23, 42, 0.035);
 }
 
 .dp-insight__icon {
@@ -549,8 +516,7 @@
 
   place-items: center;
 
-  color:
-    var(--dp-primary);
+  color: var(--dp-primary);
 
   background:
     var(--dp-primary-soft);
@@ -567,11 +533,9 @@
 
   margin-bottom: 2px;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.63rem;
-
   font-weight: 800;
 
   letter-spacing: 0.055em;
@@ -584,17 +548,13 @@
 
   overflow: hidden;
 
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
   font-size: 0.91rem;
   font-weight: 800;
-
   line-height: 1.25;
 
-  text-overflow:
-    ellipsis;
-
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -603,14 +563,11 @@
 
   margin-top: 2px;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.66rem;
-
   line-height: 1.35;
 }
-
 
 /* =========================================================
    GRID DOS GRÁFICOS
@@ -620,10 +577,7 @@
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
   gap: 16px;
 
@@ -632,18 +586,11 @@
   align-items: stretch;
 }
 
-/*
-   Mantém a mesma divisão de colunas em todas as linhas.
-   Assim o divisor central dos cards fica perfeitamente alinhado.
-*/
 .dp-grid--principal,
 .dp-grid--analise,
 .dp-grid--operacional {
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 }
 
 .dp-grid > * {
@@ -662,34 +609,27 @@
   min-width: 0;
 }
 
-
 /* =========================================================
-   RECHARTS — PADRÃO VISUAL
+   RECHARTS
 ========================================================= */
 
 .dp-page
-.recharts-cartesian-grid-horizontal
-line,
+.recharts-cartesian-grid-horizontal line,
 .dp-page
-.recharts-cartesian-grid-vertical
-line {
-  stroke:
-    #e8eef5;
+.recharts-cartesian-grid-vertical line {
+  stroke: #e8eef5;
 }
 
 .dp-page
 .recharts-cartesian-axis-line,
 .dp-page
 .recharts-cartesian-axis-tick-line {
-  stroke:
-    #cbd5e1;
+  stroke: #cbd5e1;
 }
 
 .dp-page
 .recharts-cartesian-axis-tick-value {
-  fill:
-    #64748b;
-
+  fill: #64748b;
   font-weight: 600;
 }
 
@@ -701,34 +641,21 @@ line {
   min-width: 180px;
 
   padding:
-    10px
-    12px;
+    10px 12px;
 
   color:
     var(--dp-text-secondary);
 
   background:
-    rgba(
-      255,
-      255,
-      255,
-      0.98
-    );
+    rgba(255, 255, 255, 0.98);
 
   border:
-    1px solid
-    #dbe3ee;
+    1px solid #dbe3ee;
 
   border-radius: 9px;
 
   box-shadow:
-    0 14px 34px
-    rgba(
-      15,
-      23,
-      42,
-      0.16
-    );
+    0 14px 34px rgba(15, 23, 42, 0.16);
 
   font-size: 0.7rem;
 }
@@ -738,35 +665,29 @@ line {
 
   margin-bottom: 7px;
 
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
   font-size: 0.75rem;
-
   font-weight: 800;
 }
 
 .dp-chart-tooltip__linha {
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
   gap: 18px;
 
   padding:
-    3px
-    0;
+    3px 0;
 }
 
 .dp-chart-tooltip__linha span {
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 }
 
 .dp-chart-tooltip__linha b {
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
   font-size: 0.7rem;
 
@@ -775,12 +696,11 @@ line {
 }
 
 /* =========================================================
-   ESTADO SEM DADOS DA PÁGINA
+   ESTADO SEM DADOS
 ========================================================= */
 
 .dp-empty-page {
   display: flex;
-
   align-items: center;
 
   gap: 12px;
@@ -788,537 +708,228 @@ line {
   margin-top: 4px;
 
   padding:
-    22px
-    20px;
+    22px 20px;
 
-  color:
-    #64748b;
-
-  background:
-    #ffffff;
+  color: #64748b;
+  background: #ffffff;
 
   border:
-    1px dashed
-    #cbd5e1;
+    1px dashed #cbd5e1;
 
   border-radius: 12px;
 }
 
 .dp-empty-page > svg {
   flex: 0 0 auto;
-
-  color:
-    #94a3b8;
+  color: #94a3b8;
 }
 
 .dp-empty-page strong {
   display: block;
 
-  color:
-    #334155;
+  color: #334155;
 
   font-size: 0.8rem;
 }
 
 .dp-empty-page p {
   margin:
-    3px
-    0
-    0;
+    3px 0 0;
 
   font-size: 0.69rem;
-
   line-height: 1.4;
 }
 
 /* =========================================================
-   RESPONSIVIDADE — NOTEBOOK / DESKTOP MENOR
+   AJUSTES VISUAIS — DESKTOP MENOR
 ========================================================= */
 
-@media (
-  max-width: 1450px
-) {
-  .dp-page {
-    grid-template-columns:
-      268px
-      minmax(0, 1fr);
-
-    padding-top: 12px;
-  }
-
-  .dp-sidebar-shell {
-    height:
-      calc(
-        100% - 24px
-      );
-
-    margin-top: 10px;
-
-    padding-left: 12px;
-  }
-
-  .dp-main {
-    padding:
-      24px
-      24px
-      0;
-  }
-
+@media (max-width: 1450px) {
   .dp-header {
-    margin-bottom:
-      14px;
+    margin-bottom: 14px;
   }
 
   .dp-insights {
-    gap:
-      10px;
-
-    margin-bottom:
-      14px;
+    gap: 10px;
+    margin-bottom: 14px;
   }
 
   .dp-grid {
-    gap:
-      14px;
-
-    margin-bottom:
-      14px;
+    gap: 14px;
+    margin-bottom: 14px;
   }
 
   .dp-chart {
-    height:
-      300px;
+    height: 300px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — NOTEBOOK COMPACTO
+   AJUSTES VISUAIS — NOTEBOOK
 ========================================================= */
 
-@media (
-  max-width: 1280px
-) {
-  .dp-page {
-    grid-template-columns:
-      250px
-      minmax(0, 1fr);
-  }
-
-  .dp-main {
-    padding:
-      20px
-      18px
-      0;
-  }
-
+@media (max-width: 1280px) {
   .dp-insight {
-    gap:
-      9px;
+    gap: 9px;
 
     padding:
-      10px
-      11px;
+      10px 11px;
   }
 
   .dp-insight__icon {
-    width:
-      32px;
-
-    height:
-      32px;
+    width: 32px;
+    height: 32px;
   }
 
   .dp-insight__content > strong {
-    font-size:
-      0.82rem;
+    font-size: 0.82rem;
   }
 
   .dp-chart {
-    height:
-      285px;
+    height: 285px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — LARGURA REDUZIDA
-   Sidebar continua fixa e os gráficos passam para uma coluna.
+   GRÁFICOS EM UMA COLUNA
 ========================================================= */
 
-@media (
-  max-width: 1120px
-) {
-  .dp-page {
-    grid-template-columns:
-      236px
-      minmax(0, 1fr);
-  }
-
-  .dp-main {
-    padding:
-      18px
-      16px
-      0;
-  }
-
+@media (max-width: 1120px) {
   .dp-grid--principal,
   .dp-grid--analise,
   .dp-grid--operacional {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .dp-insights {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .dp-chart {
-    height:
-      320px;
+    height: 320px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — TABLET HORIZONTAL / TELA ESTREITA
-   Ainda mantém Sidebar + conteúdo lado a lado.
+   TABLET
 ========================================================= */
 
-@media (
-  max-width: 920px
-) {
-  .dp-page {
-    grid-template-columns:
-      218px
-      minmax(0, 1fr);
-
-    padding-top:
-      8px;
-  }
-
-  .dp-sidebar-shell {
-    height:
-      calc(
-        100% - 16px
-      );
-
-    margin-top:
-      8px;
-
-    padding-left:
-      8px;
-  }
-
-  .dp-main {
-    padding:
-      14px
-      12px
-      0;
-  }
-
+@media (max-width: 920px) {
   .dp-header {
-    margin-bottom:
-      10px;
+    margin-bottom: 10px;
   }
 
   .dp-dashboard-actions {
     margin:
-      -2px
-      0
-      10px;
-  }
-
-  .dp-data-scroll {
-    padding:
-      0
-      2px
-      28px
-      0;
+      -2px 0 10px;
   }
 
   .dp-chart {
-    height:
-      290px;
+    height: 290px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — CELULAR / TABLET VERTICAL
-   Aqui deixa de existir o layout fixo em duas colunas.
+   CELULAR — ELEMENTOS VISUAIS
 ========================================================= */
 
-@media (
-  max-width: 760px
-) {
-  .dp-page {
-    display:
-      block;
-
-    height:
-      auto;
-
-    min-height:
-      calc(
-        100dvh - 76px
-      );
-
-    padding:
-      10px
-      10px
-      18px;
-
-    overflow:
-      visible;
-  }
-
-  .dp-sidebar-shell {
-    width:
-      100%;
-
-    height:
-      auto;
-
-    margin-top:
-      0;
-
-    margin-bottom:
-      14px;
-
-    padding-left:
-      0;
-
-    overflow:
-      visible;
-  }
-
-  .dp-sidebar-shell > * {
-    width:
-      100%;
-
-    height:
-      auto !important;
-
-    min-height:
-      0 !important;
-
-    max-height:
-      none !important;
-
-    overflow:
-      visible !important;
-
-    scrollbar-gutter:
-      auto;
-  }
-
-  .dp-main {
-    width:
-      100%;
-
-    height:
-      auto;
-
-    display:
-      block;
-
-    padding:
-      0;
-
-    overflow:
-      visible;
-  }
-
-  .dp-main-fixed {
-    position:
-      static;
-
-    background:
-      transparent;
-  }
-
-  .dp-data-scroll {
-    overflow:
-      visible;
-
-    padding:
-      0;
-  }
-
+@media (max-width: 760px) {
   .dp-dashboard-actions {
-    align-items:
-      stretch;
+    align-items: stretch;
+    flex-direction: column;
 
-    flex-direction:
-      column;
-
-    gap:
-      8px;
+    gap: 8px;
 
     margin:
-      0
-      0
-      12px;
+      0 0 12px;
   }
 
   .dp-refresh-button {
-    width:
-      100%;
+    width: 100%;
   }
 
   .dp-insights {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
 
-    gap:
-      10px;
+    gap: 10px;
   }
 
   .dp-grid,
   .dp-grid--principal,
   .dp-grid--analise,
   .dp-grid--operacional {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
 
-    gap:
-      12px;
+    gap: 12px;
   }
 
   .dp-chart {
-    height:
-      280px;
+    height: 280px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — CELULAR PEQUENO
+   CELULAR PEQUENO
 ========================================================= */
 
-@media (
-  max-width: 520px
-) {
-  .dp-page {
-    padding:
-      8px
-      8px
-      16px;
-  }
-
+@media (max-width: 520px) {
   .dp-header {
-    margin-bottom:
-      10px;
+    margin-bottom: 10px;
   }
 
   .dp-insight {
-    padding:
-      10px;
+    padding: 10px;
   }
 
   .dp-chart {
-    height:
-      250px;
+    height: 250px;
   }
 
   .dp-chart-tooltip {
-    min-width:
-      150px;
+    min-width: 150px;
 
     padding:
-      8px
-      9px;
+      8px 9px;
   }
 }
 
-
 /* =========================================================
-   RESPONSIVIDADE — TELA BAIXA
-   Importante para notebooks 1366x768 e similares.
+   NOTEBOOK COM ALTURA REDUZIDA
 ========================================================= */
 
-@media (
-  max-height: 820px
-) and (
-  min-width: 761px
-) {
-  .dp-page {
-    padding-top:
-      8px;
-  }
-
-  .dp-sidebar-shell {
-    height:
-      calc(
-        100% - 14px
-      );
-
-    margin-top:
-      6px;
-  }
-
-  .dp-main {
-    padding-top:
-      16px;
-  }
-
+@media (max-height: 820px) and (min-width: 761px) {
   .dp-header {
-    margin-bottom:
-      10px;
+    margin-bottom: 10px;
   }
 
   .dp-dashboard-actions {
-    min-height:
-      32px;
+    min-height: 32px;
 
     margin:
-      -3px
-      0
-      9px;
+      -3px 0 9px;
   }
 
   .dp-insights {
-    margin-bottom:
-      12px;
+    margin-bottom: 12px;
   }
 
   .dp-chart {
-    height:
-      270px;
+    height: 270px;
   }
 }
 
-
-/* =========================================================
-   RESPONSIVIDADE — TELA MUITO BAIXA
-========================================================= */
-
-@media (
-  max-height: 680px
-) and (
-  min-width: 761px
-) {
-  .dp-main {
-    padding-top:
-      10px;
-  }
-
+@media (max-height: 680px) and (min-width: 761px) {
   .dp-header {
-    margin-bottom:
-      7px;
+    margin-bottom: 7px;
   }
 
   .dp-chart {
-    height:
-      245px;
+    height: 245px;
   }
 }
 
-
 /* =========================================================
-   DRILL-DOWN GENÉRICO DOS GRÁFICOS
+   DRILL-DOWN DOS GRÁFICOS
 ========================================================= */
 
 .dp-drilldown-tooltip-clique {
@@ -1327,34 +938,27 @@ line {
   padding-top: 7px;
 
   border-top:
-    1px solid
-    #e2e8f0;
+    1px solid #e2e8f0;
 
-  color:
-    #2563eb;
+  color: #2563eb;
 
-  font-size:
-    0.67rem;
-
+  font-size: 0.67rem;
   font-weight: 700;
 }
 
 .dp-drilldown__clique {
   margin-top: 7px;
 
-  color:
-    #2563eb;
+  color: #2563eb;
 
-  font-size:
-    0.66rem;
-
+  font-size: 0.66rem;
   font-weight: 700;
 
   text-align: right;
 }
 
 /* =========================================================
-   ATUALIZAÇÃO MANUAL DO DASHBOARD
+   ATUALIZAÇÃO MANUAL
 ========================================================= */
 
 .dp-dashboard-actions {
@@ -1367,9 +971,7 @@ line {
   gap: 12px;
 
   margin:
-    -5px
-    0
-    14px;
+    -5px 0 14px;
 }
 
 .dp-dashboard-actions__status {
@@ -1394,18 +996,14 @@ line {
   gap: 7px;
 
   padding:
-    0
-    11px;
+    0 11px;
 
-  color:
-    var(--dp-primary);
+  color: var(--dp-primary);
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
   border:
-    1px solid
-    #bfdbfe;
+    1px solid #bfdbfe;
 
   border-radius: 8px;
 
@@ -1417,13 +1015,7 @@ line {
   cursor: pointer;
 
   box-shadow:
-    0 2px 6px
-    rgba(
-      15,
-      23,
-      42,
-      0.035
-    );
+    0 2px 6px rgba(15, 23, 42, 0.035);
 
   transition:
     color 0.15s ease,
@@ -1434,8 +1026,7 @@ line {
 }
 
 .dp-refresh-button:hover:not(:disabled) {
-  color:
-    #ffffff;
+  color: #ffffff;
 
   background:
     var(--dp-primary);
@@ -1444,13 +1035,7 @@ line {
     var(--dp-primary);
 
   box-shadow:
-    0 5px 12px
-    rgba(
-      37,
-      99,
-      235,
-      0.18
-    );
+    0 5px 12px rgba(37, 99, 235, 0.18);
 
   transform:
     translateY(-1px);
@@ -1463,31 +1048,324 @@ line {
 
 .dp-refresh-button:disabled {
   opacity: 0.6;
-
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
 }
 
 .dp-refresh-button__icon {
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 }
 
 /* =========================================================
-   ANIMAÇÃO DURANTE ATUALIZAÇÃO
+   ANIMAÇÃO
 ========================================================= */
 
 .dp-refresh-button__icon.is-spinning {
   animation:
-    dpRefreshSpin
-    0.8s
-    linear
-    infinite;
+    dpRefreshSpin 0.8s linear infinite;
 }
 
 @keyframes dpRefreshSpin {
   to {
-    transform:
-      rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — DESKTOP MENOR
+
+   Ajusta a largura da sidebar sem mudar a altura da Navbar.
+========================================================= */
+
+@media (max-width: 1450px) and (min-width: 761px) {
+  .dashboard-container.dp-page {
+    grid-template-columns:
+      268px minmax(0, 1fr);
+  }
+
+  .dp-page > .main-content.dp-main {
+    padding-left: 16px;
+    padding-right: 6px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK
+========================================================= */
+
+@media (max-width: 1280px) and (min-width: 761px) {
+  .dashboard-container.dp-page {
+    grid-template-columns:
+      250px minmax(0, 1fr);
+  }
+
+  .dp-page .dp-kpis {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK ESTREITO
+========================================================= */
+
+@media (max-width: 1120px) and (min-width: 761px) {
+  .dashboard-container.dp-page {
+    grid-template-columns:
+      236px minmax(0, 1fr);
+  }
+
+  .dp-page .dp-grid,
+  .dp-page .dp-grid--principal,
+  .dp-page .dp-grid--analise,
+  .dp-page .dp-grid--operacional {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .dp-page .dp-insights {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET HORIZONTAL
+========================================================= */
+
+@media (max-width: 920px) and (min-width: 761px) {
+  .dashboard-container.dp-page {
+    grid-template-columns:
+      218px minmax(0, 1fr);
+
+    padding:
+      8px 8px 8px 0;
+  }
+
+  .dp-page .dp-sidebar-shell {
+    padding-left: 8px;
+  }
+
+  .dp-page > .main-content.dp-main {
+    padding:
+      0 2px 0 10px;
+  }
+
+  .dp-page .page-header.dp-header {
+    padding: 12px;
+  }
+
+  .dp-page .dp-kpis {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — TELA BAIXA
+========================================================= */
+
+@media (max-height: 760px) and (min-width: 761px) {
+  .dashboard-container.dp-page {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .dp-page .page-header.dp-header {
+    padding:
+      10px 14px;
+
+    margin-bottom: 8px;
+  }
+
+  .dp-page .dp-dashboard-actions {
+    margin-bottom: 8px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+
+   O dashboard volta a ter rolagem normal.
+   Sidebar primeiro; conteúdo em seguida.
+========================================================= */
+
+@media (max-width: 760px) {
+  html:has(.dp-page),
+  body:has(.dp-page) {
+    height: auto;
+
+    min-height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body:has(.dp-page) {
+    padding-top:
+      var(--navbar-height, 64px);
+  }
+
+  body:has(.dp-page) #root,
+  body:has(.dp-page) .app-layout {
+    height: auto;
+
+    min-height: 0;
+
+    overflow: visible;
+  }
+
+  body:has(.dp-page)
+  .app-layout > .main-content:has(> .dp-page) {
+    height: auto;
+
+    min-height: 0;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  .dashboard-container.dp-page {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    height: auto;
+
+    min-height:
+      calc(
+        100dvh - var(--navbar-height, 64px)
+      );
+
+    margin: 0;
+
+    padding: 12px;
+
+    overflow: visible;
+  }
+
+  .dp-page .dp-sidebar-shell {
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  .dp-page .dp-sidebar-shell > .sidebar {
+    position: static;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+    max-height: none;
+
+    margin: 0;
+
+    overflow: visible;
+
+    padding:
+      18px 16px;
+  }
+
+  .dp-page > .main-content.dp-main {
+    display: block;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  .dp-page .dp-main-fixed {
+    position: static;
+
+    background: transparent;
+  }
+
+  .dp-page .dp-data-scroll {
+    height: auto;
+
+    overflow: visible;
+
+    padding:
+      0 0 24px;
+  }
+
+  .dp-page .page-header.dp-header {
+    margin:
+      0 0 12px;
+
+    padding: 14px;
+  }
+
+  .dp-page .dp-dashboard-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .dp-page .dp-refresh-button {
+    width: 100%;
+  }
+
+  .dp-page .dp-kpis {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .dp-page .dp-grid,
+  .dp-page .dp-grid--principal,
+  .dp-page .dp-grid--analise,
+  .dp-page .dp-grid--operacional {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .dp-page .dp-insights {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .dp-page .dp-chart {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR PEQUENO
+========================================================= */
+
+@media (max-width: 520px) {
+  .dashboard-container.dp-page {
+    padding: 8px;
+  }
+
+  .dp-page .dp-kpis {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .dp-page .page-header.dp-header {
+    padding: 12px;
   }
 }
