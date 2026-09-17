@@ -1,9 +1,4 @@
-import {
-  Fragment,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 import {
   FiAlertTriangle,
@@ -36,9 +31,7 @@ const ITENS_POR_PAGINA = 8;
 ===================================================== */
 
 function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
+  if (!valor) return "-";
 
   const data = new Date(valor);
 
@@ -47,12 +40,38 @@ function formatarDataHora(valor) {
   }
 
   return data.toLocaleString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   });
+}
+
+function formatarDataSemFuso(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return "-";
+  }
+
+  const texto = String(valor).trim();
+
+  // Data no formato YYYY-MM-DD: não converter para UTC.
+  const correspondencia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(texto);
+
+  if (correspondencia) {
+    const [, ano, mes, dia] = correspondencia;
+
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  // Data que já está no formato brasileiro.
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+    return texto;
+  }
+
+  return texto;
 }
 
 /* =====================================================
@@ -62,13 +81,9 @@ function formatarDataHora(valor) {
 function formatarDataInput(data) {
   const ano = data.getFullYear();
 
-  const mes = String(
-    data.getMonth() + 1,
-  ).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
 
-  const dia = String(
-    data.getDate(),
-  ).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
 }
@@ -82,11 +97,7 @@ function formatarDataInput(data) {
 function obterPeriodoPadrao() {
   const hoje = new Date();
 
-  const inicio = new Date(
-    hoje.getFullYear(),
-    hoje.getMonth(),
-    1,
-  );
+  const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
   return {
     inicio: formatarDataInput(inicio),
@@ -129,9 +140,7 @@ function obterRotuloCampo(chave) {
     ROTULOS_DETALHES[chave] ||
     String(chave ?? "")
       .replace(/_/g, " ")
-      .replace(/^\w/, (letra) =>
-        letra.toUpperCase(),
-      )
+      .replace(/^\w/, (letra) => letra.toUpperCase())
   );
 }
 
@@ -140,11 +149,7 @@ function obterRotuloCampo(chave) {
 ===================================================== */
 
 function formatarValorGenerico(valor, chave = "") {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return "-";
   }
 
@@ -154,10 +159,11 @@ function formatarValorGenerico(valor, chave = "") {
 
   const chaveNormalizada = normalizarTexto(chave);
 
-  if (
-    chaveNormalizada.includes("data") ||
-    chaveNormalizada.includes("previsao")
-  ) {
+  if (chaveNormalizada.includes("data") || chaveNormalizada.includes("previsao")) {
+    return formatarDataSemFuso(valor);
+  }
+
+  {
     const data = new Date(String(valor));
 
     if (!Number.isNaN(data.getTime())) {
@@ -165,10 +171,7 @@ function formatarValorGenerico(valor, chave = "") {
     }
   }
 
-  if (
-    chaveNormalizada === "valor" &&
-    Number.isFinite(Number(valor))
-  ) {
+  if (chaveNormalizada === "valor" && Number.isFinite(Number(valor))) {
     return Number(valor).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -185,74 +188,48 @@ function formatarValorGenerico(valor, chave = "") {
 function extrairMudancas(ocorrencia) {
   const detalhes = ocorrencia?.detalhes;
 
-  if (
-    !detalhes ||
-    typeof detalhes !== "object"
-  ) {
+  if (!detalhes || typeof detalhes !== "object") {
     return [];
   }
 
-  return Object.entries(detalhes).map(
-    ([chave, valor]) => {
+  return Object.entries(detalhes).map(([chave, valor]) => {
+    /* ITEM ADICIONADO */
 
-      /* ITEM ADICIONADO */
+    if (chave === "item_adicionado" && valor && typeof valor === "object") {
+      const descricao = [
+        valor.codigo_produto,
 
-      if (
-        chave === "item_adicionado" &&
-        valor &&
-        typeof valor === "object"
-      ) {
-        const descricao = [
-          valor.codigo_produto,
+        valor.produto,
 
-          valor.produto,
-
-          valor.quantidade !== undefined
-            ? `${valor.quantidade} ${
-                valor.unidade || ""
-              }`.trim()
-            : null,
-        ]
-          .filter(Boolean)
-          .join(" • ");
-
-        return {
-          chave,
-          campo: "Item adicionado",
-          anterior: "-",
-          novo: descricao || "Novo item incluído",
-        };
-      }
-
-      /* ALTERAÇÃO NORMAL */
-
-      const anterior =
-        valor && typeof valor === "object"
-          ? valor.anterior
-          : null;
-
-      const novo =
-        valor && typeof valor === "object"
-          ? valor.novo
-          : valor;
+        valor.quantidade !== undefined ? `${valor.quantidade} ${valor.unidade || ""}`.trim() : null,
+      ]
+        .filter(Boolean)
+        .join(" • ");
 
       return {
         chave,
-
-        campo: obterRotuloCampo(chave),
-
-        anterior: formatarValorGenerico(
-          anterior,
-          chave,
-        ),
-
-        novo: formatarValorGenerico(
-          novo,
-          chave,
-        ),
+        campo: "Item adicionado",
+        anterior: "-",
+        novo: descricao || "Novo item incluído",
       };
-    },
-  );
+    }
+
+    /* ALTERAÇÃO NORMAL */
+
+    const anterior = valor && typeof valor === "object" ? valor.anterior : null;
+
+    const novo = valor && typeof valor === "object" ? valor.novo : valor;
+
+    return {
+      chave,
+
+      campo: obterRotuloCampo(chave),
+
+      anterior: formatarValorGenerico(anterior, chave),
+
+      novo: formatarValorGenerico(novo, chave),
+    };
+  });
 }
 
 /* =====================================================
@@ -260,27 +237,19 @@ function extrairMudancas(ocorrencia) {
 ===================================================== */
 
 export default function PedidosAlteradosRelatorio() {
-
   /* =================================================
      PERÍODO INICIAL
   ================================================= */
 
-  const periodoPadrao = useMemo(
-    () => obterPeriodoPadrao(),
-    [],
-  );
+  const periodoPadrao = useMemo(() => obterPeriodoPadrao(), []);
 
   /* =================================================
      ESTADOS DOS FILTROS
   ================================================= */
 
-  const [dataInicial, setDataInicial] = useState(
-    periodoPadrao.inicio,
-  );
+  const [dataInicial, setDataInicial] = useState(periodoPadrao.inicio);
 
-  const [dataFinal, setDataFinal] = useState(
-    periodoPadrao.fim,
-  );
+  const [dataFinal, setDataFinal] = useState(periodoPadrao.fim);
 
   const [pesquisa, setPesquisa] = useState("");
 
@@ -294,10 +263,7 @@ export default function PedidosAlteradosRelatorio() {
      HISTÓRICO EXPANDIDO
   ================================================= */
 
-  const [
-    pedidosExpandidos,
-    setPedidosExpandidos,
-  ] = useState(() => new Set());
+  const [pedidosExpandidos, setPedidosExpandidos] = useState(() => new Set());
 
   /* =================================================
      EXPORTAÇÃO
@@ -316,26 +282,16 @@ export default function PedidosAlteradosRelatorio() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: [
-      "relatorio-pedidos-alterados",
-      dataInicial,
-      dataFinal,
-    ],
+    queryKey: ["relatorio-pedidos-alterados", dataInicial, dataFinal],
 
     queryFn: async () => {
-      const {
-        data,
-        error: erroRpc,
-      } = await supabase.rpc(
-        "listar_relatorio_pedidos_alterados",
-        {
-          p_data_inicial: dataInicial || null,
+      const { data, error: erroRpc } = await supabase.rpc("listar_relatorio_pedidos_alterados", {
+        p_data_inicial: dataInicial || null,
 
-          p_data_final: dataFinal || null,
+        p_data_final: dataFinal || null,
 
-          p_limite: 2000,
-        },
-      );
+        p_limite: 2000,
+      });
 
       if (erroRpc) {
         throw erroRpc;
@@ -363,9 +319,7 @@ export default function PedidosAlteradosRelatorio() {
     }
 
     return relatorio.filter((pedido) => {
-      const campos = Array.isArray(
-        pedido?.campos_alterados,
-      )
+      const campos = Array.isArray(pedido?.campos_alterados)
         ? pedido.campos_alterados.join(" ")
         : "";
 
@@ -375,11 +329,8 @@ export default function PedidosAlteradosRelatorio() {
         pedido?.vendedor,
         campos,
         pedido?.ultimo_resumo,
-      ].some((valor) =>
-        normalizarTexto(valor).includes(termo),
-      );
+      ].some((valor) => normalizarTexto(valor).includes(termo));
     });
-
   }, [relatorio, pesquisa]);
 
   /* =================================================
@@ -392,11 +343,7 @@ export default function PedidosAlteradosRelatorio() {
   const totalAlteracoes = useMemo(
     () =>
       pedidosFiltrados.reduce(
-        (total, pedido) =>
-          total +
-          Number(
-            pedido?.quantidade_alteracoes ?? 0,
-          ),
+        (total, pedido) => total + Number(pedido?.quantidade_alteracoes ?? 0),
         0,
       ),
 
@@ -411,28 +358,19 @@ export default function PedidosAlteradosRelatorio() {
 
   const totalItens = pedidosFiltrados.length;
 
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(totalItens / ITENS_POR_PAGINA),
-  );
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA));
 
   /* =================================================
      GARANTIR PÁGINA VÁLIDA
   ================================================= */
 
-  const paginaValida = Math.max(
-    1,
-    Math.min(paginaAtual, totalPaginas),
-  );
+  const paginaValida = Math.max(1, Math.min(paginaAtual, totalPaginas));
 
   useEffect(() => {
     if (paginaAtual !== paginaValida) {
       setPaginaAtual(paginaValida);
     }
-  }, [
-    paginaAtual,
-    paginaValida,
-  ]);
+  }, [paginaAtual, paginaValida]);
 
   /* =================================================
      PEDIDOS DA PÁGINA ATUAL
@@ -441,34 +379,18 @@ export default function PedidosAlteradosRelatorio() {
   ================================================= */
 
   const pedidosPagina = useMemo(() => {
-    const inicio =
-      (paginaValida - 1) * ITENS_POR_PAGINA;
+    const inicio = (paginaValida - 1) * ITENS_POR_PAGINA;
 
-    return pedidosFiltrados.slice(
-      inicio,
-      inicio + ITENS_POR_PAGINA,
-    );
-
-  }, [
-    pedidosFiltrados,
-    paginaValida,
-  ]);
+    return pedidosFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
+  }, [pedidosFiltrados, paginaValida]);
 
   /* =================================================
      INTERVALO EXIBIDO
   ================================================= */
 
-  const inicioExibicao =
-    totalItens > 0
-      ? (paginaValida - 1) *
-          ITENS_POR_PAGINA +
-        1
-      : 0;
+  const inicioExibicao = totalItens > 0 ? (paginaValida - 1) * ITENS_POR_PAGINA + 1 : 0;
 
-  const fimExibicao = Math.min(
-    paginaValida * ITENS_POR_PAGINA,
-    totalItens,
-  );
+  const fimExibicao = Math.min(paginaValida * ITENS_POR_PAGINA, totalItens);
 
   /* =================================================
      EXPANDIR HISTÓRICO DO PEDIDO
@@ -526,21 +448,14 @@ export default function PedidosAlteradosRelatorio() {
   ================================================= */
 
   async function exportarPDF() {
-    if (
-      pedidosFiltrados.length === 0 ||
-      exportando
-    ) {
+    if (pedidosFiltrados.length === 0 || exportando) {
       return;
     }
 
     try {
       setExportando("pdf");
 
-      const {
-        exportarPdfPedidosAlterados,
-      } = await import(
-        "./ExportarPedidosAlteradosPDF.js"
-      );
+      const { exportarPdfPedidosAlterados } = await import("./ExportarPedidosAlteradosPDF.js");
 
       await exportarPdfPedidosAlterados({
         pedidos: pedidosFiltrados,
@@ -555,17 +470,10 @@ export default function PedidosAlteradosRelatorio() {
 
         formatarDataHora,
       });
-
     } catch (erro) {
-      console.error(
-        "Erro ao exportar PDF:",
-        erro,
-      );
+      console.error("Erro ao exportar PDF:", erro);
 
-      window.alert(
-        "Não foi possível gerar o PDF.",
-      );
-
+      window.alert("Não foi possível gerar o PDF.");
     } finally {
       setExportando(null);
     }
@@ -579,21 +487,14 @@ export default function PedidosAlteradosRelatorio() {
   ================================================= */
 
   async function exportarExcel() {
-    if (
-      pedidosFiltrados.length === 0 ||
-      exportando
-    ) {
+    if (pedidosFiltrados.length === 0 || exportando) {
       return;
     }
 
     try {
       setExportando("excel");
 
-      const {
-        exportarExcelPedidosAlterados,
-      } = await import(
-        "./ExportarPedidosAlteradosExcel.js"
-      );
+      const { exportarExcelPedidosAlterados } = await import("./ExportarPedidosAlteradosExcel.js");
 
       await exportarExcelPedidosAlterados({
         pedidos: pedidosFiltrados,
@@ -608,17 +509,10 @@ export default function PedidosAlteradosRelatorio() {
 
         formatarDataHora,
       });
-
     } catch (erro) {
-      console.error(
-        "Erro ao exportar Excel:",
-        erro,
-      );
+      console.error("Erro ao exportar Excel:", erro);
 
-      window.alert(
-        "Não foi possível gerar o Excel.",
-      );
-
+      window.alert("Não foi possível gerar o Excel.");
     } finally {
       setExportando(null);
     }
@@ -630,32 +524,25 @@ export default function PedidosAlteradosRelatorio() {
 
   return (
     <>
-
       {/* ===============================================
           CABEÇALHO DO RELATÓRIO
       =============================================== */}
 
       <div className="relatorio-selecionado-header">
-
         <div className="relatorio-selecionado-icone">
           <FiEdit3 />
         </div>
 
         <div>
-          <span className="relatorio-selecionado-categoria">
-            Pedidos
-          </span>
+          <span className="relatorio-selecionado-categoria">Pedidos</span>
 
-          <h2>
-            Pedidos Alterados
-          </h2>
+          <h2>Pedidos Alterados</h2>
 
           <p>
-            Acompanhe alterações realizadas no conteúdo dos pedidos,
-            sem considerar o avanço normal de status ou etapa.
+            Acompanhe alterações realizadas no conteúdo dos pedidos, sem considerar o avanço normal
+            de status ou etapa.
           </p>
         </div>
-
       </div>
 
       {/* ===============================================
@@ -663,19 +550,14 @@ export default function PedidosAlteradosRelatorio() {
       =============================================== */}
 
       <div className="relatorio-acoes">
-
         {/* PDF */}
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-pdf"
           onClick={exportarPDF}
-          disabled={
-            totalItens === 0 ||
-            Boolean(exportando)
-          }
+          disabled={totalItens === 0 || Boolean(exportando)}
         >
-
           {exportando === "pdf" ? (
             <FiRefreshCw className="pedidos-alterados-girando" />
           ) : (
@@ -683,15 +565,10 @@ export default function PedidosAlteradosRelatorio() {
           )}
 
           <div>
-            <strong>
-              Baixar PDF
-            </strong>
+            <strong>Baixar PDF</strong>
 
-            <span>
-              Histórico expandido por pedido
-            </span>
+            <span>Histórico expandido por pedido</span>
           </div>
-
         </button>
 
         {/* EXCEL */}
@@ -700,12 +577,8 @@ export default function PedidosAlteradosRelatorio() {
           type="button"
           className="btn-relatorio btn-relatorio-csv"
           onClick={exportarExcel}
-          disabled={
-            totalItens === 0 ||
-            Boolean(exportando)
-          }
+          disabled={totalItens === 0 || Boolean(exportando)}
         >
-
           {exportando === "excel" ? (
             <FiRefreshCw className="pedidos-alterados-girando" />
           ) : (
@@ -713,17 +586,11 @@ export default function PedidosAlteradosRelatorio() {
           )}
 
           <div>
-            <strong>
-              Exportar Excel
-            </strong>
+            <strong>Exportar Excel</strong>
 
-            <span>
-              Resumo + histórico expandido
-            </span>
+            <span>Resumo + histórico expandido</span>
           </div>
-
         </button>
-
       </div>
 
       {/* ===============================================
@@ -731,93 +598,58 @@ export default function PedidosAlteradosRelatorio() {
       =============================================== */}
 
       <div className="relatorio-filtros-card">
-
         <div className="relatorio-filtros-header">
           <div>
-            <h3>
-              Parâmetros do relatório
-            </h3>
+            <h3>Parâmetros do relatório</h3>
 
-            <p>
-              O período é atualizado automaticamente
-              ao alterar as datas.
-            </p>
+            <p>O período é atualizado automaticamente ao alterar as datas.</p>
           </div>
         </div>
 
         <div className="pedidos-alterados-filtros">
-
           {/* DATA INICIAL */}
 
           <label className="pedidos-alterados-campo">
-
-            <span>
-              De
-            </span>
+            <span>De</span>
 
             <input
               type="date"
               value={dataInicial}
               max={dataFinal || undefined}
-              onChange={(event) =>
-                alterarDataInicial(
-                  event.target.value,
-                )
-              }
+              onChange={(event) => alterarDataInicial(event.target.value)}
             />
-
           </label>
 
           {/* DATA FINAL */}
 
           <label className="pedidos-alterados-campo">
-
-            <span>
-              Até
-            </span>
+            <span>Até</span>
 
             <input
               type="date"
               value={dataFinal}
               min={dataInicial || undefined}
-              onChange={(event) =>
-                alterarDataFinal(
-                  event.target.value,
-                )
-              }
+              onChange={(event) => alterarDataFinal(event.target.value)}
             />
-
           </label>
 
           {/* PESQUISA */}
 
           <label className="pedidos-alterados-campo pedidos-alterados-pesquisa-campo">
-
-            <span>
-              Buscar
-            </span>
+            <span>Buscar</span>
 
             <div className="pedidos-alterados-pesquisa">
-
               <FiSearch />
 
               <input
                 type="text"
                 value={pesquisa}
-                onChange={(event) =>
-                  alterarPesquisa(
-                    event.target.value,
-                  )
-                }
+                onChange={(event) => alterarPesquisa(event.target.value)}
                 placeholder="Pedido, cliente, vendedor ou campo alterado..."
               />
-
             </div>
-
           </label>
-
         </div>
-
       </div>
 
       {/* ===============================================
@@ -826,14 +658,9 @@ export default function PedidosAlteradosRelatorio() {
 
       {error && (
         <div className="relatorios-erro pedidos-alterados-erro">
-
           <FiAlertTriangle />
 
-          <span>
-            {error.message ||
-              "Não foi possível carregar as alterações dos pedidos."}
-          </span>
-
+          <span>{error.message || "Não foi possível carregar as alterações dos pedidos."}</span>
         </div>
       )}
 
@@ -842,89 +669,52 @@ export default function PedidosAlteradosRelatorio() {
       =============================================== */}
 
       {!error && isLoading && (
-
         <div className="relatorios-loading pedidos-alterados-loading">
-
           <div className="relatorios-loading-card">
-
             <div className="relatorios-spinner" />
 
-            <p>
-              Carregando alterações dos pedidos...
-            </p>
-
+            <p>Carregando alterações dos pedidos...</p>
           </div>
-
         </div>
-
       )}
 
       {/* ===============================================
           TABELA DE AUDITORIA
       =============================================== */}
 
-      {!error &&
-        !isLoading &&
-        totalItens > 0 && (
-
+      {!error && !isLoading && totalItens > 0 && (
         <>
-
           <section className="relatorio-visualizacao pedidos-alterados-visualizacao">
-
             {/* CABEÇALHO */}
 
             <div className="relatorio-visualizacao-header">
-
               <div>
+                <span className="relatorio-visualizacao-eyebrow">Auditoria</span>
 
-                <span className="relatorio-visualizacao-eyebrow">
-                  Auditoria
-                </span>
-
-                <h3>
-                  Alterações encontradas
-                </h3>
-
+                <h3>Alterações encontradas</h3>
               </div>
-
             </div>
 
             {/* INFORMAÇÕES */}
 
             <div className="relatorio-visualizacao-info">
-
               <div className="relatorio-visualizacao-info-item">
-
-                <span>
-                  Período
-                </span>
+                <span>Período</span>
 
                 <strong>
-                  {dataInicial
-                    ? dataInicial.split("-").reverse().join("/")
-                    : "Sem data inicial"}
+                  {dataInicial ? dataInicial.split("-").reverse().join("/") : "Sem data inicial"}
 
                   {" até "}
 
-                  {dataFinal
-                    ? dataFinal.split("-").reverse().join("/")
-                    : "Sem data final"}
+                  {dataFinal ? dataFinal.split("-").reverse().join("/") : "Sem data final"}
                 </strong>
-
               </div>
 
               <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
+                <span>Pedidos</span>
 
-                <span>
-                  Pedidos
-                </span>
-
-                <strong>
-                  {totalItens}
-                </strong>
-
+                <strong>{totalItens}</strong>
               </div>
-
             </div>
 
             {/* =====================================
@@ -932,13 +722,9 @@ export default function PedidosAlteradosRelatorio() {
             ===================================== */}
 
             <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
-
               <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
-
                 <thead>
-
                   <tr>
-
                     <th>Pedido</th>
 
                     <th>Cliente</th>
@@ -952,9 +738,7 @@ export default function PedidosAlteradosRelatorio() {
                     <th>O que foi alterado</th>
 
                     <th>Histórico</th>
-
                   </tr>
-
                 </thead>
 
                 {/* =================================
@@ -964,126 +748,78 @@ export default function PedidosAlteradosRelatorio() {
                 ================================= */}
 
                 <tbody>
-
                   {pedidosPagina.map((pedido) => {
+                    const codigo = pedido.codigo_pedido_omie;
 
-                    const codigo =
-                      pedido.codigo_pedido_omie;
+                    const expandido = pedidosExpandidos.has(codigo);
 
-                    const expandido =
-                      pedidosExpandidos.has(codigo);
-
-                    const campos = Array.isArray(
-                      pedido.campos_alterados,
-                    )
+                    const campos = Array.isArray(pedido.campos_alterados)
                       ? pedido.campos_alterados
                       : [];
 
-                    const ocorrencias = Array.isArray(
-                      pedido.detalhes_alteracoes,
-                    )
+                    const ocorrencias = Array.isArray(pedido.detalhes_alteracoes)
                       ? pedido.detalhes_alteracoes
                       : [];
 
                     return (
-
                       <Fragment key={`pedido-${codigo}`}>
-
                         {/* =========================
                             LINHA DO PEDIDO
                         ========================= */}
 
                         <tr>
-
                           {/* PEDIDO */}
 
                           <td>
-
                             <strong className="pedidos-alterados-numero">
-
                               {pedido.numero_pedido || codigo}
-
                             </strong>
-
                           </td>
 
                           {/* CLIENTE */}
 
-                          <td>
-                            {pedido.cliente || "-"}
-                          </td>
+                          <td>{pedido.cliente || "-"}</td>
 
                           {/* VENDEDOR */}
 
-                          <td>
-                            {pedido.vendedor || "-"}
-                          </td>
+                          <td>{pedido.vendedor || "-"}</td>
 
                           {/* ÚLTIMA ALTERAÇÃO */}
 
-                          <td>
-                            {formatarDataHora(
-                              pedido.ultima_alteracao,
-                            )}
-                          </td>
+                          <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
 
                           {/* QUANTIDADE DE ALTERAÇÕES */}
 
                           <td>
-
                             <span className="pedidos-alterados-contador">
-
                               {pedido.quantidade_alteracoes}
-
                             </span>
-
                           </td>
 
                           {/* CAMPOS ALTERADOS */}
 
                           <td>
-
                             <div className="pedidos-alterados-campos">
-
                               {campos.map((campo) => (
-
-                                <span key={campo}>
-
-                                  {campo}
-
-                                </span>
-
+                                <span key={campo}>{campo}</span>
                               ))}
-
                             </div>
-
                           </td>
 
                           {/* BOTÃO HISTÓRICO */}
 
                           <td>
-
                             <button
                               type="button"
                               className="pedidos-alterados-ver"
-                              onClick={() =>
-                                alternarPedido(codigo)
-                              }
+                              onClick={() => alternarPedido(codigo)}
                               aria-expanded={expandido}
                             >
-
-                              {expandido ? (
-                                <FiChevronUp />
-                              ) : (
-                                <FiChevronDown />
-                              )}
+                              {expandido ? <FiChevronUp /> : <FiChevronDown />}
 
                               {expandido ? "Fechar" : "Ver"}
-
                             </button>
-
                           </td>
-
                         </tr>
 
                         {/* =========================
@@ -1091,194 +827,99 @@ export default function PedidosAlteradosRelatorio() {
                         ========================= */}
 
                         {expandido && (
-
                           <tr className="pedidos-alterados-historico-linha">
-
                             <td colSpan={7}>
-
                               <div className="pedidos-alterados-historico">
-
                                 {/* TÍTULO */}
 
                                 <div className="pedidos-alterados-historico-titulo">
-
                                   <FiEdit3 />
 
                                   <div>
-
                                     <strong>
-
-                                      Histórico do pedido{" "}
-
-                                      {pedido.numero_pedido || codigo}
-
+                                      Histórico do pedido {pedido.numero_pedido || codigo}
                                     </strong>
 
                                     <span>
-
                                       {ocorrencias.length} ocorrência
-
-                                      {ocorrencias.length !== 1
-                                        ? "s"
-                                        : ""}
-
+                                      {ocorrencias.length !== 1 ? "s" : ""}
                                     </span>
-
                                   </div>
-
                                 </div>
 
                                 {/* OCORRÊNCIAS */}
 
                                 <div className="pedidos-alterados-ocorrencias">
+                                  {ocorrencias.map((ocorrencia, indice) => {
+                                    const mudancas = extrairMudancas(ocorrencia);
 
-                                  {ocorrencias.map(
-                                    (ocorrencia, indice) => {
+                                    return (
+                                      <article
+                                        key={ocorrencia.id || `${codigo}-${indice}`}
+                                        className="pedidos-alterados-ocorrencia"
+                                      >
+                                        {/* TOPO */}
 
-                                      const mudancas =
-                                        extrairMudancas(
-                                          ocorrencia,
-                                        );
+                                        <div className="pedidos-alterados-ocorrencia-topo">
+                                          <strong>Alteração #{ocorrencias.length - indice}</strong>
 
-                                      return (
+                                          <span>{formatarDataHora(ocorrencia.alterado_em)}</span>
+                                        </div>
 
-                                        <article
-                                          key={
-                                            ocorrencia.id ||
-                                            `${codigo}-${indice}`
-                                          }
-                                          className="pedidos-alterados-ocorrencia"
-                                        >
+                                        {/* MUDANÇAS */}
 
-                                          {/* TOPO */}
+                                        {mudancas.length > 0 ? (
+                                          <div className="pedidos-alterados-mudancas">
+                                            {mudancas.map((mudanca) => (
+                                              <div
+                                                key={`${ocorrencia.id}-${mudanca.chave}`}
+                                                className="pedidos-alterados-mudanca"
+                                              >
+                                                <strong>{mudanca.campo}</strong>
 
-                                          <div className="pedidos-alterados-ocorrencia-topo">
+                                                <div className="pedidos-alterados-antes-depois">
+                                                  {/* ANTES */}
 
-                                            <strong>
+                                                  <span>
+                                                    <small>Antes</small>
 
-                                              Alteração #
+                                                    <b>{mudanca.anterior}</b>
+                                                  </span>
 
-                                              {ocorrencias.length - indice}
+                                                  {/* SETA */}
 
-                                            </strong>
+                                                  <span className="pedidos-alterados-seta">→</span>
 
-                                            <span>
+                                                  {/* DEPOIS */}
 
-                                              {formatarDataHora(
-                                                ocorrencia.alterado_em,
-                                              )}
+                                                  <span>
+                                                    <small>Depois</small>
 
-                                            </span>
-
-                                          </div>
-
-                                          {/* MUDANÇAS */}
-
-                                          {mudancas.length > 0 ? (
-
-                                            <div className="pedidos-alterados-mudancas">
-
-                                              {mudancas.map((mudanca) => (
-
-                                                <div
-                                                  key={`${ocorrencia.id}-${mudanca.chave}`}
-                                                  className="pedidos-alterados-mudanca"
-                                                >
-
-                                                  <strong>
-
-                                                    {mudanca.campo}
-
-                                                  </strong>
-
-                                                  <div className="pedidos-alterados-antes-depois">
-
-                                                    {/* ANTES */}
-
-                                                    <span>
-
-                                                      <small>
-                                                        Antes
-                                                      </small>
-
-                                                      <b>
-
-                                                        {mudanca.anterior}
-
-                                                      </b>
-
-                                                    </span>
-
-                                                    {/* SETA */}
-
-                                                    <span className="pedidos-alterados-seta">
-
-                                                      →
-
-                                                    </span>
-
-                                                    {/* DEPOIS */}
-
-                                                    <span>
-
-                                                      <small>
-                                                        Depois
-                                                      </small>
-
-                                                      <b>
-
-                                                        {mudanca.novo}
-
-                                                      </b>
-
-                                                    </span>
-
-                                                  </div>
-
+                                                    <b>{mudanca.novo}</b>
+                                                  </span>
                                                 </div>
-
-                                              ))}
-
-                                            </div>
-
-                                          ) : (
-
-                                            <p className="pedidos-alterados-sem-detalhe">
-
-                                              {ocorrencia.resumo ||
-                                                "Alteração registrada sem detalhamento disponível."}
-
-                                            </p>
-
-                                          )}
-
-                                        </article>
-
-                                      );
-
-                                    },
-                                  )}
-
+                                              </div>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <p className="pedidos-alterados-sem-detalhe">
+                                            {ocorrencia.resumo ||
+                                              "Alteração registrada sem detalhamento disponível."}
+                                          </p>
+                                        )}
+                                      </article>
+                                    );
+                                  })}
                                 </div>
-
                               </div>
-
                             </td>
-
                           </tr>
-
                         )}
-
                       </Fragment>
-
                     );
-
                   })}
-
                 </tbody>
-
               </table>
-
             </div>
 
             {/* =====================================
@@ -1289,25 +930,12 @@ export default function PedidosAlteradosRelatorio() {
             ===================================== */}
 
             <div className="relatorio-visualizacao-footer">
-
               <span>
-
-                Exibindo {inicioExibicao} a{" "}
-
-                {fimExibicao} de{" "}
-
-                {totalItens} pedido(s)
-
+                Exibindo {inicioExibicao} a {fimExibicao} de {totalItens} pedido(s)
               </span>
 
-              <span>
-
-                {totalAlteracoes} alteração(ões) no período
-
-              </span>
-
+              <span>{totalAlteracoes} alteração(ões) no período</span>
             </div>
-
           </section>
 
           {/* =====================================
@@ -1317,45 +945,29 @@ export default function PedidosAlteradosRelatorio() {
           ===================================== */}
 
           {totalPaginas > 1 && (
-
             <Paginacao
               paginaAtual={paginaValida}
               totalItens={totalItens}
               itensPorPagina={ITENS_POR_PAGINA}
               onChangePagina={setPaginaAtual}
             />
-
           )}
-
         </>
-
       )}
 
       {/* ===============================================
           NENHUMA ALTERAÇÃO
       =============================================== */}
 
-      {!error &&
-        !isLoading &&
-        totalItens === 0 && (
-
+      {!error && !isLoading && totalItens === 0 && (
         <div className="relatorio-visualizacao-vazia pedidos-alterados-vazio">
-
           <FiEdit3 />
 
-          <strong>
-            Nenhuma alteração encontrada
-          </strong>
+          <strong>Nenhuma alteração encontrada</strong>
 
-          <span>
-            Não existem pedidos com alterações reais
-            no período selecionado.
-          </span>
-
+          <span>Não existem pedidos com alterações reais no período selecionado.</span>
         </div>
-
       )}
-
     </>
   );
 }

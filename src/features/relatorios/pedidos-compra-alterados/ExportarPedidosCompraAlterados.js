@@ -1,75 +1,224 @@
 
 import {
   extrairMudancasCompra,
+  protegerDadosPagamento,
 } from "./formatarHistoricoCompras";
 
-const hora = (valor) =>
-  valor
-    ? new Date(valor).toLocaleString("pt-BR", {
-        timeZone: "America/Sao_Paulo",
-      })
-    : "-";
+const FUSO = "America/Sao_Paulo";
 
-const nome = (extensao) =>
-  `Pedidos_de_Compra_Alterados_${new Date()
-    .toISOString()
-    .slice(0, 10)}.${extensao}`;
+/* =========================================================
+   DATAS
+========================================================= */
+
+function dataHora(valor) {
+  if (!valor) {
+    return "-";
+  }
+
+  const data = new Date(valor);
+
+  if (
+    Number.isNaN(
+      data.getTime()
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleString("pt-BR", {
+    timeZone: FUSO,
+
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+
+    hour: "2-digit",
+    minute: "2-digit",
+
+    hour12: false,
+  });
+}
+
+function nomeArquivo(extensao) {
+  const partes = new Intl.DateTimeFormat(
+    "en-US",
+    {
+      timeZone: FUSO,
+
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }
+  ).formatToParts(new Date());
+
+  const pegar = (tipo) =>
+    partes.find(
+      (p) => p.type === tipo
+    )?.value || "00";
+
+  return (
+    "Pedidos_de_Compra_Alterados_" +
+    `${pegar("year")}-` +
+    `${pegar("month")}-` +
+    `${pegar("day")}.` +
+    extensao
+  );
+}
+
+/* =========================================================
+   PROTEÇÃO DOS TEXTOS
+========================================================= */
+
+function textoSeguro(valor) {
+  return protegerDadosPagamento(
+    String(valor ?? "-")
+  ).replace(
+    /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,
+    " "
+  );
+}
+
+function celulaTexto(valor) {
+  const conteudo =
+    textoSeguro(valor);
+
+  return (
+    conteudo !== "-" &&
+    /^[\s]*[=+@\-]/.test(conteudo)
+  )
+    ? `'${conteudo}`
+    : conteudo;
+}
+
+/* =========================================================
+   MUDANÇAS DE UM EVENTO
+========================================================= */
+
+function mudancasEvento(
+  evento,
+  pedido,
+  referencias
+) {
+  if (
+    Array.isArray(
+      evento.mudancas
+    )
+  ) {
+    return evento.mudancas;
+  }
+
+  const refsPedido = {
+    ...referencias,
+
+    itens:
+      referencias.itensPorPedido?.[
+        String(
+          pedido.cod_ped_compra
+        )
+      ] || {},
+  };
+
+  return extrairMudancasCompra(
+    evento,
+    refsPedido
+  );
+}
+
+/* =========================================================
+   PDF
+========================================================= */
 
 export async function exportarPdfPedidosCompraAlterados(
-  lista,
+  pedidos,
   periodo,
   referencias = {}
 ) {
-  if (!lista.length) {
+  if (
+    !Array.isArray(pedidos) ||
+    pedidos.length === 0
+  ) {
     return;
   }
 
-  const { default: jsPDF } = await import("jspdf");
+  const { default: jsPDF } = await import(
+    "jspdf"
+  );
 
   const doc = new jsPDF({
     orientation: "landscape",
+
     unit: "mm",
+
     format: "a4",
   });
 
-  const largura = doc.internal.pageSize.getWidth();
-  const altura = doc.internal.pageSize.getHeight();
+  const largura =
+    doc.internal.pageSize.getWidth();
+
+  const altura =
+    doc.internal.pageSize.getHeight();
 
   const margem = 12;
 
   let y = margem;
 
-  function garantir(mm) {
-    if (y + mm > altura - margem) {
+  /* CONTROLE DE PÁGINA */
+
+  function espaco(mm) {
+    if (
+      y + mm >
+      altura - margem - 7
+    ) {
       doc.addPage();
+
       y = margem;
     }
   }
 
-  function linha(
-    texto,
-    negrito = false,
-    tamanho = 9,
-    recuo = 0
+  /* ESCREVER TEXTO */
+
+  function escrever(
+    valor,
+    {
+      negrito = false,
+      tamanho = 9,
+      recuo = 0,
+    } = {}
   ) {
     doc.setFont(
       "helvetica",
-      negrito ? "bold" : "normal"
+      negrito
+        ? "bold"
+        : "normal"
     );
 
-    doc.setFontSize(tamanho);
-
-    const quebradas = doc.splitTextToSize(
-      String(texto),
-      largura - 2 * margem - recuo
+    doc.setFontSize(
+      tamanho
     );
 
-    for (const parte of quebradas) {
-      garantir(5);
+    const texto =
+      textoSeguro(valor);
+
+    const linhas =
+      doc.splitTextToSize(
+        texto,
+
+        Math.max(
+          25,
+          largura -
+            2 * margem -
+            recuo
+        )
+      );
+
+    for (const linha of linhas) {
+      espaco(5);
 
       doc.text(
-        parte,
+        linha || " ",
+
         margem + recuo,
+
         y
       );
 
@@ -77,96 +226,160 @@ export async function exportarPdfPedidosCompraAlterados(
     }
   }
 
-  linha(
-    "PEDIDOS DE COMPRA ALTERADOS — HISTÓRICO DETECTADO",
-    true,
-    15
+  /* CABEÇALHO */
+
+  escrever(
+    "PEDIDOS DE COMPRA ALTERADOS",
+    {
+      negrito: true,
+      tamanho: 15,
+    }
   );
 
   y += 2;
 
-  linha(
-    `Período: ${periodo} | Pedidos de compra: ${lista.length}`,
-    false,
-    9
+  escrever(
+    `Período: ${periodo} | Pedidos: ${pedidos.length}`
   );
 
-  linha(
-    "As datas indicam quando o dashboard detectou mudanças, não a hora exata da edição no Omie.",
-    false,
-    8
+  escrever(
+    "Data e hora indicam a detecção da alteração pelo dashboard.",
+    {
+      tamanho: 8,
+    }
   );
 
-  y += 3;
+  y += 5;
 
-  for (const req of lista) {
-    garantir(15);
+  /* PEDIDOS */
 
-    linha(
+  for (const pedido of pedidos) {
+    espaco(18);
+
+    escrever(
       `PEDIDO DE COMPRA ${
-        req.numero_pedido ||
-        req.cod_ped_compra
-      } | ${
-        req.quantidade_alteracoes
-      } ocorrência(s)`,
+        pedido.numero_pedido ||
+        pedido.cod_ped_compra
+      }`,
 
-      true,
-      11
+      {
+        negrito: true,
+        tamanho: 11,
+      }
     );
 
-    const eventos =
-      req.detalhes_alteracoes || [];
-
-    for (const evento of eventos) {
-      const mudancas = extrairMudancasCompra(
-        evento,
-        referencias
-      );
+    for (
+      const evento of
+      pedido.detalhes_alteracoes || []
+    ) {
+      const mudancas =
+        mudancasEvento(
+          evento,
+          pedido,
+          referencias
+        );
 
       if (!mudancas.length) {
         continue;
       }
 
-      linha(
-        `Detectado em ${hora(
-          evento.detectado_em
-        )}: ${mudancas
-          .map((m) => m.campo)
-          .join(", ")}`,
+      y += 2;
 
-        true,
-        9,
-        4
+      escrever(
+        `Alteração #${
+          evento.numeroAlteracao ||
+          "-"
+        } — ${dataHora(
+          evento.detectado_em
+        )}`,
+
+        {
+          negrito: true,
+          tamanho: 9,
+          recuo: 4,
+        }
       );
 
-      for (const mudanca of mudancas) {
-        linha(
-          `${mudanca.campo}: ${mudanca.anterior}  →  ${mudanca.novo}`,
+      for (
+        const mudanca of mudancas
+      ) {
+        espaco(12);
 
-          false,
-          8,
-          8
+        escrever(
+          mudanca.campo,
+
+          {
+            negrito: true,
+            tamanho: 8,
+            recuo: 8,
+          }
         );
+
+        escrever(
+          `Antes: ${mudanca.anterior}`,
+
+          {
+            tamanho: 8,
+            recuo: 12,
+          }
+        );
+
+        escrever(
+          `Depois: ${mudanca.novo}`,
+
+          {
+            tamanho: 8,
+            recuo: 12,
+          }
+        );
+
+        if (mudanca.variacao) {
+          escrever(
+            mudanca.variacao,
+
+            {
+              negrito: true,
+              tamanho: 8,
+              recuo: 12,
+            }
+          );
+        }
+
+        y += 2;
       }
     }
 
-    y += 4;
+    y += 5;
   }
 
-  const paginas = doc.getNumberOfPages();
+  /* NUMERAÇÃO DE PÁGINAS */
+
+  const paginas =
+    doc.getNumberOfPages();
 
   for (
     let pagina = 1;
     pagina <= paginas;
     pagina++
   ) {
-    doc.setPage(pagina);
+    doc.setPage(
+      pagina
+    );
 
-    doc.setFontSize(8);
+    doc.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    doc.setFontSize(
+      8
+    );
 
     doc.text(
       `Página ${pagina} de ${paginas}`,
+
       largura - margem,
+
       altura - 5,
 
       {
@@ -175,189 +388,288 @@ export async function exportarPdfPedidosCompraAlterados(
     );
   }
 
-  doc.save(nome("pdf"));
+  doc.save(
+    nomeArquivo("pdf")
+  );
 }
 
+/* =========================================================
+   EXCEL
+========================================================= */
+
 export async function exportarExcelPedidosCompraAlterados(
-  lista,
+  pedidos,
   periodo,
   referencias = {}
 ) {
-  if (!lista.length) {
+  if (
+    !Array.isArray(pedidos) ||
+    pedidos.length === 0
+  ) {
     return;
   }
 
-  const excel = await import("exceljs");
+  const modulo = await import(
+    "exceljs"
+  );
 
   const ExcelJS =
-    excel.default || excel;
+    modulo.default ||
+    modulo;
 
-  const arquivo =
+  const workbook =
     new ExcelJS.Workbook();
 
-  arquivo.creator = "Pedrasplast";
+  workbook.creator =
+    "Pedrasplast";
 
-  /*
-   * Aba 1: Resumo
-   */
+  /* =====================================================
+     ABA RESUMO
+  ===================================================== */
 
-  const resumo = arquivo.addWorksheet(
-    "Resumo"
-  );
+  const resumo =
+    workbook.addWorksheet(
+      "Resumo"
+    );
 
   resumo.addRow([
     "PEDIDOS DE COMPRA ALTERADOS",
   ]);
 
   resumo.addRow([
-    `Período de detecção: ${periodo}`,
+    celulaTexto(
+      `Período: ${periodo}`
+    ),
   ]);
 
   resumo.addRow([
     "Pedido de compra",
     "Primeira detecção",
-    "Última detecção",
-    "Nº ocorrências",
-    "Campos alterados",
+    "Última alteração",
+    "Nº alterações",
+    "O que foi alterado",
   ]);
-
-  for (const req of lista) {
-    resumo.addRow([
-      String(
-        req.numero_pedido ||
-          req.cod_ped_compra
-      ),
-
-      hora(
-        req.primeira_alteracao
-      ),
-
-      hora(
-        req.ultima_alteracao
-      ),
-
-      Number(
-        req.quantidade_alteracoes
-      ),
-
-      (
-        req.campos_alterados || []
-      ).join(", "),
-    ]);
-  }
-
-  resumo.columns = [
-    { width: 22 },
-    { width: 23 },
-    { width: 23 },
-    { width: 18 },
-    { width: 60 },
-  ];
 
   resumo.getRow(3).font = {
     bold: true,
   };
 
-  /*
-   * Aba 2: Histórico expandido
-   */
+  resumo.views = [
+    {
+      state: "frozen",
+      ySplit: 3,
+    },
+  ];
 
-  const detalhes = arquivo.addWorksheet(
-    "Histórico Expandido"
-  );
+  resumo.columns = [
+    22,
+    23,
+    23,
+    18,
+    65,
+  ].map((width) => ({
+    width,
+  }));
 
-  detalhes.addRow([
+  /* =====================================================
+     ABA HISTÓRICO
+  ===================================================== */
+
+  const historico =
+    workbook.addWorksheet(
+      "Histórico Expandido"
+    );
+
+  historico.addRow([
     "Pedido de compra",
+    "Alteração",
     "Detectado em",
-    "Campo",
-    "Item Omie",
+    "Produto",
+    "Código do produto",
+    "O que mudou",
     "Antes",
     "Depois",
+    "Diferença",
   ]);
 
-  detalhes.getRow(1).font = {
+  historico.getRow(1).font = {
     bold: true,
   };
 
-  for (const req of lista) {
+  historico.views = [
+    {
+      state: "frozen",
+      ySplit: 1,
+    },
+  ];
+
+  historico.columns = [
+    20,
+    14,
+    23,
+    52,
+    20,
+    38,
+    35,
+    35,
+    42,
+  ].map((width) => ({
+    width,
+  }));
+
+  /* =====================================================
+     PREENCHER AS DUAS ABAS
+  ===================================================== */
+
+  for (const pedido of pedidos) {
+    resumo.addRow([
+      celulaTexto(
+        pedido.numero_pedido ||
+          pedido.cod_ped_compra
+      ),
+
+      dataHora(
+        pedido.primeira_alteracao
+      ),
+
+      dataHora(
+        pedido.ultima_alteracao
+      ),
+
+      Number(
+        pedido.quantidade_alteracoes ||
+          0
+      ),
+
+      celulaTexto(
+        (
+          pedido.campos_alterados ||
+          []
+        ).join(", ")
+      ),
+    ]);
+
     for (
       const evento of
-      req.detalhes_alteracoes || []
+      pedido.detalhes_alteracoes || []
     ) {
-      const mudancas = extrairMudancasCompra(
-        evento,
-        referencias
-      );
-
-      for (const m of mudancas) {
-        detalhes.addRow([
-          String(
-            req.numero_pedido ||
-              req.cod_ped_compra
+      for (
+        const mudanca of
+        mudancasEvento(
+          evento,
+          pedido,
+          referencias
+        )
+      ) {
+        historico.addRow([
+          celulaTexto(
+            pedido.numero_pedido ||
+              pedido.cod_ped_compra
           ),
 
-          hora(
+          celulaTexto(
+            evento.numeroAlteracao ||
+              "-"
+          ),
+
+          dataHora(
             evento.detectado_em
           ),
 
-          m.campo,
+          celulaTexto(
+            mudanca.produto?.descricao ||
+              "Informação geral do pedido"
+          ),
 
-          m.campo.match(
-            /Item (\d+)/
-          )?.[1] || "-",
+          celulaTexto(
+            mudanca.produto?.codigoComercial ||
+              "-"
+          ),
 
-          m.anterior,
+          celulaTexto(
+            mudanca.tituloCurto ||
+              mudanca.campo
+          ),
 
-          m.novo,
+          celulaTexto(
+            mudanca.anterior
+          ),
+
+          celulaTexto(
+            mudanca.novo
+          ),
+
+          celulaTexto(
+            mudanca.variacao ||
+              "-"
+          ),
         ]);
       }
     }
   }
 
-  detalhes.columns = [
-    22,
-    23,
-    26,
-    20,
-    72,
-    72,
-  ].map((width) => ({
-    width,
-  }));
+  /* =====================================================
+     AJUSTES VISUAIS DO EXCEL
+  ===================================================== */
 
-  detalhes.eachRow((row) => {
-    row.alignment = {
+  resumo.autoFilter = {
+    from: "A3",
+    to: "E3",
+  };
+
+  historico.autoFilter = {
+    from: "A1",
+    to: "I1",
+  };
+
+  historico.eachRow((linha) => {
+    linha.alignment = {
       vertical: "top",
+
       wrapText: true,
     };
   });
 
-  /*
-   * Download do arquivo
-   */
+  /* =====================================================
+     GERAR ARQUIVO
+  ===================================================== */
 
-  const blob = await arquivo.xlsx.writeBuffer();
+  const buffer =
+    await workbook.xlsx.writeBuffer();
 
-  const url = URL.createObjectURL(
-    new Blob([blob], {
+  const blob = new Blob(
+    [buffer],
+
+    {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    })
+    }
   );
 
-  const a = document.createElement("a");
+  const url =
+    URL.createObjectURL(blob);
 
-  a.href = url;
+  try {
+    const link =
+      document.createElement("a");
 
-  a.download = nome("xlsx");
+    link.href = url;
 
-  document.body.appendChild(a);
+    link.download =
+      nomeArquivo("xlsx");
 
-  a.click();
+    document.body.appendChild(
+      link
+    );
 
-  a.remove();
+    link.click();
 
-  setTimeout(
-    () => URL.revokeObjectURL(url),
-    1000
-  );
+    link.remove();
+  } finally {
+    setTimeout(
+      () =>
+        URL.revokeObjectURL(url),
+
+      15000
+    );
+  }
 }
