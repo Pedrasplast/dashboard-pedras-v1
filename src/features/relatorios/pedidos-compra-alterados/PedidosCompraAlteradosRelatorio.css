@@ -1,359 +1,715 @@
 
-/*
- * Histórico de compras:
- * comparação ampla, legível e sem JSON bruto.
- */
+/* =========================================================
+   PEDIDOS DE COMPRA ALTERADOS
+   PADRÃO VISUAL DOS PEDIDOS DE VENDA
+
+   - Histórico com fundo cinza-claro
+   - Ocorrências com borda azul
+   - Alterações em cartões de duas colunas
+   - Comparação Antes → Depois
+   - Layout compacto e responsivo
+
+   Este CSS utiliza as classes existentes no JSX.
+========================================================= */
+
+
+/* =========================================================
+   HISTÓRICO EXPANDIDO
+========================================================= */
 
 .pc-audit-historico {
-  --pc-border: #dbe5f2;
-  --pc-muted: #64748b;
-  --pc-blue: #1d4ed8;
-  --pc-green: #166534;
+  --pc-border: #e2e8f0;
+  --pc-muted: #94a3b8;
+  --pc-blue: #2563eb;
 
-  background: #f7faff;
-
-  border-radius: 12px;
-
-  padding: clamp(12px, 2vw, 22px);
-
+  width: 100%;
   min-width: 0;
-}
 
-.pc-audit-historico * {
+  padding: 16px 18px 18px;
+
+  background: #f8fafc;
+
+  border-top: 1px solid #e8edf3;
+  border-radius: 0;
+
   box-sizing: border-box;
 }
 
-.pc-audit-nota {
-  font-size: 12px;
-  color: var(--pc-muted);
-  line-height: 1.5;
-  margin: 4px 0 18px;
+.pc-audit-historico *,
+.pc-audit-historico *::before,
+.pc-audit-historico *::after {
+  box-sizing: border-box;
 }
+
+
+/* =========================================================
+   LINHA EXPANDIDA DA TABELA
+========================================================= */
+
+.pedidos-alterados-historico-linha > td {
+  padding: 0 !important;
+
+  background: #f8fafc !important;
+
+  border-top: 1px solid #e8edf3;
+}
+
+
+/* =========================================================
+   TÍTULO DO HISTÓRICO
+========================================================= */
+
+.pc-audit-historico
+.pedidos-alterados-historico-titulo {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.pc-audit-historico
+.pedidos-alterados-historico-titulo > svg {
+  flex-shrink: 0;
+
+  width: 15px;
+  height: 15px;
+
+  color: #2563eb;
+}
+
+.pc-audit-historico
+.pedidos-alterados-historico-titulo strong {
+  display: block;
+
+  color: #1e293b;
+
+  font-size: 0.75rem;
+  font-weight: 800;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   NOTA DE AUDITORIA
+========================================================= */
+
+.pc-audit-nota {
+  margin: -4px 0 12px;
+
+  color: #94a3b8;
+
+  font-size: 0.63rem;
+  font-weight: 400;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   LISTA DE OCORRÊNCIAS
+========================================================= */
 
 .pc-audit-eventos {
-  display: grid;
-  gap: 17px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  width: 100%;
   min-width: 0;
 }
+
+
+/* =========================================================
+   OCORRÊNCIA
+   Caixa branca com borda azul à esquerda
+========================================================= */
 
 .pc-audit-evento {
-  background: #fff;
-
-  border: 1px solid var(--pc-border);
-  border-left: 4px solid #2563eb;
-
-  border-radius: 12px;
-
-  padding: 16px;
-
+  width: 100%;
   min-width: 0;
 
-  box-shadow:
-    0 2px 9px rgba(25, 50, 100, 0.045);
+  padding: 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #2563eb;
+
+  border-radius: 8px;
+
+  box-shadow: none;
 }
+
+
+/* =========================================================
+   CABEÇALHO DA OCORRÊNCIA
+========================================================= */
 
 .pc-audit-evento-topo {
   display: flex;
-
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
 
   gap: 10px;
 
-  padding-bottom: 14px;
-  margin-bottom: 14px;
+  margin: 0 0 9px;
+  padding: 0;
 
-  border-bottom: 1px solid var(--pc-border);
-
-  flex-wrap: wrap;
+  border: none;
+  background: transparent;
 }
+
+
+/* =========================================================
+   IDENTIFICAÇÃO DA OCORRÊNCIA
+========================================================= */
 
 .pc-audit-evento-identificacao {
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 0;
 
   min-width: 0;
 }
 
-.pc-audit-evento-icone {
-  width: 35px;
-  height: 35px;
+.pc-audit-evento-identificacao > div {
+  display: flex;
+  flex-direction: column;
 
-  flex: 0 0 auto;
+  gap: 2px;
 
-  display: grid;
-  place-items: center;
-
-  border-radius: 10px;
-
-  color: #1d4ed8;
-  background: #eff6ff;
+  min-width: 0;
 }
+
+
+/* Oculta o ícone decorativo para seguir o padrão de vendas */
+
+.pc-audit-evento-icone {
+  display: none;
+}
+
+
+/* Título: Alteração identificada */
 
 .pc-audit-evento-identificacao strong {
   display: block;
 
-  font-size: 13px;
-  color: #102640;
+  color: #1e293b;
+
+  font-size: 0.70rem;
+  font-weight: 800;
+
+  line-height: 1.4;
 }
 
-.pc-audit-evento-identificacao span:not(.pc-audit-evento-icone) {
+
+/* Quantidade de mudanças */
+
+.pc-audit-evento-identificacao > div > span {
   display: block;
 
-  margin-top: 2px;
+  margin: 0;
 
-  font-size: 11px;
-  color: var(--pc-muted);
+  color: #94a3b8;
+
+  font-size: 0.63rem;
+  font-weight: 400;
+
+  line-height: 1.3;
 }
 
+
+/* Data da ocorrência */
+
 .pc-audit-evento-topo time {
-  font-size: 12px;
-  color: #475569;
+  flex-shrink: 0;
+
+  color: #94a3b8;
+
+  font-size: 0.63rem;
+  font-weight: 400;
 
   white-space: nowrap;
 }
 
+
+/* =========================================================
+   GRUPOS DE ALTERAÇÕES
+========================================================= */
+
 .pc-audit-grupo {
-  margin-top: 15px;
+  display: block;
+
+  width: 100%;
   min-width: 0;
+
+  margin: 0 0 8px;
+  padding: 0;
+
+  border: 0;
 }
+
+.pc-audit-grupo:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   OCULTAR CABEÇALHOS DOS GRUPOS
+
+   O relatório de vendas mostra diretamente os cartões,
+   sem dividir visualmente em categorias.
+========================================================= */
 
 .pc-audit-grupo-topo {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 12px;
-
-  margin-bottom: 9px;
+  display: none;
 }
 
-.pc-audit-grupo-topo h4 {
-  margin: 0;
-
-  color: #102640;
-
-  font-size: 13px;
-  font-weight: 750;
+.pc-audit-grade-cabecalho {
+  display: none;
 }
 
-.pc-audit-grupo-topo p {
-  margin: 2px 0 0;
 
-  color: var(--pc-muted);
+/* =========================================================
+   GRID DOS CARTÕES
 
-  font-size: 11px;
-}
+   Duas alterações lado a lado.
+========================================================= */
 
-.pc-audit-grupo-contador {
-  font-size: 11px;
-  font-weight: 750;
-
-  min-width: 25px;
-  height: 25px;
-
-  padding: 2px 6px;
-
+.pc-audit-linhas {
   display: grid;
-  place-items: center;
 
-  color: #1e40af;
-  background: #edf4ff;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
 
-  border-radius: 20px;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  border-radius: 0;
+
+  background: transparent;
+
+  overflow: visible;
 }
 
-.pc-audit-grade-cabecalho,
+
+/* =========================================================
+   CARTÃO DE ALTERAÇÃO
+
+   Campo
+   ANTES           DEPOIS
+   Valor     →     Valor
+========================================================= */
+
 .pc-audit-linha {
   display: grid;
 
   grid-template-columns:
-    minmax(165px, 1.05fr)
     minmax(0, 1fr)
+    16px
     minmax(0, 1fr);
 
-  gap: 12px;
+  grid-template-rows:
+    auto
+    minmax(0, auto);
+
+  column-gap: 8px;
+  row-gap: 5px;
 
   align-items: start;
+  align-content: start;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
+  padding: 9px;
+
+  background: #f8fafc;
+
+  border: 1px solid #edf1f5;
+  border-radius: 7px;
+
+  font-size: 0.66rem;
+
+  box-shadow: none;
 }
 
-.pc-audit-grade-cabecalho {
-  padding: 9px 13px;
 
-  background: #edf3fb;
+/* Remover o estilo de linhas alternadas da versão anterior */
 
-  color: #64748b;
+.pc-audit-linha:first-child,
+.pc-audit-linha:nth-child(even) {
+  background: #f8fafc;
 
-  font-size: 10px;
-  letter-spacing: 0.055em;
-  font-weight: 800;
-
-  border: 1px solid var(--pc-border);
-
-  border-radius: 7px 7px 0 0;
+  border: 1px solid #edf1f5;
 }
 
-.pc-audit-linhas {
-  border: 1px solid var(--pc-border);
-  border-top: 0;
 
-  border-radius: 0 0 8px 8px;
+/* =========================================================
+   NOME DO CAMPO
+========================================================= */
 
-  overflow: hidden;
-}
-
-.pc-audit-linha {
-  padding: 12px 13px;
+.pc-audit-campo {
+  grid-column: 1 / -1;
+  grid-row: 1;
 
   min-width: 0;
 
-  background: #fff;
+  margin: 0 0 2px;
+  padding: 0;
 
-  font-size: 12px;
+  color: #334155;
 
-  border-top: 1px solid #edf2f7;
-}
+  font-size: 0.66rem;
+  font-weight: 800;
 
-.pc-audit-linha:first-child {
-  border-top: 0;
-}
-
-.pc-audit-linha:nth-child(even) {
-  background: #fafcff;
-}
-
-.pc-audit-campo {
-  color: #233552;
-
-  font-weight: 700;
-
-  line-height: 1.45;
+  line-height: 1.4;
 
   overflow-wrap: anywhere;
 }
+
+
+/* =========================================================
+   CONFIGURAÇÃO DOS VALORES
+========================================================= */
 
 .pc-audit-valor {
   min-width: 0;
 
-  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 
-  white-space: pre-line;
+  color: #475569;
+
+  font-size: 0.66rem;
+  font-weight: 700;
+
+  line-height: 1.5;
+
+  white-space: pre-wrap;
 
   overflow-wrap: anywhere;
-
   word-break: normal;
 
   font-variant-numeric: tabular-nums;
 }
 
+
+/* =========================================================
+   RÓTULOS ANTES E DEPOIS
+========================================================= */
+
+.pc-audit-valor::before {
+  content: attr(data-titulo);
+
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #94a3b8;
+
+  font-size: 0.55rem;
+  font-weight: 500;
+
+  line-height: 1.3;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   VALOR ANTERIOR
+========================================================= */
+
 .pc-audit-valor-antes {
-  color: #6b7280;
-}
+  grid-column: 1;
+  grid-row: 2;
 
-.pc-audit-valor-depois {
-  color: var(--pc-green);
-
-  font-weight: 750;
-
-  display: flex;
-
-  gap: 7px;
-
-  align-items: flex-start;
-}
-
-.pc-audit-valor-depois span {
   min-width: 0;
 
-  white-space: pre-line;
+  color: #475569;
+
+  font-weight: 700;
+
+  align-self: start;
+}
+
+
+/* =========================================================
+   SETA CENTRAL
+
+   A seta é posicionada no próprio grid para evitar
+   sobreposição quando os valores são muito longos.
+========================================================= */
+
+.pc-audit-linha::after {
+  content: "→";
+
+  grid-column: 2;
+  grid-row: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 16px;
+  min-width: 16px;
+
+  margin: 13px 0 0;
+  padding: 0;
+
+  color: #94a3b8;
+
+  font-size: 0.75rem;
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   NOVO VALOR
+========================================================= */
+
+.pc-audit-valor-depois {
+  grid-column: 3;
+  grid-row: 2;
+
+  display: block;
+
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  color: #1d4ed8;
+
+  font-size: 0.66rem;
+  font-weight: 800;
+
+  line-height: 1.5;
+
+  align-self: start;
+}
+
+
+/* Texto do novo valor */
+
+.pc-audit-valor-depois span {
+  display: block;
+
+  min-width: 0;
+
+  color: inherit;
+
+  font-size: inherit;
+  font-weight: inherit;
+
+  line-height: inherit;
+
+  white-space: pre-wrap;
 
   overflow-wrap: anywhere;
 }
 
+
+/* Esconde o ícone de seta do JSX,
+   pois a seta já está posicionada pelo grid */
+
 .pc-audit-seta {
-  flex: 0 0 auto;
-
-  margin-top: 3px;
-
-  color: #94a3b8;
+  display: none;
 }
+
+
+/* =========================================================
+   SEM CAMPOS
+========================================================= */
 
 .pc-audit-sem-campos {
-  color: var(--pc-muted);
-  font-size: 12px;
-}
-
-.pc-audit-historico
-.pedidos-alterados-historico-titulo {
   margin: 0;
+
+  padding: 10px;
+
+  color: #64748b;
+
+  background: #f8fafc;
+
+  border: 1px solid #edf1f5;
+  border-radius: 7px;
+
+  font-size: 0.68rem;
 }
 
-/* Tablets e telas menores */
 
-@media (max-width: 860px) {
-  .pc-audit-grade-cabecalho {
-    display: none;
-  }
+/* =========================================================
+   AJUSTES DA TABELA DE COMPRAS
 
-  .pc-audit-linha {
+   Reaproveita o padrão do relatório de vendas.
+========================================================= */
+
+.pedidos-alterados-tabela-wrapper {
+  max-width: 100%;
+
+  overflow-x: auto;
+}
+
+.pedidos-alterados-tabela {
+  width: 100%;
+  min-width: 1080px;
+
+  border-collapse: collapse;
+}
+
+.pedidos-alterados-tabela
+.pedidos-alterados-historico-linha > td {
+  padding: 0 !important;
+
+  background: #f8fafc !important;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK / TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  /* Um cartão por linha */
+
+  .pc-audit-linhas {
     grid-template-columns:
-      minmax(0, 1fr)
       minmax(0, 1fr);
-
-    gap: 7px 12px;
   }
 
-  .pc-audit-campo {
-    grid-column: 1 / -1;
-  }
-
-  .pc-audit-valor::before {
-    content: attr(data-titulo);
-
-    display: block;
-
-    font-size: 10px;
-
-    margin-bottom: 4px;
-
-    color: #64748b;
-
-    font-weight: 650;
-
-    text-transform: uppercase;
-  }
-
-  .pc-audit-valor-depois {
-    display: block;
-  }
-
-  .pc-audit-seta {
-    display: none;
-  }
-}
-
-/* Celulares */
-
-@media (max-width: 520px) {
   .pc-audit-historico {
-    padding: 8px;
+    padding: 12px;
   }
 
   .pc-audit-evento {
     padding: 11px;
   }
 
-  .pc-audit-linha {
-    grid-template-columns:
-      minmax(0, 1fr);
+}
 
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+========================================================= */
+
+@media (max-width: 520px) {
+
+  .pc-audit-historico {
+    padding: 10px;
+  }
+
+  .pc-audit-eventos {
+    gap: 8px;
+  }
+
+  .pc-audit-evento {
+    padding: 10px;
+  }
+
+  .pc-audit-evento-topo {
+    align-items: flex-start;
+
+    gap: 5px;
+  }
+
+  .pc-audit-evento-topo time {
+    font-size: 0.60rem;
+  }
+
+  .pc-audit-linhas {
     gap: 7px;
   }
 
-  .pc-audit-campo {
-    grid-column: auto;
+  .pc-audit-linha {
+    grid-template-columns:
+      minmax(0, 1fr)
+      14px
+      minmax(0, 1fr);
+
+    column-gap: 6px;
+
+    padding: 8px;
   }
+
+  .pc-audit-linha::after {
+    width: 14px;
+    min-width: 14px;
+  }
+
+  .pc-audit-campo {
+    font-size: 0.65rem;
+  }
+
+  .pc-audit-valor {
+    font-size: 0.65rem;
+  }
+
+}
+
+
+/* =========================================================
+   CELULARES MUITO ESTREITOS
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .pc-audit-historico {
+    padding: 8px;
+  }
+
+  .pc-audit-evento {
+    padding: 8px;
+  }
+
+  .pc-audit-linha {
+    grid-template-columns:
+      minmax(0, 1fr)
+      12px
+      minmax(0, 1fr);
+
+    column-gap: 4px;
+  }
+
+  .pc-audit-linha::after {
+    width: 12px;
+    min-width: 12px;
+
+    font-size: 0.65rem;
+  }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pc-audit-historico *,
+  .pc-audit-historico *::before,
+  .pc-audit-historico *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
 }

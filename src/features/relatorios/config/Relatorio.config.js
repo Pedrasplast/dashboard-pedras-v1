@@ -1,3 +1,4 @@
+
 import {
   FiActivity,
   FiAlertTriangle,
@@ -9,26 +10,21 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 
-
 import {
   agruparProducaoPorInjetora,
 } from "../producao/ProducaoPorInjetora";
-
 
 import {
   agruparProducaoPorProduto,
 } from "../producao/ProducaoPorProduto";
 
-
 import {
   impactoParadasPorMotivo,
 } from "../paradas/ImpactoPorMotivo";
 
-
 import {
   agruparMotivoJustificativa,
 } from "../paradas/MotivoJustificativa";
-
 
 import {
   prepararPedidosDetalhados,
@@ -37,13 +33,11 @@ import {
   agruparPedidosPorDataProduto,
 } from "../pedidos/PedidosRelatorios";
 
-
 import PedidosAlteradosRelatorio
   from "../pedidos-alterados/PedidosAlteradosRelatorio";
 
 import PedidosCompraAlteradosRelatorio
   from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
-
 
 /* =========================================================
    FINANCEIRO
@@ -52,7 +46,6 @@ import PedidosCompraAlteradosRelatorio
 import FinanceiroPrevistoRealizado
   from "../financeiro/FinanceiroPrevistoRealizado";
 
-
 /* =========================================================
    MATÉRIA-PRIMA
 ========================================================= */
@@ -60,15 +53,11 @@ import FinanceiroPrevistoRealizado
 import ConsumoProgramadoPorInjetora
   from "../materia-prima/ConsumoProgramadoPorInjetora";
 
-
 import ConsumoProgramadoPorFornecedor
   from "../materia-prima/ConsumoProgramadoPorFornecedor";
 
-
 import NecessidadeCompraMateriaPrima
   from "../materia-prima/NecessidadeCompraMateriaPrima";
-
-
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -86,23 +75,13 @@ export const RELATORIOS = [
   ===================================================== */
 
   {
-    id:
-      "producao-injetora",
-
-    categoria:
-      "Produção",
-
-    titulo:
-      "Produção por Injetora",
-
+    id: "producao-injetora",
+    categoria: "Produção",
+    titulo: "Produção por Injetora",
     descricao:
       "Resumo consolidado da produção por injetora no período selecionado.",
-
-    icone:
-      FiBarChart2,
-
-    fonteDados:
-      "producao",
+    icone: FiBarChart2,
+    fonteDados: "producao",
 
     filtros: {
       periodo: true,
@@ -111,14 +90,12 @@ export const RELATORIOS = [
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      agruparProducaoPorInjetora,
+    transformarDados: agruparProducaoPorInjetora,
 
     colunas: [
       "injetora",
@@ -129,25 +106,14 @@ export const RELATORIOS = [
     ],
   },
 
-
   {
-    id:
-      "producao-produto",
-
-    categoria:
-      "Produção",
-
-    titulo:
-      "Produção por Produto",
-
+    id: "producao-produto",
+    categoria: "Produção",
+    titulo: "Produção por Produto",
     descricao:
       "Resumo consolidado da produção por produto e injetora no período selecionado.",
-
-    icone:
-      FiBarChart2,
-
-    fonteDados:
-      "producao",
+    icone: FiBarChart2,
+    fonteDados: "producao",
 
     filtros: {
       periodo: true,
@@ -156,14 +122,12 @@ export const RELATORIOS = [
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      agruparProducaoPorProduto,
+    transformarDados: agruparProducaoPorProduto,
 
     colunas: [
       "produto",
@@ -177,29 +141,18 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
      PARADAS
   ===================================================== */
 
   {
-    id:
-      "impacto-paradas-motivo",
-
-    categoria:
-      "Paradas",
-
-    titulo:
-      "Impacto das Paradas por Motivo",
-
+    id: "impacto-paradas-motivo",
+    categoria: "Paradas",
+    titulo: "Impacto das Paradas por Motivo",
     descricao:
       "Ranking dos motivos de parada conforme o tempo total perdido no período selecionado.",
-
-    icone:
-      FiAlertTriangle,
-
-    fonteDados:
-      "producao",
+    icone: FiAlertTriangle,
+    fonteDados: "producao",
 
     filtros: {
       periodo: true,
@@ -208,14 +161,12 @@ export const RELATORIOS = [
       turno: false,
       mp: false,
       tipo: true,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      impactoParadasPorMotivo,
+    transformarDados: impactoParadasPorMotivo,
 
     colunas: [
       "motivo",
@@ -226,25 +177,14 @@ export const RELATORIOS = [
     ],
   },
 
-
   {
-    id:
-      "paradas-motivo-justificativa",
-
-    categoria:
-      "Paradas",
-
-    titulo:
-      "Motivos e Justificativas das Paradas",
-
+    id: "paradas-motivo-justificativa",
+    categoria: "Paradas",
+    titulo: "Motivos e Justificativas das Paradas",
     descricao:
       "Detalha os motivos de parada e suas justificativas, destacando as causas que mais impactam a produção.",
-
-    icone:
-      FiAlertTriangle,
-
-    fonteDados:
-      "producao",
+    icone: FiAlertTriangle,
+    fonteDados: "producao",
 
     filtros: {
       periodo: true,
@@ -253,14 +193,12 @@ export const RELATORIOS = [
       turno: false,
       mp: false,
       tipo: true,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      agruparMotivoJustificativa,
+    transformarDados: agruparMotivoJustificativa,
 
     colunas: [
       "motivo",
@@ -272,46 +210,32 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
-     PEDIDOS
+     PEDIDOS DE VENDA
   ===================================================== */
 
   {
-    id:
-      "pedidos-abertos",
-
-    categoria:
-      "Pedidos",
-
-    titulo:
-      "Pedidos em Aberto",
-
+    id: "pedidos-abertos",
+    categoria: "Pedidos",
+    titulo: "Pedidos em Aberto",
     descricao:
       "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
-
-    icone:
-      FiShoppingCart,
-
-    fonteDados:
-      "pedidos",
+    icone: FiShoppingCart,
+    fonteDados: "pedidos",
 
     filtros: {
       periodo: true,
-
       injetora: false,
       produto: true,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: true,
       vendedor: true,
       status: true,
     },
 
-    transformarDados:
-      prepararPedidosDetalhados,
+    transformarDados: prepararPedidosDetalhados,
 
     colunas: [
       "pedido",
@@ -327,43 +251,28 @@ export const RELATORIOS = [
     ],
   },
 
-
   {
-    id:
-      "pedidos-atrasados",
-
-    categoria:
-      "Pedidos",
-
-    titulo:
-      "Pedidos Atrasados",
-
+    id: "pedidos-atrasados",
+    categoria: "Pedidos",
+    titulo: "Pedidos Atrasados",
     descricao:
       "Lista pedidos cuja previsão de faturamento já venceu e ainda estão com status Pedido.",
-
-    icone:
-      FiAlertTriangle,
-
-    fonteDados:
-      "pedidos",
+    icone: FiAlertTriangle,
+    fonteDados: "pedidos",
 
     filtros: {
       periodo: true,
-
       injetora: false,
       produto: true,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: true,
       vendedor: true,
-
       status: false,
     },
 
-    transformarDados:
-      prepararPedidosAtrasados,
+    transformarDados: prepararPedidosAtrasados,
 
     colunas: [
       "pedido",
@@ -378,92 +287,59 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
-     PEDIDOS ALTERADOS
+     PEDIDOS DE VENDA ALTERADOS
   ===================================================== */
 
   {
-    id:
-      "pedidos-alterados",
-
-    categoria:
-      "Pedidos",
-
-    titulo:
-      "Pedidos Alterados",
-
+    id: "pedidos-alterados",
+    categoria: "Pedidos",
+    titulo: "Pedidos Alterados",
     descricao:
       "Auditoria das alterações realizadas no conteúdo dos pedidos, mostrando reincidência e valores antes e depois.",
-
-    icone:
-      FiEdit3,
-
-    fonteDados:
-      "custom",
-
-    tipoRelatorio:
-      "custom",
-
-    componenteCustomizado:
-      PedidosAlteradosRelatorio,
+    icone: FiEdit3,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: PedidosAlteradosRelatorio,
 
     filtros: {
       periodo: false,
-
       injetora: false,
       produto: false,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      null,
-
+    transformarDados: null,
     colunas: [],
   },
 
-
   {
-    id:
-      "pedidos-produto-codigo",
-
-    categoria:
-      "Pedidos",
-
-    titulo:
-      "Quantidade de Produtos por Código",
-
+    id: "pedidos-produto-codigo",
+    categoria: "Pedidos",
+    titulo: "Quantidade de Produtos por Código",
     descricao:
       "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
-
-    icone:
-      FiPackage,
-
-    fonteDados:
-      "pedidos",
+    icone: FiPackage,
+    fonteDados: "pedidos",
 
     filtros: {
       periodo: true,
-
       injetora: false,
       produto: true,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: true,
       vendedor: true,
       status: true,
     },
 
-    transformarDados:
-      agruparPedidosPorCodigoProduto,
+    transformarDados: agruparPedidosPorCodigoProduto,
 
     colunas: [
       "codigo_produto",
@@ -474,42 +350,28 @@ export const RELATORIOS = [
     ],
   },
 
-
   {
-    id:
-      "pedidos-produto-data",
-
-    categoria:
-      "Pedidos",
-
-    titulo:
-      "Produtos por Data de Faturamento",
-
+    id: "pedidos-produto-data",
+    categoria: "Pedidos",
+    titulo: "Produtos por Data de Faturamento",
     descricao:
       "Agrupa as quantidades por previsão de faturamento e código do produto para auxiliar o planejamento da produção.",
-
-    icone:
-      FiCalendar,
-
-    fonteDados:
-      "pedidos",
+    icone: FiCalendar,
+    fonteDados: "pedidos",
 
     filtros: {
       periodo: true,
-
       injetora: false,
       produto: true,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: true,
       vendedor: true,
       status: true,
     },
 
-    transformarDados:
-      agruparPedidosPorDataProduto,
+    transformarDados: agruparPedidosPorDataProduto,
 
     colunas: [
       "previsao",
@@ -521,20 +383,22 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
-     PEDIDOS DE COMPRA — AUDITORIA
+     PEDIDOS DE COMPRA ALTERADOS — ÚNICO RELATÓRIO
+     DE COMPRAS NESTE CADASTRO
   ===================================================== */
 
   {
     id: "pedidos-compra-alterados",
     categoria: "Compras",
     titulo: "Pedidos de Compra Alterados",
-    descricao: "Compara as versões sincronizadas dos pedidos de compra e mostra campos e valores anteriores e novos.",
+    descricao:
+      "Compara as versões sincronizadas dos pedidos de compra e mostra campos e valores anteriores e novos.",
     icone: FiEdit3,
     fonteDados: "custom",
     tipoRelatorio: "custom",
     componenteCustomizado: PedidosCompraAlteradosRelatorio,
+
     filtros: {
       periodo: false,
       injetora: false,
@@ -546,56 +410,39 @@ export const RELATORIOS = [
       vendedor: false,
       status: false,
     },
+
     transformarDados: null,
     colunas: [],
   },
-
 
   /* =====================================================
      FINANCEIRO
   ===================================================== */
 
   {
-    id:
-      "financeiro-previsto-realizado",
-
-    categoria:
-      "Financeiro",
-
-    titulo:
-      "Previsto x Realizado por Categoria",
-
+    id: "financeiro-previsto-realizado",
+    categoria: "Financeiro",
+    titulo: "Previsto x Realizado por Categoria",
     descricao:
       "Compara os valores previstos e realizados por categoria financeira, destacando os desvios favoráveis e desfavoráveis.",
-
-    icone:
-      FiDollarSign,
-
-    fonteDados:
-      "custom",
-
-    tipoRelatorio:
-      "custom",
-
-    componenteCustomizado:
-      FinanceiroPrevistoRealizado,
+    icone: FiDollarSign,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: FinanceiroPrevistoRealizado,
 
     filtros: {
       periodo: false,
-
       injetora: false,
       produto: false,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
     colunas: [
       "codigo_categoria",
@@ -608,145 +455,88 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
      MATÉRIA-PRIMA
   ===================================================== */
 
   {
-    id:
-      "materia-prima-consumo-injetora",
-
-    categoria:
-      "Matéria-Prima",
-
-    titulo:
-      "Consumo Programado por Injetora",
-
+    id: "materia-prima-consumo-injetora",
+    categoria: "Matéria-Prima",
+    titulo: "Consumo Programado por Injetora",
     descricao:
       "Mostra o consumo previsto de PP de cada injetora no período selecionado, com detalhamento das programações e da receita por fornecedor.",
-
-    icone:
-      FiActivity,
-
-    fonteDados:
-      "custom",
-
-    tipoRelatorio:
-      "custom",
-
-    componenteCustomizado:
-      ConsumoProgramadoPorInjetora,
+    icone: FiActivity,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: ConsumoProgramadoPorInjetora,
 
     filtros: {
       periodo: false,
-
       injetora: false,
       produto: false,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      null,
-
+    transformarDados: null,
     colunas: [],
   },
 
-
   {
-    id:
-      "materia-prima-consumo-fornecedor",
-
-    categoria:
-      "Matéria-Prima",
-
-    titulo:
-      "Consumo Programado por Fornecedor",
-
+    id: "materia-prima-consumo-fornecedor",
+    categoria: "Matéria-Prima",
+    titulo: "Consumo Programado por Fornecedor",
     descricao:
       "Consolida a necessidade prevista de PP por fornecedor conforme as receitas dos produtos e a programação das injetoras no período selecionado.",
-
-    icone:
-      FiPackage,
-
-    fonteDados:
-      "custom",
-
-    tipoRelatorio:
-      "custom",
-
-    componenteCustomizado:
-      ConsumoProgramadoPorFornecedor,
+    icone: FiPackage,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: ConsumoProgramadoPorFornecedor,
 
     filtros: {
       periodo: false,
-
       injetora: false,
       produto: false,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      null,
-
+    transformarDados: null,
     colunas: [],
   },
 
-
   {
-    id:
-      "materia-prima-necessidade-compra",
-
-    categoria:
-      "Matéria-Prima",
-
-    titulo:
-      "Necessidade de Compra de Matéria-Prima",
-
+    id: "materia-prima-necessidade-compra",
+    categoria: "Matéria-Prima",
+    titulo: "Necessidade de Compra de Matéria-Prima",
     descricao:
       "Projeta o estoque de PP por fornecedor, considerando saldo atual, compras futuras, consumo programado, estoque mínimo, estoque alvo e prazo de reposição.",
-
-    icone:
-      FiShoppingCart,
-
-    fonteDados:
-      "custom",
-
-    tipoRelatorio:
-      "custom",
-
-    componenteCustomizado:
-      NecessidadeCompraMateriaPrima,
+    icone: FiShoppingCart,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: NecessidadeCompraMateriaPrima,
 
     filtros: {
       periodo: false,
-
       injetora: false,
       produto: false,
       turno: false,
       mp: false,
       tipo: false,
-
       cliente: false,
       vendedor: false,
       status: false,
     },
 
-    transformarDados:
-      null,
-
+    transformarDados: null,
     colunas: [],
   },
 

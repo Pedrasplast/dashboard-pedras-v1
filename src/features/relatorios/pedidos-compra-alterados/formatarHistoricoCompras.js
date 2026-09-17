@@ -1,228 +1,314 @@
 
-/*
- * FORMATAÇÃO DO HISTÓRICO DE PEDIDOS DE COMPRA
- *
- * Regras:
- * 1. Não exibir mudanças de etapa (movimentação entre colunas).
- * 2. Não considerar preenchimentos iniciais de cadastro.
- * 3. Exibir alterações reais de preço, quantidade, valores,
- *    vencimento, prazo, condição de pagamento e observações.
- * 4. Transformar parcelas e departamentos em dados legíveis.
- * 5. Não modificar o histórico original do Supabase.
- */
+/* =========================================================
+   HISTÓRICO DE PEDIDOS DE COMPRA
 
-const numeroBR = new Intl.NumberFormat("pt-BR", {
-  maximumFractionDigits: 4,
-});
+   - Preserva os eventos originais.
+   - Identifica produtos pelo código do item.
+   - Detalha parcelas e departamentos.
+   - Calcula variações.
+   - Protege dados de pagamento na apresentação.
+========================================================= */
 
-const moedaBR = new Intl.NumberFormat("pt-BR", {
+const brl = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
 });
 
-const percentualBR = new Intl.NumberFormat("pt-BR", {
-  maximumFractionDigits: 2,
+const decimal = new Intl.NumberFormat("pt-BR", {
+  maximumFractionDigits: 4,
 });
 
-// ============================================================
-// FUNÇÕES AUXILIARES
-// ============================================================
-
-function definido(valor) {
-  return (
-    valor !== null &&
-    valor !== undefined &&
-    valor !== ""
-  );
-}
-
-function objeto(valor) {
-  return valor &&
-    typeof valor === "object" &&
-    !Array.isArray(valor)
-    ? valor
+const obj = (x) =>
+  x &&
+  typeof x === "object" &&
+  !Array.isArray(x)
+    ? x
     : {};
-}
 
-function num(valor) {
-  return typeof valor === "number"
-    ? valor
-    : Number(valor);
-}
+const definido = (x) =>
+  x !== undefined &&
+  x !== null &&
+  x !== "";
 
-function moeda(valor) {
-  return Number.isFinite(num(valor)) && definido(valor)
-    ? moedaBR.format(num(valor))
-    : "Não informado";
-}
+const n = (x) =>
+  definido(x) && Number.isFinite(Number(x))
+    ? Number(x)
+    : null;
 
-function quantidade(valor) {
-  return Number.isFinite(num(valor)) && definido(valor)
-    ? numeroBR.format(num(valor))
-    : "Não informado";
-}
+const dinheiro = (x) =>
+  n(x) === null
+    ? "Não informado"
+    : brl.format(n(x));
 
-function porcentagem(valor) {
-  return definido(valor) && Number.isFinite(num(valor))
-    ? `${percentualBR.format(num(valor))}%`
-    : "Não informado";
-}
+const quant = (x) =>
+  n(x) === null
+    ? "Não informado"
+    : decimal.format(n(x));
 
-function dataBR(valor) {
-  const texto = String(valor ?? "").trim();
+const iguais = (a, b) =>
+  JSON.stringify(a ?? null) ===
+  JSON.stringify(b ?? null);
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
-    return texto.split("-").reverse().join("/");
+/* =========================================================
+   PROTEÇÃO DE DADOS DE PAGAMENTO
+========================================================= */
+
+function luhn(digitos) {
+  let soma = 0;
+  let duplicar = false;
+
+  for (let i = digitos.length - 1; i >= 0; i--) {
+    let d = Number(digitos[i]);
+
+    if (duplicar) {
+      d *= 2;
+
+      if (d > 9) {
+        d -= 9;
+      }
+    }
+
+    soma += d;
+    duplicar = !duplicar;
   }
 
-  return texto || "Não informado";
+  return soma % 10 === 0;
 }
 
-function valorAusente(valor) {
-  return (
-    !definido(valor) ||
-    (typeof valor === "string" && !valor.trim())
-  );
-}
-
-function codigoLegivel(valor, nome, mapa) {
+export function protegerDadosPagamento(valor) {
   if (
-    valorAusente(valor) ||
-    String(valor).trim() === "0"
+    valor === null ||
+    valor === undefined
   ) {
-    return "Não informado";
+    return "";
   }
 
-  const codigo = String(valor).trim();
-  const descricao = mapa?.[codigo];
+  return String(valor)
+    .replace(
+      /\b((?:n[uú]mero\s+(?:do\s+)?cart[aã]o|cart[aã]o\s*(?:n[uú]mero|n[ºo])?|card\s*(?:number|no\.?))\s*[:=#-]?\s*)((?:\d[ -]?){12,19})/gi,
+      (_trecho, rotulo) =>
+        `${rotulo}[NÚMERO PROTEGIDO]`
+    )
+    .replace(
+      /\b((?:n[uú]mero|number)\s*[:=#-]\s*)((?:\d[ -]?){12,19})/gi,
+      (_trecho, rotulo) =>
+        `${rotulo}[NÚMERO PROTEGIDO]`
+    )
+    .replace(
+      /\b((?:cvv|cvc|c[oó]digo\s+de\s+seguran[cç]a)\s*[:=#-]?\s*)\d{3,4}\b/gi,
+      (_trecho, rotulo) =>
+        `${rotulo}[PROTEGIDO]`
+    )
+    .replace(
+      /\b(?:\d[ -]?){12,18}\d\b/g,
+      (trecho) => {
+        const digitos = trecho.replace(
+          /\D/g,
+          ""
+        );
 
-  return descricao
-    ? `${descricao} (cód. ${codigo})`
-    : `${nome} ${codigo}`;
+        return digitos.length >= 13 &&
+          digitos.length <= 19 &&
+          luhn(digitos)
+          ? "[NÚMERO PROTEGIDO]"
+          : trecho;
+      }
+    );
 }
 
-// ============================================================
-// TIPOS DE CAMPOS
-// ============================================================
+/* =========================================================
+   NOMENCLATURA DOS CAMPOS
+========================================================= */
 
-const CAMPOS_MOEDA = new Set([
-  "valor_total",
+const NOMES = {
+  numero: "Número do pedido",
+  fornecedor: "Fornecedor",
+  comprador: "Comprador",
+  centro_custo: "Centro de custo",
+  categoria: "Categoria",
+  contrato: "Contrato",
+  projeto: "Projeto",
+
+  data_previsao: "Previsão de entrega",
+
+  observacoes: "Observações do pedido",
+  observacoes_internas: "Observações internas",
+
+  condicao_pagamento:
+    "Condição de pagamento",
+
+  parcelas_quantidade:
+    "Quantidade de parcelas",
+
+  codigo_comercial: "Código do produto",
+  codigo_produto: "Produto",
+  descricao: "Descrição do produto",
+  unidade: "Unidade de medida",
+
+  quantidade: "Quantidade comprada",
+  quantidade_recebida:
+    "Quantidade recebida",
+
+  preco_unitario: "Preço por unidade",
+  valor_total: "Valor total do produto",
+
+  desconto: "Desconto do produto",
+  despesas: "Despesas do produto",
+  frete_item: "Frete do produto",
+  seguro: "Seguro do produto",
+
+  local_estoque: "Local de estoque",
+  observacao: "Observação do produto",
+
+  frete: "Frete",
+  parcelas: "Parcelas",
+  departamentos: "Departamentos",
+  caracteristicas: "Características",
+
+  cTipoDoc: "Tipo de documento",
+  dVencto: "Vencimento",
+  nValor: "Valor",
+  nDias: "Prazo",
+  nPercent: "Percentual",
+  nPerc: "Percentual",
+};
+
+const MONETARIOS = new Set([
   "preco_unitario",
+  "valor_total",
   "desconto",
   "despesas",
   "frete_item",
   "seguro",
   "nValor",
-  "nValMerc",
-  "nValTot",
-  "nValUnit",
   "nValFrete",
-  "nValOutras",
   "nValSeguro",
-  "nDesconto",
-  "nDespesas",
-  "nFrete",
-  "nSeguro",
+  "nValOutras",
 ]);
 
-const CAMPOS_QUANTIDADE = new Set([
+const QUANTIDADES = new Set([
   "quantidade",
   "quantidade_recebida",
   "parcelas_quantidade",
   "nQtde",
   "nQtdeRec",
+  "nQtdVol",
 ]);
 
-const CAMPOS_DATA = new Set([
-  "data_previsao",
-  "data_inclusao",
-  "dVencto",
-  "dDtPrevisao",
-]);
-
-const DOC_TIPO = {
+const DOCUMENTOS = {
   BOL: "Boleto",
   CRC: "Cartão de crédito",
+  CHQ: "Cheque",
   DUP: "Duplicata",
   PIX: "Pix",
 };
 
-// ============================================================
-// FORMATAÇÃO DOS VALORES
-// ============================================================
+/* =========================================================
+   REFERÊNCIAS
+========================================================= */
+
+function referencia(valor, mapa, rotulo) {
+  if (
+    !definido(valor) ||
+    String(valor) === "0"
+  ) {
+    return "Não informado";
+  }
+
+  const chave = String(valor);
+
+  const nome = mapa?.[chave];
+
+  return protegerDadosPagamento(
+    nome
+      ? `${nome} (código ${chave})`
+      : `${rotulo}: ${chave}`
+  );
+}
+
+/* =========================================================
+   FORMATAR VALORES
+========================================================= */
 
 export function formatarValorCompra(
   valor,
   campo = "",
   referencias = {}
 ) {
-  if (valorAusente(valor)) {
+  if (!definido(valor)) {
     return "Não informado";
   }
 
-  if (campo === "etapa") {
-    return `Etapa ${valor}`;
+  if (MONETARIOS.has(campo)) {
+    return dinheiro(valor);
+  }
+
+  if (QUANTIDADES.has(campo)) {
+    return quant(valor);
+  }
+
+  if (campo === "nDias") {
+    return `${quant(valor)} dias`;
+  }
+
+  if (
+    campo === "nPercent" ||
+    campo === "nPerc"
+  ) {
+    return `${quant(valor)}%`;
+  }
+
+  if (
+    campo === "data_previsao" ||
+    campo === "data_inclusao" ||
+    campo === "dVencto"
+  ) {
+    const str = String(valor);
+
+    const iso =
+      /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+
+    return iso
+      ? `${iso[3]}/${iso[2]}/${iso[1]}`
+      : protegerDadosPagamento(str);
+  }
+
+  if (campo === "cTipoDoc") {
+    return protegerDadosPagamento(
+      DOCUMENTOS[valor] || String(valor)
+    );
   }
 
   if (campo === "fornecedor") {
-    return codigoLegivel(
+    return referencia(
       valor,
-      "Código Omie",
-      referencias.fornecedores
+      referencias.fornecedores,
+      "Fornecedor Omie"
     );
   }
 
   if (campo === "comprador") {
-    return codigoLegivel(
+    return referencia(
       valor,
-      "Código Omie",
-      referencias.compradores
+      referencias.compradores,
+      "Comprador Omie"
     );
   }
 
   if (campo === "local_estoque") {
-    return codigoLegivel(
+    return referencia(
       valor,
-      "Código Omie",
-      referencias.locais
+      referencias.locais,
+      "Local Omie"
     );
   }
 
   if (campo === "cCodDepto") {
-    return codigoLegivel(
+    return referencia(
       valor,
-      "Departamento",
-      referencias.departamentos
+      referencias.departamentos,
+      "Departamento Omie"
     );
-  }
-
-  if (campo === "nDias") {
-    return Number.isFinite(num(valor))
-      ? `${quantidade(valor)} dias`
-      : String(valor);
-  }
-
-  if (campo === "nPerc") {
-    return porcentagem(valor);
-  }
-
-  if (campo === "cTipoDoc") {
-    return (
-      DOC_TIPO[String(valor).toUpperCase()] ||
-      String(valor)
-    );
-  }
-
-  if (CAMPOS_MOEDA.has(campo)) {
-    return moeda(valor);
-  }
-
-  if (CAMPOS_QUANTIDADE.has(campo)) {
-    return quantidade(valor);
-  }
-
-  if (CAMPOS_DATA.has(campo)) {
-    return dataBR(valor);
   }
 
   if (typeof valor === "boolean") {
@@ -230,413 +316,386 @@ export function formatarValorCompra(
   }
 
   if (typeof valor === "number") {
-    return numeroBR.format(valor);
+    return quant(valor);
   }
 
   if (Array.isArray(valor)) {
     return valor.length
       ? valor
-          .map(
-            (item, indice) =>
-              `${indice + 1}. ${formatarValorCompra(
-                item,
-                "",
-                referencias
-              )}`
+          .map((item) =>
+            formatarValorCompra(
+              item,
+              "",
+              referencias
+            )
           )
           .join("\n")
       : "Nenhum registro";
   }
 
   if (typeof valor === "object") {
+    return Object.entries(valor)
+      .map(
+        ([chave, dado]) =>
+          `${
+            NOMES[chave] ||
+            protegerDadosPagamento(chave)
+          }: ${formatarValorCompra(
+            dado,
+            chave,
+            referencias
+          )}`
+      )
+      .join(" • ");
+  }
+
+  return protegerDadosPagamento(
+    String(valor).trim()
+  );
+}
+
+/* =========================================================
+   VARIAÇÃO DE VALORES
+========================================================= */
+
+function variacao(
+  antes,
+  depois,
+  campo,
+  unidade = ""
+) {
+  const a = n(antes);
+  const b = n(depois);
+
+  if (
+    a === null ||
+    b === null ||
+    a === b
+  ) {
+    return "";
+  }
+
+  const direcao =
+    b > a ? "Aumento" : "Redução";
+
+  if (MONETARIOS.has(campo)) {
     return (
-      Object.entries(valor)
-        .map(
-          ([chave, dado]) =>
-            `${chave}: ${formatarValorCompra(
-              dado,
-              chave,
-              referencias
-            )}`
-        )
-        .join(" • ") || "Nenhum dado"
+      `${direcao} de ${dinheiro(
+        Math.abs(b - a)
+      )}` +
+      (campo === "preco_unitario"
+        ? " por unidade"
+        : "")
     );
   }
 
-  return String(valor).trim() || "Não informado";
-}
-
-// ============================================================
-// CAMPOS DE PARCELAS E DEPARTAMENTOS
-// ============================================================
-
-const PARCELAS = [
-  ["dVencto", "Vencimento"],
-  ["nValor", "Valor"],
-  ["nDias", "Prazo"],
-  ["cTipoDoc", "Tipo de documento"],
-  ["nPercent", "Percentual"],
-  ["nParcela", "Número"],
-];
-
-const DEPARTAMENTOS = [
-  ["nPerc", "Percentual"],
-  ["nValor", "Valor"],
-];
-
-function valorAninhado(valor, campo, referencias) {
-  if (campo === "nPercent") {
-    return porcentagem(valor);
+  if (QUANTIDADES.has(campo)) {
+    return (
+      `${direcao} de ${quant(
+        Math.abs(b - a)
+      )}` +
+      (unidade
+        ? ` ${protegerDadosPagamento(unidade)}`
+        : "")
+    );
   }
 
-  return formatarValorCompra(
-    valor,
-    campo,
-    referencias
+  if (campo === "nDias") {
+    return `${direcao} de ${quant(
+      Math.abs(b - a)
+    )} dias`;
+  }
+
+  return "";
+}
+
+/* =========================================================
+   IDENTIFICAÇÃO DO PRODUTO
+========================================================= */
+
+function identificarProduto(
+  codigoItem,
+  mudanca,
+  referencias
+) {
+  const atual = obj(
+    referencias.itens?.[String(codigoItem)]
+  );
+
+  const anterior = obj(
+    mudanca.anterior
+  );
+
+  const novo = obj(
+    mudanca.novo
+  );
+
+  const item = {
+    ...atual,
+    ...anterior,
+    ...novo,
+  };
+
+  return {
+    codigoItem: String(codigoItem),
+
+    descricao: protegerDadosPagamento(
+      item.descricao ||
+        "Produto sem descrição disponível"
+    ),
+
+    codigoComercial: protegerDadosPagamento(
+      item.codigo_comercial ||
+        item.codigoComercial ||
+        ""
+    ),
+
+    unidade: protegerDadosPagamento(
+      item.unidade || ""
+    ),
+  };
+}
+
+function nomeProduto(produto) {
+  if (!produto) {
+    return "";
+  }
+
+  return (
+    produto.descricao +
+    (produto.codigoComercial
+      ? ` — cód. ${produto.codigoComercial}`
+      : "")
   );
 }
 
-function resumoParcela(parcela, referencias) {
-  const registro = objeto(parcela);
+/* =========================================================
+   CRIAR MUDANÇA
+========================================================= */
 
-  return [
-    `Parcela ${registro.nParcela ?? "?"}`,
-
-    `Venc.: ${dataBR(registro.dVencto)}`,
-
-    `Valor: ${moeda(registro.nValor)}`,
-
-    `Prazo: ${formatarValorCompra(
-      registro.nDias,
-      "nDias",
-      referencias
-    )}`,
-
-    `Documento: ${formatarValorCompra(
-      registro.cTipoDoc,
-      "cTipoDoc",
-      referencias
-    )}`,
-
-    `Percentual: ${porcentagem(
-      registro.nPercent
-    )}`,
-  ].join(" • ");
-}
-
-function resumoDepartamento(
-  departamento,
-  referencias
+function criarMudanca(
+  titulo,
+  anterior,
+  novo,
+  campo,
+  referencias,
+  produto = null
 ) {
-  const registro = objeto(departamento);
+  return {
+    campo: protegerDadosPagamento(
+      produto
+        ? `${titulo} • ${nomeProduto(produto)}`
+        : titulo
+    ),
 
-  return [
-    formatarValorCompra(
-      registro.cCodDepto,
-      "cCodDepto",
+    tituloCurto:
+      protegerDadosPagamento(titulo),
+
+    produto,
+
+    anterior: formatarValorCompra(
+      anterior,
+      campo,
       referencias
     ),
 
-    `Rateio: ${porcentagem(registro.nPerc)}`,
+    novo: formatarValorCompra(
+      novo,
+      campo,
+      referencias
+    ),
 
-    `Valor: ${moeda(registro.nValor)}`,
-  ].join(" • ");
+    variacao: protegerDadosPagamento(
+      variacao(
+        anterior,
+        novo,
+        campo,
+        produto?.unidade
+      )
+    ),
+  };
 }
 
-// ============================================================
-// IDENTIFICAÇÃO DE PREENCHIMENTOS INICIAIS
-// ============================================================
+/* =========================================================
+   PARCELAS E DEPARTAMENTOS
+========================================================= */
 
-function valorInicial(valor) {
-  return (
-    valor == null ||
-    valor === "" ||
-    valor === 0 ||
-    valor === "0" ||
-    (Array.isArray(valor) && valor.length === 0)
-  );
-}
+const PARCELA = [
+  ["dVencto", "Vencimento"],
+  ["nValor", "Valor da parcela"],
+  ["nDias", "Prazo de pagamento"],
+  ["cTipoDoc", "Tipo de documento"],
+  ["nPercent", "Percentual da parcela"],
+];
 
-function preenchimentoDeCadastro(
-  chave,
-  mudanca
-) {
-  const camposIniciais = new Set([
-    "comprador",
-    "fornecedor",
-    "centro_custo",
-    "codigo_integracao",
-    "departamentos",
-    "parcelas",
-    "caracteristicas",
-    "parcelas_quantidade",
-  ]);
-
-  const campoItem =
-    /^item_\d+_local_estoque$/.test(chave);
-
-  const registroInicial =
-    camposIniciais.has(chave) ||
-    campoItem;
-
-  return (
-    registroInicial &&
-    valorInicial(mudanca.anterior) &&
-    !valorInicial(mudanca.novo)
-  );
-}
-
-// ============================================================
-// COMPARAÇÃO DE PARCELAS E DEPARTAMENTOS
-// ============================================================
+const DEPARTAMENTO = [
+  ["nPerc", "Percentual de rateio"],
+  ["nValor", "Valor do rateio"],
+];
 
 function compararListas(
   mudanca,
   tipo,
   referencias
 ) {
-  const anterior = Array.isArray(mudanca.anterior)
+  const antes = Array.isArray(
+    mudanca.anterior
+  )
     ? mudanca.anterior
     : [];
 
-  const novo = Array.isArray(mudanca.novo)
+  const depois = Array.isArray(
+    mudanca.novo
+  )
     ? mudanca.novo
     : [];
 
-  const parcelas = tipo === "parcelas";
+  const parcelas =
+    tipo === "parcelas";
 
-  const identificador = parcelas
+  const idCampo = parcelas
     ? "nParcela"
     : "cCodDepto";
 
   const campos = parcelas
-    ? PARCELAS
-    : DEPARTAMENTOS;
+    ? PARCELA
+    : DEPARTAMENTO;
 
-  const mapaAnterior = new Map(
-    anterior.map((registro, indice) => [
-      String(
-        objeto(registro)[identificador] ??
-          indice
-      ),
-
-      objeto(registro),
+  const a = new Map(
+    antes.map((v, i) => [
+      String(v?.[idCampo] ?? i),
+      obj(v),
     ])
   );
 
-  const mapaNovo = new Map(
-    novo.map((registro, indice) => [
-      String(
-        objeto(registro)[identificador] ??
-          indice
-      ),
-
-      objeto(registro),
+  const b = new Map(
+    depois.map((v, i) => [
+      String(v?.[idCampo] ?? i),
+      obj(v),
     ])
   );
 
-  const identificadores = [
-    ...new Set([
-      ...mapaAnterior.keys(),
-      ...mapaNovo.keys(),
-    ]),
-  ];
+  const saida = [];
 
-  const linhas = [];
+  for (
+    const id of new Set([
+      ...a.keys(),
+      ...b.keys(),
+    ])
+  ) {
+    const anterior = a.get(id);
+    const novo = b.get(id);
 
-  for (const id of identificadores) {
-    const a = mapaAnterior.get(id);
-    const n = mapaNovo.get(id);
-
-    const rotulo = parcelas
+    const titulo = parcelas
       ? `Parcela ${id}`
-      : formatarValorCompra(
+      : referencia(
           id,
-          "cCodDepto",
-          referencias
+          referencias.departamentos,
+          "Departamento Omie"
         );
 
-    // Inclusão ou exclusão de parcela/departamento.
-    if (!a || !n) {
-      linhas.push({
-        campo: `${rotulo} ${
-          !a ? "adicionado(a)" : "removido(a)"
-        }`,
+    if (!anterior || !novo) {
+      const rotulo =
+        `${titulo} ` +
+        (novo ? "adicionada" : "removida");
 
-        anterior: a
-          ? parcelas
-            ? resumoParcela(a, referencias)
-            : resumoDepartamento(
-                a,
-                referencias
-              )
-          : "Não existia",
-
-        novo: n
-          ? parcelas
-            ? resumoParcela(n, referencias)
-            : resumoDepartamento(
-                n,
-                referencias
-              )
-          : "Removido",
-      });
+      saida.push(
+        criarMudanca(
+          rotulo,
+          anterior ?? null,
+          novo ?? null,
+          "",
+          referencias
+        )
+      );
 
       continue;
     }
 
-    // Comparação dos campos conhecidos.
-    for (const [chave, titulo] of campos) {
-      if (chave === identificador) {
-        continue;
-      }
-
+    for (const [campo, nome] of campos) {
       if (
-        JSON.stringify(a[chave] ?? null) ===
-        JSON.stringify(n[chave] ?? null)
+        !iguais(
+          anterior[campo],
+          novo[campo]
+        )
       ) {
-        continue;
+        saida.push(
+          criarMudanca(
+            `${titulo} • ${nome}`,
+            anterior[campo],
+            novo[campo],
+            campo,
+            referencias
+          )
+        );
       }
-
-      // Primeiro preenchimento do tipo de documento
-      // não representa revisão comercial.
-      if (
-        parcelas &&
-        chave === "cTipoDoc" &&
-        valorInicial(a[chave])
-      ) {
-        continue;
-      }
-
-      linhas.push({
-        campo: `${rotulo} • ${titulo}`,
-
-        anterior: valorAninhado(
-          a[chave],
-          chave,
-          referencias
-        ),
-
-        novo: valorAninhado(
-          n[chave],
-          chave,
-          referencias
-        ),
-      });
-    }
-
-    // Preserva a comparação de campos adicionais do Omie.
-    for (const chave of new Set([
-      ...Object.keys(a),
-      ...Object.keys(n),
-    ])) {
-      if (
-        chave === identificador ||
-        campos.some(([campo]) => campo === chave)
-      ) {
-        continue;
-      }
-
-      if (
-        JSON.stringify(a[chave] ?? null) ===
-        JSON.stringify(n[chave] ?? null)
-      ) {
-        continue;
-      }
-
-      linhas.push({
-        campo: `${rotulo} • ${chave}`,
-
-        anterior: formatarValorCompra(
-          a[chave],
-          chave,
-          referencias
-        ),
-
-        novo: formatarValorCompra(
-          n[chave],
-          chave,
-          referencias
-        ),
-      });
     }
   }
 
-  return linhas;
+  return saida;
 }
 
-// ============================================================
-// RÓTULOS DO FRETE
-// ============================================================
+/* =========================================================
+   FRETE
+========================================================= */
 
-const ROTULOS = {
-  "frete.cTpFrete": "Tipo de frete",
-  "frete.nValFrete": "Valor do frete",
-  "frete.nValSeguro": "Seguro",
-  "frete.nValOutras": "Outras despesas",
-  "frete.nCodTransp":
-    "Transportadora (código Omie)",
+const FRETE = {
+  cTpFrete: "Tipo de frete",
+  nCodTransp: "Transportadora",
+  nValFrete: "Valor do frete",
+
+  nValOutras:
+    "Outras despesas do frete",
+
+  nValSeguro: "Seguro do frete",
+  nPesoBruto: "Peso bruto",
+  nPesoLiq: "Peso líquido",
+  nQtdVol: "Quantidade de volumes",
 };
 
-// ============================================================
-// EXTRAÇÃO DAS ALTERAÇÕES RELEVANTES
-// ============================================================
+/* =========================================================
+   EXTRAIR ALTERAÇÕES
+========================================================= */
 
 export function extrairMudancasCompra(
   evento,
   referencias = {}
 ) {
-  const detalhes = objeto(evento?.detalhes);
+  const saida = [];
 
-  const resultado = [];
+  for (
+    const [chave, entrada] of
+    Object.entries(obj(evento?.detalhes))
+  ) {
+    const mudanca = obj(entrada);
 
-  for (const [chave, mudancaOriginal] of Object.entries(
-    detalhes
-  )) {
-    const mudanca = objeto(mudancaOriginal);
+    // A etapa define o escopo do relatório.
+    // Identificadores técnicos não são mudanças comerciais.
 
-    // ========================================================
-    // REGRA 1 — IGNORAR ETAPA
-    // ========================================================
-    //
-    // A movimentação entre colunas do Omie não é considerada
-    // alteração comercial.
-    //
-    // Exemplos ignorados:
-    // Etapa 10 -> 15
-    // Etapa 15 -> 20
-    // Etapa 20 -> 10
-    //
-    // A etapa continua armazenada no banco, mas não aparece
-    // na tela, PDF, Excel ou contadores recalculados.
-    // ========================================================
-
-    if (chave === "etapa") {
+    if (
+      chave === "etapa" ||
+      chave === "codigo" ||
+      chave === "codigo_integracao"
+    ) {
       continue;
     }
 
-    // ========================================================
-    // REGRA 2 — IGNORAR PREENCHIMENTOS INICIAIS
-    // ========================================================
-
     if (
-      preenchimentoDeCadastro(
-        chave,
-        mudanca
+      iguais(
+        mudanca.anterior,
+        mudanca.novo
       )
     ) {
       continue;
     }
 
-    // ========================================================
-    // REGRA 3 — PARCELAS E DEPARTAMENTOS
-    // ========================================================
+    /* PARCELAS E DEPARTAMENTOS */
 
     if (
       chave === "parcelas" ||
       chave === "departamentos"
     ) {
-      resultado.push(
+      saida.push(
         ...compararListas(
           mudanca,
           chave,
@@ -647,153 +706,177 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    // ========================================================
-    // REGRA 4 — FRETE
-    // ========================================================
+    /* FRETE */
 
-    if (
-      chave === "frete" &&
-      mudanca.anterior &&
-      mudanca.novo
-    ) {
-      const anterior = objeto(
+    if (chave === "frete") {
+      const anterior = obj(
         mudanca.anterior
       );
 
-      const novo = objeto(
+      const novo = obj(
         mudanca.novo
       );
 
-      for (const campo of new Set([
-        ...Object.keys(anterior),
-        ...Object.keys(novo),
-      ])) {
+      for (
+        const campo of new Set([
+          ...Object.keys(anterior),
+          ...Object.keys(novo),
+        ])
+      ) {
         if (
-          JSON.stringify(
-            anterior[campo] ?? null
-          ) ===
-          JSON.stringify(
-            novo[campo] ?? null
+          !iguais(
+            anterior[campo],
+            novo[campo]
           )
         ) {
-          continue;
+          saida.push(
+            criarMudanca(
+              FRETE[campo] ||
+                `Frete • ${campo}`,
+              anterior[campo],
+              novo[campo],
+              campo,
+              referencias
+            )
+          );
         }
-
-        resultado.push({
-          campo:
-            ROTULOS[`frete.${campo}`] ||
-            `Frete • ${campo}`,
-
-          anterior: formatarValorCompra(
-            anterior[campo],
-            campo,
-            referencias
-          ),
-
-          novo: formatarValorCompra(
-            novo[campo],
-            campo,
-            referencias
-          ),
-        });
       }
 
       continue;
     }
 
-    // ========================================================
-    // REGRA 5 — ITENS ADICIONADOS OU REMOVIDOS
-    // ========================================================
+    /* ITEM ADICIONADO OU REMOVIDO */
 
-    let nome = mudanca.campo || chave;
+    const addRm =
+      /^(adicionado|removido)_(\d+)$/.exec(
+        chave
+      );
 
-    const item = mudanca.item || null;
+    if (addRm) {
+      const adicionado =
+        addRm[1] === "adicionado";
 
-    if (item) {
-      nome += ` • Item ${item}`;
-    }
+      const produto =
+        identificarProduto(
+          addRm[2],
+          mudanca,
+          referencias
+        );
 
-    if (/^(adicionado_|removido_)/.test(chave)) {
-      const valor =
-        mudanca.anterior ||
-        mudanca.novo;
+      const dados = obj(
+        adicionado
+          ? mudanca.novo
+          : mudanca.anterior
+      );
 
-      const produto = objeto(valor);
+      const resumo = [
+        nomeProduto(produto),
 
-      const descricao = [
-        produto.descricao ||
-          produto.codigo_comercial ||
-          "Produto sem descrição",
+        `Quantidade: ${quant(
+          dados.quantidade
+        )} ${produto.unidade}`,
 
-        produto.quantidade !== undefined
-          ? `${quantidade(
-              produto.quantidade
-            )} un.`
-          : null,
+        `Preço unitário: ${dinheiro(
+          dados.preco_unitario
+        )}`,
 
-        produto.preco_unitario !== undefined
-          ? moeda(
-              produto.preco_unitario
+        `Valor do item: ${dinheiro(
+          dados.valor_total
+        )}`,
+      ].join("\n");
+
+      saida.push({
+        campo:
+          `${
+            adicionado
+              ? "Produto adicionado"
+              : "Produto removido"
+          } • ${nomeProduto(produto)}`,
+
+        tituloCurto: adicionado
+          ? "Produto adicionado"
+          : "Produto removido",
+
+        produto,
+
+        anterior: adicionado
+          ? "Não constava no pedido"
+          : protegerDadosPagamento(
+              resumo
+            ),
+
+        novo: adicionado
+          ? protegerDadosPagamento(
+              resumo
             )
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" • ");
+          : "Removido do pedido",
 
-      resultado.push({
-        campo: nome,
-
-        anterior: mudanca.anterior
-          ? descricao
-          : "Não existia",
-
-        novo: mudanca.novo
-          ? descricao
-          : "Removido",
+        variacao: "",
       });
 
       continue;
     }
 
-    // ========================================================
-    // REGRA 6 — CAMPOS INDIVIDUAIS
-    // ========================================================
+    /* ALTERAÇÃO DE ITEM EXISTENTE */
 
-    const campoOriginal = chave.startsWith("item_")
-      ? chave.split("_").slice(2).join("_")
-      : chave;
+    const item =
+      /^item_(\d+)_(.+)$/.exec(chave);
 
-    resultado.push({
-      campo: nome,
+    if (item) {
+      const produto =
+        identificarProduto(
+          item[1],
+          mudanca,
+          referencias
+        );
 
-      anterior: formatarValorCompra(
+      const nome =
+        NOMES[item[2]] ||
+        mudanca.campo ||
+        item[2].replaceAll("_", " ");
+
+      saida.push(
+        criarMudanca(
+          nome,
+          mudanca.anterior,
+          mudanca.novo,
+          item[2],
+          referencias,
+          produto
+        )
+      );
+
+      continue;
+    }
+
+    /* INFORMAÇÕES GERAIS */
+
+    const nome =
+      NOMES[chave] ||
+      mudanca.campo ||
+      chave.replaceAll("_", " ");
+
+    saida.push(
+      criarMudanca(
+        nome,
         mudanca.anterior,
-        campoOriginal,
-        referencias
-      ),
-
-      novo: formatarValorCompra(
         mudanca.novo,
-        campoOriginal,
+        chave,
         referencias
-      ),
-    });
+      )
+    );
   }
 
-  // ==========================================================
-  // ORDENAÇÃO: ALTERAÇÕES COMERCIAIS PRIMEIRO
-  // ==========================================================
-
-  const prioridade = (nome) =>
-    /preço|valor|quantidade|vencimento|previsão|prazo|produto/i.test(
-      nome
+  function importante(mudanca) {
+    return /preço|valor|quantidade|vencimento|prazo/i.test(
+      mudanca.tituloCurto
     )
       ? 0
       : 1;
+  }
 
-  return resultado.sort(
+  return saida.sort(
     (a, b) =>
-      prioridade(a.campo) -
-      prioridade(b.campo)
+      importante(a) - importante(b)
   );
 }
