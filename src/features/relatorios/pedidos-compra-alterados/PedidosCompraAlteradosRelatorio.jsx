@@ -133,12 +133,7 @@ async function buscarSincronizacao() {
 }
 
 /* =========================================================
-   NOVO — CONSULTAR NOMES DOS FORNECEDORES
-
-   A função Edge consulta o cache de fornecedores
-   no Supabase e busca no Omie os nomes que faltam.
-
-   As credenciais do Omie não ficam no navegador.
+   CONSULTAR NOMES DOS FORNECEDORES
 ========================================================= */
 
 async function buscarNomesFornecedores() {
@@ -363,9 +358,6 @@ function prepararPedido(pedido, referencias) {
 
 /* =========================================================
    INDICADOR DE SINCRONIZAÇÃO
-
-   Exibe somente data e hora.
-   Fica vermelho quando ocorre erro.
 ========================================================= */
 
 function IndicadorSincronizacao({
@@ -517,6 +509,15 @@ function IndicadorSincronizacao({
 
 /* =========================================================
    CARTÃO DE MUDANÇA
+
+   ALTERAÇÃO SOLICITADA:
+
+   Exibe somente:
+   - Campo alterado
+   - Antes
+   - Depois
+
+   Não exibe redução, aumento ou diferença calculada.
 ========================================================= */
 
 function CartaoMudanca({ mudanca }) {
@@ -566,21 +567,6 @@ function CartaoMudanca({ mudanca }) {
           </b>
         </span>
       </div>
-
-      {mudanca.variacao && (
-        <p
-          style={{
-            margin: "8px 0 0",
-            fontSize: 12,
-            fontWeight: 700,
-            color: "#166534",
-          }}
-        >
-          {protegerDadosPagamento(
-            mudanca.variacao
-          )}
-        </p>
-      )}
     </div>
   );
 }
@@ -731,7 +717,7 @@ export default function PedidosCompraAlteradosRelatorio({
   });
 
   /* =====================================================
-     NOVO — CONSULTAR NOMES DOS FORNECEDORES
+     CONSULTAR NOMES DOS FORNECEDORES
   ===================================================== */
 
   const fornecedoresQuery = useQuery({
@@ -826,9 +812,6 @@ export default function PedidosCompraAlteradosRelatorio({
 
   /* =====================================================
      FILTRO DE BUSCA
-
-     Agora permite pesquisar também pelo nome
-     do fornecedor.
   ===================================================== */
 
   const filtrados = useMemo(() => {
@@ -857,7 +840,6 @@ export default function PedidosCompraAlteradosRelatorio({
 
           pedido.fornecedor_codigo,
 
-          // NOVO: NOME DO FORNECEDOR
           nomeFornecedor,
 
           ...pedido.campos_alterados,
@@ -1160,10 +1142,6 @@ export default function PedidosCompraAlteradosRelatorio({
 
       {/* =================================================
           AVISO DE FORNECEDORES
-
-          Exibido somente se não for possível consultar
-          os nomes ou se alguns nomes ainda estiverem
-          pendentes no cadastro.
       ================================================= */}
 
       {fornecedoresQuery.error && (
@@ -1336,8 +1314,6 @@ export default function PedidosCompraAlteradosRelatorio({
                       const expandido =
                         abertos.has(codigo);
 
-                      /* NOVO: RESOLVER O NOME DO FORNECEDOR */
-
                       const codigoFornecedor =
                         String(
                           pedido.fornecedor_codigo ?? ""
@@ -1353,23 +1329,25 @@ export default function PedidosCompraAlteradosRelatorio({
                           key={`compra-${codigo}`}
                         >
                           <tr>
-                            {/* ===========================
-                                PEDIDO
-                            =========================== */}
+                            {/* PEDIDO */}
 
                             <td>
                               <strong className="pedidos-alterados-numero">
                                 {pedido.numero_pedido ||
                                   codigo}
                               </strong>
-                              
+
+                              <small
+                                style={{
+                                  display: "block",
+                                  opacity: 0.6,
+                                }}
+                              >
+                                Omie: {codigo}
+                              </small>
                             </td>
 
-                            {/* ===========================
-                                FORNECEDOR
-
-                                EXIBE O NOME, NÃO O CÓDIGO.
-                            =========================== */}
+                            {/* FORNECEDOR */}
 
                             <td
                               style={{
@@ -1418,9 +1396,7 @@ export default function PedidosCompraAlteradosRelatorio({
                               )}
                             </td>
 
-                            {/* ===========================
-                                ÚLTIMA ALTERAÇÃO
-                            =========================== */}
+                            {/* ÚLTIMA ALTERAÇÃO */}
 
                             <td>
                               {dataHora(
@@ -1428,9 +1404,7 @@ export default function PedidosCompraAlteradosRelatorio({
                               )}
                             </td>
 
-                            {/* ===========================
-                                QUANTIDADE DE ALTERAÇÕES
-                            =========================== */}
+                            {/* NÚMERO DE ALTERAÇÕES */}
 
                             <td>
                               <span className="pedidos-alterados-contador">
@@ -1440,9 +1414,7 @@ export default function PedidosCompraAlteradosRelatorio({
                               </span>
                             </td>
 
-                            {/* ===========================
-                                CAMPOS ALTERADOS
-                            =========================== */}
+                            {/* CAMPOS ALTERADOS */}
 
                             <td>
                               <div className="pedidos-alterados-campos">
@@ -1458,9 +1430,7 @@ export default function PedidosCompraAlteradosRelatorio({
                               </div>
                             </td>
 
-                            {/* ===========================
-                                BOTÃO HISTÓRICO
-                            =========================== */}
+                            {/* BOTÃO HISTÓRICO */}
 
                             <td>
                               <button
@@ -1486,9 +1456,7 @@ export default function PedidosCompraAlteradosRelatorio({
                             </td>
                           </tr>
 
-                          {/* ===========================
-                              HISTÓRICO EXPANDIDO
-                          =========================== */}
+                          {/* HISTÓRICO EXPANDIDO */}
 
                           {expandido && (
                             <tr className="pedidos-alterados-historico-linha">
@@ -1533,9 +1501,7 @@ export default function PedidosCompraAlteradosRelatorio({
               </div>
             </section>
 
-            {/* =========================================
-                PAGINAÇÃO
-            ========================================= */}
+            {/* PAGINAÇÃO */}
 
             {paginas > 1 && (
               <Paginacao
