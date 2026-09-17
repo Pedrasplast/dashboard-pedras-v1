@@ -41,6 +41,9 @@ import {
 import PedidosAlteradosRelatorio
   from "../pedidos-alterados/PedidosAlteradosRelatorio";
 
+import PedidosCompraAlteradosRelatorio
+  from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
+
 
 /* =========================================================
    FINANCEIRO
@@ -516,6 +519,35 @@ export const RELATORIOS = [
       "quantidade",
       "pedidos",
     ],
+  },
+
+
+  /* =====================================================
+     PEDIDOS DE COMPRA — AUDITORIA
+  ===================================================== */
+
+  {
+    id: "pedidos-compra-alterados",
+    categoria: "Compras",
+    titulo: "Pedidos de Compra Alterados",
+    descricao: "Compara as versões sincronizadas dos pedidos de compra e mostra campos e valores anteriores e novos.",
+    icone: FiEdit3,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: PedidosCompraAlteradosRelatorio,
+    filtros: {
+      periodo: false,
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+    transformarDados: null,
+    colunas: [],
   },
 
 
