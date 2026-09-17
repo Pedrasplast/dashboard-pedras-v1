@@ -1,0 +1,359 @@
+
+/*
+ * Histórico de compras:
+ * comparação ampla, legível e sem JSON bruto.
+ */
+
+.pc-audit-historico {
+  --pc-border: #dbe5f2;
+  --pc-muted: #64748b;
+  --pc-blue: #1d4ed8;
+  --pc-green: #166534;
+
+  background: #f7faff;
+
+  border-radius: 12px;
+
+  padding: clamp(12px, 2vw, 22px);
+
+  min-width: 0;
+}
+
+.pc-audit-historico * {
+  box-sizing: border-box;
+}
+
+.pc-audit-nota {
+  font-size: 12px;
+  color: var(--pc-muted);
+  line-height: 1.5;
+  margin: 4px 0 18px;
+}
+
+.pc-audit-eventos {
+  display: grid;
+  gap: 17px;
+  min-width: 0;
+}
+
+.pc-audit-evento {
+  background: #fff;
+
+  border: 1px solid var(--pc-border);
+  border-left: 4px solid #2563eb;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+  min-width: 0;
+
+  box-shadow:
+    0 2px 9px rgba(25, 50, 100, 0.045);
+}
+
+.pc-audit-evento-topo {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 10px;
+
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+
+  border-bottom: 1px solid var(--pc-border);
+
+  flex-wrap: wrap;
+}
+
+.pc-audit-evento-identificacao {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.pc-audit-evento-icone {
+  width: 35px;
+  height: 35px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.pc-audit-evento-identificacao strong {
+  display: block;
+
+  font-size: 13px;
+  color: #102640;
+}
+
+.pc-audit-evento-identificacao span:not(.pc-audit-evento-icone) {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 11px;
+  color: var(--pc-muted);
+}
+
+.pc-audit-evento-topo time {
+  font-size: 12px;
+  color: #475569;
+
+  white-space: nowrap;
+}
+
+.pc-audit-grupo {
+  margin-top: 15px;
+  min-width: 0;
+}
+
+.pc-audit-grupo-topo {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 9px;
+}
+
+.pc-audit-grupo-topo h4 {
+  margin: 0;
+
+  color: #102640;
+
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.pc-audit-grupo-topo p {
+  margin: 2px 0 0;
+
+  color: var(--pc-muted);
+
+  font-size: 11px;
+}
+
+.pc-audit-grupo-contador {
+  font-size: 11px;
+  font-weight: 750;
+
+  min-width: 25px;
+  height: 25px;
+
+  padding: 2px 6px;
+
+  display: grid;
+  place-items: center;
+
+  color: #1e40af;
+  background: #edf4ff;
+
+  border-radius: 20px;
+}
+
+.pc-audit-grade-cabecalho,
+.pc-audit-linha {
+  display: grid;
+
+  grid-template-columns:
+    minmax(165px, 1.05fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 12px;
+
+  align-items: start;
+}
+
+.pc-audit-grade-cabecalho {
+  padding: 9px 13px;
+
+  background: #edf3fb;
+
+  color: #64748b;
+
+  font-size: 10px;
+  letter-spacing: 0.055em;
+  font-weight: 800;
+
+  border: 1px solid var(--pc-border);
+
+  border-radius: 7px 7px 0 0;
+}
+
+.pc-audit-linhas {
+  border: 1px solid var(--pc-border);
+  border-top: 0;
+
+  border-radius: 0 0 8px 8px;
+
+  overflow: hidden;
+}
+
+.pc-audit-linha {
+  padding: 12px 13px;
+
+  min-width: 0;
+
+  background: #fff;
+
+  font-size: 12px;
+
+  border-top: 1px solid #edf2f7;
+}
+
+.pc-audit-linha:first-child {
+  border-top: 0;
+}
+
+.pc-audit-linha:nth-child(even) {
+  background: #fafcff;
+}
+
+.pc-audit-campo {
+  color: #233552;
+
+  font-weight: 700;
+
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+.pc-audit-valor {
+  min-width: 0;
+
+  line-height: 1.6;
+
+  white-space: pre-line;
+
+  overflow-wrap: anywhere;
+
+  word-break: normal;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.pc-audit-valor-antes {
+  color: #6b7280;
+}
+
+.pc-audit-valor-depois {
+  color: var(--pc-green);
+
+  font-weight: 750;
+
+  display: flex;
+
+  gap: 7px;
+
+  align-items: flex-start;
+}
+
+.pc-audit-valor-depois span {
+  min-width: 0;
+
+  white-space: pre-line;
+
+  overflow-wrap: anywhere;
+}
+
+.pc-audit-seta {
+  flex: 0 0 auto;
+
+  margin-top: 3px;
+
+  color: #94a3b8;
+}
+
+.pc-audit-sem-campos {
+  color: var(--pc-muted);
+  font-size: 12px;
+}
+
+.pc-audit-historico
+.pedidos-alterados-historico-titulo {
+  margin: 0;
+}
+
+/* Tablets e telas menores */
+
+@media (max-width: 860px) {
+  .pc-audit-grade-cabecalho {
+    display: none;
+  }
+
+  .pc-audit-linha {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 7px 12px;
+  }
+
+  .pc-audit-campo {
+    grid-column: 1 / -1;
+  }
+
+  .pc-audit-valor::before {
+    content: attr(data-titulo);
+
+    display: block;
+
+    font-size: 10px;
+
+    margin-bottom: 4px;
+
+    color: #64748b;
+
+    font-weight: 650;
+
+    text-transform: uppercase;
+  }
+
+  .pc-audit-valor-depois {
+    display: block;
+  }
+
+  .pc-audit-seta {
+    display: none;
+  }
+}
+
+/* Celulares */
+
+@media (max-width: 520px) {
+  .pc-audit-historico {
+    padding: 8px;
+  }
+
+  .pc-audit-evento {
+    padding: 11px;
+  }
+
+  .pc-audit-linha {
+    grid-template-columns:
+      minmax(0, 1fr);
+
+    gap: 7px;
+  }
+
+  .pc-audit-campo {
+    grid-column: auto;
+  }
+}
