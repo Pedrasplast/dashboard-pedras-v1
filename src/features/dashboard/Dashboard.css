@@ -1,6 +1,10 @@
-/* =====================================================
-   PALETA DA LOGO
-===================================================== */
+
+/* =========================================================
+   DASHBOARD DE PRODUÇÃO — ARQUIVO COMPLETO
+   Layout independente da Navbar; indicadores compactos em
+   notebooks; rolagem dentro da lista de motivos no desktop.
+   Não altera outras telas nem o JSX.
+========================================================= */
 
 :root {
   --logo-azul-escuro: #0b1f5e;
@@ -8,83 +12,244 @@
   --logo-azul-claro: #2e5bba;
   --logo-verde: #3dbb63;
   --logo-verde-escuro: #1f8f4a;
-
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
-
-  /* =================================================
-     POSICIONAMENTO DOS PAINEIS FIXOS
-     76px = altura da navbar
-     16px = respiro superior e inferior
-  ================================================= */
-  --dashboard-sticky-top: 76px;
-  --dashboard-gap-painel: 16px;
-
+  --dashboard-sticky-top: var(--navbar-height, 76px);
+  --dashboard-gap-painel: 12px;
   --dashboard-painel-altura: calc(
-    100dvh
-    - var(--dashboard-sticky-top)
-    - var(--dashboard-gap-painel)
-    - var(--dashboard-gap-painel)
+    100dvh - var(--navbar-height, 76px) - 24px
   );
 }
 
-/* =====================================================
-   LAYOUT PRINCIPAL
-===================================================== */
+/* =========================================================
+   POSICIONAMENTO ABAIXO DA NAVBAR
+========================================================= */
 
-.dashboard-container {
+@media (min-width: 761px) {
+  html:has(.producao-page),
+  body:has(.producao-page) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body:has(.producao-page) {
+    height: 100dvh;
+    min-height: 0;
+
+    padding-top: calc(
+      var(--navbar-height, 76px) + 12px
+    );
+
+    box-sizing: border-box;
+  }
+
+  body:has(.producao-page) #root,
+  body:has(.producao-page) .app-layout {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.producao-page) .app-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body:has(.producao-page)
+  .app-layout > .main-content:has(> .producao-page) {
+    display: block;
+    flex: 1 1 auto;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+  }
+}
+
+/* =========================================================
+   LAYOUT PRINCIPAL
+========================================================= */
+
+body:has(.producao-page) .dashboard-container.producao-page {
   display: grid;
+
   grid-template-columns:
-    280px
+    296px minmax(0, 1fr);
+
+  grid-template-rows:
     minmax(0, 1fr);
 
-  align-items: start;
+  align-items: stretch;
 
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  margin: 0;
+
+  padding:
+    0 12px 10px 0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
 
   background: linear-gradient(
     180deg,
-    var(--dashboard-fundo-superior) 0%,
-    var(--dashboard-fundo-inferior) 100%
+    var(--dashboard-fundo-superior),
+    var(--dashboard-fundo-inferior)
   );
 }
 
-/* =====================================================
-   CONTEÚDO PRINCIPAL
-===================================================== */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
-.main-content {
+.dashboard-container.producao-page > .producao-sidebar-shell {
+  width: 100%;
+  height: 100%;
+
   min-width: 0;
+  min-height: 0;
 
-  margin-top: 24px;
-  padding: 32px 40px;
+  align-self: stretch;
+
+  margin: 0;
+
+  padding:
+    0 0 0 12px;
 
   box-sizing: border-box;
-  overflow-x: clip;
+
+  overflow: hidden;
 }
 
-.dashboard-header {
+.producao-page .producao-sidebar-shell > .sidebar {
+  position: static !important;
+  top: auto !important;
+
+  width: 100%;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  margin: 0;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  box-sizing: border-box;
+
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* =========================================================
+   PAINEL PRINCIPAL
+========================================================= */
+
+.producao-page > .main-content {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  margin: 0;
+
+  padding:
+    0 10px 0 20px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.producao-page > .main-content > .page-header.dashboard-header {
+  position: relative;
+  top: auto;
+  z-index: 2;
+
+  flex: 0 0 auto;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  margin-top: 0;
-  margin-bottom: 24px;
+  width: 100%;
+  min-width: 0;
+
+  margin:
+    0 0 12px;
+
+  padding:
+    13px 16px;
+
+  box-sizing: border-box;
+
+  background: linear-gradient(
+    112deg,
+    #f3fcf8,
+    #f7fbff 60%,
+    #f2f6ff
+  );
+
+  border:
+    1px solid #dfe7f1;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 16px rgba(15, 23, 42, 0.045);
 }
 
-.dashboard-header h1 {
+.producao-page .dashboard-header h1 {
+  min-width: 0;
+
   margin: 0;
 
   color: var(--logo-azul-escuro);
 
-  font-size: 1.75rem;
+  font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.03em;
+
+  overflow-wrap: anywhere;
 }
 
-.dashboard-error {
-  margin-bottom: 20px;
-  padding: 12px 14px;
+.producao-page .dashboard-header .page-header__main,
+.producao-page .dashboard-header .page-header__content {
+  min-width: 0;
+}
+
+/* =========================================================
+   ERROS
+========================================================= */
+
+.producao-page .dashboard-error {
+  flex: 0 0 auto;
+
+  margin-bottom: 10px;
+
+  padding:
+    10px 12px;
 
   color: #b91c1c;
   background: #fef2f2;
@@ -92,13 +257,13 @@
   border: 1px solid #fecaca;
   border-radius: 10px;
 
-  font-size: 0.86rem;
+  font-size: 0.83rem;
   font-weight: 600;
 }
 
-/* =====================================================
+/* =========================================================
    CARREGAMENTO
-===================================================== */
+========================================================= */
 
 .loading-spinner {
   min-height: 100vh;
@@ -114,43 +279,57 @@
   font-weight: 700;
 }
 
-/* =====================================================
+/* =========================================================
    GRID DE INDICADORES
-===================================================== */
+========================================================= */
 
-.kpi-grid {
+.producao-page .kpi-grid {
+  flex: 0 0 auto;
+
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 
-  gap: 16px;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
 
-  margin-bottom: 28px;
+  gap: 12px;
+
+  margin-bottom: 12px;
 }
 
-.kpi-card {
+.producao-page .kpi-card {
   position: relative;
 
   min-width: 0;
-  min-height: 118px;
+  min-height: 100px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  gap: 5px;
+  gap: 4px;
 
-  padding: 20px;
+  padding:
+    12px 14px;
 
   box-sizing: border-box;
 
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  background: linear-gradient(
+    180deg,
+    #ffffff,
+    #fbfdff
+  );
 
-  border: 1px solid #dfe7f1;
-  border-left: 4px solid #cbd5e1;
+  border:
+    1px solid #dfe7f1;
+
+  border-left:
+    4px solid #cbd5e1;
+
   border-radius: 14px;
 
-  box-shadow: 0 6px 18px rgba(11, 31, 94, 0.05);
+  box-shadow:
+    0 6px 18px rgba(11, 31, 94, 0.05);
 
   transition:
     transform 0.2s ease,
@@ -158,138 +337,150 @@
     border-color 0.2s ease;
 }
 
-.kpi-card:hover {
+.producao-page .kpi-card:hover {
   transform: translateY(-2px);
 
-  box-shadow: 0 12px 28px rgba(11, 31, 94, 0.1);
+  box-shadow:
+    0 12px 28px rgba(11, 31, 94, 0.1);
 }
 
-.kpi-card.verde {
+.producao-page .kpi-card.verde {
   border-left-color: var(--logo-verde-escuro);
 }
 
-.kpi-card.vermelho {
+.producao-page .kpi-card.vermelho {
   border-left-color: #ef4444;
 }
 
-.kpi-card.highlight {
+.producao-page .kpi-card.highlight {
   border-left-color: var(--logo-azul-medio);
 }
 
-.kpi-card span {
+.producao-page .kpi-card span {
   color: #64748b;
 
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
+
   letter-spacing: 0.06em;
+
   text-align: center;
   text-transform: uppercase;
 }
 
-.kpi-card strong {
-  margin-top: 4px;
+.producao-page .kpi-card > strong {
+  margin-top: 2px;
 
   color: var(--logo-azul-escuro);
 
-  font-size: 1.48rem;
+  font-size: clamp(
+    1rem,
+    1.45vw,
+    1.38rem
+  );
+
   font-weight: 800;
   line-height: 1.15;
+
   text-align: center;
 
   font-variant-numeric: tabular-nums;
 }
 
-/* =====================================================
-   ÍCONES DOS CARDS
-===================================================== */
+/* =========================================================
+   ÍCONES
+========================================================= */
 
-.kpi-icon {
+.producao-page .kpi-icon {
   flex: 0 0 auto;
 
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 
   stroke-width: 2;
 }
 
-.kpi-icon-conforme {
-  width: 24px;
-  height: 24px;
+.producao-page .kpi-icon-conforme {
+  width: 21px;
+  height: 21px;
 
   color: #16a34a;
 }
 
-.kpi-icon-danificadas {
+.producao-page .kpi-icon-danificadas {
   color: #dc2626;
 }
 
-.kpi-icon-qualidade {
+.producao-page .kpi-icon-qualidade {
   color: #3b82f6;
 }
 
-.kpi-icon-horas {
+.producao-page .kpi-icon-horas {
   color: #6b7280;
 }
 
-.kpi-icon-paradas {
+.producao-page .kpi-icon-paradas {
   color: #dc2626;
 }
 
-/* =====================================================
+/* =========================================================
    CARDS DE HORAS
-===================================================== */
+========================================================= */
 
-.kpi-horas-trabalhadas {
+.producao-page .kpi-horas-trabalhadas {
   position: relative;
 
   min-width: 0;
-  min-height: 138px;
+  min-height: 110px;
 
-  padding-top: 36px;
-  padding-bottom: 24px;
+  padding-top: 24px;
+  padding-bottom: 14px;
 }
 
-/* =====================================================
-   VALOR PRINCIPAL DAS HORAS
-===================================================== */
+/* VALOR PRINCIPAL */
 
-.kpi-horas-trabalhadas .valor-horas-trabalhadas {
+.producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
   display: block;
 
   width: 100%;
   min-width: 0;
 
-  margin-top: 4px;
+  margin-top: 3px;
 
-  padding-right: 12px;
-  padding-left: 118px;
+  padding:
+    0 2px 0 94px;
 
   box-sizing: border-box;
 
   color: var(--logo-azul-escuro);
 
-  font-size: clamp(1.08rem, 1.4vw, 1.48rem);
+  font-size: clamp(
+    0.91rem,
+    1.25vw,
+    1.22rem
+  );
 
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.2;
   text-align: center;
+
   white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
 }
 
-/* =====================================================
-   INDICADOR DE DIAS
-===================================================== */
+/* INDICADOR DE DIAS */
 
-.dias-trabalhados-indicador {
+.producao-page .dias-trabalhados-indicador {
   position: absolute;
-  left: 16px;
-  bottom: 16px;
+
+  left: 10px;
+  bottom: 10px;
+
   z-index: 2;
 
-  width: 98px;
-  min-width: 98px;
+  width: 82px;
+  min-width: 82px;
 
   display: flex;
   flex-direction: column;
@@ -298,32 +489,38 @@
 
   gap: 2px;
 
-  padding: 7px 9px;
+  padding:
+    5px 7px;
 
   box-sizing: border-box;
 
   background: #f1f5f9;
 
-  border: 1px solid #dbe5f0;
+  border:
+    1px solid #dbe5f0;
+
   border-radius: 8px;
 
-  box-shadow: 0 2px 5px rgba(11, 31, 94, 0.04);
+  box-shadow:
+    0 2px 5px rgba(11, 31, 94, 0.04);
 }
 
-.dias-trabalhados-indicador small {
+.producao-page .dias-trabalhados-indicador small {
   margin: 0;
 
   color: #64748b;
 
-  font-size: 0.58rem;
+  font-size: 0.54rem;
   font-weight: 800;
   line-height: 1;
+
   letter-spacing: 0.06em;
+
   text-align: left;
   text-transform: uppercase;
 }
 
-.dias-trabalhados-indicador strong {
+.producao-page .dias-trabalhados-indicador strong {
   width: 100%;
 
   margin: 0;
@@ -331,121 +528,136 @@
 
   color: var(--logo-azul-escuro);
 
-  font-size: 0.82rem;
+  font-size: 0.69rem;
   font-weight: 800;
   line-height: 1.15;
+
   text-align: left;
   white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
 }
 
-/* =====================================================
-   PERCENTUAL DE HORAS
-===================================================== */
+/* PERCENTUAL DE HORAS */
 
-.percentual-horas-indicador {
+.producao-page .percentual-horas-indicador {
   position: absolute;
-  top: 14px;
-  right: 14px;
+
+  top: 8px;
+  right: 8px;
+
   z-index: 3;
 
-  min-width: 72px;
+  min-width: 55px;
 
   margin: 0;
-  padding: 5px 8px;
+
+  padding:
+    4px 6px;
 
   box-sizing: border-box;
 
   border-radius: 9px;
 
-  font-size: 1.5rem;
+  font-size: 1.02rem;
   font-weight: 800;
   line-height: 1;
+
   text-align: center;
   white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
 
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  box-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.05);
 }
 
-.percentual-horas-indicador-trabalhadas {
+.producao-page .percentual-horas-indicador-trabalhadas {
   color: #15803d;
   background: #ecfdf5;
 
   border: 1px solid #bbf7d0;
 }
 
-.percentual-horas-indicador-paradas {
+.producao-page .percentual-horas-indicador-paradas {
   color: #b91c1c;
   background: #fef2f2;
 
   border: 1px solid #fecaca;
 }
 
-/* =====================================================
-   CARD DE MOTIVOS DE PARADA
-===================================================== */
+/* =========================================================
+   MOTIVOS DE PARADA
 
-.chart-container {
-  position: sticky;
+   Ocupa o espaço restante do painel.
+   Somente a lista possui rolagem interna.
+========================================================= */
 
-  top: calc(
-    var(--dashboard-sticky-top) +
-    var(--dashboard-gap-painel)
-  );
+.producao-page .chart-container {
+  position: relative;
+  top: auto;
 
-  align-self: start;
-
-  width: 100%;
-  min-width: 0;
-
-  height: var(--dashboard-painel-altura);
-  min-height: 0;
-  max-height: var(--dashboard-painel-altura);
+  flex: 1 1 auto;
+  align-self: stretch;
 
   display: flex;
   flex-direction: column;
 
-  padding: 24px;
+  width: 100%;
+  min-width: 0;
+
+  height: auto;
+  min-height: 0;
+  max-height: none;
+
+  margin: 0;
+
+  padding: 16px;
 
   box-sizing: border-box;
 
   background: linear-gradient(
     180deg,
-    #ffffff 0%,
-    #fbfdff 100%
+    #ffffff,
+    #fbfdff
   );
 
   border: 1px solid #dbe6f3;
   border-radius: 16px;
 
-  box-shadow: 0 10px 30px rgba(11, 31, 94, 0.06);
+  box-shadow:
+    0 10px 30px rgba(11, 31, 94, 0.06);
 
   overflow: hidden;
 }
 
-.chart-container h3 {
+.producao-page .chart-container h3 {
   position: relative;
 
+  flex: 0 0 auto;
+
   margin: 0;
-  padding: 0 0 16px 16px;
+
+  padding:
+    0 0 12px 16px;
 
   color: var(--logo-azul-escuro);
 
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.045em;
+
   text-transform: uppercase;
 
-  border-bottom: 1px solid #e8edf4;
+  border-bottom:
+    1px solid #e8edf4;
 }
 
-.chart-container h3::before {
+.producao-page .chart-container h3::before {
   content: "";
 
   position: absolute;
+
   top: 1px;
   left: 0;
 
@@ -454,33 +666,34 @@
 
   background: linear-gradient(
     180deg,
-    var(--logo-azul-escuro) 0%,
+    var(--logo-azul-escuro),
     var(--logo-azul-claro) 65%,
-    var(--logo-verde) 100%
+    var(--logo-verde)
   );
 
   border-radius: 999px;
 }
 
-/* =====================================================
-   LISTA COM SCROLL
-===================================================== */
+/* =========================================================
+   LISTA DE MOTIVOS
+========================================================= */
 
-.motivos-list {
+.producao-page .motivos-list {
   width: 100%;
   min-width: 0;
 
   flex: 1 1 auto;
+
   min-height: 0;
   max-height: none;
 
   display: flex;
   flex-direction: column;
 
-  gap: 10px;
+  gap: 8px;
 
-  margin-top: 18px;
-  padding-right: 8px;
+  margin-top: 12px;
+  padding-right: 6px;
 
   box-sizing: border-box;
 
@@ -492,57 +705,69 @@
 
   scrollbar-width: thin;
 
-  scrollbar-color: var(--logo-azul-medio) #eef3f8;
+  scrollbar-color:
+    var(--logo-azul-medio) #eef3f8;
 }
 
-.motivos-list::-webkit-scrollbar {
+.producao-page .motivos-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.motivos-list::-webkit-scrollbar-track {
+.producao-page .motivos-list::-webkit-scrollbar-track {
   background: #eef3f8;
-
   border-radius: 999px;
 }
 
-.motivos-list::-webkit-scrollbar-thumb {
+.producao-page .motivos-list::-webkit-scrollbar-thumb {
   background: linear-gradient(
     180deg,
-    var(--logo-azul-medio) 0%,
+    var(--logo-azul-medio),
     var(--logo-azul-escuro) 70%,
-    var(--logo-verde-escuro) 100%
+    var(--logo-verde-escuro)
   );
 
   border: 2px solid #eef3f8;
   border-radius: 999px;
 }
 
-.motivos-list::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--logo-azul-escuro) 0%, var(--logo-verde-escuro) 100%);
+.producao-page .motivos-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--logo-azul-escuro),
+    var(--logo-verde-escuro)
+  );
 }
 
-/* =====================================================
+/* =========================================================
    CADA MOTIVO
-===================================================== */
+========================================================= */
 
-.motivo-bar {
-  min-height: 58px;
+.producao-page .motivo-bar {
+  flex: 0 0 auto;
+
+  min-height: 52px;
 
   display: grid;
+
   grid-template-columns:
-    minmax(190px, 280px)
-    minmax(220px, 1fr)
+    minmax(155px, 250px)
+    minmax(90px, 1fr)
     auto;
 
   align-items: center;
 
-  gap: 16px;
+  gap: 12px;
 
-  padding: 11px 14px;
+  padding:
+    9px 11px;
 
   box-sizing: border-box;
 
-  background: linear-gradient(180deg, #f9fbfe 0%, #f5f8fc 100%);
+  background: linear-gradient(
+    180deg,
+    #f9fbfe,
+    #f5f8fc
+  );
 
   border: 1px solid #e8eef6;
   border-radius: 11px;
@@ -554,20 +779,21 @@
     box-shadow 0.18s ease;
 }
 
-.motivo-bar:hover {
+.producao-page .motivo-bar:hover {
   background: #ffffff;
   border-color: #c6d7ec;
 
   transform: translateY(-1px);
 
-  box-shadow: 0 8px 18px rgba(11, 31, 94, 0.08);
+  box-shadow:
+    0 8px 18px rgba(11, 31, 94, 0.08);
 }
 
-.motivo-bar .label-row {
+.producao-page .motivo-bar .label-row {
   display: contents;
 }
 
-.motivo-bar .label-row span:first-child {
+.producao-page .motivo-bar .label-row span:first-child {
   grid-column: 1;
   grid-row: 1;
 
@@ -575,7 +801,7 @@
 
   color: #25334a;
 
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.35;
 
@@ -584,13 +810,14 @@
   white-space: nowrap;
 }
 
-.motivo-bar .label-row span:last-child {
+.producao-page .motivo-bar .label-row span:last-child {
   grid-column: 3;
   grid-row: 1;
 
-  min-width: 92px;
+  min-width: 88px;
 
-  padding: 7px 11px;
+  padding:
+    6px 9px;
 
   color: var(--logo-azul-escuro);
   background: #ffffff;
@@ -598,48 +825,51 @@
   border: 1px solid #d7e2f0;
   border-radius: 8px;
 
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 800;
   line-height: 1;
+
   text-align: center;
   white-space: nowrap;
 
   font-variant-numeric: tabular-nums;
 
-  box-shadow: 0 1px 3px rgba(11, 31, 94, 0.05);
+  box-shadow:
+    0 1px 3px rgba(11, 31, 94, 0.05);
 }
 
-/* =====================================================
-   ÁREA DA BARRA DE PROGRESSO
-===================================================== */
+/* =========================================================
+   BARRA DE PROGRESSO
+========================================================= */
 
-.motivo-bar .progress-bg {
+.producao-page .motivo-bar .progress-bg {
   grid-column: 2;
   grid-row: 1;
 
   position: relative;
 
   width: 100%;
-  height: 11px;
+  height: 10px;
 
-  background: linear-gradient(90deg, #e8eef6 0%, #edf3f8 100%);
+  background: linear-gradient(
+    90deg,
+    #e8eef6,
+    #edf3f8
+  );
 
   border-radius: 999px;
 
   overflow: hidden;
 
-  box-shadow: inset 0 1px 2px rgba(11, 31, 94, 0.07);
+  box-shadow:
+    inset 0 1px 2px rgba(11, 31, 94, 0.07);
 }
 
-/* =====================================================
-   ELEMENTO PROGRESS
-===================================================== */
+.producao-page .progress-indicador {
+  display: block;
 
-.progress-indicador {
   width: 100%;
   height: 100%;
-
-  display: block;
 
   margin: 0;
   padding: 0;
@@ -657,55 +887,63 @@
 
 /* Chrome, Edge e Safari */
 
-.progress-indicador::-webkit-progress-bar {
-  background: linear-gradient(90deg, #e8eef6 0%, #edf3f8 100%);
+.producao-page .progress-indicador::-webkit-progress-bar {
+  background: linear-gradient(
+    90deg,
+    #e8eef6,
+    #edf3f8
+  );
 
   border-radius: 999px;
 }
 
-.progress-indicador::-webkit-progress-value {
+.producao-page .progress-indicador::-webkit-progress-value {
   min-width: 4px;
 
   background: linear-gradient(
     90deg,
-    var(--logo-azul-escuro) 0%,
+    var(--logo-azul-escuro),
     var(--logo-azul-medio) 38%,
     var(--logo-azul-claro) 72%,
-    var(--logo-verde) 100%
+    var(--logo-verde)
   );
 
   border-radius: 999px;
 
-  box-shadow: 0 3px 10px rgba(11, 31, 94, 0.22);
+  box-shadow:
+    0 3px 10px rgba(11, 31, 94, 0.22);
 
   transition: width 0.4s ease;
 }
 
 /* Firefox */
 
-.progress-indicador::-moz-progress-bar {
+.producao-page .progress-indicador::-moz-progress-bar {
   min-width: 4px;
 
   background: linear-gradient(
     90deg,
-    var(--logo-azul-escuro) 0%,
+    var(--logo-azul-escuro),
     var(--logo-azul-medio) 38%,
     var(--logo-azul-claro) 72%,
-    var(--logo-verde) 100%
+    var(--logo-verde)
   );
 
   border-radius: 999px;
 
-  box-shadow: 0 3px 10px rgba(11, 31, 94, 0.22);
+  box-shadow:
+    0 3px 10px rgba(11, 31, 94, 0.22);
 }
 
-/* =====================================================
+/* =========================================================
    ESTADO SEM DADOS
-===================================================== */
+========================================================= */
 
-.sem-dados {
+.producao-page .sem-dados {
   margin: 0;
-  padding: 28px 20px;
+
+  padding:
+    22px 16px;
 
   color: #64748b;
   background: #f8fafc;
@@ -715,225 +953,576 @@
 
   font-size: 0.88rem;
   font-weight: 600;
+
   text-align: center;
 }
 
-/* =====================================================
-   RESPONSIVIDADE — TELAS INTERMEDIÁRIAS
-===================================================== */
+/* =========================================================
+   RESPONSIVIDADE — DESKTOP INTERMEDIÁRIO
+========================================================= */
 
-@media (max-width: 1200px) {
-  .motivo-bar {
+@media (max-width: 1450px) and (min-width: 761px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns:
-      minmax(170px, 230px)
-      minmax(160px, 1fr)
-      auto;
-
-    gap: 12px;
+      268px minmax(0, 1fr);
   }
 
-  .dias-trabalhados-indicador {
-    left: 12px;
-
-    width: 88px;
-    min-width: 88px;
-
-    padding: 6px 7px;
+  .dashboard-container.producao-page > .producao-sidebar-shell {
+    padding-left: 10px;
   }
 
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-right: 4px;
-    padding-left: 100px;
-
-    font-size: 1.16rem;
-  }
-
-  .percentual-horas-indicador {
-    top: 12px;
-    right: 12px;
-
-    min-width: 66px;
-
-    padding: 5px 7px;
-
-    font-size: 1.25rem;
+  .producao-page > .main-content {
+    padding:
+      0 8px 0 16px;
   }
 }
 
-/* =====================================================
-   RESPONSIVIDADE — TABLET
-===================================================== */
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK
+========================================================= */
 
-@media (max-width: 1024px) {
-  .dashboard-container {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-container {
-    position: static;
-    top: auto;
-    align-self: auto;
-
-    height: auto;
-    min-height: 0;
-    max-height: none;
-  }
-
-  .main-content {
-    margin-top: 30px;
-    padding: 24px;
-  }
-
-  .kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .motivos-list {
-    flex: none;
-    min-height: 0;
-    max-height: 500px;
-  }
-
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-left: 108px;
-
-    font-size: 1.3rem;
-  }
-
-  .dias-trabalhados-indicador {
-    width: 94px;
-    min-width: 94px;
-  }
-}
-
-/* =====================================================
-   RESPONSIVIDADE — CELULAR
-===================================================== */
-
-@media (max-width: 760px) {
-  .main-content {
-    margin-top: 35px;
-    padding: 18px;
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.45rem;
-  }
-
-  .chart-container {
-    padding: 20px 16px;
-
-    border-radius: 13px;
-  }
-
-  .motivo-bar {
+@media (max-width: 1280px) and (min-width: 761px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns:
-      minmax(0, 1fr)
-      auto;
+      250px minmax(0, 1fr);
+  }
 
-    gap: 9px 12px;
+  .producao-page .kpi-grid {
+    gap: 9px;
+    margin-bottom: 9px;
+  }
 
+  .producao-page .kpi-card {
+    min-height: 88px;
+
+    padding:
+      9px 10px;
+  }
+
+  .producao-page .kpi-card > strong {
+    font-size: clamp(
+      0.96rem,
+      1.3vw,
+      1.18rem
+    );
+  }
+
+  .producao-page .kpi-horas-trabalhadas {
+    min-height: 100px;
+
+    padding-top: 22px;
+    padding-bottom: 10px;
+  }
+
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 80px;
+    padding-right: 0;
+
+    font-size: clamp(
+      0.82rem,
+      1.12vw,
+      1.05rem
+    );
+  }
+
+  .producao-page .dias-trabalhados-indicador {
+    left: 6px;
+    bottom: 7px;
+
+    width: 72px;
+    min-width: 72px;
+
+    padding: 4px 5px;
+  }
+
+  .producao-page .dias-trabalhados-indicador strong {
+    font-size: 0.62rem;
+  }
+
+  .producao-page .percentual-horas-indicador {
+    top: 6px;
+    right: 6px;
+
+    min-width: 48px;
+
+    padding:
+      3px 5px;
+
+    font-size: 0.9rem;
+  }
+
+  .producao-page .chart-container {
     padding: 12px;
   }
+}
 
-  .motivo-bar .label-row span:first-child {
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK ESTREITO
+========================================================= */
+
+@media (max-width: 1120px) and (min-width: 761px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
+    grid-template-columns:
+      236px minmax(0, 1fr);
+  }
+
+  .producao-page .kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .producao-page .motivo-bar {
+    grid-template-columns:
+      minmax(0, 1fr) auto;
+
+    gap:
+      7px 10px;
+  }
+
+  .producao-page .motivo-bar .label-row span:first-child {
     grid-column: 1;
     grid-row: 1;
 
     white-space: normal;
   }
 
-  .motivo-bar .label-row span:last-child {
+  .producao-page .motivo-bar .label-row span:last-child {
     grid-column: 2;
     grid-row: 1;
   }
 
-  .motivo-bar .progress-bg {
+  .producao-page .motivo-bar .progress-bg {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    height: 8px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET HORIZONTAL
+========================================================= */
+
+@media (max-width: 920px) and (min-width: 761px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
+    grid-template-columns:
+      218px minmax(0, 1fr);
+
+    padding-right: 7px;
+  }
+
+  .dashboard-container.producao-page > .producao-sidebar-shell {
+    padding-left: 8px;
+  }
+
+  .producao-page > .main-content {
+    padding:
+      0 2px 0 10px;
+  }
+
+  .producao-page > .main-content > .page-header.dashboard-header {
+    padding:
+      10px 12px;
+
+    margin-bottom: 8px;
+  }
+
+  .producao-page .kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    font-size: 0.82rem;
+  }
+}
+
+/* =========================================================
+   RESPONSIVIDADE — NOTEBOOK COM POUCA ALTURA
+========================================================= */
+
+@media (max-height: 820px) and (min-width: 761px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
+    padding-bottom: 6px;
+  }
+
+  .producao-page > .main-content > .page-header.dashboard-header {
+    margin-bottom: 8px;
+
+    padding:
+      8px 12px;
+  }
+
+  .producao-page .dashboard-header h1 {
+    font-size: 1.28rem;
+  }
+
+  .producao-page .page-header__icon {
+    width: 34px;
+    height: 34px;
+
+    flex-basis: 34px;
+  }
+
+  .producao-page .page-header__icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .producao-page .kpi-grid {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .producao-page .kpi-card {
+    min-height: 78px;
+    gap: 2px;
+
+    padding:
+      7px 9px;
+  }
+
+  .producao-page .kpi-card span {
+    font-size: 0.61rem;
+  }
+
+  .producao-page .kpi-card > strong {
+    font-size: 1.05rem;
+  }
+
+  .producao-page .kpi-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .producao-page .kpi-icon-conforme {
+    width: 18px;
+    height: 18px;
+  }
+
+  .producao-page .kpi-horas-trabalhadas {
+    min-height: 94px;
+
+    padding-top: 23px;
+    padding-bottom: 7px;
+  }
+
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    font-size: 0.98rem;
+  }
+
+  .producao-page .dias-trabalhados-indicador {
+    bottom: 6px;
+  }
+
+  .producao-page .chart-container {
+    padding:
+      10px 12px;
+  }
+
+  .producao-page .motivos-list {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .producao-page .motivo-bar {
+    min-height: 44px;
+
+    padding:
+      6px 9px;
+  }
+
+  .producao-page .motivo-bar .label-row span:first-child {
+    font-size: 0.75rem;
+  }
+}
+
+/* =========================================================
+   TELAS EXTREMAMENTE BAIXAS
+
+   Preserva a rolagem interna para não cortar dados.
+========================================================= */
+
+@media (max-height: 570px) and (min-width: 761px) {
+  .producao-page > .main-content {
+    overflow-y: auto;
+  }
+
+  .producao-page .chart-container {
+    flex: 0 0 auto;
+    min-height: 220px;
+  }
+}
+
+/* =========================================================
+   CELULAR / TABLET VERTICAL
+========================================================= */
+
+@media (max-width: 760px) {
+  html:has(.producao-page),
+  body:has(.producao-page) {
+    height: auto;
+    min-height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body:has(.producao-page) {
+    padding-top: var(--navbar-height, 64px);
+  }
+
+  body:has(.producao-page) #root,
+  body:has(.producao-page) .app-layout {
+    height: auto;
+    min-height: 0;
+
+    overflow: visible;
+  }
+
+  body:has(.producao-page)
+  .app-layout > .main-content:has(> .producao-page) {
+    display: block;
+
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  body:has(.producao-page) .dashboard-container.producao-page {
+    display: flex;
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+    height: auto;
+
+    min-height: calc(
+      100dvh - var(--navbar-height, 64px)
+    );
+
+    margin: 0;
+
+    padding: 10px;
+
+    overflow: visible;
+  }
+
+  /* SIDEBAR */
+
+  .dashboard-container.producao-page > .producao-sidebar-shell {
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  .producao-page .producao-sidebar-shell > .sidebar {
+    position: static !important;
+
+    width: 100%;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0;
+
+    padding: 14px;
+
+    overflow: visible !important;
+
+    scrollbar-gutter: auto;
+  }
+
+  /* CONTEÚDO */
+
+  .producao-page > .main-content {
+    display: block;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  /* CABEÇALHO */
+
+  .producao-page > .main-content > .page-header.dashboard-header {
+    position: relative;
+    top: auto;
+
+    margin:
+      0 0 10px;
+
+    padding: 12px;
+  }
+
+  .producao-page .dashboard-header h1 {
+    font-size: 1.32rem;
+  }
+
+  /* KPIs */
+
+  .producao-page .kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+
+    margin-bottom: 10px;
+  }
+
+  .producao-page .kpi-card {
+    min-height: 88px;
+    padding: 9px;
+  }
+
+  .producao-page .kpi-card > strong {
+    font-size: clamp(
+      0.98rem,
+      3vw,
+      1.2rem
+    );
+  }
+
+  .producao-page .kpi-horas-trabalhadas {
+    min-height: 110px;
+  }
+
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 80px;
+    font-size: 0.87rem;
+  }
+
+  /* MOTIVOS */
+
+  .producao-page .chart-container {
+    flex: none;
+
+    height: auto;
+    min-height: 0;
+    max-height: none;
+
+    padding: 14px;
+  }
+
+  .producao-page .motivos-list {
+    flex: none;
+    max-height: 450px;
+  }
+
+  .producao-page .motivo-bar {
+    grid-template-columns:
+      minmax(0, 1fr) auto;
+
+    gap:
+      8px 10px;
+
+    padding: 9px;
+  }
+
+  .producao-page .motivo-bar .label-row span:first-child {
+    grid-column: 1;
+    grid-row: 1;
+
+    white-space: normal;
+  }
+
+  .producao-page .motivo-bar .label-row span:last-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .producao-page .motivo-bar .progress-bg {
     grid-column: 1 / -1;
     grid-row: 2;
 
     height: 9px;
   }
-
-  .kpi-horas-trabalhadas {
-    min-height: 132px;
-  }
-
-  .dias-trabalhados-indicador {
-    left: 12px;
-    bottom: 14px;
-
-    width: 86px;
-    min-width: 86px;
-
-    padding: 6px 7px;
-  }
-
-  .dias-trabalhados-indicador strong {
-    font-size: 0.76rem;
-  }
-
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-right: 2px;
-    padding-left: 96px;
-
-    font-size: 1.12rem;
-  }
-
-  .percentual-horas-indicador {
-    top: 12px;
-    right: 12px;
-
-    min-width: 62px;
-
-    font-size: 1.1rem;
-  }
 }
 
-/* =====================================================
-   RESPONSIVIDADE — CELULARES PEQUENOS
-===================================================== */
+/* =========================================================
+   CELULAR PEQUENO
+========================================================= */
 
-@media (max-width: 640px) {
-  .kpi-grid {
+@media (max-width: 520px) {
+  body:has(.producao-page) .dashboard-container.producao-page {
+    padding: 8px;
+  }
+
+  .producao-page .kpi-grid {
     grid-template-columns: 1fr;
   }
 
-  .kpi-card {
-    min-height: 108px;
+  .producao-page .kpi-card {
+    min-height: 80px;
   }
 
-  .kpi-horas-trabalhadas {
-    min-height: 128px;
+  .producao-page .kpi-horas-trabalhadas {
+    min-height: 100px;
   }
 
-  .dias-trabalhados-indicador {
-    left: 12px;
-    bottom: 13px;
-
-    width: 84px;
-    min-width: 84px;
-  }
-
-  .kpi-horas-trabalhadas .valor-horas-trabalhadas {
-    padding-left: 94px;
-
-    font-size: 1.16rem;
-  }
-
-  .percentual-horas-indicador {
-    top: 11px;
-    right: 11px;
-
-    min-width: 60px;
-
-    padding: 5px 6px;
-
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 88px;
     font-size: 1rem;
   }
 
-  .motivos-list {
-    flex: none;
-    max-height: 430px;
+  .producao-page .motivos-list {
+    max-height: 400px;
+  }
+}
+
+/* =========================================================
+   CELULAR MUITO ESTREITO
+========================================================= */
+
+@media (max-width: 360px) {
+  .producao-page .dias-trabalhados-indicador {
+    position: static;
+
+    width: auto;
+    min-width: 0;
+
+    align-self: flex-start;
+
+    margin:
+      0 0 6px;
+  }
+
+  .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
+    padding-left: 0;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .producao-page .percentual-horas-indicador {
+    position: static;
+
+    align-self: center;
+
+    margin-top: 4px;
   }
 }
