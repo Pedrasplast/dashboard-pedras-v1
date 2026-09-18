@@ -713,3 +713,388 @@
   }
 
 }
+
+/* =========================================================
+   NOVO SELETOR DE CATEGORIAS
+   CENTRAL DE RELATÓRIOS
+
+   Adicionar ao FINAL de TelaRelatorios.css.
+
+   Mantém os estilos anteriores e atualiza
+   somente a apresentação da barra de categorias.
+========================================================= */
+
+/* =========================================
+   ESPAÇAMENTO DA LISTA
+========================================= */
+
+.relatorios-lista {
+  gap: 20px;
+}
+
+/* =========================================
+   PAINEL PRINCIPAL
+========================================= */
+
+.relatorios-filtros-catalogo {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+
+  padding: 18px 20px 19px;
+
+  overflow: hidden;
+
+  border: 1px solid #dce6f4;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    115deg,
+    #ffffff 0%,
+    #f8fbff 66%,
+    #f1f6ff 100%
+  );
+
+  box-shadow:
+    0 4px 18px rgba(30, 58, 95, 0.04);
+}
+
+/* BARRA DECORATIVA À ESQUERDA */
+
+.relatorios-filtros-catalogo::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0 auto 0 0;
+
+  width: 3px;
+
+  background: linear-gradient(
+    180deg,
+    #60a5fa,
+    #1d4ed8
+  );
+}
+
+/* =========================================
+   CABEÇALHO
+========================================= */
+
+.relatorios-filtros-catalogo-topo {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+/* TÍTULO E ÍCONE */
+
+.relatorios-filtros-catalogo-titulo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  min-width: 0;
+}
+
+/* ÍCONE DO CABEÇALHO */
+
+.relatorios-filtros-catalogo-icone {
+  width: 38px;
+  height: 38px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 38px;
+
+  border: 1px solid #cfe0ff;
+  border-radius: 11px;
+
+  background: #eaf2ff;
+
+  color: #2563eb;
+}
+
+.relatorios-filtros-catalogo-icone svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* TÍTULO */
+
+.relatorios-filtros-catalogo-titulo strong {
+  display: block;
+
+  color: #15243d;
+
+  font-size: 0.84rem;
+  font-weight: 800;
+
+  line-height: 1.35;
+}
+
+/* DESCRIÇÃO */
+
+.relatorios-filtros-catalogo-titulo p {
+  margin: 3px 0 0;
+
+  color: #71819a;
+
+  font-size: 0.71rem;
+
+  line-height: 1.35;
+}
+
+/* =========================================
+   TOTAL DE RELATÓRIOS EXIBIDOS
+========================================= */
+
+.relatorios-filtros-catalogo-total {
+  flex-shrink: 0;
+
+  padding: 6px 10px;
+
+  border: 1px solid #e2eaf6;
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  color: #61748f;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* =========================================
+   ÁREA DOS BOTÕES
+========================================= */
+
+.relatorios-categorias-filtro {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 9px;
+}
+
+/* =========================================
+   BOTÃO PADRÃO
+========================================= */
+
+.relatorios-categorias-filtro button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  min-height: 42px;
+
+  padding: 7px 11px;
+
+  border: 1px solid #dce5f2;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #40516b;
+
+  font: inherit;
+
+  font-size: 0.75rem;
+  font-weight: 750;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 2px 4px rgba(23, 49, 87, 0.025);
+
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+/* =========================================
+   HOVER DOS BOTÕES
+========================================= */
+
+.relatorios-categorias-filtro button:hover:not(.ativa) {
+  transform: translateY(-1px);
+
+  border-color: #a9c6fa;
+
+  background: #eef5ff;
+
+  color: #1d4ed8;
+
+  box-shadow:
+    0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+/* =========================================
+   CATEGORIA SELECIONADA
+========================================= */
+
+.relatorios-categorias-filtro button.ativa,
+.relatorios-categorias-filtro button[aria-pressed="true"] {
+  border-color: #1d4ed8;
+
+  background: linear-gradient(
+    125deg,
+    #1d4ed8,
+    #2563eb
+  );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 13px rgba(37, 99, 235, 0.2);
+}
+
+/* =========================================
+   ACESSIBILIDADE
+========================================= */
+
+.relatorios-categorias-filtro button:focus-visible {
+  outline: 3px solid #93c5fd;
+
+  outline-offset: 3px;
+}
+
+/* =========================================
+   ÍCONE DA CATEGORIA
+========================================= */
+
+.relatorios-filtro-icone {
+  width: 15px;
+  height: 15px;
+
+  flex: 0 0 auto;
+}
+
+/* =========================================
+   NOME DA CATEGORIA
+========================================= */
+
+.relatorios-filtro-nome {
+  display: inline-block;
+}
+
+/* =========================================
+   CONTADOR
+========================================= */
+
+.relatorios-filtro-contagem {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 23px;
+  height: 23px;
+
+  padding: 0 6px;
+
+  box-sizing: border-box;
+
+  border-radius: 7px;
+
+  background: #edf3fc;
+
+  color: #5d6e85;
+
+  font-size: 0.69rem;
+  font-weight: 800;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* CONTADOR DA CATEGORIA ATIVA */
+
+.relatorios-categorias-filtro button.ativa
+.relatorios-filtro-contagem,
+.relatorios-categorias-filtro button[aria-pressed="true"]
+.relatorios-filtro-contagem {
+  background: rgba(255, 255, 255, 0.19);
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+========================================================= */
+
+@media (max-width: 640px) {
+
+  .relatorios-filtros-catalogo {
+    padding: 15px 13px;
+
+    gap: 13px;
+  }
+
+  .relatorios-filtros-catalogo-total {
+    margin-left: 49px;
+  }
+
+  /* ROLAGEM HORIZONTAL DOS BOTÕES */
+
+  .relatorios-categorias-filtro {
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+
+    padding: 2px 2px 9px;
+
+    margin: 0 -2px -7px;
+
+    scrollbar-width: thin;
+
+    scroll-snap-type: x proximity;
+  }
+
+  .relatorios-categorias-filtro button {
+    flex: 0 0 auto;
+
+    scroll-snap-align: start;
+  }
+
+}
+
+/* =========================================================
+   ACESSIBILIDADE — MOVIMENTO REDUZIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .relatorios-categorias-filtro button {
+    transition: none;
+  }
+
+  .relatorios-categorias-filtro button:hover:not(.ativa) {
+    transform: none;
+  }
+
+}

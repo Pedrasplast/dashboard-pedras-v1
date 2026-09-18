@@ -595,12 +595,7 @@ export function gerarPdfRelatorio({ relatorio, dados, textoFiltros }) {
         doc.setFont("helvetica", "bold");
         doc.setFontSize(9);
         doc.setTextColor(15, 23, 42);
-
-        doc.text(
-            `Total de registros: ${dados.length}`,
-            margemEsquerda,
-            y
-        );
+        
     }
 
     // NUMERAÇÃO DAS PÁGINAS
@@ -608,6 +603,7 @@ export function gerarPdfRelatorio({ relatorio, dados, textoFiltros }) {
     const totalPaginas = doc.getNumberOfPages();
 
     for (
+        
         let pagina = 1;
         pagina <= totalPaginas;
         pagina += 1

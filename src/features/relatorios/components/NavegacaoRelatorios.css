@@ -1,0 +1,281 @@
+/* =========================================================
+   NAVEGAÇÃO DA CENTRAL DE RELATÓRIOS
+
+   CSS exclusivo do componente NavegacaoRelatorios.jsx.
+   Visual compacto, com retorno fixo durante a rolagem.
+========================================================= */
+
+.relatorios-container .relatorios-navegacao-topo {
+  position: sticky;
+  top: var(--navbar-height, 76px);
+  z-index: 200;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+
+  margin: -8px 0 18px;
+  padding: 7px 4px;
+
+  box-sizing: border-box;
+
+  border: 0;
+  border-bottom: 1px solid #dce5f0;
+  border-radius: 0;
+
+  background: rgba(246, 248, 251, 0.97);
+
+  box-shadow: none;
+
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* =========================================================
+   BOTÃO VOLTAR
+========================================================= */
+
+.relatorios-container .btn-voltar-topo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 9px;
+  flex: 0 0 auto;
+
+  width: auto;
+  min-height: 38px;
+
+  margin: 0;
+  padding: 4px 11px 4px 5px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  background: transparent;
+  box-shadow: none;
+
+  color: #2355a4;
+
+  font-family: inherit;
+  font-size: 0.79rem;
+  font-weight: 750;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+/* =========================================================
+   ÍCONE DO BOTÃO
+========================================================= */
+
+.relatorios-container .btn-voltar-topo-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 30px;
+
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid #cfe0fb;
+  border-radius: 8px;
+
+  background: #eaf2ff;
+  color: #2563eb;
+
+  box-shadow: none;
+}
+
+.relatorios-container .btn-voltar-topo .btn-voltar-topo-icone svg {
+  display: block;
+  flex: none;
+
+  width: 16px;
+  height: 16px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  color: currentColor;
+
+  stroke-width: 2.2;
+  transform: none;
+}
+
+/* =========================================================
+   TEXTOS DO BOTÃO
+========================================================= */
+
+.relatorios-container .btn-voltar-topo-textos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 0;
+  min-width: 0;
+}
+
+.relatorios-container .btn-voltar-topo-textos strong {
+  color: inherit;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.relatorios-container .btn-voltar-topo-textos small {
+  display: none;
+}
+
+/* =========================================================
+   INTERAÇÕES
+========================================================= */
+
+.relatorios-container .btn-voltar-topo:hover {
+  border-color: #dbeafe;
+  border-radius: 9px;
+
+  background: #edf5ff;
+
+  color: #1d4ed8;
+
+  box-shadow: none;
+  transform: none;
+}
+
+.relatorios-container .btn-voltar-topo:hover .btn-voltar-topo-icone {
+  border-color: #a8c7ff;
+  background: #dbeafe;
+}
+
+.relatorios-container .btn-voltar-topo:hover .btn-voltar-topo-icone svg {
+  border: 0;
+
+  background: transparent;
+
+  transform: translateX(-2px);
+}
+
+.relatorios-container .btn-voltar-topo:active {
+  transform: none;
+  background: #dbeafe;
+}
+
+.relatorios-container .btn-voltar-topo:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   NOME DO RELATÓRIO ATUAL
+========================================================= */
+
+.relatorios-container .relatorios-navegacao-contexto {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  min-width: 0;
+  max-width: 55%;
+
+  margin: 0;
+  padding: 0 4px 0 16px;
+
+  border-left: 1px solid #dbe4f0;
+
+  text-align: right;
+}
+
+.relatorios-container .relatorios-navegacao-contexto > span {
+  display: none;
+}
+
+.relatorios-container .relatorios-navegacao-contexto > strong {
+  display: block;
+
+  min-width: 0;
+  max-width: 100%;
+
+  overflow: hidden;
+
+  color: #66768d;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 640px) {
+  .relatorios-container .relatorios-navegacao-topo {
+    min-height: 48px;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 5px 2px;
+  }
+
+  .relatorios-container .btn-voltar-topo {
+    gap: 7px;
+    padding-right: 7px;
+  }
+
+  .relatorios-container .btn-voltar-topo-textos strong {
+    font-size: 0.73rem;
+  }
+
+  .relatorios-container .relatorios-navegacao-contexto {
+    max-width: 38%;
+    padding-left: 9px;
+  }
+
+  .relatorios-container .relatorios-navegacao-contexto > strong {
+    font-size: 0.67rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .relatorios-container .relatorios-navegacao-contexto {
+    display: none;
+  }
+}
+
+/* =========================================================
+   MOVIMENTO REDUZIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .relatorios-container .btn-voltar-topo,
+  .relatorios-container .btn-voltar-topo .btn-voltar-topo-icone svg {
+    transition: none;
+  }
+
+  .relatorios-container .btn-voltar-topo:hover .btn-voltar-topo-icone svg {
+    transform: none;
+  }
+}
