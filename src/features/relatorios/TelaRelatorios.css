@@ -2052,3 +2052,48 @@ tbody tr:hover td {
       14px;
   }
 }
+/* Busca e categorias do catálogo — exibido somente para relatórios permitidos. */
+.relatorios-busca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 15px;
+  background: #fff;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+}
+.relatorios-busca svg { flex: none; color: #64748b; }
+.relatorios-busca input {
+  width: 100%; min-width: 0; padding: 4px;
+  border: 0; background: transparent; outline-offset: 4px;
+  color: #172033; font: inherit; font-size: .85rem;
+}
+.relatorios-busca > span { flex: none; font-size: .72rem; color: #64748b; }
+.relatorios-categorias-filtro { display: flex; gap: 8px; flex-wrap: wrap; }
+.relatorios-categorias-filtro button {
+  cursor: pointer; border: 1px solid #dbe3ee; border-radius: 8px;
+  padding: 8px 12px; background: white; font: inherit;
+  font-size: .75rem; font-weight: 700; color: #334155;
+}
+.relatorios-categorias-filtro button.ativa,
+.relatorios-categorias-filtro button[aria-pressed="true"] {
+  background: #2563eb; color: #fff; border-color: #2563eb;
+}
+.relatorios-categorias-filtro button:focus-visible,
+.relatorios-busca input:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.relatorios-sem-resultados { margin: 0; }
+.relatorio-resumo-grid--sem-contagem { grid-template-columns: minmax(220px, 320px) minmax(300px, 1fr); }
+@media (max-width: 900px) {
+  .relatorio-resumo-grid--sem-contagem { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .relatorio-resumo-grid--sem-contagem .relatorio-resumo-card:last-child { grid-column: auto; }
+}
+@media (max-width: 640px) {
+  .relatorios-busca { flex-wrap: wrap; }
+  .relatorios-busca > span { width: 100%; text-align: right; }
+  .relatorio-resumo-grid--sem-contagem { grid-template-columns: 1fr; }
+}
+/* Corrige um seletor antigo que aplicava hover a descendentes, não ao botão. */
+.relatorio-acoes .btn-relatorio:not(.btn-relatorio-pdf):not(.btn-relatorio-csv):hover:not(:disabled) {
+  background: #f8fbff;
+  border-color: #93c5fd;
+}
