@@ -1,4 +1,3 @@
-
 import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -31,6 +30,7 @@ import "./PedidosCompraAlteradosRelatorio.css";
 
 const POR_PAGINA = 8;
 const FUSO = "America/Sao_Paulo";
+const FORNECEDORES_VAZIOS = Object.freeze({});
 
 /* =========================================================
    DATAS
@@ -510,14 +510,10 @@ function IndicadorSincronizacao({
 /* =========================================================
    CARTÃO DE MUDANÇA
 
-   ALTERAÇÃO SOLICITADA:
-
-   Exibe somente:
+   Exibe:
    - Campo alterado
    - Antes
    - Depois
-
-   Não exibe redução, aumento ou diferença calculada.
 ========================================================= */
 
 function CartaoMudanca({ mudanca }) {
@@ -735,7 +731,7 @@ export default function PedidosCompraAlteradosRelatorio({
   });
 
   const nomesFornecedores =
-    fornecedoresQuery.data?.nomes || {};
+    fornecedoresQuery.data?.nomes || FORNECEDORES_VAZIOS;
 
   /* =====================================================
      CONSULTAR LOCAIS
@@ -773,10 +769,16 @@ export default function PedidosCompraAlteradosRelatorio({
 
   /* =====================================================
      REFERÊNCIAS
+
+     CORREÇÃO:
+     Compartilha o mesmo mapa usado pela coluna
+     Fornecedor com o formatador do histórico.
   ===================================================== */
 
   const referencias = useMemo(
     () => ({
+      fornecedores: nomesFornecedores,
+
       locais: locais.data || {},
 
       itensPorPedido:
@@ -784,6 +786,7 @@ export default function PedidosCompraAlteradosRelatorio({
     }),
 
     [
+      nomesFornecedores,
       locais.data,
       itens.data,
     ]
@@ -970,9 +973,7 @@ export default function PedidosCompraAlteradosRelatorio({
 
   return (
     <>
-      {/* =================================================
-          CABEÇALHO
-      ================================================= */}
+      {/* CABEÇALHO */}
 
       <div
         className="relatorio-selecionado-header"
@@ -1015,9 +1016,7 @@ export default function PedidosCompraAlteradosRelatorio({
         />
       </div>
 
-      {/* =================================================
-          EXPORTAÇÕES
-      ================================================= */}
+      {/* EXPORTAÇÕES */}
 
       <div className="relatorio-acoes">
         <button
@@ -1073,9 +1072,7 @@ export default function PedidosCompraAlteradosRelatorio({
         </button>
       </div>
 
-      {/* =================================================
-          FILTROS
-      ================================================= */}
+      {/* FILTROS */}
 
       <div className="relatorio-filtros-card">
         <div className="relatorio-filtros-header">
@@ -1140,9 +1137,7 @@ export default function PedidosCompraAlteradosRelatorio({
         </div>
       </div>
 
-      {/* =================================================
-          AVISO DE FORNECEDORES
-      ================================================= */}
+      {/* AVISO DE FORNECEDORES */}
 
       {fornecedoresQuery.error && (
         <div
@@ -1192,9 +1187,7 @@ export default function PedidosCompraAlteradosRelatorio({
           </div>
         )}
 
-      {/* =================================================
-          ERROS DO RELATÓRIO
-      ================================================= */}
+      {/* ERROS DO RELATÓRIO */}
 
       {!periodoValido && (
         <div className="relatorios-erro">
@@ -1213,9 +1206,7 @@ export default function PedidosCompraAlteradosRelatorio({
         </div>
       )}
 
-      {/* =================================================
-          CARREGAMENTO
-      ================================================= */}
+      {/* CARREGAMENTO */}
 
       {historico.isLoading && (
         <div className="relatorios-loading pedidos-alterados-loading">
@@ -1224,9 +1215,7 @@ export default function PedidosCompraAlteradosRelatorio({
         </div>
       )}
 
-      {/* =================================================
-          RESULTADOS
-      ================================================= */}
+      {/* RESULTADOS */}
 
       {!historico.isLoading &&
         !historico.error &&
@@ -1246,9 +1235,7 @@ export default function PedidosCompraAlteradosRelatorio({
                 </div>
               </div>
 
-              {/* =========================================
-                  RESUMO
-              ========================================= */}
+              {/* RESUMO */}
 
               <div className="relatorio-visualizacao-info">
                 <div className="relatorio-visualizacao-info-item">
@@ -1272,9 +1259,7 @@ export default function PedidosCompraAlteradosRelatorio({
                 </div>
               </div>
 
-              {/* =========================================
-                  TABELA
-              ========================================= */}
+              {/* TABELA */}
 
               <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
                 <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
@@ -1337,14 +1322,7 @@ export default function PedidosCompraAlteradosRelatorio({
                                   codigo}
                               </strong>
 
-                              <small
-                                style={{
-                                  display: "block",
-                                  opacity: 0.6,
-                                }}
-                              >
-                                Omie: {codigo}
-                              </small>
+                            
                             </td>
 
                             {/* FORNECEDOR */}
@@ -1474,9 +1452,7 @@ export default function PedidosCompraAlteradosRelatorio({
                 </table>
               </div>
 
-              {/* =========================================
-                  RODAPÉ
-              ========================================= */}
+              {/* RODAPÉ */}
 
               <div className="relatorio-visualizacao-footer">
                 <span>
@@ -1514,9 +1490,7 @@ export default function PedidosCompraAlteradosRelatorio({
           </>
         )}
 
-      {/* =================================================
-          NENHUM RESULTADO
-      ================================================= */}
+      {/* NENHUM RESULTADO */}
 
       {!historico.isLoading &&
         !historico.error &&

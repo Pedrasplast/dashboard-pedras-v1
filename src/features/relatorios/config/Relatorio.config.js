@@ -373,6 +373,9 @@ export const RELATORIOS = [
 
     transformarDados: agruparPedidosPorDataProduto,
 
+    // A contagem não aparece na tela. O total de quantidades aparece somente no PDF.
+    exibicao: { mostrarContagem: false },
+
     colunas: [
       "previsao",
       "codigo_produto",

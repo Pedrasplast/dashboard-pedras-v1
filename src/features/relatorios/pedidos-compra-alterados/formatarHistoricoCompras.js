@@ -1,4 +1,3 @@
-
 /* =========================================================
    HISTÓRICO DE PEDIDOS DE COMPRA
 
@@ -19,16 +18,12 @@ const decimal = new Intl.NumberFormat("pt-BR", {
 });
 
 const obj = (x) =>
-  x &&
-  typeof x === "object" &&
-  !Array.isArray(x)
+  x && typeof x === "object" && !Array.isArray(x)
     ? x
     : {};
 
 const definido = (x) =>
-  x !== undefined &&
-  x !== null &&
-  x !== "";
+  x !== undefined && x !== null && x !== "";
 
 const n = (x) =>
   definido(x) && Number.isFinite(Number(x))
@@ -46,8 +41,7 @@ const quant = (x) =>
     : decimal.format(n(x));
 
 const iguais = (a, b) =>
-  JSON.stringify(a ?? null) ===
-  JSON.stringify(b ?? null);
+  JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 
 /* =========================================================
    PROTEÇÃO DE DADOS DE PAGAMENTO
@@ -76,36 +70,27 @@ function luhn(digitos) {
 }
 
 export function protegerDadosPagamento(valor) {
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
+  if (valor === null || valor === undefined) {
     return "";
   }
 
   return String(valor)
     .replace(
       /\b((?:n[uú]mero\s+(?:do\s+)?cart[aã]o|cart[aã]o\s*(?:n[uú]mero|n[ºo])?|card\s*(?:number|no\.?))\s*[:=#-]?\s*)((?:\d[ -]?){12,19})/gi,
-      (_trecho, rotulo) =>
-        `${rotulo}[NÚMERO PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`
     )
     .replace(
       /\b((?:n[uú]mero|number)\s*[:=#-]\s*)((?:\d[ -]?){12,19})/gi,
-      (_trecho, rotulo) =>
-        `${rotulo}[NÚMERO PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`
     )
     .replace(
       /\b((?:cvv|cvc|c[oó]digo\s+de\s+seguran[cç]a)\s*[:=#-]?\s*)\d{3,4}\b/gi,
-      (_trecho, rotulo) =>
-        `${rotulo}[PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[PROTEGIDO]`
     )
     .replace(
       /\b(?:\d[ -]?){12,18}\d\b/g,
       (trecho) => {
-        const digitos = trecho.replace(
-          /\D/g,
-          ""
-        );
+        const digitos = trecho.replace(/\D/g, "");
 
         return digitos.length >= 13 &&
           digitos.length <= 19 &&
@@ -128,43 +113,29 @@ const NOMES = {
   categoria: "Categoria",
   contrato: "Contrato",
   projeto: "Projeto",
-
   data_previsao: "Previsão de entrega",
-
   observacoes: "Observações do pedido",
   observacoes_internas: "Observações internas",
-
-  condicao_pagamento:
-    "Condição de pagamento",
-
-  parcelas_quantidade:
-    "Quantidade de parcelas",
-
+  condicao_pagamento: "Condição de pagamento",
+  parcelas_quantidade: "Quantidade de parcelas",
   codigo_comercial: "Código do produto",
   codigo_produto: "Produto",
   descricao: "Descrição do produto",
   unidade: "Unidade de medida",
-
   quantidade: "Quantidade comprada",
-  quantidade_recebida:
-    "Quantidade recebida",
-
+  quantidade_recebida: "Quantidade recebida",
   preco_unitario: "Preço por unidade",
   valor_total: "Valor total do produto",
-
   desconto: "Desconto do produto",
   despesas: "Despesas do produto",
   frete_item: "Frete do produto",
   seguro: "Seguro do produto",
-
   local_estoque: "Local de estoque",
   observacao: "Observação do produto",
-
   frete: "Frete",
   parcelas: "Parcelas",
   departamentos: "Departamentos",
   caracteristicas: "Características",
-
   cTipoDoc: "Tipo de documento",
   dVencto: "Vencimento",
   nValor: "Valor",
@@ -208,15 +179,11 @@ const DOCUMENTOS = {
 ========================================================= */
 
 function referencia(valor, mapa, rotulo) {
-  if (
-    !definido(valor) ||
-    String(valor) === "0"
-  ) {
+  if (!definido(valor) || String(valor) === "0") {
     return "Não informado";
   }
 
   const chave = String(valor);
-
   const nome = mapa?.[chave];
 
   return protegerDadosPagamento(
@@ -251,10 +218,7 @@ export function formatarValorCompra(
     return `${quant(valor)} dias`;
   }
 
-  if (
-    campo === "nPercent" ||
-    campo === "nPerc"
-  ) {
+  if (campo === "nPercent" || campo === "nPerc") {
     return `${quant(valor)}%`;
   }
 
@@ -279,11 +243,24 @@ export function formatarValorCompra(
     );
   }
 
+  /* =====================================================
+     CORREÇÃO: FORNECEDOR PELO NOME
+
+     Utiliza o código do próprio valor histórico.
+     Assim, o fornecedor antigo e o novo são
+     identificados separadamente.
+
+     Não substitui o fornecedor antigo pelo atual.
+  ===================================================== */
+
   if (campo === "fornecedor") {
-    return referencia(
-      valor,
-      referencias.fornecedores,
-      "Fornecedor Omie"
+    const codigo = String(valor).trim();
+    const nome = referencias.fornecedores?.[codigo];
+
+    return protegerDadosPagamento(
+      nome && String(nome).trim()
+        ? String(nome).trim()
+        : `Fornecedor não identificado (código ${codigo})`
     );
   }
 
@@ -323,11 +300,7 @@ export function formatarValorCompra(
     return valor.length
       ? valor
           .map((item) =>
-            formatarValorCompra(
-              item,
-              "",
-              referencias
-            )
+            formatarValorCompra(item, "", referencias)
           )
           .join("\n")
       : "Nenhum registro";
@@ -349,9 +322,7 @@ export function formatarValorCompra(
       .join(" • ");
   }
 
-  return protegerDadosPagamento(
-    String(valor).trim()
-  );
+  return protegerDadosPagamento(String(valor).trim());
 }
 
 /* =========================================================
@@ -367,22 +338,15 @@ function variacao(
   const a = n(antes);
   const b = n(depois);
 
-  if (
-    a === null ||
-    b === null ||
-    a === b
-  ) {
+  if (a === null || b === null || a === b) {
     return "";
   }
 
-  const direcao =
-    b > a ? "Aumento" : "Redução";
+  const direcao = b > a ? "Aumento" : "Redução";
 
   if (MONETARIOS.has(campo)) {
     return (
-      `${direcao} de ${dinheiro(
-        Math.abs(b - a)
-      )}` +
+      `${direcao} de ${dinheiro(Math.abs(b - a))}` +
       (campo === "preco_unitario"
         ? " por unidade"
         : "")
@@ -391,9 +355,7 @@ function variacao(
 
   if (QUANTIDADES.has(campo)) {
     return (
-      `${direcao} de ${quant(
-        Math.abs(b - a)
-      )}` +
+      `${direcao} de ${quant(Math.abs(b - a))}` +
       (unidade
         ? ` ${protegerDadosPagamento(unidade)}`
         : "")
@@ -422,13 +384,8 @@ function identificarProduto(
     referencias.itens?.[String(codigoItem)]
   );
 
-  const anterior = obj(
-    mudanca.anterior
-  );
-
-  const novo = obj(
-    mudanca.novo
-  );
+  const anterior = obj(mudanca.anterior);
+  const novo = obj(mudanca.novo);
 
   const item = {
     ...atual,
@@ -488,8 +445,7 @@ function criarMudanca(
         : titulo
     ),
 
-    tituloCurto:
-      protegerDadosPagamento(titulo),
+    tituloCurto: protegerDadosPagamento(titulo),
 
     produto,
 
@@ -538,20 +494,15 @@ function compararListas(
   tipo,
   referencias
 ) {
-  const antes = Array.isArray(
-    mudanca.anterior
-  )
+  const antes = Array.isArray(mudanca.anterior)
     ? mudanca.anterior
     : [];
 
-  const depois = Array.isArray(
-    mudanca.novo
-  )
+  const depois = Array.isArray(mudanca.novo)
     ? mudanca.novo
     : [];
 
-  const parcelas =
-    tipo === "parcelas";
+  const parcelas = tipo === "parcelas";
 
   const idCampo = parcelas
     ? "nParcela"
@@ -643,10 +594,7 @@ const FRETE = {
   cTpFrete: "Tipo de frete",
   nCodTransp: "Transportadora",
   nValFrete: "Valor do frete",
-
-  nValOutras:
-    "Outras despesas do frete",
-
+  nValOutras: "Outras despesas do frete",
   nValSeguro: "Seguro do frete",
   nPesoBruto: "Peso bruto",
   nPesoLiq: "Peso líquido",
@@ -669,7 +617,6 @@ export function extrairMudancasCompra(
   ) {
     const mudanca = obj(entrada);
 
-    // A etapa define o escopo do relatório.
     // Identificadores técnicos não são mudanças comerciais.
 
     if (
@@ -689,7 +636,7 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    /* PARCELAS E DEPARTAMENTOS */
+    // PARCELAS E DEPARTAMENTOS
 
     if (
       chave === "parcelas" ||
@@ -706,16 +653,11 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    /* FRETE */
+    // FRETE
 
     if (chave === "frete") {
-      const anterior = obj(
-        mudanca.anterior
-      );
-
-      const novo = obj(
-        mudanca.novo
-      );
+      const anterior = obj(mudanca.anterior);
+      const novo = obj(mudanca.novo);
 
       for (
         const campo of new Set([
@@ -745,23 +687,20 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    /* ITEM ADICIONADO OU REMOVIDO */
+    // ITEM ADICIONADO OU REMOVIDO
 
     const addRm =
-      /^(adicionado|removido)_(\d+)$/.exec(
-        chave
-      );
+      /^(adicionado|removido)_(\d+)$/.exec(chave);
 
     if (addRm) {
       const adicionado =
         addRm[1] === "adicionado";
 
-      const produto =
-        identificarProduto(
-          addRm[2],
-          mudanca,
-          referencias
-        );
+      const produto = identificarProduto(
+        addRm[2],
+        mudanca,
+        referencias
+      );
 
       const dados = obj(
         adicionado
@@ -801,14 +740,10 @@ export function extrairMudancasCompra(
 
         anterior: adicionado
           ? "Não constava no pedido"
-          : protegerDadosPagamento(
-              resumo
-            ),
+          : protegerDadosPagamento(resumo),
 
         novo: adicionado
-          ? protegerDadosPagamento(
-              resumo
-            )
+          ? protegerDadosPagamento(resumo)
           : "Removido do pedido",
 
         variacao: "",
@@ -817,18 +752,17 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    /* ALTERAÇÃO DE ITEM EXISTENTE */
+    // ALTERAÇÃO DE ITEM EXISTENTE
 
     const item =
       /^item_(\d+)_(.+)$/.exec(chave);
 
     if (item) {
-      const produto =
-        identificarProduto(
-          item[1],
-          mudanca,
-          referencias
-        );
+      const produto = identificarProduto(
+        item[1],
+        mudanca,
+        referencias
+      );
 
       const nome =
         NOMES[item[2]] ||
@@ -849,7 +783,7 @@ export function extrairMudancasCompra(
       continue;
     }
 
-    /* INFORMAÇÕES GERAIS */
+    // INFORMAÇÕES GERAIS
 
     const nome =
       NOMES[chave] ||

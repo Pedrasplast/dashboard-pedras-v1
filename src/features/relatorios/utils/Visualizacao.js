@@ -1,3 +1,5 @@
+import { converterNumeroFlexivel as converterNumeroVisualizacao } from "@/lib/numeros";
+
 /* =========================================================
    COLUNAS DA PRÉ-VISUALIZAÇÃO
 ========================================================= */
@@ -58,20 +60,6 @@ export const COLUNAS_NUMERICAS = new Set([
   "dias_atraso",
   "quantidade",
 ]);
-
-const converterNumeroVisualizacao = (valor) => {
-  if (valor === null || valor === undefined || valor === "") return 0;
-  if (typeof valor === "number") return Number.isFinite(valor) ? valor : 0;
-
-  let texto = String(valor).trim().replace(/\s/g, "");
-  if (texto.includes(",") && texto.includes(".")) {
-    texto = texto.replace(/\./g, "").replace(",", ".");
-  } else {
-    texto = texto.replace(",", ".");
-  }
-  const numero = Number(texto);
-  return Number.isFinite(numero) ? numero : 0;
-};
 
 const formatarDataVisualizacao = (valor) => {
   if (!valor) return "-";
