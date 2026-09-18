@@ -244,7 +244,7 @@ export function formatarValorCompra(
   }
 
   /* =====================================================
-     CORREÇÃO: FORNECEDOR PELO NOME
+     FORNECEDOR PELO NOME
 
      Utiliza o código do próprio valor histórico.
      Assim, o fornecedor antigo e o novo são
@@ -610,12 +610,57 @@ export function extrairMudancasCompra(
   referencias = {}
 ) {
   const saida = [];
+  const detalhes = obj(evento?.detalhes);
+
+  /*
+   * Quando a categoria geral do pedido repete exatamente
+   * a mesma mudança de categoria de um único produto,
+   * mantemos a categoria do produto (mais informativa).
+   *
+   * Se os valores forem diferentes ou houver alterações
+   * de categoria em mais de um produto, preservamos todas.
+   * Os eventos originais não são modificados.
+   */
+
+  const categoriaGeral = obj(detalhes.categoria);
+
+  const categoriasProdutos = Object.entries(detalhes)
+    .filter(([chave, entrada]) =>
+      /^item_\d+_categoria$/.test(chave) &&
+      !iguais(
+        obj(entrada).anterior,
+        obj(entrada).novo
+      )
+    );
+
+  const categoriaProdutoUnico =
+    categoriasProdutos.length === 1
+      ? obj(categoriasProdutos[0][1])
+      : null;
+
+  const categoriaGeralRedundante =
+    Object.prototype.hasOwnProperty.call(detalhes, "categoria") &&
+    !iguais(categoriaGeral.anterior, categoriaGeral.novo) &&
+    categoriaProdutoUnico !== null &&
+    iguais(
+      categoriaGeral.anterior,
+      categoriaProdutoUnico.anterior
+    ) &&
+    iguais(
+      categoriaGeral.novo,
+      categoriaProdutoUnico.novo
+    );
 
   for (
-    const [chave, entrada] of
-    Object.entries(obj(evento?.detalhes))
+    const [chave, entrada] of Object.entries(detalhes)
   ) {
     const mudanca = obj(entrada);
+
+    // Evita repetir a mesma transição de categoria do produto.
+
+    if (chave === "categoria" && categoriaGeralRedundante) {
+      continue;
+    }
 
     // Identificadores técnicos não são mudanças comerciais.
 
