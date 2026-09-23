@@ -17,6 +17,7 @@ const VALORES_PADRAO_FILTROS_PEDIDOS = Object.freeze({
   status: "Pedido",
   cliente: "todos",
   vendedor: "todos",
+  pedidos: "",
 });
 
 function obterCodigoProduto(item) {
@@ -98,6 +99,21 @@ function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio 
           </div>
 
           <div className="rel-pedidos-filtros-grid">
+            <CampoFiltro
+              titulo="Pedido(s)"
+              className="rel-pedidos-campo rel-pedidos-campo-pedidos"
+            >
+              <input
+                type="text"
+                value={filtros?.pedidos || ""}
+                onChange={(evento) =>
+                  alterar("pedidos", evento.target.value)
+                }
+                placeholder="Ex.: 3105, 3106, 3107, 3105/1"
+                autoComplete="off"
+              />
+            </CampoFiltro>
+
             {relatorio?.filtros?.periodo && (
               <>
                 <CampoFiltro titulo="Previsão de faturamento — de" className="rel-pedidos-campo">

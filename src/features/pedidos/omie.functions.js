@@ -6,6 +6,8 @@ import {
   createClient,
 } from "@supabase/supabase-js";
 
+import { criarMapaNumeroPedidoExibicao } from "./numeroPedidoExibicao";
+
 
 const URL_PEDIDOS =
   "https://app.omie.com.br/api/v1/produtos/pedido/";
@@ -1660,6 +1662,92 @@ async function executarSincronizacaoPedidos() {
 
 
 /* =========================================================
+   NUMERACAO VISUAL DE PEDIDOS PARCIAIS
+
+   Consulta todo o historico em paginas para que a
+   numeracao /1, /2... continue estavel mesmo quando
+   o pedido original deixar de estar ativo.
+========================================================= */
+
+async function buscarRegistrosNumeracaoPedidos(
+  supabase,
+) {
+  const registros = [];
+
+  const tamanhoPagina =
+    1000;
+
+  let inicio =
+    0;
+
+  while (true) {
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from(
+          "pedidos_omie",
+        )
+        .select(
+          `
+            codigo_pedido_omie,
+            numero_pedido,
+            criado_em
+          `,
+        )
+        .order(
+          "criado_em",
+          {
+            ascending:
+              true,
+          },
+        )
+        .order(
+          "codigo_pedido_omie",
+          {
+            ascending:
+              true,
+          },
+        )
+        .range(
+          inicio,
+          inicio +
+            tamanhoPagina -
+            1,
+        );
+
+    if (error) {
+      throw new Error(
+        `Erro ao calcular a numeração visual dos pedidos: ${error.message}`,
+      );
+    }
+
+    const pagina =
+      Array.isArray(data)
+        ? data
+        : [];
+
+    registros.push(
+      ...pagina,
+    );
+
+    if (
+      pagina.length <
+      tamanhoPagina
+    ) {
+      break;
+    }
+
+    inicio +=
+      tamanhoPagina;
+  }
+
+  return registros;
+}
+
+
+/* =========================================================
    BUSCAR PEDIDOS PARA A TELA
 
    IMPORTANTE:
@@ -1713,6 +1801,7 @@ export const buscarPedidosOmie =
 
         const [
           resultadoPedidos,
+          registrosNumeracaoPedidos,
           resultadoSincronizacao,
         ] =
           await Promise.all([
@@ -1760,6 +1849,10 @@ export const buscarPedidosOmie =
                 },
               ),
 
+            buscarRegistrosNumeracaoPedidos(
+              supabase,
+            ),
+
             supabase
               .from(
                 "sincronizacao_omie",
@@ -1800,6 +1893,12 @@ export const buscarPedidosOmie =
         }
 
 
+        const mapaNumeroPedidoExibicao =
+          criarMapaNumeroPedidoExibicao(
+            registrosNumeracaoPedidos,
+          );
+
+
         const registros =
           Array.isArray(
             resultadoPedidos.data,
@@ -1820,6 +1919,16 @@ export const buscarPedidosOmie =
                   .codigo_pedido_omie,
 
               pedido:
+                registro
+                  .numero_pedido,
+
+              pedidoExibicao:
+                mapaNumeroPedidoExibicao.get(
+                  Number(
+                    registro
+                      .codigo_pedido_omie,
+                  ),
+                ) ||
                 registro
                   .numero_pedido,
 
