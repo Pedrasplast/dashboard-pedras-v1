@@ -18,7 +18,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Paginacao from "@/components/paginacao/Paginacao";
 import PageHeader from "@/components/layout/PageHeader";
 
-import { buscarPedidosOmie } from "./omie.functions";
+import { carregarMapaNumeroPedidoExibicao } from "./numeroPedidoExibicao";
 
 import "./PedidosPage.css";
 
@@ -339,6 +339,202 @@ function obterTimestampNotificacao(notificacao) {
 }
 
 /* =========================================================
+   BUSCAR PEDIDOS DIRETO DO SUPABASE
+
+   Esta tela não precisa passar por uma Server Function
+   apenas para ler dados que já estão no Supabase.
+
+   Vantagens:
+   - usa a sessão atual do navegador;
+   - o próprio Supabase JS renova o token automaticamente;
+   - evita o erro intermitente "Sessão inválida ou expirada";
+   - mantém a numeração visual de pedidos desdobrados.
+========================================================= */
+
+async function buscarPedidosDiretoSupabase() {
+  const [
+    resultadoPedidos,
+    mapaNumeroPedidoExibicao,
+    resultadoSincronizacao,
+  ] = await Promise.all([
+    supabase
+      .from("pedidos_omie")
+      .select(
+        `
+          chave_item,
+          codigo_pedido_omie,
+          numero_pedido,
+          cliente,
+          data_pedido,
+          previsao,
+          codigo_produto,
+          produto,
+          quantidade,
+          unidade,
+          vendedor,
+          valor,
+          codigo_etapa,
+          status
+        `,
+      )
+      .eq("ativo", true)
+      .order("previsao", {
+        ascending: true,
+        nullsFirst: false,
+      })
+      .order("numero_pedido", {
+        ascending: true,
+      }),
+
+    carregarMapaNumeroPedidoExibicao(
+      supabase,
+    ),
+
+    supabase
+      .from("sincronizacao_omie")
+      .select(
+        `
+          ultima_sincronizacao,
+          status,
+          quantidade_pedidos,
+          quantidade_itens,
+          duracao_ms,
+          mensagem
+        `,
+      )
+      .eq("id", 1)
+      .maybeSingle(),
+  ]);
+
+  if (resultadoPedidos.error) {
+    throw new Error(
+      `Erro ao consultar pedidos: ${resultadoPedidos.error.message}`,
+    );
+  }
+
+  if (resultadoSincronizacao.error) {
+    throw new Error(
+      `Erro ao consultar sincronização: ${resultadoSincronizacao.error.message}`,
+    );
+  }
+
+  const registros = Array.isArray(
+    resultadoPedidos.data,
+  )
+    ? resultadoPedidos.data
+    : [];
+
+  const pedidos = registros.map(
+    (registro) => ({
+      id:
+        registro.chave_item,
+
+      codigoPedido:
+        registro.codigo_pedido_omie,
+
+      codigoPedidoOmie:
+        registro.codigo_pedido_omie,
+
+      codigo_pedido_omie:
+        registro.codigo_pedido_omie,
+
+      pedido:
+        registro.numero_pedido,
+
+      numero_pedido:
+        registro.numero_pedido,
+
+      pedidoExibicao:
+        mapaNumeroPedidoExibicao.get(
+          Number(
+            registro.codigo_pedido_omie,
+          ),
+        ) ||
+        registro.numero_pedido,
+
+      cliente:
+        registro.cliente ||
+        "-",
+
+      data:
+        registro.data_pedido ||
+        null,
+
+      previsao:
+        registro.previsao ||
+        null,
+
+      codigoProduto:
+        registro.codigo_produto ||
+        "",
+
+      produto:
+        registro.produto ||
+        "",
+
+      quantidade:
+        Number(
+          registro.quantidade ??
+          0,
+        ),
+
+      unidade:
+        registro.unidade ||
+        "",
+
+      vendedor:
+        registro.vendedor ||
+        "-",
+
+      valor:
+        Number(
+          registro.valor ??
+          0,
+        ),
+
+      codigoEtapa:
+        registro.codigo_etapa ||
+        "",
+
+      status:
+        registro.status ||
+        "Pedido",
+    }),
+  );
+
+  const sincronizacao =
+    resultadoSincronizacao.data;
+
+  return {
+    pedidos,
+
+    quantidadePedidos:
+      sincronizacao
+        ?.quantidade_pedidos ??
+      0,
+
+    quantidadeLinhas:
+      pedidos.length,
+
+    atualizadoEm:
+      sincronizacao
+        ?.ultima_sincronizacao ??
+      null,
+
+    statusSincronizacao:
+      sincronizacao
+        ?.status ??
+      "aguardando",
+
+    mensagemSincronizacao:
+      sincronizacao
+        ?.mensagem ??
+      "",
+  };
+}
+
+
+/* =========================================================
    COMPONENTE
 ========================================================= */
 
@@ -405,34 +601,7 @@ export default function PedidosPage() {
     ],
 
     queryFn: async () => {
-      const {
-        data: sessaoData,
-
-        error: sessaoErro,
-      } =
-        await supabase.auth.getSession();
-
-      if (sessaoErro) {
-        throw new Error(
-          "Não foi possível validar sua sessão.",
-        );
-      }
-
-      const accessToken =
-        sessaoData?.session
-          ?.access_token;
-
-      if (!accessToken) {
-        throw new Error(
-          "Sua sessão expirou. Entre novamente no sistema.",
-        );
-      }
-
-      return await buscarPedidosOmie({
-        data: {
-          accessToken,
-        },
-      });
+      return await buscarPedidosDiretoSupabase();
     },
 
     refetchInterval:

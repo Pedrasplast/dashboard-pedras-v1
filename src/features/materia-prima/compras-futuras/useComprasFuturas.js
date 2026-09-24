@@ -6,6 +6,7 @@ import {
 
 import {
   buscarComprasFuturas,
+  confirmarChegadaCompraFutura as confirmarChegadaCompraFuturaService,
   excluirCompraFutura as excluirCompraFuturaService,
   salvarCompraFutura as salvarCompraFuturaService,
 } from "./comprasFuturasService";
@@ -22,6 +23,8 @@ export default function useComprasFuturas({
   const [salvandoId, setSalvandoId] = useState(null);
   const [excluindo, setExcluindo] = useState(false);
   const [excluindoId, setExcluindoId] = useState(null);
+  const [confirmandoChegada, setConfirmandoChegada] = useState(false);
+  const [confirmandoChegadaId, setConfirmandoChegadaId] = useState(null);
 
   const carregarCompras = useCallback(async () => {
     setCarregando(true);
@@ -98,6 +101,38 @@ export default function useComprasFuturas({
     [carregarCompras],
   );
 
+  const confirmarChegadaCompraFutura = useCallback(
+    async ({
+      id,
+      dataRecebimento,
+    }) => {
+      if (id === null || id === undefined) {
+        throw new Error(
+          "Compra futura não informada.",
+        );
+      }
+
+      setConfirmandoChegada(true);
+      setConfirmandoChegadaId(id);
+
+      try {
+        const resultado =
+          await confirmarChegadaCompraFuturaService(
+            id,
+            dataRecebimento,
+          );
+
+        await carregarCompras();
+
+        return resultado;
+      } finally {
+        setConfirmandoChegada(false);
+        setConfirmandoChegadaId(null);
+      }
+    },
+    [carregarCompras],
+  );
+
   const excluirCompraFutura = useCallback(
     async (id) => {
       if (id === null || id === undefined) {
@@ -140,9 +175,22 @@ export default function useComprasFuturas({
   const compraEstaExcluindo = useCallback(
     (id) => {
       if (!excluindo) return false;
+
       return String(id) === String(excluindoId);
     },
     [excluindo, excluindoId],
+  );
+
+  const compraEstaConfirmandoChegada = useCallback(
+    (id) => {
+      if (!confirmandoChegada) return false;
+
+      return String(id) === String(confirmandoChegadaId);
+    },
+    [
+      confirmandoChegada,
+      confirmandoChegadaId,
+    ],
   );
 
   return {
@@ -153,10 +201,13 @@ export default function useComprasFuturas({
     erro,
     salvando,
     excluindo,
+    confirmandoChegada,
     recarregar,
     salvarCompraFutura,
+    confirmarChegadaCompraFutura,
     excluirCompraFutura,
     compraEstaSalvando,
     compraEstaExcluindo,
+    compraEstaConfirmandoChegada,
   };
 }

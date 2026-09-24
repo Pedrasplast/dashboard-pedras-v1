@@ -20,6 +20,7 @@ import ConfirmacaoExclusao
   from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import CompraFuturaModal from "./CompraFuturaModal";
+import ConfirmarChegadaModal from "./ConfirmarChegadaModal";
 import useComprasFuturas from "./useComprasFuturas";
 
 import "./ComprasFuturas.css";
@@ -102,6 +103,7 @@ export default function ComprasFuturas() {
   const [itemEdicao, setItemEdicao] = useState(null);
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const [erroExclusao, setErroExclusao] = useState("");
+  const [itemParaConfirmarChegada, setItemParaConfirmarChegada] = useState(null);
 
   const {
     compras,
@@ -111,11 +113,14 @@ export default function ComprasFuturas() {
     erro,
     salvando,
     excluindo,
+    confirmandoChegada,
     recarregar,
     salvarCompraFutura,
+    confirmarChegadaCompraFutura,
     excluirCompraFutura,
     compraEstaSalvando,
     compraEstaExcluindo,
+    compraEstaConfirmandoChegada,
   } = useComprasFuturas();
 
   const filtradas = useMemo(() => {
@@ -165,14 +170,14 @@ export default function ComprasFuturas() {
   }, [compras]);
 
   function novo() {
-    if (salvando || excluindo) return;
+    if (salvando || excluindo || confirmandoChegada) return;
 
     setItemEdicao(null);
     setModalAberto(true);
   }
 
   function editar(compra) {
-    if (!compra || salvando || excluindo) return;
+    if (!compra || salvando || excluindo || confirmandoChegada) return;
 
     setItemEdicao(compra);
     setModalAberto(true);
@@ -185,8 +190,39 @@ export default function ComprasFuturas() {
     setItemEdicao(null);
   }
 
+  function solicitarConfirmacaoChegada(compra) {
+    if (
+      !compra ||
+      salvando ||
+      excluindo ||
+      confirmandoChegada ||
+      (compra.status !== "PREVISTA" && compra.status !== "CONFIRMADA")
+    ) {
+      return;
+    }
+
+    setItemParaConfirmarChegada(compra);
+  }
+
+  function cancelarConfirmacaoChegada() {
+    if (confirmandoChegada) return;
+    setItemParaConfirmarChegada(null);
+  }
+
+  async function confirmarChegada({
+    id,
+    dataRecebimento,
+  }) {
+    await confirmarChegadaCompraFutura({
+      id,
+      dataRecebimento,
+    });
+
+    setItemParaConfirmarChegada(null);
+  }
+
   function solicitarExclusao(compra) {
-    if (!compra || salvando || excluindo) return;
+    if (!compra || salvando || excluindo || confirmandoChegada) return;
 
     setErroExclusao("");
     setItemParaExcluir(compra);
@@ -276,7 +312,7 @@ export default function ComprasFuturas() {
             type="button"
             className="compras-futuras-nova"
             onClick={novo}
-            disabled={salvando || excluindo}
+            disabled={salvando || excluindo || confirmandoChegada}
           >
             <Plus size={17} />
             Nova compra
@@ -310,7 +346,7 @@ export default function ComprasFuturas() {
             type="button"
             className="compras-futuras-atualizar"
             onClick={recarregar}
-            disabled={carregando || salvando || excluindo}
+            disabled={carregando || salvando || excluindo || confirmandoChegada}
           >
             <RefreshCw
               size={16}
@@ -376,6 +412,9 @@ export default function ComprasFuturas() {
                     const estaExcluindo =
                       compraEstaExcluindo(compra.id);
 
+                    const estaConfirmandoChegada =
+                      compraEstaConfirmandoChegada(compra.id);
+
                     return (
                       <tr key={compra.id}>
                         <td>{formatarData(compra.dataCompra)}</td>
@@ -416,11 +455,26 @@ export default function ComprasFuturas() {
 
                         <td>
                           <div className="compras-futuras-acoes">
+                            {(compra.status === "PREVISTA" ||
+                              compra.status === "CONFIRMADA") && (
+                              <button
+                                type="button"
+                                className="compras-futuras-confirmar-chegada"
+                                onClick={() => solicitarConfirmacaoChegada(compra)}
+                                disabled={salvando || excluindo || confirmandoChegada}
+                              >
+                                <CheckCircle2 size={14} />
+                                {estaConfirmandoChegada
+                                  ? "Confirmando..."
+                                  : "Confirmar chegada"}
+                              </button>
+                            )}
+
                             <button
                               type="button"
                               className="compras-futuras-editar"
                               onClick={() => editar(compra)}
-                              disabled={salvando || excluindo}
+                              disabled={salvando || excluindo || confirmandoChegada}
                             >
                               <Pencil size={14} />
                               {estaSalvando ? "Salvando..." : "Editar"}
@@ -430,7 +484,7 @@ export default function ComprasFuturas() {
                               type="button"
                               className="compras-futuras-editar compras-futuras-excluir"
                               onClick={() => solicitarExclusao(compra)}
-                              disabled={salvando || excluindo}
+                              disabled={salvando || excluindo || confirmandoChegada}
                             >
                               <Trash2 size={14} />
                               {estaExcluindo ? "Excluindo..." : "Excluir"}
@@ -469,6 +523,14 @@ export default function ComprasFuturas() {
           setItemEdicao(null);
         }}
         onSalvar={salvar}
+      />
+
+      <ConfirmarChegadaModal
+        aberto={Boolean(itemParaConfirmarChegada)}
+        item={itemParaConfirmarChegada}
+        processando={confirmandoChegada}
+        onCancelar={cancelarConfirmacaoChegada}
+        onConfirmar={confirmarChegada}
       />
 
       <ConfirmacaoExclusao
