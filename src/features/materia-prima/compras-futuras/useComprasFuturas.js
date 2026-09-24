@@ -16,6 +16,8 @@ export default function useComprasFuturas({
 } = {}) {
   const [compras, setCompras] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
+  const [materiais, setMateriais] = useState([]);
+  const [fornecedorMateriais, setFornecedorMateriais] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [carregado, setCarregado] = useState(false);
   const [erro, setErro] = useState("");
@@ -45,6 +47,18 @@ export default function useComprasFuturas({
           : [],
       );
 
+      setMateriais(
+        Array.isArray(resultado?.materiais)
+          ? resultado.materiais
+          : [],
+      );
+
+      setFornecedorMateriais(
+        Array.isArray(resultado?.fornecedorMateriais)
+          ? resultado.fornecedorMateriais
+          : [],
+      );
+
       setCarregado(true);
     } catch (error) {
       console.error(
@@ -54,6 +68,8 @@ export default function useComprasFuturas({
 
       setCompras([]);
       setFornecedores([]);
+      setMateriais([]);
+      setFornecedorMateriais([]);
       setErro(
         error?.message ||
         "Não foi possível carregar as compras futuras.",
@@ -196,6 +212,8 @@ export default function useComprasFuturas({
   return {
     compras,
     fornecedores,
+    materiais,
+    fornecedorMateriais,
     carregando,
     carregado,
     erro,

@@ -71,12 +71,28 @@ const NAVIGATION_GROUPS = Object.freeze([
 
         id: "cadastro-produto",
 
-        label: "Produtos e Fornecedores",
+        label: "Produto",
 
         path: "/cadastro-produto",
 
         icon: ClipboardList,
 
+        permissao: "cadastros",
+      },
+      {
+        type: "link",
+        id: "cadastro-fornecedor",
+        label: "Fornecedor",
+        path: "/cadastro-fornecedor",
+        icon: Users,
+        permissao: "cadastros",
+      },
+      {
+        type: "link",
+        id: "cadastro-material",
+        label: "Material",
+        path: "/cadastro-material",
+        icon: Boxes,
         permissao: "cadastros",
       },
     ],
@@ -1253,4 +1269,3 @@ function Navbar({ user, isAdmin }) {
 }
 
 export default memo(Navbar);
-

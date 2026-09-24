@@ -426,3 +426,15 @@
     width: 100%;
   }
 }
+
+.entradas-pp-tabela th {
+  font-size: 13px;
+}
+
+.entradas-pp-tabela td {
+  font-size: 12px;
+}
+
+.entradas-pp-tabela td small {
+  font-size: 11px;
+}

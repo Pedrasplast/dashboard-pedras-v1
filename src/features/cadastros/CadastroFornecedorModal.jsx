@@ -72,6 +72,8 @@ function normalizarNumero(valor) {
 export default function CadastroFornecedorModal({
   aberto,
   item = null,
+  materiais = [],
+  vinculosMateriais = [],
   salvando = false,
   onCancelar,
   onSalvar,
@@ -100,6 +102,16 @@ export default function CadastroFornecedorModal({
     ativo,
     setAtivo,
   ] = useState(true);
+
+  const [
+    materiaisSelecionados,
+    setMateriaisSelecionados,
+  ] = useState([]);
+
+  const [
+    materialPadraoId,
+    setMaterialPadraoId,
+  ] = useState("");
 
   const [
     erro,
@@ -150,11 +162,54 @@ export default function CadastroFornecedorModal({
         setAtivo(true);
       }
 
+      const vinculosAtivos =
+        (
+          Array.isArray(
+            vinculosMateriais,
+          )
+            ? vinculosMateriais
+            : []
+        ).filter(
+          (vinculo) =>
+            vinculo.ativo !==
+            false,
+        );
+
+      setMateriaisSelecionados(
+        vinculosAtivos.map(
+          (vinculo) =>
+            String(
+              vinculo.materialId,
+            ),
+        ),
+      );
+
+      const vinculoPadrao =
+        vinculosAtivos.find(
+          (vinculo) =>
+            vinculo.padrao ===
+            true,
+        );
+
+      setMaterialPadraoId(
+        vinculoPadrao
+          ? String(
+              vinculoPadrao.materialId,
+            )
+          : vinculosAtivos[0]
+            ? String(
+                vinculosAtivos[0]
+                  .materialId,
+              )
+            : "",
+      );
+
       setErro("");
     },
     [
       aberto,
       item,
+      vinculosMateriais,
     ],
   );
 
@@ -340,6 +395,28 @@ export default function CadastroFornecedorModal({
       return;
     }
 
+    if (
+      materiaisSelecionados.length ===
+      0
+    ) {
+      setErro(
+        "Selecione pelo menos um material fornecido.",
+      );
+
+      return;
+    }
+
+    const materialPadraoFinal =
+      materiaisSelecionados.includes(
+        String(
+          materialPadraoId,
+        ),
+      )
+        ? String(
+            materialPadraoId,
+          )
+        : materiaisSelecionados[0];
+
     try {
       await onSalvar?.({
         id:
@@ -359,6 +436,12 @@ export default function CadastroFornecedorModal({
 
         leadTimeDias:
           leadFinal,
+
+        materialIds:
+          materiaisSelecionados,
+
+        materialPadraoId:
+          materialPadraoFinal,
       });
     } catch (error) {
       setErro(
@@ -530,6 +613,167 @@ export default function CadastroFornecedorModal({
               </span>
             </div>
           </label>
+
+          <div className="produto-pp-modal-campo">
+            <span>
+              Materiais fornecidos
+            </span>
+
+            <div className="cadastro-fornecedor-materiais">
+              {materiais
+                .filter(
+                  (material) =>
+                    material.ativo ||
+                    materiaisSelecionados.includes(
+                      String(
+                        material.id,
+                      ),
+                    ),
+                )
+                .map(
+                  (material) => {
+                    const materialId =
+                      String(
+                        material.id,
+                      );
+
+                    const selecionado =
+                      materiaisSelecionados.includes(
+                        materialId,
+                      );
+
+                    return (
+                      <div
+                        key={
+                          material.id
+                        }
+                        className={
+                          selecionado
+                            ? "cadastro-fornecedor-material cadastro-fornecedor-material--selecionado"
+                            : "cadastro-fornecedor-material"
+                        }
+                      >
+                        <label className="cadastro-fornecedor-material__check">
+                          <input
+                            type="checkbox"
+                            checked={
+                              selecionado
+                            }
+                            onChange={
+                              (event) => {
+                                const marcado =
+                                  event
+                                    .target
+                                    .checked;
+
+                                setErro(
+                                  "",
+                                );
+
+                                setMateriaisSelecionados(
+                                  (
+                                    atual,
+                                  ) => {
+                                    const proximos =
+                                      marcado
+                                        ? [
+                                            ...new Set([
+                                              ...atual,
+                                              materialId,
+                                            ]),
+                                          ]
+                                        : atual.filter(
+                                            (
+                                              id,
+                                            ) =>
+                                              id !==
+                                              materialId,
+                                          );
+
+                                    if (
+                                      !proximos.includes(
+                                        String(
+                                          materialPadraoId,
+                                        ),
+                                      )
+                                    ) {
+                                      setMaterialPadraoId(
+                                        proximos[0] ??
+                                          "",
+                                      );
+                                    }
+
+                                    return proximos;
+                                  },
+                                );
+                              }
+                            }
+                            disabled={
+                              salvando
+                            }
+                          />
+
+                          <span>
+                            {
+                              material.nome
+                            }
+                          </span>
+                        </label>
+
+                        {selecionado && (
+                          <label className="cadastro-fornecedor-material__padrao">
+                            <input
+                              type="radio"
+                              name="material-padrao"
+                              checked={
+                                String(
+                                  materialPadraoId,
+                                ) ===
+                                materialId
+                              }
+                              onChange={
+                                () =>
+                                  setMaterialPadraoId(
+                                    materialId,
+                                  )
+                              }
+                              disabled={
+                                salvando
+                              }
+                            />
+
+                            <span>
+                              Padrão
+                            </span>
+                          </label>
+                        )}
+                      </div>
+                    );
+                  },
+                )}
+            </div>
+
+            {materiais.length ===
+              0 && (
+              <small className="cadastro-fornecedor-materiais-ajuda">
+                Cadastre primeiro
+                um material em
+                Cadastro &gt;
+                Material.
+              </small>
+            )}
+
+            {materiais.length >
+              0 && (
+              <small className="cadastro-fornecedor-materiais-ajuda">
+                Selecione todos
+                os materiais que
+                este fornecedor
+                vende e marque um
+                deles como padrão.
+              </small>
+            )}
+          </div>
 
           <label className="produto-pp-modal-status">
             <input

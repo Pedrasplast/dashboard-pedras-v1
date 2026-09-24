@@ -3,28 +3,28 @@ import { createFileRoute } from "@tanstack/react-router";
 import RotaProtegida from "@/components/layout/RotaProtegida";
 import CadastrosPage from "@/features/cadastros/CadastrosPage";
 
-export const Route = createFileRoute("/cadastro-produto")({
+export const Route = createFileRoute("/cadastro-fornecedor")({
   ssr: false,
 
   head: () => ({
     meta: [
       {
-        title: "Cadastro de produto | Pedrasplast",
+        title: "Cadastro de fornecedor | Pedrasplast",
       },
       {
         name: "description",
-        content: "Cadastro de produtos e parâmetros de produção.",
+        content: "Cadastro de fornecedores e parâmetros de abastecimento.",
       },
     ],
   }),
 
-  component: CadastroProdutoRoute,
+  component: CadastroFornecedorRoute,
 });
 
-function CadastroProdutoRoute() {
+function CadastroFornecedorRoute() {
   return (
     <RotaProtegida permissao="cadastros">
-      <CadastrosPage key="produtos" tipo="produtos" />
+      <CadastrosPage key="fornecedores" tipo="fornecedores" />
     </RotaProtegida>
   );
 }

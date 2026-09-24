@@ -829,3 +829,113 @@
       100%;
   }
 }
+
+
+/* =========================================================
+   MATERIAIS DO FORNECEDOR
+========================================================= */
+
+.cadastro-fornecedor-materiais {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cadastro-fornecedor-material {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 42px;
+
+  padding: 9px 11px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    9px;
+
+  background:
+    #ffffff;
+}
+
+.cadastro-fornecedor-material--selecionado {
+  border-color:
+    #bfdbfe;
+
+  background:
+    #eff6ff;
+}
+
+.cadastro-fornecedor-material__check,
+.cadastro-fornecedor-material__padrao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color:
+    #334155;
+
+  font-size:
+    12px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+}
+
+.cadastro-fornecedor-material__check {
+  flex: 1;
+}
+
+.cadastro-fornecedor-material__check input,
+.cadastro-fornecedor-material__padrao input {
+  width: 16px;
+  height: 16px;
+
+  accent-color:
+    #2563eb;
+}
+
+.cadastro-fornecedor-material__padrao {
+  flex: 0 0 auto;
+
+  color:
+    #2563eb;
+
+  font-size:
+    10px;
+}
+
+.cadastro-fornecedor-materiais-ajuda {
+  display: block;
+
+  margin-top:
+    1px;
+
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+
+  line-height:
+    1.45;
+}
+
+@media (
+  max-width: 700px
+) {
+  .cadastro-fornecedor-material {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+}

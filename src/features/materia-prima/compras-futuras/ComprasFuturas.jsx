@@ -57,12 +57,12 @@ function formatarPrecoKg(valor) {
     return "-";
   }
 
-  return `${Number(valor).toLocaleString("pt-BR", {
+  return Number(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })}/kg`;
+  });
 }
 
 function formatarCustoKg(valor) {
@@ -70,12 +70,12 @@ function formatarCustoKg(valor) {
     return "-";
   }
 
-  return `${Number(valor).toLocaleString("pt-BR", {
+  return Number(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
-  })}/kg`;
+  });
 }
 
 function formatarPercentual(valor) {
@@ -99,6 +99,7 @@ function normalizarTexto(valor) {
 export default function ComprasFuturas() {
   const [busca, setBusca] = useState("");
   const [statusFiltro, setStatusFiltro] = useState("ABERTAS");
+  const [materialFiltro, setMaterialFiltro] = useState("TODOS");
   const [modalAberto, setModalAberto] = useState(false);
   const [itemEdicao, setItemEdicao] = useState(null);
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
@@ -108,6 +109,8 @@ export default function ComprasFuturas() {
   const {
     compras,
     fornecedores,
+    materiais,
+    fornecedorMateriais,
     carregando,
     carregado,
     erro,
@@ -130,6 +133,7 @@ export default function ComprasFuturas() {
       const buscaOk =
         !termo ||
         normalizarTexto(compra.fornecedorNome).includes(termo) ||
+        normalizarTexto(compra.materialNome).includes(termo) ||
         normalizarTexto(compra.numeroPedido).includes(termo) ||
         normalizarTexto(compra.numeroNf).includes(termo);
 
@@ -143,12 +147,24 @@ export default function ComprasFuturas() {
         statusOk = compra.status === statusFiltro;
       }
 
-      return buscaOk && statusOk;
+      const materialOk =
+        materialFiltro === "TODOS" ||
+        String(compra.materialId) === String(materialFiltro);
+
+      return buscaOk && statusOk && materialOk;
     });
-  }, [compras, busca, statusFiltro]);
+  }, [compras, busca, statusFiltro, materialFiltro]);
 
   const indicadores = useMemo(() => {
-    const abertas = compras.filter(
+    const comprasMaterial =
+      materialFiltro === "TODOS"
+        ? compras
+        : compras.filter(
+            (compra) =>
+              String(compra.materialId) === String(materialFiltro),
+          );
+
+    const abertas = comprasMaterial.filter(
       (compra) =>
         compra.ativo &&
         (
@@ -163,11 +179,22 @@ export default function ComprasFuturas() {
         (total, compra) => total + Number(compra.quantidadeKg),
         0,
       ),
-      recebidas: compras.filter(
+      recebidas: comprasMaterial.filter(
         (compra) => compra.status === "RECEBIDA",
       ).length,
     };
-  }, [compras]);
+  }, [compras, materialFiltro]);
+
+  const materialSelecionadoNome = useMemo(
+    () =>
+      materialFiltro === "TODOS"
+        ? "Matéria-prima"
+        : materiais.find(
+            (material) =>
+              String(material.id) === String(materialFiltro),
+          )?.nome ?? "Material",
+    [materialFiltro, materiais],
+  );
 
   function novo() {
     if (salvando || excluindo || confirmandoChegada) return;
@@ -298,7 +325,7 @@ export default function ComprasFuturas() {
             </div>
 
             <div>
-              <span>PP a receber</span>
+              <span>{materialSelecionadoNome} a receber</span>
               <strong>{formatarKg(indicadores.quantidadeAberta)}</strong>
             </div>
 
@@ -329,6 +356,22 @@ export default function ComprasFuturas() {
               placeholder="Buscar fornecedor, pedido ou NF..."
             />
           </label>
+
+          <select
+            value={materialFiltro}
+            onChange={(event) => setMaterialFiltro(event.target.value)}
+            aria-label="Filtrar por material"
+          >
+            <option value="TODOS">Todos os materiais</option>
+
+            {materiais
+              .filter((material) => material.ativo)
+              .map((material) => (
+                <option key={material.id} value={material.id}>
+                  {material.nome}
+                </option>
+              ))}
+          </select>
 
           <select
             value={statusFiltro}
@@ -378,7 +421,7 @@ export default function ComprasFuturas() {
             <div className="compras-futuras-estado">
               <ShoppingCart size={34} />
               <strong>Nenhuma compra cadastrada</strong>
-              <p>Cadastre as compras de PP previstas para recebimento.</p>
+              <p>Cadastre as compras de matéria-prima previstas para recebimento.</p>
             </div>
           )}
 
@@ -389,16 +432,16 @@ export default function ComprasFuturas() {
               <table className="compras-futuras-tabela">
                 <thead>
                   <tr>
-                    <th>Compra</th>
-                    <th>Previsão</th>
-                    <th>Recebimento</th>
+                    <th>Pedido (OC)</th>
+                    <th>Emissão</th>
+                    <th>Previsão Recebimento</th>
                     <th>Fornecedor</th>
-                    <th>Quantidade</th>
+                    <th>Material</th>
+                    <th>Quantidade(kg)</th>
                     <th>Preço/kg</th>
                     <th>IPI</th>
                     <th>Total</th>
                     <th>Custo/kg</th>
-                    <th>Pedido</th>
                     <th>Status</th>
                     <th>Ações</th>
                   </tr>
@@ -417,16 +460,31 @@ export default function ComprasFuturas() {
 
                     return (
                       <tr key={compra.id}>
+                        <td>
+                          <strong>{compra.numeroPedido || "-"}</strong>
+                        </td>
+
                         <td>{formatarData(compra.dataCompra)}</td>
                         <td>{formatarData(compra.dataPrevista)}</td>
-                        <td>{formatarData(compra.dataRecebimento)}</td>
 
                         <td>
                           <strong>{compra.fornecedorNome}</strong>
                         </td>
 
+                        <td>
+                          <strong>{compra.materialNome || "-"}</strong>
+                        </td>
+
                         <td className="compras-futuras-quantidade">
-                          {formatarKg(compra.quantidadeKg)}
+                          {Number(
+                            compra.quantidadeKg ?? 0,
+                          ).toLocaleString(
+                            "pt-BR",
+                            {
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            },
+                          )}
                         </td>
 
                         <td className="compras-futuras-financeiro">
@@ -448,8 +506,6 @@ export default function ComprasFuturas() {
                         <td className="compras-futuras-financeiro">
                           {formatarCustoKg(compra.custoEfetivoKg)}
                         </td>
-
-                        <td>{compra.numeroPedido || "-"}</td>
 
                         <td>{statusCompra(compra)}</td>
 
@@ -515,6 +571,8 @@ export default function ComprasFuturas() {
         aberto={modalAberto}
         item={itemEdicao}
         fornecedores={fornecedores}
+        materiais={materiais}
+        fornecedorMateriais={fornecedorMateriais}
         salvando={salvando}
         onCancelar={() => {
           if (salvando) return;
@@ -541,9 +599,13 @@ export default function ComprasFuturas() {
         itemDescricao={
           itemParaExcluir?.numeroPedido
             ? `Pedido ${itemParaExcluir.numeroPedido}`
-            : "Compra de PP"
+            : `Compra de ${itemParaExcluir?.materialNome || "matéria-prima"}`
         }
         detalhes={[
+          {
+            label: "Material",
+            valor: itemParaExcluir?.materialNome || "-",
+          },
           {
             label: "Quantidade",
             valor: itemParaExcluir
