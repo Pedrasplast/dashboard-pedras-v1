@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as CadastroFornecedorRouteImport } from './routes/cadastro-fornecedor'
+import { Route as CadastroMaterialRouteImport } from './routes/cadastro-material'
 import { Route as CadastroProdutoRouteImport } from './routes/cadastro-produto'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
@@ -41,6 +43,16 @@ const AdministracaoRoute = AdministracaoRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroFornecedorRoute = CadastroFornecedorRouteImport.update({
+  id: '/cadastro-fornecedor',
+  path: '/cadastro-fornecedor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroMaterialRoute = CadastroMaterialRouteImport.update({
+  id: '/cadastro-material',
+  path: '/cadastro-material',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CadastroProdutoRoute = CadastroProdutoRouteImport.update({
@@ -124,6 +136,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-fornecedor': typeof CadastroFornecedorRoute
+  '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -144,6 +158,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-fornecedor': typeof CadastroFornecedorRoute
+  '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -165,6 +181,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/administracao': typeof AdministracaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-fornecedor': typeof CadastroFornecedorRoute
+  '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -187,6 +205,8 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-fornecedor'
+    | '/cadastro-material'
     | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -207,6 +227,8 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-fornecedor'
+    | '/cadastro-material'
     | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -227,6 +249,8 @@ export interface FileRouteTypes {
     | '/'
     | '/administracao'
     | '/cadastro'
+    | '/cadastro-fornecedor'
+    | '/cadastro-material'
     | '/cadastro-produto'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -248,6 +272,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdministracaoRoute: typeof AdministracaoRoute
   CadastroRoute: typeof CadastroRoute
+  CadastroFornecedorRoute: typeof CadastroFornecedorRoute
+  CadastroMaterialRoute: typeof CadastroMaterialRoute
   CadastroProdutoRoute: typeof CadastroProdutoRoute
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
@@ -286,6 +312,20 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-fornecedor': {
+      id: '/cadastro-fornecedor'
+      path: '/cadastro-fornecedor'
+      fullPath: '/cadastro-fornecedor'
+      preLoaderRoute: typeof CadastroFornecedorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-material': {
+      id: '/cadastro-material'
+      path: '/cadastro-material'
+      fullPath: '/cadastro-material'
+      preLoaderRoute: typeof CadastroMaterialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cadastro-produto': {
@@ -400,6 +440,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdministracaoRoute: AdministracaoRoute,
   CadastroRoute: CadastroRoute,
+  CadastroFornecedorRoute: CadastroFornecedorRoute,
+  CadastroMaterialRoute: CadastroMaterialRoute,
   CadastroProdutoRoute: CadastroProdutoRoute,
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,

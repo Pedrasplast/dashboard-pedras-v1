@@ -482,3 +482,401 @@ export async function salvarFornecedorCadastro({
       data,
   };
 }
+
+
+/* =========================================================
+   MATERIAIS
+========================================================= */
+
+export async function buscarMateriaisCadastro() {
+  const { data, error } =
+    await supabase
+      .from(
+        "materia_prima_materiais",
+      )
+      .select(`
+        id,
+        nome,
+        ativo,
+        criado_em,
+        atualizado_em
+      `)
+      .order(
+        "nome",
+        {
+          ascending: true,
+        },
+      );
+
+  if (error) {
+    throw new Error(
+      `Erro ao carregar materiais: ${error.message}`,
+    );
+  }
+
+  const materiais =
+    Array.isArray(data)
+      ? data
+      : [];
+
+  return materiais.map(
+    (material) => ({
+      id:
+        material.id,
+
+      nome:
+        texto(
+          material.nome,
+        ),
+
+      ativo:
+        material.ativo ===
+        true,
+
+      criadoEm:
+        material.criado_em ??
+        null,
+
+      atualizadoEm:
+        material.atualizado_em ??
+        null,
+    }),
+  );
+}
+
+/* =========================================================
+   SALVAR MATERIAL
+========================================================= */
+
+export async function salvarMaterialCadastro({
+  id,
+  nome,
+  ativo,
+}) {
+  const nomeFinal =
+    texto(nome);
+
+  if (!nomeFinal) {
+    throw new Error(
+      "Informe o nome do material.",
+    );
+  }
+
+  const payload = {
+    nome:
+      nomeFinal,
+
+    ativo:
+      ativo === true,
+
+    atualizado_em:
+      new Date()
+        .toISOString(),
+  };
+
+  const consulta =
+    supabase
+      .from(
+        "materia_prima_materiais",
+      );
+
+  const {
+    data,
+    error,
+  } =
+    id
+      ? await consulta
+          .update(
+            payload,
+          )
+          .eq(
+            "id",
+            id,
+          )
+          .select(`
+            id,
+            nome,
+            ativo,
+            criado_em,
+            atualizado_em
+          `)
+          .single()
+      : await consulta
+          .insert({
+            ...payload,
+
+            criado_em:
+              new Date()
+                .toISOString(),
+          })
+          .select(`
+            id,
+            nome,
+            ativo,
+            criado_em,
+            atualizado_em
+          `)
+          .single();
+
+  if (error) {
+    if (
+      error.code ===
+      "23505"
+    ) {
+      throw new Error(
+        "Já existe um material com esse nome.",
+      );
+    }
+
+    throw new Error(
+      error.message ||
+        "Erro ao salvar material.",
+    );
+  }
+
+  return {
+    acao:
+      id
+        ? "atualizado"
+        : "criado",
+
+    material:
+      data,
+  };
+}
+
+/* =========================================================
+   FORNECEDOR X MATERIAL
+========================================================= */
+
+export async function buscarFornecedorMateriaisCadastro() {
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_fornecedor_materiais",
+      )
+      .select(`
+        id,
+        fornecedor_id,
+        material_id,
+        padrao,
+        ativo,
+        criado_em,
+        atualizado_em
+      `)
+      .order(
+        "fornecedor_id",
+        {
+          ascending: true,
+        },
+      )
+      .order(
+        "id",
+        {
+          ascending: true,
+        },
+      );
+
+  if (error) {
+    throw new Error(
+      `Erro ao carregar materiais dos fornecedores: ${error.message}`,
+    );
+  }
+
+  const vinculos =
+    Array.isArray(data)
+      ? data
+      : [];
+
+  return vinculos.map(
+    (vinculo) => ({
+      id:
+        vinculo.id,
+
+      fornecedorId:
+        vinculo.fornecedor_id,
+
+      materialId:
+        vinculo.material_id,
+
+      padrao:
+        vinculo.padrao ===
+        true,
+
+      ativo:
+        vinculo.ativo ===
+        true,
+
+      criadoEm:
+        vinculo.criado_em ??
+        null,
+
+      atualizadoEm:
+        vinculo.atualizado_em ??
+        null,
+    }),
+  );
+}
+
+/* =========================================================
+   SALVAR MATERIAIS DO FORNECEDOR
+========================================================= */
+
+export async function salvarMateriaisFornecedorCadastro({
+  fornecedorId,
+  materialIds,
+  materialPadraoId,
+}) {
+  if (
+    fornecedorId === null ||
+    fornecedorId === undefined ||
+    fornecedorId === ""
+  ) {
+    throw new Error(
+      "Fornecedor não informado.",
+    );
+  }
+
+  const ids =
+    [
+      ...new Set(
+        (
+          Array.isArray(
+            materialIds,
+          )
+            ? materialIds
+            : []
+        )
+          .map(
+            (id) =>
+              Number(id),
+          )
+          .filter(
+            Number.isFinite,
+          ),
+      ),
+    ];
+
+  if (
+    ids.length === 0
+  ) {
+    throw new Error(
+      "Selecione pelo menos um material fornecido.",
+    );
+  }
+
+  const padraoFinal =
+    Number(
+      materialPadraoId ??
+      ids[0],
+    );
+
+  if (
+    !Number.isFinite(
+      padraoFinal,
+    ) ||
+    !ids.includes(
+      padraoFinal,
+    )
+  ) {
+    throw new Error(
+      "Defina um material padrão válido.",
+    );
+  }
+
+  const {
+    error:
+      erroDesativar,
+  } =
+    await supabase
+      .from(
+        "materia_prima_fornecedor_materiais",
+      )
+      .update({
+        ativo:
+          false,
+
+        padrao:
+          false,
+
+        atualizado_em:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "fornecedor_id",
+        fornecedorId,
+      )
+      .eq(
+        "ativo",
+        true,
+      );
+
+  if (erroDesativar) {
+    throw new Error(
+      erroDesativar.message ||
+        "Erro ao atualizar os materiais do fornecedor.",
+    );
+  }
+
+  const agora =
+    new Date()
+      .toISOString();
+
+  const linhas =
+    ids.map(
+      (materialId) => ({
+        fornecedor_id:
+          fornecedorId,
+
+        material_id:
+          materialId,
+
+        padrao:
+          materialId ===
+          padraoFinal,
+
+        ativo:
+          true,
+
+        atualizado_em:
+          agora,
+      }),
+    );
+
+  const {
+    error:
+      erroSalvar,
+  } =
+    await supabase
+      .from(
+        "materia_prima_fornecedor_materiais",
+      )
+      .upsert(
+        linhas,
+        {
+          onConflict:
+            "fornecedor_id,material_id",
+        },
+      );
+
+  if (erroSalvar) {
+    throw new Error(
+      erroSalvar.message ||
+        "Erro ao vincular os materiais ao fornecedor.",
+    );
+  }
+
+  return {
+    fornecedorId,
+
+    materialIds:
+      ids,
+
+    materialPadraoId:
+      padraoFinal,
+  };
+}

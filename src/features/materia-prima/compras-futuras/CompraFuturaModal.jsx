@@ -123,6 +123,8 @@ export default function CompraFuturaModal({
   aberto,
   item = null,
   fornecedores = [],
+  materiais = [],
+  fornecedorMateriais = [],
   salvando = false,
   onCancelar,
   onSalvar,
@@ -130,6 +132,7 @@ export default function CompraFuturaModal({
   const [dataCompra, setDataCompra] = useState("");
   const [dataPrevista, setDataPrevista] = useState("");
   const [fornecedorId, setFornecedorId] = useState("");
+  const [materialId, setMaterialId] = useState("");
   const [quantidadeKg, setQuantidadeKg] = useState("");
   const [numeroPedido, setNumeroPedido] = useState("");
   const [observacao, setObservacao] = useState("");
@@ -156,6 +159,7 @@ export default function CompraFuturaModal({
       setDataCompra(item.dataCompra || hoje);
       setDataPrevista(item.dataPrevista || hoje);
       setFornecedorId(String(item.fornecedorId ?? ""));
+      setMaterialId(String(item.materialId ?? ""));
       setQuantidadeKg(numeroParaInput(item.quantidadeKg));
       setNumeroPedido(item.numeroPedido || "");
       setObservacao(item.observacao || "");
@@ -174,6 +178,7 @@ export default function CompraFuturaModal({
       setDataCompra(hoje);
       setDataPrevista(hoje);
       setFornecedorId("");
+      setMaterialId("");
       setQuantidadeKg("");
       setNumeroPedido("");
       setObservacao("");
@@ -205,6 +210,74 @@ export default function CompraFuturaModal({
     document.addEventListener("keydown", teclado);
     return () => document.removeEventListener("keydown", teclado);
   }, [aberto, salvando, onCancelar]);
+
+  const vinculosFornecedorSelecionado = useMemo(
+    () =>
+      fornecedorMateriais.filter(
+        (vinculo) =>
+          vinculo.ativo !== false &&
+          String(vinculo.fornecedorId) === String(fornecedorId),
+      ),
+    [
+      fornecedorMateriais,
+      fornecedorId,
+    ],
+  );
+
+  const materiaisDisponiveis = useMemo(
+    () =>
+      vinculosFornecedorSelecionado
+        .map((vinculo) => {
+          const material = materiais.find(
+            (itemMaterial) =>
+              String(itemMaterial.id) === String(vinculo.materialId),
+          );
+
+          if (!material) {
+            return null;
+          }
+
+          if (
+            material.ativo === false &&
+            String(material.id) !== String(materialId)
+          ) {
+            return null;
+          }
+
+          return {
+            ...material,
+            padrao: vinculo.padrao === true,
+          };
+        })
+        .filter(Boolean),
+    [
+      vinculosFornecedorSelecionado,
+      materiais,
+      materialId,
+    ],
+  );
+
+  function alterarFornecedor(novoFornecedorId) {
+    setFornecedorId(novoFornecedorId);
+    setErro("");
+
+    const vinculos = fornecedorMateriais.filter(
+      (vinculo) =>
+        vinculo.ativo !== false &&
+        String(vinculo.fornecedorId) === String(novoFornecedorId),
+    );
+
+    if (vinculos.length === 0) {
+      setMaterialId("");
+      return;
+    }
+
+    const vinculoPadrao =
+      vinculos.find((vinculo) => vinculo.padrao === true) ??
+      vinculos[0];
+
+    setMaterialId(String(vinculoPadrao.materialId));
+  }
 
   const resumoFinanceiro = useMemo(
     () =>
@@ -301,6 +374,11 @@ export default function CompraFuturaModal({
       return;
     }
 
+    if (!materialId) {
+      setErro("Selecione o material.");
+      return;
+    }
+
     if (quantidade === null || quantidade <= 0) {
       setErro("Informe uma quantidade maior que zero.");
       return;
@@ -320,6 +398,7 @@ export default function CompraFuturaModal({
         dataPrevista,
         dataRecebimento: item?.dataRecebimento ?? null,
         fornecedorId,
+        materialId,
         quantidadeKg: quantidade,
         numeroPedido,
         status:
@@ -355,7 +434,7 @@ export default function CompraFuturaModal({
           </div>
 
           <div className="compra-futura-modal-header-texto">
-            <span>Matéria-Prima PP</span>
+            <span>Matéria-Prima</span>
 
             <h3>
               {item ? "Editar compra" : "Nova compra futura"}
@@ -416,30 +495,71 @@ export default function CompraFuturaModal({
               </label>
             </div>
 
-            <label className="compra-futura-modal-campo">
-              <span>Fornecedor / fonte</span>
+            <div className="compra-futura-modal-grid">
+              <label className="compra-futura-modal-campo">
+                <span>Fornecedor / fonte</span>
 
-              <select
-                value={fornecedorId}
-                onChange={(event) => setFornecedorId(event.target.value)}
-                disabled={salvando}
-              >
-                <option value="">Selecione</option>
+                <select
+                  value={fornecedorId}
+                  onChange={(event) => alterarFornecedor(event.target.value)}
+                  disabled={salvando}
+                >
+                  <option value="">Selecione</option>
 
-                {fornecedores
-                  .filter(
-                    (fornecedor) =>
-                      fornecedor.ativo ||
-                      String(fornecedor.id) === String(fornecedorId),
-                  )
-                  .map((fornecedor) => (
-                    <option key={fornecedor.id} value={fornecedor.id}>
-                      {fornecedor.nome}
-                      {!fornecedor.ativo ? " (Inativo)" : ""}
+                  {fornecedores
+                    .filter(
+                      (fornecedor) =>
+                        fornecedor.ativo ||
+                        String(fornecedor.id) === String(fornecedorId),
+                    )
+                    .map((fornecedor) => (
+                      <option key={fornecedor.id} value={fornecedor.id}>
+                        {fornecedor.nome}
+                        {!fornecedor.ativo ? " (Inativo)" : ""}
+                      </option>
+                    ))}
+                </select>
+              </label>
+
+              <label className="compra-futura-modal-campo">
+                <span>Material</span>
+
+                <select
+                  value={materialId}
+                  onChange={(event) => {
+                    setMaterialId(event.target.value);
+                    setErro("");
+                  }}
+                  disabled={
+                    salvando ||
+                    !fornecedorId ||
+                    materiaisDisponiveis.length === 0
+                  }
+                >
+                  <option value="">
+                    {!fornecedorId
+                      ? "Selecione primeiro o fornecedor"
+                      : materiaisDisponiveis.length === 0
+                        ? "Fornecedor sem material cadastrado"
+                        : "Selecione"}
+                  </option>
+
+                  {materiaisDisponiveis.map((material) => (
+                    <option key={material.id} value={material.id}>
+                      {material.nome}
+                      {material.padrao ? " (padrão)" : ""}
                     </option>
                   ))}
-              </select>
-            </label>
+                </select>
+              </label>
+            </div>
+
+            {fornecedorId && materiaisDisponiveis.length === 0 && (
+              <p className="compra-futura-modal-ajuda">
+                Este fornecedor não possui material ativo vinculado.
+                Faça o vínculo em Cadastro &gt; Fornecedor.
+              </p>
+            )}
 
             <div className="compra-futura-modal-grid">
               <CampoNumero

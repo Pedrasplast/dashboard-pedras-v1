@@ -10,8 +10,12 @@ import { supabase } from "@/lib/supabaseClient";
 
 import {
   buscarFornecedoresCadastro,
+  buscarFornecedorMateriaisCadastro,
+  buscarMateriaisCadastro,
   buscarProdutosCadastro,
   salvarFornecedorCadastro,
+  salvarMaterialCadastro,
+  salvarMateriaisFornecedorCadastro,
   salvarProdutoCadastro,
 } from "./cadastrosService";
 
@@ -22,6 +26,11 @@ import {
 const CHAVE_PRODUTOS = ["cadastros-produtos"];
 
 const CHAVE_FORNECEDORES = ["cadastros-fornecedores"];
+
+const CHAVE_MATERIAIS = ["cadastros-materiais"];
+
+const CHAVE_FORNECEDOR_MATERIAIS =
+  ["cadastros-fornecedor-materiais"];
 
 const CHAVE_DESCRICOES = "cadastros-descricoes-estoque-omie";
 
@@ -185,6 +194,54 @@ export default function useCadastros() {
   });
 
   /* =================================================
+     MATERIAIS
+  ================================================= */
+
+  const materiaisQuery = useQuery({
+    queryKey:
+      CHAVE_MATERIAIS,
+
+    queryFn:
+      buscarMateriaisCadastro,
+
+    staleTime:
+      60 * 1000,
+
+    refetchOnMount:
+      true,
+
+    refetchOnWindowFocus:
+      true,
+
+    retry:
+      1,
+  });
+
+  /* =================================================
+     FORNECEDOR X MATERIAL
+  ================================================= */
+
+  const fornecedorMateriaisQuery = useQuery({
+    queryKey:
+      CHAVE_FORNECEDOR_MATERIAIS,
+
+    queryFn:
+      buscarFornecedorMateriaisCadastro,
+
+    staleTime:
+      60 * 1000,
+
+    refetchOnMount:
+      true,
+
+    refetchOnWindowFocus:
+      true,
+
+    retry:
+      1,
+  });
+
+  /* =================================================
      CÓDIGOS DOS PRODUTOS
 
      Evita códigos vazios e repetidos.
@@ -297,6 +354,45 @@ export default function useCadastros() {
   });
 
   /* =================================================
+     SALVAR MATERIAL
+  ================================================= */
+
+  const salvarMaterialMutation = useMutation({
+    mutationFn:
+      salvarMaterialCadastro,
+
+    onSuccess:
+      async () => {
+        await queryClient.invalidateQueries({
+          queryKey:
+            CHAVE_MATERIAIS,
+        });
+
+        await materiaisQuery.refetch();
+      },
+  });
+
+  /* =================================================
+     SALVAR FORNECEDOR X MATERIAL
+  ================================================= */
+
+  const salvarMateriaisFornecedorMutation =
+    useMutation({
+      mutationFn:
+        salvarMateriaisFornecedorCadastro,
+
+      onSuccess:
+        async () => {
+          await queryClient.invalidateQueries({
+            queryKey:
+              CHAVE_FORNECEDOR_MATERIAIS,
+          });
+
+          await fornecedorMateriaisQuery.refetch();
+        },
+    });
+
+  /* =================================================
      RECARREGAR
   ================================================= */
 
@@ -305,6 +401,10 @@ export default function useCadastros() {
       produtosQuery.refetch(),
 
       fornecedoresQuery.refetch(),
+
+      materiaisQuery.refetch(),
+
+      fornecedorMateriaisQuery.refetch(),
 
       queryClient.invalidateQueries({
         queryKey: [CHAVE_DESCRICOES],
@@ -321,6 +421,11 @@ export default function useCadastros() {
 
     fornecedores: fornecedoresQuery.data ?? [],
 
+    materiais: materiaisQuery.data ?? [],
+
+    fornecedorMateriais:
+      fornecedorMateriaisQuery.data ?? [],
+
     /* Descrições do estoque Omie */
 
     descricoesEstoque,
@@ -332,11 +437,15 @@ export default function useCadastros() {
 
     carregando:
       produtosQuery.isLoading ||
-      fornecedoresQuery.isLoading,
+      fornecedoresQuery.isLoading ||
+      materiaisQuery.isLoading ||
+      fornecedorMateriaisQuery.isLoading,
 
     atualizando:
       produtosQuery.isFetching ||
       fornecedoresQuery.isFetching ||
+      materiaisQuery.isFetching ||
+      fornecedorMateriaisQuery.isFetching ||
       descricoesQuery.isFetching,
 
     buscandoDescricoesEstoque:
@@ -350,11 +459,19 @@ export default function useCadastros() {
     salvandoFornecedor:
       salvarFornecedorMutation.isPending,
 
+    salvandoMaterial:
+      salvarMaterialMutation.isPending,
+
+    salvandoMateriaisFornecedor:
+      salvarMateriaisFornecedorMutation.isPending,
+
     /* Erros */
 
     erro:
       produtosQuery.error?.message ||
       fornecedoresQuery.error?.message ||
+      materiaisQuery.error?.message ||
+      fornecedorMateriaisQuery.error?.message ||
       "",
 
     erroDescricoesEstoque:
@@ -369,5 +486,11 @@ export default function useCadastros() {
 
     salvarFornecedor:
       salvarFornecedorMutation.mutateAsync,
+
+    salvarMaterial:
+      salvarMaterialMutation.mutateAsync,
+
+    salvarMateriaisFornecedor:
+      salvarMateriaisFornecedorMutation.mutateAsync,
   };
 }

@@ -65,6 +65,8 @@ const CAMPOS_COMPRA_FUTURA = `
   data_prevista,
   data_recebimento,
   fornecedor_id,
+  material_id,
+  tipo_material,
   quantidade_kg,
   numero_pedido,
   status,
@@ -415,6 +417,10 @@ function normalizarCompra(
     registro
       .fornecedor_id;
 
+  const materialId =
+    registro
+      .material_id;
+
   const quantidadeKg =
     Number(
       registro
@@ -437,6 +443,8 @@ function normalizarCompra(
     !dataPrevista ||
     fornecedorId === null ||
     fornecedorId === undefined ||
+    materialId === null ||
+    materialId === undefined ||
     !Number.isFinite(
       quantidadeKg,
     ) ||
@@ -464,6 +472,13 @@ function normalizarCompra(
         : null,
 
     fornecedorId,
+
+    materialId,
+
+    tipoMaterial:
+      registro
+        .tipo_material ??
+      "",
 
     quantidadeKg,
 
@@ -570,13 +585,123 @@ function normalizarCompra(
   };
 }
 
+async function buscarMateriaisCompra() {
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_materiais",
+      )
+      .select(`
+        id,
+        nome,
+        ativo
+      `)
+      .order(
+        "nome",
+        {
+          ascending: true,
+        },
+      );
+
+  if (error) {
+    throw error;
+  }
+
+  return (
+    Array.isArray(data)
+      ? data
+      : []
+  ).map(
+    (material) => ({
+      id:
+        material.id,
+
+      nome:
+        String(
+          material.nome ??
+          "",
+        ).trim(),
+
+      ativo:
+        material.ativo !==
+        false,
+    }),
+  );
+}
+
+async function buscarFornecedorMateriaisCompra() {
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_fornecedor_materiais",
+      )
+      .select(`
+        id,
+        fornecedor_id,
+        material_id,
+        padrao,
+        ativo
+      `)
+      .eq(
+        "ativo",
+        true,
+      )
+      .order(
+        "fornecedor_id",
+        {
+          ascending: true,
+        },
+      );
+
+  if (error) {
+    throw error;
+  }
+
+  return (
+    Array.isArray(data)
+      ? data
+      : []
+  ).map(
+    (vinculo) => ({
+      id:
+        vinculo.id,
+
+      fornecedorId:
+        vinculo.fornecedor_id,
+
+      materialId:
+        vinculo.material_id,
+
+      padrao:
+        vinculo.padrao ===
+        true,
+
+      ativo:
+        vinculo.ativo !==
+        false,
+    }),
+  );
+}
+
 export async function buscarComprasFuturas() {
   const [
     fornecedores,
+    materiais,
+    fornecedorMateriais,
     resultadoCompras,
   ] =
     await Promise.all([
       buscarFornecedores(),
+
+      buscarMateriaisCompra(),
+
+      buscarFornecedorMateriaisCompra(),
 
       supabase
         .from(
@@ -625,6 +750,20 @@ export async function buscarComprasFuturas() {
       ),
     );
 
+  const materiaisPorId =
+    new Map(
+      materiais.map(
+        (
+          material,
+        ) => [
+          String(
+            material.id,
+          ),
+          material,
+        ],
+      ),
+    );
+
   const compras =
     (
       Array.isArray(
@@ -651,6 +790,14 @@ export async function buscarComprasFuturas() {
               ),
             );
 
+          const material =
+            materiaisPorId.get(
+              String(
+                compra
+                  .materialId,
+              ),
+            );
+
           return {
             ...compra,
 
@@ -663,6 +810,18 @@ export async function buscarComprasFuturas() {
               fornecedor
                 ?.ativo !==
               false,
+
+            materialNome:
+              material
+                ?.nome ??
+              compra
+                .tipoMaterial ??
+              "Material não encontrado",
+
+            materialAtivo:
+              material
+                ?.ativo !==
+              false,
           };
         },
       );
@@ -670,6 +829,8 @@ export async function buscarComprasFuturas() {
   return {
     compras,
     fornecedores,
+    materiais,
+    fornecedorMateriais,
   };
 }
 
@@ -683,6 +844,8 @@ export async function salvarCompraFutura({
   dataRecebimento = null,
 
   fornecedorId,
+
+  materialId,
 
   quantidadeKg,
 
@@ -730,6 +893,11 @@ export async function salvarCompraFutura({
       .trim()
       .toUpperCase();
 
+  const materialIdFinal =
+    Number(
+      materialId,
+    );
+
   const quantidadeFinal =
     normalizarNumero(
       quantidadeKg,
@@ -772,6 +940,88 @@ export async function salvarCompraFutura({
   ) {
     throw new Error(
       "Selecione o fornecedor.",
+    );
+  }
+
+  if (
+    !Number.isFinite(
+      materialIdFinal,
+    )
+  ) {
+    throw new Error(
+      "Selecione o material.",
+    );
+  }
+
+  const [
+    materialResultado,
+    vinculoResultado,
+  ] =
+    await Promise.all([
+      supabase
+        .from(
+          "materia_prima_materiais",
+        )
+        .select(
+          "id, ativo",
+        )
+        .eq(
+          "id",
+          materialIdFinal,
+        )
+        .eq(
+          "ativo",
+          true,
+        )
+        .maybeSingle(),
+
+      supabase
+        .from(
+          "materia_prima_fornecedor_materiais",
+        )
+        .select(
+          "id",
+        )
+        .eq(
+          "fornecedor_id",
+          fornecedorId,
+        )
+        .eq(
+          "material_id",
+          materialIdFinal,
+        )
+        .eq(
+          "ativo",
+          true,
+        )
+        .maybeSingle(),
+    ]);
+
+  if (
+    materialResultado.error
+  ) {
+    throw materialResultado.error;
+  }
+
+  if (
+    vinculoResultado.error
+  ) {
+    throw vinculoResultado.error;
+  }
+
+  if (
+    !materialResultado.data
+  ) {
+    throw new Error(
+      "O material selecionado está inativo ou não existe.",
+    );
+  }
+
+  if (
+    !vinculoResultado.data
+  ) {
+    throw new Error(
+      "O material selecionado não está vinculado a este fornecedor.",
     );
   }
 
@@ -955,6 +1205,9 @@ export async function salvarCompraFutura({
 
     fornecedor_id:
       fornecedorId,
+
+    material_id:
+      materialIdFinal,
 
     quantidade_kg:
       quantidadeFinal,

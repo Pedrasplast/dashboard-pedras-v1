@@ -15,6 +15,7 @@ const CAMPOS_ENTRADA = `
   data_prevista,
   data_recebimento,
   fornecedor_id,
+  material_id,
   quantidade_kg,
   numero_pedido,
   status,
@@ -75,10 +76,21 @@ function numeroOuNull(
 export async function buscarEntradas() {
   const [
     fornecedores,
+    resultadoMateriais,
     resultado,
   ] =
     await Promise.all([
       buscarFornecedores(),
+
+      supabase
+        .from(
+          "materia_prima_materiais",
+        )
+        .select(`
+          id,
+          nome,
+          ativo
+        `),
 
       supabase
         .from(
@@ -106,6 +118,11 @@ export async function buscarEntradas() {
     ]);
 
 
+  if (resultadoMateriais.error) {
+    throw resultadoMateriais.error;
+  }
+
+
   if (resultado.error) {
     throw resultado.error;
   }
@@ -128,6 +145,29 @@ export async function buscarEntradas() {
   );
 
 
+  const materiaisPorId =
+    new Map();
+
+
+  (
+    Array.isArray(
+      resultadoMateriais.data,
+    )
+      ? resultadoMateriais.data
+      : []
+  ).forEach(
+    (
+      material,
+    ) =>
+      materiaisPorId.set(
+        String(
+          material.id,
+        ),
+        material,
+      ),
+  );
+
+
   const entradas =
     (
       Array.isArray(
@@ -144,6 +184,15 @@ export async function buscarEntradas() {
             String(
               registro
                 .fornecedor_id,
+            ),
+          );
+
+
+        const material =
+          materiaisPorId.get(
+            String(
+              registro
+                .material_id,
             ),
           );
 
@@ -175,6 +224,20 @@ export async function buscarEntradas() {
 
           fornecedorAtivo:
             fornecedor
+              ?.ativo !==
+            false,
+
+          materialId:
+            registro
+              .material_id,
+
+          materialNome:
+            material
+              ?.nome ??
+            "Material não encontrado",
+
+          materialAtivo:
+            material
               ?.ativo !==
             false,
 
