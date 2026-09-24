@@ -792,7 +792,8 @@ export default function PedidosPage() {
           const correspondePesquisa =
             !termo ||
             normalizarTexto(
-              pedido?.pedido,
+              pedido?.pedidoExibicao ??
+                pedido?.pedido,
             ).includes(termo) ||
             normalizarTexto(
               pedido?.cliente,
@@ -1979,6 +1980,7 @@ export default function PedidosPage() {
                                       <div className="pedidos-pedido-agrupado">
                                         <strong className="pedidos-numero">
                                           {
+                                            pedido.pedidoExibicao ??
                                             pedido.pedido
                                           }
                                         </strong>

@@ -142,6 +142,13 @@
 }
 
 
+/* Pedido ocupa a linha inteira para facilitar listas longas */
+
+.rel-pedidos-campo-pedidos {
+  grid-column: 1 / -1;
+}
+
+
 /* Produto ocupa mais espaço */
 
 .rel-pedidos-campo-produto {
