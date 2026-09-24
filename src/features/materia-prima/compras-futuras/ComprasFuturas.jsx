@@ -33,8 +33,8 @@ function formatarData(valor) {
 
 function formatarKg(valor) {
   return `${Number(valor ?? 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   })} kg`;
 }
 
@@ -59,8 +59,21 @@ function formatarPrecoKg(valor) {
   return `${Number(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 6,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}/kg`;
+}
+
+function formatarCustoKg(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+    return "-";
+  }
+
+  return `${Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
   })}/kg`;
 }
 
@@ -71,7 +84,7 @@ function formatarPercentual(valor) {
 
   return `${Number(valor).toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
+    maximumFractionDigits: 2,
   })}%`;
 }
 
@@ -394,7 +407,7 @@ export default function ComprasFuturas() {
                         </td>
 
                         <td className="compras-futuras-financeiro">
-                          {formatarPrecoKg(compra.custoEfetivoKg)}
+                          {formatarCustoKg(compra.custoEfetivoKg)}
                         </td>
 
                         <td>{compra.numeroPedido || "-"}</td>
