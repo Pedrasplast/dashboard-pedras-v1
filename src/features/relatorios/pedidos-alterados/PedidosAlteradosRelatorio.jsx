@@ -7,6 +7,7 @@ import {
   FiDownload,
   FiEdit3,
   FiFileText,
+  FiGitBranch,
   FiRefreshCw,
   FiSearch,
 } from "react-icons/fi";
@@ -14,7 +15,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
-import { carregarMapaNumeroPedidoExibicao } from "@/features/pedidos/numeroPedidoExibicao";
 
 // Paginação padrão já utilizada no sistema.
 import Paginacao from "@/components/paginacao/Paginacao";
@@ -26,6 +26,244 @@ import "./PedidosAlteradosRelatorio.css";
 ===================================================== */
 
 const ITENS_POR_PAGINA = 8;
+
+
+/* =====================================================
+   DESDOBRAMENTO / NUMERAÇÃO VISUAL
+
+   Mantido neste arquivo para que seja necessário alterar
+   somente PedidosAlteradosRelatorio.jsx.
+===================================================== */
+
+const TAMANHO_PAGINA_NUMERACAO = 1000;
+
+function obterTimestampCriacaoPedido(valor) {
+  if (!valor) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  const timestamp = new Date(valor).getTime();
+
+  return Number.isFinite(timestamp)
+    ? timestamp
+    : Number.POSITIVE_INFINITY;
+}
+
+function criarMapaMetadadosPedidoExibicao(registros) {
+  const pedidosPorCodigo = new Map();
+
+  for (const registro of registros ?? []) {
+    const codigo = Number(registro?.codigo_pedido_omie);
+    const numeroPedido = String(registro?.numero_pedido ?? "").trim();
+
+    if (!Number.isFinite(codigo) || codigo <= 0 || !numeroPedido) {
+      continue;
+    }
+
+    const criadoEmOriginal = registro?.criado_em ?? null;
+    const criadoEm = obterTimestampCriacaoPedido(criadoEmOriginal);
+    const existente = pedidosPorCodigo.get(codigo);
+
+    if (!existente || criadoEm < existente.criadoEm) {
+      pedidosPorCodigo.set(codigo, {
+        codigo,
+        numeroPedido,
+        criadoEm,
+        criadoEmOriginal,
+      });
+    }
+  }
+
+  const gruposPorNumero = new Map();
+
+  for (const pedido of pedidosPorCodigo.values()) {
+    if (!gruposPorNumero.has(pedido.numeroPedido)) {
+      gruposPorNumero.set(pedido.numeroPedido, []);
+    }
+
+    gruposPorNumero.get(pedido.numeroPedido).push(pedido);
+  }
+
+  const mapaMetadados = new Map();
+
+  for (const [numeroPedido, grupo] of gruposPorNumero.entries()) {
+    grupo.sort((pedidoA, pedidoB) => {
+      if (pedidoA.criadoEm !== pedidoB.criadoEm) {
+        return pedidoA.criadoEm - pedidoB.criadoEm;
+      }
+
+      return pedidoA.codigo - pedidoB.codigo;
+    });
+
+    const total = grupo.length;
+
+    const partes = grupo.map((pedido, indice) => ({
+      codigo_pedido_omie: pedido.codigo,
+      numero_pedido: numeroPedido,
+      numero_exibicao: indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`,
+      indice,
+      criado_em: pedido.criadoEmOriginal,
+    }));
+
+    grupo.forEach((pedido, indice) => {
+      mapaMetadados.set(pedido.codigo, {
+        codigoPedidoOmie: pedido.codigo,
+        numeroOriginal: numeroPedido,
+        numeroExibicao: indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`,
+        indice,
+        total,
+        desdobrado: total > 1,
+        ehOriginal: indice === 0,
+        quantidadeDerivados: Math.max(0, total - 1),
+        partes,
+      });
+    });
+  }
+
+  return mapaMetadados;
+}
+
+async function carregarMapaMetadadosPedidoExibicao() {
+  const registros = [];
+  let inicio = 0;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("pedidos_omie")
+      .select("codigo_pedido_omie,numero_pedido,criado_em")
+      .order("criado_em", { ascending: true })
+      .order("codigo_pedido_omie", { ascending: true })
+      .range(inicio, inicio + TAMANHO_PAGINA_NUMERACAO - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    const pagina = Array.isArray(data) ? data : [];
+    registros.push(...pagina);
+
+    if (pagina.length < TAMANHO_PAGINA_NUMERACAO) {
+      break;
+    }
+
+    inicio += TAMANHO_PAGINA_NUMERACAO;
+  }
+
+  return criarMapaMetadadosPedidoExibicao(registros);
+}
+
+const ESTILOS_DESDOBRAMENTO = `
+.pedidos-alterados-pedido-identificacao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.pedidos-alterados-desdobramento-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 0.56rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pedidos-alterados-desdobramento-badge svg {
+  width: 11px;
+  height: 11px;
+}
+
+.pedidos-alterados-desdobramento-badge.original {
+  color: #7c3aed;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+}
+
+.pedidos-alterados-desdobramento-badge.derivado {
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.pedidos-alterados-desdobramento-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 11px 12px;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #dbeafe;
+  border-left: 3px solid #6366f1;
+  border-radius: 8px;
+}
+
+.pedidos-alterados-desdobramento-aviso > svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: #4f46e5;
+}
+
+.pedidos-alterados-desdobramento-aviso > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pedidos-alterados-desdobramento-aviso strong {
+  color: #1e293b;
+  font-size: 0.72rem;
+}
+
+.pedidos-alterados-desdobramento-aviso > div > span {
+  color: #64748b;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+
+.pedidos-alterados-desdobramento-partes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.pedidos-alterados-desdobramento-partes small {
+  color: #94a3b8;
+  font-size: 0.58rem;
+  font-weight: 700;
+}
+
+.pedidos-alterados-desdobramento-partes > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pedidos-alterados-desdobramento-partes > div > span {
+  display: inline-flex;
+  padding: 3px 7px;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 999px;
+  font-size: 0.59rem;
+  font-weight: 800;
+}
+
+.pedidos-alterados-desdobramento-partes > div > span.atual {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+`;
 
 /* =====================================================
    FORMATAR DATA E HORA
@@ -286,13 +524,13 @@ export default function PedidosAlteradosRelatorio() {
   } = useQuery({
     queryKey: [
       "relatorio-pedidos-alterados",
-      "numeracao-visual-v1",
+      "numeracao-visual-v2-desdobramento",
       dataInicial,
       dataFinal,
     ],
 
     queryFn: async () => {
-      const [resultadoRelatorio, mapaNumeroPedidoExibicao] =
+      const [resultadoRelatorio, mapaMetadadosPedidoExibicao] =
         await Promise.all([
           supabase.rpc("listar_relatorio_pedidos_alterados", {
             p_data_inicial: dataInicial || null,
@@ -302,7 +540,7 @@ export default function PedidosAlteradosRelatorio() {
             p_limite: 2000,
           }),
 
-          carregarMapaNumeroPedidoExibicao(supabase),
+          carregarMapaMetadadosPedidoExibicao(),
         ]);
 
       if (resultadoRelatorio.error) {
@@ -324,8 +562,11 @@ export default function PedidosAlteradosRelatorio() {
             "",
         ).trim();
 
+        const metadadosDesdobramento =
+          mapaMetadadosPedidoExibicao.get(codigoPedidoOmie);
+
         const numeroExibicao =
-          mapaNumeroPedidoExibicao.get(codigoPedidoOmie) ??
+          metadadosDesdobramento?.numeroExibicao ??
           numeroOriginal;
 
         return {
@@ -336,6 +577,29 @@ export default function PedidosAlteradosRelatorio() {
           // A troca acontece somente no objeto em memória do relatório.
           // O Supabase e o Omie continuam com o número original.
           numero_pedido: numeroExibicao,
+
+          // Metadados apenas para explicar visualmente quando o pedido
+          // pertence a um desdobramento. Isso NÃO aumenta a contagem de
+          // alterações e NÃO cria uma alteração fictícia no histórico.
+          pedido_desdobrado:
+            Boolean(metadadosDesdobramento?.desdobrado),
+
+          pedido_desdobramento_original:
+            Boolean(metadadosDesdobramento?.ehOriginal),
+
+          pedido_desdobramento_indice:
+            Number(metadadosDesdobramento?.indice ?? 0),
+
+          pedido_desdobramento_total:
+            Number(metadadosDesdobramento?.total ?? 1),
+
+          pedido_desdobramento_quantidade_derivados:
+            Number(metadadosDesdobramento?.quantidadeDerivados ?? 0),
+
+          pedido_desdobramento_partes:
+            Array.isArray(metadadosDesdobramento?.partes)
+              ? metadadosDesdobramento.partes
+              : [],
         };
       });
     },
@@ -365,6 +629,8 @@ export default function PedidosAlteradosRelatorio() {
 
       return [
         pedido?.numero_pedido,
+        pedido?.numero_pedido_original,
+        pedido?.pedido_desdobrado ? "desdobrado desdobramento" : "",
         pedido?.cliente,
         pedido?.vendedor,
         campos,
@@ -564,6 +830,8 @@ export default function PedidosAlteradosRelatorio() {
 
   return (
     <>
+      <style>{ESTILOS_DESDOBRAMENTO}</style>
+
       {/* ===============================================
           CABEÇALHO DO RELATÓRIO
       =============================================== */}
@@ -811,9 +1079,34 @@ export default function PedidosAlteradosRelatorio() {
                           {/* PEDIDO */}
 
                           <td>
-                            <strong className="pedidos-alterados-numero">
-                              {pedido.numero_pedido || codigo}
-                            </strong>
+                            <div className="pedidos-alterados-pedido-identificacao">
+                              <strong className="pedidos-alterados-numero">
+                                {pedido.numero_pedido || codigo}
+                              </strong>
+
+                              {pedido.pedido_desdobrado && (
+                                <span
+                                  className={`pedidos-alterados-desdobramento-badge ${
+                                    pedido.pedido_desdobramento_original
+                                      ? "original"
+                                      : "derivado"
+                                  }`}
+                                  title={
+                                    pedido.pedido_desdobramento_original
+                                      ? "Pedido original que possui desdobramento"
+                                      : `Pedido gerado pelo desdobramento do pedido ${
+                                          pedido.numero_pedido_original || ""
+                                        }`
+                                  }
+                                >
+                                  <FiGitBranch />
+
+                                  {pedido.pedido_desdobramento_original
+                                    ? "Desdobrado"
+                                    : "Parte desdobrada"}
+                                </span>
+                              )}
+                            </div>
                           </td>
 
                           {/* CLIENTE */}
@@ -886,6 +1179,69 @@ export default function PedidosAlteradosRelatorio() {
                                     </span>
                                   </div>
                                 </div>
+
+                                {pedido.pedido_desdobrado && (
+                                  <div className="pedidos-alterados-desdobramento-aviso">
+                                    <FiGitBranch />
+
+                                    <div>
+                                      <strong>
+                                        {pedido.pedido_desdobramento_original
+                                          ? `Pedido ${
+                                              pedido.numero_pedido_original ||
+                                              pedido.numero_pedido ||
+                                              codigo
+                                            } desdobrado`
+                                          : `Pedido gerado por desdobramento de ${
+                                              pedido.numero_pedido_original || "pedido original"
+                                            }`}
+                                      </strong>
+
+                                      <span>
+                                        {pedido.pedido_desdobramento_original
+                                          ? `Este é o pedido original. O sistema identificou ${
+                                              pedido.pedido_desdobramento_quantidade_derivados
+                                            } ${
+                                              pedido.pedido_desdobramento_quantidade_derivados === 1
+                                                ? "pedido derivado"
+                                                : "pedidos derivados"
+                                            } vinculado${
+                                              pedido.pedido_desdobramento_quantidade_derivados === 1
+                                                ? ""
+                                                : "s"
+                                            } a ele.`
+                                          : `Esta é a parte ${
+                                              pedido.pedido_desdobramento_indice
+                                            } do desdobramento. O sufixo /${
+                                              pedido.pedido_desdobramento_indice
+                                            } é apenas visual para diferenciar os pedidos; no Omie e no Supabase o número-base permanece ${
+                                              pedido.numero_pedido_original || "o mesmo"
+                                            }.`}
+                                      </span>
+
+                                      {pedido.pedido_desdobramento_partes?.length > 1 && (
+                                        <div className="pedidos-alterados-desdobramento-partes">
+                                          <small>Pedidos relacionados:</small>
+
+                                          <div>
+                                            {pedido.pedido_desdobramento_partes.map((parte) => (
+                                              <span
+                                                key={`${codigo}-desdobramento-${parte.codigo_pedido_omie}`}
+                                                className={
+                                                  Number(parte.codigo_pedido_omie) === Number(codigo)
+                                                    ? "atual"
+                                                    : ""
+                                                }
+                                              >
+                                                {parte.numero_exibicao}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
 
                                 {/* OCORRÊNCIAS */}
 

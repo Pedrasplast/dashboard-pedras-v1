@@ -2,7 +2,6 @@
   width: 100%;
 }
 
-
 .compras-futuras-toolbar {
   display: flex;
   align-items: center;
@@ -17,13 +16,11 @@
   background: #f8fafc;
 }
 
-
 .compras-futuras-indicadores {
   display: flex;
 
   gap: 8px;
 }
-
 
 .compras-futuras-indicadores > div {
   min-width: 110px;
@@ -36,7 +33,6 @@
   background: #ffffff;
 }
 
-
 .compras-futuras-indicadores span {
   display: block;
 
@@ -48,7 +44,6 @@
   text-transform: uppercase;
 }
 
-
 .compras-futuras-indicadores strong {
   display: block;
 
@@ -58,7 +53,6 @@
 
   font-size: 16px;
 }
-
 
 .compras-futuras-nova {
   height: 38px;
@@ -83,7 +77,6 @@
   cursor: pointer;
 }
 
-
 .compras-futuras-filtros {
   display: flex;
 
@@ -93,7 +86,6 @@
 
   border-bottom: 1px solid #e2e8f0;
 }
-
 
 .compras-futuras-busca {
   flex: 1;
@@ -113,7 +105,6 @@
   color: #64748b;
 }
 
-
 .compras-futuras-busca input {
   width: 100%;
 
@@ -122,7 +113,6 @@
 
   font-size: 10px;
 }
-
 
 .compras-futuras-filtros select,
 .compras-futuras-atualizar {
@@ -140,7 +130,6 @@
   font-size: 10px;
 }
 
-
 .compras-futuras-atualizar {
   display: inline-flex;
   align-items: center;
@@ -150,19 +139,16 @@
   cursor: pointer;
 }
 
-
 .compras-futuras-tabela-container {
   overflow-x: auto;
 }
 
-
 .compras-futuras-tabela {
   width: 100%;
-  min-width: 950px;
+  min-width: 1380px;
 
   border-collapse: collapse;
 }
-
 
 .compras-futuras-tabela th {
   padding: 10px 12px;
@@ -179,8 +165,8 @@
   text-align: left;
 
   text-transform: uppercase;
+  white-space: nowrap;
 }
-
 
 .compras-futuras-tabela td {
   padding: 11px 12px;
@@ -190,15 +176,43 @@
   color: #334155;
 
   font-size: 10px;
-}
 
+  vertical-align: middle;
+}
 
 .compras-futuras-quantidade {
   color: #2563eb !important;
 
   font-weight: 750;
+
+  white-space: nowrap;
 }
 
+.compras-futuras-financeiro {
+  white-space: nowrap;
+}
+
+.compras-futuras-financeiro > span {
+  display: block;
+}
+
+.compras-futuras-financeiro > small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #64748b;
+
+  font-size: 8px;
+}
+
+.compras-futuras-total {
+  color: #0f172a !important;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
 
 .compras-futuras-status {
   display: inline-flex;
@@ -212,8 +226,9 @@
 
   font-size: 9px;
   font-weight: 700;
-}
 
+  white-space: nowrap;
+}
 
 .compras-futuras-status.prevista {
   background: #f1f5f9;
@@ -221,13 +236,11 @@
   color: #475569;
 }
 
-
 .compras-futuras-status.confirmada {
   background: #eff6ff;
 
   color: #2563eb;
 }
-
 
 .compras-futuras-status.recebida {
   background: #ecfdf5;
@@ -235,13 +248,18 @@
   color: #047857;
 }
 
-
 .compras-futuras-status.cancelada {
   background: #fef2f2;
 
   color: #b91c1c;
 }
 
+.compras-futuras-acoes {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
 
 .compras-futuras-editar {
   height: 31px;
@@ -266,6 +284,19 @@
   cursor: pointer;
 }
 
+.compras-futuras-excluir {
+  border-color: #fecaca;
+
+  color: #dc2626;
+}
+
+.compras-futuras-editar:disabled,
+.compras-futuras-nova:disabled,
+.compras-futuras-atualizar:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
 
 .compras-futuras-estado {
   min-height: 270px;
@@ -282,16 +313,13 @@
   text-align: center;
 }
 
-
 .compras-futuras-estado strong {
   color: #0f172a;
 }
 
-
 .compras-futuras-erro {
   color: #b91c1c;
 }
-
 
 .compras-futuras-loading {
   width: 26px;
@@ -302,25 +330,18 @@
 
   border-radius: 50%;
 
-  animation:
-    compras-futuras-loading
-    0.75s linear infinite;
+  animation: compras-futuras-loading 0.75s linear infinite;
 }
-
 
 .girando {
-  animation:
-    compras-futuras-loading
-    0.75s linear infinite;
+  animation: compras-futuras-loading 0.75s linear infinite;
 }
-
 
 @keyframes compras-futuras-loading {
   to {
     transform: rotate(360deg);
   }
 }
-
 
 @media (max-width: 800px) {
   .compras-futuras-toolbar {
@@ -329,19 +350,15 @@
     flex-direction: column;
   }
 
-
   .compras-futuras-indicadores {
     display: grid;
 
-    grid-template-columns:
-      repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
-
 
   .compras-futuras-nova {
     justify-content: center;
   }
-
 
   .compras-futuras-filtros {
     flex-direction: column;

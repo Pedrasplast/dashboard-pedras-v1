@@ -6,381 +6,157 @@ import {
 
 import {
   buscarComprasFuturas,
-
   excluirCompraFutura as excluirCompraFuturaService,
-
   salvarCompraFutura as salvarCompraFuturaService,
 } from "./comprasFuturasService";
-
-
-/* =========================================================
-   HOOK
-========================================================= */
 
 export default function useComprasFuturas({
   carregar = true,
 } = {}) {
-  const [
-    compras,
-    setCompras,
-  ] = useState([]);
+  const [compras, setCompras] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const [carregado, setCarregado] = useState(false);
+  const [erro, setErro] = useState("");
+  const [salvando, setSalvando] = useState(false);
+  const [salvandoId, setSalvandoId] = useState(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [excluindoId, setExcluindoId] = useState(null);
 
-  const [
-    fornecedores,
-    setFornecedores,
-  ] = useState([]);
+  const carregarCompras = useCallback(async () => {
+    setCarregando(true);
+    setErro("");
 
-  const [
-    carregando,
-    setCarregando,
-  ] = useState(false);
+    try {
+      const resultado = await buscarComprasFuturas();
 
-  const [
+      setCompras(
+        Array.isArray(resultado?.compras)
+          ? resultado.compras
+          : [],
+      );
+
+      setFornecedores(
+        Array.isArray(resultado?.fornecedores)
+          ? resultado.fornecedores
+          : [],
+      );
+
+      setCarregado(true);
+    } catch (error) {
+      console.error(
+        "Erro ao carregar compras futuras:",
+        error,
+      );
+
+      setCompras([]);
+      setFornecedores([]);
+      setErro(
+        error?.message ||
+        "Não foi possível carregar as compras futuras.",
+      );
+      setCarregado(true);
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!carregar || carregado || carregando) {
+      return;
+    }
+
+    void carregarCompras();
+  }, [
+    carregar,
     carregado,
-    setCarregado,
-  ] = useState(false);
+    carregando,
+    carregarCompras,
+  ]);
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
+  const recarregar = useCallback(async () => {
+    await carregarCompras();
+  }, [carregarCompras]);
 
-  const [
-    salvando,
-    setSalvando,
-  ] = useState(false);
+  const salvarCompraFutura = useCallback(
+    async (dados) => {
+      setSalvando(true);
+      setSalvandoId(dados?.id ?? null);
 
-  const [
-    salvandoId,
-    setSalvandoId,
-  ] = useState(null);
+      try {
+        const resultado =
+          await salvarCompraFuturaService(dados);
 
-  const [
-    excluindo,
-    setExcluindo,
-  ] = useState(false);
+        await carregarCompras();
 
-  const [
-    excluindoId,
-    setExcluindoId,
-  ] = useState(null);
-
-
-  /* =======================================================
-     CARREGAR
-  ======================================================= */
-
-  const carregarCompras =
-    useCallback(
-      async () => {
-        setCarregando(
-          true,
-        );
-
-        setErro(
-          "",
-        );
-
-
-        try {
-          const resultado =
-            await buscarComprasFuturas();
-
-
-          setCompras(
-            Array.isArray(
-              resultado
-                ?.compras,
-            )
-              ? resultado
-                  .compras
-              : [],
-          );
-
-
-          setFornecedores(
-            Array.isArray(
-              resultado
-                ?.fornecedores,
-            )
-              ? resultado
-                  .fornecedores
-              : [],
-          );
-
-
-          setCarregado(
-            true,
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao carregar compras futuras:",
-            error,
-          );
-
-
-          setCompras(
-            [],
-          );
-
-          setFornecedores(
-            [],
-          );
-
-          setErro(
-            error?.message ||
-              "Não foi possível carregar as compras futuras.",
-          );
-
-          setCarregado(
-            true,
-          );
-        } finally {
-          setCarregando(
-            false,
-          );
-        }
-      },
-      [],
-    );
-
-
-  /* =======================================================
-     AUTO LOAD
-  ======================================================= */
-
-  useEffect(
-    () => {
-      if (
-        !carregar ||
-        carregado ||
-        carregando
-      ) {
-        return;
+        return resultado;
+      } finally {
+        setSalvando(false);
+        setSalvandoId(null);
       }
-
-
-      void carregarCompras();
     },
-    [
-      carregar,
-      carregado,
-      carregando,
-      carregarCompras,
-    ],
+    [carregarCompras],
   );
 
+  const excluirCompraFutura = useCallback(
+    async (id) => {
+      if (id === null || id === undefined) {
+        throw new Error(
+          "Compra futura não informada.",
+        );
+      }
 
-  /* =======================================================
-     RECARREGAR
-  ======================================================= */
+      setExcluindo(true);
+      setExcluindoId(id);
 
-  const recarregar =
-    useCallback(
-      async () => {
+      try {
+        const resultado =
+          await excluirCompraFuturaService(id);
+
         await carregarCompras();
-      },
-      [
-        carregarCompras,
-      ],
-    );
 
+        return resultado;
+      } finally {
+        setExcluindo(false);
+        setExcluindoId(null);
+      }
+    },
+    [carregarCompras],
+  );
 
-  /* =======================================================
-     SALVAR
-  ======================================================= */
+  const compraEstaSalvando = useCallback(
+    (id) => {
+      if (!salvando) return false;
 
-  const salvarCompraFutura =
-    useCallback(
-      async (
-        dados,
-      ) => {
-        setSalvando(
-          true,
-        );
+      if (id === null || id === undefined) {
+        return salvandoId === null;
+      }
 
-        setSalvandoId(
-          dados?.id ??
-          null,
-        );
+      return String(id) === String(salvandoId);
+    },
+    [salvando, salvandoId],
+  );
 
-
-        try {
-          const resultado =
-            await salvarCompraFuturaService(
-              dados,
-            );
-
-
-          await carregarCompras();
-
-
-          return resultado;
-        } finally {
-          setSalvando(
-            false,
-          );
-
-          setSalvandoId(
-            null,
-          );
-        }
-      },
-      [
-        carregarCompras,
-      ],
-    );
-
-
-  /* =======================================================
-     EXCLUIR
-  ======================================================= */
-
-  const excluirCompraFutura =
-    useCallback(
-      async (
-        id,
-      ) => {
-        if (
-          id === null ||
-          id === undefined
-        ) {
-          throw new Error(
-            "Compra futura não informada.",
-          );
-        }
-
-
-        setExcluindo(
-          true,
-        );
-
-        setExcluindoId(
-          id,
-        );
-
-
-        try {
-          const resultado =
-            await excluirCompraFuturaService(
-              id,
-            );
-
-
-          await carregarCompras();
-
-
-          return resultado;
-        } finally {
-          setExcluindo(
-            false,
-          );
-
-          setExcluindoId(
-            null,
-          );
-        }
-      },
-      [
-        carregarCompras,
-      ],
-    );
-
-
-  /* =======================================================
-     ITEM SALVANDO
-  ======================================================= */
-
-  const compraEstaSalvando =
-    useCallback(
-      (
-        id,
-      ) => {
-        if (!salvando) {
-          return false;
-        }
-
-
-        if (
-          id === null ||
-          id === undefined
-        ) {
-          return (
-            salvandoId ===
-            null
-          );
-        }
-
-
-        return (
-          String(
-            id,
-          ) ===
-          String(
-            salvandoId,
-          )
-        );
-      },
-      [
-        salvando,
-        salvandoId,
-      ],
-    );
-
-
-  /* =======================================================
-     ITEM EXCLUINDO
-  ======================================================= */
-
-  const compraEstaExcluindo =
-    useCallback(
-      (
-        id,
-      ) => {
-        if (!excluindo) {
-          return false;
-        }
-
-
-        return (
-          String(
-            id,
-          ) ===
-          String(
-            excluindoId,
-          )
-        );
-      },
-      [
-        excluindo,
-        excluindoId,
-      ],
-    );
-
+  const compraEstaExcluindo = useCallback(
+    (id) => {
+      if (!excluindo) return false;
+      return String(id) === String(excluindoId);
+    },
+    [excluindo, excluindoId],
+  );
 
   return {
     compras,
-
     fornecedores,
-
     carregando,
-
     carregado,
-
     erro,
-
     salvando,
-
     excluindo,
-
     recarregar,
-
     salvarCompraFutura,
-
     excluirCompraFutura,
-
     compraEstaSalvando,
-
     compraEstaExcluindo,
   };
 }

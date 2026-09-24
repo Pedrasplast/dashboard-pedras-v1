@@ -15,6 +15,10 @@ import useEntradas from "./useEntradas";
 import "./Entradas.css";
 
 
+/* =========================================================
+   FORMATADORES
+========================================================= */
+
 function formatarData(
   valor,
 ) {
@@ -52,14 +56,114 @@ function formatarKg(
 }
 
 
+function formatarMoeda(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    !Number.isFinite(
+      Number(
+        valor,
+      ),
+    )
+  ) {
+    return "-";
+  }
+
+
+  return Number(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  );
+}
+
+
+function formatarPrecoKg(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    !Number.isFinite(
+      Number(
+        valor,
+      ),
+    )
+  ) {
+    return "-";
+  }
+
+
+  return `${Number(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 4,
+      maximumFractionDigits: 6,
+    },
+  )}/kg`;
+}
+
+
+function formatarPercentual(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    !Number.isFinite(
+      Number(
+        valor,
+      ),
+    )
+  ) {
+    return "-";
+  }
+
+
+  return `${Number(
+    valor,
+  ).toLocaleString(
+    "pt-BR",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4,
+    },
+  )}%`;
+}
+
+
 function normalizarTexto(
   valor,
 ) {
   return String(
     valor ?? "",
-  ).toLowerCase();
+  )
+    .toLowerCase()
+    .normalize(
+      "NFD",
+    )
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    );
 }
 
+
+/* =========================================================
+   ENTRADAS
+========================================================= */
 
 export default function Entradas() {
   const [
@@ -88,6 +192,10 @@ export default function Entradas() {
     useEntradas();
 
 
+  /* =======================================================
+     FILTROS
+  ======================================================= */
+
   const filtradas =
     useMemo(
       () => {
@@ -111,7 +219,7 @@ export default function Entradas() {
               ) ||
               normalizarTexto(
                 entrada
-                  .documento,
+                  .numeroPedido,
               ).includes(
                 termo,
               )
@@ -137,24 +245,51 @@ export default function Entradas() {
     );
 
 
-  const totalKg =
-    filtradas
-      .filter(
-        (
-          entrada,
-        ) =>
-          entrada.ativo,
-      )
-      .reduce(
-        (
-          total,
-          entrada,
-        ) =>
-          total +
-          entrada.quantidadeKg,
-        0,
-      );
+  /* =======================================================
+     INDICADORES
+  ======================================================= */
 
+  const indicadores =
+    useMemo(
+      () => {
+        const entradasAtivas =
+          filtradas.filter(
+            (
+              entrada,
+            ) =>
+              entrada.ativo,
+          );
+
+
+        return {
+          recebimentos:
+            filtradas.length,
+
+          totalKg:
+            entradasAtivas.reduce(
+              (
+                total,
+                entrada,
+              ) =>
+                total +
+                Number(
+                  entrada.quantidadeKg ??
+                  0,
+                ),
+              0,
+            ),
+
+        };
+      },
+      [
+        filtradas,
+      ],
+    );
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <div className="entradas-pp">
@@ -169,7 +304,7 @@ export default function Entradas() {
             </span>
 
             <strong>
-              {filtradas.length}
+              {indicadores.recebimentos}
             </strong>
           </div>
 
@@ -181,7 +316,7 @@ export default function Entradas() {
 
             <strong>
               {formatarKg(
-                totalKg,
+                indicadores.totalKg,
               )}
             </strong>
           </div>
@@ -258,6 +393,9 @@ export default function Entradas() {
           className="entradas-pp-atualizar"
           onClick={
             recarregar
+          }
+          disabled={
+            carregando
           }
         >
 
@@ -349,11 +487,15 @@ export default function Entradas() {
             <thead>
               <tr>
                 <th>Recebimento</th>
-                <th>Fornecedor</th>
-                <th>Quantidade</th>
-                <th>Pedido</th>
                 <th>Compra</th>
                 <th>Previsão</th>
+                <th>Fornecedor</th>
+                <th>Quantidade</th>
+                <th>Preço/kg</th>
+                <th>IPI</th>
+                <th>Total</th>
+                <th>Custo/kg</th>
+                <th>Pedido</th>
                 <th>Observação</th>
               </tr>
             </thead>
@@ -376,6 +518,20 @@ export default function Entradas() {
 
 
                   <td>
+                    {formatarData(
+                      entrada.dataCompra,
+                    )}
+                  </td>
+
+
+                  <td>
+                    {formatarData(
+                      entrada.dataPrevista,
+                    )}
+                  </td>
+
+
+                  <td className="entradas-pp-fornecedor">
                     <strong>
                       {entrada.fornecedorNome}
                     </strong>
@@ -389,23 +545,50 @@ export default function Entradas() {
                   </td>
 
 
+                  <td className="entradas-pp-financeiro">
+                    {formatarPrecoKg(
+                      entrada.precoUnitario,
+                    )}
+                  </td>
+
+
+                  <td className="entradas-pp-financeiro">
+                    <span>
+                      {formatarPercentual(
+                        entrada.ipiPercentual,
+                      )}
+                    </span>
+
+                    {entrada.valorIpi !==
+                      null && (
+
+                      <small>
+                        {formatarMoeda(
+                          entrada.valorIpi,
+                        )}
+                      </small>
+
+                    )}
+                  </td>
+
+
+                  <td className="entradas-pp-total">
+                    {formatarMoeda(
+                      entrada.valorTotal,
+                    )}
+                  </td>
+
+
+                  <td className="entradas-pp-financeiro">
+                    {formatarPrecoKg(
+                      entrada.custoEfetivoKg,
+                    )}
+                  </td>
+
+
                   <td>
-                    {entrada.documento ||
+                    {entrada.numeroPedido ||
                       "-"}
-                  </td>
-
-
-                  <td>
-                    {formatarData(
-                      entrada.dataCompra,
-                    )}
-                  </td>
-
-
-                  <td>
-                    {formatarData(
-                      entrada.dataPrevista,
-                    )}
                   </td>
 
 
@@ -422,6 +605,31 @@ export default function Entradas() {
             </tbody>
 
           </table>
+
+        </div>
+
+      )}
+
+
+      {!carregando &&
+        !erro &&
+        entradas.length >
+          0 &&
+        filtradas.length ===
+          0 && (
+
+        <div className="entradas-pp-estado">
+
+          <Search size={27} />
+
+          <strong>
+            Nenhum recebimento encontrado
+          </strong>
+
+          <p>
+            Altere os filtros para visualizar
+            outros recebimentos.
+          </p>
 
         </div>
 

@@ -24,105 +24,71 @@ import useComprasFuturas from "./useComprasFuturas";
 
 import "./ComprasFuturas.css";
 
+function formatarData(valor) {
+  if (!valor) return "-";
 
-/* =========================================================
-   FORMATADORES
-========================================================= */
-
-function formatarData(
-  valor,
-) {
-  if (!valor) {
-    return "-";
-  }
-
-
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    valor.split(
-      "-",
-    );
-
-
+  const [ano, mes, dia] = valor.split("-");
   return `${dia}/${mes}/${ano}`;
 }
 
-
-function formatarKg(
-  valor,
-) {
-  return `${Number(
-    valor ?? 0,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        3,
-
-      maximumFractionDigits:
-        3,
-    },
-  )} kg`;
+function formatarKg(valor) {
+  return `${Number(valor ?? 0).toLocaleString("pt-BR", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })} kg`;
 }
 
+function formatarMoeda(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+    return "-";
+  }
 
-function normalizarTexto(
-  valor,
-) {
-  return String(
-    valor ?? "",
-  )
+  return Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatarPrecoKg(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+    return "-";
+  }
+
+  return `${Number(valor).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 6,
+  })}/kg`;
+}
+
+function formatarPercentual(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+    return "-";
+  }
+
+  return `${Number(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  })}%`;
+}
+
+function normalizarTexto(valor) {
+  return String(valor ?? "")
     .toLowerCase()
-    .normalize(
-      "NFD",
-    )
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
-
-
-/* =========================================================
-   COMPRAS
-========================================================= */
 
 export default function ComprasFuturas() {
-  const [
-    busca,
-    setBusca,
-  ] = useState("");
-
-  const [
-    statusFiltro,
-    setStatusFiltro,
-  ] = useState(
-    "ABERTAS",
-  );
-
-  const [
-    modalAberto,
-    setModalAberto,
-  ] = useState(false);
-
-  const [
-    itemEdicao,
-    setItemEdicao,
-  ] = useState(null);
-
-  const [
-    itemParaExcluir,
-    setItemParaExcluir,
-  ] = useState(null);
-
-  const [
-    erroExclusao,
-    setErroExclusao,
-  ] = useState("");
-
+  const [busca, setBusca] = useState("");
+  const [statusFiltro, setStatusFiltro] = useState("ABERTAS");
+  const [modalAberto, setModalAberto] = useState(false);
+  const [itemEdicao, setItemEdicao] = useState(null);
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
+  const [erroExclusao, setErroExclusao] = useState("");
 
   const {
     compras,
@@ -137,960 +103,414 @@ export default function ComprasFuturas() {
     excluirCompraFutura,
     compraEstaSalvando,
     compraEstaExcluindo,
-  } =
-    useComprasFuturas();
+  } = useComprasFuturas();
 
+  const filtradas = useMemo(() => {
+    const termo = normalizarTexto(busca);
 
-  /* =======================================================
-     FILTRO
-  ======================================================= */
+    return compras.filter((compra) => {
+      const buscaOk =
+        !termo ||
+        normalizarTexto(compra.fornecedorNome).includes(termo) ||
+        normalizarTexto(compra.numeroPedido).includes(termo) ||
+        normalizarTexto(compra.numeroNf).includes(termo);
 
-  const filtradas =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            busca,
-          );
+      let statusOk = true;
 
+      if (statusFiltro === "ABERTAS") {
+        statusOk =
+          compra.status === "PREVISTA" ||
+          compra.status === "CONFIRMADA";
+      } else if (statusFiltro !== "TODOS") {
+        statusOk = compra.status === statusFiltro;
+      }
 
-        return compras.filter(
-          (
-            compra,
-          ) => {
-            const buscaOk =
-              !termo ||
-              normalizarTexto(
-                compra.fornecedorNome,
-              ).includes(
-                termo,
-              ) ||
-              normalizarTexto(
-                compra.numeroPedido,
-              ).includes(
-                termo,
-              );
+      return buscaOk && statusOk;
+    });
+  }, [compras, busca, statusFiltro]);
 
-
-            let statusOk =
-              true;
-
-
-            if (
-              statusFiltro ===
-              "ABERTAS"
-            ) {
-              statusOk =
-                compra.status ===
-                  "PREVISTA" ||
-                compra.status ===
-                  "CONFIRMADA";
-            } else if (
-              statusFiltro !==
-              "TODOS"
-            ) {
-              statusOk =
-                compra.status ===
-                statusFiltro;
-            }
-
-
-            return (
-              buscaOk &&
-              statusOk
-            );
-          },
-        );
-      },
-      [
-        compras,
-        busca,
-        statusFiltro,
-      ],
+  const indicadores = useMemo(() => {
+    const abertas = compras.filter(
+      (compra) =>
+        compra.ativo &&
+        (
+          compra.status === "PREVISTA" ||
+          compra.status === "CONFIRMADA"
+        ),
     );
 
-
-  /* =======================================================
-     INDICADORES
-  ======================================================= */
-
-  const indicadores =
-    useMemo(
-      () => {
-        const abertas =
-          compras.filter(
-            (
-              compra,
-            ) =>
-              compra.ativo &&
-              (
-                compra.status ===
-                  "PREVISTA" ||
-                compra.status ===
-                  "CONFIRMADA"
-              ),
-          );
-
-
-        return {
-          abertas:
-            abertas.length,
-
-          quantidadeAberta:
-            abertas.reduce(
-              (
-                total,
-                compra,
-              ) =>
-                total +
-                Number(
-                  compra.quantidadeKg,
-                ),
-              0,
-            ),
-
-          recebidas:
-            compras.filter(
-              (
-                compra,
-              ) =>
-                compra.status ===
-                "RECEBIDA",
-            ).length,
-        };
-      },
-      [
-        compras,
-      ],
-    );
-
-
-  /* =======================================================
-     NOVA COMPRA
-  ======================================================= */
+    return {
+      abertas: abertas.length,
+      quantidadeAberta: abertas.reduce(
+        (total, compra) => total + Number(compra.quantidadeKg),
+        0,
+      ),
+      recebidas: compras.filter(
+        (compra) => compra.status === "RECEBIDA",
+      ).length,
+    };
+  }, [compras]);
 
   function novo() {
-    if (
-      salvando ||
-      excluindo
-    ) {
-      return;
-    }
+    if (salvando || excluindo) return;
 
-
-    setItemEdicao(
-      null,
-    );
-
-    setModalAberto(
-      true,
-    );
+    setItemEdicao(null);
+    setModalAberto(true);
   }
 
+  function editar(compra) {
+    if (!compra || salvando || excluindo) return;
 
-  /* =======================================================
-     EDITAR
-  ======================================================= */
-
-  function editar(
-    compra,
-  ) {
-    if (
-      !compra ||
-      salvando ||
-      excluindo
-    ) {
-      return;
-    }
-
-
-    setItemEdicao(
-      compra,
-    );
-
-    setModalAberto(
-      true,
-    );
+    setItemEdicao(compra);
+    setModalAberto(true);
   }
 
+  async function salvar(dados) {
+    await salvarCompraFutura(dados);
 
-  /* =======================================================
-     SALVAR
-  ======================================================= */
-
-  async function salvar(
-    dados,
-  ) {
-    await salvarCompraFutura(
-      dados,
-    );
-
-
-    setModalAberto(
-      false,
-    );
-
-    setItemEdicao(
-      null,
-    );
+    setModalAberto(false);
+    setItemEdicao(null);
   }
 
+  function solicitarExclusao(compra) {
+    if (!compra || salvando || excluindo) return;
 
-  /* =======================================================
-     EXCLUSÃO
-  ======================================================= */
-
-  function solicitarExclusao(
-    compra,
-  ) {
-    if (
-      !compra ||
-      salvando ||
-      excluindo
-    ) {
-      return;
-    }
-
-
-    setErroExclusao(
-      "",
-    );
-
-    setItemParaExcluir(
-      compra,
-    );
+    setErroExclusao("");
+    setItemParaExcluir(compra);
   }
-
 
   function cancelarExclusao() {
-    if (excluindo) {
-      return;
-    }
+    if (excluindo) return;
 
-
-    setErroExclusao(
-      "",
-    );
-
-    setItemParaExcluir(
-      null,
-    );
+    setErroExclusao("");
+    setItemParaExcluir(null);
   }
-
 
   async function confirmarExclusao() {
-    if (
-      !itemParaExcluir ||
-      excluindo
-    ) {
-      return;
-    }
+    if (!itemParaExcluir || excluindo) return;
 
-
-    setErroExclusao(
-      "",
-    );
-
+    setErroExclusao("");
 
     try {
-      await excluirCompraFutura(
-        itemParaExcluir.id,
-      );
-
-
-      setItemParaExcluir(
-        null,
-      );
+      await excluirCompraFutura(itemParaExcluir.id);
+      setItemParaExcluir(null);
     } catch (error) {
       setErroExclusao(
-        error
-          ?.message ||
-          "Não foi possível excluir a compra futura.",
+        error?.message ||
+        "Não foi possível excluir a compra futura.",
       );
     }
   }
 
-
-  /* =======================================================
-     STATUS
-  ======================================================= */
-
-  function statusCompra(
-    compra,
-  ) {
-    if (
-      compra.status ===
-      "RECEBIDA"
-    ) {
+  function statusCompra(compra) {
+    if (compra.status === "RECEBIDA") {
       return (
         <span className="compras-futuras-status recebida">
-
-          <CheckCircle2
-            size={13}
-          />
-
+          <CheckCircle2 size={13} />
           Recebida
-
         </span>
       );
     }
 
-
-    if (
-      compra.status ===
-      "CONFIRMADA"
-    ) {
+    if (compra.status === "CONFIRMADA") {
       return (
         <span className="compras-futuras-status confirmada">
-
-          <Clock3
-            size={13}
-          />
-
+          <Clock3 size={13} />
           Confirmada
-
         </span>
       );
     }
 
-
-    if (
-      compra.status ===
-      "CANCELADA"
-    ) {
+    if (compra.status === "CANCELADA") {
       return (
         <span className="compras-futuras-status cancelada">
-
-          <XCircle
-            size={13}
-          />
-
+          <XCircle size={13} />
           Cancelada
-
         </span>
       );
     }
-
 
     return (
       <span className="compras-futuras-status prevista">
-
-        <Clock3
-          size={13}
-        />
-
+        <Clock3 size={13} />
         Prevista
-
       </span>
     );
   }
 
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
-
   return (
     <>
       <div className="compras-futuras">
-
         <div className="compras-futuras-toolbar">
-
           <div className="compras-futuras-indicadores">
-
             <div>
-
-              <span>
-                Compras abertas
-              </span>
-
-              <strong>
-                {indicadores.abertas}
-              </strong>
-
+              <span>Compras abertas</span>
+              <strong>{indicadores.abertas}</strong>
             </div>
 
-
             <div>
-
-              <span>
-                PP a receber
-              </span>
-
-              <strong>
-                {formatarKg(
-                  indicadores.quantidadeAberta,
-                )}
-              </strong>
-
+              <span>PP a receber</span>
+              <strong>{formatarKg(indicadores.quantidadeAberta)}</strong>
             </div>
 
-
             <div>
-
-              <span>
-                Recebidas
-              </span>
-
-              <strong>
-                {indicadores.recebidas}
-              </strong>
-
+              <span>Recebidas</span>
+              <strong>{indicadores.recebidas}</strong>
             </div>
-
           </div>
-
 
           <button
             type="button"
             className="compras-futuras-nova"
-            onClick={
-              novo
-            }
-            disabled={
-              salvando ||
-              excluindo
-            }
+            onClick={novo}
+            disabled={salvando || excluindo}
           >
-
-            <Plus
-              size={17}
-            />
-
+            <Plus size={17} />
             Nova compra
-
           </button>
-
         </div>
 
-
         <div className="compras-futuras-filtros">
-
           <label className="compras-futuras-busca">
-
-            <Search
-              size={16}
-            />
+            <Search size={16} />
 
             <input
-              value={
-                busca
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setBusca(
-                    event
-                      .target
-                      .value,
-                  )
-              }
-              placeholder="Buscar fornecedor ou pedido..."
+              value={busca}
+              onChange={(event) => setBusca(event.target.value)}
+              placeholder="Buscar fornecedor, pedido ou NF..."
             />
-
           </label>
 
-
           <select
-            value={
-              statusFiltro
-            }
-            onChange={
-              (
-                event,
-              ) =>
-                setStatusFiltro(
-                  event
-                    .target
-                    .value,
-                )
-            }
+            value={statusFiltro}
+            onChange={(event) => setStatusFiltro(event.target.value)}
           >
-
-            <option value="ABERTAS">
-              Compras abertas
-            </option>
-
-            <option value="PREVISTA">
-              Previstas
-            </option>
-
-            <option value="CONFIRMADA">
-              Confirmadas
-            </option>
-
-            <option value="RECEBIDA">
-              Recebidas
-            </option>
-
-            <option value="CANCELADA">
-              Canceladas
-            </option>
-
-            <option value="TODOS">
-              Todas
-            </option>
-
+            <option value="ABERTAS">Compras abertas</option>
+            <option value="PREVISTA">Previstas</option>
+            <option value="CONFIRMADA">Confirmadas</option>
+            <option value="RECEBIDA">Recebidas</option>
+            <option value="CANCELADA">Canceladas</option>
+            <option value="TODOS">Todas</option>
           </select>
-
 
           <button
             type="button"
             className="compras-futuras-atualizar"
-            onClick={
-              recarregar
-            }
-            disabled={
-              carregando ||
-              salvando ||
-              excluindo
-            }
+            onClick={recarregar}
+            disabled={carregando || salvando || excluindo}
           >
-
             <RefreshCw
               size={16}
-              className={
-                carregando
-                  ? "girando"
-                  : ""
-              }
+              className={carregando ? "girando" : ""}
             />
-
             Atualizar
-
           </button>
-
         </div>
 
-
         {carregando && (
-
           <div className="compras-futuras-estado">
-
             <span className="compras-futuras-loading" />
-
-            <strong>
-              Carregando compras
-            </strong>
-
+            <strong>Carregando compras</strong>
           </div>
-
         )}
 
-
-        {!carregando &&
-          erro && (
-
+        {!carregando && erro && (
           <div className="compras-futuras-estado compras-futuras-erro">
-
-            <AlertTriangle
-              size={30}
-            />
-
-            <strong>
-              Erro ao carregar compras
-            </strong>
-
-            <p>
-              {erro}
-            </p>
-
+            <AlertTriangle size={30} />
+            <strong>Erro ao carregar compras</strong>
+            <p>{erro}</p>
           </div>
-
         )}
-
 
         {!carregando &&
           !erro &&
           carregado &&
-          compras.length ===
-            0 && (
-
-          <div className="compras-futuras-estado">
-
-            <ShoppingCart
-              size={34}
-            />
-
-            <strong>
-              Nenhuma compra cadastrada
-            </strong>
-
-            <p>
-              Cadastre as compras de PP
-              previstas para recebimento.
-            </p>
-
-          </div>
-
-        )}
-
+          compras.length === 0 && (
+            <div className="compras-futuras-estado">
+              <ShoppingCart size={34} />
+              <strong>Nenhuma compra cadastrada</strong>
+              <p>Cadastre as compras de PP previstas para recebimento.</p>
+            </div>
+          )}
 
         {!carregando &&
           !erro &&
-          compras.length >
-            0 && (
+          compras.length > 0 && (
+            <div className="compras-futuras-tabela-container">
+              <table className="compras-futuras-tabela">
+                <thead>
+                  <tr>
+                    <th>Compra</th>
+                    <th>Previsão</th>
+                    <th>Recebimento</th>
+                    <th>Fornecedor</th>
+                    <th>Quantidade</th>
+                    <th>Preço/kg</th>
+                    <th>IPI</th>
+                    <th>Total</th>
+                    <th>Custo/kg</th>
+                    <th>Pedido</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
 
-          <div className="compras-futuras-tabela-container">
-
-            <table className="compras-futuras-tabela">
-
-              <thead>
-
-                <tr>
-                  <th>Compra</th>
-                  <th>Previsão</th>
-                  <th>Recebimento</th>
-                  <th>Fornecedor</th>
-                  <th>Quantidade</th>
-                  <th>Pedido</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {filtradas.map(
-                  (
-                    compra,
-                  ) => {
-
+                <tbody>
+                  {filtradas.map((compra) => {
                     const estaSalvando =
-                      compraEstaSalvando(
-                        compra.id,
-                      );
+                      compraEstaSalvando(compra.id);
 
                     const estaExcluindo =
-                      compraEstaExcluindo(
-                        compra.id,
-                      );
-
+                      compraEstaExcluindo(compra.id);
 
                     return (
-                      <tr
-                        key={
-                          compra.id
-                        }
-                      >
+                      <tr key={compra.id}>
+                        <td>{formatarData(compra.dataCompra)}</td>
+                        <td>{formatarData(compra.dataPrevista)}</td>
+                        <td>{formatarData(compra.dataRecebimento)}</td>
 
                         <td>
-
-                          {formatarData(
-                            compra.dataCompra,
-                          )}
-
+                          <strong>{compra.fornecedorNome}</strong>
                         </td>
-
-
-                        <td>
-
-                          {formatarData(
-                            compra.dataPrevista,
-                          )}
-
-                        </td>
-
-
-                        <td>
-
-                          {formatarData(
-                            compra.dataRecebimento,
-                          )}
-
-                        </td>
-
-
-                        <td>
-
-                          <strong>
-                            {compra.fornecedorNome}
-                          </strong>
-
-                        </td>
-
 
                         <td className="compras-futuras-quantidade">
+                          {formatarKg(compra.quantidadeKg)}
+                        </td>
 
-                          {formatarKg(
-                            compra.quantidadeKg,
+                        <td className="compras-futuras-financeiro">
+                          {formatarPrecoKg(compra.precoUnitario)}
+                        </td>
+
+                        <td className="compras-futuras-financeiro">
+                          <span>{formatarPercentual(compra.ipiPercentual)}</span>
+
+                          {compra.valorIpi !== null && (
+                            <small>{formatarMoeda(compra.valorIpi)}</small>
                           )}
-
                         </td>
 
-
-                        <td>
-
-                          {compra.numeroPedido ||
-                            "-"}
-
+                        <td className="compras-futuras-total">
+                          {formatarMoeda(compra.valorTotal)}
                         </td>
 
-
-                        <td>
-
-                          {statusCompra(
-                            compra,
-                          )}
-
+                        <td className="compras-futuras-financeiro">
+                          {formatarPrecoKg(compra.custoEfetivoKg)}
                         </td>
 
+                        <td>{compra.numeroPedido || "-"}</td>
+
+                        <td>{statusCompra(compra)}</td>
 
                         <td>
-
-                          <div
-                            style={{
-                              display:
-                                "flex",
-
-                              alignItems:
-                                "center",
-
-                              gap:
-                                "6px",
-                            }}
-                          >
-
+                          <div className="compras-futuras-acoes">
                             <button
                               type="button"
                               className="compras-futuras-editar"
-                              onClick={
-                                () =>
-                                  editar(
-                                    compra,
-                                  )
-                              }
-                              disabled={
-                                salvando ||
-                                excluindo
-                              }
+                              onClick={() => editar(compra)}
+                              disabled={salvando || excluindo}
                             >
-
-                              <Pencil
-                                size={14}
-                              />
-
-                              {estaSalvando
-                                ? "Salvando..."
-                                : "Editar"}
-
+                              <Pencil size={14} />
+                              {estaSalvando ? "Salvando..." : "Editar"}
                             </button>
-
 
                             <button
                               type="button"
-                              className="compras-futuras-editar"
-                              onClick={
-                                () =>
-                                  solicitarExclusao(
-                                    compra,
-                                  )
-                              }
-                              disabled={
-                                salvando ||
-                                excluindo
-                              }
-                              style={{
-                                color:
-                                  "#dc2626",
-
-                                borderColor:
-                                  "#fecaca",
-
-                                background:
-                                  "#ffffff",
-                              }}
+                              className="compras-futuras-editar compras-futuras-excluir"
+                              onClick={() => solicitarExclusao(compra)}
+                              disabled={salvando || excluindo}
                             >
-
-                              <Trash2
-                                size={14}
-                              />
-
-                              {estaExcluindo
-                                ? "Excluindo..."
-                                : "Excluir"}
-
+                              <Trash2 size={14} />
+                              {estaExcluindo ? "Excluindo..." : "Excluir"}
                             </button>
-
                           </div>
-
                         </td>
-
                       </tr>
                     );
-                  },
-                )}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )}
-
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
 
         {!carregando &&
           !erro &&
-          compras.length >
-            0 &&
-          filtradas.length ===
-            0 && (
-
-          <div className="compras-futuras-estado">
-
-            <Search
-              size={27}
-            />
-
-            <strong>
-              Nenhuma compra encontrada
-            </strong>
-
-            <p>
-              Altere os filtros para visualizar
-              outras compras.
-            </p>
-
-          </div>
-
-        )}
-
+          compras.length > 0 &&
+          filtradas.length === 0 && (
+            <div className="compras-futuras-estado">
+              <Search size={27} />
+              <strong>Nenhuma compra encontrada</strong>
+              <p>Altere os filtros para visualizar outras compras.</p>
+            </div>
+          )}
       </div>
 
-
       <CompraFuturaModal
-        aberto={
-          modalAberto
-        }
-        item={
-          itemEdicao
-        }
-        fornecedores={
-          fornecedores
-        }
-        salvando={
-          salvando
-        }
-        onCancelar={
-          () => {
-            if (salvando) {
-              return;
-            }
+        aberto={modalAberto}
+        item={itemEdicao}
+        fornecedores={fornecedores}
+        salvando={salvando}
+        onCancelar={() => {
+          if (salvando) return;
 
-
-            setModalAberto(
-              false,
-            );
-
-            setItemEdicao(
-              null,
-            );
-          }
-        }
-        onSalvar={
-          salvar
-        }
+          setModalAberto(false);
+          setItemEdicao(null);
+        }}
+        onSalvar={salvar}
       />
 
-
       <ConfirmacaoExclusao
-        aberto={
-          Boolean(
-            itemParaExcluir,
-          )
-        }
+        aberto={Boolean(itemParaExcluir)}
         titulo="Excluir compra futura?"
         descricao="Esta compra será removida das previsões de recebimento e deixará de participar da projeção de estoque."
-        itemTitulo={
-          itemParaExcluir
-            ?.fornecedorNome ??
-          ""
-        }
+        itemTitulo={itemParaExcluir?.fornecedorNome ?? ""}
         itemDescricao={
-          itemParaExcluir
-            ?.numeroPedido
+          itemParaExcluir?.numeroPedido
             ? `Pedido ${itemParaExcluir.numeroPedido}`
             : "Compra de PP"
         }
         detalhes={[
           {
-            label:
-              "Quantidade",
-
-            valor:
-              itemParaExcluir
-                ? formatarKg(
-                    itemParaExcluir
-                      .quantidadeKg,
-                  )
-                : "-",
+            label: "Quantidade",
+            valor: itemParaExcluir
+              ? formatarKg(itemParaExcluir.quantidadeKg)
+              : "-",
           },
-
           {
-            label:
-              "Status",
-
+            label: "Valor total",
+            valor: itemParaExcluir
+              ? formatarMoeda(itemParaExcluir.valorTotal)
+              : "-",
+          },
+          {
+            label: "Status",
             valor:
-              itemParaExcluir
-                ?.status ===
-                "CONFIRMADA"
+              itemParaExcluir?.status === "CONFIRMADA"
                 ? "Confirmada"
-                : itemParaExcluir
-                    ?.status ===
-                    "RECEBIDA"
+                : itemParaExcluir?.status === "RECEBIDA"
                   ? "Recebida"
-                  : itemParaExcluir
-                      ?.status ===
-                      "CANCELADA"
+                  : itemParaExcluir?.status === "CANCELADA"
                     ? "Cancelada"
                     : "Prevista",
           },
-
           {
-            label:
-              "Data da compra",
-
-            valor:
-              itemParaExcluir
-                ? formatarData(
-                    itemParaExcluir
-                      .dataCompra,
-                  )
-                : "-",
+            label: "Data da compra",
+            valor: itemParaExcluir
+              ? formatarData(itemParaExcluir.dataCompra)
+              : "-",
           },
-
           {
-            label:
-              "Previsão",
-
-            valor:
-              itemParaExcluir
-                ? formatarData(
-                    itemParaExcluir
-                      .dataPrevista,
-                  )
-                : "-",
+            label: "Previsão",
+            valor: itemParaExcluir
+              ? formatarData(itemParaExcluir.dataPrevista)
+              : "-",
           },
         ]}
-        erro={
-          erroExclusao
-        }
-        processando={
-          excluindo
-        }
+        erro={erroExclusao}
+        processando={excluindo}
         textoConfirmar="Excluir compra"
-        onCancelar={
-          cancelarExclusao
-        }
-        onConfirmar={
-          confirmarExclusao
-        }
+        onCancelar={cancelarExclusao}
+        onConfirmar={confirmarExclusao}
       />
-
     </>
   );
 }

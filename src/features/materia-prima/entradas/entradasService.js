@@ -6,6 +6,69 @@ import {
 
 
 /* =========================================================
+   CAMPOS
+========================================================= */
+
+const CAMPOS_ENTRADA = `
+  id,
+  data_compra,
+  data_prevista,
+  data_recebimento,
+  fornecedor_id,
+  quantidade_kg,
+  numero_pedido,
+  status,
+  observacao,
+  ativo,
+  criado_em,
+  atualizado_em,
+  preco_unitario,
+  subtotal_produtos,
+  ipi_percentual,
+  valor_ipi,
+  valor_frete,
+  tipo_frete,
+  valor_desconto,
+  outras_despesas,
+  valor_total,
+  custo_efetivo_kg,
+  numero_nf,
+  condicao_pagamento,
+  observacao_financeira
+`;
+
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function numeroOuNull(
+  valor,
+) {
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+    return null;
+  }
+
+
+  const numero =
+    Number(
+      valor,
+    );
+
+
+  return Number.isFinite(
+    numero,
+  )
+    ? numero
+    : null;
+}
+
+
+/* =========================================================
    BUSCAR ENTRADAS
 ========================================================= */
 
@@ -22,20 +85,7 @@ export async function buscarEntradas() {
           "materia_prima_compras_futuras",
         )
         .select(
-          `
-            id,
-            data_compra,
-            data_prevista,
-            data_recebimento,
-            fornecedor_id,
-            quantidade_kg,
-            numero_pedido,
-            status,
-            observacao,
-            ativo,
-            criado_em,
-            atualizado_em
-          `,
+          CAMPOS_ENTRADA,
         )
         .eq(
           "status",
@@ -43,6 +93,12 @@ export async function buscarEntradas() {
         )
         .order(
           "data_recebimento",
+          {
+            ascending: false,
+          },
+        )
+        .order(
+          "id",
           {
             ascending: false,
           },
@@ -117,16 +173,31 @@ export async function buscarEntradas() {
               ?.nome ??
             "Fornecedor não encontrado",
 
+          fornecedorAtivo:
+            fornecedor
+              ?.ativo !==
+            false,
+
           quantidadeKg:
             Number(
               registro
                 .quantidade_kg,
             ),
 
+          numeroPedido:
+            registro
+              .numero_pedido ??
+            "",
+
           documento:
             registro
               .numero_pedido ??
             "",
+
+          status:
+            registro
+              .status ??
+            "RECEBIDA",
 
           observacao:
             registro
@@ -137,6 +208,90 @@ export async function buscarEntradas() {
             registro
               .ativo !==
             false,
+
+          criadoEm:
+            registro
+              .criado_em ??
+            null,
+
+          atualizadoEm:
+            registro
+              .atualizado_em ??
+            null,
+
+          precoUnitario:
+            numeroOuNull(
+              registro
+                .preco_unitario,
+            ),
+
+          subtotalProdutos:
+            numeroOuNull(
+              registro
+                .subtotal_produtos,
+            ),
+
+          ipiPercentual:
+            numeroOuNull(
+              registro
+                .ipi_percentual,
+            ),
+
+          valorIpi:
+            numeroOuNull(
+              registro
+                .valor_ipi,
+            ),
+
+          valorFrete:
+            numeroOuNull(
+              registro
+                .valor_frete,
+            ),
+
+          tipoFrete:
+            registro
+              .tipo_frete ??
+            "",
+
+          valorDesconto:
+            numeroOuNull(
+              registro
+                .valor_desconto,
+            ),
+
+          outrasDespesas:
+            numeroOuNull(
+              registro
+                .outras_despesas,
+            ),
+
+          valorTotal:
+            numeroOuNull(
+              registro
+                .valor_total,
+            ),
+
+          custoEfetivoKg:
+            numeroOuNull(
+              registro
+                .custo_efetivo_kg,
+            ),
+
+          numeroNf:
+            registro
+              .numero_nf ??
+            "",
+
+          condicaoPagamento:
+            registro
+              .condicao_pagamento ??
+            "",
+
+          observacaoFinanceira:
+            registro
+              .observacao_financeira ??
+            "",
         };
       },
     );
