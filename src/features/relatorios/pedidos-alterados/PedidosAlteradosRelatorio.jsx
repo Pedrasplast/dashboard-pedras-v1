@@ -154,22 +154,13 @@ function formatarValorGenerico(valor, chave = "") {
     return "-";
   }
 
-  if (typeof valor === "object") {
-    return JSON.stringify(valor);
-  }
-
   const chaveNormalizada = normalizarTexto(chave);
 
+  // Somente campos realmente identificados como data podem ser formatados como data.
+  // Isso evita que números como 20240, 10120 ou 20000 sejam interpretados pelo
+  // JavaScript como anos (01/01/20240, 01/01/10120, etc.).
   if (chaveNormalizada.includes("data") || chaveNormalizada.includes("previsao")) {
     return formatarDataSemFuso(valor);
-  }
-
-  {
-    const data = new Date(String(valor));
-
-    if (!Number.isNaN(data.getTime())) {
-      return data.toLocaleDateString("pt-BR");
-    }
   }
 
   if (chaveNormalizada === "valor" && Number.isFinite(Number(valor))) {
@@ -177,6 +168,16 @@ function formatarValorGenerico(valor, chave = "") {
       style: "currency",
       currency: "BRL",
     });
+  }
+
+  if (chaveNormalizada === "quantidade" && Number.isFinite(Number(valor))) {
+    return Number(valor).toLocaleString("pt-BR", {
+      maximumFractionDigits: 3,
+    });
+  }
+
+  if (typeof valor === "object") {
+    return JSON.stringify(valor);
   }
 
   return String(valor);
