@@ -512,104 +512,146 @@ export default function PedidosAlteradosRelatorio() {
   const [exportando, setExportando] = useState(null);
 
   /* =================================================
-     CONSULTA SUPABASE
+     CONSULTA PRINCIPAL DO RELATÓRIO
 
-     Mantém a consulta original da auditoria.
+     IMPORTANTE:
+     O carregamento dos pedidos NÃO depende mais da consulta
+     auxiliar de desdobramentos. Primeiro o relatório carrega
+     normalmente pela RPC. A identificação de desdobramento é
+     buscada em uma segunda consulta, sem bloquear a tela.
   ================================================= */
 
   const {
-    data: relatorio = [],
+    data: relatorioBase = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: [
       "relatorio-pedidos-alterados",
-      "numeracao-visual-v2-desdobramento",
       dataInicial,
       dataFinal,
     ],
 
     queryFn: async () => {
-      const [resultadoRelatorio, mapaMetadadosPedidoExibicao] =
-        await Promise.all([
-          supabase.rpc("listar_relatorio_pedidos_alterados", {
-            p_data_inicial: dataInicial || null,
+      const { data, error: erroRpc } = await supabase.rpc(
+        "listar_relatorio_pedidos_alterados",
+        {
+          p_data_inicial: dataInicial || null,
+          p_data_final: dataFinal || null,
+          p_limite: 2000,
+        },
+      );
 
-            p_data_final: dataFinal || null,
-
-            p_limite: 2000,
-          }),
-
-          carregarMapaMetadadosPedidoExibicao(),
-        ]);
-
-      if (resultadoRelatorio.error) {
-        throw resultadoRelatorio.error;
+      if (erroRpc) {
+        throw erroRpc;
       }
 
-      const dados = Array.isArray(resultadoRelatorio.data)
-        ? resultadoRelatorio.data
-        : [];
-
-      return dados.map((pedido) => {
-        const codigoPedidoOmie = Number(
-          pedido?.codigo_pedido_omie,
-        );
-
-        const numeroOriginal = String(
-          pedido?.numero_pedido ??
-            codigoPedidoOmie ??
-            "",
-        ).trim();
-
-        const metadadosDesdobramento =
-          mapaMetadadosPedidoExibicao.get(codigoPedidoOmie);
-
-        const numeroExibicao =
-          metadadosDesdobramento?.numeroExibicao ??
-          numeroOriginal;
-
-        return {
-          ...pedido,
-
-          numero_pedido_original: numeroOriginal,
-
-          // A troca acontece somente no objeto em memória do relatório.
-          // O Supabase e o Omie continuam com o número original.
-          numero_pedido: numeroExibicao,
-
-          // Metadados apenas para explicar visualmente quando o pedido
-          // pertence a um desdobramento. Isso NÃO aumenta a contagem de
-          // alterações e NÃO cria uma alteração fictícia no histórico.
-          pedido_desdobrado:
-            Boolean(metadadosDesdobramento?.desdobrado),
-
-          pedido_desdobramento_original:
-            Boolean(metadadosDesdobramento?.ehOriginal),
-
-          pedido_desdobramento_indice:
-            Number(metadadosDesdobramento?.indice ?? 0),
-
-          pedido_desdobramento_total:
-            Number(metadadosDesdobramento?.total ?? 1),
-
-          pedido_desdobramento_quantidade_derivados:
-            Number(metadadosDesdobramento?.quantidadeDerivados ?? 0),
-
-          pedido_desdobramento_partes:
-            Array.isArray(metadadosDesdobramento?.partes)
-              ? metadadosDesdobramento.partes
-              : [],
-        };
-      });
+      return Array.isArray(data) ? data : [];
     },
 
     staleTime: 30 * 1000,
-
     refetchOnWindowFocus: true,
-
     retry: 1,
   });
+
+  /* =================================================
+     CONSULTA AUXILIAR DE DESDOBRAMENTOS
+
+     Se essa consulta falhar por qualquer motivo, os pedidos
+     continuam aparecendo normalmente. Apenas o selo /1, /2 e
+     a mensagem de desdobramento ficam temporariamente sem ser
+     exibidos.
+  ================================================= */
+
+  const {
+    data: mapaMetadadosPedidoExibicao,
+  } = useQuery({
+    queryKey: ["mapa-metadados-pedidos-desdobrados-v3"],
+
+    queryFn: async () => {
+      try {
+        return await carregarMapaMetadadosPedidoExibicao();
+      } catch (erro) {
+        console.warn(
+          "Não foi possível carregar os metadados de desdobramento dos pedidos:",
+          erro,
+        );
+
+        return new Map();
+      }
+    },
+
+    enabled: relatorioBase.length > 0,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 0,
+  });
+
+  /* =================================================
+     APLICAR NUMERAÇÃO VISUAL / DESDOBRAMENTO
+
+     Enquanto o mapa auxiliar ainda não chegou, usa exatamente
+     os dados originais retornados pela RPC. Assim o relatório
+     nunca fica vazio aguardando a consulta de desdobramento.
+  ================================================= */
+
+  const relatorio = useMemo(() => {
+    const mapa =
+      mapaMetadadosPedidoExibicao instanceof Map
+        ? mapaMetadadosPedidoExibicao
+        : new Map();
+
+    return relatorioBase.map((pedido) => {
+      const codigoPedidoOmie = Number(
+        pedido?.codigo_pedido_omie,
+      );
+
+      const numeroOriginal = String(
+        pedido?.numero_pedido ??
+          codigoPedidoOmie ??
+          "",
+      ).trim();
+
+      const metadadosDesdobramento =
+        mapa.get(codigoPedidoOmie);
+
+      const numeroExibicao =
+        metadadosDesdobramento?.numeroExibicao ??
+        numeroOriginal;
+
+      return {
+        ...pedido,
+
+        numero_pedido_original: numeroOriginal,
+
+        // A troca acontece somente no objeto em memória do relatório.
+        // O Supabase e o Omie continuam com o número original.
+        numero_pedido: numeroExibicao,
+
+        // Metadados visuais do desdobramento.
+        // Isso NÃO aumenta a contagem de alterações.
+        pedido_desdobrado:
+          Boolean(metadadosDesdobramento?.desdobrado),
+
+        pedido_desdobramento_original:
+          Boolean(metadadosDesdobramento?.ehOriginal),
+
+        pedido_desdobramento_indice:
+          Number(metadadosDesdobramento?.indice ?? 0),
+
+        pedido_desdobramento_total:
+          Number(metadadosDesdobramento?.total ?? 1),
+
+        pedido_desdobramento_quantidade_derivados:
+          Number(metadadosDesdobramento?.quantidadeDerivados ?? 0),
+
+        pedido_desdobramento_partes:
+          Array.isArray(metadadosDesdobramento?.partes)
+            ? metadadosDesdobramento.partes
+            : [],
+      };
+    });
+  }, [relatorioBase, mapaMetadadosPedidoExibicao]);
 
   /* =================================================
      FILTRAGEM LOCAL

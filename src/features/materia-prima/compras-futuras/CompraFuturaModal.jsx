@@ -5,6 +5,7 @@ import {
 } from "react";
 
 import {
+  CheckCircle2,
   Save,
   ShoppingCart,
   X,
@@ -12,7 +13,6 @@ import {
 
 import {
   calcularResumoFinanceiroCompra,
-  STATUS_COMPRA_FUTURA,
   TIPOS_FRETE,
 } from "./comprasFuturasService";
 
@@ -129,11 +129,9 @@ export default function CompraFuturaModal({
 }) {
   const [dataCompra, setDataCompra] = useState("");
   const [dataPrevista, setDataPrevista] = useState("");
-  const [dataRecebimento, setDataRecebimento] = useState("");
   const [fornecedorId, setFornecedorId] = useState("");
   const [quantidadeKg, setQuantidadeKg] = useState("");
   const [numeroPedido, setNumeroPedido] = useState("");
-  const [status, setStatus] = useState("PREVISTA");
   const [observacao, setObservacao] = useState("");
   const [ativo, setAtivo] = useState(true);
 
@@ -157,11 +155,9 @@ export default function CompraFuturaModal({
     if (item) {
       setDataCompra(item.dataCompra || hoje);
       setDataPrevista(item.dataPrevista || hoje);
-      setDataRecebimento(item.dataRecebimento || "");
       setFornecedorId(String(item.fornecedorId ?? ""));
       setQuantidadeKg(numeroParaInput(item.quantidadeKg));
       setNumeroPedido(item.numeroPedido || "");
-      setStatus(item.status || "PREVISTA");
       setObservacao(item.observacao || "");
       setAtivo(item.ativo !== false);
 
@@ -177,11 +173,9 @@ export default function CompraFuturaModal({
     } else {
       setDataCompra(hoje);
       setDataPrevista(hoje);
-      setDataRecebimento("");
       setFornecedorId("");
       setQuantidadeKg("");
       setNumeroPedido("");
-      setStatus("PREVISTA");
       setObservacao("");
       setAtivo(true);
 
@@ -233,16 +227,6 @@ export default function CompraFuturaModal({
       outrasDespesas,
     ],
   );
-
-  function alterarStatus(novoStatus) {
-    setStatus(novoStatus);
-
-    if (novoStatus !== "RECEBIDA") {
-      setDataRecebimento("");
-    }
-
-    setErro("");
-  }
 
   function alterarTipoFrete(novoTipo) {
     setTipoFrete(novoTipo);
@@ -322,11 +306,6 @@ export default function CompraFuturaModal({
       return;
     }
 
-    if (status === "RECEBIDA" && !dataRecebimento) {
-      setErro("Informe a data real de recebimento.");
-      return;
-    }
-
     const erroFinanceiro = validarFinanceiro();
 
     if (erroFinanceiro) {
@@ -339,11 +318,14 @@ export default function CompraFuturaModal({
         id: item?.id ?? null,
         dataCompra,
         dataPrevista,
-        dataRecebimento: status === "RECEBIDA" ? dataRecebimento : null,
+        dataRecebimento: item?.dataRecebimento ?? null,
         fornecedorId,
         quantidadeKg: quantidade,
         numeroPedido,
-        status,
+        status:
+          item?.status === "RECEBIDA" || item?.status === "CANCELADA"
+            ? item.status
+            : "CONFIRMADA",
         observacao,
         ativo,
 
@@ -380,7 +362,7 @@ export default function CompraFuturaModal({
             </h3>
 
             <p>
-              Cadastre a compra, os custos e acompanhe até o recebimento.
+              Cadastre ou edite os dados da compra. A chegada é confirmada separadamente.
             </p>
           </div>
 
@@ -482,43 +464,26 @@ export default function CompraFuturaModal({
               </label>
             </div>
 
-            <div className="compra-futura-modal-grid">
-              <label className="compra-futura-modal-campo">
-                <span>Status</span>
+            <div className="compra-futura-modal-status">
+              <CheckCircle2 size={17} aria-hidden="true" />
 
-                <select
-                  value={status}
-                  onChange={(event) => alterarStatus(event.target.value)}
-                  disabled={salvando}
-                >
-                  {STATUS_COMPRA_FUTURA.map((opcao) => (
-                    <option key={opcao.valor} value={opcao.valor}>
-                      {opcao.nome}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div>
+                <strong>
+                  Status: {item?.status === "RECEBIDA"
+                    ? "Recebida"
+                    : item?.status === "CANCELADA"
+                      ? "Cancelada"
+                      : "Confirmada"}
+                </strong>
 
-              {status === "RECEBIDA" && (
-                <label className="compra-futura-modal-campo compra-futura-modal-recebimento">
-                  <span>Data real do recebimento</span>
-
-                  <input
-                    type="date"
-                    value={dataRecebimento}
-                    onChange={(event) => {
-                      setDataRecebimento(event.target.value);
-                      setErro("");
-                    }}
-                    disabled={salvando}
-                  />
-
-                  <small>
-                    Ao salvar como Recebida, a compra aparece automaticamente
-                    na tela Entradas.
-                  </small>
-                </label>
-              )}
+                <span>
+                  {item?.status === "RECEBIDA"
+                    ? "A chegada desta compra já foi confirmada. O recebimento não é alterado nesta edição."
+                    : item?.status === "CANCELADA"
+                      ? "A compra está cancelada e o status não é alterado nesta edição."
+                      : "A compra permanece confirmada. Para registrar a chegada, use o botão Confirmar chegada na tabela."}
+                </span>
+              </div>
             </div>
 
             <label className="compra-futura-modal-campo">
