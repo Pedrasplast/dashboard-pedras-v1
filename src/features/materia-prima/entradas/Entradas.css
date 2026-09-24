@@ -31,11 +31,13 @@
   align-items: center;
 
   gap: 8px;
+
+  flex-wrap: wrap;
 }
 
 
 .entradas-pp-indicadores > div {
-  min-width: 105px;
+  min-width: 125px;
 
   padding: 8px 11px;
 
@@ -66,39 +68,6 @@
   color: #0f172a;
 
   font-size: 16px;
-}
-
-
-.entradas-pp-novo {
-  height: 38px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-
-  padding: 0 12px;
-
-  border: 1px solid #2563eb;
-  border-radius: 8px;
-
-  background: #2563eb;
-
-  color: #ffffff;
-
-  font: inherit;
-  font-size: 10px;
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-.entradas-pp-novo:disabled {
-  opacity: 0.5;
-
-  cursor: not-allowed;
 }
 
 
@@ -182,11 +151,6 @@
 }
 
 
-.entradas-pp-filtros > select {
-  max-width: 190px;
-}
-
-
 .entradas-pp-atualizar {
   height: 38px;
 
@@ -220,8 +184,7 @@
 }
 
 
-.entradas-pp-atualizar
-.girando {
+.entradas-pp-atualizar .girando {
   animation:
     entradas-girando
     0.8s
@@ -250,14 +213,14 @@
 
 .entradas-pp-tabela {
   width: 100%;
-  min-width: 900px;
+  min-width: 1280px;
 
   border-collapse: collapse;
 }
 
 
 .entradas-pp-tabela th {
-  padding: 10px 13px;
+  padding: 10px 12px;
 
   border-bottom: 1px solid #e2e8f0;
 
@@ -276,7 +239,7 @@
 
 
 .entradas-pp-tabela td {
-  padding: 11px 13px;
+  padding: 11px 12px;
 
   border-bottom: 1px solid #e2e8f0;
 
@@ -301,7 +264,7 @@
 
 
 .entradas-pp-fornecedor {
-  min-width: 190px;
+  min-width: 170px;
 }
 
 
@@ -309,17 +272,6 @@
   display: block;
 
   color: #0f172a;
-}
-
-
-.entradas-pp-fornecedor small {
-  display: block;
-
-  margin-top: 2px;
-
-  color: #b45309;
-
-  font-size: 8px;
 }
 
 
@@ -332,8 +284,38 @@
 }
 
 
+.entradas-pp-financeiro {
+  white-space: nowrap;
+}
+
+
+.entradas-pp-financeiro span {
+  display: block;
+}
+
+
+.entradas-pp-financeiro small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #64748b;
+
+  font-size: 8px;
+}
+
+
+.entradas-pp-total {
+  color: #0f172a !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
 .entradas-pp-observacao {
-  max-width: 280px;
+  max-width: 260px;
 
   overflow: hidden;
 
@@ -344,112 +326,20 @@
 
 
 /* =========================================================
-   STATUS
-========================================================= */
-
-.entradas-pp-status {
-  display: inline-flex;
-
-  padding: 4px 8px;
-
-  border-radius: 999px;
-
-  font-size: 9px;
-  font-weight: 700;
-}
-
-
-.entradas-pp-status.ativo {
-  background: #ecfdf5;
-
-  color: #047857;
-}
-
-
-.entradas-pp-status.inativo {
-  background: #f1f5f9;
-
-  color: #64748b;
-}
-
-
-/* =========================================================
-   EDITAR
-========================================================= */
-
-.entradas-pp-editar {
-  min-height: 31px;
-
-  display: inline-flex;
-  align-items: center;
-
-  gap: 5px;
-
-  padding: 0 9px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
-
-  background: #ffffff;
-
-  color: #475569;
-
-  font: inherit;
-  font-size: 9px;
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-.entradas-pp-editar:hover:not(:disabled) {
-  border-color: #93c5fd;
-
-  background: #eff6ff;
-
-  color: #2563eb;
-}
-
-
-/* =========================================================
-   RODAPÉ
-========================================================= */
-
-.entradas-pp-rodape {
-  padding: 10px 13px;
-
-  border-top: 1px solid #e2e8f0;
-
-  background: #f8fafc;
-
-  color: #64748b;
-
-  font-size: 9px;
-}
-
-
-.entradas-pp-rodape strong {
-  color: #0f172a;
-}
-
-
-/* =========================================================
    ESTADOS
 ========================================================= */
 
-.entradas-pp-estado,
-.entradas-pp-sem-resultado {
+.entradas-pp-estado {
   min-height: 270px;
 
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 
   gap: 7px;
 
-  padding: 35px 20px;
+  padding: 24px;
 
   color: #64748b;
 
@@ -457,21 +347,21 @@
 }
 
 
-.entradas-pp-estado strong,
-.entradas-pp-sem-resultado strong {
+.entradas-pp-estado strong {
   color: #0f172a;
-
-  font-size: 13px;
 }
 
 
-.entradas-pp-estado p,
-.entradas-pp-sem-resultado p {
-  max-width: 430px;
-
+.entradas-pp-estado p {
   margin: 0;
 
   font-size: 10px;
+}
+
+
+.entradas-pp-erro,
+.entradas-pp-erro strong {
+  color: #b91c1c;
 }
 
 
@@ -485,49 +375,10 @@
   border-radius: 50%;
 
   animation:
-    entradas-loading
+    entradas-girando
     0.75s
     linear
     infinite;
-}
-
-
-@keyframes entradas-loading {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-.entradas-pp-erro {
-  color: #b91c1c;
-}
-
-
-.entradas-pp-vazio-novo {
-  min-height: 36px;
-
-  display: inline-flex;
-  align-items: center;
-
-  gap: 6px;
-
-  margin-top: 7px;
-
-  padding: 0 12px;
-
-  border: 1px solid #2563eb;
-  border-radius: 8px;
-
-  background: #2563eb;
-
-  color: #ffffff;
-
-  font: inherit;
-  font-size: 10px;
-  font-weight: 700;
-
-  cursor: pointer;
 }
 
 
@@ -535,23 +386,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (
-  max-width: 1100px
-) {
-  .entradas-pp-filtros {
-    flex-wrap: wrap;
-  }
-
-
-  .entradas-pp-busca {
-    flex-basis: 100%;
-  }
-}
-
-
-@media (
-  max-width: 700px
-) {
+@media (max-width: 800px) {
   .entradas-pp-toolbar {
     align-items: stretch;
 
@@ -562,21 +397,12 @@
   .entradas-pp-indicadores {
     display: grid;
 
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: 1fr;
   }
 
 
   .entradas-pp-indicadores > div {
     min-width: 0;
-  }
-
-
-  .entradas-pp-novo {
-    width: 100%;
   }
 
 
@@ -587,11 +413,16 @@
   }
 
 
-  .entradas-pp-busca,
+  .entradas-pp-busca {
+    box-sizing: border-box;
+
+    min-width: 0;
+    width: 100%;
+  }
+
+
   .entradas-pp-filtros > input,
-  .entradas-pp-filtros > select,
   .entradas-pp-atualizar {
     width: 100%;
-    max-width: none;
   }
 }
