@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -36,60 +37,144 @@ import {
 import "./DashboardMateriaPrima.css";
 
 
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
 const DATA_INICIAL_SEM_FILTRO =
   "0001-01-01";
 
 const DATA_FINAL_SEM_FILTRO =
   "9999-12-31";
 
-/*
- * MATERIAL PADRÃO
- * material_id = 1 = PP
- */
 const MATERIAL_PADRAO =
   "1";
 
+const STORAGE_FILTROS =
+  "pedrasplast:dashboard-materia-prima:filtros";
+
+
+const FILTROS_PADRAO = {
+  dataInicial: "",
+  dataFinal: "",
+  tipoData: "compra",
+  fornecedorSelecionado: "todos",
+  materialSelecionado: MATERIAL_PADRAO,
+};
+
+
+/* =========================================================
+   PERSISTÊNCIA DOS FILTROS
+========================================================= */
+
+function carregarFiltros() {
+  if (
+    typeof window ===
+    "undefined"
+  ) {
+    return {
+      ...FILTROS_PADRAO,
+    };
+  }
+
+  try {
+    const salvo =
+      window.localStorage.getItem(
+        STORAGE_FILTROS,
+      );
+
+    if (!salvo) {
+      return {
+        ...FILTROS_PADRAO,
+      };
+    }
+
+    return {
+      ...FILTROS_PADRAO,
+      ...JSON.parse(
+        salvo,
+      ),
+    };
+  } catch {
+    return {
+      ...FILTROS_PADRAO,
+    };
+  }
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
 export default function DashboardMateriaPrima() {
   const [
+    filtros,
+    setFiltros,
+  ] =
+    useState(
+      carregarFiltros,
+    );
+
+
+  const {
     dataInicial,
-    setDataInicial,
-  ] =
-    useState(
-      "",
-    );
-
-  const [
     dataFinal,
-    setDataFinal,
-  ] =
-    useState(
-      "",
-    );
-
-  const [
     tipoData,
-    setTipoData,
-  ] =
-    useState(
-      "compra",
-    );
-
-  const [
     fornecedorSelecionado,
-    setFornecedorSelecionado,
-  ] =
-    useState(
-      "todos",
-    );
-
-  const [
     materialSelecionado,
-    setMaterialSelecionado,
-  ] =
-    useState(
-      MATERIAL_PADRAO,
+  } =
+    filtros;
+
+
+  /* =======================================================
+     PERSISTIR FILTROS
+  ======================================================= */
+
+  useEffect(
+    () => {
+      try {
+        window.localStorage.setItem(
+          STORAGE_FILTROS,
+          JSON.stringify(
+            filtros,
+          ),
+        );
+      } catch {
+        // O dashboard continua funcionando
+        // mesmo se o navegador bloquear o storage.
+      }
+    },
+    [
+      filtros,
+    ],
+  );
+
+
+  /* =======================================================
+     ALTERAR UM FILTRO
+  ======================================================= */
+
+  function alterarFiltro(
+    campo,
+    valor,
+  ) {
+    setFiltros(
+      (
+        atual,
+      ) => ({
+        ...atual,
+
+        [campo]:
+          valor,
+      }),
     );
+  }
+
+
+  /* =======================================================
+     PERÍODO
+  ======================================================= */
 
   const periodoInvalido =
     Boolean(
@@ -99,18 +184,25 @@ export default function DashboardMateriaPrima() {
         dataInicial,
     );
 
+
   /*
-   * Datas permanecem vazias na interface.
-   * Internamente usamos um período amplo
-   * para carregar todo o histórico.
+   * Datas ficam vazias visualmente.
+   * A consulta usa período amplo quando
+   * não existe filtro por data.
    */
   const dataInicialConsulta =
     dataInicial ||
     DATA_INICIAL_SEM_FILTRO;
 
+
   const dataFinalConsulta =
     dataFinal ||
     DATA_FINAL_SEM_FILTRO;
+
+
+  /* =======================================================
+     DADOS
+  ======================================================= */
 
   const {
     dados,
@@ -130,13 +222,20 @@ export default function DashboardMateriaPrima() {
         !periodoInvalido,
     });
 
+
   const financeiro =
     dados?.financeiro || {
       compras:
         [],
+
       recebimentos:
         [],
     };
+
+
+  /* =======================================================
+     FILTROS DISPONÍVEIS
+  ======================================================= */
 
   const materiaisFiltro =
     useMemo(
@@ -149,6 +248,7 @@ export default function DashboardMateriaPrima() {
       ],
     );
 
+
   const fornecedoresFiltro =
     useMemo(
       () =>
@@ -159,6 +259,11 @@ export default function DashboardMateriaPrima() {
         financeiro,
       ],
     );
+
+
+  /* =======================================================
+     FINANCEIRO FILTRADO
+  ======================================================= */
 
   const financeiroFiltrado =
     useMemo(
@@ -175,6 +280,7 @@ export default function DashboardMateriaPrima() {
       ],
     );
 
+
   const resumoFinanceiro =
     useMemo(
       () =>
@@ -185,6 +291,7 @@ export default function DashboardMateriaPrima() {
         financeiroFiltrado,
       ],
     );
+
 
   const financeiroPorMaterial =
     useMemo(
@@ -197,6 +304,7 @@ export default function DashboardMateriaPrima() {
       ],
     );
 
+
   const financeiroPorFornecedor =
     useMemo(
       () =>
@@ -207,6 +315,11 @@ export default function DashboardMateriaPrima() {
         financeiroFiltrado,
       ],
     );
+
+
+  /* =======================================================
+     EVOLUÇÃO FINANCEIRA
+  ======================================================= */
 
   const evolucaoFinanceira =
     useMemo(
@@ -220,11 +333,16 @@ export default function DashboardMateriaPrima() {
           );
         }
 
+
         const financeiroPorRecebimento = {
           ...financeiroFiltrado,
 
           compras:
-            (financeiroFiltrado.compras || []).map(
+            (
+              financeiroFiltrado
+                .compras ||
+              []
+            ).map(
               (
                 item,
               ) => ({
@@ -237,6 +355,7 @@ export default function DashboardMateriaPrima() {
             ),
         };
 
+
         return criarEvolucaoFinanceira(
           financeiroPorRecebimento,
         );
@@ -246,6 +365,11 @@ export default function DashboardMateriaPrima() {
         tipoData,
       ],
     );
+
+
+  /* =======================================================
+     INSIGHTS
+  ======================================================= */
 
   const insightsGerenciais =
     useMemo(
@@ -268,16 +392,18 @@ export default function DashboardMateriaPrima() {
     );
 
 
+  /* =======================================================
+     PERÍODO RÁPIDO
+  ======================================================= */
+
   function aplicarPeriodoRapido(
     dias,
   ) {
-    const hoje =
-      new Date();
-
     const fim =
       formatarDataISO(
-        hoje,
+        new Date(),
       );
+
 
     const inicio =
       adicionarDias(
@@ -285,37 +411,37 @@ export default function DashboardMateriaPrima() {
         -(dias - 1),
       );
 
-    setDataInicial(
-      inicio,
-    );
 
-    setDataFinal(
-      fim,
+    setFiltros(
+      (
+        atual,
+      ) => ({
+        ...atual,
+
+        dataInicial:
+          inicio,
+
+        dataFinal:
+          fim,
+      }),
     );
   }
 
+
+  /* =======================================================
+     LIMPAR FILTROS
+  ======================================================= */
 
   function limparFiltros() {
-    setDataInicial(
-      "",
-    );
-
-    setDataFinal(
-      "",
-    );
-
-    setTipoData(
-      "compra",
-    );
-
-    setFornecedorSelecionado(
-      "todos",
-    );
-
-    setMaterialSelecionado(
-      MATERIAL_PADRAO,
-    );
+    setFiltros({
+      ...FILTROS_PADRAO,
+    });
   }
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <main className="dmp-page">
@@ -338,6 +464,7 @@ export default function DashboardMateriaPrima() {
 
         </div>
 
+
         <div className="dmp-header-icone">
 
           <CircleDollarSign
@@ -353,45 +480,89 @@ export default function DashboardMateriaPrima() {
         dataInicial={
           dataInicial
         }
+
         dataFinal={
           dataFinal
         }
+
         tipoData={
           tipoData
         }
+
         fornecedorSelecionado={
           fornecedorSelecionado
         }
+
         materialSelecionado={
           materialSelecionado
         }
+
         fornecedores={
           fornecedoresFiltro
         }
+
         materiais={
           materiaisFiltro
         }
+
         materialPadrao={
           MATERIAL_PADRAO
         }
+
         onDataInicialChange={
-          setDataInicial
+          (
+            valor,
+          ) =>
+            alterarFiltro(
+              "dataInicial",
+              valor,
+            )
         }
+
         onDataFinalChange={
-          setDataFinal
+          (
+            valor,
+          ) =>
+            alterarFiltro(
+              "dataFinal",
+              valor,
+            )
         }
+
         onTipoDataChange={
-          setTipoData
+          (
+            valor,
+          ) =>
+            alterarFiltro(
+              "tipoData",
+              valor,
+            )
         }
+
         onFornecedorChange={
-          setFornecedorSelecionado
+          (
+            valor,
+          ) =>
+            alterarFiltro(
+              "fornecedorSelecionado",
+              valor,
+            )
         }
+
         onMaterialChange={
-          setMaterialSelecionado
+          (
+            valor,
+          ) =>
+            alterarFiltro(
+              "materialSelecionado",
+              valor,
+            )
         }
+
         onPeriodoRapido={
           aplicarPeriodoRapido
         }
+
         onLimparFiltros={
           limparFiltros
         }
@@ -436,21 +607,27 @@ export default function DashboardMateriaPrima() {
         resumo={
           resumoFinanceiro
         }
+
         porMaterial={
           financeiroPorMaterial
         }
+
         porFornecedor={
           financeiroPorFornecedor
         }
+
         evolucao={
           evolucaoFinanceira
         }
+
         insights={
           insightsGerenciais
         }
+
         materialSelecionado={
           materialSelecionado
         }
+
         carregando={
           carregando
         }
