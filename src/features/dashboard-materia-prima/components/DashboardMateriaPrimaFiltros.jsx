@@ -1,3 +1,10 @@
+import {
+  X,
+} from "lucide-react";
+
+import "./DashboardMateriaPrimaFiltros.css";
+
+
 export default function DashboardMateriaPrimaFiltros({
   dataInicial,
   dataFinal,
@@ -6,79 +13,69 @@ export default function DashboardMateriaPrimaFiltros({
   materialSelecionado,
   fornecedores,
   materiais,
+  materialPadrao = "1",
   onDataInicialChange,
   onDataFinalChange,
   onTipoDataChange,
   onFornecedorChange,
   onMaterialChange,
   onPeriodoRapido,
+  onLimparFiltros,
 }) {
+  const semPeriodo =
+    !dataInicial &&
+    !dataFinal;
+
+  const periodoAberto =
+    !semPeriodo &&
+    (
+      !dataInicial ||
+      !dataFinal
+    );
+
   const descricaoPeriodo =
+    semPeriodo
+      ? tipoData ===
+          "recebimento"
+        ? "Sem período definido: considerando todo o histórico pela data de recebimento."
+        : "Sem período definido: considerando todo o histórico pela data da compra."
+      : periodoAberto
+        ? tipoData ===
+            "recebimento"
+          ? "Período aberto: considerando a data de recebimento conforme a data inicial ou final informada."
+          : "Período aberto: considerando a data da compra conforme a data inicial ou final informada."
+        : tipoData ===
+            "recebimento"
+          ? "O período considera a data de recebimento efetivo do material."
+          : "O período considera a data em que a compra foi realizada.";
+
+  const estadoPadrao =
+    !dataInicial &&
+    !dataFinal &&
     tipoData ===
-      "recebimento"
-      ? "O período considera a data de recebimento efetivo do material."
-      : "O período considera a data em que a compra foi realizada.";
+      "compra" &&
+    fornecedorSelecionado ===
+      "todos" &&
+    String(
+      materialSelecionado,
+    ) ===
+      String(
+        materialPadrao,
+      );
 
   return (
     <section className="dmp-filtros-card">
 
-      <div
-        style={{
-          display:
-            "flex",
+      <div className="dmp-filtros-topo">
 
-          alignItems:
-            "flex-end",
+        <label className="dmp-filtro-tipo-data">
 
-          justifyContent:
-            "flex-start",
-
-          gap:
-            24,
-
-          flexWrap:
-            "wrap",
-
-          marginBottom:
-            14,
-        }}
-      >
-
-        <label
-          style={{
-            width:
-              270,
-
-            maxWidth:
-              "100%",
-
-            display:
-              "flex",
-
-            flexDirection:
-              "column",
-
-            gap:
-              6,
-          }}
-        >
-
-          <span
-            style={{
-              color:
-                "#64748b",
-
-              fontSize:
-                11.5,
-
-              fontWeight:
-                750,
-            }}
-          >
+          <span className="dmp-filtro-titulo">
             Filtrar período por
           </span>
 
           <select
+            className="dmp-select-tipo-data"
             value={
               tipoData
             }
@@ -90,43 +87,6 @@ export default function DashboardMateriaPrimaFiltros({
                   event.target.value,
                 )
             }
-            style={{
-              width:
-                "100%",
-
-              minHeight:
-                40,
-
-              boxSizing:
-                "border-box",
-
-              padding:
-                "0 11px",
-
-              border:
-                "1px solid #cbd5e1",
-
-              borderRadius:
-                9,
-
-              outline:
-                0,
-
-              background:
-                "#ffffff",
-
-              color:
-                "#334155",
-
-              font:
-                "inherit",
-
-              fontSize:
-                13,
-
-              fontWeight:
-                650,
-            }}
           >
 
             <option value="compra">
@@ -142,44 +102,13 @@ export default function DashboardMateriaPrimaFiltros({
         </label>
 
 
-        <div
-          style={{
-            display:
-              "flex",
+        <div className="dmp-periodo-rapido-grupo">
 
-            flexDirection:
-              "column",
-
-            gap:
-              6,
-
-            minWidth:
-              0,
-          }}
-        >
-
-          <span
-            style={{
-              color:
-                "#64748b",
-
-              fontSize:
-                11.5,
-
-              fontWeight:
-                750,
-            }}
-          >
+          <span className="dmp-filtro-titulo">
             Período rápido
           </span>
 
-          <div
-            className="dmp-filtros-rapidos"
-            style={{
-              marginBottom:
-                0,
-            }}
-          >
+          <div className="dmp-filtros-rapidos">
 
             {[7, 15, 30, 60].map(
               (
@@ -211,75 +140,42 @@ export default function DashboardMateriaPrimaFiltros({
       </div>
 
 
-      <div
-        style={{
-          marginBottom:
-            13,
+      <div className="dmp-filtros-info">
 
-          padding:
-            "9px 11px",
+        <div className="dmp-periodo-descricao">
+          {descricaoPeriodo}
+        </div>
 
-          maxWidth:
-            560,
 
-          border:
-            "1px solid #e2e8f0",
+        <button
+          type="button"
+          className={
+            `dmp-btn-limpar${
+              estadoPadrao
+                ? " dmp-btn-limpar-padrao"
+                : ""
+            }`
+          }
+          onClick={
+            onLimparFiltros
+          }
+          title="Voltar todos os filtros ao padrão"
+        >
 
-          borderRadius:
-            8,
+          <X
+            size={16}
+          />
 
-          background:
-            "#f8fafc",
+          Limpar filtros
 
-          color:
-            "#64748b",
+        </button>
 
-          fontSize:
-            11.5,
-
-          fontWeight:
-            600,
-
-          lineHeight:
-            1.4,
-        }}
-      >
-        {descricaoPeriodo}
       </div>
 
 
-      <div
-        className="dmp-filtros"
-        style={{
-          display:
-            "flex",
+      <div className="dmp-filtros">
 
-          flexWrap:
-            "wrap",
-
-          alignItems:
-            "flex-end",
-
-          justifyContent:
-            "flex-start",
-
-          gap:
-            10,
-        }}
-      >
-
-        <label
-          style={{
-            flex:
-              "0 1 160px",
-
-            minWidth:
-              150,
-
-            maxWidth:
-              175,
-          }}
-        >
+        <label className="dmp-filtro dmp-filtro-data">
 
           <span>
             De
@@ -303,18 +199,7 @@ export default function DashboardMateriaPrimaFiltros({
         </label>
 
 
-        <label
-          style={{
-            flex:
-              "0 1 160px",
-
-            minWidth:
-              150,
-
-            maxWidth:
-              175,
-          }}
-        >
+        <label className="dmp-filtro dmp-filtro-data">
 
           <span>
             Até
@@ -338,18 +223,7 @@ export default function DashboardMateriaPrimaFiltros({
         </label>
 
 
-        <label
-          style={{
-            flex:
-              "1 1 250px",
-
-            minWidth:
-              220,
-
-            maxWidth:
-              360,
-          }}
-        >
+        <label className="dmp-filtro dmp-filtro-material">
 
           <span>
             Material
@@ -397,18 +271,7 @@ export default function DashboardMateriaPrimaFiltros({
         </label>
 
 
-        <label
-          style={{
-            flex:
-              "1 1 300px",
-
-            minWidth:
-              260,
-
-            maxWidth:
-              430,
-          }}
-        >
+        <label className="dmp-filtro dmp-filtro-fornecedor">
 
           <span>
             Fornecedor
