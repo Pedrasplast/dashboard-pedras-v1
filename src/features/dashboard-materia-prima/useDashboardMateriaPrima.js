@@ -10,6 +10,7 @@ import {
 function criarResultadoVazio({
   dataInicial,
   dataFinal,
+  tipoData,
 }) {
   return {
     periodo: {
@@ -20,6 +21,10 @@ function criarResultadoVazio({
       dataFinal:
         dataFinal ||
         null,
+
+      tipoData:
+        tipoData ||
+        "compra",
     },
 
     financeiro: {
@@ -36,6 +41,7 @@ function criarResultadoVazio({
 export default function useDashboardMateriaPrima({
   dataInicial,
   dataFinal,
+  tipoData = "compra",
   habilitado = true,
 }) {
   const consulta =
@@ -44,6 +50,7 @@ export default function useDashboardMateriaPrima({
         "dashboard-materia-prima-financeiro",
         dataInicial,
         dataFinal,
+        tipoData,
       ],
 
       queryFn:
@@ -52,12 +59,14 @@ export default function useDashboardMateriaPrima({
             await buscarFinanceiroMateriaPrima({
               dataInicial,
               dataFinal,
+              tipoData,
             });
 
           return {
             periodo: {
               dataInicial,
               dataFinal,
+              tipoData,
             },
 
             financeiro,
@@ -88,6 +97,7 @@ export default function useDashboardMateriaPrima({
       criarResultadoVazio({
         dataInicial,
         dataFinal,
+        tipoData,
       }),
 
     carregando:
