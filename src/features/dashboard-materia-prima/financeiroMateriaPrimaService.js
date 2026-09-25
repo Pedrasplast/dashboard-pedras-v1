@@ -259,9 +259,78 @@ function normalizarRegistro(
 }
 
 
+function criarConsultaPeriodo({
+  dataInicial,
+  dataFinal,
+  tipoData,
+}) {
+  const porRecebimento =
+    tipoData ===
+    "recebimento";
+
+  const campoData =
+    porRecebimento
+      ? "data_recebimento"
+      : "data_compra";
+
+  let consulta =
+    supabase
+      .from(
+        "materia_prima_compras_futuras",
+      )
+      .select(
+        CAMPOS_FINANCEIROS,
+      )
+      .eq(
+        "ativo",
+        true,
+      )
+      .not(
+        campoData,
+        "is",
+        null,
+      )
+      .gte(
+        campoData,
+        dataInicial,
+      )
+      .lte(
+        campoData,
+        dataFinal,
+      );
+
+  if (
+    porRecebimento
+  ) {
+    consulta =
+      consulta.eq(
+        "status",
+        "RECEBIDA",
+      );
+  }
+
+  return consulta
+    .order(
+      campoData,
+      {
+        ascending:
+          true,
+      },
+    )
+    .order(
+      "id",
+      {
+        ascending:
+          true,
+      },
+    );
+}
+
+
 export async function buscarFinanceiroMateriaPrima({
   dataInicial,
   dataFinal,
+  tipoData = "compra",
 }) {
   if (
     !dataInicial ||
@@ -276,102 +345,31 @@ export async function buscarFinanceiroMateriaPrima({
     };
   }
 
+  const tipoDataNormalizado =
+    tipoData ===
+      "recebimento"
+      ? "recebimento"
+      : "compra";
+
   const [
     fornecedores,
-    comprasResultado,
-    recebimentosResultado,
+    registrosResultado,
   ] =
     await Promise.all([
       buscarFornecedores(),
 
-      supabase
-        .from(
-          "materia_prima_compras_futuras",
-        )
-        .select(
-          CAMPOS_FINANCEIROS,
-        )
-        .eq(
-          "ativo",
-          true,
-        )
-        .gte(
-          "data_compra",
-          dataInicial,
-        )
-        .lte(
-          "data_compra",
-          dataFinal,
-        )
-        .order(
-          "data_compra",
-          {
-            ascending:
-              true,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending:
-              true,
-          },
-        ),
-
-      supabase
-        .from(
-          "materia_prima_compras_futuras",
-        )
-        .select(
-          CAMPOS_FINANCEIROS,
-        )
-        .eq(
-          "ativo",
-          true,
-        )
-        .eq(
-          "status",
-          "RECEBIDA",
-        )
-        .not(
-          "data_recebimento",
-          "is",
-          null,
-        )
-        .gte(
-          "data_recebimento",
-          dataInicial,
-        )
-        .lte(
-          "data_recebimento",
-          dataFinal,
-        )
-        .order(
-          "data_recebimento",
-          {
-            ascending:
-              true,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending:
-              true,
-          },
-        ),
+      criarConsultaPeriodo({
+        dataInicial,
+        dataFinal,
+        tipoData:
+          tipoDataNormalizado,
+      }),
     ]);
 
   if (
-    comprasResultado.error
+    registrosResultado.error
   ) {
-    throw comprasResultado.error;
-  }
-
-  if (
-    recebimentosResultado.error
-  ) {
-    throw recebimentosResultado.error;
+    throw registrosResultado.error;
   }
 
   const fornecedoresPorId =
@@ -394,39 +392,43 @@ export async function buscarFinanceiroMateriaPrima({
       ),
     );
 
-  const normalizarLista =
+  const registros =
     (
-      lista,
-    ) =>
-      (
-        Array.isArray(
-          lista,
-        )
-          ? lista
-          : []
+      Array.isArray(
+        registrosResultado.data,
       )
-        .map(
-          (
+        ? registrosResultado.data
+        : []
+    )
+      .map(
+        (
+          registro,
+        ) =>
+          normalizarRegistro(
             registro,
-          ) =>
-            normalizarRegistro(
-              registro,
-              fornecedoresPorId,
-            ),
-        )
-        .filter(
-          Boolean,
-        );
+            fornecedoresPorId,
+          ),
+      )
+      .filter(
+        Boolean,
+      );
+
+  const recebimentos =
+    registros.filter(
+      (
+        item,
+      ) =>
+        item.status ===
+          "RECEBIDA" &&
+        Boolean(
+          item.dataRecebimento,
+        ),
+    );
 
   return {
     compras:
-      normalizarLista(
-        comprasResultado.data,
-      ),
+      registros,
 
-    recebimentos:
-      normalizarLista(
-        recebimentosResultado.data,
-      ),
+    recebimentos,
   };
 }

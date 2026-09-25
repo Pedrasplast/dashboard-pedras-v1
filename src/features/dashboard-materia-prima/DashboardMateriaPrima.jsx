@@ -62,6 +62,14 @@ export default function DashboardMateriaPrima() {
     );
 
   const [
+    tipoData,
+    setTipoData,
+  ] =
+    useState(
+      "compra",
+    );
+
+  const [
     fornecedorSelecionado,
     setFornecedorSelecionado,
   ] =
@@ -95,6 +103,7 @@ export default function DashboardMateriaPrima() {
     useDashboardMateriaPrima({
       dataInicial,
       dataFinal,
+      tipoData,
       habilitado:
         !periodoInvalido,
     });
@@ -179,12 +188,40 @@ export default function DashboardMateriaPrima() {
 
   const evolucaoFinanceira =
     useMemo(
-      () =>
-        criarEvolucaoFinanceira(
-          financeiroFiltrado,
-        ),
+      () => {
+        if (
+          tipoData !==
+          "recebimento"
+        ) {
+          return criarEvolucaoFinanceira(
+            financeiroFiltrado,
+          );
+        }
+
+        const financeiroPorRecebimento = {
+          ...financeiroFiltrado,
+
+          compras:
+            (financeiroFiltrado.compras || []).map(
+              (
+                item,
+              ) => ({
+                ...item,
+
+                dataCompra:
+                  item.dataRecebimento ||
+                  item.dataCompra,
+              }),
+            ),
+        };
+
+        return criarEvolucaoFinanceira(
+          financeiroPorRecebimento,
+        );
+      },
       [
         financeiroFiltrado,
+        tipoData,
       ],
     );
 
@@ -274,6 +311,9 @@ export default function DashboardMateriaPrima() {
         dataFinal={
           dataFinal
         }
+        tipoData={
+          tipoData
+        }
         fornecedorSelecionado={
           fornecedorSelecionado
         }
@@ -300,6 +340,9 @@ export default function DashboardMateriaPrima() {
         }
         onDataFinalChange={
           setDataFinal
+        }
+        onTipoDataChange={
+          setTipoData
         }
         onFornecedorChange={
           setFornecedorSelecionado
