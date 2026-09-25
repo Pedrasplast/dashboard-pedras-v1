@@ -3,17 +3,9 @@ import {
 } from "@tanstack/react-query";
 
 import {
-  buscarConsumoProgramado,
-} from "@/features/relatorios/materia-prima/consumoProgramadoService";
+  buscarFinanceiroMateriaPrima,
+} from "./financeiroMateriaPrimaService.js";
 
-import {
-  buscarNecessidadeCompra,
-} from "@/features/relatorios/materia-prima/necessidadeCompraService";
-
-
-/* =========================================================
-   RESULTADO VAZIO
-========================================================= */
 
 function criarResultadoVazio({
   dataInicial,
@@ -22,107 +14,24 @@ function criarResultadoVazio({
   return {
     periodo: {
       dataInicial:
-        dataInicial || null,
+        dataInicial ||
+        null,
 
       dataFinal:
-        dataFinal || null,
+        dataFinal ||
+        null,
     },
 
-    necessidade: {
-      resumo: {
-        fornecedoresAnalisados:
-          0,
-
-        fornecedoresComprar:
-          0,
-
-        fornecedoresCriticos:
-          0,
-
-        fornecedoresAtencao:
-          0,
-
-        fornecedoresSemSaldo:
-          0,
-
-        fornecedoresSemParametros:
-          0,
-
-        comprasFuturasKg:
-          0,
-
-        consumoProgramadoKg:
-          0,
-
-        necessidadeCompraKg:
-          0,
-
-        consumoSemReceitaKg:
-          0,
-      },
-
-      fornecedores:
-        [],
-    },
-
-    consumo: {
-      resumo: {
-        injetorasProgramadas:
-          0,
-
-        fornecedoresEnvolvidos:
-          0,
-
-        programacoes:
-          0,
-
-        horasProgramadas:
-          0,
-
-        ciclosCompletos:
-          0,
-
-        pecasPrevistas:
-          0,
-
-        consumoTotalKg:
-          0,
-
-        consumoDistribuidoKg:
-          0,
-
-        consumoSemReceitaKg:
-          0,
-
-        programacoesSemReceita:
-          0,
-
-        programacoesLegadas:
-          0,
-
-        programacoesComParametrosInvalidos:
-          0,
-      },
-
-      programacoes:
+    financeiro: {
+      compras:
         [],
 
-      porInjetora:
-        [],
-
-      porFornecedor:
-        [],
-
-      semReceita:
+      recebimentos:
         [],
     },
   };
 }
 
-
-/* =========================================================
-   HOOK
-========================================================= */
 
 export default function useDashboardMateriaPrima({
   dataInicial,
@@ -132,29 +41,18 @@ export default function useDashboardMateriaPrima({
   const consulta =
     useQuery({
       queryKey: [
-        "dashboard-materia-prima-gerencial",
+        "dashboard-materia-prima-financeiro",
         dataInicial,
         dataFinal,
       ],
 
       queryFn:
         async () => {
-          const [
-            necessidade,
-            consumo,
-          ] =
-            await Promise.all([
-              buscarNecessidadeCompra({
-                dataInicial,
-                dataFinal,
-              }),
-
-              buscarConsumoProgramado({
-                dataInicial,
-                dataFinal,
-              }),
-            ]);
-
+          const financeiro =
+            await buscarFinanceiroMateriaPrima({
+              dataInicial,
+              dataFinal,
+            });
 
           return {
             periodo: {
@@ -162,8 +60,7 @@ export default function useDashboardMateriaPrima({
               dataFinal,
             },
 
-            necessidade,
-            consumo,
+            financeiro,
           };
         },
 
@@ -175,7 +72,8 @@ export default function useDashboardMateriaPrima({
         ),
 
       staleTime:
-        30 * 1000,
+        30 *
+        1000,
 
       refetchOnWindowFocus:
         true,
@@ -183,7 +81,6 @@ export default function useDashboardMateriaPrima({
       retry:
         1,
     });
-
 
   return {
     dados:
@@ -204,7 +101,7 @@ export default function useDashboardMateriaPrima({
       consulta.isError
         ? consulta.error
             ?.message ||
-          "Não foi possível carregar o dashboard gerencial de matéria-prima."
+          "Não foi possível carregar o financeiro de matéria-prima."
         : "",
 
     recarregar:

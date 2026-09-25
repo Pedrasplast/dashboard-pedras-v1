@@ -1,12 +1,9 @@
-/* =========================================================
-   DASHBOARD MATÉRIA-PRIMA — VISÃO GERENCIAL
-========================================================= */
-
 .dmp-page {
   width: 100%;
   min-width: 0;
-  padding: 18px 22px 32px;
-  color: var(--color-text, #0f172a);
+  padding: 20px 24px 36px;
+  color: #0f172a;
+  font-size: 13px;
 }
 
 .dmp-header {
@@ -14,93 +11,86 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 16px;
   margin-top: 70px;
-  padding: 18px 20px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 14px;
+  margin-bottom: 16px;
+  padding: 21px 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
   background:
     linear-gradient(
       135deg,
-      rgba(37, 99, 235, 0.05),
-      rgba(5, 150, 105, 0.035)
+      rgba(37, 99, 235, 0.065),
+      rgba(5, 150, 105, 0.04)
     ),
-    var(--color-surface, #ffffff);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-}
-
-.dmp-header > div:first-child {
-  min-width: 0;
+    #ffffff;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.045);
 }
 
 .dmp-eyebrow {
   display: block;
-  margin-bottom: 4px;
-  color: var(--color-primary, #2563eb);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.055em;
+  margin-bottom: 5px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .dmp-header h1 {
   margin: 0;
-  color: var(--color-text, #0f172a);
-  font-size: 24px;
-  line-height: 1.15;
+  color: #0f172a;
+  font-size: 27px;
+  line-height: 1.12;
   letter-spacing: -0.025em;
 }
 
 .dmp-header p {
-  margin: 6px 0 0;
-  color: var(--color-text-muted, #64748b);
-  font-size: 12px;
-  line-height: 1.45;
+  max-width: 780px;
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 13.5px;
+  line-height: 1.5;
 }
 
 .dmp-header-icone {
   flex: 0 0 auto;
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(37, 99, 235, 0.12);
-  border-radius: 13px;
-  background: rgba(37, 99, 235, 0.08);
-  color: var(--color-primary, #2563eb);
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.09);
+  color: #2563eb;
 }
 
-
-/* =========================================================
-   FILTROS
-========================================================= */
-
 .dmp-filtros-card {
-  margin-bottom: 14px;
-  padding: 13px 14px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 12px;
-  background: var(--color-surface, #ffffff);
+  margin-bottom: 16px;
+  padding: 15px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
 }
 
 .dmp-filtros-rapidos {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 7px;
+  margin-bottom: 11px;
 }
 
 .dmp-filtros-rapidos button,
 .dmp-atualizar {
-  min-height: 34px;
-  padding: 0 11px;
+  min-height: 36px;
+  padding: 0 12px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 9px;
   background: #ffffff;
   color: #475569;
   font: inherit;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 750;
   cursor: pointer;
 }
 
@@ -114,12 +104,12 @@
 .dmp-filtros {
   display: grid;
   grid-template-columns:
-    minmax(145px, 180px)
-    minmax(145px, 180px)
+    minmax(145px, 175px)
+    minmax(145px, 175px)
     minmax(190px, 1fr)
-    minmax(150px, 190px)
+    minmax(230px, 1fr)
     auto;
-  gap: 9px;
+  gap: 10px;
   align-items: end;
 }
 
@@ -127,37 +117,38 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .dmp-filtros label > span {
   color: #64748b;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 750;
 }
 
 .dmp-filtros input,
 .dmp-filtros select {
   width: 100%;
-  min-height: 38px;
-  padding: 0 10px;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 0 11px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 9px;
+  outline: 0;
   background: #ffffff;
   color: #334155;
   font: inherit;
-  font-size: 12px;
-  outline: none;
+  font-size: 13px;
 }
 
 .dmp-filtros input:focus,
 .dmp-filtros select:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
 }
 
 .dmp-atualizar {
-  min-height: 38px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -165,25 +156,20 @@
 }
 
 .dmp-atualizar:disabled {
-  cursor: not-allowed;
   opacity: 0.55;
+  cursor: not-allowed;
 }
-
-
-/* =========================================================
-   MENSAGENS
-========================================================= */
 
 .dmp-mensagem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding: 10px 12px;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 11px 13px;
   border: 1px solid #e2e8f0;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .dmp-mensagem.erro {
@@ -198,27 +184,62 @@
   color: #92400e;
 }
 
+.dmp-mensagem.informativa {
+  border-color: rgba(37, 99, 235, 0.16);
+  background: #eff6ff;
+  color: #1d4ed8;
+}
 
-/* =========================================================
-   KPIs
-========================================================= */
+.dmp-secao {
+  margin-bottom: 14px;
+}
+
+.dmp-secao-titulo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 9px;
+  padding: 0 2px;
+}
+
+.dmp-secao-titulo > div > span {
+  display: block;
+  margin-bottom: 2px;
+  color: #2563eb;
+  font-size: 10.5px;
+  font-weight: 850;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.dmp-secao-titulo h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.dmp-secao-titulo > small {
+  color: #94a3b8;
+  font-size: 10.5px;
+}
 
 .dmp-kpis {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 11px;
 }
 
 .dmp-kpi {
   position: relative;
   min-width: 0;
-  min-height: 112px;
-  padding: 13px 14px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 11px;
-  background: var(--color-surface, #ffffff);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
+  min-height: 120px;
+  padding: 15px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   overflow: hidden;
 }
 
@@ -226,7 +247,7 @@
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
-  width: 3px;
+  width: 4px;
   background: #64748b;
 }
 
@@ -242,32 +263,28 @@
   background: #d97706;
 }
 
-.dmp-kpi-critico::before {
-  background: #dc2626;
-}
-
 .dmp-kpi-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
 
 .dmp-kpi-topo > span {
   color: #64748b;
-  font-size: 10px;
-  font-weight: 750;
+  font-size: 11.5px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.035em;
 }
 
 .dmp-kpi-icone {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 9px;
   background: #f8fafc;
   color: #475569;
 }
@@ -275,9 +292,9 @@
 .dmp-kpi > strong {
   display: block;
   overflow: hidden;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   color: #0f172a;
-  font-size: 20px;
+  font-size: 23px;
   line-height: 1.1;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -286,21 +303,115 @@
 .dmp-kpi > small {
   display: block;
   color: #94a3b8;
-  font-size: 9.5px;
-  line-height: 1.35;
+  font-size: 10.5px;
+  line-height: 1.4;
 }
 
+.dmp-mini-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
 
-/* =========================================================
-   CARDS E GRIDS
-========================================================= */
+.dmp-mini-kpis > article {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  padding: 13px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.dmp-mini-kpis > article > svg {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #2563eb;
+}
+
+.dmp-mini-kpis span {
+  display: block;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.dmp-mini-kpis strong {
+  display: block;
+  margin: 2px 0;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.dmp-mini-kpis small {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.dmp-insights {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dmp-insights > article {
+  min-width: 0;
+  min-height: 105px;
+  padding: 13px 14px;
+  border: 1px solid #dbeafe;
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fbff
+    );
+}
+
+.dmp-insights span {
+  display: block;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.dmp-insights strong {
+  display: block;
+  overflow: hidden;
+  margin: 7px 0 4px;
+  color: #0f172a;
+  font-size: 17px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dmp-insights small {
+  display: block;
+  color: #64748b;
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+.dmp-grid-graficos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 14px;
+}
 
 .dmp-card {
   min-width: 0;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 12px;
-  background: var(--color-surface, #ffffff);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   overflow: hidden;
 }
 
@@ -309,7 +420,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  padding: 13px 15px;
+  padding: 15px 17px;
   border-bottom: 1px solid #edf1f5;
 }
 
@@ -319,26 +430,26 @@
 
 .dmp-card-header > div > span {
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   color: #2563eb;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.055em;
   text-transform: uppercase;
 }
 
 .dmp-card-header h2 {
   margin: 0;
   color: #0f172a;
-  font-size: 14px;
-  font-weight: 750;
+  font-size: 16px;
+  font-weight: 800;
 }
 
 .dmp-card-header p {
-  margin: 3px 0 0;
+  margin: 4px 0 0;
   color: #94a3b8;
-  font-size: 10px;
-  line-height: 1.35;
+  font-size: 11.5px;
+  line-height: 1.4;
 }
 
 .dmp-card-header > svg {
@@ -346,228 +457,31 @@
   color: #64748b;
 }
 
-.dmp-grid-principal {
-  display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.8fr);
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.dmp-grid-graficos,
-.dmp-grid-rankings {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-
-/* =========================================================
-   GRÁFICOS
-========================================================= */
-
-.dmp-chart-grande {
-  height: 335px;
-  padding: 12px 8px 8px 0;
-}
-
 .dmp-chart {
-  height: 300px;
-  padding: 10px 8px 8px 0;
+  height: 315px;
+  padding: 12px 10px 10px 0;
 }
 
 .dmp-tooltip {
-  min-width: 130px;
+  min-width: 145px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 9px 10px;
+  gap: 5px;
+  padding: 10px 11px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.97);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.985);
   box-shadow: 0 8px 28px rgba(15, 23, 42, 0.12);
   color: #334155;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .dmp-tooltip strong {
   color: #0f172a;
 }
 
-
-/* =========================================================
-   ALERTAS E STATUS
-========================================================= */
-
-.dmp-alertas {
-  max-height: 388px;
-  overflow: auto;
-  padding: 4px 13px 10px;
-}
-
-.dmp-alerta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 11px 2px;
-  border-bottom: 1px solid #edf1f5;
-}
-
-.dmp-alerta:last-child {
-  border-bottom: 0;
-}
-
-.dmp-alerta > div:first-child {
-  min-width: 0;
-}
-
-.dmp-alerta strong {
-  display: block;
-  overflow: hidden;
-  color: #0f172a;
-  font-size: 11px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.dmp-alerta span {
-  display: block;
-  margin-top: 3px;
-  color: #64748b;
-  font-size: 9.5px;
-}
-
-.dmp-alerta-direita {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.dmp-alerta-direita small {
-  color: #94a3b8;
-  font-size: 9px;
-}
-
-.dmp-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
-  min-height: 23px;
-  padding: 3px 8px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 9px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.dmp-status.ok {
-  border-color: rgba(5, 150, 105, 0.16);
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.dmp-status.atencao {
-  border-color: rgba(202, 138, 4, 0.18);
-  background: #fefce8;
-  color: #a16207;
-}
-
-.dmp-status.comprar {
-  border-color: rgba(217, 119, 6, 0.18);
-  background: #fff7ed;
-  color: #c2410c;
-}
-
-.dmp-status.critico {
-  border-color: rgba(220, 38, 38, 0.18);
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
-.dmp-status.configurar,
-.dmp-status.sem-saldo,
-.dmp-status.neutro {
-  border-color: #e2e8f0;
-  background: #f8fafc;
-  color: #64748b;
-}
-
-
-/* =========================================================
-   RANKINGS
-========================================================= */
-
-.dmp-ranking {
-  padding: 4px 14px 10px;
-}
-
-.dmp-ranking-item {
-  display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 0;
-  border-bottom: 1px solid #edf1f5;
-}
-
-.dmp-ranking-item:last-child {
-  border-bottom: 0;
-}
-
-.dmp-ranking-posicao {
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 7px;
-  background: #f1f5f9;
-  color: #475569;
-  font-size: 9px;
-  font-weight: 800;
-}
-
-.dmp-ranking-item > div {
-  min-width: 0;
-}
-
-.dmp-ranking-item > div strong {
-  display: block;
-  overflow: hidden;
-  color: #0f172a;
-  font-size: 11px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.dmp-ranking-item > div small {
-  display: block;
-  overflow: hidden;
-  margin-top: 2px;
-  color: #94a3b8;
-  font-size: 9px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.dmp-ranking-valor {
-  color: #334155;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   TABELA GERENCIAL
-========================================================= */
-
 .dmp-tabela-card {
-  margin-top: 0;
+  margin-bottom: 14px;
 }
 
 .dmp-tabela-wrapper {
@@ -577,22 +491,34 @@
 
 .dmp-tabela {
   width: 100%;
-  min-width: 1420px;
+  min-width: 1180px;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 11px;
+  font-size: 12.5px;
+}
+
+.dmp-tabela-material {
+  min-width: 1920px;
+}
+
+.dmp-tabela-fornecedor {
+  min-width: 1720px;
+}
+
+.dmp-tabela-compras {
+  min-width: 1660px;
 }
 
 .dmp-tabela th {
   position: sticky;
   top: 0;
   z-index: 2;
-  padding: 9px 11px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e2e8f0;
   background: #f8fafc;
   color: #64748b;
-  font-size: 9px;
-  font-weight: 800;
+  font-size: 10.5px;
+  font-weight: 850;
   letter-spacing: 0.035em;
   text-align: left;
   text-transform: uppercase;
@@ -600,167 +526,102 @@
 }
 
 .dmp-tabela td {
-  padding: 10px 11px;
+  padding: 11px 12px;
   border-bottom: 1px solid #edf1f5;
   background: #ffffff;
   color: #334155;
   vertical-align: middle;
 }
 
-.dmp-tabela tbody > tr:not(.dmp-detalhe-linha):hover > td {
+.dmp-tabela tbody tr:hover td {
   background: #fafcff;
 }
 
-.dmp-tabela td:first-child strong {
+.dmp-tabela td strong {
   color: #0f172a;
-  white-space: nowrap;
+  font-weight: 750;
 }
 
-.dmp-tabela .numero,
-.dmp-detalhe-tabela .numero {
+.dmp-tabela .numero {
   text-align: right;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.dmp-negativo {
-  color: #dc2626 !important;
+.dmp-total {
+  color: #2563eb !important;
+  font-weight: 850;
+}
+
+.dmp-custo {
+  color: #047857 !important;
+  font-weight: 850;
+}
+
+.dmp-variacao-alta {
+  color: #b45309 !important;
   font-weight: 800;
 }
 
-.dmp-compra {
-  color: #c2410c !important;
+.dmp-variacao-baixa {
+  color: #047857 !important;
   font-weight: 800;
 }
 
-.dmp-detalhar {
-  min-height: 29px;
+.dmp-status-compra {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 0 8px;
-  border: 1px solid #cbd5e1;
-  border-radius: 7px;
-  background: #ffffff;
-  color: #475569;
-  font: inherit;
-  font-size: 9.5px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.dmp-detalhar:hover {
-  border-color: #93c5fd;
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-
-/* =========================================================
-   DETALHE
-========================================================= */
-
-.dmp-detalhe-linha > td {
-  padding: 0 !important;
-  background: #f8fafc !important;
-}
-
-.dmp-detalhe {
-  padding: 13px;
-}
-
-.dmp-detalhe-kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.dmp-detalhe-kpis > div {
-  padding: 9px 10px;
+  min-width: 84px;
+  min-height: 24px;
+  padding: 3px 8px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #ffffff;
-}
-
-.dmp-detalhe-kpis span {
-  display: block;
-  margin-bottom: 3px;
-  color: #94a3b8;
-  font-size: 8.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.dmp-detalhe-kpis strong {
-  color: #0f172a;
-  font-size: 11px;
-}
-
-.dmp-detalhe-tabela-wrapper {
-  overflow: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #ffffff;
-}
-
-.dmp-detalhe-tabela {
-  width: 100%;
-  min-width: 800px;
-  border-collapse: collapse;
-  font-size: 10px;
-}
-
-.dmp-detalhe-tabela th {
-  padding: 8px 9px;
-  border-bottom: 1px solid #e2e8f0;
+  border-radius: 999px;
   background: #f8fafc;
   color: #64748b;
-  font-size: 8.5px;
-  text-align: left;
-  text-transform: uppercase;
+  font-size: 9.5px;
+  font-weight: 850;
 }
 
-.dmp-detalhe-tabela td {
-  padding: 8px 9px;
-  border-bottom: 1px solid #edf1f5;
+.dmp-status-compra.recebida {
+  border-color: rgba(5, 150, 105, 0.17);
+  background: #ecfdf5;
+  color: #047857;
 }
 
+.dmp-status-compra.confirmada {
+  border-color: rgba(37, 99, 235, 0.17);
+  background: #eff6ff;
+  color: #1d4ed8;
+}
 
-/* =========================================================
-   ESTADOS VAZIOS
-========================================================= */
+.dmp-status-compra.prevista {
+  border-color: rgba(217, 119, 6, 0.17);
+  background: #fff7ed;
+  color: #c2410c;
+}
 
 .dmp-vazio {
-  min-height: 180px;
+  min-height: 185px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 20px;
+  gap: 7px;
+  padding: 22px;
   color: #94a3b8;
   text-align: center;
 }
 
-.dmp-vazio.compacto {
-  min-height: 130px;
-}
-
 .dmp-vazio strong {
   color: #475569;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .dmp-vazio span {
-  max-width: 340px;
-  font-size: 9.5px;
-  line-height: 1.4;
-}
-
-.dmp-tabela-vazio {
-  min-height: 220px;
+  max-width: 360px;
+  font-size: 10.5px;
+  line-height: 1.45;
 }
 
 .dmp-girando {
@@ -773,18 +634,11 @@
   }
 }
 
-
-/* =========================================================
-   RESPONSIVO
-========================================================= */
-
 @media (max-width: 1280px) {
-  .dmp-kpis {
+  .dmp-kpis,
+  .dmp-mini-kpis,
+  .dmp-insights {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dmp-grid-principal {
-    grid-template-columns: 1fr;
   }
 
   .dmp-filtros {
@@ -796,9 +650,9 @@
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 900px) {
   .dmp-page {
-    padding: 12px 10px 24px;
+    padding: 14px 11px 26px;
   }
 
   .dmp-header {
@@ -806,23 +660,25 @@
   }
 
   .dmp-header h1 {
-    font-size: 20px;
+    font-size: 23px;
   }
 
-  .dmp-grid-graficos,
-  .dmp-grid-rankings {
+  .dmp-grid-graficos {
     grid-template-columns: 1fr;
   }
 
-  .dmp-detalhe-kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .dmp-secao-titulo {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
   }
 }
 
 @media (max-width: 560px) {
   .dmp-kpis,
-  .dmp-filtros,
-  .dmp-detalhe-kpis {
+  .dmp-mini-kpis,
+  .dmp-insights,
+  .dmp-filtros {
     grid-template-columns: 1fr;
   }
 
@@ -830,8 +686,78 @@
     display: none;
   }
 
-  .dmp-chart-grande,
   .dmp-chart {
-    height: 280px;
+    height: 290px;
   }
+}
+
+.dmp-page {
+  width: 100%;
+  min-width: 0;
+  padding: 20px 24px 36px;
+  color: #0f172a;
+  font-size: 13px;
+}
+
+.dmp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 70px;
+  margin-bottom: 16px;
+  padding: 21px 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(37, 99, 235, 0.065),
+      rgba(5, 150, 105, 0.04)
+    ),
+    #ffffff;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.045);
+}
+
+.dmp-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dmp-header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 27px;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.dmp-header p {
+  max-width: 780px;
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.dmp-header-icone {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.09);
+  color: #2563eb;
+}
+
+.dmp-filtros-card {
+  margin-bottom: 16px;
+  padding: 15px 16px;
 }
