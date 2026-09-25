@@ -1736,7 +1736,7 @@ export default function PainelFinanceiroMateriaPrima({
             </span>
 
             <h2>
-              Análise gerencial por material
+              Análise por Material
             </h2>
 
             <p>
