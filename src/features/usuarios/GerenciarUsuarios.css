@@ -1,74 +1,86 @@
 /* =========================================================
    GERENCIAR USUÁRIOS
-   ESTILO PRINCIPAL + MODAL DE PERMISSÕES
 
-   Arquivo único.
-   Não use GerenciarUsuariosPermissoes.css junto com este.
+   Responsabilidades deste arquivo:
+   - Página
+   - Tabela de usuários
+   - Alertas / loading
+   - Modal genérico
+   - Modal de novo usuário
+   - Modal de exclusão
+
+   O modal de permissões possui CSS próprio:
+   components/PermissoesModal.css
 ========================================================= */
-
 
 /* =========================================================
    PÁGINA
 ========================================================= */
 
 .gerenciar-usuarios-container {
-  width: 100%;
-  max-width: 100%;
+  width: 70%;
+  max-width: 1400px;
   min-width: 0;
+
+  margin: 70px auto 0;
+
   padding: 18px 22px 32px;
+
   color: var(--color-text, #0f172a);
 }
 
-.gerenciar-usuarios-container * {
-  box-sizing: border-box;
+@media (max-width: 1200px) {
+  .gerenciar-usuarios-container {
+    width: 90%;
+  }
 }
 
-.btn-voltar-home {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 34px;
-  margin: 0 0 12px;
-  padding: 0 11px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 8px;
-  background: var(--color-surface, #ffffff);
-  color: var(--color-text-secondary, #475569);
-  font: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    border-color 0.15s ease,
-    background 0.15s ease,
-    color 0.15s ease;
+@media (max-width: 850px) {
+  .gerenciar-usuarios-container {
+    width: 100%;
+    padding: 14px 12px 24px;
+  }
 }
 
-.btn-voltar-home:hover {
-  border-color: var(--color-border-strong, #cbd5e1);
-  background: var(--color-surface-subtle, #f8fafc);
-  color: var(--color-text, #0f172a);
-}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
 
 .admin-header-block {
   margin-bottom: 14px;
 }
 
+/* =========================================================
+   NOVO USUÁRIO
+========================================================= */
+
 .btn-novo-usuario {
   min-height: 36px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 7px;
+
   padding: 0 13px;
+
   border: 1px solid rgba(37, 99, 235, 0.18);
+
   border-radius: 8px;
+
   background: var(--color-primary, #2563eb);
+
   color: #ffffff;
+
   font: inherit;
   font-size: 11px;
   font-weight: 700;
+
   cursor: pointer;
+
   transition:
     filter 0.15s ease,
     transform 0.15s ease;
@@ -82,86 +94,121 @@
   transform: translateY(1px);
 }
 
-
 /* =========================================================
-   ALERTAS / LOADING
+   ALERTAS
 ========================================================= */
 
 .alert-message {
   margin: 0 0 14px;
+
   padding: 10px 12px;
+
   border: 1px solid var(--color-border, #e2e8f0);
+
   border-radius: 9px;
+
   background: var(--color-surface, #ffffff);
+
   font-size: 11px;
   font-weight: 650;
 }
 
 .alert-message.sucesso {
   border-color: rgba(5, 150, 105, 0.2);
+
   background: #ecfdf5;
   color: #047857;
 }
 
 .alert-message.erro {
   border-color: rgba(220, 38, 38, 0.18);
+
   background: #fef2f2;
   color: #b91c1c;
 }
 
+/* =========================================================
+   LOADING
+========================================================= */
+
 .loading-state {
   min-height: 180px;
+
   display: grid;
   place-items: center;
+
   border: 1px solid var(--color-border, #e2e8f0);
+
   border-radius: 12px;
+
   background: var(--color-surface, #ffffff);
+
   color: var(--color-text-muted, #64748b);
+
   font-size: 12px;
   font-weight: 600;
 }
 
-
 /* =========================================================
-   TABELA DE USUÁRIOS
+   TABELA
 ========================================================= */
 
 .table-responsive {
   width: 100%;
+
   overflow-x: auto;
+
   border: 1px solid var(--color-border, #e2e8f0);
+
   border-radius: 12px;
+
   background: var(--color-surface, #ffffff);
+
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
+
   -webkit-overflow-scrolling: touch;
 }
 
 .usuarios-table {
   width: 100%;
+
   min-width: 960px;
+
   border-collapse: separate;
   border-spacing: 0;
+
   font-size: 12px;
 }
 
 .usuarios-table th {
   padding: 10px 13px;
+
   border-bottom: 1px solid var(--color-border, #e2e8f0);
+
   background: var(--color-surface-subtle, #f8fafc);
+
   color: var(--color-text-secondary, #475569);
+
   font-size: 9.5px;
   font-weight: 800;
+
   letter-spacing: 0.035em;
+
   text-align: left;
   text-transform: uppercase;
+
   white-space: nowrap;
 }
 
 .usuarios-table td {
   padding: 11px 13px;
+
   border-bottom: 1px solid #edf1f5;
+
   background: #ffffff;
+
   color: var(--color-text-secondary, #334155);
+
   vertical-align: middle;
 }
 
@@ -175,7 +222,9 @@
 
 .user-email-col {
   min-width: 240px;
+
   color: var(--color-text, #0f172a) !important;
+
   font-weight: 650;
 }
 
@@ -185,76 +234,107 @@
 
 .tabela-vazia {
   padding: 40px 20px !important;
+
   color: var(--color-text-muted, #64748b) !important;
+
   text-align: center !important;
 }
 
-
 /* =========================================================
-   BADGES
+   PERFIL
 ========================================================= */
 
 .badge-role {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-width: 96px;
+
   padding: 5px 9px;
+
   border: 1px solid var(--color-border, #e2e8f0);
+
   border-radius: 999px;
+
   font-size: 9px;
   font-weight: 800;
+
   line-height: 1;
+
   white-space: nowrap;
 }
 
 .badge-role.admin {
   border-color: rgba(37, 99, 235, 0.16);
+
   background: #eff6ff;
   color: #1d4ed8;
 }
 
 .badge-role.operador {
   border-color: rgba(100, 116, 139, 0.16);
+
   background: #f8fafc;
   color: #475569;
 }
+
+/* =========================================================
+   ADMIN — ACESSO TOTAL
+========================================================= */
 
 .acesso-total-admin {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-width: 102px;
   min-height: 29px;
+
   padding: 0 9px;
+
   border: 1px solid rgba(5, 150, 105, 0.16);
+
   border-radius: 8px;
+
   background: #ecfdf5;
   color: #047857;
+
   font-size: 9.5px;
   font-weight: 750;
 }
 
-
 /* =========================================================
-   BOTÕES DA TABELA
+   CONFIGURAR ACESSOS
 ========================================================= */
 
 .btn-gerenciar-permissoes {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 7px;
+
   min-height: 32px;
+
   padding: 0 9px 0 10px;
+
   border: 1px solid rgba(37, 99, 235, 0.18);
+
   border-radius: 8px;
+
   background: #eff6ff;
   color: #1d4ed8;
+
   font: inherit;
   font-size: 9.5px;
   font-weight: 750;
+
   cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .btn-gerenciar-permissoes:hover {
@@ -264,39 +344,57 @@
 
 .contador-permissoes {
   min-width: 34px;
+
   padding: 3px 6px;
+
   border-radius: 999px;
+
   background: rgba(37, 99, 235, 0.1);
+
   color: #1d4ed8;
+
   font-size: 8.5px;
   font-weight: 800;
 }
 
+/* =========================================================
+   NÍVEL / EXCLUSÃO
+========================================================= */
+
 .btn-change-role,
 .btn-delete-user {
   min-height: 31px;
+
   padding: 0 10px;
+
   border-radius: 7px;
+
   font: inherit;
   font-size: 9px;
   font-weight: 700;
+
   cursor: pointer;
+
+  transition: filter 0.15s ease;
 }
 
 .btn-change-role.adm {
   border: 1px solid rgba(37, 99, 235, 0.18);
+
   background: #eff6ff;
   color: #1d4ed8;
 }
 
 .btn-change-role.op {
   border: 1px solid #e2e8f0;
+
   background: #f8fafc;
   color: #475569;
 }
 
 .btn-delete-user {
   border: 1px solid rgba(220, 38, 38, 0.16);
+
   background: #fef2f2;
   color: #b91c1c;
 }
@@ -306,14 +404,21 @@
   filter: brightness(0.98);
 }
 
-
 /* =========================================================
-   MODAL — BASE
+   MODAL GENÉRICO
+
+   Usado por:
+   - Novo usuário
+   - Exclusão
+
+   Permissões NÃO usa este CSS.
 ========================================================= */
 
 .modal-overlay {
   position: fixed;
+
   inset: 0;
+
   z-index: 9999;
 
   display: flex;
@@ -322,41 +427,27 @@
 
   padding: 18px;
 
+  overflow: auto;
+
   background: rgba(15, 23, 42, 0.58);
 
-  overflow: auto;
-}
-
-.modal-overlay-permissoes {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 18px;
-
-  background: rgba(15, 23, 42, 0.66);
-
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-
-  overflow: auto;
+  animation: gerenciarFadeIn 0.16s ease-out;
 }
 
 .modal-content {
   position: relative;
-  z-index: 10001;
 
   width: min(470px, calc(100vw - 36px));
+
   max-width: 470px;
   max-height: calc(100dvh - 36px);
 
   padding: 20px;
 
+  overflow: auto;
+
   border: 1px solid var(--color-border, #e2e8f0);
+
   border-radius: 14px;
 
   background: #ffffff;
@@ -365,29 +456,44 @@
 
   color: var(--color-text, #0f172a);
 
-  overflow: auto;
+  text-align: center;
+
+  animation: gerenciarModalIn 0.16s ease-out;
 }
 
-.modal-content.modal-permissoes.modal-permissoes-v2 {
-  position: relative;
-  z-index: 10001;
+.modal-content > h3 {
+  margin: 0 0 8px;
 
-  width: min(1040px, calc(100vw - 36px));
-  max-width: 1040px;
+  color: #1f2937;
 
-  height: min(860px, calc(100dvh - 36px));
-  max-height: calc(100dvh - 36px);
+  font-size: 18px;
+  font-weight: 750;
+}
 
-  padding: 0;
+.modal-content > p {
+  margin: 0 0 20px;
 
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 16px;
+  color: #4b5563;
 
-  background: #ffffff;
+  font-size: 13px;
 
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+  line-height: 1.5;
+}
 
-  overflow: hidden;
+/* =========================================================
+   MODAL DE EXCLUSÃO
+========================================================= */
+
+.modal-icon-alert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  color: #d97706;
+
+  font-size: 32px;
 }
 
 /* =========================================================
@@ -396,61 +502,116 @@
 
 .modal-novo-usuario {
   width: min(560px, calc(100vw - 36px));
+
   max-width: 560px;
+
   padding: 0;
+
   overflow: hidden;
+
+  text-align: left;
 }
 
 .modal-novo-usuario-header {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 34px;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr)
+    34px;
+
   align-items: center;
+
   gap: 11px;
+
   padding: 16px 18px;
+
   border-bottom: 1px solid #e2e8f0;
+
   background: #ffffff;
 }
 
 .modal-novo-usuario-header h3 {
   margin: 0;
+
+  color: #0f172a;
+
   font-size: 16px;
+  font-weight: 750;
 }
 
 .modal-novo-usuario-header p {
   margin: 3px 0 0;
+
   color: #64748b;
+
   font-size: 10px;
+
   line-height: 1.4;
 }
+
+/* =========================================================
+   ÍCONE DO NOVO USUÁRIO
+
+   A classe mantém o nome atual para não precisar
+   alterar NovoUsuarioModal.jsx.
+========================================================= */
 
 .modal-permissoes-icon {
   width: 42px;
   height: 42px;
+
   display: grid;
   place-items: center;
+
+  flex-shrink: 0;
+
   border-radius: 10px;
+
   background: #eff6ff;
   color: #2563eb;
+
   font-size: 18px;
 }
+
+/* =========================================================
+   FECHAR NOVO USUÁRIO
+========================================================= */
 
 .btn-fechar-modal-usuario {
   width: 34px;
   height: 34px;
+
   display: grid;
   place-items: center;
+
   padding: 0;
+
   border: 1px solid #e2e8f0;
+
   border-radius: 8px;
+
   background: #ffffff;
   color: #64748b;
+
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .btn-fechar-modal-usuario:hover:not(:disabled) {
+  border-color: #cbd5e1;
+
   background: #f8fafc;
   color: #0f172a;
 }
+
+/* =========================================================
+   FORMULÁRIO NOVO USUÁRIO
+========================================================= */
 
 .form-novo-usuario,
 .usuario-criado-sucesso {
@@ -459,12 +620,15 @@
 
 .campo-novo-usuario {
   display: flex;
+
   flex-direction: column;
+
   gap: 6px;
 }
 
 .campo-novo-usuario > span {
   color: #475569;
+
   font-size: 10px;
   font-weight: 700;
 }
@@ -472,77 +636,128 @@
 .campo-novo-usuario input,
 .bloco-link-primeiro-acesso input {
   width: 100%;
+
   min-height: 40px;
+
   padding: 0 11px;
+
   border: 1px solid #cbd5e1;
+
   border-radius: 8px;
+
   background: #ffffff;
   color: #0f172a;
+
   font: inherit;
   font-size: 11px;
+
   outline: none;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .campo-novo-usuario input:focus,
 .bloco-link-primeiro-acesso input:focus {
   border-color: #2563eb;
+
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
+/* =========================================================
+   USUÁRIO CRIADO
+========================================================= */
+
 .usuario-criado-sucesso > strong {
   display: block;
+
   color: #047857;
+
   font-size: 14px;
 }
 
 .usuario-criado-sucesso > span {
   display: block;
+
   margin-top: 4px;
+
   color: #0f172a;
+
   font-size: 11px;
   font-weight: 650;
 }
 
 .usuario-criado-sucesso > p {
   margin: 12px 0;
+
   color: #64748b;
+
   font-size: 10px;
+
   line-height: 1.45;
 }
 
+/* =========================================================
+   LINK DE PRIMEIRO ACESSO
+========================================================= */
+
 .bloco-link-primeiro-acesso {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
   gap: 8px;
 }
 
 .bloco-link-primeiro-acesso button {
   min-height: 40px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 6px;
+
   padding: 0 11px;
+
   border: 1px solid rgba(37, 99, 235, 0.18);
+
   border-radius: 8px;
+
   background: #eff6ff;
   color: #1d4ed8;
+
   font: inherit;
   font-size: 9.5px;
   font-weight: 750;
+
   cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
+.bloco-link-primeiro-acesso button:hover {
+  border-color: #93c5fd;
+
+  background: #dbeafe;
+}
 
 /* =========================================================
-   AÇÕES DOS MODAIS
+   AÇÕES DOS MODAIS GENÉRICOS
 ========================================================= */
 
 .modal-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
   gap: 8px;
+
   margin-top: 18px;
 }
 
@@ -550,28 +765,40 @@
 .btn-modal-salvar-permissoes,
 .btn-modal-confirmar {
   min-height: 36px;
+
   padding: 0 14px;
+
   border-radius: 8px;
+
   font: inherit;
   font-size: 10px;
   font-weight: 750;
+
   cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    filter 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .btn-modal-cancelar {
   border: 1px solid #cbd5e1;
+
   background: #ffffff;
   color: #475569;
 }
 
 .btn-modal-salvar-permissoes {
   border: 1px solid #2563eb;
+
   background: #2563eb;
   color: #ffffff;
 }
 
 .btn-modal-confirmar {
   border: 1px solid #dc2626;
+
   background: #dc2626;
   color: #ffffff;
 }
@@ -587,107 +814,43 @@
 
 .btn-modal-cancelar:disabled,
 .btn-modal-salvar-permissoes:disabled,
-.btn-modal-confirmar:disabled {
+.btn-modal-confirmar:disabled,
+.btn-fechar-modal-usuario:disabled {
   cursor: not-allowed;
+
   opacity: 0.58;
 }
 
-
 /* =========================================================
-   MODAL DE PERMISSÕES — ESTRUTURA BASE
+   ANIMAÇÕES
 ========================================================= */
 
-.modal-content.modal-permissoes {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+@keyframes gerenciarFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.modal-permissoes-header {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
+@keyframes gerenciarModalIn {
+  from {
+    opacity: 0;
 
-.acoes-permissoes-rapidas {
-  display: flex;
-  gap: 7px;
-}
+    transform: translateY(4px) scale(0.99);
+  }
 
-.acoes-permissoes-rapidas button,
-.acoes-relatorios-permissoes button,
-.btn-modulo-liberar,
-.btn-modulo-bloquear {
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #475569;
-  font: inherit;
-  cursor: pointer;
-}
+  to {
+    opacity: 1;
 
-.lista-permissoes {
-  min-height: 0;
+    transform: translateY(0) scale(1);
+  }
 }
-
-.permissoes-modulos-lista {
-  min-width: 0;
-}
-
-.permissao-modulo-card {
-  min-width: 0;
-}
-
-.permissao-modulo-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.permissao-modulo-titulo {
-  min-width: 0;
-}
-
-.permissao-modulo-titulo > strong {
-  display: block;
-}
-
-.permissao-modulo-acoes {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.permissao-modulo-telas {
-  display: grid;
-}
-
-.item-permissao {
-  cursor: pointer;
-}
-
-.item-permissao-info {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.titulo-relatorios-permissoes {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 750;
-}
-
-.acoes-relatorios-permissoes {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
 
 /* =========================================================
-   RESPONSIVO DA PÁGINA
+   RESPONSIVO — TABLET
 ========================================================= */
 
 @media (max-width: 900px) {
@@ -695,6 +858,10 @@
     padding: 14px 12px 24px;
   }
 }
+
+/* =========================================================
+   RESPONSIVO — CELULAR
+========================================================= */
 
 @media (max-width: 600px) {
   .gerenciar-usuarios-container {
@@ -708,12 +875,18 @@
   .modal-content,
   .modal-novo-usuario {
     width: calc(100vw - 12px);
+
     max-width: calc(100vw - 12px);
+
     max-height: calc(100dvh - 12px);
   }
 
   .modal-novo-usuario-header {
-    grid-template-columns: 36px minmax(0, 1fr) 32px;
+    grid-template-columns:
+      36px
+      minmax(0, 1fr)
+      32px;
+
     padding: 12px;
   }
 
@@ -730,1687 +903,35 @@
   .bloco-link-primeiro-acesso {
     grid-template-columns: 1fr;
   }
-}
 
+  .modal-actions {
+    display: grid;
 
-/* =========================================================
-   A PARTIR DAQUI:
-   VISUAL V2 DO MODAL DE PERMISSÕES
-========================================================= */
-
-
-/* =========================================================
-   GERENCIAR USUÁRIOS
-   MODAL DE PERMISSÕES — VISUAL V2
-
-   Este arquivo complementa GerenciarUsuarios.css.
-   Importar depois do CSS principal.
-========================================================= */
-
-
-/* =========================================================
-   OVERLAY
-========================================================= */
-
-.modal-overlay-permissoes {
-  padding: 18px;
-  background:
-    rgba(15, 23, 42, 0.66);
-  backdrop-filter:
-    blur(3px);
-  -webkit-backdrop-filter:
-    blur(3px);
-}
-
-
-/* =========================================================
-   PAINEL PRINCIPAL
-========================================================= */
-
-.modal-content.modal-permissoes.modal-permissoes-v2 {
-  width:
-    min(
-      1040px,
-      calc(100vw - 36px)
-    );
-  max-width:
-    1040px;
-  height:
-    min(
-      860px,
-      calc(100dvh - 36px)
-    );
-  max-height:
-    calc(100dvh - 36px);
-  padding:
-    0;
-  border:
-    1px solid
-    rgba(
-      226,
-      232,
-      240,
-      0.95
-    );
-  border-radius:
-    16px;
-  background:
-    #ffffff;
-  box-shadow:
-    0 30px 80px
-      rgba(
-        15,
-        23,
-        42,
-        0.28
-      );
-  overflow:
-    hidden;
-  text-align:
-    left;
-}
-
-
-/* =========================================================
-   CABEÇALHO
-========================================================= */
-
-.modal-permissoes-header-v2 {
-  flex:
-    0 0 auto;
-  min-height:
-    82px;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    20px;
-  padding:
-    16px 20px;
-  border-bottom:
-    1px solid
-    #e2e8f0;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(
-        37,
-        99,
-        235,
-        0.055
-      ),
-      rgba(
-        5,
-        150,
-        105,
-        0.025
-      )
-    ),
-    #ffffff;
-}
-
-.modal-permissoes-header-principal {
-  min-width:
-    0;
-  display:
-    flex;
-  align-items:
-    center;
-  gap:
-    12px;
-}
-
-.modal-permissoes-v2
-.modal-permissoes-icon {
-  width:
-    42px;
-  height:
-    42px;
-  border:
-    1px solid
-    rgba(
-      37,
-      99,
-      235,
-      0.12
-    );
-  border-radius:
-    11px;
-  background:
-    #eff6ff;
-  color:
-    #2563eb;
-}
-
-.modal-permissoes-identificacao {
-  min-width:
-    0;
-}
-
-.modal-permissoes-eyebrow {
-  display:
-    block;
-  margin-bottom:
-    2px;
-  color:
-    #2563eb;
-  font-size:
-    9px;
-  font-weight:
-    800;
-  letter-spacing:
-    0.06em;
-  text-transform:
-    uppercase;
-}
-
-.modal-permissoes-header-v2 h3 {
-  margin:
-    0;
-  color:
-    #0f172a;
-  font-size:
-    18px;
-  font-weight:
-    750;
-  letter-spacing:
-    -0.015em;
-}
-
-.modal-permissoes-header-v2 p {
-  overflow:
-    hidden;
-  margin:
-    3px 0 0;
-  color:
-    #64748b;
-  font-size:
-    11px;
-  white-space:
-    nowrap;
-  text-overflow:
-    ellipsis;
-}
-
-.modal-permissoes-fechar {
-  flex:
-    0 0 auto;
-  width:
-    34px;
-  height:
-    34px;
-  display:
-    inline-flex;
-  align-items:
-    center;
-  justify-content:
-    center;
-  padding:
-    0;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    9px;
-  background:
-    #ffffff;
-  color:
-    #64748b;
-  cursor:
-    pointer;
-  transition:
-    all
-    0.16s
-    ease;
-}
-
-.modal-permissoes-fechar:hover:not(:disabled) {
-  border-color:
-    #cbd5e1;
-  background:
-    #f8fafc;
-  color:
-    #0f172a;
-}
-
-.modal-permissoes-fechar:disabled {
-  cursor:
-    not-allowed;
-  opacity:
-    0.55;
-}
-
-
-/* =========================================================
-   RESUMO
-========================================================= */
-
-.modal-permissoes-resumo {
-  flex:
-    0 0 auto;
-  display:
-    grid;
-  grid-template-columns:
-    repeat(
-      3,
-      minmax(
-        0,
-        1fr
-      )
-    );
-  gap:
-    8px;
-  padding:
-    10px 20px;
-  border-bottom:
-    1px solid
-    #edf1f5;
-  background:
-    #f8fafc;
-}
-
-.modal-permissoes-resumo-card {
-  position:
-    relative;
-  min-width:
-    0;
-  min-height:
-    72px;
-  padding:
-    10px 12px;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    10px;
-  background:
-    #ffffff;
-  overflow:
-    hidden;
-}
-
-.modal-permissoes-resumo-card::before {
-  content:
-    "";
-  position:
-    absolute;
-  inset:
-    0 auto 0 0;
-  width:
-    3px;
-  background:
-    #2563eb;
-}
-
-.modal-permissoes-resumo-card > span {
-  display:
-    block;
-  margin-bottom:
-    4px;
-  color:
-    #64748b;
-  font-size:
-    8.5px;
-  font-weight:
-    800;
-  letter-spacing:
-    0.04em;
-  text-transform:
-    uppercase;
-}
-
-.modal-permissoes-resumo-card > strong {
-  display:
-    block;
-  color:
-    #0f172a;
-  font-size:
-    17px;
-  font-weight:
-    800;
-  line-height:
-    1.1;
-}
-
-.modal-permissoes-resumo-card > strong small {
-  margin-left:
-    2px;
-  color:
-    #94a3b8;
-  font-size:
-    11px;
-  font-weight:
-    700;
-}
-
-.modal-permissoes-resumo-card > p {
-  overflow:
-    hidden;
-  margin:
-    4px 0 0;
-  color:
-    #94a3b8;
-  font-size:
-    9px;
-  white-space:
-    nowrap;
-  text-overflow:
-    ellipsis;
-}
-
-.modal-permissoes-resumo-card.resumo-liberado::before {
-  background:
-    #059669;
-}
-
-.modal-permissoes-resumo-card.resumo-liberado
-.modal-permissoes-resumo-status {
-  color:
-    #047857;
-}
-
-.modal-permissoes-resumo-card.resumo-bloqueado::before {
-  background:
-    #94a3b8;
-}
-
-.modal-permissoes-resumo-card.resumo-bloqueado
-.modal-permissoes-resumo-status {
-  color:
-    #64748b;
-}
-
-.modal-permissoes-resumo-status {
-  font-size:
-    15px !important;
-}
-
-
-/* =========================================================
-   AÇÕES RÁPIDAS
-========================================================= */
-
-.acoes-permissoes-rapidas-v2 {
-  flex:
-    0 0 auto;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    16px;
-  padding:
-    10px 20px;
-  border-bottom:
-    1px solid
-    #e2e8f0;
-  background:
-    #ffffff;
-}
-
-.acoes-permissoes-rapidas-v2 > div:first-child {
-  min-width:
-    0;
-}
-
-.acoes-permissoes-rapidas-v2 > div:first-child strong {
-  display:
-    block;
-  margin-bottom:
-    2px;
-  color:
-    #334155;
-  font-size:
-    11px;
-  font-weight:
-    750;
-}
-
-.acoes-permissoes-rapidas-v2 > div:first-child span {
-  display:
-    block;
-  color:
-    #94a3b8;
-  font-size:
-    9px;
-}
-
-.acoes-permissoes-rapidas-botoes {
-  flex:
-    0 0 auto;
-  display:
-    flex;
-  align-items:
-    center;
-  gap:
-    7px;
-}
-
-.acoes-permissoes-rapidas-v2 button,
-.acoes-relatorios-permissoes button {
-  min-height:
-    30px;
-  padding:
-    0 10px;
-  border-radius:
-    7px;
-  font-size:
-    9.5px;
-  font-weight:
-    750;
-}
-
-.acao-permissao-liberar {
-  border-color:
-    rgba(
-      5,
-      150,
-      105,
-      0.22
-    ) !important;
-  background:
-    #ecfdf5 !important;
-  color:
-    #047857 !important;
-}
-
-.acao-permissao-liberar:hover {
-  border-color:
-    #6ee7b7 !important;
-  background:
-    #d1fae5 !important;
-}
-
-.acao-permissao-bloquear {
-  border-color:
-    #e2e8f0 !important;
-  background:
-    #f8fafc !important;
-  color:
-    #64748b !important;
-}
-
-.acao-permissao-bloquear:hover {
-  border-color:
-    #cbd5e1 !important;
-  background:
-    #f1f5f9 !important;
-  color:
-    #334155 !important;
-}
-
-
-/* =========================================================
-   ÁREA ROLÁVEL
-========================================================= */
-
-.lista-permissoes-v2 {
-  flex:
-    1 1 auto;
-  min-height:
-    0;
-  padding:
-    14px 20px 20px;
-  overflow:
-    auto;
-  background:
-    #f8fafc;
-  scrollbar-width:
-    thin;
-  scrollbar-color:
-    #cbd5e1
-    transparent;
-}
-
-.lista-permissoes-v2::-webkit-scrollbar {
-  width:
-    8px;
-  height:
-    8px;
-}
-
-.lista-permissoes-v2::-webkit-scrollbar-track {
-  background:
-    transparent;
-}
-
-.lista-permissoes-v2::-webkit-scrollbar-thumb {
-  border-radius:
-    999px;
-  background:
-    #cbd5e1;
-}
-
-
-/* =========================================================
-   TÍTULO DO CONTEÚDO
-========================================================= */
-
-.titulo-grupo-permissoes-v2 {
-  margin:
-    0 0 10px;
-}
-
-.titulo-grupo-permissoes-v2 > div {
-  display:
-    flex;
-  align-items:
-    baseline;
-  gap:
-    8px;
-  flex-wrap:
-    wrap;
-}
-
-.titulo-grupo-permissoes-v2 strong {
-  color:
-    #334155;
-  font-size:
-    10px;
-  font-weight:
-    800;
-  letter-spacing:
-    0.045em;
-  text-transform:
-    uppercase;
-}
-
-.titulo-grupo-permissoes-v2 span {
-  color:
-    #94a3b8;
-  font-size:
-    9px;
-  font-weight:
-    500;
-  letter-spacing:
-    0;
-  text-transform:
-    none;
-}
-
-
-/* =========================================================
-   GRID DOS MÓDULOS
-========================================================= */
-
-.permissoes-modulos-grid {
-  display:
-    grid;
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        0,
-        1fr
-      )
-    );
-  gap:
-    10px;
-  align-items:
-    start;
-}
-
-.permissao-modulo-card-v2 {
-  min-width:
-    0;
-  margin:
-    0;
-  padding:
-    0;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    11px;
-  background:
-    #ffffff;
-  box-shadow:
-    0 1px 2px
-      rgba(
-        15,
-        23,
-        42,
-        0.035
-      );
-  overflow:
-    hidden;
-  transition:
-    border-color
-      0.15s
-      ease,
-    box-shadow
-      0.15s
-      ease;
-}
-
-.permissao-modulo-card-v2.ativo {
-  border-color:
-    rgba(
-      5,
-      150,
-      105,
-      0.28
-    );
-  box-shadow:
-    0 0 0 1px
-      rgba(
-        5,
-        150,
-        105,
-        0.035
-      );
-}
-
-.permissao-modulo-card-v2.parcial {
-  border-color:
-    rgba(
-      217,
-      119,
-      6,
-      0.32
-    );
-}
-
-.permissao-modulo-card-relatorios {
-  grid-column:
-    1 / -1;
-}
-
-
-/* =========================================================
-   CABEÇALHO DO MÓDULO
-========================================================= */
-
-.permissao-modulo-card-v2
-.permissao-modulo-header {
-  min-height:
-    72px;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    10px;
-  padding:
-    10px 12px;
-  border-bottom:
-    1px solid
-    #edf1f5;
-  background:
-    #ffffff;
-}
-
-.permissao-modulo-titulo {
-  min-width:
-    0;
-}
-
-.permissao-modulo-titulo-linha {
-  display:
-    flex;
-  align-items:
-    center;
-  gap:
-    7px;
-  margin-bottom:
-    3px;
-}
-
-.permissao-modulo-card-v2
-.permissao-modulo-titulo
-> span {
-  display:
-    block;
-  overflow:
-    hidden;
-  color:
-    #94a3b8;
-  font-size:
-    9px;
-  line-height:
-    1.3;
-  white-space:
-    nowrap;
-  text-overflow:
-    ellipsis;
-}
-
-.permissao-modulo-titulo-linha
-> strong {
-  color:
-    #0f172a;
-  font-size:
-    12px;
-  font-weight:
-    750;
-}
-
-.permissao-modulo-status {
-  display:
-    inline-flex !important;
-  align-items:
-    center;
-  justify-content:
-    center;
-  width:
-    auto !important;
-  padding:
-    2px 6px;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    999px;
-  font-size:
-    7.5px !important;
-  font-weight:
-    800 !important;
-  line-height:
-    1.2 !important;
-  white-space:
-    nowrap;
-  text-transform:
-    uppercase;
-}
-
-.permissao-modulo-status.completo {
-  border-color:
-    rgba(
-      5,
-      150,
-      105,
-      0.18
-    );
-  background:
-    #ecfdf5;
-  color:
-    #047857 !important;
-}
-
-.permissao-modulo-status.parcial {
-  border-color:
-    rgba(
-      217,
-      119,
-      6,
-      0.18
-    );
-  background:
-    #fffbeb;
-  color:
-    #b45309 !important;
-}
-
-.permissao-modulo-status.bloqueado {
-  background:
-    #f8fafc;
-  color:
-    #64748b !important;
-}
-
-.permissao-modulo-card-v2
-.permissao-modulo-acoes {
-  flex:
-    0 0 auto;
-  display:
-    flex;
-  align-items:
-    center;
-  gap:
-    6px;
-}
-
-.permissao-modulo-card-v2
-.permissao-modulo-contador {
-  min-width:
-    30px;
-  display:
-    inline-flex;
-  align-items:
-    center;
-  justify-content:
-    center;
-  padding:
-    3px 6px;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    999px;
-  background:
-    #f8fafc;
-  color:
-    #64748b;
-  font-size:
-    8.5px;
-  font-weight:
-    800;
-}
-
-.permissao-modulo-card-v2
-.btn-modulo-liberar,
-.permissao-modulo-card-v2
-.btn-modulo-bloquear {
-  min-height:
-    28px;
-  padding:
-    0 8px;
-  border-radius:
-    7px;
-  font-size:
-    8.5px;
-  font-weight:
-    750;
-  cursor:
-    pointer;
-}
-
-.permissao-modulo-card-v2
-.btn-modulo-liberar {
-  border:
-    1px solid
-    rgba(
-      37,
-      99,
-      235,
-      0.18
-    );
-  background:
-    #eff6ff;
-  color:
-    #1d4ed8;
-}
-
-.permissao-modulo-card-v2
-.btn-modulo-bloquear {
-  border:
-    1px solid
-    #e2e8f0;
-  background:
-    #f8fafc;
-  color:
-    #64748b;
-}
-
-
-/* =========================================================
-   TELAS DO MÓDULO
-========================================================= */
-
-.permissao-modulo-card-v2
-.permissao-modulo-telas {
-  display:
-    grid;
-  gap:
-    0;
-}
-
-.item-permissao-v2 {
-  min-height:
-    48px;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    12px;
-  margin:
-    0;
-  padding:
-    8px 12px;
-  border:
-    0;
-  border-bottom:
-    1px solid
-    #edf1f5;
-  border-radius:
-    0;
-  background:
-    #ffffff;
-  box-shadow:
-    none;
-}
-
-.item-permissao-v2:last-child {
-  border-bottom:
-    0;
-}
-
-.item-permissao-v2:hover {
-  border-color:
-    #edf1f5;
-  background:
-    #f8fafc;
-}
-
-.item-permissao-v2.ativo {
-  border-color:
-    #edf1f5;
-  background:
-    rgba(
-      236,
-      253,
-      245,
-      0.52
-    );
-  box-shadow:
-    none;
-}
-
-.item-permissao-v2
-.item-permissao-info {
-  min-width:
-    0;
-  gap:
-    2px;
-}
-
-.item-permissao-v2
-.item-permissao-info
-strong {
-  overflow:
-    hidden;
-  color:
-    #334155;
-  font-size:
-    10.5px;
-  font-weight:
-    650;
-  white-space:
-    nowrap;
-  text-overflow:
-    ellipsis;
-}
-
-.item-permissao-v2
-.item-permissao-info
-span {
-  overflow:
-    hidden;
-  color:
-    #94a3b8;
-  font-size:
-    8.5px;
-  white-space:
-    nowrap;
-  text-overflow:
-    ellipsis;
-}
-
-
-/* =========================================================
-   SWITCH
-========================================================= */
-
-.permissao-switch {
-  position:
-    relative;
-  flex:
-    0 0 auto;
-  width:
-    34px;
-  height:
-    20px;
-  display:
-    inline-flex;
-}
-
-.permissao-switch
-> input {
-  position:
-    absolute;
-  width:
-    1px !important;
-  height:
-    1px !important;
-  margin:
-    0 !important;
-  opacity:
-    0;
-  pointer-events:
-    none;
-}
-
-.permissao-switch-trilho {
-  position:
-    absolute;
-  inset:
-    0;
-  display:
-    block;
-  border:
-    1px solid
-    #cbd5e1;
-  border-radius:
-    999px;
-  background:
-    #e2e8f0;
-  cursor:
-    pointer;
-  transition:
-    all
-    0.18s
-    ease;
-}
-
-.permissao-switch-trilho
-> span {
-  position:
-    absolute;
-  top:
-    2px;
-  left:
-    2px;
-  width:
-    14px;
-  height:
-    14px;
-  border-radius:
-    50%;
-  background:
-    #ffffff;
-  box-shadow:
-    0 1px 3px
-      rgba(
-        15,
-        23,
-        42,
-        0.18
-      );
-  transition:
-    transform
-    0.18s
-    ease;
-}
-
-.permissao-switch
-> input:checked
-+ .permissao-switch-trilho {
-  border-color:
-    #059669;
-  background:
-    #10b981;
-}
-
-.permissao-switch
-> input:checked
-+ .permissao-switch-trilho
-> span {
-  transform:
-    translateX(
-      14px
-    );
-}
-
-.permissao-switch
-> input:focus-visible
-+ .permissao-switch-trilho {
-  outline:
-    3px solid
-    rgba(
-      37,
-      99,
-      235,
-      0.15
-    );
-  outline-offset:
-    2px;
-}
-
-
-/* =========================================================
-   RELATÓRIOS
-========================================================= */
-
-.bloco-relatorios-v2 {
-  margin:
-    0;
-  padding:
-    12px;
-  border-top:
-    1px solid
-    #e2e8f0;
-  background:
-    #f8fafc;
-}
-
-.bloco-relatorios-v2
-.cabecalho-permissoes-relatorios {
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    16px;
-  margin:
-    0 0 10px;
-  padding:
-    10px 11px;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    9px;
-  background:
-    #ffffff;
-}
-
-.bloco-relatorios-v2
-.titulo-relatorios-permissoes {
-  margin-bottom:
-    2px;
-  color:
-    #0f172a;
-  font-size:
-    11px;
-}
-
-.bloco-relatorios-v2
-.titulo-relatorios-permissoes
-svg {
-  color:
-    #2563eb;
-}
-
-.bloco-relatorios-v2
-.cabecalho-permissoes-relatorios
-p {
-  margin:
-    0;
-  color:
-    #94a3b8;
-  font-size:
-    8.5px;
-}
-
-.relatorios-permissoes-grid {
-  display:
-    grid;
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        0,
-        1fr
-      )
-    );
-  gap:
-    9px;
-}
-
-.grupo-relatorios-permissoes-v2 {
-  min-width:
-    0;
-  margin:
-    0;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    9px;
-  background:
-    #ffffff;
-  overflow:
-    hidden;
-}
-
-.grupo-relatorios-permissoes-v2
-.categoria-relatorios-permissoes {
-  min-height:
-    34px;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between;
-  gap:
-    8px;
-  margin:
-    0;
-  padding:
-    7px 10px;
-  border-bottom:
-    1px solid
-    #edf1f5;
-  background:
-    #f8fafc;
-  color:
-    #475569;
-  font-size:
-    8.5px;
-  font-weight:
-    800;
-  letter-spacing:
-    0.05em;
-  text-transform:
-    uppercase;
-}
-
-.grupo-relatorios-permissoes-v2
-.categoria-relatorios-permissoes
-small {
-  min-width:
-    27px;
-  padding:
-    2px 5px;
-  border:
-    1px solid
-    #e2e8f0;
-  border-radius:
-    999px;
-  background:
-    #ffffff;
-  color:
-    #64748b;
-  font-size:
-    7.5px;
-  text-align:
-    center;
-}
-
-.grupo-relatorios-itens {
-  display:
-    grid;
-}
-
-.grupo-relatorios-permissoes-v2
-.item-permissao-relatorio {
-  min-height:
-    43px;
-}
-
-.grupo-relatorios-permissoes-v2
-.item-permissao-relatorio.ativo {
-  background:
-    rgba(
-      236,
-      253,
-      245,
-      0.6
-    );
-}
-
-.grupo-relatorios-permissoes-v2
-.item-permissao-relatorio
-.item-permissao-info
-strong {
-  color:
-    #334155;
-  font-size:
-    9.5px;
-}
-
-.permissao-switch-relatorio
-> input:checked
-+ .permissao-switch-trilho {
-  border-color:
-    #059669;
-  background:
-    #10b981;
-}
-
-
-/* =========================================================
-   RODAPÉ
-========================================================= */
-
-.modal-permissoes-actions-v2 {
-  flex:
-    0 0 auto;
-  min-height:
-    66px;
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    space-between !important;
-  gap:
-    16px;
-  padding:
-    10px 20px !important;
-  border-top:
-    1px solid
-    #e2e8f0;
-  background:
-    #ffffff;
-}
-
-.modal-permissoes-actions-info {
-  min-width:
-    0;
-  display:
-    flex;
-  align-items:
-    baseline;
-  gap:
-    5px;
-  color:
-    #64748b;
-}
-
-.modal-permissoes-actions-info
-strong {
-  color:
-    #2563eb;
-  font-size:
-    15px;
-  font-weight:
-    800;
-}
-
-.modal-permissoes-actions-info
-span {
-  font-size:
-    9.5px;
-  font-weight:
-    600;
-}
-
-.modal-permissoes-actions-botoes {
-  display:
-    flex;
-  align-items:
-    center;
-  justify-content:
-    flex-end;
-  gap:
-    8px;
-}
-
-.modal-permissoes-actions-v2
-.btn-modal-cancelar,
-.modal-permissoes-actions-v2
-.btn-modal-salvar-permissoes {
-  min-height:
-    36px;
-  padding:
-    0 14px;
-  border-radius:
-    8px;
-  font-size:
-    10.5px;
-  font-weight:
-    700;
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (
-  max-width:
-    860px
-) {
-  .modal-overlay-permissoes {
-    padding:
-      10px;
-  }
-
-  .modal-content.modal-permissoes.modal-permissoes-v2 {
-    width:
-      calc(
-        100vw -
-        20px
-      );
-    max-width:
-      calc(
-        100vw -
-        20px
-      );
-    height:
-      calc(
-        100dvh -
-        20px
-      );
-    max-height:
-      calc(
-        100dvh -
-        20px
-      );
-    border-radius:
-      12px;
-  }
-
-  .permissoes-modulos-grid,
-  .relatorios-permissoes-grid {
-    grid-template-columns:
-      1fr;
-  }
-
-  .permissao-modulo-card-relatorios {
-    grid-column:
-      auto;
-  }
-}
-
-
-/* =========================================================
-   CELULAR
-========================================================= */
-
-@media (
-  max-width:
-    600px
-) {
-  .modal-overlay-permissoes {
-    padding:
-      4px;
-  }
-
-  .modal-content.modal-permissoes.modal-permissoes-v2 {
-    width:
-      calc(
-        100vw -
-        8px
-      );
-    max-width:
-      calc(
-        100vw -
-        8px
-      );
-    height:
-      calc(
-        100dvh -
-        8px
-      );
-    max-height:
-      calc(
-        100dvh -
-        8px
-      );
-    border-radius:
-      9px;
-  }
-
-  .modal-permissoes-header-v2 {
-    min-height:
-      70px;
-    padding:
-      12px;
-  }
-
-  .modal-permissoes-v2
-  .modal-permissoes-icon {
-    width:
-      36px;
-    height:
-      36px;
-  }
-
-  .modal-permissoes-header-v2 h3 {
-    font-size:
-      16px;
-  }
-
-  .modal-permissoes-resumo {
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(
-          0,
-          1fr
-        )
-      );
-    gap:
-      4px;
-    padding:
-      7px 8px;
-  }
-
-  .modal-permissoes-resumo-card {
-    min-height:
-      64px;
-    padding:
-      8px;
-  }
-
-  .modal-permissoes-resumo-card
-  > span {
-    font-size:
-      7px;
-  }
-
-  .modal-permissoes-resumo-card
-  > strong {
-    font-size:
-      14px;
-  }
-
-  .modal-permissoes-resumo-card
-  > p {
-    display:
-      none;
-  }
-
-  .acoes-permissoes-rapidas-v2 {
-    flex-direction:
-      column;
-    align-items:
-      stretch;
-    gap:
-      7px;
-    padding:
-      8px;
-  }
-
-  .acoes-permissoes-rapidas-v2
-  > div:first-child
-  span {
-    display:
-      none;
-  }
-
-  .acoes-permissoes-rapidas-botoes {
-    display:
-      grid;
     grid-template-columns:
       1fr
       1fr;
   }
 
-  .lista-permissoes-v2 {
-    padding:
-      9px 8px 12px;
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVO — CELULAR PEQUENO
+========================================================= */
+
+@media (max-width: 420px) {
+  .usuarios-table {
+    min-width: 850px;
   }
 
-  .permissao-modulo-card-v2
-  .permissao-modulo-header {
-    align-items:
-      flex-start;
-    min-height:
-      68px;
-    padding:
-      9px;
+  .btn-voltar-home,
+  .btn-novo-usuario {
+    font-size: 10px;
   }
 
-  .permissao-modulo-card-v2
-  .permissao-modulo-titulo
-  > span {
-    white-space:
-      normal;
-  }
-
-  .permissao-modulo-card-v2
-  .permissao-modulo-acoes {
-    flex-direction:
-      column;
-    align-items:
-      flex-end;
-  }
-
-  .item-permissao-v2 {
-    min-height:
-      46px;
-    padding:
-      8px 9px;
-  }
-
-  .bloco-relatorios-v2 {
-    padding:
-      8px;
-  }
-
-  .bloco-relatorios-v2
-  .cabecalho-permissoes-relatorios {
-    flex-direction:
-      column;
-    align-items:
-      stretch;
-    gap:
-      8px;
-  }
-
-  .acoes-relatorios-permissoes {
-    display:
-      grid;
-    grid-template-columns:
-      1fr
-      1fr;
-    width:
-      100%;
-  }
-
-  .modal-permissoes-actions-v2 {
-    min-height:
-      60px;
-    padding:
-      8px !important;
-  }
-
-  .modal-permissoes-actions-info {
-    display:
-      none;
-  }
-
-  .modal-permissoes-actions-botoes {
-    width:
-      100%;
-    display:
-      grid;
-    grid-template-columns:
-      1fr
-      1fr;
-  }
-
-  .modal-permissoes-actions-v2
-  .btn-modal-cancelar,
-  .modal-permissoes-actions-v2
-  .btn-modal-salvar-permissoes {
-    width:
-      100%;
+  .modal-actions {
+    grid-template-columns: 1fr;
   }
 }
