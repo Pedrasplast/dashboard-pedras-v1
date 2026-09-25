@@ -17,6 +17,7 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  LabelList,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -92,6 +93,311 @@ function formatarDias(
 }
 
 
+function formatarMoedaCompacta(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "R$ 0";
+  }
+
+  if (
+    Math.abs(
+      numero,
+    ) >= 1000000
+  ) {
+    return `R$ ${(numero / 1000000).toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits:
+          1,
+
+        maximumFractionDigits:
+          1,
+      },
+    )} mi`;
+  }
+
+  if (
+    Math.abs(
+      numero,
+    ) >= 1000
+  ) {
+    return `R$ ${(numero / 1000).toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits:
+          0,
+
+        maximumFractionDigits:
+          1,
+      },
+    )} mil`;
+  }
+
+  return formatarMoeda(
+    numero,
+    0,
+  );
+}
+
+
+function formatarKgCompacto(
+  valor,
+) {
+  const numero =
+    Number(
+      valor,
+    );
+
+  if (
+    !Number.isFinite(
+      numero,
+    )
+  ) {
+    return "0 kg";
+  }
+
+  if (
+    Math.abs(
+      numero,
+    ) >= 1000000
+  ) {
+    return `${(numero / 1000000).toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits:
+          1,
+
+        maximumFractionDigits:
+          1,
+      },
+    )} mi kg`;
+  }
+
+  if (
+    Math.abs(
+      numero,
+    ) >= 1000
+  ) {
+    return `${(numero / 1000).toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits:
+          0,
+
+        maximumFractionDigits:
+          1,
+      },
+    )} mil kg`;
+  }
+
+  return formatarKg(
+    numero,
+    0,
+  );
+}
+
+
+function TickFornecedorMaterial({
+  x,
+  y,
+  payload,
+}) {
+  const valor =
+    String(
+      payload?.value ??
+      "",
+    );
+
+  const separador =
+    " • ";
+
+  const indice =
+    valor.indexOf(
+      separador,
+    );
+
+  const fornecedor =
+    indice >= 0
+      ? valor.slice(
+          0,
+          indice,
+        )
+      : valor;
+
+  const material =
+    indice >= 0
+      ? valor.slice(
+          indice +
+            separador.length,
+        )
+      : "";
+
+  const fornecedorCurto =
+    fornecedor.length > 23
+      ? `${fornecedor.slice(
+          0,
+          23,
+        )}…`
+      : fornecedor;
+
+  const materialCurto =
+    material.length > 25
+      ? `${material.slice(
+          0,
+          25,
+        )}…`
+      : material;
+
+  return (
+    <g
+      transform={`translate(${x},${y})`}
+    >
+      <text
+        x={-10}
+        y={-4}
+        textAnchor="end"
+        fill="#334155"
+        fontSize={11.5}
+        fontWeight={700}
+      >
+        {fornecedorCurto}
+      </text>
+
+      {materialCurto && (
+        <text
+          x={-10}
+          y={12}
+          textAnchor="end"
+          fill="#94a3b8"
+          fontSize={9.5}
+          fontWeight={500}
+        >
+          {materialCurto}
+        </text>
+      )}
+    </g>
+  );
+}
+
+
+function RotuloValorBarra({
+  x,
+  y,
+  width,
+  height,
+  value,
+}) {
+  return (
+    <text
+      x={Number(
+        x,
+      ) +
+        Number(
+          width,
+        ) +
+        8}
+      y={Number(
+        y,
+      ) +
+        Number(
+          height,
+        ) /
+          2 +
+        4}
+      fill="#475569"
+      fontSize={10.5}
+      fontWeight={700}
+    >
+      {formatarMoedaCompacta(
+        value,
+      )}
+    </text>
+  );
+}
+
+
+function RotuloQuantidadeBarra({
+  x,
+  y,
+  width,
+  height,
+  value,
+}) {
+  return (
+    <text
+      x={Number(
+        x,
+      ) +
+        Number(
+          width,
+        ) +
+        8}
+      y={Number(
+        y,
+      ) +
+        Number(
+          height,
+        ) /
+          2 +
+        4}
+      fill="#475569"
+      fontSize={10.5}
+      fontWeight={700}
+    >
+      {formatarKgCompacto(
+        value,
+      )}
+    </text>
+  );
+}
+
+
+function TooltipQuantidade({
+  active,
+  payload,
+  label,
+}) {
+  if (
+    !active ||
+    !payload?.length
+  ) {
+    return null;
+  }
+
+  const valor =
+    payload[0]?.value;
+
+  return (
+    <div className="dmp-tooltip">
+
+      {label && (
+        <strong>
+          {label}
+        </strong>
+      )}
+
+      <span>
+        Quantidade: {formatarKg(
+          valor,
+          0,
+        )}
+      </span>
+
+    </div>
+  );
+}
+
+
 export default function PainelFinanceiroMateriaPrima({
   resumo,
   porMaterial,
@@ -107,14 +413,87 @@ export default function PainelFinanceiroMateriaPrima({
 
 
   const dadosGraficoFornecedorMaterial =
-    (porFornecedor || []).map(
-      (item) => ({
-        ...item,
+    (porFornecedor || [])
+      .map(
+        (item) => ({
+          ...item,
 
-        fornecedorMaterial:
-          `${item.fornecedor} • ${item.material}`,
-      }),
+          fornecedorMaterial:
+            `${item.fornecedor} • ${item.material}`,
+        }),
+      )
+      .sort(
+        (
+          a,
+          b,
+        ) =>
+          Number(
+            b.total ||
+              0,
+          ) -
+          Number(
+            a.total ||
+              0,
+          ),
+      );
+
+
+  const dadosGraficoQuantidade =
+    [
+      ...dadosGraficoFornecedorMaterial,
+    ].sort(
+      (
+        a,
+        b,
+      ) =>
+        Number(
+          b.quantidadeKg ||
+            0,
+        ) -
+        Number(
+          a.quantidadeKg ||
+            0,
+        ),
     );
+
+
+  const dadosGraficoPrecoCusto =
+    dadosGraficoFornecedorMaterial.filter(
+      (item) =>
+        item.precoMedioKg !== null &&
+        item.precoMedioKg !== undefined &&
+        item.custoMedioKg !== null &&
+        item.custoMedioKg !== undefined &&
+        Number.isFinite(
+          Number(
+            item.precoMedioKg,
+          ),
+        ) &&
+        Number.isFinite(
+          Number(
+            item.custoMedioKg,
+          ),
+        ),
+    );
+
+
+  const alturaGraficoFornecedor =
+    Math.max(
+      315,
+      dadosGraficoFornecedorMaterial.length *
+        52 +
+        70,
+    );
+
+
+  const alturaGraficoPrecoCusto =
+    Math.max(
+      315,
+      dadosGraficoPrecoCusto.length *
+        64 +
+        80,
+    );
+
 
   return (
     <section className="dmp-financeiro">
@@ -161,10 +540,6 @@ export default function PainelFinanceiroMateriaPrima({
         <div className="dmp-secao-titulo">
 
           <div>
-
-            <span>
-              Visão executiva
-            </span>
 
             <h2>
               Indicadores principais
@@ -544,7 +919,7 @@ export default function PainelFinanceiroMateriaPrima({
             <div>
 
               <span>
-                Leitura gerencial
+                Destaques
               </span>
 
               <h2>
@@ -606,15 +981,15 @@ export default function PainelFinanceiroMateriaPrima({
             <div>
 
               <span>
-                Participação
+                Ranking financeiro
               </span>
 
               <h2>
-                Valor comprado por fornecedor e material
+                Valor comprado por fornecedor
               </h2>
 
               <p>
-                Comparação do valor total comprado por fornecedor, separado por material.
+                Ranking do maior para o menor valor comprado, com identificação do material.
               </p>
 
             </div>
@@ -626,7 +1001,13 @@ export default function PainelFinanceiroMateriaPrima({
           </div>
 
 
-          <div className="dmp-chart">
+          <div
+            className="dmp-chart"
+            style={{
+              height:
+                alturaGraficoFornecedor,
+            }}
+          >
 
             {dadosGraficoFornecedorMaterial.length >
             0 ? (
@@ -643,56 +1024,72 @@ export default function PainelFinanceiroMateriaPrima({
                   layout="vertical"
                   margin={{
                     top:
-                      8,
+                      12,
+
                     right:
-                      24,
+                      105,
+
                     left:
-                      110,
+                      18,
+
                     bottom:
-                      0,
+                      8,
                   }}
+                  barCategoryGap="30%"
                 >
 
                   <CartesianGrid
-                    strokeDasharray="3 3"
+                    strokeDasharray="3 5"
                     horizontal={
                       false
                     }
+                    stroke="#e8eef5"
                   />
 
                   <XAxis
                     type="number"
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
                     tick={{
                       fontSize:
-                        11,
+                        10.5,
+
+                      fill:
+                        "#94a3b8",
                     }}
                     tickFormatter={
-                      (
-                        valor,
-                      ) =>
-                        `${Math.round(
-                          Number(
-                            valor,
-                          ) /
-                          1000,
-                        )}k`
+                      formatarMoedaCompacta
                     }
                   />
 
                   <YAxis
                     dataKey="fornecedorMaterial"
                     type="category"
-                    width={210}
-                    tick={{
-                      fontSize:
-                        12,
-                    }}
+                    width={190}
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
+                    tick={
+                      <TickFornecedorMaterial />
+                    }
+                    interval={0}
                   />
 
                   <Tooltip
                     content={
                       <TooltipFinanceiro />
                     }
+                    cursor={{
+                      fill:
+                        "#f8fafc",
+                    }}
                   />
 
                   <Bar
@@ -701,11 +1098,25 @@ export default function PainelFinanceiroMateriaPrima({
                     fill="#2563eb"
                     radius={[
                       0,
-                      7,
-                      7,
+                      8,
+                      8,
                       0,
                     ]}
-                  />
+                    barSize={24}
+                    isAnimationActive={
+                      true
+                    }
+                    animationDuration={650}
+                  >
+
+                    <LabelList
+                      dataKey="total"
+                      content={
+                        <RotuloValorBarra />
+                      }
+                    />
+
+                  </Bar>
 
                 </BarChart>
 
@@ -725,6 +1136,379 @@ export default function PainelFinanceiroMateriaPrima({
 
                 <span>
                   Não há compras para o filtro selecionado.
+                </span>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </article>
+
+
+        <article className="dmp-card">
+
+          <div className="dmp-card-header">
+
+            <div>
+
+              <span>
+                Volume
+              </span>
+
+              <h2>
+                Quantidade comprada por fornecedor
+              </h2>
+
+              <p>
+                Comparação do volume comprado em kg para cada fornecedor e material.
+              </p>
+
+            </div>
+
+            <Scale
+              size={21}
+            />
+
+          </div>
+
+
+          <div
+            className="dmp-chart"
+            style={{
+              height:
+                alturaGraficoFornecedor,
+            }}
+          >
+
+            {dadosGraficoQuantidade.length >
+            0 ? (
+
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+
+                <BarChart
+                  data={
+                    dadosGraficoQuantidade
+                  }
+                  layout="vertical"
+                  margin={{
+                    top:
+                      12,
+
+                    right:
+                      105,
+
+                    left:
+                      18,
+
+                    bottom:
+                      8,
+                  }}
+                  barCategoryGap="30%"
+                >
+
+                  <CartesianGrid
+                    strokeDasharray="3 5"
+                    horizontal={
+                      false
+                    }
+                    stroke="#e8eef5"
+                  />
+
+                  <XAxis
+                    type="number"
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
+                    tick={{
+                      fontSize:
+                        10.5,
+
+                      fill:
+                        "#94a3b8",
+                    }}
+                    tickFormatter={
+                      formatarKgCompacto
+                    }
+                  />
+
+                  <YAxis
+                    dataKey="fornecedorMaterial"
+                    type="category"
+                    width={190}
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
+                    tick={
+                      <TickFornecedorMaterial />
+                    }
+                    interval={0}
+                  />
+
+                  <Tooltip
+                    content={
+                      <TooltipQuantidade />
+                    }
+                    cursor={{
+                      fill:
+                        "#f8fafc",
+                    }}
+                  />
+
+                  <Bar
+                    dataKey="quantidadeKg"
+                    name="Quantidade comprada"
+                    fill="#0f766e"
+                    radius={[
+                      0,
+                      8,
+                      8,
+                      0,
+                    ]}
+                    barSize={24}
+                    isAnimationActive={
+                      true
+                    }
+                    animationDuration={650}
+                  >
+
+                    <LabelList
+                      dataKey="quantidadeKg"
+                      content={
+                        <RotuloQuantidadeBarra />
+                      }
+                    />
+
+                  </Bar>
+
+                </BarChart>
+
+              </ResponsiveContainer>
+
+            ) : (
+
+              <div className="dmp-vazio">
+
+                <Scale
+                  size={28}
+                />
+
+                <strong>
+                  Sem volume comprado
+                </strong>
+
+                <span>
+                  Não há quantidades para o filtro selecionado.
+                </span>
+
+              </div>
+
+            )}
+
+          </div>
+
+        </article>
+
+
+        <article className="dmp-card">
+
+          <div className="dmp-card-header">
+
+            <div>
+
+              <span>
+                Comparativo de custo
+              </span>
+
+              <h2>
+                Preço médio x custo efetivo por fornecedor
+              </h2>
+
+              <p>
+                Mostra quanto o preço negociado se transforma em custo real após frete, impostos e despesas.
+              </p>
+
+            </div>
+
+            <CircleDollarSign
+              size={21}
+            />
+
+          </div>
+
+
+          <div
+            className="dmp-chart"
+            style={{
+              height:
+                alturaGraficoPrecoCusto,
+            }}
+          >
+
+            {dadosGraficoPrecoCusto.length >
+            0 ? (
+
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+
+                <BarChart
+                  data={
+                    dadosGraficoPrecoCusto
+                  }
+                  layout="vertical"
+                  margin={{
+                    top:
+                      18,
+
+                    right:
+                      30,
+
+                    left:
+                      18,
+
+                    bottom:
+                      8,
+                  }}
+                  barCategoryGap="24%"
+                  barGap={4}
+                >
+
+                  <CartesianGrid
+                    strokeDasharray="3 5"
+                    horizontal={
+                      false
+                    }
+                    stroke="#e8eef5"
+                  />
+
+                  <XAxis
+                    type="number"
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
+                    tick={{
+                      fontSize:
+                        10.5,
+
+                      fill:
+                        "#94a3b8",
+                    }}
+                    tickFormatter={
+                      (
+                        valor,
+                      ) =>
+                        Number(
+                          valor,
+                        ).toLocaleString(
+                          "pt-BR",
+                          {
+                            minimumFractionDigits:
+                              2,
+
+                            maximumFractionDigits:
+                              2,
+                          },
+                        )
+                    }
+                  />
+
+                  <YAxis
+                    dataKey="fornecedorMaterial"
+                    type="category"
+                    width={190}
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
+                    tick={
+                      <TickFornecedorMaterial />
+                    }
+                    interval={0}
+                  />
+
+                  <Tooltip
+                    content={
+                      <TooltipFinanceiro />
+                    }
+                    cursor={{
+                      fill:
+                        "#f8fafc",
+                    }}
+                  />
+
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    wrapperStyle={{
+                      fontSize:
+                        11,
+
+                      paddingTop:
+                        8,
+                    }}
+                  />
+
+                  <Bar
+                    dataKey="precoMedioKg"
+                    name="Preço médio/kg"
+                    fill="#2563eb"
+                    radius={[
+                      0,
+                      6,
+                      6,
+                      0,
+                    ]}
+                    barSize={12}
+                  />
+
+                  <Bar
+                    dataKey="custoMedioKg"
+                    name="Custo efetivo/kg"
+                    fill="#059669"
+                    radius={[
+                      0,
+                      6,
+                      6,
+                      0,
+                    ]}
+                    barSize={12}
+                  />
+
+                </BarChart>
+
+              </ResponsiveContainer>
+
+            ) : (
+
+              <div className="dmp-vazio">
+
+                <CircleDollarSign
+                  size={28}
+                />
+
+                <strong>
+                  Sem custo comparável
+                </strong>
+
+                <span>
+                  Não há preço e custo por kg suficientes para o filtro selecionado.
                 </span>
 
               </div>
@@ -765,7 +1549,13 @@ export default function PainelFinanceiroMateriaPrima({
           </div>
 
 
-          <div className="dmp-chart">
+          <div
+            className="dmp-chart"
+            style={{
+              height:
+                alturaGraficoPrecoCusto,
+            }}
+          >
 
             {evolucao.length >
             0 ? (
@@ -782,35 +1572,57 @@ export default function PainelFinanceiroMateriaPrima({
                   margin={{
                     top:
                       12,
+
                     right:
                       24,
+
                     left:
                       10,
+
                     bottom:
                       4,
                   }}
                 >
 
                   <CartesianGrid
-                    strokeDasharray="3 3"
+                    strokeDasharray="3 5"
                     vertical={
                       false
                     }
+                    stroke="#e8eef5"
                   />
 
                   <XAxis
                     dataKey="dataLabel"
                     minTickGap={18}
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
                     tick={{
                       fontSize:
-                        11,
+                        10.5,
+
+                      fill:
+                        "#94a3b8",
                     }}
                   />
 
                   <YAxis
+                    axisLine={
+                      false
+                    }
+                    tickLine={
+                      false
+                    }
                     tick={{
                       fontSize:
-                        11,
+                        10.5,
+
+                      fill:
+                        "#94a3b8",
                     }}
                     tickFormatter={
                       (
@@ -823,6 +1635,7 @@ export default function PainelFinanceiroMateriaPrima({
                           {
                             minimumFractionDigits:
                               2,
+
                             maximumFractionDigits:
                               2,
                           },
@@ -837,7 +1650,8 @@ export default function PainelFinanceiroMateriaPrima({
                   />
 
                   <Legend
-                    iconSize={10}
+                    iconType="circle"
+                    iconSize={8}
                     wrapperStyle={{
                       fontSize:
                         11,
@@ -850,9 +1664,12 @@ export default function PainelFinanceiroMateriaPrima({
                     name="Preço médio/kg"
                     stroke="#2563eb"
                     strokeWidth={2.8}
-                    dot={{
+                    dot={
+                      false
+                    }
+                    activeDot={{
                       r:
-                        3,
+                        4,
                     }}
                     connectNulls
                   />
@@ -863,9 +1680,12 @@ export default function PainelFinanceiroMateriaPrima({
                     name="Custo efetivo/kg"
                     stroke="#059669"
                     strokeWidth={2.8}
-                    dot={{
+                    dot={
+                      false
+                    }
+                    activeDot={{
                       r:
-                        3,
+                        4,
                     }}
                     connectNulls
                   />
@@ -981,7 +1801,7 @@ export default function PainelFinanceiroMateriaPrima({
                 </th>
 
                 <th className="numero">
-                  Amplitude
+                  Variação mín.–máx.
                 </th>
 
                 <th className="numero">
@@ -1023,9 +1843,11 @@ export default function PainelFinanceiroMateriaPrima({
                   >
 
                     <td>
+
                       <strong>
                         {item.material}
                       </strong>
+
                     </td>
 
                     <td className="numero">
@@ -1103,6 +1925,7 @@ export default function PainelFinanceiroMateriaPrima({
                       className={
                         [
                           "numero",
+
                           item.variacaoUltimaCompraPercentual >
                             0
                             ? "dmp-variacao-alta"
@@ -1262,15 +2085,19 @@ export default function PainelFinanceiroMateriaPrima({
                   >
 
                     <td>
+
                       <strong>
                         {item.material}
                       </strong>
+
                     </td>
 
                     <td>
+
                       <strong>
                         {item.fornecedor}
                       </strong>
+
                     </td>
 
                     <td className="numero">
