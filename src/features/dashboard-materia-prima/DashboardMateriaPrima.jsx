@@ -31,26 +31,32 @@ import {
 import {
   adicionarDias,
   formatarDataISO,
-  obterPeriodoInicial,
 } from "./dashboardMateriaPrimaUtils.js";
 
 import "./DashboardMateriaPrima.css";
 
 
-export default function DashboardMateriaPrima() {
-  const periodoInicial =
-    useMemo(
-      () =>
-        obterPeriodoInicial(),
-      [],
-    );
+const DATA_INICIAL_SEM_FILTRO =
+  "0001-01-01";
 
+const DATA_FINAL_SEM_FILTRO =
+  "9999-12-31";
+
+/*
+ * MATERIAL PADRÃO
+ * material_id = 1 = PP
+ */
+const MATERIAL_PADRAO =
+  "1";
+
+
+export default function DashboardMateriaPrima() {
   const [
     dataInicial,
     setDataInicial,
   ] =
     useState(
-      periodoInicial.inicio,
+      "",
     );
 
   const [
@@ -58,7 +64,7 @@ export default function DashboardMateriaPrima() {
     setDataFinal,
   ] =
     useState(
-      periodoInicial.fim,
+      "",
     );
 
   const [
@@ -82,7 +88,7 @@ export default function DashboardMateriaPrima() {
     setMaterialSelecionado,
   ] =
     useState(
-      "1",
+      MATERIAL_PADRAO,
     );
 
   const periodoInvalido =
@@ -93,17 +99,33 @@ export default function DashboardMateriaPrima() {
         dataInicial,
     );
 
+  /*
+   * Datas permanecem vazias na interface.
+   * Internamente usamos um período amplo
+   * para carregar todo o histórico.
+   */
+  const dataInicialConsulta =
+    dataInicial ||
+    DATA_INICIAL_SEM_FILTRO;
+
+  const dataFinalConsulta =
+    dataFinal ||
+    DATA_FINAL_SEM_FILTRO;
+
   const {
     dados,
     carregando,
-    atualizando,
     erro,
-    recarregar,
   } =
     useDashboardMateriaPrima({
-      dataInicial,
-      dataFinal,
+      dataInicial:
+        dataInicialConsulta,
+
+      dataFinal:
+        dataFinalConsulta,
+
       tipoData,
+
       habilitado:
         !periodoInvalido,
     });
@@ -272,6 +294,29 @@ export default function DashboardMateriaPrima() {
     );
   }
 
+
+  function limparFiltros() {
+    setDataInicial(
+      "",
+    );
+
+    setDataFinal(
+      "",
+    );
+
+    setTipoData(
+      "compra",
+    );
+
+    setFornecedorSelecionado(
+      "todos",
+    );
+
+    setMaterialSelecionado(
+      MATERIAL_PADRAO,
+    );
+  }
+
   return (
     <main className="dmp-page">
 
@@ -326,14 +371,8 @@ export default function DashboardMateriaPrima() {
         materiais={
           materiaisFiltro
         }
-        carregando={
-          carregando
-        }
-        atualizando={
-          atualizando
-        }
-        periodoInvalido={
-          periodoInvalido
+        materialPadrao={
+          MATERIAL_PADRAO
         }
         onDataInicialChange={
           setDataInicial
@@ -353,9 +392,8 @@ export default function DashboardMateriaPrima() {
         onPeriodoRapido={
           aplicarPeriodoRapido
         }
-        onAtualizar={
-          () =>
-            recarregar()
+        onLimparFiltros={
+          limparFiltros
         }
       />
 

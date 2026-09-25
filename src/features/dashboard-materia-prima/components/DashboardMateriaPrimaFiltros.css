@@ -1,0 +1,870 @@
+/* =========================================================
+   DASHBOARD MATÉRIA-PRIMA
+   COMPONENTE: FILTROS
+========================================================= */
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.dmp-filtros-card {
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-bottom: 16px;
+
+  padding:
+    15px
+    16px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    13px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0 1px 2px
+    rgba(
+      15,
+      23,
+      42,
+      0.025
+    );
+}
+
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.dmp-filtros-card .dmp-filtros-topo {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: flex-start;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   TIPO DE DATA
+========================================================= */
+
+.dmp-filtros-card .dmp-filtro-tipo-data {
+  width: 270px;
+
+  max-width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.dmp-filtros-card .dmp-filtro-titulo {
+  color:
+    #64748b;
+
+  font-size:
+    11.5px;
+
+  font-weight:
+    750;
+}
+
+.dmp-filtros-card .dmp-select-tipo-data {
+  width:
+    100%;
+
+  height:
+    40px;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    0
+    11px;
+
+  border:
+    1px solid
+    #cbd5e1;
+
+  border-radius:
+    9px;
+
+  outline:
+    0;
+
+  background:
+    #ffffff;
+
+  color:
+    #334155;
+
+  font:
+    inherit;
+
+  font-size:
+    13px;
+
+  font-weight:
+    650;
+
+  cursor:
+    pointer;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.dmp-filtros-card .dmp-select-tipo-data:hover {
+  border-color:
+    #94a3b8;
+}
+
+.dmp-filtros-card .dmp-select-tipo-data:focus {
+  border-color:
+    #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.09
+    );
+}
+
+
+/* =========================================================
+   PERÍODO RÁPIDO
+========================================================= */
+
+.dmp-filtros-card .dmp-periodo-rapido-grupo {
+  min-width:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    6px;
+}
+
+.dmp-filtros-card .dmp-filtros-rapidos {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    7px;
+
+  margin:
+    0;
+}
+
+.dmp-filtros-card .dmp-filtros-rapidos button {
+  height:
+    36px;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1px solid
+    #cbd5e1;
+
+  border-radius:
+    9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #475569;
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  font-weight:
+    750;
+
+  cursor:
+    pointer;
+
+  white-space:
+    nowrap;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dmp-filtros-card .dmp-filtros-rapidos button:hover {
+  border-color:
+    #94a3b8;
+
+  background:
+    #f8fafc;
+
+  color:
+    #0f172a;
+
+  box-shadow:
+    0 2px 5px
+    rgba(
+      15,
+      23,
+      42,
+      0.05
+    );
+
+  transform:
+    translateY(-1px);
+}
+
+.dmp-filtros-card .dmp-filtros-rapidos button:active {
+  transform:
+    translateY(0);
+}
+
+
+/* =========================================================
+   INFORMAÇÃO DO PERÍODO
+========================================================= */
+
+.dmp-filtros-card .dmp-filtros-info {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-start;
+
+  gap:
+    10px;
+
+  flex-wrap:
+    wrap;
+
+  margin-bottom:
+    13px;
+}
+
+.dmp-filtros-card .dmp-periodo-descricao {
+  width:
+    515px;
+
+  max-width:
+    100%;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    9px
+    11px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius:
+    8px;
+
+  background:
+    #f8fafc;
+
+  color:
+    #64748b;
+
+  font-size:
+    11.5px;
+
+  font-weight:
+    600;
+
+  line-height:
+    1.4;
+}
+
+
+/* =========================================================
+   BOTÃO LIMPAR FILTROS
+========================================================= */
+
+.dmp-filtros-card .dmp-btn-limpar {
+  height:
+    38px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    7px;
+
+  padding:
+    0
+    15px;
+
+  border:
+    1px solid
+    #fb7185;
+
+  border-radius:
+    8px;
+
+  background:
+    #fff1f2;
+
+  color:
+    #be123c;
+
+  box-shadow:
+    0 2px 5px
+    rgba(
+      190,
+      18,
+      60,
+      0.10
+    );
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  font-weight:
+    800;
+
+  white-space:
+    nowrap;
+
+  cursor:
+    pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.dmp-filtros-card .dmp-btn-limpar svg {
+  flex:
+    0
+    0
+    auto;
+
+  stroke-width:
+    2.6;
+}
+
+.dmp-filtros-card .dmp-btn-limpar:hover {
+  border-color:
+    #e11d48;
+
+  background:
+    #ffe4e6;
+
+  color:
+    #9f1239;
+
+  box-shadow:
+    0 4px 10px
+    rgba(
+      190,
+      18,
+      60,
+      0.15
+    );
+
+  transform:
+    translateY(-1px);
+}
+
+.dmp-filtros-card .dmp-btn-limpar:active {
+  transform:
+    translateY(0);
+}
+
+.dmp-filtros-card .dmp-btn-limpar-padrao {
+  border-color:
+    #fda4af;
+
+  background:
+    #fff7f8;
+
+  color:
+    #e11d48;
+
+  box-shadow:
+    0 1px 3px
+    rgba(
+      190,
+      18,
+      60,
+      0.07
+    );
+}
+
+.dmp-filtros-card .dmp-btn-limpar-padrao:hover {
+  border-color:
+    #fb7185;
+
+  background:
+    #fff1f2;
+
+  color:
+    #be123c;
+}
+
+
+/* =========================================================
+   LINHA PRINCIPAL DOS FILTROS
+
+   DESKTOP:
+   DE | ATÉ | MATERIAL | FORNECEDOR
+
+   As colunas possuem largura controlada.
+   Isso evita o fornecedor ser empurrado
+   para o lado direito em monitores largos.
+========================================================= */
+
+.dmp-filtros-card .dmp-filtros {
+  width:
+    100%;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    145px
+    145px
+    minmax(
+      250px,
+      300px
+    )
+    minmax(
+      300px,
+      360px
+    );
+
+  align-items:
+    end;
+
+  justify-content:
+    start;
+
+  column-gap:
+    10px;
+
+  row-gap:
+    10px;
+}
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.dmp-filtros-card .dmp-filtro {
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  max-width:
+    none;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    6px;
+}
+
+.dmp-filtros-card .dmp-filtro > span {
+  color:
+    #64748b;
+
+  font-size:
+    11.5px;
+
+  font-weight:
+    750;
+}
+
+
+/* =========================================================
+   REMOVE FLEX ANTIGO
+========================================================= */
+
+.dmp-filtros-card .dmp-filtro-data,
+.dmp-filtros-card .dmp-filtro-material,
+.dmp-filtros-card .dmp-filtro-fornecedor {
+  flex:
+    none;
+
+  width:
+    100%;
+
+  min-width:
+    0;
+
+  max-width:
+    none;
+}
+
+
+/* =========================================================
+   INPUTS / SELECTS
+========================================================= */
+
+.dmp-filtros-card .dmp-filtros input,
+.dmp-filtros-card .dmp-filtros select {
+  width:
+    100%;
+
+  height:
+    40px;
+
+  min-height:
+    40px;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    0
+    11px;
+
+  border:
+    1px solid
+    #cbd5e1;
+
+  border-radius:
+    9px;
+
+  outline:
+    0;
+
+  background:
+    #ffffff;
+
+  color:
+    #334155;
+
+  font:
+    inherit;
+
+  font-size:
+    13px;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.dmp-filtros-card .dmp-filtros select {
+  cursor:
+    pointer;
+}
+
+.dmp-filtros-card .dmp-filtros input:hover,
+.dmp-filtros-card .dmp-filtros select:hover {
+  border-color:
+    #94a3b8;
+}
+
+.dmp-filtros-card .dmp-filtros input:focus,
+.dmp-filtros-card .dmp-filtros select:focus {
+  border-color:
+    #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.09
+    );
+}
+
+
+/* =========================================================
+   MONITOR GRANDE
+   1400px +
+========================================================= */
+
+@media (
+  min-width:
+    1400px
+) {
+
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      145px
+      145px
+      300px
+      360px;
+
+    justify-content:
+      start;
+  }
+}
+
+
+/* =========================================================
+   NOTEBOOK / DESKTOP MÉDIO
+   901px - 1199px
+========================================================= */
+
+@media (
+  min-width:
+    901px
+) and (
+  max-width:
+    1199px
+) {
+
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      145px
+      145px
+      minmax(
+        220px,
+        1fr
+      )
+      minmax(
+        250px,
+        1fr
+      );
+
+    justify-content:
+      stretch;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ATÉ 900px
+========================================================= */
+
+@media (
+  max-width:
+    900px
+) {
+
+  .dmp-filtros-card .dmp-filtros-topo {
+    gap:
+      12px;
+  }
+
+  .dmp-filtros-card .dmp-filtro-tipo-data {
+    width:
+      250px;
+  }
+
+  .dmp-filtros-card .dmp-filtros-info {
+    align-items:
+      stretch;
+  }
+
+  .dmp-filtros-card .dmp-periodo-descricao {
+    width:
+      auto;
+
+    flex:
+      1
+      1
+      100%;
+  }
+
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      10px;
+  }
+}
+
+
+/* =========================================================
+   TABLET PEQUENO
+   ATÉ 700px
+========================================================= */
+
+@media (
+  max-width:
+    700px
+) {
+
+  .dmp-filtros-card {
+    padding:
+      13px;
+  }
+
+  .dmp-filtros-card .dmp-filtros-topo {
+    flex-direction:
+      column;
+
+    align-items:
+      stretch;
+  }
+
+  .dmp-filtros-card .dmp-filtro-tipo-data,
+  .dmp-filtros-card .dmp-periodo-rapido-grupo {
+    width:
+      100%;
+
+    max-width:
+      none;
+  }
+
+  .dmp-filtros-card .dmp-filtros-info {
+    flex-direction:
+      column;
+  }
+
+  .dmp-filtros-card .dmp-periodo-descricao {
+    width:
+      100%;
+
+    min-width:
+      0;
+  }
+
+  .dmp-filtros-card .dmp-btn-limpar {
+    align-self:
+      flex-start;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ATÉ 560px
+========================================================= */
+
+@media (
+  max-width:
+    560px
+) {
+
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      1fr;
+  }
+
+  .dmp-filtros-card .dmp-filtros-rapidos {
+    display:
+      grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    width:
+      100%;
+  }
+
+  .dmp-filtros-card .dmp-filtros-rapidos button {
+    width:
+      100%;
+  }
+
+  .dmp-filtros-card .dmp-btn-limpar {
+    width:
+      100%;
+  }
+}
+
+
+/* =========================================================
+   MOBILE PEQUENO
+   ATÉ 380px
+========================================================= */
+
+@media (
+  max-width:
+    380px
+) {
+
+  .dmp-filtros-card {
+    padding:
+      11px;
+  }
+
+  .dmp-filtros-card .dmp-filtros-rapidos {
+    grid-template-columns:
+      1fr;
+  }
+
+  .dmp-filtros-card .dmp-filtro-titulo,
+  .dmp-filtros-card .dmp-filtro > span {
+    font-size:
+      11px;
+  }
+}
