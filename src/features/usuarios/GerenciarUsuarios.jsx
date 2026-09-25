@@ -83,23 +83,7 @@ export default function GerenciarUsuarios() {
 
   return (
     <div className="gerenciar-usuarios-container">
-
-      <button
-        type="button"
-        className="btn-voltar-home"
-        onClick={
-          () =>
-            navigate("/")
-        }
-      >
-        <FiArrowLeft />
-
-        <span>
-          Página Inicial
-        </span>
-      </button>
-
-
+     
       <PageHeader
         eyebrow="Administração"
         title="Gerenciamento de Usuários"
