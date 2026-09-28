@@ -16,6 +16,7 @@ const CAMPOS_ENTRADA = `
   data_recebimento,
   fornecedor_id,
   material_id,
+  tipo_classificacao,
   quantidade_kg,
   numero_pedido,
   status,
@@ -240,6 +241,11 @@ export async function buscarEntradas() {
             material
               ?.ativo !==
             false,
+
+          tipoClassificacao:
+            registro
+              .tipo_classificacao ??
+            "",
 
           quantidadeKg:
             Number(
