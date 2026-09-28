@@ -3,6 +3,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
 import {
+  ArrowDownToLine,
   Bell,
   Boxes,
   ChevronDown,
@@ -17,6 +18,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  ShoppingBag,
   ShoppingCart,
   ShieldCheck,
   Upload,
@@ -188,6 +190,49 @@ const NAVIGATION_GROUPS = Object.freeze([
     ],
   },
 
+  /* =====================================================
+     COMPRAS
+===================================================== */
+
+{
+  type: "group",
+
+  id: "compras",
+
+  label: "Compras",
+
+  icon: ShoppingBag,
+
+  children: [
+    {
+      type: "link",
+
+      id: "compras-futuras",
+
+      label: "Compras Futuras",
+
+      path: "/compras-futuras",
+
+      icon: ShoppingBag,
+
+      permissao: "compras",
+    },
+
+    {
+      type: "link",
+
+      id: "entradas-materia-prima",
+
+      label: "Entradas",
+
+      path: "/entradas-materia-prima",
+
+      icon: ArrowDownToLine,
+
+      permissao: "compras",
+    },
+  ],
+},
   /* =====================================================
        PEDIDOS
     ===================================================== */

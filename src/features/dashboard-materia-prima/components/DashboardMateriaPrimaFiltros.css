@@ -74,6 +74,7 @@
   gap: 6px;
 }
 
+
 .dmp-filtros-card .dmp-filtro-titulo {
   color:
     #64748b;
@@ -84,6 +85,7 @@
   font-weight:
     750;
 }
+
 
 .dmp-filtros-card .dmp-select-tipo-data {
   width:
@@ -133,10 +135,12 @@
     background-color 0.15s ease;
 }
 
+
 .dmp-filtros-card .dmp-select-tipo-data:hover {
   border-color:
     #94a3b8;
 }
+
 
 .dmp-filtros-card .dmp-select-tipo-data:focus {
   border-color:
@@ -171,6 +175,7 @@
     6px;
 }
 
+
 .dmp-filtros-card .dmp-filtros-rapidos {
   display:
     flex;
@@ -187,6 +192,7 @@
   margin:
     0;
 }
+
 
 .dmp-filtros-card .dmp-filtros-rapidos button {
   height:
@@ -232,6 +238,7 @@
     box-shadow 0.15s ease;
 }
 
+
 .dmp-filtros-card .dmp-filtros-rapidos button:hover {
   border-color:
     #94a3b8;
@@ -254,6 +261,7 @@
   transform:
     translateY(-1px);
 }
+
 
 .dmp-filtros-card .dmp-filtros-rapidos button:active {
   transform:
@@ -284,6 +292,7 @@
   margin-bottom:
     13px;
 }
+
 
 .dmp-filtros-card .dmp-periodo-descricao {
   width:
@@ -392,6 +401,7 @@
     transform 0.15s ease;
 }
 
+
 .dmp-filtros-card .dmp-btn-limpar svg {
   flex:
     0
@@ -402,7 +412,8 @@
     2.6;
 }
 
-.dmp-filtros-card .dmp-btn-limpar:hover {
+
+.dmp-filtros-card .dmp-btn-limpar:hover:not(:disabled) {
   border-color:
     #e11d48;
 
@@ -425,40 +436,34 @@
     translateY(-1px);
 }
 
-.dmp-filtros-card .dmp-btn-limpar:active {
+
+.dmp-filtros-card .dmp-btn-limpar:active:not(:disabled) {
   transform:
     translateY(0);
 }
 
-.dmp-filtros-card .dmp-btn-limpar-padrao {
+
+.dmp-filtros-card .dmp-btn-limpar:disabled {
   border-color:
-    #fda4af;
+    #e2e8f0;
 
   background:
-    #fff7f8;
+    #f8fafc;
 
   color:
-    #e11d48;
+    #94a3b8;
 
   box-shadow:
-    0 1px 3px
-    rgba(
-      190,
-      18,
-      60,
-      0.07
-    );
-}
+    none;
 
-.dmp-filtros-card .dmp-btn-limpar-padrao:hover {
-  border-color:
-    #fb7185;
+  opacity:
+    0.65;
 
-  background:
-    #fff1f2;
+  cursor:
+    not-allowed;
 
-  color:
-    #be123c;
+  transform:
+    none;
 }
 
 
@@ -529,6 +534,7 @@
   gap:
     6px;
 }
+
 
 .dmp-filtros-card .dmp-filtro > span {
   color:
@@ -613,16 +619,19 @@
     background-color 0.15s ease;
 }
 
+
 .dmp-filtros-card .dmp-filtros select {
   cursor:
     pointer;
 }
+
 
 .dmp-filtros-card .dmp-filtros input:hover,
 .dmp-filtros-card .dmp-filtros select:hover {
   border-color:
     #94a3b8;
 }
+
 
 .dmp-filtros-card .dmp-filtros input:focus,
 .dmp-filtros-card .dmp-filtros select:focus {
@@ -660,6 +669,7 @@
     justify-content:
       start;
   }
+
 }
 
 
@@ -692,6 +702,7 @@
     justify-content:
       stretch;
   }
+
 }
 
 
@@ -710,15 +721,18 @@
       12px;
   }
 
+
   .dmp-filtros-card .dmp-filtro-tipo-data {
     width:
       250px;
   }
 
+
   .dmp-filtros-card .dmp-filtros-info {
     align-items:
       stretch;
   }
+
 
   .dmp-filtros-card .dmp-periodo-descricao {
     width:
@@ -729,6 +743,7 @@
       1
       100%;
   }
+
 
   .dmp-filtros-card .dmp-filtros {
     grid-template-columns:
@@ -743,6 +758,7 @@
     gap:
       10px;
   }
+
 }
 
 
@@ -761,6 +777,7 @@
       13px;
   }
 
+
   .dmp-filtros-card .dmp-filtros-topo {
     flex-direction:
       column;
@@ -768,6 +785,7 @@
     align-items:
       stretch;
   }
+
 
   .dmp-filtros-card .dmp-filtro-tipo-data,
   .dmp-filtros-card .dmp-periodo-rapido-grupo {
@@ -778,10 +796,12 @@
       none;
   }
 
+
   .dmp-filtros-card .dmp-filtros-info {
     flex-direction:
       column;
   }
+
 
   .dmp-filtros-card .dmp-periodo-descricao {
     width:
@@ -791,10 +811,12 @@
       0;
   }
 
+
   .dmp-filtros-card .dmp-btn-limpar {
     align-self:
       flex-start;
   }
+
 }
 
 
@@ -813,6 +835,7 @@
       1fr;
   }
 
+
   .dmp-filtros-card .dmp-filtros-rapidos {
     display:
       grid;
@@ -830,15 +853,18 @@
       100%;
   }
 
+
   .dmp-filtros-card .dmp-filtros-rapidos button {
     width:
       100%;
   }
 
+
   .dmp-filtros-card .dmp-btn-limpar {
     width:
       100%;
   }
+
 }
 
 
@@ -857,14 +883,17 @@
       11px;
   }
 
+
   .dmp-filtros-card .dmp-filtros-rapidos {
     grid-template-columns:
       1fr;
   }
+
 
   .dmp-filtros-card .dmp-filtro-titulo,
   .dmp-filtros-card .dmp-filtro > span {
     font-size:
       11px;
   }
+
 }

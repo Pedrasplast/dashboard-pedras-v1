@@ -1,5 +1,5 @@
 /* =========================================================
-   ENTRADAS PP
+   ENTRADAS
 ========================================================= */
 
 .entradas-pp {
@@ -13,7 +13,7 @@
 
 .entradas-pp-toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
 
   gap: 14px;
@@ -25,6 +25,11 @@
   background: #f8fafc;
 }
 
+
+/* =========================================================
+   INDICADORES
+========================================================= */
+
 .entradas-pp-indicadores {
   display: flex;
   align-items: center;
@@ -33,6 +38,7 @@
 
   flex-wrap: wrap;
 }
+
 
 .entradas-pp-indicadores > div {
   min-width: 125px;
@@ -45,6 +51,7 @@
   background: #ffffff;
 }
 
+
 .entradas-pp-indicadores span {
   display: block;
 
@@ -56,6 +63,7 @@
   text-transform: uppercase;
 }
 
+
 .entradas-pp-indicadores strong {
   display: block;
 
@@ -64,6 +72,341 @@
   color: #0f172a;
 
   font-size: 15px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FILTROS PRINCIPAIS
+========================================================= */
+
+.entradas-pp-filtros {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  margin-left: auto;
+
+  flex-wrap: wrap;
+}
+
+
+.entradas-pp-filtros label {
+  min-width: 165px;
+}
+
+
+.entradas-pp-filtros .entradas-pp-filtro-tipo {
+  min-width: 125px;
+}
+
+
+.entradas-pp-filtros label > span {
+  display: block;
+
+  margin: 0 0 5px 2px;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.entradas-pp-filtros select {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 30px 0 10px;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  font: inherit;
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+
+.entradas-pp-filtros select:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(
+      37,
+      99,
+      235,
+      0.08
+    );
+}
+
+
+/* =========================================================
+   PERÍODO
+========================================================= */
+
+.entradas-pp-periodo {
+  display: grid;
+
+  grid-template-columns:
+    270px
+    minmax(260px, 1fr)
+    auto;
+
+  align-items: end;
+
+  gap: 12px;
+
+  padding: 10px 18px 12px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   TIPO DO PERÍODO
+========================================================= */
+
+.entradas-pp-periodo-tipo {
+  display: block;
+}
+
+
+.entradas-pp-periodo-tipo > span,
+.entradas-pp-periodo-datas label > span {
+  display: block;
+
+  margin: 0 0 5px 2px;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.entradas-pp-periodo-tipo select {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 38px;
+
+  padding: 0 30px 0 10px;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   INFORMAÇÃO
+========================================================= */
+
+.entradas-pp-periodo-info {
+  min-height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  padding: 0 11px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: #475569;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   DATAS
+========================================================= */
+
+.entradas-pp-periodo-datas {
+  display: flex;
+  align-items: flex-end;
+
+  gap: 8px;
+}
+
+
+.entradas-pp-periodo-datas label {
+  width: 145px;
+}
+
+
+.entradas-pp-periodo-datas input {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 38px;
+
+  padding: 0 9px;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  font: inherit;
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   LIMPAR FILTROS
+========================================================= */
+
+.entradas-pp-limpar {
+  height: 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  border: 1px solid #fb7185;
+  border-radius: 8px;
+
+  background: #fff1f2;
+
+  color: #be123c;
+
+  box-shadow:
+    0 2px 5px
+    rgba(
+      190,
+      18,
+      60,
+      0.10
+    );
+
+  font: inherit;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+
+.entradas-pp-limpar svg {
+  flex: 0 0 auto;
+
+  stroke-width: 2.6;
+}
+
+
+.entradas-pp-limpar:hover:not(:disabled) {
+  border-color: #e11d48;
+
+  background: #ffe4e6;
+
+  color: #9f1239;
+
+  box-shadow:
+    0 4px 10px
+    rgba(
+      190,
+      18,
+      60,
+      0.15
+    );
+
+  transform: translateY(-1px);
+}
+
+
+.entradas-pp-limpar:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+
+.entradas-pp-limpar:disabled {
+  border-color: #e2e8f0;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  box-shadow: none;
+
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+.entradas-pp-periodo-tipo select:focus,
+.entradas-pp-periodo-datas input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(
+      37,
+      99,
+      235,
+      0.08
+    );
 }
 
 
@@ -77,12 +420,14 @@
   overflow-x: auto;
 }
 
+
 .entradas-pp-tabela {
   width: 100%;
   min-width: 1280px;
 
   border-collapse: collapse;
 }
+
 
 .entradas-pp-tabela th {
   padding: 9px 10px;
@@ -102,6 +447,7 @@
   white-space: nowrap;
 }
 
+
 .entradas-pp-tabela td {
   padding: 10px 10px;
 
@@ -114,9 +460,15 @@
   vertical-align: middle;
 }
 
+
 .entradas-pp-tabela tbody tr:hover {
   background: #f8fafc;
 }
+
+
+/* =========================================================
+   DATA
+========================================================= */
 
 .entradas-pp-data {
   font-weight: 700;
@@ -124,15 +476,26 @@
   white-space: nowrap;
 }
 
+
+/* =========================================================
+   FORNECEDOR
+========================================================= */
+
 .entradas-pp-fornecedor {
   min-width: 160px;
 }
+
 
 .entradas-pp-fornecedor strong {
   display: block;
 
   color: #0f172a;
 }
+
+
+/* =========================================================
+   QUANTIDADE
+========================================================= */
 
 .entradas-pp-quantidade {
   color: #2563eb !important;
@@ -142,13 +505,20 @@
   white-space: nowrap;
 }
 
+
+/* =========================================================
+   FINANCEIRO
+========================================================= */
+
 .entradas-pp-financeiro {
   white-space: nowrap;
 }
 
+
 .entradas-pp-financeiro span {
   display: block;
 }
+
 
 .entradas-pp-financeiro small,
 .entradas-pp-tabela td small {
@@ -161,6 +531,7 @@
   font-size: 9px;
 }
 
+
 .entradas-pp-total {
   color: #0f172a !important;
 
@@ -168,6 +539,11 @@
 
   white-space: nowrap;
 }
+
+
+/* =========================================================
+   OBSERVAÇÃO
+========================================================= */
 
 .entradas-pp-observacao {
   max-width: 260px;
@@ -201,9 +577,11 @@
   text-align: center;
 }
 
+
 .entradas-pp-estado strong {
   color: #0f172a;
 }
+
 
 .entradas-pp-estado p {
   margin: 0;
@@ -211,10 +589,16 @@
   font-size: 10px;
 }
 
+
 .entradas-pp-erro,
 .entradas-pp-erro strong {
   color: #b91c1c;
 }
+
+
+/* =========================================================
+   LOADING
+========================================================= */
 
 .entradas-pp-loading {
   width: 26px;
@@ -232,6 +616,7 @@
     infinite;
 }
 
+
 @keyframes entradas-girando {
   to {
     transform: rotate(360deg);
@@ -243,12 +628,46 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 800px) {
+@media (max-width: 1200px) {
+
   .entradas-pp-toolbar {
     align-items: stretch;
 
     flex-direction: column;
   }
+
+
+  .entradas-pp-filtros {
+    width: 100%;
+
+    margin-left: 0;
+
+    justify-content: flex-start;
+  }
+
+
+  .entradas-pp-filtros label {
+    flex: 1;
+  }
+
+
+  .entradas-pp-periodo {
+    grid-template-columns:
+      240px
+      1fr;
+  }
+
+
+  .entradas-pp-periodo-datas {
+    grid-column:
+      1 /
+      -1;
+  }
+
+}
+
+
+@media (max-width: 800px) {
 
   .entradas-pp-indicadores {
     display: grid;
@@ -256,7 +675,57 @@
     grid-template-columns: 1fr;
   }
 
+
   .entradas-pp-indicadores > div {
     min-width: 0;
   }
+
+
+  .entradas-pp-filtros {
+    flex-direction: column;
+  }
+
+
+  .entradas-pp-filtros label,
+  .entradas-pp-filtro-tipo {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  .entradas-pp-periodo {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+
+  .entradas-pp-periodo-datas {
+    width: 100%;
+  }
+
+
+  .entradas-pp-periodo-datas label {
+    flex: 1;
+
+    width: auto;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .entradas-pp-periodo-datas {
+    flex-direction: column;
+  }
+
+
+  .entradas-pp-periodo-datas label,
+  .entradas-pp-limpar {
+    width: 100%;
+  }
+
 }

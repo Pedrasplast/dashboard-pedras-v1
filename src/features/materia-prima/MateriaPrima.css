@@ -6,10 +6,8 @@
   width: 100%;
   min-height: 100%;
 
-  background:
-    #f8fafc;
+  background: #f8fafc;
 }
-
 
 /* =========================================================
    CONTAINER
@@ -22,12 +20,8 @@
 
   margin: 70px auto;
 
-  padding:
-    22px
-    24px
-    32px;
+  padding: 22px 24px 32px;
 }
-
 
 /* =========================================================
    CONTEÚDO PRINCIPAL
@@ -36,28 +30,14 @@
 .materia-prima-conteudo {
   overflow: hidden;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
-
 
 /* =========================================================
    CABEÇALHO DO CONTEÚDO
@@ -69,28 +49,19 @@
 
   gap: 13px;
 
-  padding:
-    16px
-    18px;
+  padding: 16px 18px;
 
-  border-bottom:
-    1px solid
-    #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 }
-
 
 /* =========================================================
    ÍCONE
 ========================================================= */
 
 .materia-prima-conteudo-icone {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   width: 42px;
   height: 42px;
@@ -99,20 +70,14 @@
   align-items: center;
   justify-content: center;
 
-  border:
-    1px solid
-    #bfdbfe;
+  border: 1px solid #bfdbfe;
 
-  border-radius:
-    11px;
+  border-radius: 11px;
 
-  background:
-    #eff6ff;
+  background: #eff6ff;
 
-  color:
-    #2563eb;
+  color: #2563eb;
 }
-
 
 /* =========================================================
    TEXTO DO CABEÇALHO
@@ -122,84 +87,60 @@
   min-width: 0;
 }
 
-
 .materia-prima-conteudo-header span {
   display: block;
 
-  margin-bottom:
-    2px;
+  margin-bottom: 2px;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  font-size:
-    10px;
+  font-size: 10px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    0.06em;
+  letter-spacing: 0.06em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
-
 
 .materia-prima-conteudo-header h2 {
   margin: 0;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  font-size:
-    18px;
+  font-size: 18px;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  line-height:
-    1.25;
+  line-height: 1.25;
 }
-
 
 .materia-prima-conteudo-header p {
-  margin:
-    4px
-    0
-    0;
+  margin: 4px 0 0;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  font-size:
-    11px;
+  font-size: 11px;
 
-  line-height:
-    1.4;
+  line-height: 1.4;
 }
-
 
 /* =========================================================
    CONTEÚDO VAZIO
 ========================================================= */
 
 .materia-prima-conteudo-vazio {
-  min-height:
-    300px;
+  min-height: 300px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  padding:
-    32px;
+  padding: 32px;
 
-  text-align:
-    center;
+  text-align: center;
 }
-
 
 .materia-prima-conteudo-vazio-icone {
   width: 58px;
@@ -209,99 +150,72 @@
   align-items: center;
   justify-content: center;
 
-  margin-bottom:
-    14px;
+  margin-bottom: 14px;
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
-  background:
-    #f1f5f9;
+  background: #f1f5f9;
 
-  color:
-    #64748b;
+  color: #64748b;
 }
-
 
 .materia-prima-conteudo-vazio strong {
-  margin-bottom:
-    6px;
+  margin-bottom: 6px;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  font-size:
-    16px;
+  font-size: 16px;
 }
 
-
 .materia-prima-conteudo-vazio p {
-  max-width:
-    420px;
+  max-width: 420px;
 
   margin: 0;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  font-size:
-    12px;
+  font-size: 12px;
 
-  line-height:
-    1.5;
+  line-height: 1.5;
 }
+
 
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (
-  max-width: 900px
-) {
+@media (max-width: 900px) {
   .materia-prima-container {
-    padding:
-      18px;
+    padding: 18px;
   }
 }
-
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media (
-  max-width: 600px
-) {
+@media (max-width: 600px) {
   .materia-prima-container {
-    padding:
-      14px;
+    padding: 14px;
   }
-
 
   .materia-prima-conteudo {
-    border-radius:
-      12px;
+    border-radius: 12px;
   }
-
 
   .materia-prima-conteudo-header {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    padding:
-      14px;
+    padding: 14px;
   }
-
 
   .materia-prima-conteudo-icone {
     width: 38px;
     height: 38px;
   }
 
-
   .materia-prima-conteudo-header h2 {
-    font-size:
-      16px;
+    font-size: 16px;
   }
 }

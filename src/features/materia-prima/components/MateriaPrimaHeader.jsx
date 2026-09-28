@@ -8,9 +8,9 @@ import "./MateriaPrimaHeader.css";
 export default function MateriaPrimaHeader() {
   return (
     <PageHeader
-      eyebrow="Controle de PP"
+      eyebrow="Controle de Matéria-Prima"
       title="Matéria-Prima"
-      description="Controle de fornecedores, receitas, programação, entradas, compras futuras e projeção do estoque de PP."
+      description="Controle de receitas, programação e projeção dos estoques de matéria-prima."
       icon={ClipboardList}
       className="materia-prima-header"
     />

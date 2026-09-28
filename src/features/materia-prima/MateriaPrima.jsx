@@ -9,8 +9,6 @@ import MateriaPrimaNavegacao, {
   MATERIA_PRIMA_SECOES,
 } from "./components/MateriaPrimaNavegacao";
 
-import ComprasFuturas from "./compras-futuras/ComprasFuturas";
-import Entradas from "./entradas/Entradas";
 import Programacao from "./programacao/Programacao";
 import Projecao from "./projecao/Projecao";
 import Receitas from "./receitas/Receitas";
@@ -76,18 +74,6 @@ export default function MateriaPrima() {
       case "programacao":
         return (
           <Programacao />
-        );
-
-
-      case "entradas":
-        return (
-          <Entradas />
-        );
-
-
-      case "compras-futuras":
-        return (
-          <ComprasFuturas />
         );
 
 
