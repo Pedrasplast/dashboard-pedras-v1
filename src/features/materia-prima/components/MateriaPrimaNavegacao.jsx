@@ -1,10 +1,8 @@
 import {
-  ArrowDownToLine,
   BarChart3,
   Boxes,
   CalendarDays,
   FlaskConical,
-  ShoppingCart,
 } from "lucide-react";
 
 import "./MateriaPrimaNavegacao.css";
@@ -20,31 +18,15 @@ export const MATERIA_PRIMA_SECOES =
       id: "visao-geral",
       titulo: "Visão Geral",
       descricao:
-        "Resumo do estoque, consumo e situação do PP.",
+        "Resumo do estoque, consumo e situação da matéria-prima.",
       icone: Boxes,
-    },
-
-    {
-      id: "compras-futuras",
-      titulo: "Compras Futuras",
-      descricao:
-        "Controle das compras com recebimento previsto.",
-      icone: ShoppingCart,
-    },
-
-    {
-      id: "entradas",
-      titulo: "Entradas",
-      descricao:
-        "Registro dos recebimentos reais de matéria-prima.",
-      icone: ArrowDownToLine,
     },
 
     {
       id: "receitas",
       titulo: "Receitas",
       descricao:
-        "Composição de PP utilizada por cada produto.",
+        "Composição de matéria-prima utilizada por cada produto.",
       icone: FlaskConical,
     },
 

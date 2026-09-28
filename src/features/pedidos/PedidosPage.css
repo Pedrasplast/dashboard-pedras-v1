@@ -1,7 +1,7 @@
 /* =========================================================
-   PEDIDOS
-   Estilo geral do módulo
+   PEDIDOS - LAYOUT GERAL
 ========================================================= */
+
 
 /* =========================================================
    CSS DOS COMPONENTES
@@ -11,9 +11,9 @@
 @import "./components/PedidosResumo.css";
 @import "./components/PedidosFiltros.css";
 @import "./components/PedidosConteudo.css";
-@import "./components/PedidosTabela.css";
 @import "./components/PedidosEstado.css";
 @import "./components/PedidosAvisoCancelados.css";
+
 
 /* =========================================================
    CONFIGURAÇÃO GLOBAL
@@ -24,51 +24,118 @@
   box-sizing: border-box;
 }
 
+
 .pedidos-page {
+  /* =======================================================
+     CORES PRINCIPAIS
+  ======================================================= */
+
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
   --primary-soft: #eff6ff;
 
+
+  /* =======================================================
+     ERRO / ATRASO
+  ======================================================= */
+
   --danger: #dc2626;
   --danger-dark: #b91c1c;
   --danger-soft: #fef2f2;
+
+
+  /* =======================================================
+     NOVO PEDIDO
+  ======================================================= */
 
   --warning: #f97316;
   --warning-dark: #c2410c;
   --warning-soft: #fff7ed;
   --warning-hover: #ffedd5;
 
+
+  /* =======================================================
+     SUCESSO
+  ======================================================= */
+
   --success: #059669;
   --success-soft: #ecfdf5;
+
+
+  /* =======================================================
+     PEDIDO ALTERADO
+  ======================================================= */
 
   --purple: #7c3aed;
   --purple-soft: #faf5ff;
   --purple-hover: #f3e8ff;
 
-  --page-bg: #f4f7fb;
+
+  /* =======================================================
+     SUPERFÍCIES
+  ======================================================= */
 
   --surface: #ffffff;
   --surface-soft: #f8fafc;
 
+  --page-bg: #f4f7fb;
+
+
+  /* =======================================================
+     BORDAS
+  ======================================================= */
+
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
+
+
+  /* =======================================================
+     TEXTOS
+  ======================================================= */
 
   --text: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --text-light: #94a3b8;
 
+
+  /* =======================================================
+     DIMENSÕES
+  ======================================================= */
+
   width: 100%;
 
-  min-height: calc(100vh - 72px);
+  min-height:
+    calc(
+      100vh - 72px
+    );
 
-  padding: 92px 26px 32px;
 
-  background: linear-gradient(180deg, #f8fafc 0, var(--page-bg) 190px);
+  /* =======================================================
+     ESPAÇAMENTO
+  ======================================================= */
+
+  padding:
+    92px
+    24px
+    30px;
+
+
+  /* =======================================================
+     FUNDO
+  ======================================================= */
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc 0,
+      var(--page-bg) 190px
+    );
 }
 
+
 /* =========================================================
-   CONTAINER
+   CONTAINER PRINCIPAL
 ========================================================= */
 
 .pedidos-container {
@@ -76,8 +143,11 @@
 
   max-width: 1850px;
 
-  margin: 0 auto;
+  margin:
+    0
+    auto;
 }
+
 
 /* =========================================================
    CABEÇALHO
@@ -88,48 +158,31 @@
 
   align-items: center;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
-  gap: 28px;
+  gap: 24px;
 
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
+
 
 .pedidos-header > div:first-child {
   min-width: 0;
 }
 
-.pedidos-header h1 {
-  margin: 0;
-
-  font-size: 30px;
-
-  font-weight: 750;
-
-  line-height: 1.15;
-
-  letter-spacing: -0.025em;
-
-  color: var(--text);
-}
-
-.pedidos-header p {
-  margin: 7px 0 0;
-
-  font-size: 14px;
-
-  line-height: 1.5;
-
-  color: var(--text-muted);
-}
 
 .pedidos-header-actions {
-  flex: 0 0 auto;
+  flex:
+    0
+    0
+    auto;
 
   display: flex;
 
   align-items: center;
 }
+
 
 /* =========================================================
    RODAPÉ
@@ -148,468 +201,137 @@
 
   font-size: 10px;
 
-  color: var(--text-light);
+  line-height: 1.4;
+
+  color:
+    var(--text-light);
 }
 
-/* =========================================================
-   RESPONSIVIDADE - 1500px
-========================================================= */
-
-@media (max-width: 1500px) {
-  .pedidos-page {
-    padding: 92px 20px 28px;
-  }
-
-  .pedidos-tabela {
-    min-width: 1360px;
-  }
-
-  .pedidos-col-produto {
-    min-width: 390px;
-  }
-
-  .pedidos-produto {
-    min-width: 390px;
-
-    max-width: 560px;
-  }
-}
 
 /* =========================================================
    RESPONSIVIDADE - 1200px
 ========================================================= */
 
 @media (max-width: 1200px) {
-  .pedidos-resumo {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  .pedidos-page {
+    padding:
+      90px
+      18px
+      26px;
   }
 
-  .pedidos-filtros {
-    flex-wrap: wrap;
-  }
 
-  .pedidos-pesquisa {
-    flex-basis: 100%;
-  }
-
-  .pedidos-filtros select {
-    flex: 1 1 220px;
-  }
-
-  .pedidos-tabela {
-    min-width: 1280px;
+  .pedidos-header {
+    margin-bottom: 20px;
   }
 }
+
 
 /* =========================================================
    RESPONSIVIDADE - 900px
 ========================================================= */
 
 @media (max-width: 900px) {
+
   .pedidos-page {
-    padding: 88px 16px 24px;
+    padding:
+      84px
+      12px
+      22px;
   }
+
 
   .pedidos-header {
-    flex-direction: column;
+    flex-direction:
+      column;
 
-    align-items: flex-start;
+    align-items:
+      stretch;
 
-    gap: 16px;
+    gap: 12px;
+
+    margin-bottom: 18px;
   }
+
 
   .pedidos-header-actions {
     width: 100%;
   }
+}
 
-  .pedidos-atualizacao {
-    width: 100%;
 
+/* =========================================================
+   RESPONSIVIDADE - 700px
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .pedidos-page {
+    padding:
+      82px
+      10px
+      18px;
+  }
+
+
+  .pedidos-container {
     max-width: 100%;
   }
 
-  .pedidos-filtros {
-    align-items: stretch;
-  }
 
-  .pedidos-filtros select {
-    min-width: 0;
-  }
-}
-
-/* =========================================================
-   RESPONSIVIDADE - MOBILE
-========================================================= */
-
-@media (max-width: 750px) {
-  .pedidos-page {
-    padding: 86px 12px 20px;
-  }
-
-  .pedidos-header h1 {
-    font-size: 26px;
-  }
-
-  .pedidos-header p {
-    font-size: 13px;
-  }
-
-  .pedidos-atualizacao {
-    width: 100%;
-
-    min-width: 0;
-  }
-
-  .pedidos-atualizacao-textos {
-    flex: 1;
-  }
-
-  .pedidos-atualizacao-horarios {
-    white-space: normal;
-  }
-
-  .pedidos-resumo {
-    grid-template-columns: 1fr;
-
-    gap: 10px;
-  }
-
-  .pedidos-card {
-    min-height: 84px;
-
-    padding: 14px 15px;
-  }
-
-  .pedidos-filtros {
-    flex-direction: column;
-
-    gap: 9px;
-
-    padding: 11px;
-  }
-
-  .pedidos-pesquisa {
-    width: 100%;
-
-    min-width: 0;
-  }
-
-  .pedidos-filtros select {
-    width: 100%;
-
-    flex: none;
-  }
-
-  .pedidos-btn-limpar {
-    width: 100%;
-  }
-
-  .pedidos-content-header {
-    min-height: auto;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
+  .pedidos-header {
     gap: 10px;
 
-    padding: 14px;
+    margin-bottom: 14px;
   }
 
-  .pedidos-tabela {
-    min-width: 1200px;
 
-    font-size: 11px;
-  }
-
-  .pedidos-col-produto {
-    min-width: 350px;
-  }
-
-  .pedidos-produto {
-    min-width: 350px;
-
-    max-width: 460px;
-
-    font-size: 11px;
-  }
-
-  .pedidos-cliente {
-    min-width: 190px;
-  }
-
-  .pedidos-tabela th {
-    padding: 10px;
+  .pedidos-rodape-info {
+    margin-top: 10px;
 
     font-size: 9px;
   }
-
-  .pedidos-tabela td {
-    padding: 11px 10px;
-  }
-
-  .pedidos-itens-badge {
-    font-size: 7px;
-
-    padding: 3px 6px;
-  }
-
-  .pedidos-item-indicador {
-    font-size: 13px;
-  }
 }
 
+
 /* =========================================================
-   RESPONSIVIDADE - MOBILE PEQUENO
+   RESPONSIVIDADE - 520px
 ========================================================= */
 
-@media (max-width: 420px) {
+@media (max-width: 520px) {
+
   .pedidos-page {
-    padding: 83px 9px 16px;
+    padding:
+      78px
+      8px
+      16px;
   }
 
-  .pedidos-header h1 {
-    font-size: 24px;
+
+  .pedidos-header {
+    margin-bottom: 12px;
   }
 
-  .pedidos-atualizacao-titulo {
-    font-size: 9px;
-  }
 
-  .pedidos-atualizacao-horarios {
-    font-size: 11px;
-  }
+  .pedidos-rodape-info {
+    padding-left: 0;
 
-  .pedidos-card strong {
-    font-size: 19px;
-  }
-
-  .pedidos-content {
-    border-radius: 10px;
-  }
-
-  .pedidos-tabela {
-    min-width: 1140px;
+    font-size: 8.5px;
   }
 }
+
 
 /* =========================================================
-   DESTAQUE DE PEDIDOS EM ATRASO
+   RESPONSIVIDADE - 360px
 ========================================================= */
 
-.pedidos-previsao-wrapper {
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-start;
-
-  gap: 6px;
-}
-
-.pedidos-previsao-data {
-  white-space: nowrap;
-}
-
-.pedidos-tag-atraso {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 4px;
-
-  padding: 4px 7px;
-
-  border: 1px solid #fecaca;
-
-  border-radius: 999px;
-
-  background: #fef2f2;
-
-  color: #dc2626;
-
-  font-size: 9px;
-
-  font-weight: 800;
-
-  line-height: 1;
-
-  white-space: nowrap;
-}
-
-.pedidos-tag-atraso svg {
-  flex: 0 0 auto;
-}
-
-.pedido-linha-atrasada,
-.pedido-linha-atrasada > td {
-  background: #fffafa !important;
-}
-
-.pedido-linha-atrasada:hover,
-.pedido-linha-atrasada:hover > td {
-  background: #fef2f2 !important;
-}
-
-.pedido-celula-atrasada {
-  background: #fffafa !important;
-}
-
-.pedidos-inicio-grupo.pedido-linha-atrasada > td:first-child {
-  box-shadow: inset 3px 0 0 #ef4444;
-}
-
-@media (max-width: 750px) {
-  .pedidos-tag-atraso {
-    font-size: 8px;
-
-    padding: 4px 6px;
-  }
-}
-
-/* =========================================================
-   STATUS CANCELADO
-========================================================= */
-
-.status-cancelado {
-  background: #fef2f2;
-
-  color: #b91c1c;
-
-  border: 1px solid #fecaca;
-}
-
-/* =========================================================
-   SINALIZAÇÃO DE PEDIDOS
-========================================================= */
-
-/*
-   NOVO     = laranja
-   ALTERADO = roxo
-
-   Pedidos atrasados e cancelados mantêm prioridade
-   visual sobre estas sinalizações.
-*/
-
-.pedido-linha-nova,
-.pedido-linha-alterada {
-  cursor: pointer;
-}
-
-/* =========================================================
-   PEDIDO NOVO
-========================================================= */
-
-.pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada) > td {
-  background: var(--warning-soft);
-}
-
-.pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover > td {
-  background: var(--warning-hover);
-}
-
-.pedido-celula-nova {
-  box-shadow: inset 4px 0 0 var(--warning);
-}
-
-.pedido-novo-badge {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-height: 21px;
-
-  padding: 3px 8px;
-
-  border: 1px solid var(--warning);
-
-  border-radius: 999px;
-
-  background: var(--warning);
-
-  color: #ffffff;
-
-  font-size: 9px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.06em;
-
-  line-height: 1;
-
-  white-space: nowrap;
-
-  box-shadow: 0 2px 6px rgba(249, 115, 22, 0.28);
-}
-
-/* =========================================================
-   PEDIDO ALTERADO
-========================================================= */
-
-.pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada) > td {
-  background: var(--purple-soft);
-}
-
-.pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover > td {
-  background: var(--purple-hover);
-}
-
-/*
-   O JSX atual adiciona esta classe diretamente
-   à célula principal do pedido alterado.
-*/
-
-.pedido-celula-alterada {
-  box-shadow: inset 4px 0 0 var(--purple);
-}
-
-.pedido-alterado-badge {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-height: 21px;
-
-  padding: 3px 8px;
-
-  border: 1px solid var(--purple);
-
-  border-radius: 999px;
-
-  background: var(--purple);
-
-  color: #ffffff;
-
-  font-size: 9px;
-
-  font-weight: 900;
-
-  letter-spacing: 0.06em;
-
-  line-height: 1;
-
-  white-space: nowrap;
-
-  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
-}
-
-/* =========================================================
-   MOBILE - BADGES
-========================================================= */
-
-@media (max-width: 750px) {
-  .pedido-novo-badge,
-  .pedido-alterado-badge {
-    min-height: 19px;
-
-    padding: 3px 7px;
-
-    font-size: 8px;
+@media (max-width: 360px) {
+
+  .pedidos-page {
+    padding:
+      76px
+      6px
+      14px;
   }
 }

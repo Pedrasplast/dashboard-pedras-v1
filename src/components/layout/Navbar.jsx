@@ -3,6 +3,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
 import {
+  ArrowDownToLine,
   Bell,
   Boxes,
   ChevronDown,
@@ -184,6 +185,50 @@ const NAVIGATION_GROUPS = Object.freeze([
         icon: Warehouse,
 
         permissao: "estoque",
+      },
+    ],
+  },
+
+  /* =====================================================
+       COMPRAS
+    ===================================================== */
+
+  {
+    type: "group",
+
+    id: "compras",
+
+    label: "Compras",
+
+    icon: ShoppingCart,
+
+    children: [
+      {
+        type: "link",
+
+        id: "compras-futuras",
+
+        label: "Compras Futuras",
+
+        path: "/compras-futuras",
+
+        icon: ShoppingCart,
+
+        permissao: "materia_prima",
+      },
+
+      {
+        type: "link",
+
+        id: "entradas-materia-prima",
+
+        label: "Entradas",
+
+        path: "/entradas-materia-prima",
+
+        icon: ArrowDownToLine,
+
+        permissao: "materia_prima",
       },
     ],
   },

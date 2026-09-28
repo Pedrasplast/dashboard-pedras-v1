@@ -165,4 +165,23 @@
   color: var(--text-secondary);
 }
 
+@media (max-width: 850px) {
+  .pedidos-filtros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 
+  .pedidos-pesquisa {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .pedidos-filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .pedidos-pesquisa {
+    grid-column: auto;
+  }
+}
