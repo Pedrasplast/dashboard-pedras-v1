@@ -5,3 +5,4 @@ dist/
 .env.*.local
 .output/
 .vercel/
+public/version.json

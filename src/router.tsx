@@ -1,16 +1,44 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import {
+  QueryClient,
+} from "@tanstack/react-query";
 
-export const getRouter = () => {
-  const queryClient = new QueryClient();
+import {
+  createRouter,
+} from "@tanstack/react-router";
 
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
-  });
+import {
+  routeTree,
+} from "./routeTree.gen";
 
-  return router;
-};
+
+/*
+ * Inicializa uma única vez o sistema
+ * global de atualização automática.
+ */
+import "./lib/atualizadorSistema";
+
+
+export const getRouter =
+  () => {
+    const queryClient =
+      new QueryClient();
+
+
+    const router =
+      createRouter({
+        routeTree,
+
+        context: {
+          queryClient,
+        },
+
+        scrollRestoration:
+          true,
+
+        defaultPreloadStaleTime:
+          0,
+      });
+
+
+    return router;
+  };
