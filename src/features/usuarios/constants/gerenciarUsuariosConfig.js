@@ -53,6 +53,19 @@ export const MODULOS_PERMISSOES =
     },
 
     {
+      id: "compras",
+
+      nome: "Compras",
+
+      descricao:
+        "Compras futuras e recebimentos de matéria-prima.",
+
+      chaves: [
+        "compras",
+      ],
+    },
+
+    {
       id: "pedidos",
 
       nome: "Pedidos",

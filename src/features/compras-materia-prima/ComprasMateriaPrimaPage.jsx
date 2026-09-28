@@ -1,6 +1,6 @@
 import {
   ArrowDownToLine,
-  ShoppingCart,
+  ShoppingBag,
 } from "lucide-react";
 
 import PageHeader from "@/components/layout/PageHeader";
@@ -17,7 +17,7 @@ const SECOES = Object.freeze({
     titulo: "Compras Futuras",
     descricao:
       "Controle das compras de matéria-prima com recebimento previsto.",
-    icone: ShoppingCart,
+    icone: ShoppingBag,
     componente: ComprasFuturas,
   },
 

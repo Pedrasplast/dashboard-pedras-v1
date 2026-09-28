@@ -18,6 +18,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  ShoppingBag,
   ShoppingCart,
   ShieldCheck,
   Upload,
@@ -190,49 +191,48 @@ const NAVIGATION_GROUPS = Object.freeze([
   },
 
   /* =====================================================
-       COMPRAS
-    ===================================================== */
+     COMPRAS
+===================================================== */
 
-  {
-    type: "group",
+{
+  type: "group",
 
-    id: "compras",
+  id: "compras",
 
-    label: "Compras",
+  label: "Compras",
 
-    icon: ShoppingCart,
+  icon: ShoppingBag,
 
-    children: [
-      {
-        type: "link",
+  children: [
+    {
+      type: "link",
 
-        id: "compras-futuras",
+      id: "compras-futuras",
 
-        label: "Compras Futuras",
+      label: "Compras Futuras",
 
-        path: "/compras-futuras",
+      path: "/compras-futuras",
 
-        icon: ShoppingCart,
+      icon: ShoppingBag,
 
-        permissao: "materia_prima",
-      },
+      permissao: "compras",
+    },
 
-      {
-        type: "link",
+    {
+      type: "link",
 
-        id: "entradas-materia-prima",
+      id: "entradas-materia-prima",
 
-        label: "Entradas",
+      label: "Entradas",
 
-        path: "/entradas-materia-prima",
+      path: "/entradas-materia-prima",
 
-        icon: ArrowDownToLine,
+      icon: ArrowDownToLine,
 
-        permissao: "materia_prima",
-      },
-    ],
-  },
-
+      permissao: "compras",
+    },
+  ],
+},
   /* =====================================================
        PEDIDOS
     ===================================================== */

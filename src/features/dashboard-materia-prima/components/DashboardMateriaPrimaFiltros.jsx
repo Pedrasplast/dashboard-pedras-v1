@@ -1,5 +1,5 @@
 import {
-  X,
+  RotateCcw,
 } from "lucide-react";
 
 import "./DashboardMateriaPrimaFiltros.css";
@@ -149,21 +149,23 @@ export default function DashboardMateriaPrimaFiltros({
 
         <button
           type="button"
-          className={
-            `dmp-btn-limpar${
-              estadoPadrao
-                ? " dmp-btn-limpar-padrao"
-                : ""
-            }`
-          }
+          className="dmp-btn-limpar"
           onClick={
             onLimparFiltros
           }
-          title="Voltar todos os filtros ao padrão"
+          disabled={
+            estadoPadrao
+          }
+          title={
+            estadoPadrao
+              ? "Não há filtros para limpar"
+              : "Voltar todos os filtros ao padrão"
+          }
         >
 
-          <X
-            size={16}
+          <RotateCcw
+            size={14}
+            aria-hidden="true"
           />
 
           Limpar filtros

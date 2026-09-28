@@ -2,8 +2,11 @@ import {
   createFileRoute,
 } from "@tanstack/react-router";
 
-import RotaProtegida from "@/components/layout/RotaProtegida";
-import ComprasMateriaPrimaPage from "@/features/compras-materia-prima/ComprasMateriaPrimaPage";
+import RotaProtegida
+  from "@/components/layout/RotaProtegida";
+
+import ComprasMateriaPrimaPage
+  from "@/features/compras-materia-prima/ComprasMateriaPrimaPage";
 
 
 export const Route =
@@ -19,7 +22,9 @@ export const Route =
             "Compras Futuras | Pedrasplast",
         },
         {
-          name: "description",
+          name:
+            "description",
+
           content:
             "Controle das compras futuras de matéria-prima da Pedrasplast.",
         },
@@ -33,9 +38,13 @@ export const Route =
 
 function ComprasFuturasRoute() {
   return (
-    <RotaProtegida permissao="materia_prima">
+    <RotaProtegida
+      permissao="compras"
+    >
 
-      <ComprasMateriaPrimaPage secao="compras-futuras" />
+      <ComprasMateriaPrimaPage
+        secao="compras-futuras"
+      />
 
     </RotaProtegida>
   );
