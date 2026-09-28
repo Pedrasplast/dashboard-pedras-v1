@@ -47,6 +47,31 @@ function normalizarQuantidade(
 }
 
 
+function normalizarMaterial(
+  registro,
+) {
+  if (!registro) {
+    return null;
+  }
+
+
+  return {
+    id:
+      registro.id,
+
+    nome:
+      String(
+        registro.nome ??
+          "",
+      ).trim(),
+
+    ativo:
+      registro.ativo !==
+      false,
+  };
+}
+
+
 function normalizarSaldo(
   registro,
 ) {
@@ -60,6 +85,9 @@ function normalizarSaldo(
 
   const fornecedorId =
     registro?.fornecedor_id;
+
+  const materialId =
+    registro?.material_id;
 
   const dataBase =
     String(
@@ -78,6 +106,8 @@ function normalizarSaldo(
     id === undefined ||
     fornecedorId === null ||
     fornecedorId === undefined ||
+    materialId === null ||
+    materialId === undefined ||
     !dataBase ||
     !Number.isFinite(
       quantidadeKg,
@@ -91,6 +121,8 @@ function normalizarSaldo(
     id,
 
     fornecedorId,
+
+    materialId,
 
     dataBase,
 
@@ -115,8 +147,47 @@ function normalizarSaldo(
 }
 
 
+async function buscarMateriais() {
+  const {
+    data,
+    error,
+  } =
+    await supabase
+      .from(
+        "materia_prima_materiais",
+      )
+      .select(`
+        id,
+        nome,
+        ativo
+      `)
+      .order(
+        "nome",
+        {
+          ascending: true,
+        },
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  return (
+    Array.isArray(data)
+      ? data
+      : []
+  )
+    .map(
+      normalizarMaterial,
+    )
+    .filter(Boolean);
+}
+
+
 /* =========================================================
-   ÚLTIMO SALDO POR FORNECEDOR
+   ÚLTIMO SALDO POR MATERIAL + FORNECEDOR
 ========================================================= */
 
 export function obterUltimosSaldosPorFornecedor(
@@ -145,9 +216,7 @@ export function obterUltimosSaldosPorFornecedor(
         saldo,
       ) => {
         const chave =
-          String(
-            saldo.fornecedorId,
-          );
+          `${saldo.materialId}|${saldo.fornecedorId}`;
 
         const atual =
           mapa.get(
@@ -189,42 +258,85 @@ export function obterUltimosSaldosPorFornecedor(
    BUSCAR SALDOS
 ========================================================= */
 
-export async function buscarSaldosIniciais() {
+export async function buscarSaldosIniciais({
+  materialId = null,
+} = {}) {
+  const materialIdFinal =
+    materialId === null ||
+    materialId === undefined ||
+    materialId === ""
+      ? null
+      : Number(
+          materialId,
+        );
+
+
+  if (
+    materialIdFinal !== null &&
+    !Number.isFinite(
+      materialIdFinal,
+    )
+  ) {
+    throw new Error(
+      "Material inválido.",
+    );
+  }
+
+
+  let consultaSaldos =
+    supabase
+      .from(
+        "materia_prima_saldo_inicial",
+      )
+      .select(`
+        id,
+        fornecedor_id,
+        material_id,
+        data_base,
+        quantidade_kg,
+        observacao,
+        ativo,
+        criado_em,
+        atualizado_em
+      `);
+
+
+  if (
+    materialIdFinal !== null
+  ) {
+    consultaSaldos =
+      consultaSaldos.eq(
+        "material_id",
+        materialIdFinal,
+      );
+  }
+
+
+  consultaSaldos =
+    consultaSaldos
+      .order(
+        "data_base",
+        {
+          ascending: false,
+        },
+      )
+      .order(
+        "id",
+        {
+          ascending: false,
+        },
+      );
+
+
   const [
     fornecedores,
+    materiais,
     resultadoSaldos,
   ] =
     await Promise.all([
       buscarFornecedores(),
-
-      supabase
-        .from(
-          "materia_prima_saldo_inicial",
-        )
-        .select(
-          `
-            id,
-            fornecedor_id,
-            data_base,
-            quantidade_kg,
-            observacao,
-            ativo,
-            criado_em,
-            atualizado_em
-          `,
-        )
-        .order(
-          "data_base",
-          {
-            ascending: false,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending: false,
-          },
-        ),
+      buscarMateriais(),
+      consultaSaldos,
     ]);
 
 
@@ -248,6 +360,24 @@ export async function buscarSaldosIniciais() {
           fornecedor.id,
         ),
         fornecedor,
+      );
+    },
+  );
+
+
+  const materiaisPorId =
+    new Map();
+
+
+  materiais.forEach(
+    (
+      material,
+    ) => {
+      materiaisPorId.set(
+        String(
+          material.id,
+        ),
+        material,
       );
     },
   );
@@ -283,6 +413,13 @@ export async function buscarSaldosIniciais() {
               ),
             );
 
+          const material =
+            materiaisPorId.get(
+              String(
+                saldo.materialId,
+              ),
+            );
+
 
           return {
             ...saldo,
@@ -294,6 +431,14 @@ export async function buscarSaldosIniciais() {
             fornecedorAtivo:
               fornecedor?.ativo !==
               false,
+
+            materialNome:
+              material?.nome ??
+              "Material não encontrado",
+
+            materialAtivo:
+              material?.ativo !==
+              false,
           };
         },
       )
@@ -304,6 +449,8 @@ export async function buscarSaldosIniciais() {
     saldos,
 
     fornecedores,
+
+    materiais,
   };
 }
 
@@ -315,6 +462,7 @@ export async function buscarSaldosIniciais() {
 export async function salvarSaldoInicial({
   id = null,
   fornecedorId,
+  materialId,
   dataBase,
   quantidadeKg,
   observacao = "",
@@ -325,6 +473,11 @@ export async function salvarSaldoInicial({
       dataBase ?? "",
     ).trim();
 
+  const materialIdFinal =
+    Number(
+      materialId,
+    );
+
   const quantidadeFinal =
     normalizarQuantidade(
       quantidadeKg,
@@ -334,6 +487,17 @@ export async function salvarSaldoInicial({
     String(
       observacao ?? "",
     ).trim();
+
+
+  if (
+    !Number.isFinite(
+      materialIdFinal,
+    )
+  ) {
+    throw new Error(
+      "Selecione o material.",
+    );
+  }
 
 
   if (
@@ -369,6 +533,9 @@ export async function salvarSaldoInicial({
     fornecedor_id:
       fornecedorId,
 
+    material_id:
+      materialIdFinal,
+
     data_base:
       dataBaseFinal,
 
@@ -388,6 +555,19 @@ export async function salvarSaldoInicial({
       new Date()
         .toISOString(),
   };
+
+
+  const campos = `
+    id,
+    fornecedor_id,
+    material_id,
+    data_base,
+    quantidade_kg,
+    observacao,
+    ativo,
+    criado_em,
+    atualizado_em
+  `;
 
 
   /* =======================================================
@@ -414,16 +594,7 @@ export async function salvarSaldoInicial({
           id,
         )
         .select(
-          `
-            id,
-            fornecedor_id,
-            data_base,
-            quantidade_kg,
-            observacao,
-            ativo,
-            criado_em,
-            atualizado_em
-          `,
+          campos,
         )
         .single();
 
@@ -434,7 +605,7 @@ export async function salvarSaldoInicial({
         "23505"
       ) {
         throw new Error(
-          "Já existe um saldo para este fornecedor nesta data-base.",
+          "Já existe um saldo para este fornecedor, material e data-base.",
         );
       }
 
@@ -465,16 +636,7 @@ export async function salvarSaldoInicial({
         dadosSalvar,
       )
       .select(
-        `
-          id,
-          fornecedor_id,
-          data_base,
-          quantidade_kg,
-          observacao,
-          ativo,
-          criado_em,
-          atualizado_em
-        `,
+        campos,
       )
       .single();
 
@@ -485,7 +647,7 @@ export async function salvarSaldoInicial({
       "23505"
     ) {
       throw new Error(
-        "Já existe um saldo para este fornecedor nesta data-base.",
+        "Já existe um saldo para este fornecedor, material e data-base.",
       );
     }
 

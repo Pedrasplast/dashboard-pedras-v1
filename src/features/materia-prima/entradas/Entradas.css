@@ -25,7 +25,6 @@
   background: #f8fafc;
 }
 
-
 .entradas-pp-indicadores {
   display: flex;
   align-items: center;
@@ -34,7 +33,6 @@
 
   flex-wrap: wrap;
 }
-
 
 .entradas-pp-indicadores > div {
   min-width: 125px;
@@ -47,7 +45,6 @@
   background: #ffffff;
 }
 
-
 .entradas-pp-indicadores span {
   display: block;
 
@@ -59,7 +56,6 @@
   text-transform: uppercase;
 }
 
-
 .entradas-pp-indicadores strong {
   display: block;
 
@@ -67,136 +63,7 @@
 
   color: #0f172a;
 
-  font-size: 16px;
-}
-
-
-/* =========================================================
-   FILTROS
-========================================================= */
-
-.entradas-pp-filtros {
-  display: flex;
-  align-items: center;
-
-  gap: 7px;
-
-  padding: 11px 18px;
-
-  border-bottom: 1px solid #e2e8f0;
-
-  background: #ffffff;
-}
-
-
-.entradas-pp-busca {
-  flex: 1;
-
-  min-width: 220px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 7px;
-
-  padding: 0 10px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  color: #64748b;
-}
-
-
-.entradas-pp-busca input {
-  width: 100%;
-
-  border: 0;
-  outline: 0;
-
-  background: transparent;
-
-  color: #0f172a;
-
-  font: inherit;
-  font-size: 10px;
-}
-
-
-.entradas-pp-busca:focus-within {
-  border-color: #2563eb;
-}
-
-
-.entradas-pp-filtros > input,
-.entradas-pp-filtros > select {
-  box-sizing: border-box;
-
-  height: 38px;
-
-  padding: 0 9px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  outline: 0;
-
-  background: #ffffff;
-
-  color: #475569;
-
-  font: inherit;
-  font-size: 10px;
-}
-
-
-.entradas-pp-atualizar {
-  height: 38px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-
-  padding: 0 11px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #475569;
-
-  font: inherit;
-  font-size: 10px;
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-.entradas-pp-atualizar:disabled {
-  opacity: 0.5;
-
-  cursor: not-allowed;
-}
-
-
-.entradas-pp-atualizar .girando {
-  animation:
-    entradas-girando
-    0.8s
-    linear
-    infinite;
-}
-
-
-@keyframes entradas-girando {
-  to {
-    transform: rotate(360deg);
-  }
+  font-size: 15px;
 }
 
 
@@ -210,7 +77,6 @@
   overflow-x: auto;
 }
 
-
 .entradas-pp-tabela {
   width: 100%;
   min-width: 1280px;
@@ -218,9 +84,8 @@
   border-collapse: collapse;
 }
 
-
 .entradas-pp-tabela th {
-  padding: 10px 12px;
+  padding: 9px 10px;
 
   border-bottom: 1px solid #e2e8f0;
 
@@ -228,7 +93,7 @@
 
   color: #64748b;
 
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 750;
 
   text-align: left;
@@ -237,24 +102,21 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-tabela td {
-  padding: 11px 12px;
+  padding: 10px 10px;
 
   border-bottom: 1px solid #e2e8f0;
 
   color: #334155;
 
-  font-size: 10px;
+  font-size: 11px;
 
   vertical-align: middle;
 }
 
-
 .entradas-pp-tabela tbody tr:hover {
   background: #f8fafc;
 }
-
 
 .entradas-pp-data {
   font-weight: 700;
@@ -262,18 +124,15 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-fornecedor {
-  min-width: 170px;
+  min-width: 160px;
 }
-
 
 .entradas-pp-fornecedor strong {
   display: block;
 
   color: #0f172a;
 }
-
 
 .entradas-pp-quantidade {
   color: #2563eb !important;
@@ -283,27 +142,24 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-financeiro {
   white-space: nowrap;
 }
-
 
 .entradas-pp-financeiro span {
   display: block;
 }
 
-
-.entradas-pp-financeiro small {
+.entradas-pp-financeiro small,
+.entradas-pp-tabela td small {
   display: block;
 
   margin-top: 2px;
 
   color: #64748b;
 
-  font-size: 8px;
+  font-size: 9px;
 }
-
 
 .entradas-pp-total {
   color: #0f172a !important;
@@ -312,7 +168,6 @@
 
   white-space: nowrap;
 }
-
 
 .entradas-pp-observacao {
   max-width: 260px;
@@ -346,11 +201,9 @@
   text-align: center;
 }
 
-
 .entradas-pp-estado strong {
   color: #0f172a;
 }
-
 
 .entradas-pp-estado p {
   margin: 0;
@@ -358,12 +211,10 @@
   font-size: 10px;
 }
 
-
 .entradas-pp-erro,
 .entradas-pp-erro strong {
   color: #b91c1c;
 }
-
 
 .entradas-pp-loading {
   width: 26px;
@@ -381,6 +232,12 @@
     infinite;
 }
 
+@keyframes entradas-girando {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* =========================================================
    RESPONSIVO
@@ -393,48 +250,13 @@
     flex-direction: column;
   }
 
-
   .entradas-pp-indicadores {
     display: grid;
 
     grid-template-columns: 1fr;
   }
 
-
   .entradas-pp-indicadores > div {
     min-width: 0;
   }
-
-
-  .entradas-pp-filtros {
-    align-items: stretch;
-
-    flex-direction: column;
-  }
-
-
-  .entradas-pp-busca {
-    box-sizing: border-box;
-
-    min-width: 0;
-    width: 100%;
-  }
-
-
-  .entradas-pp-filtros > input,
-  .entradas-pp-atualizar {
-    width: 100%;
-  }
-}
-
-.entradas-pp-tabela th {
-  font-size: 13px;
-}
-
-.entradas-pp-tabela td {
-  font-size: 12px;
-}
-
-.entradas-pp-tabela td small {
-  font-size: 11px;
 }

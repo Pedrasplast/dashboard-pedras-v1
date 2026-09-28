@@ -32,8 +32,9 @@ export default function Projecao() {
 
           <p>
             Cadastre ou atualize os inventários
-            físicos utilizados como ponto de
-            partida da projeção.
+            físicos por material e fornecedor,
+            utilizados como ponto de partida
+            da projeção.
           </p>
 
         </div>
@@ -63,11 +64,11 @@ export default function Projecao() {
           </strong>
 
           <p>
-            O saldo é calculado por fornecedor,
-            considerando saldo-base, materiais
-            recebidos, compras futuras e consumo
-            da programação conforme a receita
-            de cada produto.
+            O saldo é calculado por material e
+            fornecedor, considerando saldo-base,
+            materiais recebidos, compras futuras
+            e, quando aplicável, consumo da
+            programação conforme a receita.
           </p>
 
         </div>
