@@ -10,7 +10,6 @@ import {
 
   Plus,
 
-  RefreshCw,
 
   Search,
 
@@ -198,7 +197,6 @@ export default function ComprasFuturas() {
 
   const [busca, setBusca] = useState("");
 
-  const [statusFiltro, setStatusFiltro] = useState("ABERTAS");
 
   const [materialFiltro, setMaterialFiltro] = useState("TODOS");
 
@@ -236,7 +234,6 @@ export default function ComprasFuturas() {
 
     confirmandoChegada,
 
-    recarregar,
 
     salvarCompraFutura,
 
@@ -278,23 +275,11 @@ export default function ComprasFuturas() {
 
 
 
-      let statusOk = true;
+      const statusOk =
 
+        compra.status === "PREVISTA" ||
 
-
-      if (statusFiltro === "ABERTAS") {
-
-        statusOk =
-
-          compra.status === "PREVISTA" ||
-
-          compra.status === "CONFIRMADA";
-
-      } else if (statusFiltro !== "TODOS") {
-
-        statusOk = compra.status === statusFiltro;
-
-      }
+        compra.status === "CONFIRMADA";
 
 
 
@@ -310,7 +295,7 @@ export default function ComprasFuturas() {
 
     });
 
-  }, [compras, busca, statusFiltro, materialFiltro]);
+  }, [compras, busca, materialFiltro]);
 
 
 
@@ -748,55 +733,6 @@ export default function ComprasFuturas() {
 
           </select>
 
-
-
-          <select
-
-            value={statusFiltro}
-
-            onChange={(event) => setStatusFiltro(event.target.value)}
-
-          >
-
-            <option value="ABERTAS">Compras abertas</option>
-
-            <option value="PREVISTA">Previstas</option>
-
-            <option value="CONFIRMADA">Confirmadas</option>
-
-            <option value="RECEBIDA">Recebidas</option>
-
-            <option value="CANCELADA">Canceladas</option>
-
-            <option value="TODOS">Todas</option>
-
-          </select>
-
-
-
-          <button
-
-            type="button"
-
-            className="compras-futuras-atualizar"
-
-            onClick={recarregar}
-
-            disabled={carregando || salvando || excluindo || confirmandoChegada}
-
-          >
-
-            <RefreshCw
-
-              size={16}
-
-              className={carregando ? "girando" : ""}
-
-            />
-
-            Atualizar
-
-          </button>
 
         </div>
 

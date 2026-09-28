@@ -1,0 +1,102 @@
+/* =========================================================
+   CONTEUDO
+========================================================= */
+
+.pedidos-content {
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius: 13px;
+
+  background: var(--surface);
+
+  box-shadow:
+    0 2px 10px
+    rgba(15, 23, 42, 0.035);
+}
+
+.pedidos-content-header {
+  min-height: 68px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding:
+    15px
+    18px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fbfdff 100%
+    );
+}
+
+.pedidos-content-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+
+  font-weight: 750;
+
+  color: var(--text);
+}
+
+.pedidos-content-header p {
+  margin:
+    4px
+    0
+    0;
+
+  font-size: 12px;
+
+  color: var(--text-muted);
+}
+
+
+/* =========================================================
+   OMIE
+========================================================= */
+
+.pedidos-demo {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding:
+    6px
+    10px;
+
+  border:
+    1px solid
+    #bfdbfe;
+
+  border-radius: 999px;
+
+  background: var(--primary-soft);
+
+  color: var(--primary-dark);
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+

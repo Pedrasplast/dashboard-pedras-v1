@@ -16,15 +16,18 @@ import {
 export default function useProjecao({
   dataInicio,
   dataFim,
+  materialId = "1",
 }) {
   const [
     dados,
     setDados,
   ] = useState({
     linhas: [],
+    materiais: [],
     fornecedores: [],
     fornecedoresSemSaldo: [],
     programacoesSemReceita: [],
+    consumoProgramadoDisponivel: true,
   });
 
   const [
@@ -52,7 +55,8 @@ export default function useProjecao({
       async () => {
         if (
           !dataInicio ||
-          !dataFim
+          !dataFim ||
+          !materialId
         ) {
           return;
         }
@@ -68,6 +72,7 @@ export default function useProjecao({
             await buscarProjecao({
               dataInicio,
               dataFim,
+              materialId,
             });
 
 
@@ -96,6 +101,7 @@ export default function useProjecao({
       [
         dataInicio,
         dataFim,
+        materialId,
       ],
     );
 

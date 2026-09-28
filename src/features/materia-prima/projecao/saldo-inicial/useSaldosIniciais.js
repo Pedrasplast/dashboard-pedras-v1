@@ -26,6 +26,11 @@ export default function useSaldosIniciais() {
   ] = useState([]);
 
   const [
+    materiais,
+    setMateriais,
+  ] = useState([]);
+
+  const [
     carregando,
     setCarregando,
   ] = useState(false);
@@ -86,6 +91,15 @@ export default function useSaldosIniciais() {
           );
 
 
+          setMateriais(
+            Array.isArray(
+              resultado?.materiais,
+            )
+              ? resultado.materiais
+              : [],
+          );
+
+
           setCarregado(true);
         } catch (error) {
           console.error(
@@ -97,6 +111,8 @@ export default function useSaldosIniciais() {
           setSaldos([]);
 
           setFornecedores([]);
+
+          setMateriais([]);
 
           setErro(
             "Não foi possível carregar os saldos iniciais.",
@@ -214,6 +230,8 @@ export default function useSaldosIniciais() {
     saldos,
 
     fornecedores,
+
+    materiais,
 
     carregando,
 

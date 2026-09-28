@@ -1,0 +1,197 @@
+/* =========================================================
+   CARDS
+========================================================= */
+
+.pedidos-resumo {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+.pedidos-card {
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 104px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding:
+    18px
+    19px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius: 12px;
+
+  background: var(--surface);
+
+  box-shadow:
+    0 2px 8px
+    rgba(15, 23, 42, 0.035);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.pedidos-card:hover {
+  transform: translateY(-1px);
+
+  border-color: var(--border-strong);
+
+  box-shadow:
+    0 5px 16px
+    rgba(15, 23, 42, 0.07);
+}
+
+.pedidos-card-icon {
+  width: 46px;
+
+  height: 46px;
+
+  flex: 0 0 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: var(--primary-soft);
+
+  color: var(--primary);
+}
+
+.pedidos-card > div:last-child {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.pedidos-card-label {
+  font-size: 12px;
+
+  font-weight: 550;
+
+  color: var(--text-muted);
+}
+
+.pedidos-card strong {
+  overflow: hidden;
+
+  font-size: 21px;
+
+  font-weight: 750;
+
+  color: var(--text);
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* ATRASADOS */
+
+.pedidos-resumo
+.pedidos-card:nth-child(2) {
+  border-color: #fecaca;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #fffafa 55%,
+      var(--danger-soft) 100%
+    );
+
+  box-shadow:
+    0 3px 12px
+    rgba(220, 38, 38, 0.06);
+}
+
+.pedidos-resumo
+.pedidos-card:nth-child(2)::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  bottom: 0;
+
+  left: 0;
+
+  width: 4px;
+
+  background: var(--danger);
+}
+
+.pedidos-resumo
+.pedidos-card:nth-child(2)
+.pedidos-card-icon {
+  background: #fee2e2;
+
+  color: var(--danger);
+}
+
+.pedidos-resumo
+.pedidos-card:nth-child(2)
+.pedidos-card-label {
+  color: var(--danger-dark);
+}
+
+.pedidos-resumo
+.pedidos-card:nth-child(2)
+strong {
+  color: var(--danger);
+}
+
+
+/* QUANTIDADE */
+
+.pedidos-resumo
+.pedidos-card:nth-child(3)
+.pedidos-card-icon {
+  background: var(--purple-soft);
+
+  color: var(--purple);
+}
+
+
+/* PROXIMOS */
+
+.pedidos-resumo
+.pedidos-card:nth-child(4)
+.pedidos-card-icon {
+  background: var(--success-soft);
+
+  color: var(--success);
+}
+
+
