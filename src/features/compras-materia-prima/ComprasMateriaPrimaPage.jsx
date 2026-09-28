@@ -34,13 +34,16 @@ const SECOES = Object.freeze({
 
 export default function ComprasMateriaPrimaPage({
   secao,
+  isAdmin = false,
 }) {
   const configuracao =
     SECOES[secao] ??
     SECOES["compras-futuras"];
 
+
   const Conteudo =
     configuracao.componente;
+
 
   return (
     <main className="compras-materia-prima-page">
@@ -48,16 +51,29 @@ export default function ComprasMateriaPrimaPage({
       <div className="compras-materia-prima-container">
 
         <PageHeader
-          eyebrow={configuracao.eyebrow}
-          title={configuracao.titulo}
-          description={configuracao.descricao}
-          icon={configuracao.icone}
+          eyebrow={
+            configuracao.eyebrow
+          }
+          title={
+            configuracao.titulo
+          }
+          description={
+            configuracao.descricao
+          }
+          icon={
+            configuracao.icone
+          }
           className="compras-materia-prima-header"
         />
 
+
         <section className="compras-materia-prima-conteudo">
 
-          <Conteudo />
+          <Conteudo
+            isAdmin={
+              isAdmin
+            }
+          />
 
         </section>
 

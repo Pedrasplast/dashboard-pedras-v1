@@ -22,7 +22,10 @@ import {
 
 import "./ComprasFuturas.css";
 
-export default function ComprasFuturas() {
+
+export default function ComprasFuturas({
+  isAdmin = false,
+}) {
   const dados = useComprasFuturas();
 
   const {
@@ -41,91 +44,251 @@ export default function ComprasFuturas() {
     compraEstaConfirmandoChegada,
   } = dados;
 
-  const { filtros, alterarFiltro, opcoes, filtradas } = useFiltrosComprasFuturas(compras);
 
-  const { ocupado, modal, chegada, exclusao } = useAcoesComprasFuturas(dados);
+  const {
+    filtros,
+    alterarFiltro,
+    opcoes,
+    filtradas,
+  } = useFiltrosComprasFuturas(
+    compras,
+  );
 
-  const indicadores = useMemo(() => calcularIndicadores(filtradas), [filtradas]);
+
+  const {
+    ocupado,
+    modal,
+    chegada,
+    exclusao,
+  } = useAcoesComprasFuturas(
+    dados,
+  );
+
+
+  const indicadores = useMemo(
+    () =>
+      calcularIndicadores(
+        filtradas,
+      ),
+    [
+      filtradas,
+    ],
+  );
+
 
   function obterProcessando(id) {
     return {
-      salvando: compraEstaSalvando(id),
-      excluindo: compraEstaExcluindo(id),
-      confirmandoChegada: compraEstaConfirmandoChegada(id),
+      salvando:
+        compraEstaSalvando(
+          id,
+        ),
+
+      excluindo:
+        compraEstaExcluindo(
+          id,
+        ),
+
+      confirmandoChegada:
+        compraEstaConfirmandoChegada(
+          id,
+        ),
     };
   }
 
-  const podeExibir = !carregando && !erro;
-  const semCompras = podeExibir && carregado && compras.length === 0;
-  const semResultado = podeExibir && compras.length > 0 && filtradas.length === 0;
-  const exibirTabela = podeExibir && filtradas.length > 0;
+
+  const podeExibir =
+    !carregando &&
+    !erro;
+
+
+  const semCompras =
+    podeExibir &&
+    carregado &&
+    compras.length === 0;
+
+
+  const semResultado =
+    podeExibir &&
+    compras.length > 0 &&
+    filtradas.length === 0;
+
+
+  const exibirTabela =
+    podeExibir &&
+    filtradas.length > 0;
+
 
   return (
     <>
       <div className="compras-futuras">
+
         <div className="compras-futuras-toolbar">
+
           <button
             type="button"
             className="compras-futuras-nova"
-            onClick={modal.novo}
-            disabled={ocupado}
+            onClick={
+              modal.novo
+            }
+            disabled={
+              ocupado
+            }
           >
-            <Plus size={17} />
+            <Plus
+              size={17}
+            />
+
             Nova compra
           </button>
+
         </div>
+
 
         <div className="compras-futuras-resumo-filtros">
-          <ComprasFuturasIndicadores indicadores={indicadores} />
-          <ComprasFuturasFiltros filtros={filtros} opcoes={opcoes} onChange={alterarFiltro} />
+
+          <ComprasFuturasIndicadores
+            indicadores={
+              indicadores
+            }
+          />
+
+
+          <ComprasFuturasFiltros
+            filtros={
+              filtros
+            }
+            opcoes={
+              opcoes
+            }
+            onChange={
+              alterarFiltro
+            }
+          />
+
         </div>
 
-        {carregando && <EstadoCarregando />}
 
-        {!carregando && erro && <EstadoErro mensagem={erro} />}
+        {carregando && (
+          <EstadoCarregando />
+        )}
 
-        {semCompras && <EstadoSemCompras />}
+
+        {!carregando &&
+          erro && (
+            <EstadoErro
+              mensagem={
+                erro
+              }
+            />
+          )}
+
+
+        {semCompras && (
+          <EstadoSemCompras />
+        )}
+
 
         {exibirTabela && (
           <ComprasFuturasTabela
-            compras={filtradas}
-            bloqueado={ocupado}
-            obterProcessando={obterProcessando}
-            onConfirmarChegada={chegada.solicitar}
-            onEditar={modal.editar}
-            onExcluir={exclusao.solicitar}
+            compras={
+              filtradas
+            }
+            bloqueado={
+              ocupado
+            }
+            obterProcessando={
+              obterProcessando
+            }
+            onConfirmarChegada={
+              chegada.solicitar
+            }
+            onEditar={
+              modal.editar
+            }
+            onExcluir={
+              exclusao.solicitar
+            }
+            isAdmin={
+              isAdmin
+            }
           />
         )}
 
-        {semResultado && <EstadoSemResultado />}
+
+        {semResultado && (
+          <EstadoSemResultado />
+        )}
+
       </div>
 
+
       <CompraFuturaModal
-        aberto={modal.aberto}
-        item={modal.item}
-        fornecedores={fornecedores}
-        materiais={materiais}
-        fornecedorMateriais={fornecedorMateriais}
-        salvando={salvando}
-        onCancelar={modal.fechar}
-        onSalvar={modal.salvar}
+        aberto={
+          modal.aberto
+        }
+        item={
+          modal.item
+        }
+        fornecedores={
+          fornecedores
+        }
+        materiais={
+          materiais
+        }
+        fornecedorMateriais={
+          fornecedorMateriais
+        }
+        salvando={
+          salvando
+        }
+        onCancelar={
+          modal.fechar
+        }
+        onSalvar={
+          modal.salvar
+        }
       />
+
 
       <ConfirmarChegadaModal
-        aberto={Boolean(chegada.item)}
-        item={chegada.item}
-        processando={confirmandoChegada}
-        onCancelar={chegada.cancelar}
-        onConfirmar={chegada.confirmar}
+        aberto={
+          Boolean(
+            chegada.item,
+          )
+        }
+        item={
+          chegada.item
+        }
+        processando={
+          confirmandoChegada
+        }
+        onCancelar={
+          chegada.cancelar
+        }
+        onConfirmar={
+          chegada.confirmar
+        }
       />
 
+
       <ExclusaoCompraFutura
-        compra={exclusao.item}
-        erro={exclusao.erro}
-        processando={excluindo}
-        onCancelar={exclusao.cancelar}
-        onConfirmar={exclusao.confirmar}
+        compra={
+          exclusao.item
+        }
+        erro={
+          exclusao.erro
+        }
+        processando={
+          excluindo
+        }
+        onCancelar={
+          exclusao.cancelar
+        }
+        onConfirmar={
+          exclusao.confirmar
+        }
       />
+
     </>
   );
 }
