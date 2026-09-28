@@ -17,7 +17,8 @@ const COLUNAS = [
 ];
 
 /**
- * `obterProcessando(id)` devolve { salvando, excluindo, confirmandoChegada } da compra.
+ * `obterProcessando(id)` devolve:
+ * { salvando, excluindo, confirmandoChegada }
  */
 export default function ComprasFuturasTabela({
   compras,
@@ -26,31 +27,61 @@ export default function ComprasFuturasTabela({
   onConfirmarChegada,
   onEditar,
   onExcluir,
+  isAdmin = false,
 }) {
   return (
     <div className="compras-futuras-tabela-container">
       <table className="compras-futuras-tabela">
+
         <thead>
           <tr>
-            {COLUNAS.map((coluna) => (
-              <th key={coluna}>{coluna}</th>
-            ))}
+            {COLUNAS.map(
+              (
+                coluna,
+              ) => (
+                <th
+                  key={coluna}
+                >
+                  {coluna}
+                </th>
+              ),
+            )}
           </tr>
         </thead>
 
         <tbody>
-          {compras.map((compra) => (
-            <CompraFuturaLinha
-              key={compra.id}
-              compra={compra}
-              processando={obterProcessando(compra.id)}
-              bloqueado={bloqueado}
-              onConfirmarChegada={onConfirmarChegada}
-              onEditar={onEditar}
-              onExcluir={onExcluir}
-            />
-          ))}
+          {compras.map(
+            (
+              compra,
+            ) => (
+              <CompraFuturaLinha
+                key={compra.id}
+                compra={compra}
+                processando={
+                  obterProcessando(
+                    compra.id,
+                  )
+                }
+                bloqueado={
+                  bloqueado
+                }
+                onConfirmarChegada={
+                  onConfirmarChegada
+                }
+                onEditar={
+                  onEditar
+                }
+                onExcluir={
+                  onExcluir
+                }
+                isAdmin={
+                  isAdmin
+                }
+              />
+            ),
+          )}
         </tbody>
+
       </table>
     </div>
   );
