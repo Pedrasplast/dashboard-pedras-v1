@@ -19,6 +19,7 @@ import PainelFinanceiroMateriaPrima
   from "./components/PainelFinanceiroMateriaPrima.jsx";
 
 import {
+  criarComprasMensais,
   criarEvolucaoFinanceira,
   criarFinanceiroFiltrado,
   criarFinanceiroPorFornecedor,
@@ -116,7 +117,6 @@ export default function DashboardMateriaPrima() {
       carregarFiltros,
     );
 
-
   const {
     dataInicial,
     dataFinal,
@@ -190,10 +190,10 @@ export default function DashboardMateriaPrima() {
    * A consulta usa período amplo quando
    * não existe filtro por data.
    */
+
   const dataInicialConsulta =
     dataInicial ||
     DATA_INICIAL_SEM_FILTRO;
-
 
   const dataFinalConsulta =
     dataFinal ||
@@ -318,23 +318,29 @@ export default function DashboardMateriaPrima() {
 
 
   /* =======================================================
-     EVOLUÇÃO FINANCEIRA
+     BASE TEMPORAL DOS GRÁFICOS
+
+     COMPRA
+     -> utiliza dataCompra
+
+     RECEBIMENTO
+     -> utiliza dataRecebimento
+
+     Fornecedor, material e período já foram filtrados
+     anteriormente.
   ======================================================= */
 
-  const evolucaoFinanceira =
+  const financeiroTemporal =
     useMemo(
       () => {
         if (
           tipoData !==
           "recebimento"
         ) {
-          return criarEvolucaoFinanceira(
-            financeiroFiltrado,
-          );
+          return financeiroFiltrado;
         }
 
-
-        const financeiroPorRecebimento = {
+        return {
           ...financeiroFiltrado,
 
           compras:
@@ -354,15 +360,45 @@ export default function DashboardMateriaPrima() {
               }),
             ),
         };
-
-
-        return criarEvolucaoFinanceira(
-          financeiroPorRecebimento,
-        );
       },
       [
         financeiroFiltrado,
         tipoData,
+      ],
+    );
+
+
+  /* =======================================================
+     EVOLUÇÃO FINANCEIRA
+  ======================================================= */
+
+  const evolucaoFinanceira =
+    useMemo(
+      () =>
+        criarEvolucaoFinanceira(
+          financeiroTemporal,
+        ),
+      [
+        financeiroTemporal,
+      ],
+    );
+
+
+  /* =======================================================
+     COMPRAS MENSAIS
+
+     Janeiro até o último mês com compra.
+     Meses sem movimentação aparecem com zero.
+  ======================================================= */
+
+  const comprasMensais =
+    useMemo(
+      () =>
+        criarComprasMensais(
+          financeiroTemporal,
+        ),
+      [
+        financeiroTemporal,
       ],
     );
 
@@ -404,13 +440,11 @@ export default function DashboardMateriaPrima() {
         new Date(),
       );
 
-
     const inicio =
       adicionarDias(
         fim,
         -(dias - 1),
       );
-
 
     setFiltros(
       (
@@ -449,7 +483,6 @@ export default function DashboardMateriaPrima() {
       <section className="dmp-header">
 
         <div>
-
           <span className="dmp-eyebrow">
             Compras • Custos • Fornecedores
           </span>
@@ -459,18 +492,15 @@ export default function DashboardMateriaPrima() {
           </h1>
 
           <p>
-            Visão gerencial de compras, preços, custo efetivo, concentração por fornecedor e desempenho de entrega.
+            Visão gerencial de compras, preços, custo efetivo,
+            concentração por fornecedor e desempenho de entrega.
           </p>
-
         </div>
 
-
         <div className="dmp-header-icone">
-
           <CircleDollarSign
             size={30}
           />
-
         </div>
 
       </section>
@@ -570,9 +600,7 @@ export default function DashboardMateriaPrima() {
 
 
       {periodoInvalido && (
-
         <div className="dmp-mensagem erro">
-
           <AlertTriangle
             size={18}
           />
@@ -580,16 +608,12 @@ export default function DashboardMateriaPrima() {
           <span>
             A data final não pode ser anterior à data inicial.
           </span>
-
         </div>
-
       )}
 
 
       {erro && (
-
         <div className="dmp-mensagem erro">
-
           <AlertTriangle
             size={18}
           />
@@ -597,9 +621,7 @@ export default function DashboardMateriaPrima() {
           <span>
             {erro}
           </span>
-
         </div>
-
       )}
 
 
@@ -618,6 +640,10 @@ export default function DashboardMateriaPrima() {
 
         evolucao={
           evolucaoFinanceira
+        }
+
+        mensal={
+          comprasMensais
         }
 
         insights={

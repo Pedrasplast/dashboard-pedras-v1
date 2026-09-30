@@ -5,6 +5,10 @@ import {
 } from "./dashboardMateriaPrimaUtils.js";
 
 
+/* =========================================================
+   COMPRAS VÁLIDAS
+========================================================= */
+
 function comprasValidas(
   financeiro,
 ) {
@@ -24,6 +28,10 @@ function comprasValidas(
 }
 
 
+/* =========================================================
+   RECEBIMENTOS VÁLIDOS
+========================================================= */
+
 function recebimentosValidos(
   financeiro,
 ) {
@@ -35,6 +43,10 @@ function recebimentosValidos(
 }
 
 
+/* =========================================================
+   CHAVE MATERIAL
+========================================================= */
+
 function chaveMaterial(
   item,
 ) {
@@ -45,6 +57,10 @@ function chaveMaterial(
   );
 }
 
+
+/* =========================================================
+   DIFERENÇA EM DIAS
+========================================================= */
 
 function diferencaDias(
   dataInicial,
@@ -114,6 +130,10 @@ function diferencaDias(
 }
 
 
+/* =========================================================
+   PERCENTUAL
+========================================================= */
+
 function percentual(
   numerador,
   denominador,
@@ -138,6 +158,10 @@ function percentual(
   100;
 }
 
+
+/* =========================================================
+   MÉTRICAS DE ENTREGA
+========================================================= */
 
 function criarMetricasEntrega(
   lista,
@@ -277,6 +301,10 @@ function criarMetricasEntrega(
 }
 
 
+/* =========================================================
+   FILTRO DE MATERIAIS
+========================================================= */
+
 export function criarMateriaisFiltro(
   financeiro,
 ) {
@@ -331,6 +359,10 @@ export function criarMateriaisFiltro(
   );
 }
 
+
+/* =========================================================
+   FILTRO DE FORNECEDORES
+========================================================= */
 
 export function criarFornecedoresFiltro(
   financeiro,
@@ -400,6 +432,10 @@ export function criarFornecedoresFiltro(
 }
 
 
+/* =========================================================
+   FILTRAR LISTA
+========================================================= */
+
 function filtrarLista({
   lista,
   fornecedorSelecionado,
@@ -447,6 +483,10 @@ function filtrarLista({
 }
 
 
+/* =========================================================
+   FINANCEIRO FILTRADO
+========================================================= */
+
 export function criarFinanceiroFiltrado({
   financeiro,
   fornecedorSelecionado,
@@ -475,6 +515,10 @@ export function criarFinanceiroFiltrado({
   };
 }
 
+
+/* =========================================================
+   AGRUPAMENTO BASE
+========================================================= */
 
 function agruparBase(
   compras,
@@ -834,6 +878,10 @@ function agruparBase(
 }
 
 
+/* =========================================================
+   BASE INICIAL
+========================================================= */
+
 function criarInicialBase(
   item,
 ) {
@@ -901,6 +949,10 @@ function criarInicialBase(
   };
 }
 
+
+/* =========================================================
+   RESUMO FINANCEIRO
+========================================================= */
 
 export function criarResumoFinanceiro(
   financeiro,
@@ -1228,6 +1280,10 @@ export function criarResumoFinanceiro(
 }
 
 
+/* =========================================================
+   FINANCEIRO POR MATERIAL
+========================================================= */
+
 export function criarFinanceiroPorMaterial(
   financeiro,
 ) {
@@ -1278,6 +1334,10 @@ export function criarFinanceiroPorMaterial(
 }
 
 
+/* =========================================================
+   FINANCEIRO POR FORNECEDOR
+========================================================= */
+
 export function criarFinanceiroPorFornecedor(
   financeiro,
 ) {
@@ -1286,12 +1346,14 @@ export function criarFinanceiroPorFornecedor(
       comprasValidas(
         financeiro,
       ),
+
       (
         item,
       ) =>
         `${chaveMaterial(
           item,
         )}::${item.fornecedorId}`,
+
       (
         item,
       ) => ({
@@ -1342,6 +1404,7 @@ export function criarFinanceiroPorFornecedor(
         participacaoMaterialPercentual:
           percentual(
             item.total,
+
             totaisPorMaterial.get(
               String(
                 item.materialId,
@@ -1364,6 +1427,10 @@ export function criarFinanceiroPorFornecedor(
     );
 }
 
+
+/* =========================================================
+   EVOLUÇÃO FINANCEIRA
+========================================================= */
 
 export function criarEvolucaoFinanceira(
   financeiro,
@@ -1499,6 +1566,251 @@ export function criarEvolucaoFinanceira(
 }
 
 
+/* =========================================================
+   COMPRAS POR MÊS
+========================================================= */
+
+export function criarComprasMensais(
+  financeiro,
+) {
+  const compras =
+    comprasValidas(
+      financeiro,
+    ).filter(
+      (
+        item,
+      ) =>
+        Boolean(
+          item.dataCompra,
+        ),
+    );
+
+  if (
+    compras.length ===
+    0
+  ) {
+    return [];
+  }
+
+
+  /* =======================================================
+     EXTRAIR ANO E MÊS
+  ======================================================= */
+
+  const registros =
+    compras
+      .map(
+        (
+          item,
+        ) => {
+          const match =
+            String(
+              item.dataCompra ||
+              "",
+            ).match(
+              /^(\d{4})-(\d{2})/,
+            );
+
+          if (
+            !match
+          ) {
+            return null;
+          }
+
+          const ano =
+            Number(
+              match[1],
+            );
+
+          const mes =
+            Number(
+              match[2],
+            );
+
+          if (
+            !Number.isInteger(
+              ano,
+            ) ||
+            !Number.isInteger(
+              mes,
+            ) ||
+            mes < 1 ||
+            mes > 12
+          ) {
+            return null;
+          }
+
+          return {
+            ano,
+            mes,
+            item,
+          };
+        },
+      )
+      .filter(
+        Boolean,
+      );
+
+  if (
+    registros.length ===
+    0
+  ) {
+    return [];
+  }
+
+
+  /* =======================================================
+     ANO MAIS RECENTE DISPONÍVEL APÓS OS FILTROS
+  ======================================================= */
+
+  const anoReferencia =
+    Math.max(
+      ...registros.map(
+        (
+          registro,
+        ) =>
+          registro.ano,
+      ),
+    );
+
+
+  const registrosAno =
+    registros.filter(
+      (
+        registro,
+      ) =>
+        registro.ano ===
+        anoReferencia,
+    );
+
+  if (
+    registrosAno.length ===
+    0
+  ) {
+    return [];
+  }
+
+
+  /* =======================================================
+     ÚLTIMO MÊS COM COMPRA
+  ======================================================= */
+
+  const ultimoMes =
+    Math.max(
+      ...registrosAno.map(
+        (
+          registro,
+        ) =>
+          registro.mes,
+      ),
+    );
+
+
+  const nomesMeses = [
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+    "Out",
+    "Nov",
+    "Dez",
+  ];
+
+
+  const mapa =
+    new Map();
+
+
+  /* =======================================================
+     JANEIRO ATÉ O ÚLTIMO MÊS
+
+     Meses sem compra aparecem com zero.
+  ======================================================= */
+
+  for (
+    let mes = 1;
+    mes <= ultimoMes;
+    mes += 1
+  ) {
+    mapa.set(
+      mes,
+      {
+        ano:
+          anoReferencia,
+
+        mes,
+
+        mesLabel:
+          nomesMeses[
+            mes - 1
+          ],
+
+        valorComprado:
+          0,
+
+        quantidadeKg:
+          0,
+
+        compras:
+          0,
+      },
+    );
+  }
+
+
+  /* =======================================================
+     CONSOLIDAR VALOR E QUANTIDADE
+  ======================================================= */
+
+  for (
+    const registro of
+    registrosAno
+  ) {
+    const atual =
+      mapa.get(
+        registro.mes,
+      );
+
+    if (
+      !atual
+    ) {
+      continue;
+    }
+
+    atual.valorComprado +=
+      numero(
+        registro
+          .item
+          .valorTotal,
+      );
+
+    atual.quantidadeKg +=
+      numero(
+        registro
+          .item
+          .quantidadeKg,
+      );
+
+    atual.compras +=
+      1;
+  }
+
+
+  return [
+    ...mapa.values(),
+  ];
+}
+
+
+/* =========================================================
+   INSIGHTS GERENCIAIS
+========================================================= */
+
 export function criarInsightsGerenciais({
   resumo,
   porMaterial,
@@ -1506,6 +1818,7 @@ export function criarInsightsGerenciais({
 }) {
   const insights =
     [];
+
 
   const maiorMaterial =
     porMaterial?.[0] ||
@@ -1530,6 +1843,7 @@ export function criarInsightsGerenciais({
           : "Material com maior valor comprado",
     });
   }
+
 
   const maiorAmplitude =
     [
@@ -1574,6 +1888,7 @@ export function criarInsightsGerenciais({
     });
   }
 
+
   const maiorConcentracao =
     [
       ...(porFornecedor ||
@@ -1616,6 +1931,7 @@ export function criarInsightsGerenciais({
         )}% das compras de ${maiorConcentracao.material}`,
     });
   }
+
 
   const maiorImpactoCustos =
     [
@@ -1685,12 +2001,17 @@ export function criarInsightsGerenciais({
     });
   }
 
+
   return insights.slice(
     0,
     4,
   );
 }
 
+
+/* =========================================================
+   ÚLTIMAS COMPRAS
+========================================================= */
 
 export function criarUltimasCompras(
   financeiro,
