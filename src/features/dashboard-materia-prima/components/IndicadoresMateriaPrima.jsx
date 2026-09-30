@@ -1,7 +1,6 @@
 import {
   BadgeDollarSign,
   Banknote,
-  Building2,
   CircleDollarSign,
   Clock3,
   Gauge,
@@ -290,25 +289,6 @@ export function IndicadoresPrincipaisMateriaPrima({
             PackageCheck
           }
           tipo="ok"
-        />
-
-
-        <KpiCard
-          titulo="Fornecedores ativos"
-          valor={
-            carregando
-              ? "..."
-              : formatarNumero(
-                  resumo.fornecedoresDistintos,
-                  0,
-                )
-          }
-          subtitulo={
-            `${resumo.materiaisDistintos} material(is) no período`
-          }
-          icone={
-            Building2
-          }
         />
 
       </div>

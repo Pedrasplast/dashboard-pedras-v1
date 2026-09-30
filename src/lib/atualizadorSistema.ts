@@ -6,19 +6,38 @@ const INTERVALO_VERIFICACAO =
   60_000;
 
 const ATRASO_INICIAL =
-  10_000;
+  3_000;
 
 
-/*
- * Esta versão foi inserida pelo Vite
- * durante o build.
- */
+/* =========================================================
+   VERSÃO EMBUTIDA NO BUILD
+
+   Se o Vite disponibilizar VITE_APP_VERSION,
+   usamos diretamente.
+
+   Se não disponibilizar, o sistema registra
+   automaticamente a versão encontrada em
+   version.json na primeira consulta.
+========================================================= */
+
+const VERSAO_EMBUTIDA =
+  String(
+    import.meta.env
+      .VITE_APP_VERSION ??
+      "",
+  ).trim();
 
 
-const VERSAO_ATUAL = import.meta.env.VITE_APP_VERSION;
+let versaoEmExecucao =
+  VERSAO_EMBUTIDA ||
+  null;
 
 
 let verificando =
+  false;
+
+
+let recarregando =
   false;
 
 
@@ -27,16 +46,48 @@ let verificando =
 ========================================================= */
 
 async function buscarVersaoPublicada() {
+  const url =
+    new URL(
+      "/version.json",
+      window.location.origin,
+    );
+
+
+  /*
+   * Evita qualquer reaproveitamento
+   * do version.json pelo navegador,
+   * proxy ou CDN.
+   */
+  url.searchParams.set(
+    "t",
+    String(
+      Date.now(),
+    ),
+  );
+
+
   const resposta =
     await fetch(
-      `/version.json?t=${Date.now()}`,
+      url.toString(),
       {
+        method:
+          "GET",
+
         cache:
           "no-store",
+
+        credentials:
+          "same-origin",
 
         headers: {
           Accept:
             "application/json",
+
+          "Cache-Control":
+            "no-cache, no-store, must-revalidate",
+
+          Pragma:
+            "no-cache",
         },
       },
     );
@@ -53,10 +104,65 @@ async function buscarVersaoPublicada() {
     await resposta.json();
 
 
+  const versao =
+    String(
+      dados?.version ??
+      "",
+    ).trim();
+
+
   return (
-    dados?.version ||
+    versao ||
     null
   );
+}
+
+
+/* =========================================================
+   RECARREGAR SISTEMA
+========================================================= */
+
+function recarregarSistema(
+  novaVersao: string,
+) {
+  if (
+    recarregando
+  ) {
+    return;
+  }
+
+
+  recarregando =
+    true;
+
+
+  console.info(
+    "[Atualização] Recarregando sistema para nova versão.",
+    {
+      atual:
+        versaoEmExecucao,
+
+      nova:
+        novaVersao,
+    },
+  );
+
+
+  /*
+   * Atualizamos primeiro a referência em memória.
+   * Isso evita chamadas duplicadas durante os
+   * milissegundos anteriores ao reload.
+   */
+  versaoEmExecucao =
+    novaVersao;
+
+
+  /*
+   * O Vite gera arquivos com hash.
+   * Ao recarregar a página, o HTML atualizado
+   * aponta para os novos bundles.
+   */
+  window.location.reload();
 }
 
 
@@ -67,6 +173,22 @@ async function buscarVersaoPublicada() {
 async function verificarAtualizacao() {
   if (
     verificando ||
+    recarregando
+  ) {
+    return;
+  }
+
+
+  /*
+   * Quando já conhecemos a versão executada,
+   * não há necessidade de consultar enquanto
+   * a aba estiver completamente escondida.
+   *
+   * Ao usuário voltar para a aba, fazemos
+   * a consulta imediatamente.
+   */
+  if (
+    versaoEmExecucao &&
     document
       .visibilityState ===
       "hidden"
@@ -85,22 +207,59 @@ async function verificarAtualizacao() {
 
 
     if (
-      !versaoPublicada ||
-      !VERSAO_ATUAL
+      !versaoPublicada
     ) {
       return;
     }
 
 
+    /*
+     * FALLBACK IMPORTANTE
+     *
+     * Caso VITE_APP_VERSION não tenha sido
+     * injetada pelo Vite, usamos a primeira
+     * versão publicada encontrada como a
+     * versão atualmente executada.
+     *
+     * Da próxima consulta em diante já será
+     * possível detectar novos deployments.
+     */
+    if (
+      !versaoEmExecucao
+    ) {
+      versaoEmExecucao =
+        versaoPublicada;
+
+
+      console.info(
+        "[Atualização] Versão inicial registrada.",
+        {
+          versao:
+            versaoEmExecucao,
+
+          origem:
+            "version.json",
+        },
+      );
+
+
+      return;
+    }
+
+
+    /*
+     * Existe um deploy diferente daquele
+     * que esta aba está executando.
+     */
     if (
       versaoPublicada !==
-      VERSAO_ATUAL
+      versaoEmExecucao
     ) {
       console.info(
         "[Atualização] Nova versão encontrada.",
         {
           atual:
-            VERSAO_ATUAL,
+            versaoEmExecucao,
 
           nova:
             versaoPublicada,
@@ -108,21 +267,19 @@ async function verificarAtualizacao() {
       );
 
 
-      /*
-       * O novo deploy já está disponível.
-       * Recarregamos para baixar os novos
-       * arquivos gerados pelo Vite.
-       */
-      window.location.reload();
+      recarregarSistema(
+        versaoPublicada,
+      );
     }
   } catch (
     erro
   ) {
     /*
-     * Falha de internet ou indisponibilidade
-     * momentânea não deve afetar o sistema.
+     * Falha momentânea de internet,
+     * Vercel ou version.json não pode
+     * interromper a utilização do sistema.
      *
-     * Na próxima verificação tentamos novamente.
+     * Tentaremos novamente posteriormente.
      */
     console.debug(
       "[Atualização] Não foi possível verificar a versão.",
@@ -136,7 +293,7 @@ async function verificarAtualizacao() {
 
 
 /* =========================================================
-   QUANDO O USUÁRIO VOLTAR PARA A ABA
+   VOLTOU PARA A ABA
 ========================================================= */
 
 function verificarAoVoltarParaAba() {
@@ -145,8 +302,26 @@ function verificarAoVoltarParaAba() {
       .visibilityState ===
     "visible"
   ) {
-    verificarAtualizacao();
+    void verificarAtualizacao();
   }
+}
+
+
+/* =========================================================
+   VOLTOU PELO CACHE DO NAVEGADOR
+========================================================= */
+
+function verificarAoRestaurarPagina() {
+  void verificarAtualizacao();
+}
+
+
+/* =========================================================
+   INTERNET VOLTOU
+========================================================= */
+
+function verificarAoVoltarInternet() {
+  void verificarAtualizacao();
 }
 
 
@@ -160,7 +335,9 @@ function iniciarAtualizadorSistema() {
    */
   if (
     typeof window ===
-    "undefined"
+      "undefined" ||
+    typeof document ===
+      "undefined"
   ) {
     return;
   }
@@ -168,9 +345,9 @@ function iniciarAtualizadorSistema() {
 
   /*
    * Durante npm run dev não queremos
-   * recarregamentos automáticos.
+   * refresh automático.
    *
-   * O HMR do Vite já cuida disso.
+   * O próprio HMR do Vite já cuida disso.
    */
   if (
     import.meta.env.DEV
@@ -179,27 +356,44 @@ function iniciarAtualizadorSistema() {
   }
 
 
+  console.info(
+    "[Atualização] Monitor de versão iniciado.",
+    {
+      versaoEmbutida:
+        VERSAO_EMBUTIDA ||
+        null,
+
+      intervaloMs:
+        INTERVALO_VERIFICACAO,
+    },
+  );
+
+
   /*
-   * Primeira verificação após 10 segundos.
+   * Primeira consulta rapidamente após
+   * o carregamento.
    */
   window.setTimeout(
-    verificarAtualizacao,
+    () => {
+      void verificarAtualizacao();
+    },
     ATRASO_INICIAL,
   );
 
 
   /*
-   * Depois verifica a cada 60 segundos.
+   * Consulta periódica.
    */
   window.setInterval(
-    verificarAtualizacao,
+    () => {
+      void verificarAtualizacao();
+    },
     INTERVALO_VERIFICACAO,
   );
 
 
   /*
-   * Se o usuário estava em outra aba
-   * e voltar ao sistema, verifica na hora.
+   * Usuário voltou para a aba.
    */
   document.addEventListener(
     "visibilitychange",
@@ -208,12 +402,31 @@ function iniciarAtualizadorSistema() {
 
 
   /*
-   * Também verifica quando a janela
-   * recebe foco novamente.
+   * Usuário voltou para a janela.
    */
   window.addEventListener(
     "focus",
-    verificarAtualizacao,
+    verificarAoRestaurarPagina,
+  );
+
+
+  /*
+   * Trata inclusive restauração através
+   * do back-forward cache do navegador.
+   */
+  window.addEventListener(
+    "pageshow",
+    verificarAoRestaurarPagina,
+  );
+
+
+  /*
+   * Se estava sem internet e ela voltar,
+   * verificamos imediatamente.
+   */
+  window.addEventListener(
+    "online",
+    verificarAoVoltarInternet,
   );
 }
 
