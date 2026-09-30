@@ -1,25 +1,47 @@
 import {
   AlertTriangle,
+  CalendarCheck2,
   CalendarClock,
   PackageSearch,
   ShoppingCart,
 } from "lucide-react";
+
 import { formatarNumero } from "../utils/format.utils";
 
-function CardResumo({ icon: Icon, label, valor }) {
+
+function CardResumo({
+  icon: Icon,
+  label,
+  valor,
+  tipo,
+  isLoading,
+  onClick,
+}) {
   return (
-    <article className="pedidos-card">
+    <button
+      type="button"
+      className={`pedidos-card pedidos-card--${tipo}`}
+      onClick={() => onClick(tipo)}
+      disabled={isLoading}
+      aria-label={`Ver detalhes de ${label}`}
+    >
       <div className="pedidos-card-icon">
         <Icon size={22} />
       </div>
 
       <div>
-        <span className="pedidos-card-label">{label}</span>
-        <strong>{valor}</strong>
+        <span className="pedidos-card-label">
+          {label}
+        </span>
+
+        <strong>
+          {valor}
+        </strong>
       </div>
-    </article>
+    </button>
   );
 }
+
 
 export default function PedidosResumo({
   isLoading,
@@ -27,34 +49,83 @@ export default function PedidosResumo({
   pedidosAtrasados,
   quantidadeTotal,
   entregasProximos7Dias,
+  faturamentosHoje,
+  onCardClick,
 }) {
-  const carregando = isLoading ? "-" : null;
+  const carregando =
+    isLoading
+      ? "-"
+      : null;
 
   return (
     <section className="pedidos-resumo">
+
       <CardResumo
         icon={ShoppingCart}
         label="Pedidos em aberto"
-        valor={carregando ?? quantidadePedidos}
+        valor={
+          carregando ??
+          quantidadePedidos
+        }
+        tipo="abertos"
+        isLoading={isLoading}
+        onClick={onCardClick}
       />
+
 
       <CardResumo
         icon={AlertTriangle}
         label="Pedidos atrasados"
-        valor={carregando ?? pedidosAtrasados}
+        valor={
+          carregando ??
+          pedidosAtrasados
+        }
+        tipo="atrasados"
+        isLoading={isLoading}
+        onClick={onCardClick}
       />
+
 
       <CardResumo
         icon={PackageSearch}
         label="Quantidade total"
-        valor={carregando ?? formatarNumero(quantidadeTotal)}
+        valor={
+          carregando ??
+          formatarNumero(
+            quantidadeTotal,
+          )
+        }
+        tipo="quantidade"
+        isLoading={isLoading}
+        onClick={onCardClick}
       />
+
 
       <CardResumo
         icon={CalendarClock}
         label="Faturamentos próximos 7 dias"
-        valor={carregando ?? entregasProximos7Dias}
+        valor={
+          carregando ??
+          entregasProximos7Dias
+        }
+        tipo="proximos"
+        isLoading={isLoading}
+        onClick={onCardClick}
       />
+
+
+      <CardResumo
+        icon={CalendarCheck2}
+        label="Faturamento do dia"
+        valor={
+          carregando ??
+          faturamentosHoje
+        }
+        tipo="hoje"
+        isLoading={isLoading}
+        onClick={onCardClick}
+      />
+
     </section>
   );
 }
