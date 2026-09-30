@@ -1,47 +1,105 @@
 /* =========================================================
-   ATUALIZACAO
+   ATUALIZAÇÃO AUTOMÁTICA
+   Versão minimalista integrada ao cabeçalho
 ========================================================= */
 
-.pedidos-atualizacao {
-  min-width: 265px;
+.pedidos-atualizacao-minimal {
+  width: fit-content;
 
-  min-height: 58px;
-
-  display: flex;
+  display: inline-flex;
 
   align-items: center;
 
-  gap: 11px;
+  gap: 8px;
+
+  margin-left: auto;
 
   padding:
-    9px
-    14px;
+    3px
+    2px;
 
-  border:
-    1px solid
-    #dbe4ef;
-
-  border-radius: 11px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #ffffff 0%,
-      #f8fafc 100%
+  color:
+    var(
+      --text-muted,
+      #64748b
     );
 
-  box-shadow:
-    0 1px 3px
-    rgba(15, 23, 42, 0.04);
+  cursor: default;
 }
 
-.pedidos-atualizacao > svg {
-  flex: 0 0 auto;
 
-  color: var(--primary);
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.pedidos-atualizacao-minimal-icone {
+  flex:
+    0
+    0
+    auto;
+
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 8px;
+
+  background:
+    rgba(
+      37,
+      99,
+      235,
+      0.055
+    );
+
+  color:
+    rgba(
+      37,
+      99,
+      235,
+      0.75
+    );
+
+  transition:
+    background
+      0.15s
+      ease,
+    color
+      0.15s
+      ease;
 }
 
-.pedidos-atualizacao-textos {
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.pedidos-atualizacao-minimal:hover
+.pedidos-atualizacao-minimal-icone {
+  background:
+    rgba(
+      37,
+      99,
+      235,
+      0.085
+    );
+
+  color:
+    var(
+      --primary,
+      #2563eb
+    );
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.pedidos-atualizacao-minimal-conteudo {
   min-width: 0;
 
   display: flex;
@@ -51,42 +109,268 @@
   gap: 3px;
 }
 
-.pedidos-atualizacao-titulo {
-  font-size: 9px;
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.pedidos-atualizacao-minimal-topo {
+  display: flex;
+
+  align-items: center;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.pedidos-atualizacao-minimal-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color:
+    var(
+      --text-light,
+      #94a3b8
+    );
+
+  font-size: 7.5px;
 
   font-weight: 800;
 
-  letter-spacing: 0.07em;
+  line-height: 1;
+
+  letter-spacing:
+    0.055em;
 
   text-transform: uppercase;
-
-  color: var(--text-muted);
-}
-
-.pedidos-atualizacao-horarios {
-  font-size: 12px;
-
-  line-height: 1.4;
-
-  color: var(--text-secondary);
 
   white-space: nowrap;
 }
 
-.pedidos-atualizacao-horarios strong {
-  font-size: 13px;
+
+/* =========================================================
+   PONTO DE STATUS
+========================================================= */
+
+.pedidos-atualizacao-minimal-ponto {
+  width: 5px;
+  height: 5px;
+
+  flex:
+    0
+    0
+    auto;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      37,
+      99,
+      235,
+      0.72
+    );
+}
+
+
+/* =========================================================
+   HORÁRIOS
+========================================================= */
+
+.pedidos-atualizacao-minimal-horarios {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  font-size: 9.5px;
+
+  line-height: 1.15;
+
+  white-space: nowrap;
+}
+
+
+.pedidos-atualizacao-minimal-horarios > span {
+  display: inline-flex;
+
+  align-items: baseline;
+
+  gap: 3px;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.pedidos-atualizacao-minimal-label {
+  color:
+    var(
+      --text-light,
+      #94a3b8
+    );
+
+  font-size: 8.5px;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   VALORES
+========================================================= */
+
+.pedidos-atualizacao-minimal-horarios strong {
+  color:
+    var(
+      --text-secondary,
+      #475569
+    );
+
+  font-size: 10px;
 
   font-weight: 750;
 
-  color: var(--text);
-}
-
-.pedidos-atualizacao-separador {
-  margin:
-    0
-    7px;
-
-  color: #cbd5e1;
+  font-variant-numeric:
+    tabular-nums;
 }
 
 
+/* =========================================================
+   PRÓXIMA ATUALIZAÇÃO
+========================================================= */
+
+.pedidos-atualizacao-minimal-horarios
+.pedidos-atualizacao-minimal-proxima {
+  color:
+    var(
+      --primary-dark,
+      #1d4ed8
+    );
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DIVISOR
+========================================================= */
+
+.pedidos-atualizacao-minimal-divisor {
+  color:
+    #cbd5e1;
+
+  font-size: 7px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .pedidos-atualizacao-minimal {
+    margin-left: 0;
+  }
+
+
+  .pedidos-atualizacao-minimal-icone {
+    width: 26px;
+    height: 26px;
+  }
+
+
+  .pedidos-atualizacao-minimal-status {
+    font-size: 7px;
+  }
+
+
+  .pedidos-atualizacao-minimal-horarios {
+    font-size: 9px;
+  }
+
+
+  .pedidos-atualizacao-minimal-horarios strong {
+    font-size: 9.5px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+  .pedidos-atualizacao-minimal {
+    gap: 6px;
+
+    padding:
+      2px
+      0;
+  }
+
+
+  .pedidos-atualizacao-minimal-icone {
+    width: 24px;
+    height: 24px;
+
+    border-radius: 7px;
+  }
+
+
+  .pedidos-atualizacao-minimal-status {
+    font-size: 6.5px;
+  }
+
+
+  .pedidos-atualizacao-minimal-horarios {
+    gap: 4px;
+
+    font-size: 8.5px;
+  }
+
+
+  .pedidos-atualizacao-minimal-label {
+    font-size: 8px;
+  }
+
+
+  .pedidos-atualizacao-minimal-horarios strong {
+    font-size: 9px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE PEQUENO
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .pedidos-atualizacao-minimal-icone {
+    display: none;
+  }
+
+
+  .pedidos-atualizacao-minimal-divisor {
+    display: none;
+  }
+
+
+  .pedidos-atualizacao-minimal-horarios {
+    flex-wrap: wrap;
+
+    white-space: normal;
+  }
+}
