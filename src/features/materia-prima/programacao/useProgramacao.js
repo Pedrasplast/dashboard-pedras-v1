@@ -15,11 +15,15 @@ export default function useProgramacao({
 } = {}) {
   const [programacao, setProgramacao] = useState([]);
   const [produtos, setProdutos] = useState([]);
+  const [receitas, setReceitas] = useState([]);
+
   const [carregando, setCarregando] = useState(false);
   const [carregado, setCarregado] = useState(false);
   const [erro, setErro] = useState("");
+
   const [salvando, setSalvando] = useState(false);
   const [salvandoId, setSalvandoId] = useState(null);
+
   const [excluindo, setExcluindo] = useState(false);
   const [excluindoId, setExcluindoId] = useState(null);
 
@@ -28,7 +32,8 @@ export default function useProgramacao({
     setErro("");
 
     try {
-      const resultado = await buscarProgramacaoComCalendario();
+      const resultado =
+        await buscarProgramacaoComCalendario();
 
       setProgramacao(
         Array.isArray(resultado?.programacao)
@@ -42,6 +47,12 @@ export default function useProgramacao({
           : [],
       );
 
+      setReceitas(
+        Array.isArray(resultado?.receitas)
+          ? resultado.receitas
+          : [],
+      );
+
       setCarregado(true);
     } catch (error) {
       console.error(
@@ -51,10 +62,13 @@ export default function useProgramacao({
 
       setProgramacao([]);
       setProdutos([]);
+      setReceitas([]);
+
       setErro(
         error?.message ||
           "Não foi possível carregar a programação de matéria-prima.",
       );
+
       setCarregado(true);
     } finally {
       setCarregando(false);
@@ -62,7 +76,11 @@ export default function useProgramacao({
   }, []);
 
   useEffect(() => {
-    if (!carregar || carregado || carregando) {
+    if (
+      !carregar ||
+      carregado ||
+      carregando
+    ) {
       return;
     }
 
@@ -74,103 +92,155 @@ export default function useProgramacao({
     carregarProgramacao,
   ]);
 
-  const recarregar = useCallback(async () => {
-    await carregarProgramacao();
-  }, [carregarProgramacao]);
+  const recarregar =
+    useCallback(async () => {
+      await carregarProgramacao();
+    }, [
+      carregarProgramacao,
+    ]);
 
-  const salvarProgramacao = useCallback(
-    async (dados) => {
-      const id = dados?.id ?? null;
+  const salvarProgramacao =
+    useCallback(
+      async (dados) => {
+        const id =
+          dados?.id ?? null;
 
-      setSalvando(true);
-      setSalvandoId(id);
+        setSalvando(true);
+        setSalvandoId(id);
 
-      try {
-        const resultado = await salvarProgramacaoCalendario(dados);
+        try {
+          const resultado =
+            await salvarProgramacaoCalendario(
+              dados,
+            );
 
-        await carregarProgramacao();
+          await carregarProgramacao();
 
-        return resultado;
-      } catch (error) {
-        console.error("Erro ao salvar programação:", error);
-        throw error;
-      } finally {
-        setSalvando(false);
-        setSalvandoId(null);
-      }
-    },
-    [carregarProgramacao],
-  );
+          return resultado;
+        } catch (error) {
+          console.error(
+            "Erro ao salvar programação:",
+            error,
+          );
 
-  const excluirProgramacao = useCallback(
-    async (id) => {
-      if (id === null || id === undefined) {
-        throw new Error("Programação não informada.");
-      }
+          throw error;
+        } finally {
+          setSalvando(false);
+          setSalvandoId(null);
+        }
+      },
+      [
+        carregarProgramacao,
+      ],
+    );
 
-      setExcluindo(true);
-      setExcluindoId(id);
+  const excluirProgramacao =
+    useCallback(
+      async (id) => {
+        if (
+          id === null ||
+          id === undefined
+        ) {
+          throw new Error(
+            "Programação não informada.",
+          );
+        }
 
-      try {
-        const resultado = await excluirProgramacaoService(id);
+        setExcluindo(true);
+        setExcluindoId(id);
 
-        await carregarProgramacao();
+        try {
+          const resultado =
+            await excluirProgramacaoService(
+              id,
+            );
 
-        return resultado;
-      } catch (error) {
-        console.error("Erro ao excluir programação:", error);
-        throw error;
-      } finally {
-        setExcluindo(false);
-        setExcluindoId(null);
-      }
-    },
-    [carregarProgramacao],
-  );
+          await carregarProgramacao();
 
-  const itemEstaSalvando = useCallback(
-    (id) => {
-      if (!salvando) {
-        return false;
-      }
+          return resultado;
+        } catch (error) {
+          console.error(
+            "Erro ao excluir programação:",
+            error,
+          );
 
-      if (id === null || id === undefined) {
-        return salvandoId === null;
-      }
+          throw error;
+        } finally {
+          setExcluindo(false);
+          setExcluindoId(null);
+        }
+      },
+      [
+        carregarProgramacao,
+      ],
+    );
 
-      return String(id) === String(salvandoId);
-    },
-    [salvando, salvandoId],
-  );
+  const itemEstaSalvando =
+    useCallback(
+      (id) => {
+        if (!salvando) {
+          return false;
+        }
 
-  const itemEstaExcluindo = useCallback(
-    (id) => {
-      if (
-        !excluindo ||
-        id === null ||
-        id === undefined
-      ) {
-        return false;
-      }
+        if (
+          id === null ||
+          id === undefined
+        ) {
+          return salvandoId === null;
+        }
 
-      return String(id) === String(excluindoId);
-    },
-    [excluindo, excluindoId],
-  );
+        return (
+          String(id) ===
+          String(salvandoId)
+        );
+      },
+      [
+        salvando,
+        salvandoId,
+      ],
+    );
+
+  const itemEstaExcluindo =
+    useCallback(
+      (id) => {
+        if (
+          !excluindo ||
+          id === null ||
+          id === undefined
+        ) {
+          return false;
+        }
+
+        return (
+          String(id) ===
+          String(excluindoId)
+        );
+      },
+      [
+        excluindo,
+        excluindoId,
+      ],
+    );
 
   return {
     programacao,
     produtos,
+    receitas,
+
     carregando,
     carregado,
     erro,
+
     salvando,
     salvandoId,
+
     excluindo,
     excluindoId,
+
     recarregar,
     salvarProgramacao,
     excluirProgramacao,
+
     itemEstaSalvando,
     itemEstaExcluindo,
   };

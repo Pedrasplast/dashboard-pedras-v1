@@ -15,6 +15,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as CadastroFornecedorRouteImport } from './routes/cadastro-fornecedor'
 import { Route as CadastroMaterialRouteImport } from './routes/cadastro-material'
 import { Route as CadastroProdutoRouteImport } from './routes/cadastro-produto'
+import { Route as CadastroReceitaRouteImport } from './routes/cadastro-receita'
 import { Route as ComprasFuturasRouteImport } from './routes/compras-futuras'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
@@ -60,6 +61,11 @@ const CadastroMaterialRoute = CadastroMaterialRouteImport.update({
 const CadastroProdutoRoute = CadastroProdutoRouteImport.update({
   id: '/cadastro-produto',
   path: '/cadastro-produto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroReceitaRoute = CadastroReceitaRouteImport.update({
+  id: '/cadastro-receita',
+  path: '/cadastro-receita',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComprasFuturasRoute = ComprasFuturasRouteImport.update({
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/cadastro-fornecedor': typeof CadastroFornecedorRoute
   '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
+  '/cadastro-receita': typeof CadastroReceitaRoute
   '/compras-futuras': typeof ComprasFuturasRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/cadastro-fornecedor': typeof CadastroFornecedorRoute
   '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
+  '/cadastro-receita': typeof CadastroReceitaRoute
   '/compras-futuras': typeof ComprasFuturasRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/cadastro-fornecedor': typeof CadastroFornecedorRoute
   '/cadastro-material': typeof CadastroMaterialRoute
   '/cadastro-produto': typeof CadastroProdutoRoute
+  '/cadastro-receita': typeof CadastroReceitaRoute
   '/compras-futuras': typeof ComprasFuturasRoute
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/cadastro-fornecedor'
     | '/cadastro-material'
     | '/cadastro-produto'
+    | '/cadastro-receita'
     | '/compras-futuras'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/cadastro-fornecedor'
     | '/cadastro-material'
     | '/cadastro-produto'
+    | '/cadastro-receita'
     | '/compras-futuras'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/cadastro-fornecedor'
     | '/cadastro-material'
     | '/cadastro-produto'
+    | '/cadastro-receita'
     | '/compras-futuras'
     | '/dashboard'
     | '/dashboard-materia-prima'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   CadastroFornecedorRoute: typeof CadastroFornecedorRoute
   CadastroMaterialRoute: typeof CadastroMaterialRoute
   CadastroProdutoRoute: typeof CadastroProdutoRoute
+  CadastroReceitaRoute: typeof CadastroReceitaRoute
   ComprasFuturasRoute: typeof ComprasFuturasRoute
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
@@ -359,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro-produto'
       fullPath: '/cadastro-produto'
       preLoaderRoute: typeof CadastroProdutoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-receita': {
+      id: '/cadastro-receita'
+      path: '/cadastro-receita'
+      fullPath: '/cadastro-receita'
+      preLoaderRoute: typeof CadastroReceitaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compras-futuras': {
@@ -483,6 +503,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroFornecedorRoute: CadastroFornecedorRoute,
   CadastroMaterialRoute: CadastroMaterialRoute,
   CadastroProdutoRoute: CadastroProdutoRoute,
+  CadastroReceitaRoute: CadastroReceitaRoute,
   ComprasFuturasRoute: ComprasFuturasRoute,
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,

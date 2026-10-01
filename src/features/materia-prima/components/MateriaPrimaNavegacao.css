@@ -1,135 +1,106 @@
 /* =========================================================
-   NAVEGAÇÃO
+   NAVEGAÇÃO MATÉRIA-PRIMA
+   Programação | Saldo-base | Projeção
 ========================================================= */
 
 .materia-prima-navegacao {
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
-
-  gap: 10px;
+  width: 100%;
 
   margin-bottom: 16px;
+
+  border-bottom: 1px solid #dfe7f1;
+
+  background: transparent;
 }
 
 
 /* =========================================================
-   ITEM
+   CONTAINER
+========================================================= */
+
+.materia-prima-navegacao-tabs {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 3px;
+
+  min-height: 50px;
+
+  padding: 0 4px;
+}
+
+
+/* =========================================================
+   ABA
 ========================================================= */
 
 .materia-prima-nav-item {
-  width: 100%;
-  min-width: 0;
+  position: relative;
 
-  display: flex;
+  height: 50px;
+
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
 
-  gap: 11px;
+  gap: 9px;
 
-  min-height: 72px;
+  padding: 0 17px;
 
-  padding:
-    12px
-    14px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
 
-  border:
-    1px solid
-    #e2e8f0;
+  outline: 0;
 
-  border-radius:
-    12px;
+  background: transparent;
 
-  background:
-    #ffffff;
+  color: #64748b;
 
-  color:
-    #475569;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
 
-  font-family:
-    inherit;
+  letter-spacing: -0.005em;
 
-  text-align:
-    left;
-
-  cursor:
-    pointer;
-
-  box-shadow:
-    0
-    1px
-    2px
-    rgba(
-      15,
-      23,
-      42,
-      0.03
-    );
+  cursor: pointer;
 
   transition:
-    border-color
-    0.15s
-    ease,
-    background-color
-    0.15s
-    ease,
-    box-shadow
-    0.15s
-    ease,
-    transform
-    0.15s
-    ease;
-}
-
-
-.materia-prima-nav-item:hover {
-  border-color:
-    #cbd5e1;
-
-  background:
-    #f8fafc;
-
-  box-shadow:
-    0
-    2px
-    5px
-    rgba(
-      15,
-      23,
-      42,
-      0.05
-    );
+    color 0.16s ease,
+    background-color 0.16s ease;
 }
 
 
 /* =========================================================
-   ITEM ATIVO
+   HOVER
+========================================================= */
+
+.materia-prima-nav-item:hover:not(.ativo) {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(248, 250, 252, 0.2) 0%,
+      #f8fafc 100%
+    );
+
+  color: #334155;
+}
+
+
+/* =========================================================
+   ATIVO
 ========================================================= */
 
 .materia-prima-nav-item.ativo {
-  border-color:
-    #93c5fd;
-
   background:
-    #eff6ff;
-
-  color:
-    #1d4ed8;
-
-  box-shadow:
-    0
-    0
-    0
-    1px
-    rgba(
-      37,
-      99,
-      235,
-      0.04
+    linear-gradient(
+      180deg,
+      rgba(239, 246, 255, 0) 0%,
+      rgba(239, 246, 255, 0.65) 100%
     );
+
+  color: #0f172a;
+
+  font-weight: 800;
 }
 
 
@@ -138,101 +109,122 @@
 ========================================================= */
 
 .materia-prima-nav-icone {
-  flex:
-    0
-    0
-    auto;
+  box-sizing: border-box;
 
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 auto;
 
-  border-radius:
-    10px;
+  padding: 6px;
 
-  background:
-    #f1f5f9;
+  border: 1px solid transparent;
+  border-radius: 8px;
 
-  color:
-    #64748b;
+  background: transparent;
+
+  color: #94a3b8;
 
   transition:
-    background-color
-    0.15s
-    ease,
-    color
-    0.15s
-    ease;
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+
+.materia-prima-nav-item:hover:not(.ativo)
+.materia-prima-nav-icone {
+  border-color: #e2e8f0;
+
+  background: #ffffff;
+
+  color: #475569;
 }
 
 
 .materia-prima-nav-item.ativo
 .materia-prima-nav-icone {
-  background:
-    #dbeafe;
+  border-color: #bfdbfe;
 
-  color:
-    #2563eb;
+  background:
+    linear-gradient(
+      180deg,
+      #eff6ff 0%,
+      #dbeafe 100%
+    );
+
+  color: #2563eb;
+
+  box-shadow:
+    0 2px 6px rgba(37, 99, 235, 0.10);
 }
 
 
 /* =========================================================
-   TEXTO
+   INDICADOR ATIVO
 ========================================================= */
 
-.materia-prima-nav-texto {
-  flex: 1;
+.materia-prima-nav-indicador {
+  position: absolute;
 
-  min-width: 0;
+  left: 14px;
+  right: 14px;
+  bottom: -1px;
 
-  display: flex;
-  flex-direction: column;
+  height: 3px;
 
-  gap: 3px;
+  border-radius: 999px 999px 0 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      #2563eb 0%,
+      #3b82f6 55%,
+      #60a5fa 100%
+    );
+
+  box-shadow:
+    0 -1px 7px rgba(37, 99, 235, 0.18);
 }
 
 
-.materia-prima-nav-texto strong {
-  color:
-    #0f172a;
+/* =========================================================
+   EFEITO ATIVO
+========================================================= */
 
-  font-size:
-    13px;
+.materia-prima-nav-item.ativo::before {
+  content: "";
 
-  font-weight:
-    750;
+  position: absolute;
 
-  line-height:
-    1.2;
+  left: 50%;
+  bottom: 3px;
+
+  width: 22px;
+  height: 8px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(37, 99, 235, 0.09);
+
+  filter: blur(6px);
+
+  pointer-events: none;
 }
 
 
-.materia-prima-nav-item.ativo
-.materia-prima-nav-texto strong {
-  color:
-    #1d4ed8;
-}
+/* =========================================================
+   FOCO
+========================================================= */
 
+.materia-prima-nav-item:focus-visible {
+  background: #f8fafc;
 
-.materia-prima-nav-texto small {
-  display: block;
-
-  overflow: hidden;
-
-  color:
-    #64748b;
-
-  font-size:
-    10px;
-
-  line-height:
-    1.35;
-
-  text-overflow:
-    ellipsis;
+  box-shadow:
+    inset 0 0 0 2px #bfdbfe;
 }
 
 
@@ -240,15 +232,30 @@
    TABLET
 ========================================================= */
 
-@media (
-  max-width: 950px
-) {
-  .materia-prima-navegacao {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+@media (max-width: 760px) {
+  .materia-prima-navegacao-tabs {
+    width: 100%;
+
+    min-height: 48px;
+  }
+
+
+  .materia-prima-nav-item {
+    flex: 1;
+
+    height: 48px;
+
+    padding: 0 12px;
+
+    font-size: 11px;
+  }
+
+
+  .materia-prima-nav-icone {
+    width: 28px;
+    height: 28px;
+
+    padding: 5px;
   }
 }
 
@@ -257,28 +264,70 @@
    MOBILE
 ========================================================= */
 
-@media (
-  max-width: 620px
-) {
-  .materia-prima-navegacao {
-    grid-template-columns:
-      1fr;
+@media (max-width: 560px) {
+  .materia-prima-navegacao-tabs {
+    width: 100%;
 
-    gap: 8px;
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+
+    gap: 0;
+
+    padding: 0;
   }
 
 
   .materia-prima-nav-item {
-    min-height: 62px;
+    width: 100%;
 
-    padding:
-      10px
-      12px;
+    height: 46px;
+
+    gap: 6px;
+
+    padding: 0 6px;
+
+    font-size: 10px;
   }
 
 
   .materia-prima-nav-icone {
-    width: 34px;
-    height: 34px;
+    width: 26px;
+    height: 26px;
+
+    padding: 5px;
+  }
+
+
+  .materia-prima-nav-indicador {
+    left: 10px;
+    right: 10px;
+
+    height: 2px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE MUITO PEQUENO
+========================================================= */
+
+@media (max-width: 390px) {
+  .materia-prima-nav-item {
+    gap: 4px;
+
+    padding: 0 4px;
+
+    font-size: 9px;
+  }
+
+
+  .materia-prima-nav-icone {
+    width: 24px;
+    height: 24px;
   }
 }

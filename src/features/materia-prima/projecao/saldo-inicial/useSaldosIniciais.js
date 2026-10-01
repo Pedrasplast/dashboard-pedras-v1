@@ -10,6 +10,10 @@ import {
 } from "./saldoInicialService";
 
 
+const EVENTO_ATUALIZAR_PROJECAO =
+  "materia-prima-projecao-atualizar";
+
+
 /* =========================================================
    HOOK
 ========================================================= */
@@ -166,6 +170,27 @@ export default function useSaldosIniciais() {
 
 
           await carregarSaldos();
+
+
+          /*
+           * Saldos-base e projeção ficam na mesma tela, mas
+           * usam hooks independentes. Após salvar o saldo,
+           * avisamos a projeção para recalcular imediatamente.
+           */
+          window.dispatchEvent(
+            new CustomEvent(
+              EVENTO_ATUALIZAR_PROJECAO,
+              {
+                detail: {
+                  origem: "saldo-inicial",
+                  saldoId:
+                    resultado?.id ??
+                    dados?.id ??
+                    null,
+                },
+              },
+            ),
+          );
 
 
           return resultado;

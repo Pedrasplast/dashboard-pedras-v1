@@ -972,6 +972,7 @@ export default function ProgramacaoModal({
   aberto,
   item = null,
   produtos = [],
+  receitas = [],
   programacao = [],
   salvando = false,
   onCancelar,
@@ -1011,6 +1012,12 @@ export default function ProgramacaoModal({
     horasOutroLote,
     setHorasOutroLote,
   ] = useState("8");
+
+
+  const [
+    receitaLoteId,
+    setReceitaLoteId,
+  ] = useState("");
 
 
   const [
@@ -1096,6 +1103,7 @@ export default function ProgramacaoModal({
       setErro("");
       setDatasMarcadas([]);
       setHorasOutroLote("8");
+      setReceitaLoteId("");
 
 
       if (
@@ -1129,6 +1137,12 @@ export default function ProgramacaoModal({
                     .minutosDescontados ??
                     0,
                 ),
+
+              receitaId:
+                dia.receitaId ?? null,
+
+              receitaNome:
+                dia.receitaNome ?? "",
 
               limiteMinutos:
                 1440,
@@ -1581,7 +1595,6 @@ export default function ProgramacaoModal({
     );
 
 
-    setDatasMarcadas([]);
     setErro("");
   }
 
@@ -1630,6 +1643,128 @@ export default function ProgramacaoModal({
           horas * 60,
         ),
     });
+  }
+
+
+  /* =======================================================
+     RECEITA POR DIA
+  ======================================================= */
+
+  function obterReceita(receitaId) {
+    return receitas.find(
+      (receita) =>
+        String(receita?.id ?? "") ===
+        String(receitaId ?? ""),
+    ) ?? null;
+  }
+
+
+  function aplicarReceitaMarcadas() {
+    if (
+      datasMarcadas.length ===
+      0
+    ) {
+      return;
+    }
+
+
+    const receita =
+      obterReceita(
+        receitaLoteId,
+      );
+
+
+    if (!receita) {
+      setErro(
+        "Selecione uma receita válida para os dias marcados.",
+      );
+
+      return;
+    }
+
+
+    setDiasSelecionados(
+      (atuais) => {
+        const mapa =
+          new Map(
+            atuais.map(
+              (dia) => [
+                dia.data,
+                dia,
+              ],
+            ),
+          );
+
+
+        for (
+          const data
+          of datasMarcadas
+        ) {
+          if (
+            dataEhPassada(data)
+          ) {
+            continue;
+          }
+
+
+          const configuracao =
+            calendarioPorData.get(
+              data,
+            );
+
+
+          const atual =
+            mapa.get(data) ?? {
+              data,
+
+              perfilHoras: "",
+
+              minutosSolicitados: 0,
+
+              minutosDescontados: 0,
+
+              limiteMinutos:
+                Number(
+                  configuracao
+                    ?.minutosProgramados ??
+                    1440,
+                ),
+
+              limitePerfilCodigo:
+                configuracao
+                  ?.perfilCodigo ??
+                  "24H",
+            };
+
+
+          mapa.set(
+            data,
+            {
+              ...atual,
+
+              receitaId:
+                receita.id,
+
+              receitaNome:
+                receita.nome,
+            },
+          );
+        }
+
+
+        return [
+          ...mapa.values(),
+        ].sort(
+          (a, b) =>
+            a.data.localeCompare(
+              b.data,
+            ),
+        );
+      },
+    );
+
+
+    setErro("");
   }
 
 
@@ -2069,6 +2204,21 @@ export default function ProgramacaoModal({
 
         return;
       }
+
+
+      if (
+        dia.receitaId === null ||
+        dia.receitaId === undefined ||
+        dia.receitaId === ""
+      ) {
+        setErro(
+          `Selecione a receita de ${formatarDataVisual(
+            dia.data,
+          )}.`,
+        );
+
+        return;
+      }
     }
 
 
@@ -2497,24 +2647,26 @@ export default function ProgramacaoModal({
                   className={[
                     "programacao-calendario-receita-status",
 
-                    produtoSelecionado
-                      .receitaConfigurada
+                    receitas.length > 0
                       ? "ok"
                       : "pendente",
                   ].join(" ")}
                 >
 
                   <span>
-                    Receita
+                    Receitas disponíveis
                   </span>
 
 
                   <strong>
 
-                    {produtoSelecionado
-                      .receitaConfigurada
-                      ? "CONFIGURADA"
-                      : "PENDENTE"}
+                    {receitas.length > 0
+                      ? `${receitas.length} ATIVA${
+                          receitas.length === 1
+                            ? ""
+                            : "S"
+                        }`
+                      : "NENHUMA"}
 
                   </strong>
 
@@ -2936,12 +3088,16 @@ export default function ProgramacaoModal({
 
                                 <strong className="programacao-calendario-horas-programadas">
 
-                                  {
-                                    formatarMinutos(
-                                      programado
-                                        .minutosSolicitados,
-                                    )
-                                  }
+                                  {Number(
+                                    programado
+                                      .minutosSolicitados ??
+                                      0,
+                                  ) > 0
+                                    ? formatarMinutos(
+                                        programado
+                                          .minutosSolicitados,
+                                      )
+                                    : "Defina horas"}
 
                                 </strong>
 
@@ -2973,6 +3129,25 @@ export default function ProgramacaoModal({
                                   </small>
 
                                 )}
+
+
+                                <span
+                                  className={
+                                    programado
+                                      .receitaId
+                                      ? "programacao-calendario-dia-receita definida"
+                                      : "programacao-calendario-dia-receita pendente"
+                                  }
+                                  title={
+                                    programado
+                                      .receitaNome ||
+                                    "Receita pendente"
+                                  }
+                                >
+                                  {programado
+                                    .receitaNome ||
+                                    "Receita pendente"}
+                                </span>
 
                               </>
 
@@ -3030,7 +3205,7 @@ export default function ProgramacaoModal({
                     <div className="programacao-calendario-lote-info">
 
                       <span>
-                        Jornada dos dias selecionados
+                        Configuração dos dias selecionados
                       </span>
 
 
@@ -3049,7 +3224,7 @@ export default function ProgramacaoModal({
 
 
                       <small>
-                        Escolha uma jornada para aplicar em lote.
+                        Aplique a jornada e a receita diretamente aos dias marcados. Para usar receitas diferentes, selecione os dias separadamente.
                       </small>
 
                     </div>
@@ -3139,6 +3314,67 @@ export default function ProgramacaoModal({
                       </div>
 
 
+                      <div className="programacao-calendario-lote-receita">
+
+                        <span className="programacao-calendario-lote-receita-rotulo">
+                          Receita
+                        </span>
+
+
+                        <select
+                          value={
+                            receitaLoteId
+                          }
+                          onChange={
+                            (event) =>
+                              setReceitaLoteId(
+                                event.target.value,
+                              )
+                          }
+                          disabled={
+                            salvando ||
+                            receitas.length === 0
+                          }
+                        >
+
+                          <option value="">
+                            Selecionar receita
+                          </option>
+
+
+                          {receitas.map(
+                            (receita) => (
+
+                              <option
+                                key={receita.id}
+                                value={receita.id}
+                              >
+                                {receita.nome}
+                              </option>
+
+                            ),
+                          )}
+
+                        </select>
+
+
+                        <button
+                          type="button"
+                          onClick={
+                            aplicarReceitaMarcadas
+                          }
+                          disabled={
+                            salvando ||
+                            !receitaLoteId ||
+                            receitas.length === 0
+                          }
+                        >
+                          Aplicar receita
+                        </button>
+
+                      </div>
+
+
                       {algumMarcadoProgramado && (
 
                         <button
@@ -3184,6 +3420,7 @@ export default function ProgramacaoModal({
                   </div>
 
                 )}
+
 
               </section>
 

@@ -212,6 +212,7 @@ export default function Programacao() {
   const {
     programacao,
     produtos,
+    receitas,
     carregando,
     carregado,
     erro,
@@ -1003,13 +1004,18 @@ export default function Programacao() {
                             {item
                               .receitaConfigurada ? (
 
-                              <span className="programacao-pp-receita ok">
+                              <span
+                                className="programacao-pp-receita ok"
+                                title={(item.receitaNomes ?? []).join(" • ")}
+                              >
 
                                 <CheckCircle2
                                   size={13}
                                 />
 
-                                100%
+                                {(item.receitaNomes ?? []).length > 1
+                                  ? `${item.receitaNomes.length} receitas`
+                                  : item.receitaNomes?.[0] || "Receita definida"}
 
                               </span>
 
@@ -1204,6 +1210,9 @@ export default function Programacao() {
         }
         produtos={
           produtos
+        }
+        receitas={
+          receitas
         }
         programacao={
           programacao

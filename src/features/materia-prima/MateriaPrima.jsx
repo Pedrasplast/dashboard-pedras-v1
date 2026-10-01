@@ -10,9 +10,8 @@ import MateriaPrimaNavegacao, {
 } from "./components/MateriaPrimaNavegacao";
 
 import Programacao from "./programacao/Programacao";
-import Projecao from "./projecao/Projecao";
-import Receitas from "./receitas/Receitas";
-import VisaoGeral from "./visao-geral/VisaoGeral";
+import ProjecaoDiaria from "./projecao/ProjecaoDiaria";
+import SaldosIniciais from "./projecao/saldo-inicial/SaldosIniciais";
 
 import "./MateriaPrima.css";
 
@@ -26,7 +25,7 @@ export default function MateriaPrima() {
     secaoAtivaId,
     setSecaoAtivaId,
   ] = useState(
-    "visao-geral",
+    "programacao",
   );
 
 
@@ -52,64 +51,34 @@ export default function MateriaPrima() {
 
 
   /* =======================================================
-     CONTEÚDO DA SEÇÃO
+     CONTEÚDO
   ======================================================= */
 
   function renderizarSecao() {
     switch (
       secaoAtivaId
     ) {
-      case "visao-geral":
-        return (
-          <VisaoGeral />
-        );
-
-
-      case "receitas":
-        return (
-          <Receitas />
-        );
-
-
       case "programacao":
         return (
           <Programacao />
         );
 
 
+      case "saldo-base":
+        return (
+          <SaldosIniciais />
+        );
+
+
       case "projecao":
         return (
-          <Projecao />
+          <ProjecaoDiaria />
         );
 
 
       default:
         return (
-          <div className="materia-prima-conteudo-vazio">
-
-            <div className="materia-prima-conteudo-vazio-icone">
-
-              <secaoAtiva.icone
-                size={32}
-                strokeWidth={1.7}
-                aria-hidden="true"
-              />
-
-            </div>
-
-
-            <strong>
-              {secaoAtiva.titulo}
-            </strong>
-
-
-            <p>
-              Esta área será desenvolvida
-              na etapa correspondente do
-              módulo de Matéria-Prima.
-            </p>
-
-          </div>
+          <Programacao />
         );
     }
   }

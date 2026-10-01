@@ -9,6 +9,10 @@ import {
 } from "./projecaoService";
 
 
+const EVENTO_ATUALIZAR_PROJECAO =
+  "materia-prima-projecao-atualizar";
+
+
 /* =========================================================
    HOOK PROJEÇÃO
 ========================================================= */
@@ -113,6 +117,40 @@ export default function useProjecao({
   useEffect(
     () => {
       void carregar();
+    },
+    [
+      carregar,
+    ],
+  );
+
+
+  /* =======================================================
+     ATUALIZAÇÃO CRUZADA
+
+     Quando o saldo-base é salvo no bloco acima, esse evento
+     faz a projeção recalcular imediatamente sem depender de
+     troca de filtro, recarregamento da página ou botão.
+  ======================================================= */
+
+  useEffect(
+    () => {
+      function atualizarProjecao() {
+        void carregar();
+      }
+
+
+      window.addEventListener(
+        EVENTO_ATUALIZAR_PROJECAO,
+        atualizarProjecao,
+      );
+
+
+      return () => {
+        window.removeEventListener(
+          EVENTO_ATUALIZAR_PROJECAO,
+          atualizarProjecao,
+        );
+      };
     },
     [
       carregar,

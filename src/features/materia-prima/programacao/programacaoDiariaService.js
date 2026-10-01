@@ -77,6 +77,8 @@ function normalizarDia(registro) {
     ciclosCompletos: Math.trunc(numero(registro?.ciclos_completos)),
     pecasPrevistas: Math.trunc(numero(registro?.pecas_previstas)),
     consumoTotalKg,
+    receitaId: registro?.receita_id ?? null,
+    receitaNome: String(registro?.receita_nome ?? "").trim(),
     receitaPercentualTotal: numero(registro?.receita_percentual_total),
     receitaConfigurada,
     receitaItens,
@@ -93,6 +95,71 @@ function normalizarDia(registro) {
   };
 }
 
+function agregarConsumosFornecedores(dias = []) {
+  const mapa = new Map();
+
+  for (const dia of dias) {
+    for (const consumo of dia?.consumosFornecedores ?? []) {
+      const chave = String(consumo?.fornecedorId ?? "");
+
+      if (!chave) {
+        continue;
+      }
+
+      if (!mapa.has(chave)) {
+        mapa.set(chave, {
+          fornecedorId: consumo.fornecedorId,
+          fornecedorNome: consumo.fornecedorNome,
+          consumoPeriodoKg: 0,
+          consumoKg: 0,
+        });
+      }
+
+      const atual = mapa.get(chave);
+      atual.consumoPeriodoKg = arredondar(
+        atual.consumoPeriodoKg + numero(consumo?.consumoPeriodoKg),
+      );
+      atual.consumoKg = atual.consumoPeriodoKg;
+    }
+  }
+
+  return [...mapa.values()].sort((a, b) =>
+    String(a.fornecedorNome).localeCompare(String(b.fornecedorNome), "pt-BR", {
+      sensitivity: "base",
+      numeric: true,
+    }),
+  );
+}
+
+function listarReceitasUtilizadas(dias = []) {
+  const mapa = new Map();
+
+  for (const dia of dias) {
+    if (dia?.receitaId === null || dia?.receitaId === undefined) {
+      continue;
+    }
+
+    const chave = String(dia.receitaId);
+
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        id: dia.receitaId,
+        nome: dia.receitaNome || `Receita ${dia.receitaId}`,
+        quantidadeDias: 0,
+      });
+    }
+
+    mapa.get(chave).quantidadeDias += 1;
+  }
+
+  return [...mapa.values()].sort((a, b) =>
+    String(a.nome).localeCompare(String(b.nome), "pt-BR", {
+      sensitivity: "base",
+      numeric: true,
+    }),
+  );
+}
+
 /* =========================================================
    FONTE CANÔNICA DO BANCO
 ========================================================= */
@@ -103,7 +170,7 @@ export async function buscarProgramacaoDiaria({
   apenasAtivas = true,
 } = {}) {
   const { data, error } = await supabase.rpc(
-    "listar_programacao_diaria",
+    "listar_programacao_diaria_v2",
     {
       p_data_inicio: dataInicio || null,
       p_data_fim: dataFim || null,
@@ -143,9 +210,6 @@ export function agruparProgramacaoDiaria(dias = []) {
         cicloSegundos: dia.cicloSegundos,
         cavidadeMolde: dia.cavidadeMolde,
         pesoKg: dia.pesoKg,
-        receitaConfigurada: dia.receitaConfigurada,
-        receitaPercentualTotal: dia.receitaPercentualTotal,
-        receitaItens: dia.receitaItens,
         diasProgramacao: [],
       });
     }
@@ -162,6 +226,12 @@ export function agruparProgramacaoDiaria(dias = []) {
       ciclosCompletos: dia.ciclosCompletos,
       pecasPrevistas: dia.pecasPrevistas,
       consumoTotalKg: dia.consumoTotalKg,
+      receitaId: dia.receitaId,
+      receitaNome: dia.receitaNome,
+      receitaPercentualTotal: dia.receitaPercentualTotal,
+      receitaConfigurada: dia.receitaConfigurada,
+      receitaItens: dia.receitaItens,
+      consumosFornecedores: dia.consumosFornecedores,
     });
   }
 
@@ -193,6 +263,12 @@ export function agruparProgramacaoDiaria(dias = []) {
         ),
       );
 
+      const receitasUtilizadas = listarReceitasUtilizadas(diasOrdenados);
+
+      const receitaConfigurada =
+        diasOrdenados.length > 0 &&
+        diasOrdenados.every((dia) => dia.receitaConfigurada === true);
+
       return {
         ...item,
         diasProgramacao: diasOrdenados,
@@ -206,10 +282,17 @@ export function agruparProgramacaoDiaria(dias = []) {
         ciclosCompletos: Math.trunc(ciclosCompletos),
         pecasPrevistas: Math.trunc(pecasPrevistas),
         quantidade: Math.trunc(pecasPrevistas),
+
         pecasPorHora:
-          numero(item.cicloSegundos) > 0 && numero(item.cavidadeMolde) > 0
-            ? arredondar((3600 / item.cicloSegundos) * item.cavidadeMolde, 2)
+          numero(item.cicloSegundos) > 0 &&
+          numero(item.cavidadeMolde) > 0
+            ? arredondar(
+                (3600 / item.cicloSegundos) *
+                  item.cavidadeMolde,
+                2,
+              )
             : 0,
+
         consumoPorHoraKg:
           numero(item.cicloSegundos) > 0 &&
           numero(item.cavidadeMolde) > 0 &&
@@ -220,22 +303,46 @@ export function agruparProgramacaoDiaria(dias = []) {
                   item.pesoKg,
               )
             : 0,
+
         consumoPeriodoKg,
-        consumosFornecedores: distribuirConsumoReceita(
-          consumoPeriodoKg,
-          item.receitaItens,
-          item.receitaConfigurada,
-        ),
+        receitaConfigurada,
+        receitaPercentualTotal:
+          receitaConfigurada ? 100 : 0,
+        receitasUtilizadas,
+        receitaNomes:
+          receitasUtilizadas.map(
+            (receita) => receita.nome,
+          ),
+        receitaItens: [],
+        consumosFornecedores:
+          agregarConsumosFornecedores(
+            diasOrdenados,
+          ),
         calculoLegado: false,
       };
     })
     .sort(
       (a, b) =>
-        String(a.dataInicio ?? "").localeCompare(String(b.dataInicio ?? "")) ||
-        String(a.injetora ?? "").localeCompare(String(b.injetora ?? ""), "pt-BR", {
-          numeric: true,
-        }) ||
-        Number(a.id ?? 0) - Number(b.id ?? 0),
+        String(
+          a.dataInicio ?? "",
+        ).localeCompare(
+          String(
+            b.dataInicio ?? "",
+          ),
+        ) ||
+        String(
+          a.injetora ?? "",
+        ).localeCompare(
+          String(
+            b.injetora ?? "",
+          ),
+          "pt-BR",
+          {
+            numeric: true,
+          },
+        ) ||
+        Number(a.id ?? 0) -
+          Number(b.id ?? 0),
     );
 }
 
@@ -244,64 +351,149 @@ export async function buscarProgramacaoAgrupada({
   dataFim = null,
   apenasAtivas = false,
 } = {}) {
-  const dias = await buscarProgramacaoDiaria({
-    dataInicio,
-    dataFim,
-    apenasAtivas,
-  });
+  const dias =
+    await buscarProgramacaoDiaria({
+      dataInicio,
+      dataFim,
+      apenasAtivas,
+    });
 
-  return agruparProgramacaoDiaria(dias);
+  return agruparProgramacaoDiaria(
+    dias,
+  );
 }
 
 /* =========================================================
    ADAPTADOR PARA A PROJEÇÃO EXISTENTE
 ========================================================= */
 
-export function converterDiasParaProjecao(dias = []) {
-  return (Array.isArray(dias) ? dias : []).map((dia) => ({
-    id: `${dia.programacaoId}:${dia.diaId}`,
-    programacaoId: dia.programacaoId,
-    diaId: dia.diaId,
-    codigoProduto: dia.codigoProduto,
-    codigo_produto: dia.codigoProduto,
-    descricao: dia.descricao,
-    injetora: dia.injetora,
-    ativo: dia.ativo,
-    dataInicio: dia.data,
-    data_inicio: dia.data,
-    dataFim: dia.data,
-    data_fim: dia.data,
-    horaInicio: null,
-    hora_inicio: null,
-    horaFim: null,
-    hora_fim: null,
-    quantidade: dia.pecasPrevistas,
-    pesoKg: dia.pesoKg,
-    peso_kg: dia.pesoKg,
-    cicloSegundos: dia.cicloSegundos,
-    ciclo_segundos: dia.cicloSegundos,
-    cavidadeMolde: dia.cavidadeMolde,
-    cavidade_molde: dia.cavidadeMolde,
-    consumoPeriodoKg: dia.consumoTotalKg,
-    consumo_periodo_kg: dia.consumoTotalKg,
-    receitaConfigurada: dia.receitaConfigurada,
-    receitaPercentualTotal: dia.receitaPercentualTotal,
-    receitaItens: dia.receitaItens,
-    consumosFornecedores: dia.consumosFornecedores,
-    minutosEfetivos: dia.minutosEfetivos,
-    horasPeriodo: dia.horasEfetivas,
-    calculoLegado: false,
+export function converterDiasParaProjecao(
+  dias = [],
+) {
+  return (
+    Array.isArray(dias)
+      ? dias
+      : []
+  ).map((dia) => ({
+    id:
+      `${dia.programacaoId}:${dia.diaId}`,
+
+    programacaoId:
+      dia.programacaoId,
+
+    diaId:
+      dia.diaId,
+
+    codigoProduto:
+      dia.codigoProduto,
+
+    codigo_produto:
+      dia.codigoProduto,
+
+    descricao:
+      dia.descricao,
+
+    injetora:
+      dia.injetora,
+
+    ativo:
+      dia.ativo,
+
+    dataInicio:
+      dia.data,
+
+    data_inicio:
+      dia.data,
+
+    dataFim:
+      dia.data,
+
+    data_fim:
+      dia.data,
+
+    horaInicio:
+      null,
+
+    hora_inicio:
+      null,
+
+    horaFim:
+      null,
+
+    hora_fim:
+      null,
+
+    quantidade:
+      dia.pecasPrevistas,
+
+    pesoKg:
+      dia.pesoKg,
+
+    peso_kg:
+      dia.pesoKg,
+
+    cicloSegundos:
+      dia.cicloSegundos,
+
+    ciclo_segundos:
+      dia.cicloSegundos,
+
+    cavidadeMolde:
+      dia.cavidadeMolde,
+
+    cavidade_molde:
+      dia.cavidadeMolde,
+
+    consumoPeriodoKg:
+      dia.consumoTotalKg,
+
+    consumo_periodo_kg:
+      dia.consumoTotalKg,
+
+    receitaId:
+      dia.receitaId,
+
+    receitaNome:
+      dia.receitaNome,
+
+    receitaConfigurada:
+      dia.receitaConfigurada,
+
+    receitaPercentualTotal:
+      dia.receitaPercentualTotal,
+
+    receitaItens:
+      dia.receitaItens,
+
+    consumosFornecedores:
+      dia.consumosFornecedores,
+
+    minutosEfetivos:
+      dia.minutosEfetivos,
+
+    horasPeriodo:
+      dia.horasEfetivas,
+
+    calculoLegado:
+      false,
   }));
 }
 
-export async function buscarProgramacaoParaProjecao({ dataInicio, dataFim }) {
-  const dias = await buscarProgramacaoDiaria({
-    dataInicio,
-    dataFim,
-    apenasAtivas: true,
-  });
+export async function buscarProgramacaoParaProjecao({
+  dataInicio,
+  dataFim,
+}) {
+  const dias =
+    await buscarProgramacaoDiaria({
+      dataInicio,
+      dataFim,
+      apenasAtivas: true,
+    });
 
   return {
-    programacao: converterDiasParaProjecao(dias),
+    programacao:
+      converterDiasParaProjecao(
+        dias,
+      ),
   };
 }
