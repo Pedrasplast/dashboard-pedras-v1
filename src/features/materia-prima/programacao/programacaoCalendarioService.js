@@ -1,12 +1,12 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import {
-  buscarProdutosPP,
-} from "../produtos/produtosPPService";
+  buscarCadastroReceitas,
+} from "@/features/cadastros/receitas/cadastroReceitasService";
 
 import {
-  buscarReceitas,
-} from "../receitas/receitasService";
+  buscarProdutosPP,
+} from "../produtos/produtosPPService";
 
 import {
   buscarProgramacaoAgrupada,
@@ -24,22 +24,13 @@ function numero(valor, fallback = 0) {
     : fallback;
 }
 
-function montarProdutos({ produtos, receitas }) {
-  const receitaPorCodigo = new Map(
-    (receitas || []).map((receita) => [
-      String(receita?.codigo ?? "").trim(),
-      receita,
-    ]),
-  );
-
-  return (produtos || [])
+function montarProdutos(produtos = []) {
+  return (Array.isArray(produtos) ? produtos : [])
     .filter((produto) => produto?.ativo !== false)
     .map((produto) => {
       const codigo = String(
         produto?.codigoProduto ?? produto?.codigo ?? "",
       ).trim();
-
-      const receita = receitaPorCodigo.get(codigo) ?? null;
 
       return {
         codigo,
@@ -50,13 +41,6 @@ function montarProdutos({ produtos, receitas }) {
         pesoKg: numero(produto?.pesoKg, null),
         cicloSegundos: numero(produto?.cicloSegundos, null),
         cavidadeMolde: numero(produto?.cavidadeMolde, null),
-        receitaConfigurada: receita?.configurada === true,
-        receitaPercentualTotal: numero(receita?.percentualTotal),
-        receitaItens: (receita?.itens ?? []).map((item) => ({
-          fornecedorId: item?.fornecedorId ?? null,
-          fornecedorNome: item?.fornecedorNome ?? "Fornecedor",
-          percentual: numero(item?.percentual),
-        })),
       };
     })
     .filter((produto) => produto.codigo)
@@ -68,28 +52,56 @@ function montarProdutos({ produtos, receitas }) {
     );
 }
 
+function montarReceitas(receitas = []) {
+  return (Array.isArray(receitas) ? receitas : [])
+    .filter(
+      (receita) =>
+        receita?.ativo === true &&
+        receita?.configurada === true,
+    )
+    .map((receita) => ({
+      id: receita.id,
+      nome: String(receita?.nome ?? "").trim(),
+      descricao: String(receita?.descricao ?? "").trim(),
+      percentualTotal: numero(receita?.percentualTotal),
+      configurada: receita?.configurada === true,
+      ativo: receita?.ativo === true,
+      itens: (Array.isArray(receita?.itens) ? receita.itens : []).map(
+        (item) => ({
+          fornecedorId: item?.fornecedorId ?? null,
+          fornecedorNome: String(
+            item?.fornecedorNome ?? "Fornecedor",
+          ).trim(),
+          percentual: numero(item?.percentual),
+        }),
+      ),
+    }))
+    .filter((receita) => receita.id && receita.nome)
+    .sort((a, b) =>
+      a.nome.localeCompare(b.nome, "pt-BR", {
+        sensitivity: "base",
+        numeric: true,
+      }),
+    );
+}
+
 /* =========================================================
-   BUSCAR PROGRAMAÇÃO + PRODUTOS
+   BUSCAR PROGRAMAÇÃO + PRODUTOS + RECEITAS
 ========================================================= */
 
 export async function buscarProgramacaoComCalendario() {
-  const [programacao, produtosBrutos, dadosReceitas] = await Promise.all([
+  const [programacao, produtosBrutos, cadastroReceitas] = await Promise.all([
     buscarProgramacaoAgrupada({
       apenasAtivas: false,
     }),
     buscarProdutosPP(),
-    buscarReceitas(),
+    buscarCadastroReceitas(),
   ]);
-
-  const produtos = montarProdutos({
-    produtos: produtosBrutos,
-    receitas: dadosReceitas?.receitas ?? [],
-  });
 
   return {
     programacao,
-    produtos,
-    fornecedores: dadosReceitas?.fornecedores ?? [],
+    produtos: montarProdutos(produtosBrutos),
+    receitas: montarReceitas(cadastroReceitas?.receitas ?? []),
   };
 }
 
@@ -144,11 +156,17 @@ export async function salvarProgramacaoCalendario({
       minutos_descontados: Math.trunc(
         numero(dia?.minutosDescontados),
       ),
+      receita_id:
+        dia?.receitaId === null ||
+        dia?.receitaId === undefined ||
+        dia?.receitaId === ""
+          ? null
+          : Number(dia.receitaId),
     }),
   );
 
   const { data, error } = await supabase.rpc(
-    "salvar_programacao_calendario",
+    "salvar_programacao_calendario_v3",
     {
       p_id: id,
       p_codigo_produto: String(codigoProduto ?? "").trim(),

@@ -447,6 +447,32 @@
   line-height: 1;
 }
 
+.programacao-calendario-dia-receita {
+  max-width: 100%;
+  margin-top: 2px;
+  padding: 2px 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  font-size: 6px;
+  font-weight: 900;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.programacao-calendario-dia-receita.definida {
+  border: 1px solid #ddd6fe;
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.programacao-calendario-dia-receita.pendente {
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
 .programacao-calendario-status-passado {
   color: #94a3b8;
   font-size: 8px;
@@ -518,15 +544,15 @@
 
 .programacao-calendario-lote {
   display: grid;
-  grid-template-columns: minmax(190px, .8fr) minmax(0, 2fr);
-  align-items: center;
-  gap: 14px;
-  margin: 0 10px 10px;
-  padding: 11px 12px;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 12px;
+  margin: 0 10px 12px;
+  padding: 14px 16px;
   border: 1px solid #93c5fd;
-  border-radius: 11px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #eff6ff, #f8fbff);
-  box-shadow: 0 5px 16px rgba(37, 99, 235, .08);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, .09);
 }
 
 .programacao-calendario-lote-info > span,
@@ -537,57 +563,61 @@
 
 .programacao-calendario-lote-info > span {
   color: #2563eb;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: .04em;
+  letter-spacing: .05em;
   text-transform: uppercase;
 }
 
 .programacao-calendario-lote-info > strong {
-  margin-top: 2px;
+  margin-top: 3px;
   color: #0f172a;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
 }
 
 .programacao-calendario-lote-info > small {
-  margin-top: 2px;
+  max-width: 340px;
+  margin-top: 4px;
   color: #64748b;
-  font-size: 8px;
+  font-size: 9px;
+  line-height: 1.45;
 }
 
 .programacao-calendario-lote-acoes {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 9px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(147, 197, 253, .55);
 }
 
 .programacao-calendario-lote-presets {
   display: flex;
-  gap: 5px;
+  gap: 6px;
 }
 
 .programacao-calendario-lote-presets button,
 .programacao-calendario-lote-outro button,
 .programacao-calendario-lote-remover,
 .programacao-calendario-lote-limpar {
-  min-height: 32px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 0 10px;
-  border-radius: 8px;
+  padding: 0 12px;
+  border-radius: 9px;
   font: inherit;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 900;
   cursor: pointer;
 }
 
 .programacao-calendario-lote-presets button {
-  min-width: 42px;
+  min-width: 50px;
   border: 1px solid #93c5fd;
   background: #ffffff;
   color: #1d4ed8;
@@ -599,7 +629,7 @@
 }
 
 .programacao-calendario-lote-outro {
-  height: 32px;
+  height: 40px;
   display: inline-flex;
   align-items: center;
   overflow: hidden;
@@ -609,14 +639,14 @@
 }
 
 .programacao-calendario-lote-outro > span {
-  padding: 0 7px;
+  padding: 0 9px;
   color: #64748b;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 800;
 }
 
 .programacao-calendario-lote-outro input {
-  width: 50px;
+  width: 58px;
   height: 100%;
   padding: 0 5px;
   border: 0;
@@ -624,8 +654,8 @@
   border-right: 1px solid #e2e8f0;
   outline: 0;
   color: #0f172a;
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 850;
   text-align: center;
 }
 
@@ -790,14 +820,6 @@
   .programacao-calendario-config-tecnico > div:nth-child(n + 4) {
     border-top: 1px solid #e5eaf0;
   }
-
-  .programacao-calendario-lote {
-    grid-template-columns: 1fr;
-  }
-
-  .programacao-calendario-lote-acoes {
-    justify-content: flex-start;
-  }
 }
 
 @media (max-width: 760px) {
@@ -913,5 +935,116 @@
 
   .programacao-calendario-resumo strong {
     font-size: 17px;
+  }
+}
+
+/* =========================================================
+   RECEITA NO CALENDÁRIO
+========================================================= */
+
+.programacao-calendario-lote-receita {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid #a78bfa;
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(124, 58, 237, .08);
+}
+
+.programacao-calendario-lote-receita-rotulo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-right: 1px solid #ede9fe;
+  background: #faf5ff;
+  color: #7c3aed;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.programacao-calendario-lote-receita select {
+  min-width: 280px;
+  height: 40px;
+  padding: 0 34px 0 11px;
+  border: 0;
+  outline: 0;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.programacao-calendario-lote-receita button {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 0;
+  border-left: 1px solid #ddd6fe;
+  background: #f5f3ff;
+  color: #6d28d9;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.programacao-calendario-lote-receita button:hover:not(:disabled) {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.programacao-calendario-lote-receita select:disabled,
+.programacao-calendario-lote-receita button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 760px) {
+  .programacao-calendario-lote {
+    margin-left: 6px;
+    margin-right: 6px;
+    padding: 12px;
+  }
+
+  .programacao-calendario-lote-acoes {
+    align-items: stretch;
+  }
+
+  .programacao-calendario-lote-presets {
+    width: 100%;
+  }
+
+  .programacao-calendario-lote-presets button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .programacao-calendario-lote-outro {
+    flex: 1 1 210px;
+  }
+
+  .programacao-calendario-lote-outro input {
+    flex: 1;
+    min-width: 56px;
+  }
+}
+
+@media (max-width: 640px) {
+  .programacao-calendario-lote-receita {
+    width: 100%;
+  }
+
+  .programacao-calendario-lote-receita select {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .programacao-calendario-lote-receita-rotulo {
+    display: none;
   }
 }

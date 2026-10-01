@@ -19,6 +19,7 @@ export const MODULOS_PERMISSOES =
         "cadastro_produto",
         "cadastro_fornecedor",
         "cadastro_material",
+        "cadastro_receita",
       ],
     },
 
