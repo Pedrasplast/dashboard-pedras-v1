@@ -9,8 +9,12 @@ import {
   FiEye,
   FiFileText,
   FiRefreshCw,
+  FiSearch,
   FiX,
 } from "react-icons/fi";
+
+import Filtros
+  from "@/components/filtros/Filtros";
 
 import Paginacao
   from "@/components/paginacao/Paginacao";
@@ -32,10 +36,14 @@ import useFinanceiroPrevistoRealizado
   from "./hooks/useFinanceiroPrevistoRealizado";
 
 import {
+  criarFiltrosFinanceirosIniciais,
   criarGruposFinanceiros,
+  filtrarCategoriasFinanceiras,
+  filtrarDadosPorCategoria,
   MESES,
   obterAnoAtual,
-  obterMesAtual,
+  obterCategoriasFinanceiras,
+  obterNomeCategoriaSelecionada,
   obterNomeMes,
   paginarGruposFinanceiros,
 } from "./utils/financeiroPrevistoRealizado.utils";
@@ -49,17 +57,22 @@ const ITENS_POR_PAGINA = 10;
 export default function FinanceiroPrevistoRealizado({
   relatorio,
 }) {
-  const [ano, setAno] = useState(
-    obterAnoAtual(),
+  const filtrosPadrao = useMemo(
+    () => criarFiltrosFinanceirosIniciais(),
+    [],
   );
 
-  const [mes, setMes] = useState(
-    obterMesAtual(),
+  const [filtros, setFiltros] = useState(
+    () => criarFiltrosFinanceirosIniciais(),
   );
 
-  const [tipo, setTipo] = useState(
-    "todos",
-  );
+  const {
+    ano,
+    mes,
+    tipo,
+    categoria,
+    buscaCategoria,
+  } = filtros;
 
   const [visualizacaoAberta, setVisualizacaoAberta] =
     useState(false);
@@ -103,13 +116,85 @@ export default function FinanceiroPrevistoRealizado({
   );
 
 
+  const categoriasDisponiveis = useMemo(
+    () =>
+      obterCategoriasFinanceiras(
+        dados,
+      ),
+    [dados],
+  );
+
+
+  const categoriasEncontradas = useMemo(
+    () =>
+      filtrarCategoriasFinanceiras(
+        categoriasDisponiveis,
+        buscaCategoria,
+      ),
+    [
+      categoriasDisponiveis,
+      buscaCategoria,
+    ],
+  );
+
+
+  const categoriasExibidas = useMemo(() => {
+    if (
+      !categoria ||
+      categoria === "todas" ||
+      categoriasEncontradas.some(
+        (item) => item.codigo === categoria,
+      )
+    ) {
+      return categoriasEncontradas;
+    }
+
+    const selecionada =
+      categoriasDisponiveis.find(
+        (item) =>
+          item.codigo === categoria,
+      );
+
+    if (!selecionada) {
+      return categoriasEncontradas;
+    }
+
+    return [
+      selecionada,
+      ...categoriasEncontradas,
+    ];
+  }, [
+    categoria,
+    categoriasDisponiveis,
+    categoriasEncontradas,
+  ]);
+
+
+  const dadosFiltrados = useMemo(
+    () =>
+      filtrarDadosPorCategoria(
+        dados,
+        categoria,
+        buscaCategoria,
+      ),
+    [
+      dados,
+      categoria,
+      buscaCategoria,
+    ],
+  );
+
+
   const gruposRelatorio = useMemo(
     () =>
       criarGruposFinanceiros(
-        dados,
+        dadosFiltrados,
         tipo,
       ),
-    [dados, tipo],
+    [
+      dadosFiltrados,
+      tipo,
+    ],
   );
 
 
@@ -125,6 +210,7 @@ export default function FinanceiroPrevistoRealizado({
   const totalItens =
     dadosExportacao.length;
 
+
   const totalPaginas = Math.max(
     1,
     Math.ceil(
@@ -132,6 +218,7 @@ export default function FinanceiroPrevistoRealizado({
       ITENS_POR_PAGINA,
     ),
   );
+
 
   const paginaValida = Math.max(
     1,
@@ -141,9 +228,11 @@ export default function FinanceiroPrevistoRealizado({
     ),
   );
 
+
   const inicioPagina =
     (paginaValida - 1) *
     ITENS_POR_PAGINA;
+
 
   const fimPagina =
     inicioPagina +
@@ -170,6 +259,7 @@ export default function FinanceiroPrevistoRealizado({
       ? inicioPagina + 1
       : 0;
 
+
   const fimExibicao = Math.min(
     fimPagina,
     totalItens,
@@ -182,30 +272,30 @@ export default function FinanceiroPrevistoRealizado({
         ? "Receitas e Despesas"
         : tipo;
 
+    const categoriaTexto =
+      categoria !== "todas"
+        ? obterNomeCategoriaSelecionada(
+            categoriasDisponiveis,
+            categoria,
+          )
+        : buscaCategoria.trim()
+          ? `Busca: ${buscaCategoria.trim()}`
+          : "Todas as categorias";
+
     return (
       `Ano: ${ano} | ` +
       `Mês: ${obterNomeMes(mes)} | ` +
-      `Tipo: ${tipoTexto}`
+      `Tipo: ${tipoTexto} | ` +
+      `Categoria: ${categoriaTexto}`
     );
-  }, [ano, mes, tipo]);
-
-
-  function alterarAno(valor) {
-    setAno(Number(valor));
-    setPaginaAtual(1);
-  }
-
-
-  function alterarMes(valor) {
-    setMes(Number(valor));
-    setPaginaAtual(1);
-  }
-
-
-  function alterarTipo(valor) {
-    setTipo(valor);
-    setPaginaAtual(1);
-  }
+  }, [
+    ano,
+    mes,
+    tipo,
+    categoria,
+    buscaCategoria,
+    categoriasDisponiveis,
+  ]);
 
 
   async function handleGerarPDF() {
@@ -390,102 +480,253 @@ export default function FinanceiroPrevistoRealizado({
       </div>
 
 
-      <div className="relatorio-filtros-card">
-        <div className="relatorio-filtros-header">
+      <div className="relatorio-filtros-card financeiro-relatorio-filtros-card">
+        <div className="relatorio-filtros-header financeiro-relatorio-filtros-header">
           <div>
             <h3>
               Parâmetros do relatório
             </h3>
-
-            <p>
-              Selecione o ano, mês e tipo financeiro.
-            </p>
           </div>
 
           {atualizando && (
             <span className="financeiro-relatorio-atualizando">
               <FiRefreshCw className="financeiro-relatorio-girando" />
+
               Atualizando dados...
             </span>
           )}
         </div>
 
 
-        <div className="financeiro-relatorio-filtros">
-          <label>
-            <span>Ano</span>
+        <Filtros
+          filtros={filtros}
+          setFiltros={setFiltros}
+          valoresPadrao={filtrosPadrao}
+          className="financeiro-relatorio-filtros-wrapper"
+          mostrarBotaoLimpar={true}
+          textoLimpar="Limpar filtros"
+          iconeLimpar={<FiX />}
+          onDepoisAlterar={() =>
+            setPaginaAtual(1)
+          }
+          onDepoisLimpar={() =>
+            setPaginaAtual(1)
+          }
+        >
+          {({ alterar }) => (
+            <div className="financeiro-relatorio-filtros">
 
-            <select
-              value={ano}
-              onChange={(event) =>
-                alterarAno(
-                  event.target.value,
-                )
-              }
-            >
-              {(anosDisponiveis.length > 0
-                ? anosDisponiveis
-                : [obterAnoAtual()]
-              ).map((itemAno) => (
-                <option
-                  key={itemAno}
-                  value={itemAno}
+              {/* ANO */}
+
+              <label>
+                <span>
+                  Ano
+                </span>
+
+                <select
+                  value={ano}
+                  onChange={(event) =>
+                    alterar(
+                      "ano",
+                      Number(
+                        event.target.value,
+                      ),
+                      {
+                        categoria:
+                          "todas",
+
+                        buscaCategoria:
+                          "",
+                      },
+                    )
+                  }
                 >
-                  {itemAno}
-                </option>
-              ))}
-            </select>
-          </label>
+                  {(anosDisponiveis.length > 0
+                    ? anosDisponiveis
+                    : [obterAnoAtual()]
+                  ).map((itemAno) => (
+                    <option
+                      key={itemAno}
+                      value={itemAno}
+                    >
+                      {itemAno}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
 
-          <label>
-            <span>Mês</span>
+              {/* MÊS */}
 
-            <select
-              value={mes}
-              onChange={(event) =>
-                alterarMes(
-                  event.target.value,
-                )
-              }
-            >
-              {MESES.map((itemMes) => (
-                <option
-                  key={itemMes.valor}
-                  value={itemMes.valor}
+              <label>
+                <span>
+                  Mês
+                </span>
+
+                <select
+                  value={mes}
+                  onChange={(event) =>
+                    alterar(
+                      "mes",
+                      Number(
+                        event.target.value,
+                      ),
+                      {
+                        categoria:
+                          "todas",
+
+                        buscaCategoria:
+                          "",
+                      },
+                    )
+                  }
                 >
-                  {itemMes.nome}
-                </option>
-              ))}
-            </select>
-          </label>
+                  {MESES.map(
+                    (itemMes) => (
+                      <option
+                        key={
+                          itemMes.valor
+                        }
+                        value={
+                          itemMes.valor
+                        }
+                      >
+                        {itemMes.nome}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </label>
 
 
-          <label>
-            <span>Tipo</span>
+              {/* TIPO */}
 
-            <select
-              value={tipo}
-              onChange={(event) =>
-                alterarTipo(
-                  event.target.value,
-                )
-              }
-            >
-              <option value="todos">
-                Receitas e Despesas
-              </option>
+              <label>
+                <span>
+                  Tipo
+                </span>
 
-              <option value="Receita">
-                Receita
-              </option>
+                <select
+                  value={tipo}
+                  onChange={(event) =>
+                    alterar(
+                      "tipo",
+                      event.target.value,
+                      {
+                        categoria:
+                          "todas",
 
-              <option value="Despesa">
-                Despesa
-              </option>
-            </select>
-          </label>
-        </div>
+                        buscaCategoria:
+                          "",
+                      },
+                    )
+                  }
+                >
+                  <option value="todos">
+                    Receitas e Despesas
+                  </option>
+
+                  <option value="Receita">
+                    Receita
+                  </option>
+
+                  <option value="Despesa">
+                    Despesa
+                  </option>
+                </select>
+              </label>
+
+
+              {/* CATEGORIA */}
+
+              <label className="financeiro-relatorio-filtro-categoria">
+                <span>
+                  Categoria
+                </span>
+
+                <select
+                  value={categoria}
+                  onChange={(event) =>
+                    alterar(
+                      "categoria",
+                      event.target.value,
+                      {
+                        buscaCategoria:
+                          "",
+                      },
+                    )
+                  }
+                >
+                  <option value="todas">
+                    Todas as categorias
+                  </option>
+
+                  {categoriasExibidas.map(
+                    (item) => (
+                      <option
+                        key={
+                          item.codigo
+                        }
+                        value={
+                          item.codigo
+                        }
+                      >
+                        {item.codigo} - {item.nome}
+                      </option>
+                    ),
+                  )}
+
+                  {buscaCategoria.trim() &&
+                    categoriasEncontradas.length ===
+                      0 && (
+                      <option
+                        value="__sem_resultado__"
+                        disabled
+                      >
+                        Nenhuma categoria encontrada
+                      </option>
+                    )}
+                </select>
+              </label>
+
+
+              {/* BUSCA CATEGORIA */}
+
+              <label className="financeiro-relatorio-busca-categoria">
+                <span>
+                  Buscar categoria
+                </span>
+
+                <div className="financeiro-relatorio-busca-categoria-campo">
+                  <FiSearch />
+
+                  <input
+                    type="search"
+                    value={
+                      buscaCategoria
+                    }
+                    onChange={(
+                      event,
+                    ) =>
+                      alterar(
+                        "buscaCategoria",
+                        event.target
+                          .value,
+                        {
+                          categoria:
+                            "todas",
+                        },
+                      )
+                    }
+                    placeholder="Código ou nome da categoria"
+                    autoComplete="off"
+                  />
+                </div>
+              </label>
+
+            </div>
+          )}
+        </Filtros>
       </div>
 
 
@@ -518,7 +759,7 @@ export default function FinanceiroPrevistoRealizado({
             </span>
 
             <strong>
-              {dados.length}
+              {totalItens}
             </strong>
           </div>
 
@@ -564,7 +805,9 @@ export default function FinanceiroPrevistoRealizado({
               type="button"
               className="relatorio-visualizacao-fechar"
               onClick={() =>
-                setVisualizacaoAberta(false)
+                setVisualizacaoAberta(
+                  false,
+                )
               }
               aria-label="Fechar visualização"
             >
@@ -598,13 +841,21 @@ export default function FinanceiroPrevistoRealizado({
 
           {totalItens > 0 ? (
             <div className="financeiro-relatorio-grupos">
-              {gruposPagina.map((grupo) => (
-                <FinanceiroTabelaGrupo
-                  key={grupo.chave}
-                  grupo={grupo}
-                  colunas={colunasExibicao}
-                />
-              ))}
+              {gruposPagina.map(
+                (grupo) => (
+                  <FinanceiroTabelaGrupo
+                    key={
+                      grupo.chave
+                    }
+                    grupo={
+                      grupo
+                    }
+                    colunas={
+                      colunasExibicao
+                    }
+                  />
+                ),
+              )}
             </div>
           ) : (
             <div className="relatorio-visualizacao-vazia">
@@ -623,7 +874,9 @@ export default function FinanceiroPrevistoRealizado({
 
           <div className="relatorio-visualizacao-footer">
             <span>
-              Exibindo {inicioExibicao} a {fimExibicao} de{" "}
+              Exibindo{" "}
+              {inicioExibicao} a{" "}
+              {fimExibicao} de{" "}
               {totalItens} registro(s)
             </span>
 
@@ -633,12 +886,21 @@ export default function FinanceiroPrevistoRealizado({
           </div>
 
 
-          {totalItens > ITENS_POR_PAGINA && (
+          {totalItens >
+            ITENS_POR_PAGINA && (
             <Paginacao
-              paginaAtual={paginaValida}
-              totalItens={totalItens}
-              itensPorPagina={ITENS_POR_PAGINA}
-              onChangePagina={setPaginaAtual}
+              paginaAtual={
+                paginaValida
+              }
+              totalItens={
+                totalItens
+              }
+              itensPorPagina={
+                ITENS_POR_PAGINA
+              }
+              onChangePagina={
+                setPaginaAtual
+              }
             />
           )}
         </section>
