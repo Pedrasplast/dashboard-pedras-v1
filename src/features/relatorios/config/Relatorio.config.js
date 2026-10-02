@@ -1,4 +1,3 @@
-
 import {
   FiActivity,
   FiAlertTriangle,
@@ -10,21 +9,13 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 
-import {
-  agruparProducaoPorInjetora,
-} from "../producao/ProducaoPorInjetora";
+import { agruparProducaoPorInjetora } from "../producao/ProducaoPorInjetora";
 
-import {
-  agruparProducaoPorProduto,
-} from "../producao/ProducaoPorProduto";
+import { agruparProducaoPorProduto } from "../producao/ProducaoPorProduto";
 
-import {
-  impactoParadasPorMotivo,
-} from "../paradas/ImpactoPorMotivo";
+import { impactoParadasPorMotivo } from "../paradas/ImpactoPorMotivo";
 
-import {
-  agruparMotivoJustificativa,
-} from "../paradas/MotivoJustificativa";
+import { agruparMotivoJustificativa } from "../paradas/MotivoJustificativa";
 
 import {
   prepararPedidosDetalhados,
@@ -33,31 +24,27 @@ import {
   agruparPedidosPorDataProduto,
 } from "../pedidos/PedidosRelatorios";
 
-import PedidosAlteradosRelatorio
-  from "../pedidos-alterados/PedidosAlteradosRelatorio";
+import PedidosAlteradosRelatorio from "../pedidos-alterados/PedidosAlteradosRelatorio";
 
-import PedidosCompraAlteradosRelatorio
-  from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
+import PedidosCompraAlteradosRelatorio from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
 
 /* =========================================================
    FINANCEIRO
 ========================================================= */
 
-import FinanceiroPrevistoRealizado
-  from "../financeiro/FinanceiroPrevistoRealizado";
+import FinanceiroPrevistoRealizado from "../financeiro/FinanceiroPrevistoRealizado";
 
 /* =========================================================
    MATÉRIA-PRIMA
 ========================================================= */
 
-import ConsumoProgramadoPorInjetora
-  from "../materia-prima/ConsumoProgramadoPorInjetora";
+import ConsumoProgramadoPorInjetora from "../materia-prima/consumo-programado-injetora/ConsumoProgramadoPorInjetora";
 
-import ConsumoProgramadoPorFornecedor
-  from "../materia-prima/ConsumoProgramadoPorFornecedor";
+import ConsumoProgramadoPorFornecedor from "../materia-prima/consumo-programado-fornecedor/ConsumoProgramadoPorFornecedor";
 
-import NecessidadeCompraMateriaPrima
-  from "../materia-prima/NecessidadeCompraMateriaPrima";
+import NecessidadeCompraMateriaPrima from "../materia-prima/necessidade-compra/NecessidadeCompraMateriaPrima";
+
+import EntradasComprasMateriaPrima from "../materia-prima/entradas-compras/EntradasComprasMateriaPrima";
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -69,7 +56,6 @@ import NecessidadeCompraMateriaPrima
 ========================================================= */
 
 export const RELATORIOS = [
-
   /* =====================================================
      PRODUÇÃO
   ===================================================== */
@@ -78,8 +64,7 @@ export const RELATORIOS = [
     id: "producao-injetora",
     categoria: "Produção",
     titulo: "Produção por Injetora",
-    descricao:
-      "Resumo consolidado da produção por injetora no período selecionado.",
+    descricao: "Resumo consolidado da produção por injetora no período selecionado.",
     icone: FiBarChart2,
     fonteDados: "producao",
 
@@ -97,21 +82,14 @@ export const RELATORIOS = [
 
     transformarDados: agruparProducaoPorInjetora,
 
-    colunas: [
-      "injetora",
-      "conforme",
-      "danificada",
-      "total_produzido",
-      "qualidade",
-    ],
+    colunas: ["injetora", "conforme", "danificada", "total_produzido", "qualidade"],
   },
 
   {
     id: "producao-produto",
     categoria: "Produção",
     titulo: "Produção por Produto",
-    descricao:
-      "Resumo consolidado da produção por produto e injetora no período selecionado.",
+    descricao: "Resumo consolidado da produção por produto e injetora no período selecionado.",
     icone: FiBarChart2,
     fonteDados: "producao",
 
@@ -168,13 +146,7 @@ export const RELATORIOS = [
 
     transformarDados: impactoParadasPorMotivo,
 
-    colunas: [
-      "motivo",
-      "ocorrencias",
-      "tempo_total",
-      "tempo_medio",
-      "percentual_impacto",
-    ],
+    colunas: ["motivo", "ocorrencias", "tempo_total", "tempo_medio", "percentual_impacto"],
   },
 
   {
@@ -218,8 +190,7 @@ export const RELATORIOS = [
     id: "pedidos-abertos",
     categoria: "Pedidos",
     titulo: "Pedidos em Aberto",
-    descricao:
-      "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
+    descricao: "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
     icone: FiShoppingCart,
     fonteDados: "pedidos",
 
@@ -315,6 +286,7 @@ export const RELATORIOS = [
     },
 
     transformarDados: null,
+
     colunas: [],
   },
 
@@ -322,8 +294,7 @@ export const RELATORIOS = [
     id: "pedidos-produto-codigo",
     categoria: "Pedidos",
     titulo: "Quantidade de Produtos por Código",
-    descricao:
-      "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
+    descricao: "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
     icone: FiPackage,
     fonteDados: "pedidos",
 
@@ -341,13 +312,7 @@ export const RELATORIOS = [
 
     transformarDados: agruparPedidosPorCodigoProduto,
 
-    colunas: [
-      "codigo_produto",
-      "produto_pedido",
-      "unidade",
-      "quantidade",
-      "pedidos_atendidos",
-    ],
+    colunas: ["codigo_produto", "produto_pedido", "unidade", "quantidade", "pedidos_atendidos"],
   },
 
   {
@@ -373,22 +338,15 @@ export const RELATORIOS = [
 
     transformarDados: agruparPedidosPorDataProduto,
 
-    // A contagem não aparece na tela. O total de quantidades aparece somente no PDF.
-    exibicao: { mostrarContagem: false },
+    exibicao: {
+      mostrarContagem: false,
+    },
 
-    colunas: [
-      "previsao",
-      "codigo_produto",
-      "produto_pedido",
-      "unidade",
-      "quantidade",
-      "pedidos",
-    ],
+    colunas: ["previsao", "codigo_produto", "produto_pedido", "unidade", "quantidade", "pedidos"],
   },
 
   /* =====================================================
-     PEDIDOS DE COMPRA ALTERADOS — ÚNICO RELATÓRIO
-     DE COMPRAS NESTE CADASTRO
+     PEDIDOS DE COMPRA ALTERADOS
   ===================================================== */
 
   {
@@ -415,6 +373,7 @@ export const RELATORIOS = [
     },
 
     transformarDados: null,
+
     colunas: [],
   },
 
@@ -486,6 +445,7 @@ export const RELATORIOS = [
     },
 
     transformarDados: null,
+
     colunas: [],
   },
 
@@ -513,6 +473,7 @@ export const RELATORIOS = [
     },
 
     transformarDados: null,
+
     colunas: [],
   },
 
@@ -540,7 +501,47 @@ export const RELATORIOS = [
     },
 
     transformarDados: null,
+
     colunas: [],
   },
 
+  {
+    id: "materia-prima-entradas-compras",
+    categoria: "Matéria-Prima",
+    titulo: "Entradas e Compras de Matéria-Prima",
+    descricao:
+      "Consolida materiais recebidos e compras futuras, com filtros por período, situação, fornecedor, material e tipo, além de totalização dinâmica.",
+    icone: FiShoppingCart,
+    fonteDados: "custom",
+    tipoRelatorio: "custom",
+    componenteCustomizado: EntradasComprasMateriaPrima,
+
+    filtros: {
+      periodo: false,
+      injetora: false,
+      produto: false,
+      turno: false,
+      mp: false,
+      tipo: false,
+      cliente: false,
+      vendedor: false,
+      status: false,
+    },
+
+    transformarDados: null,
+
+    colunas: [
+      "pedido",
+      "recebido",
+      "emissao",
+      "previsao_recebimento",
+      "fornecedor_mp",
+      "material_mp",
+      "tipo",
+      "quantidade_kg",
+      "preco",
+      "ipi",
+      "total",
+    ],
+  },
 ];

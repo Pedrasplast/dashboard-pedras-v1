@@ -22,18 +22,25 @@ const CORES = {
   texto: "FF0F172A",
 };
 
-/*
- * Colunas cujo conteúdo é numérico/monetário/percentual.
- * Além das já usadas na pré-visualização em tela, inclui as
- * colunas financeiras (Previsto x Realizado por Categoria).
- */
+
+/* =========================================================
+   ALINHAMENTOS
+========================================================= */
+
 const COLUNAS_ALINHADAS_DIREITA = new Set([
   ...COLUNAS_NUMERICAS,
+
   "valor_previsto",
   "valor_realizado",
   "variacao",
   "variacao_percentual",
+
+  "quantidade_kg",
+  "preco",
+  "ipi",
+  "total",
 ]);
+
 
 const COLUNAS_LARGAS = new Set([
   "descricao",
@@ -52,36 +59,71 @@ const COLUNAS_LARGAS = new Set([
 ========================================================= */
 
 function obterDataHoraEmissao() {
-  return new Date().toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return new Date().toLocaleString(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
 }
+
 
 function calcularLarguraColuna(coluna) {
   if (coluna.larguraExcel) {
-    return Number(coluna.larguraExcel);
+    return Number(
+      coluna.larguraExcel,
+    );
   }
 
-  if (COLUNAS_LARGAS.has(coluna.chave)) {
+  if (
+    COLUNAS_LARGAS.has(
+      coluna.chave,
+    )
+  ) {
     return 38;
   }
 
-  const titulo = String(coluna.titulo || coluna.chave || "");
+  const titulo = String(
+    coluna.titulo ||
+    coluna.chave ||
+    "",
+  );
 
-  return Math.max(14, Math.min(32, titulo.length + 10));
+  return Math.max(
+    14,
+    Math.min(
+      32,
+      titulo.length + 10,
+    ),
+  );
 }
 
-function obterValorCelula(coluna, item) {
-  if (typeof coluna.valorExcel === "function") {
-    return coluna.valorExcel(item);
+
+function obterValorCelula(
+  coluna,
+  item,
+) {
+  if (
+    typeof coluna.valorExcel ===
+    "function"
+  ) {
+    return coluna.valorExcel(
+      item,
+    );
   }
 
-  if (typeof coluna.valor === "function") {
-    return coluna.valor(item);
+  if (
+    typeof coluna.valor ===
+    "function"
+  ) {
+    return coluna.valor(
+      item,
+    );
   }
 
   return "";
@@ -89,58 +131,209 @@ function obterValorCelula(coluna, item) {
 
 
 /* =========================================================
-   CABEÇALHO DO RELATÓRIO
-   (título + faixa + período/filtros/emissão)
+   FORMATAÇÃO DAS CÉLULAS DO EXCEL
 ========================================================= */
 
-function criarCabecalhoRelatorio({ worksheet, relatorio, textoFiltros, totalColunas }) {
-  const ultimaColuna = worksheet.getColumn(totalColunas).letter;
+function aplicarFormatoExcel(
+  cell,
+  coluna,
+  valor,
+) {
+  if (!coluna?.formatoExcel) {
+    return;
+  }
 
-  /* TÍTULO */
+  const ehNumero =
+    typeof valor === "number" &&
+    Number.isFinite(valor);
 
-  worksheet.mergeCells(`A1:${ultimaColuna}1`);
+  const ehData =
+    valor instanceof Date &&
+    !Number.isNaN(
+      valor.getTime(),
+    );
 
-  const tituloCell = worksheet.getCell("A1");
+  /*
+   * Só aplica numFmt quando a célula possui um valor
+   * realmente numérico ou uma Date.
+   *
+   * Isso permite, por exemplo:
+   *
+   * Recebido = Date       -> dd/mm/yyyy
+   * Recebido = A receber  -> texto normal
+   */
+  if (
+    !ehNumero &&
+    !ehData
+  ) {
+    return;
+  }
 
-  tituloCell.value = relatorio?.titulo || "Relatório";
+  cell.numFmt =
+    coluna.formatoExcel;
+}
 
-  tituloCell.font = { bold: true, size: 16, color: { argb: CORES.texto } };
 
-  tituloCell.alignment = { vertical: "middle", horizontal: "left" };
+/* =========================================================
+   CABEÇALHO DO RELATÓRIO
+========================================================= */
 
-  worksheet.getRow(1).height = 28;
+function criarCabecalhoRelatorio({
+  worksheet,
+  relatorio,
+  textoFiltros,
+  totalColunas,
+}) {
+  const ultimaColuna =
+    worksheet
+      .getColumn(
+        totalColunas,
+      )
+      .letter;
 
-  /* FAIXA DA CATEGORIA */
 
-  worksheet.mergeCells(`A2:${ultimaColuna}2`);
+  /* =======================================================
+     TÍTULO
+  ======================================================= */
 
-  const faixa = worksheet.getCell("A2");
+  worksheet.mergeCells(
+    `A1:${ultimaColuna}1`,
+  );
 
-  faixa.value = String(relatorio?.categoria || "Relatório").toUpperCase();
+  const tituloCell =
+    worksheet.getCell(
+      "A1",
+    );
 
-  faixa.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.azul } };
+  tituloCell.value =
+    relatorio?.titulo ||
+    "Relatório";
 
-  faixa.font = { bold: true, color: { argb: CORES.branco }, size: 9 };
+  tituloCell.font = {
+    bold: true,
+    size: 16,
 
-  faixa.alignment = { vertical: "middle", horizontal: "left" };
+    color: {
+      argb:
+        CORES.texto,
+    },
+  };
 
-  worksheet.getRow(2).height = 21;
+  tituloCell.alignment = {
+    vertical:
+      "middle",
 
-  /* INFORMAÇÕES */
+    horizontal:
+      "left",
+  };
 
-  worksheet.mergeCells(`A3:${ultimaColuna}3`);
+  worksheet.getRow(
+    1,
+  ).height = 28;
 
-  const info = worksheet.getCell("A3");
 
-  info.value = `Filtros: ${textoFiltros || "Sem filtros adicionais"}   •   Emitido em: ${obterDataHoraEmissao()}`;
+  /* =======================================================
+     FAIXA DA CATEGORIA
+  ======================================================= */
 
-  info.font = { size: 9, bold: true, color: { argb: CORES.cinzaTexto } };
+  worksheet.mergeCells(
+    `A2:${ultimaColuna}2`,
+  );
 
-  info.alignment = { vertical: "middle", horizontal: "left", wrapText: true };
+  const faixa =
+    worksheet.getCell(
+      "A2",
+    );
 
-  worksheet.getRow(3).height = 21;
+  faixa.value =
+    String(
+      relatorio?.categoria ||
+      "Relatório",
+    ).toUpperCase();
 
-  worksheet.getRow(4).height = 8;
+  faixa.fill = {
+    type: "pattern",
+    pattern: "solid",
+
+    fgColor: {
+      argb:
+        CORES.azul,
+    },
+  };
+
+  faixa.font = {
+    bold: true,
+    size: 9,
+
+    color: {
+      argb:
+        CORES.branco,
+    },
+  };
+
+  faixa.alignment = {
+    vertical:
+      "middle",
+
+    horizontal:
+      "left",
+  };
+
+  worksheet.getRow(
+    2,
+  ).height = 21;
+
+
+  /* =======================================================
+     INFORMAÇÕES
+  ======================================================= */
+
+  worksheet.mergeCells(
+    `A3:${ultimaColuna}3`,
+  );
+
+  const info =
+    worksheet.getCell(
+      "A3",
+    );
+
+  info.value =
+    `Filtros: ${
+      textoFiltros ||
+      "Sem filtros adicionais"
+    }   •   Emitido em: ${
+      obterDataHoraEmissao()
+    }`;
+
+  info.font = {
+    size: 9,
+    bold: true,
+
+    color: {
+      argb:
+        CORES.cinzaTexto,
+    },
+  };
+
+  info.alignment = {
+    vertical:
+      "middle",
+
+    horizontal:
+      "left",
+
+    wrapText:
+      true,
+  };
+
+  worksheet.getRow(
+    3,
+  ).height = 21;
+
+  worksheet.getRow(
+    4,
+  ).height = 8;
+
 
   return 5;
 }
@@ -150,26 +343,84 @@ function criarCabecalhoRelatorio({ worksheet, relatorio, textoFiltros, totalColu
    CABEÇALHO DA TABELA
 ========================================================= */
 
-function escreverCabecalhoTabela({ worksheet, linha, colunas }) {
-  colunas.forEach((coluna, indice) => {
-    const cell = worksheet.getCell(linha, indice + 1);
+function escreverCabecalhoTabela({
+  worksheet,
+  linha,
+  colunas,
+}) {
+  colunas.forEach(
+    (
+      coluna,
+      indice,
+    ) => {
+      const cell =
+        worksheet.getCell(
+          linha,
+          indice + 1,
+        );
 
-    cell.value = coluna.titulo || coluna.chave;
+      cell.value =
+        coluna.titulo ||
+        coluna.chave;
 
-    cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.azulEscuro } };
+      cell.fill = {
+        type:
+          "pattern",
 
-    cell.font = { bold: true, color: { argb: CORES.branco }, size: 10 };
+        pattern:
+          "solid",
 
-    cell.alignment = {
-      vertical: "middle",
-      horizontal: COLUNAS_ALINHADAS_DIREITA.has(coluna.chave) ? "right" : "left",
-      wrapText: true,
-    };
+        fgColor: {
+          argb:
+            CORES.azulEscuro,
+        },
+      };
 
-    cell.border = { bottom: { style: "thin", color: { argb: "FF334155" } } };
-  });
+      cell.font = {
+        bold:
+          true,
 
-  worksheet.getRow(linha).height = 24;
+        size:
+          10,
+
+        color: {
+          argb:
+            CORES.branco,
+        },
+      };
+
+      cell.alignment = {
+        vertical:
+          "middle",
+
+        horizontal:
+          COLUNAS_ALINHADAS_DIREITA.has(
+            coluna.chave,
+          )
+            ? "right"
+            : "left",
+
+        wrapText:
+          true,
+      };
+
+      cell.border = {
+        bottom: {
+          style:
+            "thin",
+
+          color: {
+            argb:
+              "FF334155",
+          },
+        },
+      };
+    },
+  );
+
+  worksheet.getRow(
+    linha,
+  ).height = 24;
 }
 
 
@@ -177,33 +428,117 @@ function escreverCabecalhoTabela({ worksheet, linha, colunas }) {
    LINHAS DE DADOS
 ========================================================= */
 
-function escreverLinhasDados({ worksheet, linhaInicial, colunas, dados }) {
-  let linhaAtual = linhaInicial;
+function escreverLinhasDados({
+  worksheet,
+  linhaInicial,
+  colunas,
+  dados,
+}) {
+  let linhaAtual =
+    linhaInicial;
 
-  dados.forEach((item, indice) => {
-    colunas.forEach((coluna, indiceColuna) => {
-      const cell = worksheet.getCell(linhaAtual, indiceColuna + 1);
 
-      cell.value = obterValorCelula(coluna, item);
+  dados.forEach(
+    (
+      item,
+      indice,
+    ) => {
+      colunas.forEach(
+        (
+          coluna,
+          indiceColuna,
+        ) => {
+          const cell =
+            worksheet.getCell(
+              linhaAtual,
+              indiceColuna + 1,
+            );
 
-      cell.font = { size: 9.5, color: { argb: CORES.texto } };
 
-      cell.alignment = {
-        vertical: "middle",
-        horizontal: COLUNAS_ALINHADAS_DIREITA.has(coluna.chave) ? "right" : "left",
-      };
+          const valorCelula =
+            obterValorCelula(
+              coluna,
+              item,
+            );
 
-      cell.border = { bottom: { style: "thin", color: { argb: CORES.cinzaBorda } } };
 
-      if (indice % 2 === 1) {
-        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.cinzaMuitoClaro } };
-      }
-    });
+          cell.value =
+            valorCelula;
 
-    worksheet.getRow(linhaAtual).height = 20;
 
-    linhaAtual += 1;
-  });
+          aplicarFormatoExcel(
+            cell,
+            coluna,
+            valorCelula,
+          );
+
+
+          cell.font = {
+            size:
+              9.5,
+
+            color: {
+              argb:
+                CORES.texto,
+            },
+          };
+
+
+          cell.alignment = {
+            vertical:
+              "middle",
+
+            horizontal:
+              COLUNAS_ALINHADAS_DIREITA.has(
+                coluna.chave,
+              )
+                ? "right"
+                : "left",
+          };
+
+
+          cell.border = {
+            bottom: {
+              style:
+                "thin",
+
+              color: {
+                argb:
+                  CORES.cinzaBorda,
+              },
+            },
+          };
+
+
+          if (
+            indice % 2 === 1
+          ) {
+            cell.fill = {
+              type:
+                "pattern",
+
+              pattern:
+                "solid",
+
+              fgColor: {
+                argb:
+                  CORES.cinzaMuitoClaro,
+              },
+            };
+          }
+        },
+      );
+
+
+      worksheet.getRow(
+        linhaAtual,
+      ).height = 20;
+
+
+      linhaAtual += 1;
+    },
+  );
+
 
   return linhaAtual;
 }
@@ -211,151 +546,392 @@ function escreverLinhasDados({ worksheet, linhaInicial, colunas, dados }) {
 
 /* =========================================================
    FAIXA DE GRUPO
-   (usada quando o relatório separa os dados em blocos,
-   como Receitas / Despesas no Financeiro)
 ========================================================= */
 
-function escreverFaixaGrupo({ worksheet, linha, titulo, quantidade, totalColunas }) {
-  const ultimaColuna = worksheet.getColumn(totalColunas).letter;
+function escreverFaixaGrupo({
+  worksheet,
+  linha,
+  titulo,
+  quantidade,
+  totalColunas,
+}) {
+  const ultimaColuna =
+    worksheet
+      .getColumn(
+        totalColunas,
+      )
+      .letter;
 
-  worksheet.mergeCells(`A${linha}:${ultimaColuna}${linha}`);
 
-  const cell = worksheet.getCell(`A${linha}`);
+  worksheet.mergeCells(
+    `A${linha}:${ultimaColuna}${linha}`,
+  );
 
-  cell.value = `${String(titulo || "").toUpperCase()}  (${quantidade} registro${quantidade === 1 ? "" : "s"})`;
 
-  cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.azulClaro } };
+  const cell =
+    worksheet.getCell(
+      `A${linha}`,
+    );
 
-  cell.font = { bold: true, color: { argb: CORES.azul }, size: 10 };
 
-  cell.alignment = { vertical: "middle", horizontal: "left" };
+  cell.value =
+    `${String(
+      titulo || "",
+    ).toUpperCase()}  (${
+      quantidade
+    } registro${
+      quantidade === 1
+        ? ""
+        : "s"
+    })`;
 
-  worksheet.getRow(linha).height = 22;
+
+  cell.fill = {
+    type:
+      "pattern",
+
+    pattern:
+      "solid",
+
+    fgColor: {
+      argb:
+        CORES.azulClaro,
+    },
+  };
+
+
+  cell.font = {
+    bold:
+      true,
+
+    size:
+      10,
+
+    color: {
+      argb:
+        CORES.azul,
+    },
+  };
+
+
+  cell.alignment = {
+    vertical:
+      "middle",
+
+    horizontal:
+      "left",
+  };
+
+
+  worksheet.getRow(
+    linha,
+  ).height = 22;
 }
 
 
-/* =====================================================
+/* =========================================================
    GERADOR DE EXCEL
-===================================================== */
+========================================================= */
 
-export async function gerarExcelRelatorio({ relatorio, dados, textoFiltros, grupos }) {
+export async function gerarExcelRelatorio({
+  relatorio,
+  dados,
+  textoFiltros,
+  grupos,
+}) {
   if (!relatorio) {
     return;
   }
 
-  if (!Array.isArray(dados) || dados.length === 0) {
-    alert("Nenhum dado encontrado com os filtros selecionados.");
+
+  if (
+    !Array.isArray(
+      dados,
+    ) ||
+    dados.length === 0
+  ) {
+    alert(
+      "Nenhum dado encontrado com os filtros selecionados.",
+    );
 
     return;
   }
 
-  try {
-    const colunas = obterColunasExportacao(relatorio, "excel");
 
-    if (colunas.length === 0) {
-      alert("Nenhuma coluna configurada para este relatório.");
+  try {
+    const colunas =
+      obterColunasExportacao(
+        relatorio,
+        "excel",
+      );
+
+
+    if (
+      colunas.length === 0
+    ) {
+      alert(
+        "Nenhuma coluna configurada para este relatório.",
+      );
 
       return;
     }
 
-    const workbook = new ExcelJS.Workbook();
 
-    workbook.creator = "Pedrasplast";
-    workbook.company = "Pedrasplast";
-    workbook.subject = relatorio.titulo;
-    workbook.title = relatorio.titulo;
-    workbook.created = new Date();
+    const workbook =
+      new ExcelJS.Workbook();
 
-    const worksheet = workbook.addWorksheet("Relatório", {
-      views: [{ showGridLines: false }],
-    });
 
-    worksheet.columns = colunas.map((coluna) => ({ width: calcularLarguraColuna(coluna) }));
+    workbook.creator =
+      "Pedrasplast";
 
-    const linhaCabecalhoTabela = criarCabecalhoRelatorio({
-      worksheet,
-      relatorio,
-      textoFiltros,
-      totalColunas: colunas.length,
-    });
+    workbook.company =
+      "Pedrasplast";
 
-    /* =================================================
-       GRUPOS (ex.: Receitas / Despesas no Financeiro)
-    ================================================= */
+    workbook.subject =
+      relatorio.titulo;
 
-    const gruposValidos = Array.isArray(grupos)
-      ? grupos.filter((grupo) => Array.isArray(grupo?.dados) && grupo.dados.length > 0)
-      : [];
+    workbook.title =
+      relatorio.titulo;
 
-    if (gruposValidos.length > 0) {
-      let linhaAtual = linhaCabecalhoTabela;
+    workbook.created =
+      new Date();
 
-      gruposValidos.forEach((grupo) => {
-        escreverFaixaGrupo({
-          worksheet,
-          linha: linhaAtual,
-          titulo: grupo.titulo,
-          quantidade: grupo.dados.length,
-          totalColunas: colunas.length,
-        });
 
-        linhaAtual += 1;
+    const worksheet =
+      workbook.addWorksheet(
+        "Relatório",
+        {
+          views: [
+            {
+              showGridLines:
+                false,
+            },
+          ],
+        },
+      );
 
-        escreverCabecalhoTabela({ worksheet, linha: linhaAtual, colunas });
 
-        linhaAtual += 1;
+    worksheet.columns =
+      colunas.map(
+        (coluna) => ({
+          width:
+            calcularLarguraColuna(
+              coluna,
+            ),
+        }),
+      );
 
-        linhaAtual = escreverLinhasDados({
-          worksheet,
-          linhaInicial: linhaAtual,
-          colunas,
-          dados: grupo.dados,
-        });
 
-        worksheet.getRow(linhaAtual).height = 10;
+    const linhaCabecalhoTabela =
+      criarCabecalhoRelatorio({
+        worksheet,
+        relatorio,
+        textoFiltros,
 
-        linhaAtual += 1;
+        totalColunas:
+          colunas.length,
       });
 
+
+    /* =====================================================
+       GRUPOS
+    ===================================================== */
+
+    const gruposValidos =
+      Array.isArray(
+        grupos,
+      )
+        ? grupos.filter(
+            (grupo) =>
+              Array.isArray(
+                grupo?.dados,
+              ) &&
+              grupo.dados.length > 0,
+          )
+        : [];
+
+
+    if (
+      gruposValidos.length > 0
+    ) {
+      let linhaAtual =
+        linhaCabecalhoTabela;
+
+
+      gruposValidos.forEach(
+        (grupo) => {
+          escreverFaixaGrupo({
+            worksheet,
+
+            linha:
+              linhaAtual,
+
+            titulo:
+              grupo.titulo,
+
+            quantidade:
+              grupo.dados.length,
+
+            totalColunas:
+              colunas.length,
+          });
+
+
+          linhaAtual += 1;
+
+
+          escreverCabecalhoTabela({
+            worksheet,
+
+            linha:
+              linhaAtual,
+
+            colunas,
+          });
+
+
+          linhaAtual += 1;
+
+
+          linhaAtual =
+            escreverLinhasDados({
+              worksheet,
+
+              linhaInicial:
+                linhaAtual,
+
+              colunas,
+
+              dados:
+                grupo.dados,
+            });
+
+
+          worksheet.getRow(
+            linhaAtual,
+          ).height = 10;
+
+
+          linhaAtual += 1;
+        },
+      );
+
+
       worksheet.views = [
-        { state: "frozen", ySplit: linhaCabecalhoTabela - 1, showGridLines: false },
+        {
+          state:
+            "frozen",
+
+          ySplit:
+            linhaCabecalhoTabela -
+            1,
+
+          showGridLines:
+            false,
+        },
       ];
     } else {
-      escreverCabecalhoTabela({ worksheet, linha: linhaCabecalhoTabela, colunas });
-
-      const ultimaLinha = escreverLinhasDados({
+      escreverCabecalhoTabela({
         worksheet,
-        linhaInicial: linhaCabecalhoTabela + 1,
+
+        linha:
+          linhaCabecalhoTabela,
+
         colunas,
-        dados,
-      }) - 1;
+      });
+
+
+      const ultimaLinha =
+        escreverLinhasDados({
+          worksheet,
+
+          linhaInicial:
+            linhaCabecalhoTabela +
+            1,
+
+          colunas,
+
+          dados,
+        }) - 1;
+
 
       worksheet.autoFilter = {
-        from: { row: linhaCabecalhoTabela, column: 1 },
-        to: { row: ultimaLinha, column: colunas.length },
+        from: {
+          row:
+            linhaCabecalhoTabela,
+
+          column:
+            1,
+        },
+
+        to: {
+          row:
+            ultimaLinha,
+
+          column:
+            colunas.length,
+        },
       };
 
+
       worksheet.views = [
-        { state: "frozen", ySplit: linhaCabecalhoTabela, showGridLines: false },
+        {
+          state:
+            "frozen",
+
+          ySplit:
+            linhaCabecalhoTabela,
+
+          showGridLines:
+            false,
+        },
       ];
     }
 
-    /* =================================================
+
+    /* =====================================================
        DOWNLOAD
-    ================================================= */
+    ===================================================== */
 
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer =
+      await workbook.xlsx.writeBuffer();
 
-    const nomeArquivo = `${relatorio.id}_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+    const nomeArquivo =
+      `${relatorio.id}_${
+        new Date()
+          .toISOString()
+          .slice(
+            0,
+            10,
+          )
+      }.xlsx`;
 
-    saveAs(blob, nomeArquivo);
+
+    const blob =
+      new Blob(
+        [
+          buffer,
+        ],
+        {
+          type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+      );
+
+
+    saveAs(
+      blob,
+      nomeArquivo,
+    );
   } catch (erro) {
-    console.error("Erro ao gerar Excel:", erro);
+    console.error(
+      "Erro ao gerar Excel:",
+      erro,
+    );
 
-    alert("Não foi possível gerar o arquivo Excel.");
+    alert(
+      "Não foi possível gerar o arquivo Excel.",
+    );
   }
 }

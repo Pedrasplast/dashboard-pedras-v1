@@ -8,310 +8,110 @@ import {
   FiDownload,
   FiEye,
   FiFileText,
+  FiRefreshCw,
   FiX,
 } from "react-icons/fi";
 
-import { useQuery } from "@tanstack/react-query";
+import Paginacao
+  from "@/components/paginacao/Paginacao";
 
-import { supabase } from "@/lib/supabaseClient";
-
-import Paginacao from "@/components/paginacao/Paginacao";
+import FinanceiroTabelaGrupo
+  from "./components/FinanceiroTabelaGrupo";
 
 import {
-  obterColunasRelatorio,
-} from "../config/Colunas.config";
+  obterColunasFinanceiro,
+} from "./config/financeiroColunas";
+
+import {
+  criarRelatorioFinanceiroExportacao,
+  exportarFinanceiroExcel,
+  exportarFinanceiroPDF,
+} from "./export/financeiroPrevistoRealizadoExport";
+
+import useFinanceiroPrevistoRealizado
+  from "./hooks/useFinanceiroPrevistoRealizado";
+
+import {
+  criarGruposFinanceiros,
+  MESES,
+  obterAnoAtual,
+  obterMesAtual,
+  obterNomeMes,
+  paginarGruposFinanceiros,
+} from "./utils/financeiroPrevistoRealizado.utils";
 
 import "./FinanceiroPrevistoRealizado.css";
 
-/* =====================================================
-   PAGINAÇÃO PADRÃO
-===================================================== */
 
 const ITENS_POR_PAGINA = 10;
 
-/* =====================================================
-   MESES
-===================================================== */
-
-const MESES = Object.freeze([
-  { valor: 1, nome: "Janeiro" },
-  { valor: 2, nome: "Fevereiro" },
-  { valor: 3, nome: "Março" },
-  { valor: 4, nome: "Abril" },
-  { valor: 5, nome: "Maio" },
-  { valor: 6, nome: "Junho" },
-  { valor: 7, nome: "Julho" },
-  { valor: 8, nome: "Agosto" },
-  { valor: 9, nome: "Setembro" },
-  { valor: 10, nome: "Outubro" },
-  { valor: 11, nome: "Novembro" },
-  { valor: 12, nome: "Dezembro" },
-]);
-
-function obterAnoAtual() {
-  return new Date().getFullYear();
-}
-
-function obterMesAtual() {
-  return new Date().getMonth() + 1;
-}
-
-function obterNomeMes(numero) {
-  return MESES.find(
-    (item) => item.valor === Number(numero),
-  )?.nome || "-";
-}
-
-/* =====================================================
-   MANTER CABEÇALHO FINANCEIRO PRIMEIRO
-===================================================== */
-
-function colocarCabecalhoPrimeiro(lista, codigoCabecalho) {
-  const registros = Array.isArray(lista)
-    ? [...lista]
-    : [];
-
-  const indice = registros.findIndex(
-    (item) =>
-      String(item?.codigo_categoria || "").trim() ===
-      String(codigoCabecalho),
-  );
-
-  if (indice <= 0) {
-    return registros;
-  }
-
-  const [cabecalho] = registros.splice(indice, 1);
-
-  return [
-    cabecalho,
-    ...registros,
-  ];
-}
-
-/* =====================================================
-   COMPONENTE
-===================================================== */
 
 export default function FinanceiroPrevistoRealizado({
   relatorio,
 }) {
-  /* =================================================
-     FILTROS
-  ================================================= */
+  const [ano, setAno] = useState(
+    obterAnoAtual(),
+  );
 
-  const [ano, setAno] = useState(obterAnoAtual());
-  const [mes, setMes] = useState(obterMesAtual());
-  const [tipo, setTipo] = useState("todos");
+  const [mes, setMes] = useState(
+    obterMesAtual(),
+  );
+
+  const [tipo, setTipo] = useState(
+    "todos",
+  );
 
   const [visualizacaoAberta, setVisualizacaoAberta] =
     useState(false);
 
-  /* =================================================
-     PAGINAÇÃO
-  ================================================= */
+  const [paginaAtual, setPaginaAtual] =
+    useState(1);
 
-  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [exportando, setExportando] =
+    useState(null);
 
-  /* =================================================
-     ANOS DISPONÍVEIS
-  ================================================= */
 
   const {
-    data: anosDisponiveis = [],
-  } = useQuery({
-    queryKey: ["financeiro-relatorios-anos"],
-
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("financeiro_omie_resumo")
-        .select("ano")
-        .order("ano", {
-          ascending: false,
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      return [
-        ...new Set(
-          (data || [])
-            .map((item) => Number(item.ano))
-            .filter(Number.isFinite),
-        ),
-      ];
-    },
-
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
+    anosDisponiveis,
+    dados,
+    carregando,
+    atualizando,
+    erro,
+  } = useFinanceiroPrevistoRealizado({
+    ano,
+    mes,
+    tipo,
+    habilitado: Boolean(relatorio),
   });
 
-  /* =================================================
-     CONSULTA DO RELATÓRIO
-  ================================================= */
-
-  const {
-    data: dados = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: [
-      "relatorio-financeiro-previsto-realizado",
-      ano,
-      mes,
-      tipo,
-    ],
-
-    queryFn: async () => {
-      const {
-        data,
-        error: erroRpc,
-      } = await supabase.rpc(
-        "listar_relatorio_financeiro_previsto_realizado",
-        {
-          p_ano: Number(ano),
-
-          p_mes_inicial: Number(mes),
-
-          p_mes_final: Number(mes),
-
-          p_tipo: tipo === "todos" ? null : tipo,
-
-          p_limite: 5000,
-        },
-      );
-
-      if (erroRpc) {
-        throw erroRpc;
-      }
-
-      return Array.isArray(data) ? data : [];
-    },
-
-    enabled: Boolean(relatorio && ano && mes),
-
-    staleTime: 30 * 1000,
-
-    refetchOnWindowFocus: true,
-
-    retry: 1,
-  });
-
-  /* =================================================
-     COLUNAS
-  ================================================= */
-
-  const colunas = useMemo(
-    () => obterColunasRelatorio(relatorio),
-    [relatorio],
-  );
 
   const colunasExibicao = useMemo(
     () =>
-      colunas.filter(
-        (coluna) => coluna.chave !== "tipo_financeiro",
-      ),
-    [colunas],
+      obterColunasFinanceiro({
+        incluirTipo: false,
+      }),
+    [],
   );
 
-  /* =================================================
-     CONFIGURAÇÃO DA EXPORTAÇÃO
-  ================================================= */
 
   const relatorioExportacao = useMemo(
-    () => ({
-      ...relatorio,
-
-      colunas: Array.isArray(relatorio?.colunas)
-        ? relatorio.colunas.filter(
-            (chave) => chave !== "tipo_financeiro",
-          )
-        : [],
-    }),
+    () =>
+      criarRelatorioFinanceiroExportacao(
+        relatorio,
+      ),
     [relatorio],
   );
 
-  /* =================================================
-     SEPARAR RECEITAS E DESPESAS
-  ================================================= */
 
-  const dadosReceitas = useMemo(
+  const gruposRelatorio = useMemo(
     () =>
-      colocarCabecalhoPrimeiro(
-        dados.filter(
-          (item) =>
-            String(item.tipo || "")
-              .trim()
-              .toLowerCase() === "receita",
-        ),
-        "1",
+      criarGruposFinanceiros(
+        dados,
+        tipo,
       ),
-    [dados],
+    [dados, tipo],
   );
 
-  const dadosDespesas = useMemo(
-    () =>
-      colocarCabecalhoPrimeiro(
-        dados.filter(
-          (item) =>
-            String(item.tipo || "")
-              .trim()
-              .toLowerCase() === "despesa",
-        ),
-        "2",
-      ),
-    [dados],
-  );
-
-  /* =================================================
-     GRUPOS ORIGINAIS
-  ================================================= */
-
-  const gruposRelatorio = useMemo(() => {
-    if (tipo === "Receita") {
-      return [
-        {
-          chave: "receitas",
-          titulo: "Receitas",
-          dados: dadosReceitas,
-        },
-      ];
-    }
-
-    if (tipo === "Despesa") {
-      return [
-        {
-          chave: "despesas",
-          titulo: "Despesas",
-          dados: dadosDespesas,
-        },
-      ];
-    }
-
-    return [
-      {
-        chave: "receitas",
-        titulo: "Receitas",
-        dados: dadosReceitas,
-      },
-      {
-        chave: "despesas",
-        titulo: "Despesas",
-        dados: dadosDespesas,
-      },
-    ].filter((grupo) => grupo.dados.length > 0);
-  }, [
-    tipo,
-    dadosReceitas,
-    dadosDespesas,
-  ]);
-
-  /* =================================================
-     DADOS COMPLETOS PARA EXPORTAÇÃO
-
-     Não sofre paginação.
-  ================================================= */
 
   const dadosExportacao = useMemo(
     () =>
@@ -321,114 +121,60 @@ export default function FinanceiroPrevistoRealizado({
     [gruposRelatorio],
   );
 
-  /* =================================================
-     PAGINAÇÃO PADRÃO
 
-     Aplica 10 linhas no conjunto de receitas
-     e despesas, sem modificar os dados originais.
-  ================================================= */
-
-  const totalItens = dadosExportacao.length;
+  const totalItens =
+    dadosExportacao.length;
 
   const totalPaginas = Math.max(
     1,
-    Math.ceil(totalItens / ITENS_POR_PAGINA),
+    Math.ceil(
+      totalItens /
+      ITENS_POR_PAGINA,
+    ),
   );
 
   const paginaValida = Math.max(
     1,
-    Math.min(paginaAtual, totalPaginas),
+    Math.min(
+      paginaAtual,
+      totalPaginas,
+    ),
   );
 
   const inicioPagina =
-    (paginaValida - 1) * ITENS_POR_PAGINA;
+    (paginaValida - 1) *
+    ITENS_POR_PAGINA;
 
   const fimPagina =
-    inicioPagina + ITENS_POR_PAGINA;
+    inicioPagina +
+    ITENS_POR_PAGINA;
 
-  /* =================================================
-     SEPARAR OS REGISTROS DA PÁGINA POR GRUPO
 
-     Mantém Receitas e Despesas em tabelas separadas.
-  ================================================= */
+  const gruposPagina = useMemo(
+    () =>
+      paginarGruposFinanceiros({
+        grupos: gruposRelatorio,
+        inicio: inicioPagina,
+        fim: fimPagina,
+      }),
+    [
+      gruposRelatorio,
+      inicioPagina,
+      fimPagina,
+    ],
+  );
 
-  const gruposPagina = useMemo(() => {
-    let indiceGlobal = 0;
-
-    return gruposRelatorio
-      .map((grupo) => {
-        const inicioGrupo = indiceGlobal;
-
-        const fimGrupo =
-          inicioGrupo + grupo.dados.length;
-
-        indiceGlobal = fimGrupo;
-
-        const inicioLocal = Math.max(
-          0,
-          inicioPagina - inicioGrupo,
-        );
-
-        const fimLocal = Math.max(
-          0,
-          Math.min(
-            grupo.dados.length,
-            fimPagina - inicioGrupo,
-          ),
-        );
-
-        return {
-          ...grupo,
-
-          totalGrupo: grupo.dados.length,
-
-          dados: grupo.dados.slice(
-            inicioLocal,
-            fimLocal,
-          ),
-        };
-      })
-      .filter((grupo) => grupo.dados.length > 0);
-  }, [
-    gruposRelatorio,
-    inicioPagina,
-    fimPagina,
-  ]);
-
-  /* =================================================
-     INTERVALO EXIBIDO
-  ================================================= */
 
   const inicioExibicao =
-    totalItens > 0 ? inicioPagina + 1 : 0;
+    totalItens > 0
+      ? inicioPagina + 1
+      : 0;
 
   const fimExibicao = Math.min(
     fimPagina,
     totalItens,
   );
 
-  /* =================================================
-     ALTERAR FILTROS
-  ================================================= */
-
-  function alterarAno(valor) {
-    setAno(Number(valor));
-    setPaginaAtual(1);
-  }
-
-  function alterarMes(valor) {
-    setMes(Number(valor));
-    setPaginaAtual(1);
-  }
-
-  function alterarTipo(valor) {
-    setTipo(valor);
-    setPaginaAtual(1);
-  }
-
-  /* =================================================
-     TEXTO DOS FILTROS
-  ================================================= */
 
   const textoFiltros = useMemo(() => {
     const tipoTexto =
@@ -443,60 +189,103 @@ export default function FinanceiroPrevistoRealizado({
     );
   }, [ano, mes, tipo]);
 
-  /* =================================================
-     EXPORTAÇÃO PDF — TODOS OS REGISTROS
-  ================================================= */
+
+  function alterarAno(valor) {
+    setAno(Number(valor));
+    setPaginaAtual(1);
+  }
+
+
+  function alterarMes(valor) {
+    setMes(Number(valor));
+    setPaginaAtual(1);
+  }
+
+
+  function alterarTipo(valor) {
+    setTipo(valor);
+    setPaginaAtual(1);
+  }
+
 
   async function handleGerarPDF() {
-    if (dadosExportacao.length === 0) {
+    if (
+      dadosExportacao.length === 0 ||
+      exportando
+    ) {
       return;
     }
 
-    const {
-      gerarPdfRelatorio,
-    } = await import("../exportacao/GerarPDF");
+    try {
+      setExportando("pdf");
 
-    gerarPdfRelatorio({
-      relatorio: relatorioExportacao,
+      await exportarFinanceiroPDF({
+        relatorio:
+          relatorioExportacao,
 
-      dados: dadosExportacao,
+        dados:
+          dadosExportacao,
 
-      textoFiltros,
+        textoFiltros,
 
-      grupos: gruposRelatorio,
-    });
+        grupos:
+          gruposRelatorio,
+      });
+    } catch (errorExportacao) {
+      console.error(
+        "Erro ao gerar PDF financeiro:",
+        errorExportacao,
+      );
+
+      window.alert(
+        "Não foi possível gerar o PDF financeiro.",
+      );
+    } finally {
+      setExportando(null);
+    }
   }
 
-  /* =================================================
-     EXPORTAÇÃO EXCEL — TODOS OS REGISTROS
-  ================================================= */
 
   async function handleGerarExcel() {
-    if (dadosExportacao.length === 0) {
+    if (
+      dadosExportacao.length === 0 ||
+      exportando
+    ) {
       return;
     }
 
-    const {
-      gerarExcelRelatorio,
-    } = await import("../exportacao/GerarExcel");
+    try {
+      setExportando("excel");
 
-    await gerarExcelRelatorio({
-      relatorio: relatorioExportacao,
+      await exportarFinanceiroExcel({
+        relatorio:
+          relatorioExportacao,
 
-      dados: dadosExportacao,
+        dados:
+          dadosExportacao,
 
-      grupos: gruposRelatorio,
-    });
+        textoFiltros,
+
+        grupos:
+          gruposRelatorio,
+      });
+    } catch (errorExportacao) {
+      console.error(
+        "Erro ao gerar Excel financeiro:",
+        errorExportacao,
+      );
+
+      window.alert(
+        "Não foi possível gerar o Excel financeiro.",
+      );
+    } finally {
+      setExportando(null);
+    }
   }
 
-  /* =================================================
-     RENDERIZAÇÃO
-  ================================================= */
 
   return (
     <>
-      {/* CABEÇALHO */}
-
       <div className="relatorio-selecionado-header">
         <div className="relatorio-selecionado-icone">
           <FiDollarSign />
@@ -519,7 +308,6 @@ export default function FinanceiroPrevistoRealizado({
         </div>
       </div>
 
-      {/* AÇÕES */}
 
       <div className="relatorio-acoes">
         <button
@@ -529,57 +317,99 @@ export default function FinanceiroPrevistoRealizado({
             setPaginaAtual(1);
             setVisualizacaoAberta(true);
           }}
-          disabled={dadosExportacao.length === 0}
+          disabled={
+            dadosExportacao.length === 0
+          }
         >
           <FiEye />
 
           <div>
-            <strong>Visualizar</strong>
-            <span>Conferir antes de exportar</span>
+            <strong>
+              Visualizar
+            </strong>
+
+            <span>
+              Conferir antes de exportar
+            </span>
           </div>
         </button>
+
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-pdf"
           onClick={handleGerarPDF}
-          disabled={dadosExportacao.length === 0}
+          disabled={
+            dadosExportacao.length === 0 ||
+            Boolean(exportando)
+          }
         >
-          <FiFileText />
+          {exportando === "pdf" ? (
+            <FiRefreshCw className="financeiro-relatorio-girando" />
+          ) : (
+            <FiFileText />
+          )}
 
           <div>
-            <strong>Baixar PDF</strong>
-            <span>Relatório formatado</span>
+            <strong>
+              Baixar PDF
+            </strong>
+
+            <span>
+              Relatório formatado
+            </span>
           </div>
         </button>
+
 
         <button
           type="button"
           className="btn-relatorio btn-relatorio-csv"
           onClick={handleGerarExcel}
-          disabled={dadosExportacao.length === 0}
+          disabled={
+            dadosExportacao.length === 0 ||
+            Boolean(exportando)
+          }
         >
-          <FiDownload />
+          {exportando === "excel" ? (
+            <FiRefreshCw className="financeiro-relatorio-girando" />
+          ) : (
+            <FiDownload />
+          )}
 
           <div>
-            <strong>Exportar Excel</strong>
-            <span>Tabela XLSX</span>
+            <strong>
+              Exportar Excel
+            </strong>
+
+            <span>
+              Tabela XLSX
+            </span>
           </div>
         </button>
       </div>
 
-      {/* FILTROS */}
 
       <div className="relatorio-filtros-card">
         <div className="relatorio-filtros-header">
           <div>
-            <h3>Parâmetros do relatório</h3>
+            <h3>
+              Parâmetros do relatório
+            </h3>
 
             <p>
               Selecione o ano, mês e tipo financeiro.
             </p>
           </div>
+
+          {atualizando && (
+            <span className="financeiro-relatorio-atualizando">
+              <FiRefreshCw className="financeiro-relatorio-girando" />
+              Atualizando dados...
+            </span>
+          )}
         </div>
+
 
         <div className="financeiro-relatorio-filtros">
           <label>
@@ -588,7 +418,9 @@ export default function FinanceiroPrevistoRealizado({
             <select
               value={ano}
               onChange={(event) =>
-                alterarAno(event.target.value)
+                alterarAno(
+                  event.target.value,
+                )
               }
             >
               {(anosDisponiveis.length > 0
@@ -605,13 +437,16 @@ export default function FinanceiroPrevistoRealizado({
             </select>
           </label>
 
+
           <label>
             <span>Mês</span>
 
             <select
               value={mes}
               onChange={(event) =>
-                alterarMes(event.target.value)
+                alterarMes(
+                  event.target.value,
+                )
               }
             >
               {MESES.map((itemMes) => (
@@ -625,13 +460,16 @@ export default function FinanceiroPrevistoRealizado({
             </select>
           </label>
 
+
           <label>
             <span>Tipo</span>
 
             <select
               value={tipo}
               onChange={(event) =>
-                alterarTipo(event.target.value)
+                alterarTipo(
+                  event.target.value,
+                )
               }
             >
               <option value="todos">
@@ -650,46 +488,56 @@ export default function FinanceiroPrevistoRealizado({
         </div>
       </div>
 
-      {/* ERRO */}
 
-      {error && (
+      {erro && (
         <div className="relatorios-erro">
-          {error.message ||
+          {erro.message ||
             "Não foi possível carregar o relatório financeiro."}
         </div>
       )}
 
-      {/* CARREGAMENTO */}
 
-      {isLoading && (
+      {carregando && (
         <div className="relatorios-loading financeiro-relatorio-loading">
           <div className="relatorios-loading-card">
             <div className="relatorios-spinner" />
 
-            <p>Carregando dados financeiros...</p>
+            <p>
+              Carregando dados financeiros...
+            </p>
           </div>
         </div>
       )}
 
-      {/* RESUMO */}
 
-      {!isLoading && !error && (
+      {!carregando && !erro && (
         <div className="relatorio-resumo-grid">
           <div className="relatorio-resumo-card">
-            <span>Registros no relatório</span>
-            <strong>{dados.length}</strong>
+            <span>
+              Registros no relatório
+            </span>
+
+            <strong>
+              {dados.length}
+            </strong>
           </div>
 
+
           <div className="relatorio-resumo-card">
-            <span>Relatório selecionado</span>
+            <span>
+              Relatório selecionado
+            </span>
 
             <strong className="relatorio-resumo-texto">
               {relatorio?.titulo}
             </strong>
           </div>
 
+
           <div className="relatorio-resumo-card">
-            <span>Filtros aplicados</span>
+            <span>
+              Filtros aplicados
+            </span>
 
             <strong className="relatorio-resumo-texto">
               {textoFiltros}
@@ -698,7 +546,6 @@ export default function FinanceiroPrevistoRealizado({
         </div>
       )}
 
-      {/* PRÉ-VISUALIZAÇÃO */}
 
       {visualizacaoAberta && (
         <section className="relatorio-visualizacao">
@@ -708,96 +555,64 @@ export default function FinanceiroPrevistoRealizado({
                 Pré-visualização
               </span>
 
-              <h3>{relatorio?.titulo}</h3>
+              <h3>
+                {relatorio?.titulo}
+              </h3>
             </div>
 
             <button
               type="button"
               className="relatorio-visualizacao-fechar"
-              onClick={() => setVisualizacaoAberta(false)}
+              onClick={() =>
+                setVisualizacaoAberta(false)
+              }
               aria-label="Fechar visualização"
             >
               <FiX />
             </button>
           </div>
 
+
           <div className="relatorio-visualizacao-info">
             <div className="relatorio-visualizacao-info-item">
-              <span>Filtros</span>
-              <strong>{textoFiltros}</strong>
+              <span>
+                Filtros
+              </span>
+
+              <strong>
+                {textoFiltros}
+              </strong>
             </div>
 
             <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-              <span>Registros</span>
-              <strong>{totalItens}</strong>
+              <span>
+                Registros
+              </span>
+
+              <strong>
+                {totalItens}
+              </strong>
             </div>
           </div>
+
 
           {totalItens > 0 ? (
             <div className="financeiro-relatorio-grupos">
               {gruposPagina.map((grupo) => (
-                <section
+                <FinanceiroTabelaGrupo
                   key={grupo.chave}
-                  className={`financeiro-relatorio-grupo financeiro-relatorio-grupo-${grupo.chave}`}
-                >
-                  <div className="financeiro-relatorio-grupo-titulo">
-                    <div>
-                      <span>Classificação financeira</span>
-                      <h4>{grupo.titulo}</h4>
-                    </div>
-
-                    <strong>
-                      {grupo.totalGrupo} categoria(s)
-                    </strong>
-                  </div>
-
-                  <div className="relatorio-visualizacao-tabela-wrapper">
-                    <table className="relatorio-visualizacao-tabela">
-                      <thead>
-                        <tr>
-                          {colunasExibicao.map((coluna) => (
-                            <th key={coluna.chave}>
-                              {coluna.titulo}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {grupo.dados.map((item, indice) => (
-                          <tr
-                            key={`${grupo.chave}-${item.codigo_categoria || "categoria"}-${indice}`}
-                            className={
-                              String(
-                                item.codigo_categoria || "",
-                              ).trim() ===
-                              (
-                                grupo.chave === "receitas"
-                                  ? "1"
-                                  : "2"
-                              )
-                                ? "financeiro-linha-cabecalho-grupo"
-                                : ""
-                            }
-                          >
-                            {colunasExibicao.map((coluna) => (
-                              <td key={coluna.chave}>
-                                {coluna.valor(item)}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
+                  grupo={grupo}
+                  colunas={colunasExibicao}
+                />
               ))}
             </div>
           ) : (
             <div className="relatorio-visualizacao-vazia">
               <FiFileText />
 
-              <strong>Nenhum registro encontrado</strong>
+              <strong>
+                Nenhum registro encontrado
+              </strong>
 
               <span>
                 Ajuste os filtros para visualizar os dados.
@@ -805,7 +620,6 @@ export default function FinanceiroPrevistoRealizado({
             </div>
           )}
 
-          {/* RODAPÉ */}
 
           <div className="relatorio-visualizacao-footer">
             <span>
@@ -818,7 +632,6 @@ export default function FinanceiroPrevistoRealizado({
             </span>
           </div>
 
-          {/* PAGINAÇÃO PADRÃO */}
 
           {totalItens > ITENS_POR_PAGINA && (
             <Paginacao

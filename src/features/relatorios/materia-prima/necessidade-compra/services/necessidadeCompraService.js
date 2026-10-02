@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 import {
   buscarConsumoProgramado,
-} from "./consumoProgramadoService";
+} from "../../shared/services/consumoProgramadoService";
 
 
 /* =========================================================

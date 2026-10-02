@@ -6,6 +6,7 @@ import {
   FiDownload,
   FiEye,
   FiFileText,
+  FiSearch,
   FiX,
 } from "react-icons/fi";
 
@@ -194,6 +195,20 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const [paginaAtual, setPaginaAtual] = useState(1);
+
+  /* =====================================================
+     ESTADOS DO CATÁLOGO DE RELATÓRIOS
+  ===================================================== */
+
+  const [
+    categoriaSelecionada,
+    setCategoriaSelecionada,
+  ] = useState("Todos");
+
+  const [
+    buscaRelatorios,
+    setBuscaRelatorios,
+  ] = useState("");
 
   /* =====================================================
      ESTADOS DAS PERMISSÕES
@@ -394,6 +409,80 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     () => [...relatoriosPorCategoria.keys()],
     [relatoriosPorCategoria],
   );
+
+  /* =====================================================
+     CATÁLOGO DE RELATÓRIOS
+
+     As categorias e contagens são derivadas apenas dos
+     relatórios que o usuário possui permissão para acessar.
+  ===================================================== */
+
+  const categoriasCatalogo = useMemo(
+    () => [
+      {
+        nome: "Todos",
+        quantidade: relatoriosDisponiveis.length,
+      },
+
+      ...categorias.map((categoria) => ({
+        nome: categoria,
+        quantidade:
+          relatoriosPorCategoria.get(categoria)?.length || 0,
+      })),
+    ],
+    [
+      categorias,
+      relatoriosDisponiveis.length,
+      relatoriosPorCategoria,
+    ],
+  );
+
+  const relatoriosCatalogo = useMemo(() => {
+    const listaBase =
+      categoriaSelecionada === "Todos"
+        ? relatoriosDisponiveis
+        : relatoriosPorCategoria.get(categoriaSelecionada) || [];
+
+    const termo = normalizarTexto(buscaRelatorios).trim();
+
+    if (!termo) {
+      return listaBase;
+    }
+
+    return listaBase.filter((relatorio) => {
+      const conteudo = normalizarTexto(
+        [
+          relatorio.categoria,
+          relatorio.titulo,
+          relatorio.descricao,
+        ].join(" "),
+      );
+
+      return conteudo.includes(termo);
+    });
+  }, [
+    buscaRelatorios,
+    categoriaSelecionada,
+    relatoriosDisponiveis,
+    relatoriosPorCategoria,
+  ]);
+
+  const tituloCatalogo =
+    categoriaSelecionada === "Todos"
+      ? "Todos os relatórios"
+      : categoriaSelecionada;
+
+  useEffect(() => {
+    if (
+      categoriaSelecionada !== "Todos" &&
+      !categorias.includes(categoriaSelecionada)
+    ) {
+      setCategoriaSelecionada("Todos");
+    }
+  }, [
+    categoriaSelecionada,
+    categorias,
+  ]);
 
   /* =====================================================
      RELATÓRIO SELECIONADO
@@ -1391,7 +1480,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         <PageHeader
           eyebrow="Central de Relatórios"
           title="Relatórios"
-          description="Consulte produção, paradas, pedidos e financeiro utilizando dados já sincronizados no sistema."
+          description="Consulte e exporte informações operacionais e gerenciais utilizando os dados já disponíveis no sistema."
           icon={FiFileText}
           className="relatorios-header"
         />
@@ -1423,35 +1512,108 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         )}
 
       {/* ===============================================
-          LISTA DOS RELATÓRIOS
+          CATÁLOGO DOS RELATÓRIOS
       =============================================== */}
 
       {!relatorioSelecionado &&
         relatoriosDisponiveis.length > 0 && (
-          <div className="relatorios-lista">
+          <section className="relatorios-catalogo">
 
-            {categorias.map((categoria) => {
-              const relatoriosCategoria =
-                relatoriosPorCategoria.get(categoria) || [];
+            {/* BUSCA */}
 
-              return (
-                <section
-                  key={categoria}
-                  className="relatorios-categoria"
+            <div className="relatorios-busca">
+              <FiSearch />
+
+              <input
+                type="search"
+                value={buscaRelatorios}
+                onChange={(event) =>
+                  setBuscaRelatorios(event.target.value)
+                }
+                placeholder="Buscar relatório por nome, categoria ou descrição..."
+                aria-label="Buscar relatório"
+              />
+
+              <span>
+                {relatoriosCatalogo.length} de{" "}
+                {relatoriosDisponiveis.length}
+              </span>
+            </div>
+
+            <div className="relatorios-catalogo-layout">
+
+              {/* CATEGORIAS */}
+
+              <aside className="relatorios-categorias-sidebar">
+                <div className="relatorios-categorias-sidebar-header">
+                  <span>
+                    Categorias
+                  </span>
+
+                  <strong>
+                    {categorias.length}
+                  </strong>
+                </div>
+
+                <nav
+                  className="relatorios-categorias-menu"
+                  aria-label="Categorias de relatórios"
                 >
-                  <div className="relatorios-categoria-header">
+                  {categoriasCatalogo.map((categoria) => {
+                    const ativa =
+                      categoriaSelecionada === categoria.nome;
+
+                    return (
+                      <button
+                        key={categoria.nome}
+                        type="button"
+                        className={
+                          ativa
+                            ? "relatorios-categoria-btn ativa"
+                            : "relatorios-categoria-btn"
+                        }
+                        aria-pressed={ativa}
+                        onClick={() =>
+                          setCategoriaSelecionada(categoria.nome)
+                        }
+                      >
+                        <span className="relatorios-categoria-btn-nome">
+                          {categoria.nome}
+                        </span>
+
+                        <span className="relatorios-categoria-btn-contagem">
+                          {categoria.quantidade}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </nav>
+              </aside>
+
+              {/* CONTEÚDO */}
+
+              <div className="relatorios-catalogo-conteudo">
+                <div className="relatorios-catalogo-header">
+                  <div>
+                    <span className="relatorios-catalogo-eyebrow">
+                      Catálogo
+                    </span>
+
                     <h2>
-                      {categoria}
+                      {tituloCatalogo}
                     </h2>
 
-                    <span>
-                      {relatoriosCategoria.length} relatório(s)
-                    </span>
+                    <p>
+                      {buscaRelatorios.trim()
+                        ? `${relatoriosCatalogo.length} resultado(s) para "${buscaRelatorios.trim()}".`
+                        : `${relatoriosCatalogo.length} relatório(s) disponível(is) nesta seleção.`}
+                    </p>
                   </div>
+                </div>
 
-                  <div className="relatorios-grid">
-
-                    {relatoriosCategoria.map((relatorio) => {
+                {relatoriosCatalogo.length > 0 ? (
+                  <div className="relatorios-grid relatorios-grid--catalogo">
+                    {relatoriosCatalogo.map((relatorio) => {
                       const Icone = relatorio.icone;
 
                       return (
@@ -1468,31 +1630,32 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                           </div>
 
                           <div className="relatorio-card-conteudo">
-
-                            <span className="relatorio-card-categoria">
-                              {relatorio.categoria}
-                            </span>
-
                             <h3>
                               {relatorio.titulo}
                             </h3>
-
-                            <p>
-                              {relatorio.descricao}
-                            </p>
                           </div>
 
                           <FiChevronRight className="relatorio-card-seta" />
                         </button>
                       );
                     })}
-
                   </div>
-                </section>
-              );
-            })}
+                ) : (
+                  <div className="relatorios-sem-resultados">
+                    <FiSearch />
 
-          </div>
+                    <strong>
+                      Nenhum relatório encontrado
+                    </strong>
+
+                    <span>
+                      Ajuste a busca ou escolha outra categoria.
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
         )}
 
       {/* ===============================================

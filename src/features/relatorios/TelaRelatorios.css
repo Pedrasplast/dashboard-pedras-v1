@@ -1836,3 +1836,1369 @@
   background: #f8fbff;
   border-color: #93c5fd;
 }
+
+/* =========================================================
+   CATÁLOGO DE RELATÓRIOS
+   Visual corporativo — busca + categorias + cards
+========================================================= */
+
+.relatorios-catalogo {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+/* =========================================================
+   BUSCA PRINCIPAL
+========================================================= */
+
+.relatorios-catalogo .relatorios-busca {
+  width: 100%;
+  min-height: 58px;
+
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 9px 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #dce5f0;
+  border-radius: 14px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 24px rgba(15, 23, 42, 0.035);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.relatorios-catalogo .relatorios-busca:focus-within {
+  border-color: #93c5fd;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08),
+    0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.relatorios-catalogo .relatorios-busca svg {
+  width: 38px;
+  height: 38px;
+
+  padding: 10px;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+
+  box-sizing: border-box;
+}
+
+.relatorios-catalogo .relatorios-busca input {
+  width: 100%;
+  min-width: 0;
+
+  padding: 6px 2px;
+
+  color: #172033;
+  background: transparent;
+
+  border: 0;
+  outline: none;
+
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.relatorios-catalogo .relatorios-busca input::placeholder {
+  color: #9aa7b8;
+  font-weight: 500;
+}
+
+.relatorios-catalogo .relatorios-busca > span {
+  min-width: 64px;
+
+  padding: 6px 9px;
+
+  color: #64748b;
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+
+  box-sizing: border-box;
+
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ESTRUTURA PRINCIPAL
+========================================================= */
+
+.relatorios-catalogo-layout {
+  width: 100%;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  align-items: start;
+
+  gap: 18px;
+}
+
+
+/* =========================================================
+   MENU LATERAL DE CATEGORIAS
+========================================================= */
+
+.relatorios-categorias-sidebar {
+  position: sticky;
+  top: 86px;
+
+  width: 100%;
+
+  padding: 12px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe7f1;
+  border-radius: 14px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 8px 22px rgba(15, 23, 42, 0.03);
+}
+
+.relatorios-categorias-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 5px 5px 12px;
+  margin-bottom: 7px;
+
+  border-bottom: 1px solid #edf1f5;
+}
+
+.relatorios-categorias-sidebar-header span {
+  color: #334155;
+
+  font-size: 0.64rem;
+  font-weight: 850;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.relatorios-categorias-sidebar-header strong {
+  min-width: 27px;
+  height: 23px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 7px;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  box-sizing: border-box;
+
+  font-size: 0.63rem;
+  font-weight: 850;
+}
+
+.relatorios-categorias-menu {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.relatorios-categoria-btn {
+  position: relative;
+
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 9px 9px 9px 11px;
+
+  color: #475569;
+  background: transparent;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  box-sizing: border-box;
+
+  font-family: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.relatorios-categoria-btn:hover {
+  color: #1e3a8a;
+  background: #f8fbff;
+  border-color: #dbeafe;
+
+  transform: translateX(2px);
+}
+
+.relatorios-categoria-btn.ativa,
+.relatorios-categoria-btn[aria-pressed="true"] {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+
+  box-shadow:
+    inset 3px 0 0 #2563eb,
+    0 2px 7px rgba(37, 99, 235, 0.06);
+}
+
+.relatorios-categoria-btn:focus-visible {
+  outline: none;
+
+  border-color: #93c5fd;
+
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.relatorios-categoria-btn-nome {
+  min-width: 0;
+
+  overflow: hidden;
+
+  font-size: 0.72rem;
+  font-weight: 750;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.relatorios-categoria-btn.ativa .relatorios-categoria-btn-nome,
+.relatorios-categoria-btn[aria-pressed="true"] .relatorios-categoria-btn-nome {
+  font-weight: 850;
+}
+
+.relatorios-categoria-btn-contagem {
+  min-width: 27px;
+  height: 22px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  padding: 0 7px;
+
+  color: #64748b;
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+
+  box-sizing: border-box;
+
+  font-size: 0.61rem;
+  font-weight: 850;
+}
+
+.relatorios-categoria-btn.ativa .relatorios-categoria-btn-contagem,
+.relatorios-categoria-btn[aria-pressed="true"] .relatorios-categoria-btn-contagem {
+  color: #1d4ed8;
+  background: #ffffff;
+  border-color: #bfdbfe;
+}
+
+
+/* =========================================================
+   PAINEL DO CATÁLOGO
+========================================================= */
+
+.relatorios-catalogo-conteudo {
+  width: 100%;
+  min-width: 0;
+
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe7f1;
+  border-radius: 14px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 8px 24px rgba(15, 23, 42, 0.03);
+}
+
+.relatorios-catalogo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+  padding: 1px 2px 14px;
+
+  border-bottom: 1px solid #edf1f5;
+}
+
+.relatorios-catalogo-eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 5px;
+
+  color: #2563eb;
+
+  font-size: 0.58rem;
+  font-weight: 850;
+
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.relatorios-catalogo-header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 1.02rem;
+  font-weight: 850;
+
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.relatorios-catalogo-header p {
+  margin: 5px 0 0;
+
+  color: #7c8ba1;
+
+  font-size: 0.69rem;
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   GRID E CARDS DO CATÁLOGO
+========================================================= */
+
+.relatorios-grid--catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+
+  gap: 12px;
+
+  justify-content: stretch;
+}
+
+.relatorios-grid--catalogo .relatorio-card {
+  position: relative;
+
+  min-height: 104px;
+
+  grid-template-columns:
+    44px
+    minmax(0, 1fr)
+    18px;
+
+  gap: 13px;
+
+  padding: 14px 14px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e8f0;
+  border-radius: 12px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.relatorios-grid--catalogo .relatorio-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    #2563eb 0%,
+    #60a5fa 100%
+  );
+
+  opacity: 0;
+
+  transform: scaleX(0.35);
+  transform-origin: left center;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover {
+  background: #fbfdff;
+
+  border-color: #bfd8fb;
+
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.075),
+    0 2px 5px rgba(37, 99, 235, 0.035);
+
+  transform: translateY(-2px);
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.relatorios-grid--catalogo .relatorio-card:focus-visible {
+  outline: none;
+
+  border-color: #60a5fa;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1),
+    0 9px 22px rgba(15, 23, 42, 0.06);
+}
+
+.relatorios-grid--catalogo .relatorio-card-icone {
+  width: 44px;
+  height: 44px;
+
+  color: #2563eb;
+  background: linear-gradient(
+    180deg,
+    #f2f7ff 0%,
+    #eaf3ff 100%
+  );
+
+  border: 1px solid #d8e8ff;
+  border-radius: 11px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.relatorios-grid--catalogo .relatorio-card-icone svg {
+  width: 18px;
+  height: 18px;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo {
+  align-self: center;
+}
+
+.relatorios-grid--catalogo .relatorio-card-categoria {
+  margin-bottom: 4px;
+
+  color: #2563eb;
+
+  font-size: 0.56rem;
+  font-weight: 850;
+
+  letter-spacing: 0.09em;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo h3 {
+  color: #172033;
+
+  font-size: 0.82rem;
+  font-weight: 850;
+
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo p {
+  margin-top: 4px;
+
+  color: #7b899c;
+
+  font-size: 0.66rem;
+  font-weight: 500;
+  line-height: 1.45;
+
+  -webkit-line-clamp: 2;
+}
+
+.relatorios-grid--catalogo .relatorio-card-seta {
+  width: 18px;
+  height: 18px;
+
+  color: #a7b2c2;
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover .relatorio-card-seta {
+  color: #2563eb;
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   SEM RESULTADOS
+========================================================= */
+
+.relatorios-catalogo .relatorios-sem-resultados {
+  min-height: 240px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 30px;
+
+  color: #8a99ad;
+
+  text-align: center;
+
+  background: #fafcff;
+
+  border: 1px dashed #cdd8e5;
+  border-radius: 12px;
+
+  box-sizing: border-box;
+}
+
+.relatorios-catalogo .relatorios-sem-resultados svg {
+  width: 38px;
+  height: 38px;
+
+  padding: 9px;
+
+  color: #64748b;
+  background: #f1f5f9;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  box-sizing: border-box;
+}
+
+.relatorios-catalogo .relatorios-sem-resultados strong {
+  color: #334155;
+
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.relatorios-catalogo .relatorios-sem-resultados span {
+  color: #8a99ad;
+
+  font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   RESPONSIVO DO CATÁLOGO
+========================================================= */
+
+@media (max-width: 1200px) {
+  .relatorios-catalogo-layout {
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .relatorios-grid--catalogo {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .relatorios-catalogo-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .relatorios-categorias-sidebar {
+    position: static;
+
+    padding: 10px;
+  }
+
+  .relatorios-categorias-sidebar-header {
+    margin-bottom: 0;
+    padding: 3px 4px 9px;
+  }
+
+  .relatorios-categorias-menu {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+
+    gap: 7px;
+
+    padding-top: 9px;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+
+  .relatorios-categoria-btn {
+    width: auto;
+    min-width: max-content;
+
+    flex: 0 0 auto;
+
+    padding: 8px 10px;
+  }
+
+  .relatorios-categoria-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .relatorios-categoria-btn.ativa,
+  .relatorios-categoria-btn[aria-pressed="true"] {
+    box-shadow:
+      inset 0 -3px 0 #2563eb,
+      0 2px 7px rgba(37, 99, 235, 0.05);
+  }
+
+  .relatorios-catalogo-conteudo {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .relatorios-catalogo {
+    gap: 12px;
+  }
+
+  .relatorios-catalogo .relatorios-busca {
+    grid-template-columns: 36px minmax(0, 1fr);
+
+    min-height: 54px;
+
+    padding: 8px 10px;
+  }
+
+  .relatorios-catalogo .relatorios-busca svg {
+    width: 36px;
+    height: 36px;
+
+    padding: 9px;
+  }
+
+  .relatorios-catalogo .relatorios-busca > span {
+    grid-column: 1 / -1;
+
+    width: fit-content;
+    min-width: 0;
+
+    margin-left: 48px;
+    margin-top: -3px;
+
+    padding: 4px 8px;
+  }
+
+  .relatorios-categorias-sidebar {
+    border-radius: 12px;
+  }
+
+  .relatorios-catalogo-conteudo {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .relatorios-catalogo-header {
+    margin-bottom: 12px;
+    padding: 1px 1px 11px;
+  }
+
+  .relatorios-catalogo-header h2 {
+    font-size: 0.96rem;
+  }
+
+  .relatorios-grid--catalogo {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card {
+    min-height: 92px;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr)
+      16px;
+
+    gap: 11px;
+
+    padding: 12px;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card-icone {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 420px) {
+  .relatorios-grid--catalogo .relatorio-card {
+    grid-template-columns:
+      40px
+      minmax(0, 1fr);
+  }
+
+  .relatorios-grid--catalogo .relatorio-card-seta {
+    display: none;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card-icone {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* =========================================================
+   CENTRAL DE RELATÓRIOS — REFINO CORPORATIVO V2
+   Camada de acabamento visual sobre o catálogo existente.
+   Não altera a lógica, permissões ou abertura dos relatórios.
+========================================================= */
+
+/* Cabeçalho principal mais compacto e menos "card" */
+.relatorios-header {
+  margin-bottom: 18px;
+  padding: 17px 19px;
+
+  border-color: #e5eaf0;
+  border-radius: 14px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 7px 22px rgba(15, 23, 42, 0.025);
+}
+
+.relatorios-header h1 {
+  font-size: 1.38rem;
+  letter-spacing: -0.03em;
+}
+
+.relatorios-header p {
+  margin-top: 5px;
+  color: #718096;
+  font-size: 0.76rem;
+}
+
+/* Um único painel visual para toda a central */
+.relatorios-catalogo {
+  gap: 0;
+
+  padding: 12px;
+  background: #ffffff;
+
+  border: 1px solid #e1e7ee;
+  border-radius: 16px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.02),
+    0 12px 34px rgba(15, 23, 42, 0.035);
+}
+
+/* Barra de busca integrada ao painel */
+.relatorios-catalogo .relatorios-busca {
+  min-height: 52px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+
+  padding: 7px 9px;
+
+  background: #f8fafc;
+  border: 1px solid #e5eaf0;
+  border-radius: 11px;
+
+  box-shadow: none;
+}
+
+.relatorios-catalogo .relatorios-busca:focus-within {
+  background: #ffffff;
+  border-color: #9fc4f8;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.075);
+}
+
+.relatorios-catalogo .relatorios-busca svg {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+
+  color: #3b6fc4;
+  background: #ffffff;
+
+  border-color: #dce7f5;
+  border-radius: 9px;
+}
+
+.relatorios-catalogo .relatorios-busca input {
+  padding: 5px 1px;
+  font-size: 0.79rem;
+  font-weight: 600;
+}
+
+.relatorios-catalogo .relatorios-busca > span {
+  min-width: 72px;
+  padding: 5px 9px;
+
+  color: #506176;
+  background: #ffffff;
+  border-color: #e1e7ee;
+
+  font-size: 0.62rem;
+}
+
+/* Sidebar e conteúdo passam a parecer duas áreas do mesmo painel */
+.relatorios-catalogo-layout {
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 0;
+
+  margin-top: 12px;
+
+  border: 1px solid #e7ebf0;
+  border-radius: 13px;
+  overflow: hidden;
+
+  background: #ffffff;
+}
+
+.relatorios-categorias-sidebar {
+  top: 82px;
+
+  padding: 14px 10px 14px 12px;
+
+  background: #f8fafc;
+  border: 0;
+  border-right: 1px solid #e7ebf0;
+  border-radius: 0;
+
+  box-shadow: none;
+}
+
+.relatorios-categorias-sidebar-header {
+  padding: 2px 4px 12px;
+  margin-bottom: 8px;
+  border-bottom-color: #e5eaf0;
+}
+
+.relatorios-categorias-sidebar-header span {
+  color: #536273;
+  font-size: 0.61rem;
+  letter-spacing: 0.095em;
+}
+
+.relatorios-categorias-sidebar-header strong {
+  min-width: 25px;
+  height: 21px;
+
+  color: #315f9f;
+  background: #eef4fb;
+  border-color: #d7e4f3;
+
+  font-size: 0.6rem;
+}
+
+.relatorios-categorias-menu {
+  gap: 3px;
+}
+
+.relatorios-categoria-btn {
+  min-height: 38px;
+
+  padding: 8px 8px 8px 12px;
+
+  color: #526174;
+  border-radius: 8px;
+}
+
+.relatorios-categoria-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+
+  background: transparent;
+  border-radius: 999px;
+}
+
+.relatorios-categoria-btn:hover {
+  color: #1f4f91;
+  background: #f1f6fc;
+  border-color: transparent;
+  transform: none;
+}
+
+.relatorios-categoria-btn.ativa,
+.relatorios-categoria-btn[aria-pressed="true"] {
+  color: #194f9b;
+  background: #edf4fd;
+  border-color: transparent;
+
+  box-shadow: none;
+}
+
+.relatorios-categoria-btn.ativa::before,
+.relatorios-categoria-btn[aria-pressed="true"]::before {
+  background: #2563eb;
+}
+
+.relatorios-categoria-btn-nome {
+  font-size: 0.71rem;
+  font-weight: 690;
+}
+
+.relatorios-categoria-btn.ativa .relatorios-categoria-btn-nome,
+.relatorios-categoria-btn[aria-pressed="true"] .relatorios-categoria-btn-nome {
+  font-weight: 820;
+}
+
+.relatorios-categoria-btn-contagem {
+  min-width: 25px;
+  height: 20px;
+  padding: 0 6px;
+
+  color: #708096;
+  background: #ffffff;
+  border-color: #e1e7ee;
+
+  font-size: 0.59rem;
+}
+
+.relatorios-categoria-btn.ativa .relatorios-categoria-btn-contagem,
+.relatorios-categoria-btn[aria-pressed="true"] .relatorios-categoria-btn-contagem {
+  color: #1d4ed8;
+  background: #ffffff;
+  border-color: #cadcf5;
+}
+
+/* Conteúdo principal sem aparência de um segundo card */
+.relatorios-catalogo-conteudo {
+  min-height: 410px;
+
+  padding: 18px 20px 20px;
+
+  background: #ffffff;
+  border: 0;
+  border-radius: 0;
+
+  box-shadow: none;
+}
+
+.relatorios-catalogo-header {
+  min-height: 48px;
+
+  margin-bottom: 14px;
+  padding: 0 1px 13px;
+
+  border-bottom-color: #edf0f3;
+}
+
+.relatorios-catalogo-eyebrow {
+  margin-bottom: 3px;
+
+  color: #6b7c90;
+  font-size: 0.54rem;
+  letter-spacing: 0.11em;
+}
+
+.relatorios-catalogo-header h2 {
+  font-size: 1.04rem;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+}
+
+.relatorios-catalogo-header p {
+  margin-top: 4px;
+
+  color: #8996a7;
+  font-size: 0.66rem;
+}
+
+/* Cards mais compactos e com leitura rápida */
+.relatorios-grid--catalogo {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.relatorios-grid--catalogo .relatorio-card {
+  min-height: 94px;
+
+  grid-template-columns:
+    40px
+    minmax(0, 1fr)
+    16px;
+
+  gap: 11px;
+
+  padding: 12px 12px;
+
+  border-color: #e5eaf0;
+  border-radius: 10px;
+
+  box-shadow: none;
+}
+
+.relatorios-grid--catalogo .relatorio-card::before {
+  top: 11px;
+  bottom: 11px;
+  left: 0;
+
+  width: 3px;
+  height: auto;
+
+  background: #2563eb;
+  border-radius: 0 999px 999px 0;
+
+  transform: scaleY(0.45);
+  transform-origin: center;
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover {
+  background: #fbfdff;
+  border-color: #cbdcf2;
+
+  box-shadow:
+    0 6px 16px rgba(15, 23, 42, 0.045);
+
+  transform: none;
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.relatorios-grid--catalogo .relatorio-card:focus-visible {
+  border-color: #8fb8ee;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.085);
+}
+
+.relatorios-grid--catalogo .relatorio-card-icone {
+  width: 40px;
+  height: 40px;
+
+  color: #2d63aa;
+  background: #f2f6fb;
+
+  border-color: #dce6f1;
+  border-radius: 9px;
+
+  box-shadow: none;
+}
+
+.relatorios-grid--catalogo .relatorio-card-icone svg {
+  width: 17px;
+  height: 17px;
+}
+
+.relatorios-grid--catalogo .relatorio-card-categoria {
+  margin-bottom: 3px;
+
+  color: #71839a;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.085em;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo h3 {
+  color: #1c2736;
+
+  font-size: 0.79rem;
+  font-weight: 800;
+  line-height: 1.26;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo p {
+  margin-top: 3px;
+
+  color: #8592a3;
+
+  font-size: 0.63rem;
+  line-height: 1.42;
+}
+
+.relatorios-grid--catalogo .relatorio-card-seta {
+  width: 16px;
+  height: 16px;
+
+  color: #b2bcc9;
+}
+
+.relatorios-grid--catalogo .relatorio-card:hover .relatorio-card-seta {
+  color: #3b6fc4;
+  transform: translateX(2px);
+}
+
+.relatorios-catalogo .relatorios-sem-resultados {
+  min-height: 300px;
+
+  background: #fbfcfe;
+  border-color: #d9e1eb;
+  border-radius: 10px;
+}
+
+/* Em telas largas, usa três colunas quando houver espaço real. */
+@media (min-width: 1440px) {
+  .relatorios-grid--catalogo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .relatorios-catalogo-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .relatorios-grid--catalogo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .relatorios-catalogo {
+    padding: 10px;
+  }
+
+  .relatorios-catalogo-layout {
+    display: flex;
+    flex-direction: column;
+
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .relatorios-categorias-sidebar {
+    position: static;
+
+    padding: 10px 0 8px;
+
+    background: #ffffff;
+    border-right: 0;
+    border-bottom: 1px solid #e7ebf0;
+  }
+
+  .relatorios-categorias-sidebar-header {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .relatorios-categorias-menu {
+    padding-top: 8px;
+  }
+
+  .relatorios-categoria-btn {
+    min-height: 34px;
+    padding: 7px 10px;
+
+    background: #f8fafc;
+    border: 1px solid #e7ebf0;
+  }
+
+  .relatorios-categoria-btn::before {
+    display: none;
+  }
+
+  .relatorios-categoria-btn.ativa,
+  .relatorios-categoria-btn[aria-pressed="true"] {
+    background: #edf4fd;
+    border-color: #cbdcf2;
+  }
+
+  .relatorios-catalogo-conteudo {
+    min-height: 0;
+    padding: 15px 0 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  .relatorios-header {
+    margin-bottom: 12px;
+    padding: 15px;
+  }
+
+  .relatorios-catalogo {
+    padding: 8px;
+    border-radius: 13px;
+  }
+
+  .relatorios-catalogo .relatorios-busca {
+    min-height: 50px;
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .relatorios-catalogo .relatorios-busca svg {
+    width: 32px;
+    height: 32px;
+    padding: 7px;
+  }
+
+  .relatorios-catalogo .relatorios-busca > span {
+    grid-column: 1 / -1;
+
+    width: fit-content;
+    margin: -2px 0 0 42px;
+  }
+
+  .relatorios-catalogo-header {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+
+  .relatorios-grid--catalogo {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card {
+    min-height: 86px;
+    grid-template-columns: 38px minmax(0, 1fr) 15px;
+    gap: 10px;
+    padding: 11px;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card-icone {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* =========================================================
+   CATÁLOGO — CARD COMPACTO SOMENTE COM TÍTULO
+   Mantém apenas ícone, título e seta no card de seleção.
+========================================================= */
+
+.relatorios-grid--catalogo .relatorio-card {
+  min-height: 72px;
+
+  grid-template-columns:
+    40px
+    minmax(0, 1fr)
+    16px;
+
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 13px;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+}
+
+.relatorios-grid--catalogo .relatorio-card-conteudo h3 {
+  margin: 0;
+
+  color: #1c2736;
+
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.3;
+
+  letter-spacing: -0.012em;
+}
+
+/* Segurança para versões antigas do JSX ainda em cache. */
+.relatorios-grid--catalogo .relatorio-card-categoria,
+.relatorios-grid--catalogo .relatorio-card-conteudo p {
+  display: none;
+}
+
+.relatorios-grid--catalogo .relatorio-card::before {
+  top: 10px;
+  bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .relatorios-grid--catalogo .relatorio-card {
+    min-height: 68px;
+
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      16px;
+
+    padding: 11px 12px;
+  }
+
+  .relatorios-grid--catalogo .relatorio-card-icone {
+    width: 38px;
+    height: 38px;
+  }
+}

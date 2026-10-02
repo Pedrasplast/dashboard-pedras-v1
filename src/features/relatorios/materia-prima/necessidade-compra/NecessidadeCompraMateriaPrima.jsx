@@ -18,7 +18,7 @@ import {
 } from "react-icons/fi";
 
 import useNecessidadeCompra
-  from "./useNecessidadeCompra";
+  from "./hooks/useNecessidadeCompra";
 
 import "./NecessidadeCompraMateriaPrima.css";
 
@@ -943,7 +943,7 @@ export default function NecessidadeCompraMateriaPrima({
       const {
         gerarPdfRelatorio,
       } = await import(
-        "../exportacao/GerarPDF"
+        "../../exportacao/GerarPDF"
       );
 
 
@@ -991,7 +991,7 @@ export default function NecessidadeCompraMateriaPrima({
       const {
         gerarExcelRelatorio,
       } = await import(
-        "../exportacao/GerarExcel"
+        "../../exportacao/GerarExcel"
       );
 
 
