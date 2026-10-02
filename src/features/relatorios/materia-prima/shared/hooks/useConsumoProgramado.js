@@ -5,7 +5,7 @@ import {
 import {
   buscarConsumoProgramado,
   criarResultadoConsumoProgramadoVazio,
-} from "./consumoProgramadoService";
+} from "../services/consumoProgramadoService";
 
 
 export default function useConsumoProgramado({

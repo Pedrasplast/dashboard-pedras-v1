@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   buscarNecessidadeCompra,
   criarResultadoNecessidadeCompraVazio,
-} from "./necessidadeCompraService";
+} from "../services/necessidadeCompraService";
 
 /* =========================================================
    HOOK DO RELATÓRIO DE NECESSIDADE DE COMPRA

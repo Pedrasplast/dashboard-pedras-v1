@@ -14,7 +14,7 @@ import {
 
 import Paginacao from "@/components/paginacao/Paginacao";
 
-import useConsumoProgramado from "./useConsumoProgramado";
+import useConsumoProgramado from "../shared/hooks/useConsumoProgramado";
 
 import "./ConsumoProgramadoPorFornecedor.css";
 
@@ -808,7 +808,7 @@ export default function ConsumoProgramadoPorFornecedor({
       setExportando("pdf");
 
       const { gerarPdfRelatorio } = await import(
-        "../exportacao/GerarPDF"
+        "../../exportacao/GerarPDF"
       );
 
       await gerarPdfRelatorio({
@@ -847,7 +847,7 @@ export default function ConsumoProgramadoPorFornecedor({
       setExportando("excel");
 
       const { gerarExcelRelatorio } = await import(
-        "../exportacao/GerarExcel"
+        "../../exportacao/GerarExcel"
       );
 
       await gerarExcelRelatorio({

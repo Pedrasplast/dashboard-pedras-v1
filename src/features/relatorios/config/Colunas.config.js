@@ -1,5 +1,9 @@
 import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
 
+import {
+  COLUNAS_FINANCEIRO,
+} from "../financeiro/config/financeiroColunas";
+
 const converterNumero = converterNumeroFlexivel;
 const formatarNumero = formatarNumeroFlexivel;
 
@@ -10,6 +14,40 @@ function formatarData(valor) {
   if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
   const br = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
   if (br) return `${br[1]}/${br[2]}/${br[3]}`;
+  return texto;
+}
+
+function converterDataExcel(valor) {
+  if (!valor) return "";
+
+  const texto = String(valor).trim();
+
+  if (!texto) return "";
+
+  if (texto.toLowerCase() === "a receber") {
+    return "A receber";
+  }
+
+  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+  if (iso) {
+    return new Date(
+      Number(iso[1]),
+      Number(iso[2]) - 1,
+      Number(iso[3]),
+    );
+  }
+
+  const br = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+
+  if (br) {
+    return new Date(
+      Number(br[3]),
+      Number(br[2]) - 1,
+      Number(br[1]),
+    );
+  }
+
   return texto;
 }
 
@@ -26,6 +64,7 @@ function formatarIdentificadorPedido(valor) {
 }
 
 export const COLUNAS_RELATORIO = {
+  ...COLUNAS_FINANCEIRO,
   /* PRODUÇÃO */
   data: {
     titulo: "Data",
@@ -178,6 +217,111 @@ export const COLUNAS_RELATORIO = {
       }),
   },
 
+
+  /* ENTRADAS E COMPRAS DE MATÉRIA-PRIMA */
+  recebido: {
+    titulo: "Recebido",
+    larguraPdf: 24,
+    larguraExcel: 14,
+    valor: (item) => formatarData(item.recebido),
+    valorExcel: (item) => converterDataExcel(item.recebido),
+    formatoExcel: "dd/mm/yyyy",
+  },
+  emissao: {
+    titulo: "Emissão",
+    larguraPdf: 24,
+    larguraExcel: 14,
+    valor: (item) => formatarData(item.emissao),
+    valorExcel: (item) => converterDataExcel(item.emissao),
+    formatoExcel: "dd/mm/yyyy",
+  },
+  previsao_recebimento: {
+    titulo: "Previsão de Recebimento",
+    larguraPdf: 34,
+    larguraExcel: 20,
+    valor: (item) => formatarData(item.previsao_recebimento),
+    valorExcel: (item) => converterDataExcel(item.previsao_recebimento),
+    formatoExcel: "dd/mm/yyyy",
+  },
+  fornecedor_mp: {
+    titulo: "Fornecedor",
+    larguraPdf: 42,
+    larguraExcel: 30,
+    valor: (item) => item.fornecedor_mp || "-",
+    valorExcel: (item) => item.fornecedor_mp || "-",
+  },
+  material_mp: {
+    titulo: "Material",
+    larguraPdf: 20,
+    larguraExcel: 18,
+    valor: (item) => item.material_mp || "-",
+    valorExcel: (item) => item.material_mp || "-",
+  },
+  quantidade_kg: {
+    titulo: "Quantidade",
+    larguraPdf: 25,
+    larguraExcel: 17,
+    valor: (item) =>
+      `${formatarNumero(item.quantidade_kg, 3)} kg`,
+    valorExcel: (item) => converterNumero(item.quantidade_kg),
+    formatoExcel: "#,##0",
+  },
+  preco: {
+    titulo: "Preço",
+    larguraPdf: 31,
+    larguraExcel: 18,
+    valor: (item) => {
+      if (item.preco === null || item.preco === undefined || item.preco === "") {
+        return "-";
+      }
+
+      return `${converterNumero(item.preco).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 3,
+        maximumFractionDigits: 3,
+      })}/kg`;
+    },
+    valorExcel: (item) =>
+      item.preco === null || item.preco === undefined || item.preco === ""
+        ? null
+        : converterNumero(item.preco),
+    formatoExcel: "[$R$-416] #,##0.00",
+  },
+  ipi: {
+    titulo: "IPI",
+    larguraPdf: 18,
+    larguraExcel: 12,
+    valor: (item) => {
+      if (item.ipi === null || item.ipi === undefined || item.ipi === "") {
+        return "-";
+      }
+
+      return `${converterNumero(item.ipi).toLocaleString("pt-BR", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })}%`;
+    },
+    valorExcel: (item) =>
+      item.ipi === null || item.ipi === undefined || item.ipi === ""
+        ? null
+        : converterNumero(item.ipi) / 100,
+    formatoExcel: "0.00%",
+  },
+  total: {
+    titulo: "Total",
+    larguraPdf: 32,
+    larguraExcel: 18,
+    valor: (item) =>
+      converterNumero(item.total).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    valorExcel: (item) => converterNumero(item.total),
+    formatoExcel: "[$R$-416] #,##0.00",
+  },
   /* PEDIDOS */
   pedido: {
     titulo: "Pedido",
