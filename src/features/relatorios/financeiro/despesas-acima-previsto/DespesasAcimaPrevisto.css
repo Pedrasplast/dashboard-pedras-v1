@@ -1,0 +1,251 @@
+/* =========================================================
+   DESPESAS ACIMA DO PREVISTO
+========================================================= */
+
+.despesas-acima-previsto-icone {
+  color: #dc2626;
+}
+
+
+.despesas-acima-previsto-filtros-card {
+  min-width: 0;
+}
+
+
+.despesas-acima-previsto-filtros-header {
+  align-items: center;
+}
+
+
+.despesas-acima-previsto-filtros-header h3 {
+  margin-bottom: 0;
+}
+
+
+.despesas-acima-previsto-filtros-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+
+.despesas-acima-previsto-filtros {
+  display: grid;
+
+  grid-template-columns:
+    minmax(130px, 160px)
+    minmax(150px, 190px)
+    minmax(360px, 1fr)
+    minmax(260px, 320px);
+
+  gap: 10px;
+  align-items: end;
+}
+
+
+.despesas-acima-previsto-filtros label {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.despesas-acima-previsto-filtros label > span {
+  color: #64748b;
+
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+
+.despesas-acima-previsto-filtros select,
+.despesas-acima-previsto-filtros input {
+  width: 100%;
+  min-height: 39px;
+
+  box-sizing: border-box;
+
+  color: #334155;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.75rem;
+
+  outline: none;
+
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+
+.despesas-acima-previsto-filtros select {
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+
+.despesas-acima-previsto-filtros input {
+  padding: 0 10px;
+}
+
+
+.despesas-acima-previsto-filtros select:hover,
+.despesas-acima-previsto-filtros input:hover {
+  border-color: #94a3b8;
+}
+
+
+.despesas-acima-previsto-filtros select:focus,
+.despesas-acima-previsto-filtros input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.08);
+}
+
+
+.despesas-acima-previsto-filtro-categoria select {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.despesas-acima-previsto-busca-campo {
+  position: relative;
+  min-width: 0;
+}
+
+
+.despesas-acima-previsto-busca-campo > svg {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+
+  width: 15px;
+  height: 15px;
+
+  color: #94a3b8;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+
+.despesas-acima-previsto-busca-campo input {
+  padding-left: 34px;
+}
+
+
+.despesas-acima-previsto-busca-campo input::placeholder {
+  color: #94a3b8;
+}
+
+
+.despesas-acima-previsto-filtros-wrapper
+> .filtros-compartilhados-limpar {
+  margin-top: 12px;
+}
+
+
+.despesas-acima-previsto-atualizando {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  color: #64748b;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+
+.despesas-acima-previsto-girando {
+  animation:
+    despesas-acima-previsto-girar
+    0.8s
+    linear
+    infinite;
+}
+
+
+@keyframes despesas-acima-previsto-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.despesas-acima-previsto-loading {
+  min-height: 220px;
+}
+
+
+.despesas-acima-previsto-resumo-excesso {
+  color: #b42318;
+}
+
+
+.despesas-acima-previsto-tabela-area {
+  padding: 18px 20px 22px;
+}
+
+
+.despesas-acima-previsto-tabela {
+  min-width: 1050px;
+  table-layout: fixed;
+}
+
+
+.despesas-acima-previsto-tabela th,
+.despesas-acima-previsto-tabela td {
+  vertical-align: middle;
+}
+
+
+.despesas-acima-previsto-tabela
+.despesas-acima-previsto-coluna-numerica {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+
+.despesas-acima-previsto-tabela
+.despesas-acima-previsto-destaque {
+  color: #b42318;
+  font-weight: 800;
+}
+
+
+@media (max-width: 1100px) {
+  .despesas-acima-previsto-filtros {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 640px) {
+  .despesas-acima-previsto-filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .despesas-acima-previsto-filtros-wrapper
+  > .filtros-compartilhados-limpar {
+    width: 100%;
+  }
+
+  .despesas-acima-previsto-tabela-area {
+    padding: 14px;
+  }
+}

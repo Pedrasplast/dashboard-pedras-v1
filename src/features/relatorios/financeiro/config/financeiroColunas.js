@@ -261,6 +261,79 @@ export const COLUNAS_FINANCEIRO = {
     formatoExcel:
       '0.00%;[Red]-0.00%',
   },
+
+
+  excesso_previsto: {
+    titulo:
+      "Excesso sobre o Previsto",
+
+    larguraPdf:
+      34,
+
+    larguraExcel:
+      22,
+
+    larguraTabela:
+      "17%",
+
+    numerica:
+      true,
+
+    valor: (item) =>
+      formatarMoeda(
+        item?.excesso_previsto,
+      ),
+
+    valorExcel: (item) =>
+      converterNumero(
+        item?.excesso_previsto,
+      ),
+
+    formatoExcel:
+      '[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00',
+  },
+
+
+  excesso_percentual: {
+    titulo:
+      "Excesso Percentual",
+
+    larguraPdf:
+      29,
+
+    larguraExcel:
+      20,
+
+    larguraTabela:
+      "15%",
+
+    numerica:
+      true,
+
+    valor: (item) =>
+      formatarPercentual(
+        item?.excesso_percentual,
+      ),
+
+    valorExcel: (item) => {
+      if (
+        valorVazio(
+          item?.excesso_percentual,
+        )
+      ) {
+        return null;
+      }
+
+      return (
+        converterNumero(
+          item.excesso_percentual,
+        ) / 100
+      );
+    },
+
+    formatoExcel:
+      '0.00%;[Red]-0.00%',
+  },
 };
 
 
