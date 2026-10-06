@@ -61,7 +61,10 @@ export default function Dashboard() {
   }, [rawDados, filtros.injetora]);
 
   const dadosFiltrados = useMemo(
-    () => filtrarRegistrosDashboard(rawDados, filtros),
+    () =>
+      filtrarRegistrosDashboard(rawDados, filtros, {
+        ajustarParadasPorTurno: true,
+      }),
     [
       rawDados,
       filtros.injetora,

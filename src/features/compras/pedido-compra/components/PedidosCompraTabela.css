@@ -1,0 +1,1145 @@
+.compras-tabela-desktop {
+  display: block;
+  width: 100%;
+}
+
+.compras-tabela-wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.compras-tabela {
+  width: 100%;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  color: var(--text-secondary);
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   LARGURAS GERAIS
+========================================================= */
+
+.compras-tabela--todos {
+  min-width: 1810px;
+}
+
+.compras-tabela--pedidos {
+  min-width: 1690px;
+}
+
+.compras-tabela--requisicoes {
+  width: 100%;
+
+  min-width: 0;
+
+  table-layout: fixed;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.compras-tabela th {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1;
+
+  padding:
+    10px 8px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing:
+    0.035em;
+
+  text-align: left;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CÉLULAS
+========================================================= */
+
+.compras-tabela td {
+  padding:
+    10px 8px;
+
+  border-bottom:
+    1px solid
+    #edf2f7;
+
+  vertical-align: top;
+
+  background: #fff;
+}
+
+.compras-tabela tbody tr:hover td {
+  background: #fbfdff;
+}
+
+/*
+   Quando um pedido possui vários itens expandidos,
+   todas as linhas recebem a classe compras-grupo-destacado.
+   Assim o pedido inteiro fica destacado de uma vez,
+   inclusive as células com rowSpan.
+*/
+.compras-tabela tbody
+  tr.compras-grupo-destacado:not(.compras-linha-atrasada)
+  td {
+  background: #f8fbff !important;
+}
+
+.compras-tabela tbody
+  tr.compras-linha-atrasada.compras-grupo-destacado
+  td {
+  background: #fef2f2 !important;
+}
+
+.compras-tabela .compras-celula-grupo {
+  vertical-align: top;
+
+  border-right:
+    1px solid
+    #f1f5f9;
+}
+
+.compras-item-continuacao td {
+  border-top: 0;
+}
+
+.compras-inicio-grupo td {
+  border-top:
+    5px solid
+    #f8fafc;
+}
+
+/* =========================================================
+   COLUNAS - REQUISIÇÕES
+========================================================= */
+
+.compras-tabela--requisicoes
+  .compras-col-requisicao {
+  width: 6%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-categoria {
+  width: 11%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-previsao {
+  width: 7%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-codigo {
+  width: 8%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-produto {
+  width: 20%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-observacao-item {
+  width: 12%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-numero {
+  width: 5%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-unidade {
+  width: 4%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-observacoes {
+  width: 14%;
+}
+
+.compras-tabela--requisicoes
+  .compras-col-observacoes-internas {
+  width: 13%;
+}
+
+/* =========================================================
+   REQUISIÇÃO
+========================================================= */
+
+.compras-requisicao {
+  color: var(--text);
+}
+
+.compras-requisicao strong {
+  font-size: 11.5px;
+}
+
+/* =========================================================
+   PEDIDO
+========================================================= */
+
+.compras-pedido {
+  min-width: 78px;
+
+  color: var(--text);
+}
+
+.compras-pedido strong {
+  font-size: 12px;
+}
+
+/* =========================================================
+   CATEGORIA
+========================================================= */
+
+.compras-categoria-requisicao {
+  color: #334155;
+
+  font-weight: 650;
+
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   FORNECEDOR
+========================================================= */
+
+.compras-fornecedor {
+  min-width: 210px;
+  max-width: 290px;
+
+  font-weight: 650;
+
+  color: #334155;
+}
+
+/* =========================================================
+   PREVISÃO
+========================================================= */
+
+.compras-previsao {
+  color: #334155;
+}
+
+.compras-previsao-conteudo {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items:
+    flex-start;
+
+  gap: 5px;
+}
+
+.compras-previsao-conteudo > strong {
+  color: #334155;
+
+  font-size: 10.5px;
+
+  font-weight: 700;
+}
+
+/* =========================================================
+   CÓDIGO
+========================================================= */
+
+.compras-codigo {
+  font-weight: 700;
+
+  color: #334155;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   PRODUTO
+========================================================= */
+
+.compras-produto {
+  color: #334155;
+
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+.compras-produto-linha {
+  min-width: 0;
+
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 10px;
+}
+
+.compras-produto-descricao {
+  min-width: 0;
+
+  flex: 1 1 auto;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   BOTÃO EXPANDIR ITENS
+========================================================= */
+
+.compras-btn-itens {
+  min-height: 23px;
+
+  flex: 0 0 auto;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  padding:
+    3px 7px;
+
+  border:
+    1px solid
+    #dbeafe;
+
+  border-radius:
+    999px;
+
+  background:
+    #f8fbff;
+
+  color:
+    #2563eb;
+
+  font-family: inherit;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    border-color
+      0.15s ease,
+    background
+      0.15s ease,
+    color
+      0.15s ease,
+    transform
+      0.15s ease,
+    box-shadow
+      0.15s ease;
+}
+
+.compras-btn-itens:hover {
+  transform:
+    translateY(
+      -1px
+    );
+
+  border-color:
+    #93c5fd;
+
+  background:
+    #eff6ff;
+
+  color:
+    #1d4ed8;
+
+  box-shadow:
+    0 2px 6px
+    rgba(
+      37,
+      99,
+      235,
+      0.08
+    );
+}
+
+.compras-btn-itens--aberto {
+  border-color:
+    #cbd5e1;
+
+  background:
+    #f8fafc;
+
+  color:
+    #64748b;
+}
+
+.compras-btn-itens--aberto:hover {
+  border-color:
+    #94a3b8;
+
+  background:
+    #f1f5f9;
+
+  color:
+    #475569;
+}
+
+.compras-btn-itens svg {
+  flex:
+    0 0 auto;
+
+  stroke-width: 2.5;
+}
+
+/* =========================================================
+   OBSERVAÇÃO DO ITEM
+========================================================= */
+
+.compras-observacao-item {
+  color: #64748b;
+
+  font-size: 9.5px;
+
+  line-height: 1.4;
+
+  white-space: normal;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   QUANTIDADE
+========================================================= */
+
+.compras-numero {
+  text-align: right !important;
+
+  font-variant-numeric:
+    tabular-nums;
+
+  white-space: nowrap;
+}
+
+.compras-unidade {
+  text-align: center;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   SALDO
+========================================================= */
+
+.compras-saldo {
+  font-weight: 750;
+
+  color: #0f172a;
+}
+
+/* =========================================================
+   SOLICITANTE
+========================================================= */
+
+.compras-col-solicitante {
+  min-width: 120px;
+}
+
+.compras-solicitante {
+  min-width: 120px;
+  max-width: 180px;
+
+  color: #334155;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   COMPRADOR
+========================================================= */
+
+.compras-comprador {
+  min-width: 130px;
+  max-width: 200px;
+
+  font-size: 10px;
+
+  font-weight: 650;
+
+  color: #334155;
+}
+
+/* =========================================================
+   VALOR POR ITEM
+========================================================= */
+
+.compras-col-valor,
+.compras-valor {
+  min-width: 105px;
+
+  text-align: right !important;
+
+  white-space: nowrap;
+
+  font-variant-numeric:
+    tabular-nums;
+
+  font-weight: 700;
+}
+
+.compras-valor-item {
+  color: #0f172a;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   OBSERVAÇÕES - PEDIDOS
+========================================================= */
+
+.compras-col-observacoes-pedido {
+  min-width: 240px;
+}
+
+.compras-observacoes-pedido {
+  min-width: 240px;
+  max-width: 360px;
+
+  color: #475569;
+
+  font-size: 9.5px;
+
+  line-height: 1.45;
+
+  white-space: pre-line;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   OBSERVAÇÕES - REQUISIÇÕES
+========================================================= */
+
+.compras-observacoes-requisicao,
+.compras-observacoes-internas {
+  color: #475569;
+
+  font-size: 9px;
+
+  line-height: 1.4;
+
+  white-space: pre-line;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   BADGE ATRASO
+========================================================= */
+
+.compras-tag-atraso {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  width: max-content;
+
+  padding:
+    3px 8px;
+
+  border:
+    1px solid
+    #fecaca;
+
+  border-radius:
+    999px;
+
+  background: #fff1f2;
+
+  color: #ef4444;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.compras-tag-atraso svg {
+  flex:
+    0 0 auto;
+
+  stroke-width: 2.2;
+}
+
+.compras-linha-atrasada td {
+  background: #fffafa;
+}
+
+.compras-linha-atrasada:hover td {
+  background:
+    #fef2f2 !important;
+}
+
+/*
+   Se o pedido atrasado tiver vários itens,
+   mantém todas as linhas do grupo com
+   a mesma tonalidade durante o hover.
+*/
+.compras-linha-atrasada.compras-grupo-destacado td {
+  background: #fef2f2 !important;
+}
+
+/* =========================================================
+   BADGES RECEBIMENTO
+   MANTIDO PARA MOBILE
+========================================================= */
+
+.compras-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 21px;
+
+  max-width: 160px;
+
+  padding:
+    3px 7px;
+
+  border-radius:
+    999px;
+
+  font-size: 8.5px;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  text-align: center;
+
+  white-space: normal;
+}
+
+.compras-badge--recebido {
+  background: #ecfdf5;
+
+  color: #047857;
+}
+
+.compras-badge--recebido-parcialmente {
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+.compras-badge--em-atraso {
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.compras-badge--em-aberto {
+  background: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+.compras-sem-status {
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+.compras-cards-mobile {
+  display: none;
+}
+
+.compras-mobile-observacoes {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  margin-top: 10px;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+}
+
+.compras-mobile-observacoes small {
+  color: #64748b;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.compras-mobile-observacoes span {
+  color: #475569;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+
+  white-space: pre-line;
+}
+
+.compras-mobile-item-observacao {
+  color:
+    #94a3b8 !important;
+
+  font-size:
+    8.5px !important;
+}
+
+.compras-mobile-produto-linha {
+  min-width: 0;
+
+  display: flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 8px;
+}
+
+.compras-mobile-produto-linha > span {
+  min-width: 0;
+
+  flex: 1 1 auto;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.compras-tabela-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.compras-tabela-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.compras-tabela-wrapper::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    #f1f5f9;
+
+  border-radius:
+    999px;
+
+  background: #b8c4d3;
+}
+
+/* =========================================================
+   DESKTOP MÉDIO
+========================================================= */
+
+@media (
+  max-width:
+    1650px
+) {
+  .compras-tabela--requisicoes {
+    min-width: 1280px;
+  }
+
+  .compras-tabela--pedidos {
+    min-width: 1620px;
+  }
+
+  .compras-tabela--todos {
+    min-width: 1740px;
+  }
+
+  .compras-tabela--requisicoes th {
+    font-size: 7.5px;
+  }
+
+  .compras-tabela--requisicoes td {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .compras-btn-itens {
+    padding:
+      3px 6px;
+
+    font-size: 7.5px;
+  }
+
+  .compras-observacoes-pedido {
+    min-width: 210px;
+  }
+}
+
+/* =========================================================
+   NOTEBOOK
+========================================================= */
+
+@media (
+  max-width:
+    1350px
+) {
+  .compras-tabela--requisicoes {
+    min-width: 1180px;
+  }
+
+  .compras-tabela--pedidos {
+    min-width: 1570px;
+  }
+
+  .compras-tabela--todos {
+    min-width: 1680px;
+  }
+
+  .compras-observacoes-requisicao,
+  .compras-observacoes-internas,
+  .compras-observacao-item {
+    font-size: 8.5px;
+  }
+
+  .compras-observacoes-pedido {
+    font-size: 8.5px;
+  }
+}
+
+/* =========================================================
+   NOTEBOOK MENOR
+========================================================= */
+
+@media (
+  max-width:
+    1100px
+) {
+  .compras-tabela--requisicoes {
+    min-width: 1080px;
+  }
+
+  .compras-tabela--pedidos {
+    min-width: 1520px;
+  }
+
+  .compras-tabela--todos {
+    min-width: 1630px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+  max-width:
+    900px
+) {
+  .compras-tabela--requisicoes {
+    min-width: 1000px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width:
+    760px
+) {
+  .compras-tabela-desktop {
+    display: none;
+  }
+
+  .compras-cards-mobile {
+    display: grid;
+
+    gap: 10px;
+
+    padding: 10px;
+  }
+
+  .compras-mobile-card {
+    padding: 14px;
+
+    border:
+      1px solid
+      var(--border);
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    box-shadow:
+      0 1px 3px
+      rgba(
+        15,
+        23,
+        42,
+        0.03
+      );
+  }
+
+  .compras-mobile-card.atrasado {
+    border-left:
+      4px solid
+      var(--danger);
+
+    background: #fffafa;
+  }
+
+  .compras-mobile-topo {
+    display: flex;
+
+    align-items:
+      flex-start;
+
+    justify-content:
+      space-between;
+
+    gap: 10px;
+  }
+
+  .compras-mobile-topo > div {
+    display: flex;
+
+    flex-direction:
+      column;
+
+    gap: 2px;
+  }
+
+  .compras-mobile-topo span {
+    color:
+      var(--text-light);
+
+    font-size: 8px;
+
+    text-transform:
+      uppercase;
+  }
+
+  .compras-mobile-topo strong {
+    color:
+      var(--text);
+
+    font-size: 15px;
+  }
+
+  .compras-mobile-card h3 {
+    margin:
+      12px 0;
+
+    color: #334155;
+
+    font-size: 12px;
+  }
+
+  .compras-mobile-grade {
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: #f8fafc;
+  }
+
+  .compras-mobile-grade > span {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction:
+      column;
+
+    gap: 3px;
+  }
+
+  .compras-mobile-grade small {
+    color:
+      var(--text-light);
+
+    font-size: 8px;
+
+    text-transform:
+      uppercase;
+  }
+
+  .compras-mobile-grade strong {
+    overflow: hidden;
+
+    color: #475569;
+
+    font-size: 10px;
+
+    text-overflow:
+      ellipsis;
+  }
+
+  .compras-mobile-itens {
+    display: grid;
+
+    gap: 7px;
+
+    margin-top: 10px;
+  }
+
+  .compras-mobile-item {
+    display: flex;
+
+    align-items:
+      flex-start;
+
+    justify-content:
+      space-between;
+
+    gap: 10px;
+
+    padding-top: 7px;
+
+    border-top:
+      1px solid
+      #eef2f7;
+  }
+
+  .compras-mobile-item > div {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction:
+      column;
+
+    gap: 2px;
+  }
+
+  .compras-mobile-item strong {
+    color: #334155;
+
+    font-size: 9px;
+  }
+
+  .compras-mobile-item span {
+    color: #64748b;
+
+    font-size: 9.5px;
+
+    line-height: 1.3;
+  }
+
+  .compras-mobile-item small {
+    flex:
+      0 0 auto;
+
+    color: #475569;
+
+    font-size: 8.5px;
+
+    font-weight: 700;
+
+    text-align: right;
+  }
+
+  .compras-btn-itens {
+    min-height: 24px;
+
+    padding:
+      4px 7px;
+
+    font-size: 8px;
+  }
+}
+
+/* =========================================================
+   CELULAR PEQUENO
+========================================================= */
+
+@media (
+  max-width:
+    480px
+) {
+  .compras-mobile-grade {
+    grid-template-columns:
+      1fr;
+  }
+
+  .compras-mobile-item {
+    flex-direction: column;
+  }
+
+  .compras-mobile-item small {
+    width: 100%;
+
+    text-align: left;
+  }
+
+  .compras-mobile-produto-linha {
+    width: 100%;
+  }
+}

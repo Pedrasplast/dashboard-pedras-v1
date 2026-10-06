@@ -1,0 +1,533 @@
+.compras-filtros {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding: 14px;
+
+  margin-bottom: 20px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius: 12px;
+
+  background:
+    var(--surface);
+
+  box-shadow:
+    0 1px 3px
+    rgba(
+      15,
+      23,
+      42,
+      0.025
+    );
+}
+
+.compras-filtros-linha-principal {
+  display: grid;
+
+  grid-template-columns:
+    minmax(
+      350px,
+      1.75fr
+    )
+    minmax(
+      165px,
+      0.75fr
+    )
+    minmax(
+      185px,
+      0.85fr
+    )
+    minmax(
+      175px,
+      0.8fr
+    )
+    minmax(
+      190px,
+      0.8fr
+    );
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.compras-filtros-linha-periodo {
+  display: grid;
+
+  grid-template-columns:
+    160px
+    160px
+    minmax(
+      260px,
+      1fr
+    )
+    auto;
+
+  align-items: end;
+
+  gap: 10px;
+}
+
+/* =========================================================
+   PESQUISA
+========================================================= */
+
+.compras-pesquisa {
+  min-width: 0;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid
+    var(--border-strong);
+
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: #a7b1bf;
+}
+
+.compras-pesquisa:focus-within,
+.compras-filtros select:focus,
+.compras-filtro-data input:focus {
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      37,
+      99,
+      235,
+      0.09
+    );
+}
+
+.compras-pesquisa input {
+  width: 100%;
+
+  min-width: 0;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: #0f172a;
+
+  font-size: 12px;
+
+  font-weight: 500;
+}
+
+.compras-pesquisa input::placeholder {
+  color: #bac3cf;
+
+  opacity: 1;
+
+  font-weight: 400;
+}
+
+/* =========================================================
+   SELECTS
+========================================================= */
+
+.compras-filtros select {
+  min-width: 0;
+
+  width: 100%;
+
+  height: 42px;
+
+  padding:
+    0 30px
+    0 10px;
+
+  border:
+    1px solid
+    var(--border-strong);
+
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #fff;
+
+  color:
+    var(--text-secondary);
+
+  font-size: 11.5px;
+
+  cursor: pointer;
+
+  transition:
+    background
+      0.15s ease,
+    color
+      0.15s ease,
+    border-color
+      0.15s ease;
+}
+
+/* =========================================================
+   FILTROS DESATIVADOS
+========================================================= */
+
+.compras-filtros select:disabled {
+  border-color: #e5eaf0;
+
+  background:
+    #f8fafc;
+
+  color:
+    #b8c2cf;
+
+  cursor:
+    not-allowed;
+
+  opacity: 1;
+}
+
+.compras-filtros select:disabled:hover {
+  border-color:
+    #e5eaf0;
+}
+
+/* =========================================================
+   DATA
+========================================================= */
+
+.compras-filtro-data {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.compras-filtro-data label {
+  color:
+    var(--text-secondary);
+
+  font-size: 10px;
+
+  font-weight: 750;
+}
+
+.compras-filtro-data input {
+  width: 100%;
+
+  height: 42px;
+
+  padding:
+    0 10px;
+
+  border:
+    1px solid
+    var(--border-strong);
+
+  border-radius: 8px;
+
+  outline: 0;
+
+  background: #fff;
+
+  color:
+    var(--text-secondary);
+
+  font-family: inherit;
+
+  font-size: 11.5px;
+
+  cursor: pointer;
+}
+
+/*
+  Placeholder nativo dd/mm/aaaa mais apagado
+  quando o input está vazio.
+*/
+
+.compras-filtro-data
+  input[type="date"]:not(:valid) {
+  color: #c2cad4;
+}
+
+.compras-filtro-data
+  input[type="date"]:not(:valid)::-webkit-datetime-edit {
+  color: #c2cad4;
+}
+
+.compras-filtro-data
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-text {
+  color: #c2cad4;
+}
+
+.compras-filtro-data
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-day-field,
+.compras-filtro-data
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-month-field,
+.compras-filtro-data
+  input[type="date"]:not(:valid)::-webkit-datetime-edit-year-field {
+  color: #c2cad4;
+}
+
+/*
+  Quando existir uma data selecionada,
+  volta para a cor normal.
+*/
+
+.compras-filtro-data
+  input[type="date"]:valid {
+  color:
+    var(--text-secondary);
+}
+
+.compras-filtro-data
+  input[type="date"]:valid::-webkit-datetime-edit {
+  color:
+    var(--text-secondary);
+}
+
+.compras-filtro-data
+  input[type="date"]:valid::-webkit-datetime-edit-text {
+  color:
+    var(--text-secondary);
+}
+
+.compras-filtro-data
+  input[type="date"]:valid::-webkit-datetime-edit-day-field,
+.compras-filtro-data
+  input[type="date"]:valid::-webkit-datetime-edit-month-field,
+.compras-filtro-data
+  input[type="date"]:valid::-webkit-datetime-edit-year-field {
+  color:
+    var(--text-secondary);
+}
+
+.compras-filtro-data
+  input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TEXTO DO PERÍODO
+========================================================= */
+
+.compras-periodo-info {
+  min-height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid
+    #e8edf3;
+
+  border-radius: 8px;
+
+  background: #fafbfd;
+
+  color: #a3adbb;
+
+  font-size: 10px;
+
+  font-weight: 400;
+}
+
+/* =========================================================
+   LIMPAR FILTROS
+========================================================= */
+
+.compras-btn-limpar {
+  height: 42px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    0 15px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: #cbd5e1;
+
+  font-size: 11.5px;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+
+  cursor:
+    not-allowed;
+}
+
+.compras-btn-limpar--ativo {
+  border-color: #fb7185;
+
+  background: #fff7f8;
+
+  color: #e11d48;
+
+  cursor: pointer;
+}
+
+.compras-btn-limpar--ativo:hover {
+  border-color: #f43f5e;
+
+  background: #fff1f2;
+
+  color: #be123c;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      244,
+      63,
+      94,
+      0.07
+    );
+}
+
+.compras-btn-limpar:disabled {
+  opacity: 1;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (
+  max-width:
+    1450px
+) {
+  .compras-filtros-linha-principal {
+    grid-template-columns:
+      minmax(
+        300px,
+        1.5fr
+      )
+      repeat(
+        4,
+        minmax(
+          145px,
+          1fr
+        )
+      );
+  }
+}
+
+@media (
+  max-width:
+    1150px
+) {
+  .compras-filtros-linha-principal {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .compras-pesquisa {
+    grid-column:
+      1 / -1;
+  }
+
+  .compras-filtros-linha-periodo {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .compras-periodo-info {
+    grid-column:
+      1 / 2;
+  }
+
+  .compras-btn-limpar {
+    width: 100%;
+  }
+}
+
+@media (
+  max-width:
+    700px
+) {
+  .compras-filtros-linha-principal {
+    grid-template-columns:
+      1fr;
+  }
+
+  .compras-pesquisa {
+    grid-column: auto;
+  }
+
+  .compras-filtros-linha-periodo {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .compras-periodo-info {
+    grid-column:
+      1 / -1;
+  }
+
+  .compras-btn-limpar {
+    grid-column:
+      1 / -1;
+  }
+}
+
+@media (
+  max-width:
+    520px
+) {
+  .compras-filtros {
+    padding: 10px;
+  }
+
+  .compras-filtros-linha-periodo {
+    grid-template-columns:
+      1fr;
+  }
+
+  .compras-periodo-info,
+  .compras-btn-limpar {
+    grid-column: auto;
+  }
+}

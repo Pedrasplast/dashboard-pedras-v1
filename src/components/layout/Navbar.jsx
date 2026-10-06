@@ -216,6 +216,20 @@ const NAVIGATION_GROUPS = Object.freeze([
     {
       type: "link",
 
+      id: "pedidos-compra",
+
+      label: "Pedidos de Compra",
+
+      path: "/pedidos-compra",
+
+      icon: ShoppingBag,
+
+      permissao: "compras",
+    },
+
+    {
+      type: "link",
+
       id: "compras-futuras",
 
       label: "Compras Futuras",

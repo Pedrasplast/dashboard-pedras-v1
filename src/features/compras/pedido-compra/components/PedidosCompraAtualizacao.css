@@ -1,0 +1,10 @@
+.compras-atualizacao { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; color: #64748b; }
+.compras-atualizacao-icone { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: rgba(37,99,235,.055); color: rgba(37,99,235,.75); }
+.compras-atualizacao-conteudo { display: flex; flex-direction: column; gap: 3px; }
+.compras-atualizacao-status { display: inline-flex; align-items: center; gap: 5px; color: #94a3b8; font-size: 7.5px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; white-space: nowrap; }
+.compras-atualizacao-ponto { width: 5px; height: 5px; border-radius: 50%; background: rgba(37,99,235,.72); }
+.compras-atualizacao-ponto.atualizando { animation: compras-pulse 1s ease-in-out infinite; }
+.compras-atualizacao-horario { display: inline-flex; gap: 4px; color: #94a3b8; font-size: 8.5px; }
+.compras-atualizacao-horario strong { color: #475569; font-size: 10px; font-variant-numeric: tabular-nums; }
+@keyframes compras-pulse { 50% { opacity: .3; transform: scale(.8); } }
+@media (max-width: 900px) { .compras-atualizacao { margin-left: 0; } }
