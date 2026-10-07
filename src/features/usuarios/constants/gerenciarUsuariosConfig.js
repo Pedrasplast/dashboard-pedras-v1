@@ -1,121 +1,303 @@
-export const CHAVE_TELA_USUARIOS =
-  "usuarios";
+export const CHAVE_TELA_USUARIOS = "usuarios";
 
-export const CHAVE_TELA_RELATORIOS =
-  "relatorios";
+export const CHAVE_TELA_RELATORIOS = "relatorios";
 
+/* =========================================================
+   CATÁLOGO CENTRAL DE TELAS
 
-export const MODULOS_PERMISSOES =
-  Object.freeze([
-    {
-      id: "cadastro",
+   Esta é a fonte única das telas controladas pelo sistema.
 
-      nome: "Cadastro",
+   Ao criar uma nova tela:
+   1. adicione-a aqui;
+   2. informe o módulo;
+   3. use a mesma chave no Navbar e no RotaProtegida.
 
-      descricao:
-        "Cadastros mestres utilizados nas rotinas do sistema.",
+   Quando um administrador abrir Gerenciamento de Usuários,
+   o catálogo será sincronizado automaticamente com o Supabase.
+========================================================= */
 
-      chaves: [
-        "cadastro_produto",
-        "cadastro_fornecedor",
-        "cadastro_material",
-        "cadastro_receita",
-      ],
-    },
+export const TELAS_SISTEMA = Object.freeze([
+  {
+    chave: "materia_prima",
+    nome: "Matéria-Prima",
+    rota: "/materia-prima",
+    ordem: 0,
+    ativo: true,
+    modulo: "producao",
+    gerenciavel: true,
+  },
 
-    {
-      id: "dashboards",
+  {
+    chave: "dashboard",
+    nome: "Dashboard",
+    rota: "/dashboard",
+    ordem: 1,
+    ativo: true,
+    modulo: "dashboards",
+    gerenciavel: true,
+  },
 
-      nome: "Dashboards",
+  {
+    chave: "pedidos",
+    nome: "Pedidos",
+    rota: "/pedidos",
+    ordem: 2,
+    ativo: true,
+    modulo: "pedidos",
+    gerenciavel: true,
+  },
 
-      descricao:
-        "Painéis gerenciais e indicadores da operação.",
+  {
+    chave: "relatorios",
+    nome: "Relatórios",
+    rota: "/relatorios",
+    ordem: 3,
+    ativo: true,
+    modulo: "relatorios",
+    gerenciavel: true,
+  },
 
-      chaves: [
-        "dashboard",
-        "dashboard_produtividade",
-        "dashboard_materia_prima",
-        "dashboard_paradas",
-      ],
-    },
+  {
+    chave: "dashboard_produtividade",
+    nome: "Produtividade",
+    rota: "/dashboard-produtividade",
+    ordem: 4,
+    ativo: true,
+    modulo: "dashboards",
+    gerenciavel: true,
+  },
 
-    {
-      id: "producao",
+  {
+    chave: "dashboard_materia_prima",
+    nome: "Matéria-prima",
+    rota: "/dashboard-materia-prima",
+    ordem: 5,
+    ativo: true,
+    modulo: "dashboards",
+    gerenciavel: true,
+  },
 
-      nome: "Produção",
+  {
+    chave: "importar",
+    nome: "Importar",
+    rota: "/importar",
+    ordem: 6,
+    ativo: true,
+    modulo: "administracao",
+    gerenciavel: true,
+  },
 
-      descricao:
-        "Operação e planejamento dos processos produtivos.",
+  {
+    chave: "usuarios",
+    nome: "Gerenciar usuários",
+    rota: "/usuarios",
+    ordem: 7,
+    ativo: true,
+    modulo: "administracao",
+    gerenciavel: false,
+  },
 
-      chaves: [
-        "materia_prima",
-        "estoque",
-      ],
-    },
+  {
+    chave: "financeiro",
+    nome: "Financeiro",
+    rota: "/financeiro",
+    ordem: 8,
+    ativo: true,
+    modulo: "financeiro",
+    gerenciavel: true,
+  },
 
-    {
-      id: "compras",
+  {
+    chave: "financeiro_evolucao_mensal",
+    nome: "Evolução Mensal Financeira",
+    rota: "/financeiro-evolucao-mensal",
+    ordem: 9,
+    ativo: true,
+    modulo: "financeiro",
+    gerenciavel: true,
+  },
 
-      nome: "Compras",
+  {
+    chave: "dashboard_paradas",
+    nome: "Dashboard de Paradas",
+    rota: "/dashboard-paradas",
+    ordem: 10,
+    ativo: true,
+    modulo: "dashboards",
+    gerenciavel: true,
+  },
 
-      descricao:
-        "Compras futuras e recebimentos de matéria-prima.",
+  {
+    chave: "estoque",
+    nome: "Estoque",
+    rota: "/estoque",
+    ordem: 11,
+    ativo: true,
+    modulo: "producao",
+    gerenciavel: true,
+  },
 
-      chaves: [
-        "compras",
-      ],
-    },
+  {
+    chave: "cadastro_produto",
+    nome: "Cadastro de Produto",
+    rota: "/cadastro-produto",
+    ordem: 12,
+    ativo: true,
+    modulo: "cadastro",
+    gerenciavel: true,
+  },
 
-    {
-      id: "pedidos",
+  {
+    chave: "cadastro_fornecedor",
+    nome: "Cadastro de Fornecedor",
+    rota: "/cadastro-fornecedor",
+    ordem: 13,
+    ativo: true,
+    modulo: "cadastro",
+    gerenciavel: true,
+  },
 
-      nome: "Pedidos",
+  {
+    chave: "cadastro_material",
+    nome: "Cadastro de Material",
+    rota: "/cadastro-material",
+    ordem: 14,
+    ativo: true,
+    modulo: "cadastro",
+    gerenciavel: true,
+  },
 
-      descricao:
-        "Consulta e acompanhamento dos pedidos.",
+  {
+    chave: "compras_futuras",
+    nome: "Compras Futuras",
+    rota: "/compras-futuras",
+    ordem: 15,
+    ativo: true,
+    modulo: "compras",
+    gerenciavel: true,
+  },
 
-      chaves: [
-        "pedidos",
-      ],
-    },
+  {
+    chave: "pedidos_compra",
+    nome: "Pedidos de Compra",
+    rota: "/pedidos-compra",
+    ordem: 16,
+    ativo: true,
+    modulo: "compras",
+    gerenciavel: true,
+  },
 
-    {
-      id: "financeiro",
+  {
+    chave: "entradas_materia_prima",
+    nome: "Entradas",
+    rota: "/entradas-materia-prima",
+    ordem: 17,
+    ativo: true,
+    modulo: "compras",
+    gerenciavel: true,
+  },
 
-      nome: "Financeiro",
+  {
+    chave: "cadastro_receita",
+    nome: "Cadastro de Receita",
+    rota: "/cadastro-receita",
+    ordem: 35,
+    ativo: true,
+    modulo: "cadastro",
+    gerenciavel: true,
+  },
+]);
 
-      descricao:
-        "Painéis e análises financeiras.",
+/* =========================================================
+   MÓDULOS
+========================================================= */
 
-      chaves: [
-        "financeiro",
-        "financeiro_evolucao_mensal",
-      ],
-    },
+const MODULOS = Object.freeze([
+  {
+    id: "cadastro",
+    nome: "Cadastro",
+    descricao:
+      "Cadastros mestres utilizados nas rotinas do sistema.",
+  },
 
-    {
-      id: "relatorios",
+  {
+    id: "dashboards",
+    nome: "Dashboards",
+    descricao:
+      "Painéis gerenciais e indicadores da operação.",
+  },
 
-      nome: "Relatórios",
+  {
+    id: "producao",
+    nome: "Produção",
+    descricao:
+      "Operação e planejamento dos processos produtivos.",
+  },
 
-      descricao:
-        "Central de relatórios e permissões específicas.",
+  {
+    id: "compras",
+    nome: "Compras",
+    descricao:
+      "Pedidos de compra, compras futuras e recebimentos de matéria-prima.",
+  },
 
-      chaves: [
-        "relatorios",
-      ],
-    },
+  {
+    id: "pedidos",
+    nome: "Pedidos",
+    descricao:
+      "Consulta e acompanhamento dos pedidos.",
+  },
 
-    {
-      id: "administracao",
+  {
+    id: "financeiro",
+    nome: "Financeiro",
+    descricao:
+      "Painéis e análises financeiras.",
+  },
 
-      nome: "Administração",
+  {
+    id: "relatorios",
+    nome: "Relatórios",
+    descricao:
+      "Central de relatórios e permissões específicas.",
+  },
 
-      descricao:
-        "Funções administrativas disponíveis para operadores.",
+  {
+    id: "administracao",
+    nome: "Administração",
+    descricao:
+      "Funções administrativas disponíveis para operadores.",
+  },
+]);
 
-      chaves: [
-        "importar",
-      ],
-    },
-  ]);
+/* =========================================================
+   GERAR MÓDULOS DE PERMISSÕES AUTOMATICAMENTE
+========================================================= */
+
+export const MODULOS_PERMISSOES = Object.freeze(
+  MODULOS.map((modulo) => ({
+    ...modulo,
+
+    chaves: TELAS_SISTEMA.filter(
+      (tela) =>
+        tela.modulo === modulo.id &&
+        tela.gerenciavel !== false,
+    ).map((tela) => tela.chave),
+  })).filter(
+    (modulo) =>
+      modulo.chaves.length > 0,
+  ),
+);
+
+/* =========================================================
+   LOCALIZAR TELA POR CHAVE
+========================================================= */
+
+export function obterTelaSistema(chave) {
+  return (
+    TELAS_SISTEMA.find(
+      (tela) =>
+        tela.chave === chave,
+    ) || null
+  );
+}

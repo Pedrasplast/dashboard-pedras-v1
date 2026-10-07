@@ -1,23 +1,40 @@
 import {
+  useCallback,
+  useMemo,
+} from "react";
+
+import {
   useQuery,
 } from "@tanstack/react-query";
+
+import {
+  ESTOQUE_QUERY_KEYS,
+  INTERVALO_ATUALIZACAO_ESTOQUE,
+  STALE_TIME_ESTOQUE,
+  STALE_TIME_LOCAIS_ESTOQUE,
+} from "../constants/estoque.constants";
 
 import {
   buscarEstoqueProdutos,
   buscarLocaisEstoqueAtivos,
   buscarPedidosAbertosProdutos,
   buscarStatusSincronizacaoEstoque,
-} from "./estoqueService";
+} from "../services/estoqueService";
+
 
 /* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
+   HOOK DE ESTOQUE
 
-const INTERVALO_ATUALIZACAO =
-  30 * 1000;
+   Responsabilidade:
+   - coordenar React Query;
+   - juntar loading / fetching / erros;
+   - entregar dados prontos para a página.
 
-/* =========================================================
-   HOOK
+   Não deve:
+   - formatar dados;
+   - filtrar tabela;
+   - ordenar produtos;
+   - calcular KPIs.
 ========================================================= */
 
 export default function useEstoque({
@@ -29,17 +46,15 @@ export default function useEstoque({
 
   const locaisQuery =
     useQuery({
-      queryKey: [
-        "estoque-locais-ativos",
-      ],
+      queryKey:
+        ESTOQUE_QUERY_KEYS
+          .LOCAIS,
 
       queryFn:
         buscarLocaisEstoqueAtivos,
 
       staleTime:
-        5 *
-        60 *
-        1000,
+        STALE_TIME_LOCAIS_ESTOQUE,
 
       refetchOnWindowFocus:
         true,
@@ -48,16 +63,18 @@ export default function useEstoque({
         1,
     });
 
+
   /* =======================================================
      ESTOQUE
   ======================================================= */
 
   const estoqueQuery =
     useQuery({
-      queryKey: [
-        "estoque-produtos-acabados",
-        codigoLocalEstoque,
-      ],
+      queryKey:
+        ESTOQUE_QUERY_KEYS
+          .PRODUTOS(
+            codigoLocalEstoque,
+          ),
 
       queryFn:
         () =>
@@ -71,7 +88,7 @@ export default function useEstoque({
         ),
 
       refetchInterval:
-        INTERVALO_ATUALIZACAO,
+        INTERVALO_ATUALIZACAO_ESTOQUE,
 
       refetchIntervalInBackground:
         false,
@@ -83,12 +100,12 @@ export default function useEstoque({
         true,
 
       staleTime:
-        15 *
-        1000,
+        STALE_TIME_ESTOQUE,
 
       retry:
         1,
     });
+
 
   /* =======================================================
      PEDIDOS EM ABERTO
@@ -96,15 +113,15 @@ export default function useEstoque({
 
   const pedidosQuery =
     useQuery({
-      queryKey: [
-        "estoque-pedidos-abertos",
-      ],
+      queryKey:
+        ESTOQUE_QUERY_KEYS
+          .PEDIDOS_ABERTOS,
 
       queryFn:
         buscarPedidosAbertosProdutos,
 
       refetchInterval:
-        INTERVALO_ATUALIZACAO,
+        INTERVALO_ATUALIZACAO_ESTOQUE,
 
       refetchIntervalInBackground:
         false,
@@ -116,28 +133,28 @@ export default function useEstoque({
         true,
 
       staleTime:
-        15 *
-        1000,
+        STALE_TIME_ESTOQUE,
 
       retry:
         1,
     });
 
+
   /* =======================================================
-     STATUS SINCRONIZAÇÃO
+     STATUS DA SINCRONIZAÇÃO
   ======================================================= */
 
   const statusQuery =
     useQuery({
-      queryKey: [
-        "estoque-status-sincronizacao",
-      ],
+      queryKey:
+        ESTOQUE_QUERY_KEYS
+          .STATUS_SINCRONIZACAO,
 
       queryFn:
         buscarStatusSincronizacaoEstoque,
 
       refetchInterval:
-        INTERVALO_ATUALIZACAO,
+        INTERVALO_ATUALIZACAO_ESTOQUE,
 
       refetchIntervalInBackground:
         false,
@@ -149,25 +166,102 @@ export default function useEstoque({
         true,
 
       staleTime:
-        15 *
-        1000,
+        STALE_TIME_ESTOQUE,
 
       retry:
         1,
     });
 
+
   /* =======================================================
      RECARREGAR
+
+     Mantemos disponível para casos futuros,
+     mesmo que o botão manual tenha sido removido da UI.
   ======================================================= */
 
-  async function recarregar() {
-    await Promise.all([
-      estoqueQuery.refetch(),
-      pedidosQuery.refetch(),
-      statusQuery.refetch(),
-      locaisQuery.refetch(),
-    ]);
-  }
+  const recarregar =
+    useCallback(
+      async () => {
+        await Promise.all([
+          estoqueQuery
+            .refetch(),
+
+          pedidosQuery
+            .refetch(),
+
+          statusQuery
+            .refetch(),
+
+          locaisQuery
+            .refetch(),
+        ]);
+      },
+      [
+        estoqueQuery,
+        pedidosQuery,
+        statusQuery,
+        locaisQuery,
+      ],
+    );
+
+
+  /* =======================================================
+     RESUMO DE PEDIDOS
+  ======================================================= */
+
+  const resumoPedidosAbertos =
+    useMemo(
+      () => ({
+        quantidadeTotal:
+          pedidosQuery
+            .data
+            ?.quantidadeTotal ??
+          0,
+
+        pedidosDistintos:
+          pedidosQuery
+            .data
+            ?.pedidosDistintos ??
+          0,
+
+        linhas:
+          pedidosQuery
+            .data
+            ?.linhas ??
+          0,
+      }),
+      [
+        pedidosQuery.data,
+      ],
+    );
+
+
+  /* =======================================================
+     CARREGANDO
+  ======================================================= */
+
+  const carregando =
+    locaisQuery.isLoading ||
+    pedidosQuery.isLoading ||
+    (
+      Boolean(
+        codigoLocalEstoque,
+      ) &&
+      estoqueQuery.isLoading
+    );
+
+
+  /* =======================================================
+     ATUALIZANDO
+  ======================================================= */
+
+  const atualizando =
+    estoqueQuery.isFetching ||
+    pedidosQuery.isFetching ||
+    statusQuery.isFetching ||
+    locaisQuery.isFetching;
+
 
   /* =======================================================
      ERRO
@@ -188,6 +282,7 @@ export default function useEstoque({
       ?.message ||
     "";
 
+
   /* =======================================================
      RETORNO
   ======================================================= */
@@ -207,45 +302,15 @@ export default function useEstoque({
         ?.itens ??
       [],
 
-    resumoPedidosAbertos: {
-      quantidadeTotal:
-        pedidosQuery
-          .data
-          ?.quantidadeTotal ??
-        0,
-
-      pedidosDistintos:
-        pedidosQuery
-          .data
-          ?.pedidosDistintos ??
-        0,
-
-      linhas:
-        pedidosQuery
-          .data
-          ?.linhas ??
-        0,
-    },
+    resumoPedidosAbertos,
 
     statusSincronizacao:
       statusQuery.data ??
       null,
 
-    carregando:
-      locaisQuery.isLoading ||
-      pedidosQuery.isLoading ||
-      (
-        Boolean(
-          codigoLocalEstoque,
-        ) &&
-        estoqueQuery.isLoading
-      ),
+    carregando,
 
-    atualizando:
-      estoqueQuery.isFetching ||
-      pedidosQuery.isFetching ||
-      statusQuery.isFetching ||
-      locaisQuery.isFetching,
+    atualizando,
 
     erro,
 

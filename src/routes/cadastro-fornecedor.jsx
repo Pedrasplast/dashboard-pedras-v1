@@ -23,7 +23,7 @@ export const Route = createFileRoute("/cadastro-fornecedor")({
 
 function CadastroFornecedorRoute() {
   return (
-    <RotaProtegida permissao="cadastros">
+    <RotaProtegida permissao="cadastro_fornecedor">
       <CadastrosPage key="fornecedores" tipo="fornecedores" />
     </RotaProtegida>
   );

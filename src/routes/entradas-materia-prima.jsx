@@ -21,6 +21,7 @@ export const Route =
           title:
             "Entradas de Matéria-Prima | Pedrasplast",
         },
+
         {
           name:
             "description",
@@ -39,13 +40,11 @@ export const Route =
 function EntradasMateriaPrimaRoute() {
   return (
     <RotaProtegida
-      permissao="compras"
+      permissao="entradas_materia_prima"
     >
-
       <ComprasMateriaPrimaPage
         secao="entradas"
       />
-
     </RotaProtegida>
   );
 }

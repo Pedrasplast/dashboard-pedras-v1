@@ -7,15 +7,27 @@ import {
 
 import "./FinanceiroPage.css";
 
-import { WalletCards } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
+import {
+  WalletCards,
+} from "lucide-react";
 
-import FinanceiroStatusSincronizacao from "./components/FinanceiroStatusSincronizacao";
+import PageHeader
+  from "@/components/layout/PageHeader";
 
-import FinanceiroDetalhes from "./components/FinanceiroDetalhes";
-import FinanceiroFiltros from "./components/FinanceiroFiltros";
-import FinanceiroResumo from "./components/FinanceiroResumo";
-import FinanceiroTabela from "./components/FinanceiroTabela";
+import FinanceiroStatusSincronizacao
+  from "./components/FinanceiroStatusSincronizacao";
+
+import FinanceiroDetalhes
+  from "./components/FinanceiroDetalhes";
+
+import FinanceiroFiltros
+  from "./components/FinanceiroFiltros";
+
+import FinanceiroResumo
+  from "./components/FinanceiroResumo";
+
+import FinanceiroTabela
+  from "./components/FinanceiroTabela";
 
 import {
   useFinanceiroAnos,
@@ -46,6 +58,36 @@ function obterPeriodoAtual() {
       agora.getMonth() +
       1,
   };
+}
+
+
+/* =========================================================
+   NORMALIZAR TEXTO PARA PESQUISA
+
+   Remove:
+   - espaços extras
+   - diferenças entre maiúsculas/minúsculas
+   - acentos
+
+   Exemplo:
+   "Manutenção" -> "manutencao"
+========================================================= */
+
+function normalizarTexto(
+  valor,
+) {
+  return String(
+    valor ?? "",
+  )
+    .normalize(
+      "NFD",
+    )
+    .replace(
+      /[\u0300-\u036f]/g,
+      "",
+    )
+    .trim()
+    .toLowerCase();
 }
 
 
@@ -89,6 +131,43 @@ export default function FinanceiroPage() {
     );
 
 
+  /*
+   * Categoria utilizada para filtrar
+   * a tabela da visão geral.
+   *
+   * "todas" = nenhuma categoria específica.
+   */
+  const [
+    categoriaFiltro,
+    definirCategoriaFiltro,
+  ] =
+    useState(
+      "todas",
+    );
+
+
+  /*
+   * Pesquisa livre.
+   *
+   * Pesquisa por:
+   * - código
+   * - categoria
+   * - tipo
+   */
+  const [
+    buscaLivre,
+    definirBuscaLivre,
+  ] =
+    useState(
+      "",
+    );
+
+
+  /*
+   * Categoria aberta no modal de detalhes.
+   *
+   * Não confundir com categoriaFiltro.
+   */
   const [
     categoriaSelecionada,
     definirCategoriaSelecionada,
@@ -130,7 +209,9 @@ export default function FinanceiroPage() {
 
       const anoExiste =
         anosDisponiveis.includes(
-          Number(ano),
+          Number(
+            ano,
+          ),
         );
 
 
@@ -141,6 +222,14 @@ export default function FinanceiroPage() {
 
         definirCategoriaSelecionada(
           null,
+        );
+
+        definirCategoriaFiltro(
+          "todas",
+        );
+
+        definirBuscaLivre(
+          "",
         );
       }
     },
@@ -208,10 +297,17 @@ export default function FinanceiroPage() {
 
 
   /* =======================================================
-     LINHAS
+     FILTRO POR TIPO
+
+     Primeiro selecionamos:
+     - todos
+     - receitas
+     - despesas
+
+     Depois os outros filtros são aplicados.
   ======================================================= */
 
-  const linhasTabela =
+  const linhasPorTipo =
     useMemo(
       () => {
         if (
@@ -243,6 +339,267 @@ export default function FinanceiroPage() {
 
 
   /* =======================================================
+     CATEGORIAS DISPONÍVEIS
+
+     É gerada automaticamente a partir
+     dos dados do período selecionado.
+
+     Cada opção utiliza o código como valor,
+     evitando problemas com categorias de mesmo nome.
+  ======================================================= */
+
+  const categoriasDisponiveis =
+    useMemo(
+      () => {
+        const mapa =
+          new Map();
+
+
+        for (
+          const linha of
+          linhasPorTipo
+        ) {
+          const codigo =
+            String(
+              linha
+                ?.codigo_categoria ??
+                "",
+            ).trim();
+
+
+          const categoria =
+            String(
+              linha
+                ?.categoria ??
+                "",
+            ).trim();
+
+
+          if (
+            !codigo &&
+            !categoria
+          ) {
+            continue;
+          }
+
+
+          const chave =
+            codigo ||
+            categoria;
+
+
+          if (
+            mapa.has(
+              chave,
+            )
+          ) {
+            continue;
+          }
+
+
+          mapa.set(
+            chave,
+            {
+              valor:
+                chave,
+
+              codigo,
+
+              categoria,
+
+              label:
+                codigo &&
+                categoria
+                  ? `${codigo} - ${categoria}`
+                  : categoria ||
+                    codigo,
+            },
+          );
+        }
+
+
+        return Array
+          .from(
+            mapa.values(),
+          )
+          .sort(
+            (
+              primeiro,
+              segundo,
+            ) =>
+              primeiro.label
+                .localeCompare(
+                  segundo.label,
+                  "pt-BR",
+                  {
+                    numeric:
+                      true,
+                  },
+                ),
+          );
+      },
+      [
+        linhasPorTipo,
+      ],
+    );
+
+
+  /* =======================================================
+     CORRIGIR CATEGORIA QUANDO TIPO MUDAR
+
+     Exemplo:
+     usuário escolheu uma despesa e depois
+     alterou Tipo para Receitas.
+
+     A categoria antiga deixa de ser válida.
+  ======================================================= */
+
+  useEffect(
+    () => {
+      if (
+        categoriaFiltro ===
+        "todas"
+      ) {
+        return;
+      }
+
+
+      const existe =
+        categoriasDisponiveis
+          .some(
+            (
+              categoria,
+            ) =>
+              categoria.valor ===
+              categoriaFiltro,
+          );
+
+
+      if (!existe) {
+        definirCategoriaFiltro(
+          "todas",
+        );
+      }
+    },
+    [
+      categoriasDisponiveis,
+      categoriaFiltro,
+    ],
+  );
+
+
+  /* =======================================================
+     FILTRAR TABELA
+
+     Ordem:
+     1. Tipo
+     2. Categoria
+     3. Pesquisa livre
+  ======================================================= */
+
+  const linhasTabela =
+    useMemo(
+      () => {
+        let resultado =
+          linhasPorTipo;
+
+
+        /* ===============================================
+           CATEGORIA
+        =============================================== */
+
+        if (
+          categoriaFiltro !==
+          "todas"
+        ) {
+          resultado =
+            resultado.filter(
+              (
+                linha,
+              ) => {
+                const codigo =
+                  String(
+                    linha
+                      ?.codigo_categoria ??
+                      "",
+                  ).trim();
+
+
+                const categoria =
+                  String(
+                    linha
+                      ?.categoria ??
+                      "",
+                  ).trim();
+
+
+                return (
+                  codigo ===
+                    categoriaFiltro ||
+                  categoria ===
+                    categoriaFiltro
+                );
+              },
+            );
+        }
+
+
+        /* ===============================================
+           PESQUISA LIVRE
+        =============================================== */
+
+        const termo =
+          normalizarTexto(
+            buscaLivre,
+          );
+
+
+        if (termo) {
+          resultado =
+            resultado.filter(
+              (
+                linha,
+              ) => {
+                const conteudo =
+                  normalizarTexto(
+                    [
+                      linha
+                        ?.codigo_categoria,
+
+                      linha
+                        ?.categoria,
+
+                      linha
+                        ?.tipo,
+                    ]
+                      .filter(
+                        Boolean,
+                      )
+                      .join(
+                        " ",
+                      ),
+                  );
+
+
+                return conteudo.includes(
+                  termo,
+                );
+              },
+            );
+        }
+
+
+        return resultado;
+      },
+      [
+        linhasPorTipo,
+        categoriaFiltro,
+        buscaLivre,
+      ],
+    );
+
+
+  /* =======================================================
      NOME MÊS
   ======================================================= */
 
@@ -250,7 +607,9 @@ export default function FinanceiroPage() {
     useMemo(
       () =>
         mesesFinanceiro.find(
-          (item) =>
+          (
+            item,
+          ) =>
             item.valor ===
             mes,
         )?.nome ??
@@ -305,6 +664,14 @@ export default function FinanceiroPage() {
         definirCategoriaSelecionada(
           null,
         );
+
+        definirCategoriaFiltro(
+          "todas",
+        );
+
+        definirBuscaLivre(
+          "",
+        );
       },
       [],
     );
@@ -321,6 +688,14 @@ export default function FinanceiroPage() {
 
         definirCategoriaSelecionada(
           null,
+        );
+
+        definirCategoriaFiltro(
+          "todas",
+        );
+
+        definirBuscaLivre(
+          "",
         );
       },
       [],
@@ -339,8 +714,77 @@ export default function FinanceiroPage() {
         definirCategoriaSelecionada(
           null,
         );
+
+        definirCategoriaFiltro(
+          "todas",
+        );
       },
       [],
+    );
+
+
+  const alterarCategoriaFiltro =
+    useCallback(
+      (
+        novaCategoria,
+      ) => {
+        definirCategoriaFiltro(
+          novaCategoria,
+        );
+
+        definirCategoriaSelecionada(
+          null,
+        );
+      },
+      [],
+    );
+
+
+  const alterarBuscaLivre =
+    useCallback(
+      (
+        novoValor,
+      ) => {
+        definirBuscaLivre(
+          novoValor,
+        );
+
+        definirCategoriaSelecionada(
+          null,
+        );
+      },
+      [],
+    );
+
+
+  const limparFiltros =
+    useCallback(
+      () => {
+        definirTipo(
+          "todos",
+        );
+
+        definirCategoriaFiltro(
+          "todas",
+        );
+
+        definirBuscaLivre(
+          "",
+        );
+
+        definirCategoriaSelecionada(
+          null,
+        );
+      },
+      [],
+    );
+
+
+  const possuiFiltroAdicional =
+    tipo !== "todos" ||
+    categoriaFiltro !== "todas" ||
+    Boolean(
+      buscaLivre.trim(),
     );
 
 
@@ -355,12 +799,18 @@ export default function FinanceiroPage() {
         eyebrow="Gestão financeira"
         title="Financeiro"
         description="Previsto x realizado"
-        icon={WalletCards}
+        icon={
+          WalletCards
+        }
         className="financeiro-cabecalho"
         actions={
           <FinanceiroStatusSincronizacao
-            sincronizacao={sincronizacao}
-            carregando={carregandoSincronizacao}
+            sincronizacao={
+              sincronizacao
+            }
+            carregando={
+              carregandoSincronizacao
+            }
           />
         }
       />
@@ -374,23 +824,57 @@ export default function FinanceiroPage() {
         mes={
           mes
         }
+
         ano={
           ano
         }
+
         tipo={
           tipo
         }
+
+        categoria={
+          categoriaFiltro
+        }
+
+        busca={
+          buscaLivre
+        }
+
+        categoriasDisponiveis={
+          categoriasDisponiveis
+        }
+
         anosDisponiveis={
           anosDisponiveis
         }
+
+        possuiFiltroAdicional={
+          possuiFiltroAdicional
+        }
+
         aoAlterarMes={
           alterarMes
         }
+
         aoAlterarAno={
           alterarAno
         }
+
         aoAlterarTipo={
           alterarTipo
+        }
+
+        aoAlterarCategoria={
+          alterarCategoriaFiltro
+        }
+
+        aoAlterarBusca={
+          alterarBuscaLivre
+        }
+
+        aoLimparFiltros={
+          limparFiltros
         }
       />
 
@@ -446,6 +930,14 @@ export default function FinanceiroPage() {
         !erroFinanceiro && (
           <>
 
+            {/* =============================================
+                RESUMO
+
+                Os cards continuam representando o período
+                completo. Categoria e pesquisa livre filtram
+                somente a tabela.
+            ============================================= */}
+
             <FinanceiroResumo
               resumo={
                 financeiro
@@ -484,6 +976,20 @@ export default function FinanceiroPage() {
                         ? ""
                         : "s"
                     }
+
+                    {possuiFiltroAdicional && (
+                      <>
+                        {" "}
+                        encontrada
+                        {
+                          linhasTabela
+                            .length ===
+                          1
+                            ? ""
+                            : "s"
+                        }
+                      </>
+                    )}
                   </span>
 
                 </div>
@@ -495,6 +1001,7 @@ export default function FinanceiroPage() {
                 linhas={
                   linhasTabela
                 }
+
                 aoDetalhar={
                   abrirDetalhes
                 }
@@ -516,15 +1023,19 @@ export default function FinanceiroPage() {
             categoriaSelecionada,
           )
         }
+
         ano={
           ano
         }
+
         mes={
           mes
         }
+
         categoria={
           categoriaSelecionada
         }
+
         aoFechar={
           fecharDetalhes
         }
