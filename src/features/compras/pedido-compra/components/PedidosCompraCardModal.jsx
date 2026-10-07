@@ -1,12 +1,15 @@
 import {
   useEffect,
   useMemo,
+  useState,
 } from "react";
 
 import {
   AlertTriangle,
   CalendarCheck2,
   CalendarClock,
+  ChevronDown,
+  ChevronUp,
   CircleDollarSign,
   ClipboardList,
   ListChecks,
@@ -31,298 +34,167 @@ import {
 
 import "./PedidosCompraCardModal.css";
 
-const CONFIGURACOES =
-  Object.freeze({
-    abertos: {
-      titulo:
-        "Pedidos em aberto",
+const CONFIGURACOES = Object.freeze({
+  abertos: {
+    titulo: "Pedidos em aberto",
+    descricao: "Pedidos que ainda possuem saldo pendente de recebimento.",
+    icone: ShoppingBag,
+    tipo: "abertos",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
 
-      descricao:
-        "Pedidos que ainda possuem saldo pendente de recebimento.",
+  atrasados: {
+    titulo: "Pedidos atrasados",
+    descricao: "Pedidos com saldo pendente e previsão de recebimento já vencida.",
+    icone: AlertTriangle,
+    tipo: "atrasados",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
 
-      icone:
-        ShoppingBag,
+  "valor-aberto": {
+    titulo: "Valor total em aberto",
+    descricao: "Composição do valor ainda pendente nos pedidos de compra em aberto.",
+    icone: CircleDollarSign,
+    tipo: "valor",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
 
-      tipo:
-        "abertos",
+  "proximos-7-dias": {
+    titulo: "Recebimentos próximos 7 dias",
+    descricao: "Pedidos em aberto com previsão de recebimento entre hoje e os próximos 7 dias.",
+    icone: CalendarClock,
+    tipo: "proximos",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
 
-      documento:
-        TIPOS_DOCUMENTO.PEDIDO,
-    },
+  hoje: {
+    titulo: "Recebimentos do dia",
+    descricao: "Pedidos em aberto cuja previsão de recebimento é hoje.",
+    icone: CalendarCheck2,
+    tipo: "hoje",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
 
-    atrasados: {
-      titulo:
-        "Pedidos atrasados",
+  "requisicoes-total": {
+    titulo: "Requisições abertas",
+    descricao: "Requisições de compra atualmente disponíveis no Omie considerando os filtros aplicados.",
+    icone: ClipboardList,
+    tipo: "requisicoes",
+    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  },
 
-      descricao:
-        "Pedidos com saldo pendente e previsão de recebimento já vencida.",
+  "requisicoes-valor": {
+    titulo: "Valor requisitado",
+    descricao: "Composição do valor dos itens das requisições de compra selecionadas.",
+    icone: WalletCards,
+    tipo: "requisicoes-valor",
+    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  },
 
-      icone:
-        AlertTriangle,
+  "requisicoes-itens": {
+    titulo: "Itens requisitados",
+    descricao: "Itens existentes nas requisições de compra selecionadas.",
+    icone: PackageSearch,
+    tipo: "requisicoes-itens",
+    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  },
 
-      tipo:
-        "atrasados",
+  "requisicoes-proximos-7-dias": {
+    titulo: "Requisições próximos 7 dias",
+    descricao: "Requisições com sugestão de entrega entre hoje e os próximos 7 dias.",
+    icone: ListChecks,
+    tipo: "requisicoes-proximos",
+    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  },
 
-      documento:
-        TIPOS_DOCUMENTO.PEDIDO,
-    },
+  "requisicoes-hoje": {
+    titulo: "Requisições para hoje",
+    descricao: "Requisições cuja sugestão de entrega é hoje.",
+    icone: CalendarCheck2,
+    tipo: "requisicoes-hoje",
+    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  },
+});
 
-    "valor-aberto": {
-      titulo:
-        "Valor total em aberto",
-
-      descricao:
-        "Composição do valor ainda pendente nos pedidos de compra em aberto.",
-
-      icone:
-        CircleDollarSign,
-
-      tipo:
-        "valor",
-
-      documento:
-        TIPOS_DOCUMENTO.PEDIDO,
-    },
-
-    "proximos-7-dias": {
-      titulo:
-        "Recebimentos próximos 7 dias",
-
-      descricao:
-        "Pedidos em aberto com previsão de recebimento entre hoje e os próximos 7 dias.",
-
-      icone:
-        CalendarClock,
-
-      tipo:
-        "proximos",
-
-      documento:
-        TIPOS_DOCUMENTO.PEDIDO,
-    },
-
-    hoje: {
-      titulo:
-        "Recebimentos do dia",
-
-      descricao:
-        "Pedidos em aberto cuja previsão de recebimento é hoje.",
-
-      icone:
-        CalendarCheck2,
-
-      tipo:
-        "hoje",
-
-      documento:
-        TIPOS_DOCUMENTO.PEDIDO,
-    },
-
-    "requisicoes-total": {
-      titulo:
-        "Requisições abertas",
-
-      descricao:
-        "Requisições de compra atualmente disponíveis no Omie considerando os filtros aplicados.",
-
-      icone:
-        ClipboardList,
-
-      tipo:
-        "requisicoes",
-
-      documento:
-        TIPOS_DOCUMENTO.REQUISICAO,
-    },
-
-    "requisicoes-valor": {
-      titulo:
-        "Valor requisitado",
-
-      descricao:
-        "Composição do valor dos itens das requisições de compra selecionadas.",
-
-      icone:
-        WalletCards,
-
-      tipo:
-        "requisicoes-valor",
-
-      documento:
-        TIPOS_DOCUMENTO.REQUISICAO,
-    },
-
-    "requisicoes-itens": {
-      titulo:
-        "Itens requisitados",
-
-      descricao:
-        "Itens existentes nas requisições de compra selecionadas.",
-
-      icone:
-        PackageSearch,
-
-      tipo:
-        "requisicoes-itens",
-
-      documento:
-        TIPOS_DOCUMENTO.REQUISICAO,
-    },
-
-    "requisicoes-proximos-7-dias": {
-      titulo:
-        "Requisições próximos 7 dias",
-
-      descricao:
-        "Requisições com sugestão de entrega entre hoje e os próximos 7 dias.",
-
-      icone:
-        ListChecks,
-
-      tipo:
-        "requisicoes-proximos",
-
-      documento:
-        TIPOS_DOCUMENTO.REQUISICAO,
-    },
-
-    "requisicoes-hoje": {
-      titulo:
-        "Requisições para hoje",
-
-      descricao:
-        "Requisições cuja sugestão de entrega é hoje.",
-
-      icone:
-        CalendarCheck2,
-
-      tipo:
-        "requisicoes-hoje",
-
-      documento:
-        TIPOS_DOCUMENTO.REQUISICAO,
-    },
-  });
-
-function obterValorPrincipal(
-  cardId,
-  indicadores,
-) {
+function obterValorPrincipal(cardId, indicadores) {
   switch (cardId) {
     case "abertos":
-      return String(
-        indicadores?.abertos ??
-          0,
-      );
+      return String(indicadores?.abertos ?? 0);
 
     case "atrasados":
-      return String(
-        indicadores?.atrasados ??
-          0,
-      );
+      return String(indicadores?.atrasados ?? 0);
 
     case "valor-aberto":
-      return formatarMoeda(
-        indicadores
-          ?.valorEmAberto ??
-          0,
-      );
+      return formatarMoeda(indicadores?.valorEmAberto ?? 0);
 
     case "proximos-7-dias":
-      return String(
-        indicadores
-          ?.proximos7Dias ??
-          0,
-      );
+      return String(indicadores?.proximos7Dias ?? 0);
 
     case "hoje":
-      return String(
-        indicadores?.hoje ??
-          0,
-      );
+      return String(indicadores?.hoje ?? 0);
 
     case "requisicoes-total":
-      return String(
-        indicadores?.total ??
-          0,
-      );
+      return String(indicadores?.total ?? 0);
 
     case "requisicoes-valor":
-      return formatarMoeda(
-        indicadores
-          ?.valorTotal ??
-          0,
-      );
+      return formatarMoeda(indicadores?.valorTotal ?? 0);
 
     case "requisicoes-itens":
-      return String(
-        indicadores?.itens ??
-          0,
-      );
+      return String(indicadores?.itens ?? 0);
 
     case "requisicoes-proximos-7-dias":
-      return String(
-        indicadores
-          ?.proximos7Dias ??
-          0,
-      );
+      return String(indicadores?.proximos7Dias ?? 0);
 
     case "requisicoes-hoje":
-      return String(
-        indicadores?.hoje ??
-          0,
-      );
+      return String(indicadores?.hoje ?? 0);
 
     default:
       return "0";
   }
 }
 
-function obterNomeCategoria(
-  requisicao,
-) {
+function obterNomeCategoria(requisicao) {
   return (
-    String(
-      requisicao
-        ?.categoria_nome ??
-        "",
-    ).trim() ||
-    String(
-      requisicao
-        ?.categoria ??
-        "",
-    ).trim() ||
+    String(requisicao?.categoria_nome ?? "").trim() ||
+    String(requisicao?.categoria ?? "").trim() ||
     "-"
   );
 }
 
-function obterCodigoProduto(
-  item,
-) {
+function obterCodigoProduto(item) {
   return (
-    String(
-      item
-        ?.codigo_comercial ??
-        "",
-    ).trim() ||
-    String(
-      item
-        ?.codigo_produto ??
-        "",
-    ).trim() ||
+    String(item?.codigo_comercial ?? "").trim() ||
+    String(item?.codigo_produto ?? "").trim() ||
     "-"
   );
 }
 
-function obterDescricaoProduto(
-  item,
-) {
-  return (
-    String(
-      item?.descricao ??
-        "",
-    ).trim() ||
-    "Produto não identificado"
+function obterDescricaoProduto(item) {
+  return String(item?.descricao ?? "").trim() || "Produto não identificado";
+}
+
+function obterValorItem(item) {
+  const valorTotal = Number(item?.valor_total);
+
+  if (Number.isFinite(valorTotal)) {
+    return valorTotal;
+  }
+
+  const quantidade = Number(item?.quantidade ?? 0);
+  const precoUnitario = Number(item?.preco_unitario ?? 0);
+
+  return quantidade * precoUnitario;
+}
+
+function obterDocumentoId(documento) {
+  return String(
+    documento?.documento_id ??
+      documento?.cod_ped_compra ??
+      documento?.cod_req_compra ??
+      documento?.numero_pedido ??
+      documento?.numero_requisicao ??
+      documento?.numero_documento ??
+      "",
   );
 }
 
@@ -337,15 +209,14 @@ function BadgeRecebimento({
     );
   }
 
-  const classe =
-    String(
-      situacao,
-    )
-      .toLowerCase()
-      .replaceAll(
-        "_",
-        "-",
-      );
+  const classe = String(
+    situacao,
+  )
+    .toLowerCase()
+    .replaceAll(
+      "_",
+      "-",
+    );
 
   return (
     <span
@@ -360,8 +231,76 @@ function BadgeRecebimento({
   );
 }
 
+function BotaoItensModal({
+  totalItens,
+  expandido,
+  onClick,
+}) {
+  if (
+    totalItens <= 1
+  ) {
+    return null;
+  }
+
+  const itensOcultos =
+    Math.max(
+      totalItens - 1,
+      0,
+    );
+
+  return (
+    <button
+      type="button"
+      className={`compras-btn-itens${
+        expandido
+          ? " compras-btn-itens--aberto"
+          : ""
+      }`}
+      onClick={
+        onClick
+      }
+      title={
+        expandido
+          ? "Recolher itens"
+          : "Ver todos os itens"
+      }
+      aria-expanded={
+        expandido
+      }
+    >
+      {expandido ? (
+        <>
+          Recolher
+
+          <ChevronUp
+            size={
+              12
+            }
+          />
+        </>
+      ) : (
+        <>
+          +{itensOcultos}{" "}
+          {itensOcultos ===
+          1
+            ? "item"
+            : "itens"}
+
+          <ChevronDown
+            size={
+              12
+            }
+          />
+        </>
+      )}
+    </button>
+  );
+}
+
 function TabelaPedidos({
   pedidos,
+  documentosExpandidos,
+  onAlternarItens,
 }) {
   return (
     <div className="compras-card-modal-tabela-wrapper">
@@ -399,7 +338,7 @@ function TabelaPedidos({
         </thead>
 
         <tbody>
-          {pedidos.map(
+          {pedidos.flatMap(
             (
               pedido,
             ) => {
@@ -415,21 +354,67 @@ function TabelaPedidos({
                     )
                   : 0;
 
-              return (
+              const documentoId =
+                obterDocumentoId(
+                  pedido,
+                );
+
+              const todosItens =
+                Array.isArray(
+                  pedido
+                    ?.itens,
+                )
+                  ? pedido.itens
+                  : [];
+
+              const possuiMaisItens =
+                todosItens.length >
+                1;
+
+              const expandido =
+                documentosExpandidos.has(
+                  documentoId,
+                );
+
+              const linhaPrincipal = (
                 <tr
-                  key={
-                    pedido
-                      .documento_id ||
-                    pedido
-                      .cod_ped_compra
-                  }
+                  key={`pedido-${documentoId}`}
                 >
                   <td>
                     <div className="compras-card-modal-pedido">
-                      <strong>
-                        {pedido.numero_pedido ||
-                          "-"}
-                      </strong>
+                      <div
+                        style={{
+                          display:
+                            "flex",
+                          alignItems:
+                            "flex-start",
+                          justifyContent:
+                            "space-between",
+                          gap:
+                            8,
+                        }}
+                      >
+                        <strong>
+                          {pedido.numero_pedido ||
+                            "-"}
+                        </strong>
+
+                        {possuiMaisItens && (
+                          <BotaoItensModal
+                            totalItens={
+                              todosItens.length
+                            }
+                            expandido={
+                              expandido
+                            }
+                            onClick={() =>
+                              onAlternarItens(
+                                documentoId,
+                              )
+                            }
+                          />
+                        )}
+                      </div>
 
                       {atrasado &&
                         diasAtraso >
@@ -444,10 +429,12 @@ function TabelaPedidos({
                             {
                               diasAtraso
                             }{" "}
+
                             {diasAtraso ===
                             1
                               ? "dia"
                               : "dias"}{" "}
+
                             em atraso
                           </span>
                         )}
@@ -499,6 +486,182 @@ function TabelaPedidos({
                   </td>
                 </tr>
               );
+
+              if (
+                !expandido ||
+                todosItens.length ===
+                  0
+              ) {
+                return [
+                  linhaPrincipal,
+                ];
+              }
+
+              const linhaItens = (
+                <tr
+                  key={`pedido-itens-${documentoId}`}
+                >
+                  <td
+                    colSpan={
+                      7
+                    }
+                    style={{
+                      padding:
+                        0,
+                    }}
+                  >
+                    <div className="compras-card-modal-tabela-wrapper">
+                      <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
+                        <thead>
+                          <tr>
+                            <th>
+                              Código
+                            </th>
+
+                            <th className="compras-card-modal-col-produto">
+                              Produto
+                            </th>
+
+                            <th className="compras-card-modal-col-numero">
+                              Qtd.
+                            </th>
+
+                            <th className="compras-card-modal-col-numero">
+                              Recebido
+                            </th>
+
+                            <th className="compras-card-modal-col-numero">
+                              Saldo
+                            </th>
+
+                            <th>
+                              Un.
+                            </th>
+
+                            <th className="compras-card-modal-col-valor">
+                              Valor item
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {todosItens.map(
+                            (
+                              item,
+                              indice,
+                            ) => {
+                              const quantidade =
+                                Number(
+                                  item
+                                    ?.quantidade ??
+                                    0,
+                                );
+
+                              const recebida =
+                                Math.min(
+                                  Number(
+                                    item
+                                      ?.quantidade_recebida ??
+                                      0,
+                                  ),
+                                  quantidade,
+                                );
+
+                              const saldo =
+                                Math.max(
+                                  quantidade -
+                                    recebida,
+                                  0,
+                                );
+
+                              return (
+                                <tr
+                                  key={`${documentoId}-${item?.codigo_item ?? indice}`}
+                                >
+                                  <td className="compras-card-modal-codigo">
+                                    {
+                                      obterCodigoProduto(
+                                        item,
+                                      )
+                                    }
+                                  </td>
+
+                                  <td className="compras-card-modal-produto">
+                                    <strong>
+                                      {
+                                        obterDescricaoProduto(
+                                          item,
+                                        )
+                                      }
+                                    </strong>
+
+                                    {item
+                                      ?.observacao && (
+                                      <span className="compras-card-modal-item-observacao">
+                                        {
+                                          item.observacao
+                                        }
+                                      </span>
+                                    )}
+                                  </td>
+
+                                  <td className="compras-card-modal-numero">
+                                    {
+                                      formatarNumero(
+                                        quantidade,
+                                        2,
+                                      )
+                                    }
+                                  </td>
+
+                                  <td className="compras-card-modal-numero">
+                                    {
+                                      formatarNumero(
+                                        recebida,
+                                        2,
+                                      )
+                                    }
+                                  </td>
+
+                                  <td className="compras-card-modal-numero">
+                                    {
+                                      formatarNumero(
+                                        saldo,
+                                        2,
+                                      )
+                                    }
+                                  </td>
+
+                                  <td>
+                                    {item
+                                      ?.unidade ||
+                                      "-"}
+                                  </td>
+
+                                  <td className="compras-card-modal-valor">
+                                    {
+                                      formatarMoeda(
+                                        obterValorItem(
+                                          item,
+                                        ),
+                                      )
+                                    }
+                                  </td>
+                                </tr>
+                              );
+                            },
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              );
+
+              return [
+                linhaPrincipal,
+                linhaItens,
+              ];
             },
           )}
         </tbody>
@@ -509,6 +672,8 @@ function TabelaPedidos({
 
 function TabelaRequisicoes({
   requisicoes,
+  documentosExpandidos,
+  onAlternarItens,
 }) {
   return (
     <div className="compras-card-modal-tabela-wrapper">
@@ -575,7 +740,29 @@ function TabelaRequisicoes({
                       },
                     ];
 
-              return itens.map(
+              const documentoId =
+                obterDocumentoId(
+                  requisicao,
+                );
+
+              const expandido =
+                documentosExpandidos.has(
+                  documentoId,
+                );
+
+              const possuiMaisItens =
+                itens.length >
+                1;
+
+              const itensVisiveis =
+                expandido
+                  ? itens
+                  : itens.slice(
+                      0,
+                      1,
+                    );
+
+              return itensVisiveis.map(
                 (
                   item,
                   indice,
@@ -614,26 +801,60 @@ function TabelaRequisicoes({
 
                   return (
                     <tr
-                      key={`${requisicao.documento_id}-${item.codigo_item ?? indice}`}
+                      key={`${documentoId}-${item.codigo_item ?? indice}`}
+                      className={
+                        primeiro
+                          ? ""
+                          : "compras-card-modal-item-continuacao"
+                      }
                     >
                       {primeiro && (
                         <>
                           <td
                             rowSpan={
-                              itens.length
+                              itensVisiveis.length
                             }
                             className="compras-card-modal-celula-grupo"
                           >
-                            <strong className="compras-card-modal-requisicao">
-                              {requisicao.numero_requisicao ||
-                                requisicao.numero_documento ||
-                                "-"}
-                            </strong>
+                            <div
+                              style={{
+                                display:
+                                  "flex",
+                                alignItems:
+                                  "flex-start",
+                                justifyContent:
+                                  "space-between",
+                                gap:
+                                  8,
+                              }}
+                            >
+                              <strong className="compras-card-modal-requisicao">
+                                {requisicao.numero_requisicao ||
+                                  requisicao.numero_documento ||
+                                  "-"}
+                              </strong>
+
+                              {possuiMaisItens && (
+                                <BotaoItensModal
+                                  totalItens={
+                                    itens.length
+                                  }
+                                  expandido={
+                                    expandido
+                                  }
+                                  onClick={() =>
+                                    onAlternarItens(
+                                      documentoId,
+                                    )
+                                  }
+                                />
+                              )}
+                            </div>
                           </td>
 
                           <td
                             rowSpan={
-                              itens.length
+                              itensVisiveis.length
                             }
                             className="compras-card-modal-celula-grupo compras-card-modal-categoria"
                           >
@@ -646,7 +867,7 @@ function TabelaRequisicoes({
 
                           <td
                             rowSpan={
-                              itens.length
+                              itensVisiveis.length
                             }
                             className="compras-card-modal-celula-grupo"
                           >
@@ -736,6 +957,15 @@ export default function PedidosCompraCardModal({
   tipoDocumento,
   onClose,
 }) {
+  const [
+    documentosExpandidos,
+    setDocumentosExpandidos,
+  ] =
+    useState(
+      () =>
+        new Set(),
+    );
+
   const configuracao =
     CONFIGURACOES[
       cardId
@@ -802,6 +1032,18 @@ export default function PedidosCompraCardModal({
 
   useEffect(
     () => {
+      setDocumentosExpandidos(
+        new Set(),
+      );
+    },
+    [
+      aberto,
+      cardId,
+    ],
+  );
+
+  useEffect(
+    () => {
       if (
         !aberto
       ) {
@@ -841,7 +1083,6 @@ export default function PedidosCompraCardModal({
         );
       };
     },
-
     [
       aberto,
       onClose,
@@ -863,6 +1104,37 @@ export default function PedidosCompraCardModal({
       cardId,
       indicadores,
     );
+
+  function alternarItens(
+    documentoId,
+  ) {
+    setDocumentosExpandidos(
+      (
+        atual,
+      ) => {
+        const proximo =
+          new Set(
+            atual,
+          );
+
+        if (
+          proximo.has(
+            documentoId,
+          )
+        ) {
+          proximo.delete(
+            documentoId,
+          );
+        } else {
+          proximo.add(
+            documentoId,
+          );
+        }
+
+        return proximo;
+      },
+    );
+  }
 
   function handleBackdropClick(
     event,
@@ -1029,11 +1301,23 @@ export default function PedidosCompraCardModal({
               requisicoes={
                 pedidos
               }
+              documentosExpandidos={
+                documentosExpandidos
+              }
+              onAlternarItens={
+                alternarItens
+              }
             />
           ) : (
             <TabelaPedidos
               pedidos={
                 pedidos
+              }
+              documentosExpandidos={
+                documentosExpandidos
+              }
+              onAlternarItens={
+                alternarItens
               }
             />
           )}

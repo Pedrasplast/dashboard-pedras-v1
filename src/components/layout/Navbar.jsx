@@ -80,30 +80,48 @@ const NAVIGATION_GROUPS = Object.freeze([
 
         icon: ClipboardList,
 
-        permissao: "cadastros",
+        permissao: "cadastro_produto",
       },
+
       {
         type: "link",
+
         id: "cadastro-fornecedor",
+
         label: "Fornecedor",
+
         path: "/cadastro-fornecedor",
+
         icon: Users,
-        permissao: "cadastros",
+
+        permissao: "cadastro_fornecedor",
       },
+
       {
         type: "link",
+
         id: "cadastro-material",
+
         label: "Material",
+
         path: "/cadastro-material",
+
         icon: Boxes,
-        permissao: "cadastros",
+
+        permissao: "cadastro_material",
       },
+
       {
         type: "link",
+
         id: "cadastro-receita",
+
         label: "Receita",
+
         path: "/cadastro-receita",
+
         icon: FlaskConical,
+
         permissao: "materia_prima",
       },
     ],
@@ -131,6 +149,16 @@ const NAVIGATION_GROUPS = Object.freeze([
         icon: Factory,
 
         permissao: "dashboard",
+      },
+
+      {
+        label: "Dashboard-Produtividade",
+
+        path: "/dashboard-produtividade",
+
+        icon: Gauge,
+
+        permissao: "dashboard_produtividade",
       },
 
       {
@@ -200,10 +228,10 @@ const NAVIGATION_GROUPS = Object.freeze([
   },
 
   /* =====================================================
-     COMPRAS
-===================================================== */
+       COMPRAS
+    ===================================================== */
 
-{
+  {
   type: "group",
 
   id: "compras",
@@ -224,7 +252,7 @@ const NAVIGATION_GROUPS = Object.freeze([
 
       icon: ShoppingBag,
 
-      permissao: "compras",
+      permissao: "pedidos_compra",
     },
 
     {
@@ -238,7 +266,7 @@ const NAVIGATION_GROUPS = Object.freeze([
 
       icon: ShoppingBag,
 
-      permissao: "compras",
+      permissao: "compras_futuras",
     },
 
     {
@@ -252,10 +280,11 @@ const NAVIGATION_GROUPS = Object.freeze([
 
       icon: ArrowDownToLine,
 
-      permissao: "compras",
+      permissao: "entradas_materia_prima",
     },
   ],
 },
+
   /* =====================================================
        PEDIDOS
     ===================================================== */
@@ -338,7 +367,6 @@ const NAVIGATION_GROUPS = Object.freeze([
     permissao: "relatorios",
   },
 ]);
-
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */

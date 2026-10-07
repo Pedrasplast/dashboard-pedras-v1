@@ -23,7 +23,7 @@ export const Route = createFileRoute("/cadastro-material")({
 
 function CadastroMaterialRoute() {
   return (
-    <RotaProtegida permissao="cadastros">
+    <RotaProtegida permissao="cadastro_material">
       <CadastrosPage key="materiais" tipo="materiais" />
     </RotaProtegida>
   );

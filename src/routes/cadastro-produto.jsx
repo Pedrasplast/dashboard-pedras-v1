@@ -23,7 +23,7 @@ export const Route = createFileRoute("/cadastro-produto")({
 
 function CadastroProdutoRoute() {
   return (
-    <RotaProtegida permissao="cadastros">
+    <RotaProtegida permissao="cadastro_produto">
       <CadastrosPage key="produtos" tipo="produtos" />
     </RotaProtegida>
   );

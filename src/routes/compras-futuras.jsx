@@ -30,6 +30,7 @@ export const Route =
           title:
             "Compras Futuras | Pedrasplast",
         },
+
         {
           name:
             "description",
@@ -49,7 +50,8 @@ function ComprasFuturasRoute() {
   const [
     isAdmin,
     setIsAdmin,
-  ] = useState(false);
+  ] =
+    useState(false);
 
 
   useEffect(() => {
@@ -150,16 +152,14 @@ function ComprasFuturasRoute() {
 
   return (
     <RotaProtegida
-      permissao="compras"
+      permissao="compras_futuras"
     >
-
       <ComprasMateriaPrimaPage
         secao="compras-futuras"
         isAdmin={
           isAdmin
         }
       />
-
     </RotaProtegida>
   );
 }
