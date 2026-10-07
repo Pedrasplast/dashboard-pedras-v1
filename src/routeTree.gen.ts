@@ -30,6 +30,7 @@ import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MateriaPrimaRouteImport } from './routes/materia-prima'
 import { Route as PedidosRouteImport } from './routes/pedidos'
+import { Route as PedidosCompraRouteImport } from './routes/pedidos-compra'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 
@@ -139,6 +140,11 @@ const PedidosRoute = PedidosRouteImport.update({
   path: '/pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PedidosCompraRoute = PedidosCompraRouteImport.update({
+  id: '/pedidos-compra',
+  path: '/pedidos-compra',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelatoriosRoute = RelatoriosRouteImport.update({
   id: '/relatorios',
   path: '/relatorios',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
+  '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
+  '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
+  '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
   '/usuarios': typeof UsuariosRoute
 }
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
+    | '/pedidos-compra'
     | '/relatorios'
     | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
+    | '/pedidos-compra'
     | '/relatorios'
     | '/usuarios'
   id:
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/materia-prima'
     | '/pedidos'
+    | '/pedidos-compra'
     | '/relatorios'
     | '/usuarios'
   fileRoutesById: FileRoutesById
@@ -326,6 +338,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MateriaPrimaRoute: typeof MateriaPrimaRoute
   PedidosRoute: typeof PedidosRoute
+  PedidosCompraRoute: typeof PedidosCompraRoute
   RelatoriosRoute: typeof RelatoriosRoute
   UsuariosRoute: typeof UsuariosRoute
 }
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pedidos-compra': {
+      id: '/pedidos-compra'
+      path: '/pedidos-compra'
+      fullPath: '/pedidos-compra'
+      preLoaderRoute: typeof PedidosCompraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relatorios': {
       id: '/relatorios'
       path: '/relatorios'
@@ -518,6 +538,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MateriaPrimaRoute: MateriaPrimaRoute,
   PedidosRoute: PedidosRoute,
+  PedidosCompraRoute: PedidosCompraRoute,
   RelatoriosRoute: RelatoriosRoute,
   UsuariosRoute: UsuariosRoute,
 }

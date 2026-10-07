@@ -1,0 +1,384 @@
+@import "components/PedidosCompraAtualizacao.css";
+@import "components/PedidosCompraResumo.css";
+@import "components/PedidosCompraFiltros.css";
+@import "components/PedidosCompraTabela.css";
+
+.compras-page {
+  width:
+    100%;
+
+  min-height:
+    100%;
+
+  padding:
+    18px;
+
+    margin-top: 70px;
+
+  background:
+    #f4f7fb;
+}
+
+.compras-container {
+  width:
+    100%;
+
+  max-width:
+    none;
+
+  margin:
+    0 auto;
+}
+
+.compras-header {
+  margin-bottom:
+    18px;
+}
+
+.compras-content {
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    12px;
+
+  background:
+    #fff;
+
+  box-shadow:
+    0 1px 4px
+    rgba(
+      15,
+      23,
+      42,
+      0.035
+    );
+}
+
+.compras-content-header {
+  min-height:
+    70px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    15px;
+
+  padding:
+    14px
+    18px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+.compras-content-header
+  h2 {
+  margin:
+    0;
+
+  color:
+    #0f172a;
+
+  font-size:
+    14px;
+
+  font-weight:
+    800;
+}
+
+.compras-content-header
+  p {
+  margin:
+    3px
+    0
+    0;
+
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+}
+
+.compras-fonte {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-height:
+    25px;
+
+  padding:
+    0 10px;
+
+  border:
+    1px solid
+    #bfdbfe;
+
+  border-radius:
+    999px;
+
+  background:
+    #eff6ff;
+
+  color:
+    #2563eb;
+
+  font-size:
+    8px;
+
+  font-weight:
+    850;
+
+  letter-spacing:
+    0.035em;
+
+  text-transform:
+    uppercase;
+
+  white-space:
+    nowrap;
+}
+
+.compras-fonte--erro {
+  border-color:
+    #fca5a5;
+
+  background:
+    #fff1f2;
+
+  color:
+    #dc2626;
+}
+
+.compras-omie-erro {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    8px;
+
+  margin:
+    10px
+    14px
+    0;
+
+  padding:
+    9px
+    11px;
+
+  border:
+    1px solid
+    #fecaca;
+
+  border-radius:
+    8px;
+
+  background:
+    #fff7f7;
+
+  color:
+    #b91c1c;
+}
+
+.compras-omie-erro
+  svg {
+  flex:
+    0 0 auto;
+
+  margin-top:
+    1px;
+}
+
+.compras-omie-erro
+  div {
+  min-width:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    2px;
+}
+
+.compras-omie-erro
+  strong {
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+}
+
+.compras-omie-erro
+  span {
+  color:
+    #dc2626;
+
+  font-size:
+    9.5px;
+
+  line-height:
+    1.4;
+
+  overflow-wrap:
+    anywhere;
+}
+
+.compras-estado {
+  min-height:
+    260px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    5px;
+
+  padding:
+    30px;
+
+  color:
+    #64748b;
+
+  text-align:
+    center;
+}
+
+.compras-estado
+  strong {
+  color:
+    #334155;
+
+  font-size:
+    13px;
+}
+
+.compras-estado
+  span {
+  font-size:
+    10px;
+}
+
+.compras-estado--erro
+  strong {
+  color:
+    #dc2626;
+}
+
+.compras-estado
+  button {
+  margin-top:
+    8px;
+
+  padding:
+    8px 13px;
+
+  border:
+    1px solid
+    #cbd5e1;
+
+  border-radius:
+    7px;
+
+  background:
+    #fff;
+
+  color:
+    #475569;
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+}
+
+.compras-estado
+  button:hover {
+  background:
+    #f8fafc;
+}
+
+@media (
+  max-width:
+    900px
+) {
+  .compras-page {
+    padding:
+      12px;
+  }
+
+  .compras-content-header {
+    min-height:
+      60px;
+
+    padding:
+      12px;
+  }
+}
+
+@media (
+  max-width:
+    560px
+) {
+  .compras-page {
+    padding:
+      8px;
+  }
+
+  .compras-content-header {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .compras-fonte {
+    align-self:
+      flex-start;
+  }
+
+  .compras-omie-erro {
+    margin:
+      8px;
+  }
+}

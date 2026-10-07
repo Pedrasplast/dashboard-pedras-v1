@@ -1,0 +1,399 @@
+.compras-resumo {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(
+        0,
+        1fr
+      )
+    );
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.compras-resumo--completo {
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(
+        0,
+        1fr
+      )
+    );
+  gap: 10px;
+}
+
+.compras-resumo-card {
+  min-width: 0;
+  min-height: 104px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding:
+    17px 18px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    12px;
+
+  background:
+    #fff;
+
+  box-shadow:
+    0 1px 4px
+    rgba(
+      15,
+      23,
+      42,
+      0.04
+    );
+
+  transition:
+    border-color
+      0.15s ease,
+    box-shadow
+      0.15s ease,
+    transform
+      0.15s ease;
+}
+
+.compras-resumo-card--compacto {
+  min-height:
+    82px;
+
+  gap:
+    10px;
+
+  padding:
+    12px 13px;
+}
+
+.compras-resumo-card--clicavel {
+  cursor:
+    pointer;
+}
+
+.compras-resumo-card--clicavel:hover {
+  border-color:
+    #cbd5e1;
+
+  box-shadow:
+    0 4px 14px
+    rgba(
+      15,
+      23,
+      42,
+      0.07
+    );
+
+  transform:
+    translateY(
+      -1px
+    );
+}
+
+.compras-resumo-card--ativo {
+  border-color:
+    #60a5fa;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(
+      59,
+      130,
+      246,
+      0.08
+    );
+}
+
+.compras-resumo-card--danger {
+  border-left:
+    3px solid
+    #ef4444;
+
+  background:
+    #fffafa;
+}
+
+.compras-resumo-card-icone {
+  width:
+    44px;
+
+  height:
+    44px;
+
+  flex:
+    0 0 auto;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    10px;
+
+  background:
+    #eff6ff;
+
+  color:
+    #2563eb;
+}
+
+.compras-resumo-card--compacto
+  .compras-resumo-card-icone {
+  width:
+    36px;
+
+  height:
+    36px;
+
+  border-radius:
+    9px;
+}
+
+.compras-resumo-card-icone--danger {
+  background:
+    #fee2e2;
+
+  color:
+    #ef4444;
+}
+
+.compras-resumo-card-icone--success {
+  background:
+    #ecfdf5;
+
+  color:
+    #059669;
+}
+
+.compras-resumo-card-icone--purple {
+  background:
+    #f5f3ff;
+
+  color:
+    #7c3aed;
+}
+
+.compras-resumo-card-icone--cyan {
+  background:
+    #ecfeff;
+
+  color:
+    #0891b2;
+}
+
+.compras-resumo-card-icone--requisicao {
+  background:
+    #eef2ff;
+
+  color:
+    #4f46e5;
+}
+
+.compras-resumo-card-icone--requisicao-valor {
+  background:
+    #f0fdf4;
+
+  color:
+    #16a34a;
+}
+
+.compras-resumo-card-icone--requisicao-itens {
+  background:
+    #fff7ed;
+
+  color:
+    #ea580c;
+}
+
+.compras-resumo-card-icone--requisicao-futuro {
+  background:
+    #faf5ff;
+
+  color:
+    #9333ea;
+}
+
+.compras-resumo-card-icone--requisicao-hoje {
+  background:
+    #ecfeff;
+
+  color:
+    #0e7490;
+}
+
+.compras-resumo-card-conteudo {
+  min-width:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    5px;
+}
+
+.compras-resumo-card-titulo {
+  overflow:
+    hidden;
+
+  color:
+    #64748b;
+
+  font-size:
+    10px;
+
+  font-weight:
+    650;
+
+  line-height:
+    1.25;
+
+  text-overflow:
+    ellipsis;
+}
+
+.compras-resumo-card-valor {
+  overflow:
+    hidden;
+
+  color:
+    #0f172a;
+
+  font-size:
+    19px;
+
+  font-weight:
+    800;
+
+  line-height:
+    1.15;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+.compras-resumo-card--compacto
+  .compras-resumo-card-titulo {
+  font-size:
+    8.5px;
+}
+
+.compras-resumo-card--compacto
+  .compras-resumo-card-valor {
+  font-size:
+    15px;
+}
+
+.compras-resumo-card--danger
+  .compras-resumo-card-valor {
+  color:
+    #dc2626;
+}
+
+@media (
+  max-width:
+    1500px
+) {
+  .compras-resumo {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .compras-resumo--completo {
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .compras-resumo--completo
+    .compras-resumo-card {
+    min-height:
+      76px;
+
+    padding:
+      10px;
+  }
+}
+
+@media (
+  max-width:
+    1200px
+) {
+  .compras-resumo--completo {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+@media (
+  max-width:
+    950px
+) {
+  .compras-resumo,
+  .compras-resumo--completo {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+}
+
+@media (
+  max-width:
+    560px
+) {
+  .compras-resumo,
+  .compras-resumo--completo {
+    grid-template-columns:
+      1fr;
+  }
+
+  .compras-resumo-card,
+  .compras-resumo-card--compacto {
+    min-height:
+      72px;
+
+    padding:
+      11px 12px;
+  }
+}
