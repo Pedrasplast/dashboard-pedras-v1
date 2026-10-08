@@ -22,7 +22,7 @@
   overflow-x: auto;
   overflow-y: visible;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-inline: contain;
@@ -48,15 +48,15 @@
 }
 
 .pedidos-tabela thead {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .pedidos-tabela th {
   padding: 12px 12px;
 
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   text-align: left !important;
 
@@ -66,7 +66,7 @@
   letter-spacing: 0.035em;
   text-transform: uppercase;
 
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 
   white-space: nowrap;
 }
@@ -80,11 +80,11 @@
 
   vertical-align: top;
 
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .pedidos-tabela tbody tr {
-  background: #ffffff;
+  background: var(--color-surface);
 
   transition: background 0.12s ease;
 }
@@ -107,7 +107,7 @@
 .pedidos-tabela th:first-child {
   z-index: 6;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   box-shadow:
     4px 0 8px
@@ -119,7 +119,7 @@
 
   min-width: 82px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-shadow:
     4px 0 8px
@@ -155,7 +155,7 @@
 .pedidos-celula-agrupada {
   vertical-align: top !important;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   border-bottom:
     1px solid
@@ -183,7 +183,7 @@
 
   font-weight: 750;
 
-  color: var(--primary);
+  color: var(--color-primary);
 
   white-space: nowrap;
 }
@@ -204,9 +204,9 @@
   border: 1px solid #bfdbfe;
   border-radius: 999px;
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 8px;
   font-weight: 800;
@@ -229,7 +229,7 @@
   font-weight: 600;
   line-height: 1.45;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   white-space: normal;
 
@@ -274,7 +274,7 @@
 
   font-weight: 650;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   white-space: nowrap;
 }
@@ -309,13 +309,13 @@
 
   font-weight: 500;
 
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .pedidos-item-indicador {
   flex: 0 0 auto;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 16px;
   font-weight: 700;
@@ -368,9 +368,9 @@
   border: 1px solid #fecaca;
   border-radius: 999px;
 
-  background: #fef2f2;
+  background: var(--color-danger-soft);
 
-  color: #dc2626;
+  color: var(--color-danger);
 
   font-size: 9px;
   font-weight: 800;
@@ -391,7 +391,7 @@
 
 .pedido-linha-atrasada:hover,
 .pedido-linha-atrasada:hover > td {
-  background: #fef2f2 !important;
+  background: var(--color-danger-soft) !important;
 }
 
 .pedido-celula-atrasada {
@@ -412,13 +412,13 @@
 
 .pedido-linha-cancelada,
 .pedido-linha-cancelada > td {
-  background: #f8fafc !important;
+  background: var(--color-surface-subtle) !important;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .pedido-celula-cancelada {
-  background: #f8fafc !important;
+  background: var(--color-surface-subtle) !important;
 }
 
 
@@ -433,33 +433,33 @@
 
 .pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada)
 > td {
-  background: var(--warning-soft);
+  background: #fff7ed;
 }
 
 .pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover
 > td {
-  background: var(--warning-hover);
+  background: #ffedd5;
 }
 
 .pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada)
 > td {
-  background: var(--purple-soft);
+  background: #faf5ff;
 }
 
 .pedido-linha-alterada:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover
 > td {
-  background: var(--purple-hover);
+  background: #f3e8ff;
 }
 
 .pedido-celula-nova {
   box-shadow:
-    inset 4px 0 0 var(--warning),
+    inset 4px 0 0 #f97316,
     4px 0 8px rgba(15, 23, 42, 0.04);
 }
 
 .pedido-celula-alterada {
   box-shadow:
-    inset 4px 0 0 var(--purple),
+    inset 4px 0 0 #7c3aed,
     4px 0 8px rgba(15, 23, 42, 0.04);
 }
 
@@ -481,7 +481,7 @@
 
   border-radius: 999px;
 
-  color: #ffffff;
+  color: var(--color-surface);
 
   font-size: 9px;
   font-weight: 900;
@@ -494,9 +494,9 @@
 }
 
 .pedido-novo-badge {
-  border: 1px solid var(--warning);
+  border: 1px solid #f97316;
 
-  background: var(--warning);
+  background: #f97316;
 
   box-shadow:
     0 2px 6px
@@ -504,9 +504,9 @@
 }
 
 .pedido-alterado-badge {
-  border: 1px solid var(--purple);
+  border: 1px solid #7c3aed;
 
-  background: var(--purple);
+  background: #7c3aed;
 
   box-shadow:
     0 2px 6px
@@ -523,11 +523,11 @@
 }
 
 .pedidos-tabela-wrapper::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 }
 
 .pedidos-tabela-wrapper::-webkit-scrollbar-thumb {
-  border: 2px solid #f1f5f9;
+  border: 2px solid var(--color-surface-muted);
   border-radius: 999px;
 
   background: #b8c4d3;
@@ -761,7 +761,7 @@
 
     padding: 10px;
 
-    background: #f8fafc;
+    background: var(--color-surface-subtle);
   }
 
 
@@ -774,10 +774,10 @@
 
     overflow: hidden;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
 
-    background: #ffffff;
+    background: var(--color-surface);
 
     box-shadow:
       0 2px 7px
@@ -797,7 +797,7 @@
   }
 
   .pedidos-mobile-card--clicavel:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
@@ -805,15 +805,15 @@
   /* ESTADOS */
 
   .pedidos-mobile-card--novo {
-    border-left: 4px solid var(--warning);
+    border-left: 4px solid #f97316;
 
-    background: var(--warning-soft);
+    background: #fff7ed;
   }
 
   .pedidos-mobile-card--alterado {
-    border-left: 4px solid var(--purple);
+    border-left: 4px solid #7c3aed;
 
-    background: var(--purple-soft);
+    background: #faf5ff;
   }
 
   .pedidos-mobile-card--atrasado {
@@ -823,9 +823,9 @@
   }
 
   .pedidos-mobile-card--cancelado {
-    border-left: 4px solid #94a3b8;
+    border-left: 4px solid var(--color-text-light);
 
-    background: #f8fafc;
+    background: var(--color-surface-subtle);
   }
 
 
@@ -866,7 +866,7 @@
     font-size: 16px;
     font-weight: 800;
 
-    color: var(--primary);
+    color: var(--color-primary);
   }
 
   .pedidos-mobile-header-direita {
@@ -894,7 +894,7 @@
     letter-spacing: 0.045em;
     text-transform: uppercase;
 
-    color: var(--text-muted);
+    color: var(--color-text-muted);
   }
 
 
@@ -914,7 +914,7 @@
 
     line-height: 1.4;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     overflow-wrap: anywhere;
   }
@@ -950,7 +950,7 @@
 
     padding: 9px 10px;
 
-    background: #ffffff;
+    background: var(--color-surface);
   }
 
   .pedidos-mobile-card--atrasado
@@ -960,7 +960,7 @@
 
   .pedidos-mobile-card--cancelado
   .pedidos-mobile-info {
-    background: #f8fafc;
+    background: var(--color-surface-subtle);
   }
 
   .pedidos-mobile-info strong {
@@ -971,7 +971,7 @@
 
     line-height: 1.35;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     overflow-wrap: anywhere;
   }
@@ -1017,7 +1017,7 @@
     font-size: 10px;
     font-weight: 800;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     white-space: nowrap;
   }
@@ -1029,12 +1029,12 @@
 
     border-radius: 6px;
 
-    background: #f1f5f9;
+    background: var(--color-surface-muted);
 
     font-size: 9px;
     font-weight: 750;
 
-    color: #475569;
+    color: var(--color-text-secondary);
 
     white-space: nowrap;
   }
@@ -1045,7 +1045,7 @@
 
     line-height: 1.4;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     overflow-wrap: anywhere;
   }

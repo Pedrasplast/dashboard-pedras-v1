@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useState,
@@ -217,65 +219,13 @@ export default function CadastroFornecedorModal({
      ESC
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
 
-      function fecharEscape(event) {
-        if (
-          event.key === "Escape" &&
-          !salvando
-        ) {
-          onCancelar?.();
-        }
-      }
-
-      document.addEventListener(
-        "keydown",
-        fecharEscape,
-      );
-
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
 
   /* =======================================================
      SCROLL
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
 
-      const overflowAnterior =
-        document.body.style.overflow;
-
-      document.body.style.overflow =
-        "hidden";
-
-      return () => {
-        document.body.style.overflow =
-          overflowAnterior;
-      };
-    },
-    [
-      aberto,
-    ],
-  );
 
   /* =======================================================
      SALVAR
@@ -456,15 +406,22 @@ export default function CadastroFornecedorModal({
   }
 
   return (
-    <div className="produto-pp-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
       <div
         className="produto-pp-modal cadastro-produto-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadastro-fornecedor-modal-titulo"
       >
-        <div className="produto-pp-modal-header">
-          <div className="produto-pp-modal-header-icone">
+        <div className="produto-pp-modal-header" data-modal-header="">
+          <div className="produto-pp-modal-header-icone" data-modal-icone="">
             <Truck
               size={22}
               aria-hidden="true"
@@ -476,11 +433,13 @@ export default function CadastroFornecedorModal({
               Cadastro
             </span>
 
-            <h3 id="cadastro-fornecedor-modal-titulo">
-              {item
-                ? "Editar fornecedor"
-                : "Cadastrar fornecedor"}
-            </h3>
+            <ModalTitulo>
+              <h3 id="cadastro-fornecedor-modal-titulo">
+                {item
+                  ? "Editar fornecedor"
+                  : "Cadastrar fornecedor"}
+              </h3>
+            </ModalTitulo>
 
             <p>
               Dados utilizados no planejamento
@@ -494,6 +453,7 @@ export default function CadastroFornecedorModal({
             onClick={onCancelar}
             disabled={salvando}
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={19} />
           </button>
@@ -502,6 +462,7 @@ export default function CadastroFornecedorModal({
         <form
           className="produto-pp-modal-form"
           onSubmit={enviar}
+          data-modal-form=""
         >
           <label className="produto-pp-modal-campo">
             <span>
@@ -807,12 +768,13 @@ export default function CadastroFornecedorModal({
             </div>
           )}
 
-          <div className="produto-pp-modal-acoes">
+          <div className="produto-pp-modal-acoes" data-modal-footer="">
             <button
               type="button"
               className="produto-pp-modal-cancelar"
               onClick={onCancelar}
               disabled={salvando}
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -821,6 +783,7 @@ export default function CadastroFornecedorModal({
               type="submit"
               className="produto-pp-modal-salvar"
               disabled={salvando}
+              data-modal-acao="primaria"
             >
               <Save size={17} />
 
@@ -831,6 +794,6 @@ export default function CadastroFornecedorModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

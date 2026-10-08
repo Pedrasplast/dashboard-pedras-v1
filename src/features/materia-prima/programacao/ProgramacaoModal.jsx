@@ -1,3 +1,6 @@
+import "./ProgramacaoLayout.css";
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   AlertTriangle,
   CalendarDays,
@@ -2294,7 +2297,14 @@ export default function ProgramacaoModal({
 
 
   return (
-    <div className="programacao-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="amplo"
+      fecharAoClicarFora={false}
+    >
 
       <div
         className="programacao-modal programacao-modal-calendario"
@@ -2303,9 +2313,9 @@ export default function ProgramacaoModal({
         aria-labelledby="programacao-modal-titulo"
       >
 
-        <div className="programacao-modal-header">
+        <div className="programacao-modal-header" data-modal-header="">
 
-          <div className="programacao-modal-header-icone">
+          <div className="programacao-modal-header-icone" data-modal-icone="">
             <CalendarDays
               size={22}
               strokeWidth={2}
@@ -2321,13 +2331,15 @@ export default function ProgramacaoModal({
             </span>
 
 
-            <h3 id="programacao-modal-titulo">
+            <ModalTitulo>
+              <h3 id="programacao-modal-titulo">
 
-              {item
-                ? "Editar programação"
-                : "Nova programação"}
+                {item
+                  ? "Editar programação"
+                  : "Nova programação"}
 
-            </h3>
+              </h3>
+            </ModalTitulo>
 
 
             <p>
@@ -2347,6 +2359,7 @@ export default function ProgramacaoModal({
               salvando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X
               size={19}
@@ -2361,7 +2374,9 @@ export default function ProgramacaoModal({
           onSubmit={
             enviarFormulario
           }
+          data-modal-form=""
         >
+<div className="programacao-modal-conteudo">
 
           {itemLegado && (
 
@@ -2392,7 +2407,7 @@ export default function ProgramacaoModal({
 
           <section className="programacao-calendario-configuracao">
 
-            <div className="programacao-calendario-configuracao-cabecalho">
+            <div className="programacao-calendario-configuracao-cabecalho" >
 
               <div>
 
@@ -2681,11 +2696,11 @@ export default function ProgramacaoModal({
 
           {!itemLegado && (
 
-            <>
+            <div className="programacao-calendario-area">
 
               <section className="programacao-calendario-bloco">
 
-                <div className="programacao-calendario-cabecalho">
+                <div className="programacao-calendario-cabecalho" >
 
                   <div className="programacao-calendario-cabecalho-texto">
 
@@ -3043,7 +3058,7 @@ export default function ProgramacaoModal({
                           </div>
 
 
-                          <div className="programacao-calendario-dia-conteudo">
+                          <div className="programacao-calendario-dia-conteudo" >
 
                             {passado ? (
 
@@ -3197,10 +3212,13 @@ export default function ProgramacaoModal({
                 </div>
 
 
-                {datasMarcadas.length >
-                  0 && (
 
-                  <div className="programacao-calendario-lote">
+
+
+              </section>
+
+
+              <div className="programacao-calendario-lote">
 
                     <div className="programacao-calendario-lote-info">
 
@@ -3250,9 +3268,7 @@ export default function ProgramacaoModal({
                                     perfil,
                                   )
                               }
-                              disabled={
-                                salvando
-                              }
+                              disabled={datasMarcadas.length === 0 || (salvando)}
                             >
                               {
                                 perfil.rotulo
@@ -3288,9 +3304,7 @@ export default function ProgramacaoModal({
                                 event.target.value,
                               )
                           }
-                          disabled={
-                            salvando
-                          }
+                          disabled={datasMarcadas.length === 0 || (salvando)}
                         />
 
 
@@ -3304,9 +3318,7 @@ export default function ProgramacaoModal({
                           onClick={
                             aplicarOutro
                           }
-                          disabled={
-                            salvando
-                          }
+                          disabled={datasMarcadas.length === 0 || (salvando)}
                         >
                           Aplicar
                         </button>
@@ -3331,10 +3343,8 @@ export default function ProgramacaoModal({
                                 event.target.value,
                               )
                           }
-                          disabled={
-                            salvando ||
-                            receitas.length === 0
-                          }
+                          disabled={datasMarcadas.length === 0 || (salvando ||
+                            receitas.length === 0)}
                         >
 
                           <option value="">
@@ -3363,11 +3373,9 @@ export default function ProgramacaoModal({
                           onClick={
                             aplicarReceitaMarcadas
                           }
-                          disabled={
-                            salvando ||
+                          disabled={datasMarcadas.length === 0 || (salvando ||
                             !receitaLoteId ||
-                            receitas.length === 0
-                          }
+                            receitas.length === 0)}
                         >
                           Aplicar receita
                         </button>
@@ -3383,9 +3391,7 @@ export default function ProgramacaoModal({
                           onClick={
                             removerMarcadosDaProgramacao
                           }
-                          disabled={
-                            salvando
-                          }
+                          disabled={datasMarcadas.length === 0 || (salvando)}
                         >
 
                           <Trash2
@@ -3408,9 +3414,7 @@ export default function ProgramacaoModal({
                               [],
                             )
                         }
-                        disabled={
-                          salvando
-                        }
+                        disabled={datasMarcadas.length === 0 || (salvando)}
                       >
                         Limpar
                       </button>
@@ -3419,15 +3423,9 @@ export default function ProgramacaoModal({
 
                   </div>
 
-                )}
+<section className="programacao-calendario-resumo-bloco">
 
-
-              </section>
-
-
-              <section className="programacao-calendario-resumo-bloco">
-
-                <div className="programacao-calendario-resumo-cabecalho">
+                <div className="programacao-calendario-resumo-cabecalho" >
 
                   <div>
 
@@ -3569,7 +3567,7 @@ export default function ProgramacaoModal({
 
               </section>
 
-            </>
+            </div>
 
           )}
 
@@ -3641,7 +3639,8 @@ export default function ProgramacaoModal({
           )}
 
 
-          <div className="programacao-modal-acoes">
+          </div>
+<div className="programacao-modal-acoes" data-modal-footer="">
 
             <button
               type="button"
@@ -3652,6 +3651,7 @@ export default function ProgramacaoModal({
               disabled={
                 salvando
               }
+              data-modal-acao="secundaria"
             >
 
               {itemLegado
@@ -3669,6 +3669,7 @@ export default function ProgramacaoModal({
                 disabled={
                   salvando
                 }
+                data-modal-acao="primaria"
               >
 
                 <Save
@@ -3694,6 +3695,6 @@ export default function ProgramacaoModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

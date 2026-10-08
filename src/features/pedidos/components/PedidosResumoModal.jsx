@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useMemo,
 } from "react";
 
@@ -13,6 +12,9 @@ import {
 import {
   formatarNumero,
 } from "../utils/format.utils";
+
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 
 import "./PedidosResumoModal.css";
 
@@ -140,51 +142,6 @@ export default function PedidosResumoModal({
   todosPedidos = [],
   onFechar,
 }) {
-  useEffect(() => {
-    if (!aberto) {
-      return undefined;
-    }
-
-
-    function aoPressionarTecla(
-      event,
-    ) {
-      if (
-        event.key ===
-        "Escape"
-      ) {
-        onFechar();
-      }
-    }
-
-
-    const overflowAnterior =
-      document.body.style.overflow;
-
-    document.body.style.overflow =
-      "hidden";
-
-    window.addEventListener(
-      "keydown",
-      aoPressionarTecla,
-    );
-
-
-    return () => {
-      document.body.style.overflow =
-        overflowAnterior;
-
-      window.removeEventListener(
-        "keydown",
-        aoPressionarTecla,
-      );
-    };
-  }, [
-    aberto,
-    onFechar,
-  ]);
-
-
   const linhasPorPedido =
     useMemo(() => {
       const mapa =
@@ -320,33 +277,18 @@ export default function PedidosResumoModal({
 
 
   return (
-    <div
-      className="pedidos-resumo-modal-backdrop"
-      onMouseDown={
-        (
-          event,
-        ) => {
-          if (
-            event.target ===
-            event.currentTarget
-          ) {
-            onFechar();
-          }
-        }
-      }
+    <Modal
+      aberto={aberto}
+      onFechar={onFechar}
+      tamanho="grande"
+      className="pedidos-resumo-modal"
     >
-      <section
-        className="pedidos-resumo-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label={titulo}
-      >
 
-        <header className="pedidos-resumo-modal-header">
+        <header className="pedidos-resumo-modal-header" data-modal-header="">
 
           <div className="pedidos-resumo-modal-titulo">
 
-            <div className="pedidos-resumo-modal-icone">
+            <div className="pedidos-resumo-modal-icone" data-modal-icone="">
               <CalendarClock
                 size={21}
               />
@@ -357,9 +299,11 @@ export default function PedidosResumoModal({
                 Pedidos
               </span>
 
-              <h2>
-                {titulo}
-              </h2>
+              <ModalTitulo>
+                <h2>
+                  {titulo}
+                </h2>
+              </ModalTitulo>
 
               {descricao && (
                 <p>
@@ -378,6 +322,7 @@ export default function PedidosResumoModal({
               onFechar
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X
               size={20}
@@ -518,7 +463,7 @@ export default function PedidosResumoModal({
         )}
 
 
-        <footer className="pedidos-resumo-modal-footer">
+        <footer className="pedidos-resumo-modal-footer" data-modal-footer="">
 
           <span>
             {registros.length ===
@@ -533,13 +478,14 @@ export default function PedidosResumoModal({
             onClick={
               onFechar
             }
+            data-modal-acao="primaria"
+            data-modal-fechar=""
           >
             Fechar
           </button>
 
         </footer>
 
-      </section>
-    </div>
+      </Modal>
   );
 }

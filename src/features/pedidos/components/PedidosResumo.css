@@ -1,5 +1,20 @@
 /* =========================================================
-   CARDS
+   PEDIDOS
+   RESUMO / CARDS
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - estrutura preservada;
+   - responsividade preservada;
+   - estados preservados;
+   - tokens locais substituidos pelos globais;
+   - cores especificas de cards mantidas localmente.
+========================================================= */
+
+
+/* =========================================================
+   GRID PRINCIPAL
 ========================================================= */
 
 .pedidos-resumo {
@@ -8,12 +23,15 @@
   grid-template-columns:
     repeat(
       5,
-      minmax(0, 1fr)
+      minmax(
+        0,
+        1fr
+      )
     );
 
   gap: 15px;
 
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 
@@ -40,22 +58,19 @@
   overflow: hidden;
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  background:
-    var(--surface);
+  background: var(--color-surface);
 
   box-shadow:
-    0 2px 8px
-    rgba(
-      15,
-      23,
-      42,
-      0.035
-    );
+    0
+    2px
+    8px
+    rgb(15 23 42 / 0.035);
 
   font: inherit;
 
@@ -66,29 +81,34 @@
   cursor: pointer;
 
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
 }
 
+
+/* =========================================================
+   CARD - HOVER
+========================================================= */
 
 .pedidos-card:hover:not(:disabled) {
   transform:
     translateY(-2px);
 
   border-color:
-    var(--border-strong);
+    var(--color-border-strong);
 
   box-shadow:
-    0 7px 20px
-    rgba(
-      15,
-      23,
-      42,
-      0.09
-    );
+    0
+    7px
+    20px
+    rgb(15 23 42 / 0.09);
 }
 
+
+/* =========================================================
+   CARD - ACTIVE
+========================================================= */
 
 .pedidos-card:active:not(:disabled) {
   transform:
@@ -96,22 +116,28 @@
 }
 
 
+/* =========================================================
+   CARD - FOCO
+========================================================= */
+
 .pedidos-card:focus-visible {
   outline: 0;
 
   border-color:
-    var(--primary);
+    var(--color-primary);
 
   box-shadow:
-    0 0 0 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.12
-    );
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
 }
 
+
+/* =========================================================
+   CARD - DISABLED
+========================================================= */
 
 .pedidos-card:disabled {
   cursor: default;
@@ -119,7 +145,7 @@
 
 
 /* =========================================================
-   ÍCONE
+   ICONE
 ========================================================= */
 
 .pedidos-card-icon {
@@ -127,7 +153,9 @@
   height: 46px;
 
   flex:
-    0 0 46px;
+    0
+    0
+    46px;
 
   display: flex;
   align-items: center;
@@ -136,12 +164,16 @@
   border-radius: 11px;
 
   background:
-    var(--primary-soft);
+    var(--color-primary-soft);
 
   color:
-    var(--primary);
+    var(--color-primary);
 }
 
+
+/* =========================================================
+   CONTEUDO
+========================================================= */
 
 .pedidos-card > div:last-child {
   min-width: 0;
@@ -154,25 +186,34 @@
 }
 
 
+/* =========================================================
+   LABEL
+========================================================= */
+
 .pedidos-card-label {
-  font-size: 12px;
+  color:
+    var(--color-text-muted);
+
+  font-size:
+    var(--font-size-caption);
 
   font-weight: 550;
-
-  color:
-    var(--text-muted);
 }
 
+
+/* =========================================================
+   VALOR
+========================================================= */
 
 .pedidos-card strong {
   overflow: hidden;
 
+  color:
+    var(--color-text);
+
   font-size: 21px;
 
   font-weight: 750;
-
-  color:
-    var(--text);
 
   text-overflow: ellipsis;
 
@@ -191,21 +232,22 @@
   background:
     linear-gradient(
       135deg,
-      #ffffff 0%,
+      var(--color-surface) 0%,
       #fffafa 55%,
-      var(--danger-soft) 100%
+      var(--color-danger-soft) 100%
     );
 
   box-shadow:
-    0 3px 12px
-    rgba(
-      220,
-      38,
-      38,
-      0.06
-    );
+    0
+    3px
+    12px
+    rgb(220 38 38 / 0.06);
 }
 
+
+/* =========================================================
+   LINHA LATERAL - ATRASADOS
+========================================================= */
 
 .pedidos-card--atrasados::before {
   content: "";
@@ -219,31 +261,43 @@
   width: 4px;
 
   background:
-    var(--danger);
+    var(--color-danger);
 }
 
 
+/* =========================================================
+   ICONE - ATRASADOS
+========================================================= */
+
 .pedidos-card--atrasados
-.pedidos-card-icon {
+  .pedidos-card-icon {
   background:
     #fee2e2;
 
   color:
-    var(--danger);
+    var(--color-danger);
 }
 
 
+/* =========================================================
+   LABEL - ATRASADOS
+========================================================= */
+
 .pedidos-card--atrasados
-.pedidos-card-label {
+  .pedidos-card-label {
   color:
-    var(--danger-dark);
+    var(--color-danger-hover);
 }
 
 
+/* =========================================================
+   VALOR - ATRASADOS
+========================================================= */
+
 .pedidos-card--atrasados
-strong {
+  strong {
   color:
-    var(--danger);
+    var(--color-danger);
 }
 
 
@@ -252,26 +306,26 @@ strong {
 ========================================================= */
 
 .pedidos-card--quantidade
-.pedidos-card-icon {
+  .pedidos-card-icon {
   background:
-    var(--purple-soft);
+    #f5f3ff;
 
   color:
-    var(--purple);
+    #7c3aed;
 }
 
 
 /* =========================================================
-   PRÓXIMOS 7 DIAS
+   PROXIMOS 7 DIAS
 ========================================================= */
 
 .pedidos-card--proximos
-.pedidos-card-icon {
+  .pedidos-card-icon {
   background:
-    var(--success-soft);
+    var(--color-success-soft);
 
   color:
-    var(--success);
+    var(--color-success);
 }
 
 
@@ -286,15 +340,19 @@ strong {
   background:
     linear-gradient(
       135deg,
-      #ffffff 0%,
+      var(--color-surface) 0%,
       #f8fdff 55%,
       #f0f9ff 100%
     );
 }
 
 
+/* =========================================================
+   ICONE - FATURAMENTO DO DIA
+========================================================= */
+
 .pedidos-card--hoje
-.pedidos-card-icon {
+  .pedidos-card-icon {
   background:
     #e0f2fe;
 
@@ -303,55 +361,71 @@ strong {
 }
 
 
-.pedidos-card--hoje
-.pedidos-card-label {
-  color:
-    #0369a1;
-}
-
+/* =========================================================
+   LABEL - FATURAMENTO DO DIA
+========================================================= */
 
 .pedidos-card--hoje
-strong {
+  .pedidos-card-label {
   color:
     #0369a1;
 }
 
 
 /* =========================================================
-   RESPONSIVO
+   VALOR - FATURAMENTO DO DIA
+========================================================= */
+
+.pedidos-card--hoje
+  strong {
+  color:
+    #0369a1;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE - 1350px
 ========================================================= */
 
 @media (max-width: 1350px) {
-
   .pedidos-resumo {
     grid-template-columns:
       repeat(
         3,
-        minmax(0, 1fr)
+        minmax(
+          0,
+          1fr
+        )
       );
   }
-
 }
 
 
-@media (max-width: 900px) {
+/* =========================================================
+   RESPONSIVIDADE - 900px
+========================================================= */
 
+@media (max-width: 900px) {
   .pedidos-resumo {
     grid-template-columns:
       repeat(
         2,
-        minmax(0, 1fr)
+        minmax(
+          0,
+          1fr
+        )
       );
   }
-
 }
 
 
-@media (max-width: 520px) {
+/* =========================================================
+   RESPONSIVIDADE - 520px
+========================================================= */
 
+@media (max-width: 520px) {
   .pedidos-resumo {
     grid-template-columns:
       1fr;
   }
-
 }

@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   FiAlertTriangle,
 } from "react-icons/fi";
@@ -15,18 +17,27 @@ export default function ExcluirUsuarioModal({
   }
 
   return (
-    <div className="modal-overlay">
+    <Modal
+      asChild
+      aberto={Boolean(usuario)}
+      onFechar={onCancelar}
+      bloqueado={false}
+      tamanho="pequeno"
+      fecharAoClicarFora={false}
+    >
 
       <div className="modal-content">
 
-        <div className="modal-icon-alert">
+        <header data-modal-header><div><div className="modal-icon-alert">
           <FiAlertTriangle />
         </div>
 
 
-        <h3>
-          Confirmar Exclusão
-        </h3>
+        <ModalTitulo>
+          <h3>
+            Confirmar Exclusão
+          </h3>
+        </ModalTitulo>
 
 
         <p>
@@ -38,10 +49,10 @@ export default function ExcluirUsuarioModal({
           </strong>
 
           ? Esta ação não poderá ser desfeita.
-        </p>
+        </p></div></header>
 
 
-        <div className="modal-actions">
+        <div className="modal-actions" data-modal-footer="">
 
           <button
             type="button"
@@ -49,6 +60,7 @@ export default function ExcluirUsuarioModal({
             onClick={
               onCancelar
             }
+            data-modal-acao="secundaria"
           >
             Cancelar
           </button>
@@ -60,6 +72,7 @@ export default function ExcluirUsuarioModal({
             onClick={
               onConfirmar
             }
+            data-modal-acao="perigo"
           >
             Sim, excluir
           </button>
@@ -68,6 +81,6 @@ export default function ExcluirUsuarioModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   AlertTriangle,
   FlaskConical,
@@ -302,7 +304,14 @@ export default function CadastroReceitaModal({
   }
 
   return (
-    <div className="cadastro-receita-modal-overlay">
+    <Modal
+      asChild
+      aberto={true}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="grande"
+      fecharAoClicarFora={false}
+    >
       <form
         className="cadastro-receita-modal"
         onSubmit={handleSubmit}
@@ -310,8 +319,8 @@ export default function CadastroReceitaModal({
         aria-modal="true"
         aria-labelledby="cadastro-receita-modal-titulo"
       >
-        <header className="cadastro-receita-modal__header">
-          <div className="cadastro-receita-modal__icone">
+        <header className="cadastro-receita-modal__header" data-modal-header="">
+          <div className="cadastro-receita-modal__icone" data-modal-icone="">
             <FlaskConical size={22} />
           </div>
 
@@ -320,11 +329,13 @@ export default function CadastroReceitaModal({
               Cadastro
             </span>
 
-            <h2 id="cadastro-receita-modal-titulo">
-              {receita
-                ? "Editar receita"
-                : "Nova receita"}
-            </h2>
+            <ModalTitulo>
+              <h2 id="cadastro-receita-modal-titulo">
+                {receita
+                  ? "Editar receita"
+                  : "Nova receita"}
+              </h2>
+            </ModalTitulo>
 
             <p>
               A receita é independente
@@ -340,12 +351,13 @@ export default function CadastroReceitaModal({
             onClick={onCancelar}
             disabled={salvando}
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={18} />
           </button>
         </header>
 
-        <div className="cadastro-receita-modal__body">
+        <div className="cadastro-receita-modal__body" data-modal-body="">
           <div className="cadastro-receita-modal__campos">
             <label className="cadastro-receita-campo">
               <span>
@@ -388,7 +400,7 @@ export default function CadastroReceitaModal({
           </div>
 
           <section className="cadastro-receita-composicao">
-            <div className="cadastro-receita-composicao__header">
+            <div className="cadastro-receita-composicao__header" data-modal-header="">
               <div>
                 <span>
                   Composição
@@ -583,12 +595,13 @@ export default function CadastroReceitaModal({
           )}
         </div>
 
-        <footer className="cadastro-receita-modal__footer">
+        <footer className="cadastro-receita-modal__footer" data-modal-footer="">
           <button
             type="button"
             className="cadastro-receita-botao-secundario"
             onClick={onCancelar}
             disabled={salvando}
+            data-modal-acao="secundaria"
           >
             Cancelar
           </button>
@@ -600,6 +613,7 @@ export default function CadastroReceitaModal({
               salvando ||
               !totalValido
             }
+            data-modal-acao="primaria"
           >
             <Save size={16} />
 
@@ -609,6 +623,6 @@ export default function CadastroReceitaModal({
           </button>
         </footer>
       </form>
-    </div>
+    </Modal>
   );
 }

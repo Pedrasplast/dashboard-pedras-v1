@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   FiCopy,
   FiUserPlus,
@@ -24,22 +26,31 @@ export default function NovoUsuarioModal({
   }
 
   return (
-    <div className="modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onFechar}
+      bloqueado={criando}
+      tamanho="pequeno"
+      fecharAoClicarFora={false}
+    >
 
       <div className="modal-content modal-novo-usuario">
 
-        <div className="modal-novo-usuario-header">
+        <div className="modal-novo-usuario-header" data-modal-header="">
 
-          <div className="modal-permissoes-icon">
+          <div className="modal-permissoes-icon" data-modal-icone="">
             <FiUserPlus />
           </div>
 
 
           <div>
 
-            <h3>
-              Cadastrar usuário
-            </h3>
+            <ModalTitulo>
+              <h3>
+                Cadastrar usuário
+              </h3>
+            </ModalTitulo>
 
             <p>
               Cadastre o e-mail do colaborador.
@@ -59,6 +70,7 @@ export default function NovoUsuarioModal({
               criando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <FiX />
           </button>
@@ -73,6 +85,7 @@ export default function NovoUsuarioModal({
               onSubmit
             }
             className="form-novo-usuario"
+            data-modal-form=""
           >
 
             <label className="campo-novo-usuario">
@@ -106,7 +119,7 @@ export default function NovoUsuarioModal({
             </label>
 
 
-            <div className="modal-actions">
+            <div className="modal-actions" data-modal-footer="">
 
               <button
                 type="button"
@@ -117,6 +130,7 @@ export default function NovoUsuarioModal({
                 disabled={
                   criando
                 }
+                data-modal-acao="secundaria"
               >
                 Cancelar
               </button>
@@ -128,6 +142,7 @@ export default function NovoUsuarioModal({
                 disabled={
                   criando
                 }
+                data-modal-acao="primaria"
               >
                 {criando
                   ? "Cadastrando..."
@@ -189,7 +204,7 @@ export default function NovoUsuarioModal({
             </div>
 
 
-            <div className="modal-actions">
+            <div className="modal-actions" data-modal-footer="">
 
               <button
                 type="button"
@@ -197,6 +212,7 @@ export default function NovoUsuarioModal({
                 onClick={
                   onFechar
                 }
+                data-modal-acao="primaria"
               >
                 Concluir
               </button>
@@ -209,6 +225,6 @@ export default function NovoUsuarioModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

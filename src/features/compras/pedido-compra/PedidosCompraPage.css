@@ -3,181 +3,199 @@
 @import "components/PedidosCompraFiltros.css";
 @import "components/PedidosCompraTabela.css";
 
+
+/* =========================================================
+   PEDIDOS DE COMPRA
+   PAGINA PRINCIPAL
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - estrutura preservada;
+   - medidas principais preservadas;
+   - cores centralizadas;
+   - radius centralizados;
+   - tipografia centralizada;
+   - estados centralizados.
+========================================================= */
+
+
+/* =========================================================
+   PAGINA
+========================================================= */
+
 .compras-page {
-  width:
-    100%;
+  width: 100%;
 
-  min-height:
-    100%;
+  min-height: 100%;
 
-  padding:
-    18px;
+  padding: 18px;
 
-    margin-top: 70px;
+  margin-top: 70px;
 
-  background:
-    #f4f7fb;
+  background: var(--color-page-background);
 }
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
 
 .compras-container {
-  width:
-    100%;
+  width: 100%;
 
-  max-width:
-    none;
+  max-width: none;
 
-  margin:
-    0 auto;
+  margin: 0 auto;
 }
+
+
+/* =========================================================
+   HEADER DA PAGINA
+========================================================= */
 
 .compras-header {
-  margin-bottom:
-    18px;
+  margin-bottom: 18px;
 }
+
+
+/* =========================================================
+   CONTEUDO PRINCIPAL
+========================================================= */
 
 .compras-content {
-  overflow:
-    hidden;
+  overflow: hidden;
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius:
-    12px;
+  border-radius: var(--radius-lg);
 
-  background:
-    #fff;
+  background: var(--color-surface);
 
   box-shadow:
-    0 1px 4px
-    rgba(
-      15,
-      23,
-      42,
-      0.035
-    );
+    0
+    1px
+    4px
+    rgb(15 23 42 / 0.035);
 }
 
+
+/* =========================================================
+   CABECALHO DO CONTEUDO
+========================================================= */
+
 .compras-content-header {
-  min-height:
-    70px;
+  min-height: 70px;
 
-  display:
-    flex;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  align-items:
-    center;
-
-  justify-content:
-    space-between;
-
-  gap:
-    15px;
+  gap: 15px;
 
   padding:
     14px
     18px;
 
   border-bottom:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 }
 
-.compras-content-header
-  h2 {
-  margin:
-    0;
 
-  color:
-    #0f172a;
+/* =========================================================
+   TITULO DO BLOCO
+========================================================= */
 
-  font-size:
-    14px;
+.compras-content-header h2 {
+  margin: 0;
 
-  font-weight:
-    800;
+  color: var(--color-text);
+
+  font-size: var(--font-size-md);
+  font-weight: 800;
 }
 
-.compras-content-header
-  p {
+
+/* =========================================================
+   DESCRICAO DO BLOCO
+========================================================= */
+
+.compras-content-header p {
   margin:
     3px
     0
     0;
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    10px;
+  font-size: var(--font-size-micro);
 }
+
+
+/* =========================================================
+   INDICADOR DE FONTE
+========================================================= */
 
 .compras-fonte {
-  display:
-    inline-flex;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  min-height:
-    25px;
+  min-height: 25px;
 
   padding:
-    0 10px;
+    0
+    10px;
 
   border:
-    1px solid
+    1px
+    solid
     #bfdbfe;
 
-  border-radius:
-    999px;
+  border-radius: var(--radius-pill);
 
-  background:
-    #eff6ff;
+  background: var(--color-primary-soft);
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    8px;
+  font-size: 8px;
+  font-weight: 850;
 
-  font-weight:
-    850;
+  letter-spacing: 0.035em;
 
-  letter-spacing:
-    0.035em;
+  text-transform: uppercase;
 
-  text-transform:
-    uppercase;
-
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
+
+/* =========================================================
+   INDICADOR DE FONTE - ERRO
+========================================================= */
 
 .compras-fonte--erro {
-  border-color:
-    #fca5a5;
+  border-color: #fca5a5;
 
-  background:
-    #fff1f2;
+  background: #fff1f2;
 
-  color:
-    #dc2626;
+  color: var(--color-danger);
 }
 
+
+/* =========================================================
+   ERRO DE SINCRONIZACAO OMIE
+========================================================= */
+
 .compras-omie-erro {
-  display:
-    flex;
+  display: flex;
+  align-items: flex-start;
 
-  align-items:
-    flex-start;
-
-  gap:
-    8px;
+  gap: var(--space-2);
 
   margin:
     10px
@@ -189,196 +207,239 @@
     11px;
 
   border:
-    1px solid
+    1px
+    solid
     #fecaca;
 
-  border-radius:
-    8px;
+  border-radius: var(--radius-md);
 
-  background:
-    #fff7f7;
+  background: #fff7f7;
 
-  color:
-    #b91c1c;
+  color: var(--color-danger-hover);
 }
 
-.compras-omie-erro
-  svg {
+
+/* =========================================================
+   ICONE DO ERRO
+========================================================= */
+
+.compras-omie-erro svg {
   flex:
-    0 0 auto;
+    0
+    0
+    auto;
 
-  margin-top:
-    1px;
+  margin-top: 1px;
 }
 
-.compras-omie-erro
-  div {
-  min-width:
-    0;
 
-  display:
-    flex;
+/* =========================================================
+   CONTEUDO DO ERRO
+========================================================= */
 
-  flex-direction:
-    column;
+.compras-omie-erro div {
+  min-width: 0;
 
-  gap:
-    2px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
 }
 
-.compras-omie-erro
-  strong {
-  font-size:
-    10px;
 
-  font-weight:
-    800;
+/* =========================================================
+   TITULO DO ERRO
+========================================================= */
+
+.compras-omie-erro strong {
+  font-size: var(--font-size-micro);
+
+  font-weight: 800;
 }
 
-.compras-omie-erro
-  span {
-  color:
-    #dc2626;
 
-  font-size:
-    9.5px;
+/* =========================================================
+   TEXTO DO ERRO
+========================================================= */
 
-  line-height:
-    1.4;
+.compras-omie-erro span {
+  color: var(--color-danger);
 
-  overflow-wrap:
-    anywhere;
+  font-size: 9.5px;
+
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
 }
+
+
+/* =========================================================
+   ESTADOS DA TELA
+   loading / vazio / erro
+========================================================= */
 
 .compras-estado {
-  min-height:
-    260px;
+  min-height: 260px;
 
-  display:
-    flex;
+  display: flex;
+  flex-direction: column;
 
-  flex-direction:
-    column;
+  align-items: center;
+  justify-content: center;
 
-  align-items:
-    center;
+  gap: 5px;
 
-  justify-content:
-    center;
+  padding: 30px;
 
-  gap:
-    5px;
+  color: var(--color-text-muted);
 
-  padding:
-    30px;
-
-  color:
-    #64748b;
-
-  text-align:
-    center;
+  text-align: center;
 }
 
-.compras-estado
-  strong {
-  color:
-    #334155;
 
-  font-size:
+/* =========================================================
+   TITULO DO ESTADO
+========================================================= */
+
+.compras-estado strong {
+  color: #334155;
+
+  font-size: var(--font-size-body);
+}
+
+
+/* =========================================================
+   TEXTO DO ESTADO
+========================================================= */
+
+.compras-estado span {
+  font-size: var(--font-size-micro);
+}
+
+
+/* =========================================================
+   ESTADO DE ERRO
+========================================================= */
+
+.compras-estado--erro strong {
+  color: var(--color-danger);
+}
+
+
+/* =========================================================
+   BOTAO DO ESTADO
+========================================================= */
+
+.compras-estado button {
+  margin-top: var(--space-2);
+
+  padding:
+    var(--space-2)
     13px;
-}
-
-.compras-estado
-  span {
-  font-size:
-    10px;
-}
-
-.compras-estado--erro
-  strong {
-  color:
-    #dc2626;
-}
-
-.compras-estado
-  button {
-  margin-top:
-    8px;
-
-  padding:
-    8px 13px;
 
   border:
-    1px solid
-    #cbd5e1;
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius:
-    7px;
+  border-radius: var(--radius-sm);
 
-  background:
-    #fff;
+  background: var(--color-surface);
 
-  color:
-    #475569;
+  color: var(--color-text-secondary);
 
-  font-size:
-    10px;
+  font-family: inherit;
 
-  font-weight:
-    700;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
 
-  cursor:
-    pointer;
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
 
-.compras-estado
-  button:hover {
-  background:
-    #f8fafc;
+
+/* =========================================================
+   BOTAO - HOVER
+========================================================= */
+
+.compras-estado button:hover {
+  background: var(--color-surface-subtle);
 }
 
-@media (
-  max-width:
-    900px
-) {
+
+/* =========================================================
+   BOTAO - ACTIVE
+========================================================= */
+
+.compras-estado button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   BOTAO - FOCO
+========================================================= */
+
+.compras-estado button:focus {
+  outline: none;
+}
+
+
+.compras-estado button:focus-visible {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE - TABLET
+========================================================= */
+
+@media (max-width: 900px) {
   .compras-page {
-    padding:
-      12px;
+    padding: var(--space-3);
   }
 
   .compras-content-header {
-    min-height:
-      60px;
+    min-height: 60px;
 
-    padding:
-      12px;
+    padding: var(--space-3);
   }
 }
 
-@media (
-  max-width:
-    560px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - MOBILE
+========================================================= */
+
+@media (max-width: 560px) {
   .compras-page {
-    padding:
-      8px;
+    padding: var(--space-2);
   }
 
   .compras-content-header {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    flex-direction:
-      column;
+    flex-direction: column;
   }
 
   .compras-fonte {
-    align-self:
-      flex-start;
+    align-self: flex-start;
   }
 
   .compras-omie-erro {
-    margin:
-      8px;
+    margin: var(--space-2);
   }
 }

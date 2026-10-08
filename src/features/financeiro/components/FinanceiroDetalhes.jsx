@@ -1,3 +1,6 @@
+import "./FinanceiroDetalhes.css";
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   memo,
   useMemo,
@@ -432,21 +435,14 @@ function FinanceiroDetalhes({
 
 
   return (
-    <div className="financeiro-detalhes-overlay">
-
-      {/* FUNDO */}
-
-      <button
-        type="button"
-        className="financeiro-detalhes-fundo"
-        aria-label="Fechar detalhes"
-        onClick={
-          fecharPainel
-        }
-      />
-
-
-      {/* PAINEL */}
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={fecharPainel}
+      bloqueado={false}
+      tamanho="grande"
+      fecharAoClicarFora={true}
+    >
 
       <aside className="financeiro-detalhes-painel">
 
@@ -454,7 +450,7 @@ function FinanceiroDetalhes({
             CABEÇALHO
         ================================================= */}
 
-        <header className="financeiro-detalhes-cabecalho">
+        <header className="financeiro-detalhes-cabecalho" data-modal-header="">
 
           <div className="financeiro-detalhes-identificacao">
 
@@ -465,12 +461,14 @@ function FinanceiroDetalhes({
               }
             </span>
 
-            <h2 className="financeiro-detalhes-titulo">
-              {
-                categoria
-                  .categoria
-              }
-            </h2>
+            <ModalTitulo>
+              <h2 className="financeiro-detalhes-titulo">
+                {
+                  categoria
+                    .categoria
+                }
+              </h2>
+            </ModalTitulo>
 
             <div className="financeiro-detalhes-periodo">
 
@@ -503,6 +501,7 @@ function FinanceiroDetalhes({
             onClick={
               fecharPainel
             }
+            data-modal-fechar=""
           >
             <X
               size={19}
@@ -865,7 +864,7 @@ function FinanceiroDetalhes({
 
       </aside>
 
-    </div>
+    </Modal>
   );
 }
 

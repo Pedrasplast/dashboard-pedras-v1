@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useState,
@@ -53,19 +55,7 @@ export default function ConfirmarChegadaModal({
     setErro("");
   }, [aberto, item?.id]);
 
-  useEffect(() => {
-    if (!aberto) return undefined;
 
-    function teclado(event) {
-      if (event.key === "Escape" && !processando) {
-        onCancelar?.();
-      }
-    }
-
-    document.addEventListener("keydown", teclado);
-
-    return () => document.removeEventListener("keydown", teclado);
-  }, [aberto, processando, onCancelar]);
 
   async function enviar(event) {
     event.preventDefault();
@@ -107,25 +97,35 @@ export default function ConfirmarChegadaModal({
   if (!aberto || !item) return null;
 
   return (
-    <div className="compra-futura-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={processando}
+      tamanho="pequeno"
+      fecharAoClicarFora={false}
+    >
       <div
         className="compra-futura-modal"
         style={{ maxWidth: "560px" }}
       >
-        <div className="compra-futura-modal-header">
+        <div className="compra-futura-modal-header" data-modal-header="">
           <div
             className="compra-futura-modal-icone"
             style={{
               background: "#ecfdf5",
               color: "#047857",
             }}
+            data-modal-icone=""
           >
             <CheckCircle2 size={22} aria-hidden="true" />
           </div>
 
           <div className="compra-futura-modal-header-texto">
             <span>Matéria-Prima PP</span>
-            <h3>Confirmar chegada</h3>
+            <ModalTitulo>
+              <h3>Confirmar chegada</h3>
+            </ModalTitulo>
             <p>
               Informe somente a data em que o material realmente chegou.
             </p>
@@ -137,6 +137,7 @@ export default function ConfirmarChegadaModal({
             onClick={onCancelar}
             disabled={processando}
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={19} />
           </button>
@@ -145,6 +146,7 @@ export default function ConfirmarChegadaModal({
         <form
           className="compra-futura-modal-form"
           onSubmit={enviar}
+          data-modal-form=""
         >
           <section className="compra-futura-modal-secao">
             <div className="compra-futura-modal-secao-titulo">
@@ -204,12 +206,13 @@ export default function ConfirmarChegadaModal({
             </div>
           )}
 
-          <div className="compra-futura-modal-acoes">
+          <div className="compra-futura-modal-acoes" data-modal-footer="">
             <button
               type="button"
               className="compra-futura-modal-cancelar"
               onClick={onCancelar}
               disabled={processando}
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -218,6 +221,7 @@ export default function ConfirmarChegadaModal({
               type="submit"
               className="compra-futura-modal-salvar"
               disabled={processando}
+              data-modal-acao="primaria"
             >
               <CheckCircle2 size={17} />
               {processando ? "Confirmando..." : "Confirmar chegada"}
@@ -225,6 +229,6 @@ export default function ConfirmarChegadaModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
 
   useEffect,
@@ -406,29 +408,7 @@ export default function CompraFuturaModal({
 
 
 
-  useEffect(() => {
 
-    if (!aberto) return undefined;
-
-
-
-    function teclado(event) {
-
-      if (event.key === "Escape" && !salvando) {
-
-        onCancelar?.();
-
-      }
-
-    }
-
-
-
-    document.addEventListener("keydown", teclado);
-
-    return () => document.removeEventListener("keydown", teclado);
-
-  }, [aberto, salvando, onCancelar]);
 
 
 
@@ -874,13 +854,20 @@ export default function CompraFuturaModal({
 
   return (
 
-    <div className="compra-futura-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
 
       <div className="compra-futura-modal">
 
-        <div className="compra-futura-modal-header">
+        <div className="compra-futura-modal-header" data-modal-header="">
 
-          <div className="compra-futura-modal-icone">
+          <div className="compra-futura-modal-icone" data-modal-icone="">
 
             <ShoppingCart size={22} aria-hidden="true" />
 
@@ -894,11 +881,13 @@ export default function CompraFuturaModal({
 
 
 
-            <h3>
+            <ModalTitulo>
+              <h3>
 
-              {item ? "Editar compra" : "Nova compra futura"}
+                {item ? "Editar compra" : "Nova compra futura"}
 
-            </h3>
+              </h3>
+            </ModalTitulo>
 
 
 
@@ -923,7 +912,7 @@ export default function CompraFuturaModal({
             disabled={salvando}
 
             aria-label="Fechar"
-
+            data-modal-fechar=""
           >
 
             <X size={19} />
@@ -934,7 +923,7 @@ export default function CompraFuturaModal({
 
 
 
-        <form className="compra-futura-modal-form" onSubmit={enviar}>
+        <form className="compra-futura-modal-form" onSubmit={enviar} data-modal-form="">
 
           <section className="compra-futura-modal-secao">
 
@@ -1626,7 +1615,7 @@ export default function CompraFuturaModal({
 
 
 
-          <div className="compra-futura-modal-acoes">
+          <div className="compra-futura-modal-acoes" data-modal-footer="">
 
             <button
 
@@ -1637,7 +1626,7 @@ export default function CompraFuturaModal({
               onClick={onCancelar}
 
               disabled={salvando}
-
+              data-modal-acao="secundaria"
             >
 
               Cancelar
@@ -1653,7 +1642,7 @@ export default function CompraFuturaModal({
               className="compra-futura-modal-salvar"
 
               disabled={salvando}
-
+              data-modal-acao="primaria"
             >
 
               <Save size={17} />
@@ -1668,7 +1657,7 @@ export default function CompraFuturaModal({
 
       </div>
 
-    </div>
+    </Modal>
 
   );
 

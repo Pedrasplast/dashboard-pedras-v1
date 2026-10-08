@@ -1,11 +1,36 @@
 import { memo } from "react";
 
-function CampoFiltro({ titulo, className = "", children }) {
-  const classes = [className].filter(Boolean).join(" ");
+import "./CampoFiltro.css";
+
+
+/* =========================================================
+   CAMPO DE FILTRO COMPARTILHADO
+   ---------------------------------------------------------
+   Estrutura visual padrao para campos utilizados em filtros.
+
+   A classe recebida pela tela continua sendo preservada para
+   manter compatibilidade com os estilos existentes durante a
+   migracao gradual para o Design System.
+========================================================= */
+
+function CampoFiltro({
+  titulo,
+  className = "",
+  children,
+}) {
+  const classes = [
+    "campo-filtro",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <label className={classes}>
-      <span>{titulo}</span>
+      <span className="campo-filtro__label">
+        {titulo}
+      </span>
+
       {children}
     </label>
   );

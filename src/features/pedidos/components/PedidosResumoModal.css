@@ -61,7 +61,7 @@
     16px;
 
   background:
-    #ffffff;
+    var(--color-surface);
 
   box-shadow:
     0 24px 70px
@@ -94,12 +94,12 @@
 
   border-bottom:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   background:
     linear-gradient(
       135deg,
-      #ffffff,
+      var(--color-surface),
       #f8fbff
     );
 }
@@ -129,10 +129,10 @@
   border-radius: 11px;
 
   background:
-    #eff6ff;
+    var(--color-primary-soft);
 
   color:
-    #2563eb;
+    var(--color-primary);
 }
 
 
@@ -142,7 +142,7 @@
   margin-bottom: 2px;
 
   color:
-    #2563eb;
+    var(--color-primary);
 
   font-size: 10px;
   font-weight: 800;
@@ -159,7 +159,7 @@
   margin: 0;
 
   color:
-    #0f172a;
+    var(--color-text);
 
   font-size: 21px;
 
@@ -174,7 +174,7 @@
     0;
 
   color:
-    #64748b;
+    var(--color-text-muted);
 
   font-size: 12px;
 }
@@ -185,7 +185,9 @@
   height: 36px;
 
   flex:
-    0 0 36px;
+    0
+    0
+    36px;
 
   display: flex;
 
@@ -194,15 +196,15 @@
 
   border:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   border-radius: 9px;
 
   background:
-    #ffffff;
+    var(--color-surface);
 
   color:
-    #64748b;
+    var(--color-text-muted);
 
   cursor: pointer;
 
@@ -215,13 +217,13 @@
 
 .pedidos-resumo-modal-fechar:hover {
   border-color:
-    #cbd5e1;
+    var(--color-border-strong);
 
   background:
-    #f8fafc;
+    var(--color-surface-subtle);
 
   color:
-    #0f172a;
+    var(--color-text);
 }
 
 
@@ -240,10 +242,10 @@
 
   border-bottom:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   background:
-    #f8fafc;
+    var(--color-surface-subtle);
 }
 
 
@@ -266,13 +268,13 @@
 
   border:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   border-radius:
     9px;
 
   background:
-    #ffffff;
+    var(--color-surface);
 }
 
 
@@ -282,13 +284,13 @@
     3;
 
   color:
-    #2563eb;
+    var(--color-primary);
 }
 
 
 .pedidos-resumo-modal-indicadores span {
   color:
-    #64748b;
+    var(--color-text-muted);
 
   font-size: 9px;
   font-weight: 700;
@@ -300,7 +302,7 @@
 
 .pedidos-resumo-modal-indicadores strong {
   color:
-    #0f172a;
+    var(--color-text);
 
   font-size: 16px;
 }
@@ -340,13 +342,13 @@
 
   border-bottom:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   background:
-    #f8fafc;
+    var(--color-surface-subtle);
 
   color:
-    #64748b;
+    var(--color-text-muted);
 
   font-size: 10px;
   font-weight: 800;
@@ -371,7 +373,7 @@
     #eef2f7;
 
   color:
-    #334155;
+    var(--color-text-strong);
 
   font-size: 11px;
 
@@ -383,13 +385,13 @@
 tbody
 tr:hover {
   background:
-    #f8fafc;
+    var(--color-surface-subtle);
 }
 
 
 .pedidos-resumo-modal-pedido {
   color:
-    #2563eb !important;
+    var(--color-primary) !important;
 
   font-weight:
     800;
@@ -404,7 +406,7 @@ tr:hover {
     260px;
 
   color:
-    #0f172a !important;
+    var(--color-text) !important;
 
   font-weight:
     650;
@@ -435,7 +437,7 @@ tr:hover {
   padding: 30px;
 
   color:
-    #64748b;
+    var(--color-text-muted);
 
   font-size: 13px;
 
@@ -463,16 +465,16 @@ tr:hover {
 
   border-top:
     1px solid
-    #e2e8f0;
+    var(--color-border);
 
   background:
-    #ffffff;
+    var(--color-surface);
 }
 
 
 .pedidos-resumo-modal-footer span {
   color:
-    #64748b;
+    var(--color-text-muted);
 
   font-size: 11px;
 }
@@ -487,16 +489,16 @@ tr:hover {
 
   border:
     1px solid
-    #2563eb;
+    var(--color-primary);
 
   border-radius:
     8px;
 
   background:
-    #2563eb;
+    var(--color-primary);
 
   color:
-    #ffffff;
+    var(--color-surface);
 
   font: inherit;
 
@@ -509,10 +511,10 @@ tr:hover {
 
 .pedidos-resumo-modal-footer button:hover {
   background:
-    #1d4ed8;
+    var(--color-primary-hover);
 
   border-color:
-    #1d4ed8;
+    var(--color-primary-hover);
 }
 
 

@@ -1,4 +1,18 @@
 /* =========================================================
+   PEDIDOS
+   CONTEUDO PRINCIPAL
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - estrutura preservada;
+   - dimensoes preservadas;
+   - tokens locais substituidos pelos globais;
+   - visual mantido.
+========================================================= */
+
+
+/* =========================================================
    CONTEUDO
 ========================================================= */
 
@@ -8,17 +22,25 @@
   overflow: hidden;
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
   border-radius: 13px;
 
-  background: var(--surface);
+  background: var(--color-surface);
 
   box-shadow:
-    0 2px 10px
-    rgba(15, 23, 42, 0.035);
+    0
+    2px
+    10px
+    rgb(15 23 42 / 0.035);
 }
+
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .pedidos-content-header {
   min-height: 68px;
@@ -36,36 +58,47 @@
     18px;
 
   border-bottom:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
   background:
     linear-gradient(
       180deg,
-      #ffffff 0%,
+      var(--color-surface) 0%,
       #fbfdff 100%
     );
 }
 
+
+/* =========================================================
+   TITULO
+========================================================= */
+
 .pedidos-content-header h2 {
   margin: 0;
 
-  font-size: 16px;
+  color: var(--color-text);
+
+  font-size: var(--font-size-lg);
 
   font-weight: 750;
-
-  color: var(--text);
 }
+
+
+/* =========================================================
+   DESCRICAO
+========================================================= */
 
 .pedidos-content-header p {
   margin:
-    4px
+    var(--space-1)
     0
     0;
 
-  font-size: 12px;
+  color: var(--color-text-muted);
 
-  color: var(--text-muted);
+  font-size: var(--font-size-caption);
 }
 
 
@@ -83,20 +116,19 @@
     10px;
 
   border:
-    1px solid
+    1px
+    solid
     #bfdbfe;
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
-  background: var(--primary-soft);
+  background: var(--color-primary-soft);
 
-  color: var(--primary-dark);
+  color: var(--color-primary-hover);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 
   font-weight: 750;
 
   white-space: nowrap;
 }
-
-

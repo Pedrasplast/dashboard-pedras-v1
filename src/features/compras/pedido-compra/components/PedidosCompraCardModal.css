@@ -1,4 +1,21 @@
 /* =========================================================
+   PEDIDOS DE COMPRA
+   CARD MODAL
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - estrutura preservada;
+   - tamanhos preservados;
+   - responsividade preservada;
+   - cores principais centralizadas;
+   - estados centralizados;
+   - radius e sombras centralizados quando aplicavel;
+   - cores especificas de categorias mantidas localmente.
+========================================================= */
+
+
+/* =========================================================
    BACKDROP
 ========================================================= */
 
@@ -17,25 +34,21 @@
   justify-content: center;
 
   padding:
-    18px 24px
+    18px
+    24px
     24px;
 
   background:
-    rgba(
-      15,
-      23,
-      42,
-      0.58
-    );
+    rgb(15 23 42 / 0.58);
 
-  backdrop-filter:
-    blur(5px);
+  backdrop-filter: blur(5px);
 
   animation:
     compras-modal-backdrop-in
-    0.18s
+    var(--transition-base)
     ease-out;
 }
+
 
 /* =========================================================
    MODAL
@@ -55,46 +68,31 @@
     );
 
   max-height:
-    calc(
-      100vh - 110px
-    );
+    calc(100vh - 110px);
 
   display: flex;
-
   flex-direction: column;
 
   overflow: hidden;
 
   border:
-    1px solid
-    rgba(
-      203,
-      213,
-      225,
-      0.9
-    );
+    1px
+    solid
+    rgb(203 213 225 / 0.9);
 
-  border-radius:
-    20px;
+  border-radius: 20px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
   box-shadow:
-    0 32px 80px
-    rgba(
-      15,
-      23,
-      42,
-      0.28
-    ),
-    0 8px 24px
-    rgba(
-      15,
-      23,
-      42,
-      0.08
-    );
+    0
+    32px
+    80px
+    rgb(15 23 42 / 0.28),
+    0
+    8px
+    24px
+    rgb(15 23 42 / 0.08);
 
   animation:
     compras-modal-in
@@ -107,6 +105,7 @@
     );
 }
 
+
 .compras-card-modal--requisicao {
   width:
     min(
@@ -114,6 +113,7 @@
       calc(100vw - 42px)
     );
 }
+
 
 /* =========================================================
    LINHA SUPERIOR DECORATIVA
@@ -125,8 +125,8 @@
   position: absolute;
 
   top: 0;
-  left: 0;
   right: 0;
+  left: 0;
 
   z-index: 5;
 
@@ -135,11 +135,12 @@
   background:
     linear-gradient(
       90deg,
-      #2563eb 0%,
+      var(--color-primary) 0%,
       #6366f1 48%,
       #8b5cf6 100%
     );
 }
+
 
 /* =========================================================
    HEADER
@@ -148,86 +149,94 @@
 .compras-card-modal-header {
   position: relative;
 
-  flex: 0 0 auto;
+  flex:
+    0
+    0
+    auto;
 
   display: flex;
 
   align-items: flex-start;
-
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   gap: 22px;
 
   padding:
-    24px 28px
+    24px
+    28px
     21px;
 
   border-bottom:
-    1px solid
-    #e2e8f0;
+    1px
+    solid
+    var(--color-border);
 
   background:
     linear-gradient(
       135deg,
-      #ffffff 0%,
+      var(--color-surface) 0%,
       #f8fbff 55%,
       #f5f7ff 100%
     );
 }
 
+
 .compras-card-modal-heading {
   min-width: 0;
 
   display: flex;
+  align-items: flex-start;
 
-  align-items:
-    flex-start;
-
-  gap: 16px;
+  gap: var(--space-4);
 }
+
+
+/* =========================================================
+   ICONE
+========================================================= */
 
 .compras-card-modal-icon {
   width: 50px;
   height: 50px;
 
   flex:
-    0 0 50px;
+    0
+    0
+    50px;
 
   display: grid;
-
   place-items: center;
 
   border:
-    1px solid
+    1px
+    solid
     #dbeafe;
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
   background:
     linear-gradient(
       145deg,
-      #eff6ff,
+      var(--color-primary-soft),
       #e0ecff
     );
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
   box-shadow:
-    0 6px 16px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+    0
+    6px
+    16px
+    rgb(37 99 235 / 0.08);
 }
 
+
+/* =========================================================
+   ICONE - ATRASADOS
+========================================================= */
+
 .compras-card-modal-icon--atrasados {
-  border-color:
-    #fecaca;
+  border-color: #fecaca;
 
   background:
     linear-gradient(
@@ -236,13 +245,16 @@
       #fee2e2
     );
 
-  color:
-    #dc2626;
+  color: var(--color-danger);
 }
 
+
+/* =========================================================
+   ICONE - VALOR
+========================================================= */
+
 .compras-card-modal-icon--valor {
-  border-color:
-    #bbf7d0;
+  border-color: #bbf7d0;
 
   background:
     linear-gradient(
@@ -251,13 +263,16 @@
       #dcfce7
     );
 
-  color:
-    #059669;
+  color: var(--color-success);
 }
 
+
+/* =========================================================
+   ICONE - PROXIMOS
+========================================================= */
+
 .compras-card-modal-icon--proximos {
-  border-color:
-    #ddd6fe;
+  border-color: #ddd6fe;
 
   background:
     linear-gradient(
@@ -266,13 +281,16 @@
       #ede9fe
     );
 
-  color:
-    #7c3aed;
+  color: #7c3aed;
 }
 
+
+/* =========================================================
+   ICONE - HOJE
+========================================================= */
+
 .compras-card-modal-icon--hoje {
-  border-color:
-    #a5f3fc;
+  border-color: #a5f3fc;
 
   background:
     linear-gradient(
@@ -281,13 +299,16 @@
       #cffafe
     );
 
-  color:
-    #0891b2;
+  color: #0891b2;
 }
 
+
+/* =========================================================
+   ICONE - REQUISICOES
+========================================================= */
+
 .compras-card-modal-icon--requisicoes {
-  border-color:
-    #c7d2fe;
+  border-color: #c7d2fe;
 
   background:
     linear-gradient(
@@ -296,13 +317,12 @@
       #e0e7ff
     );
 
-  color:
-    #4f46e5;
+  color: #4f46e5;
 }
 
+
 .compras-card-modal-icon--requisicoes-valor {
-  border-color:
-    #bbf7d0;
+  border-color: #bbf7d0;
 
   background:
     linear-gradient(
@@ -311,13 +331,12 @@
       #dcfce7
     );
 
-  color:
-    #059669;
+  color: var(--color-success);
 }
 
+
 .compras-card-modal-icon--requisicoes-itens {
-  border-color:
-    #fed7aa;
+  border-color: #fed7aa;
 
   background:
     linear-gradient(
@@ -326,13 +345,12 @@
       #ffedd5
     );
 
-  color:
-    #ea580c;
+  color: #ea580c;
 }
 
+
 .compras-card-modal-icon--requisicoes-proximos {
-  border-color:
-    #e9d5ff;
+  border-color: #e9d5ff;
 
   background:
     linear-gradient(
@@ -341,13 +359,12 @@
       #f3e8ff
     );
 
-  color:
-    #9333ea;
+  color: #9333ea;
 }
 
+
 .compras-card-modal-icon--requisicoes-hoje {
-  border-color:
-    #a5f3fc;
+  border-color: #a5f3fc;
 
   background:
     linear-gradient(
@@ -356,141 +373,143 @@
       #cffafe
     );
 
-  color:
-    #0891b2;
+  color: #0891b2;
 }
+
 
 /* =========================================================
    TEXTOS HEADER
 ========================================================= */
 
 .compras-card-modal-eyebrow {
-  display:
-    inline-flex;
-
+  display: inline-flex;
   align-items: center;
 
   margin-bottom: 5px;
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
   font-size: 9px;
-
   font-weight: 850;
 
-  letter-spacing:
-    0.12em;
+  letter-spacing: 0.12em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
+
 
 .compras-card-modal-heading h2 {
   margin: 0;
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 
   font-size: 23px;
-
   font-weight: 800;
 
-  letter-spacing:
-    -0.025em;
+  letter-spacing: -0.025em;
 
-  line-height: 1.2;
+  line-height: var(--line-height-tight);
 }
+
 
 .compras-card-modal-heading p {
   max-width: 760px;
 
   margin:
-    6px 0 0;
+    6px
+    0
+    0;
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
   font-size: 11.5px;
 
   line-height: 1.55;
 }
 
+
 /* =========================================================
-   BOTÃO X
+   BOTAO X
 ========================================================= */
 
 .compras-card-modal-fechar {
-  width: 38px;
-  height: 38px;
+  width: var(--control-height-md);
+  height: var(--control-height-md);
 
   flex:
-    0 0 38px;
+    0
+    0
+    var(--control-height-md);
 
   display: grid;
-
   place-items: center;
 
   border:
-    1px solid
+    1px
+    solid
     #dbe3ee;
 
-  border-radius:
-    11px;
+  border-radius: 11px;
 
   background:
-    rgba(
-      255,
-      255,
-      255,
-      0.85
-    );
+    rgb(255 255 255 / 0.85);
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
   cursor: pointer;
 
   box-shadow:
-    0 2px 6px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+    0
+    2px
+    6px
+    rgb(15 23 42 / 0.04);
 
   transition:
-    transform
-      0.15s ease,
-    background
-      0.15s ease,
-    color
-      0.15s ease,
-    border-color
-      0.15s ease;
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
+
 
 .compras-card-modal-fechar:hover {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 
-  border-color:
-    #cbd5e1;
+  border-color: var(--color-border-strong);
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 }
+
+
+.compras-card-modal-fechar:focus {
+  outline: none;
+}
+
+
+.compras-card-modal-fechar:focus-visible {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
 
 /* =========================================================
    RESUMO / KPIs
 ========================================================= */
 
 .compras-card-modal-resumo {
-  flex: 0 0 auto;
+  flex:
+    0
+    0
+    auto;
 
   display: grid;
 
@@ -506,15 +525,17 @@
   gap: 10px;
 
   padding:
-    14px 28px;
+    14px
+    28px;
 
   border-bottom:
-    1px solid
-    #e2e8f0;
+    1px
+    solid
+    var(--color-border);
 
-  background:
-    #f8fafc;
+  background: var(--color-page-background);
 }
+
 
 .compras-card-modal-resumo > div {
   position: relative;
@@ -522,29 +543,27 @@
   min-width: 0;
 
   padding:
-    12px 14px;
+    12px
+    14px;
 
   overflow: hidden;
 
   border:
-    1px solid
-    #e2e8f0;
+    1px
+    solid
+    var(--color-border);
 
-  border-radius:
-    11px;
+  border-radius: 11px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
   box-shadow:
-    0 1px 3px
-    rgba(
-      15,
-      23,
-      42,
-      0.025
-    );
+    0
+    1px
+    3px
+    rgb(15 23 42 / 0.025);
 }
+
 
 .compras-card-modal-resumo > div::before {
   content: "";
@@ -557,86 +576,80 @@
 
   width: 3px;
 
-  background:
-    #cbd5e1;
+  background: var(--color-border-strong);
 }
+
 
 .compras-card-modal-resumo > div:nth-child(2)::before {
-  background:
-    #6366f1;
+  background: #6366f1;
 }
+
 
 .compras-card-modal-resumo > div:nth-child(3)::before {
-  background:
-    #10b981;
+  background: #10b981;
 }
 
+
 .compras-card-modal-resumo > div:nth-child(4)::before {
-  background:
-    #8b5cf6;
+  background: #8b5cf6;
 }
+
 
 .compras-card-modal-resumo span {
   display: block;
 
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
+  font-weight: var(--font-weight-bold);
 
-  font-weight: 700;
-
-  letter-spacing:
-    0.01em;
+  letter-spacing: 0.01em;
 }
+
 
 .compras-card-modal-resumo strong {
   display: block;
 
   overflow: hidden;
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 
   font-size: 17px;
-
   font-weight: 850;
 
-  letter-spacing:
-    -0.02em;
+  letter-spacing: -0.02em;
 
-  line-height: 1.2;
+  line-height: var(--line-height-tight);
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
+
 .compras-card-modal-resumo-destaque {
-  border-color:
-    #bfdbfe !important;
+  border-color: #bfdbfe !important;
 
   background:
     linear-gradient(
       145deg,
-      #eff6ff,
-      #ffffff
+      var(--color-primary-soft),
+      var(--color-surface)
     ) !important;
 }
 
+
 .compras-card-modal-resumo-destaque::before {
-  background:
-    #2563eb !important;
+  background: var(--color-primary) !important;
 }
 
+
 .compras-card-modal-resumo-destaque strong {
-  color:
-    #1d4ed8;
+  color: var(--color-primary-hover);
 }
+
 
 /* =========================================================
    CORPO
@@ -648,16 +661,19 @@
   min-height: 0;
 
   flex:
-    1 1 auto;
+    1
+    1
+    auto;
 
   overflow: auto;
 
   padding:
-    0 28px;
+    0
+    28px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 }
+
 
 /* =========================================================
    TABELA WRAPPER
@@ -665,14 +681,13 @@
 
 .compras-card-modal-tabela-wrapper {
   width: 100%;
-
   max-width: 100%;
 
   overflow-x: auto;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 }
+
 
 /* =========================================================
    TABELA
@@ -681,27 +696,32 @@
 .compras-card-modal-tabela {
   width: 100%;
 
-  border-collapse:
-    separate;
-
+  border-collapse: separate;
   border-spacing: 0;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-family: var(--font-family-sans);
 }
+
 
 .compras-card-modal-tabela--pedidos {
-  min-width:
-    900px;
+  min-width: 900px;
 }
+
 
 .compras-card-modal-tabela--requisicoes {
-  min-width:
-    1120px;
+  min-width: 1120px;
 
-  table-layout:
-    auto;
+  table-layout: auto;
 }
+
+
+/* =========================================================
+   CABECALHO DA TABELA
+========================================================= */
 
 .compras-card-modal-tabela th {
   position: sticky;
@@ -711,78 +731,81 @@
   z-index: 4;
 
   padding:
-    11px 10px;
+    11px
+    10px;
 
   border-bottom:
-    1px solid
-    #cbd5e1;
+    1px
+    solid
+    var(--color-border-strong);
 
-  background:
-    #f4f7fb;
+  background: #f4f7fb;
 
-  color:
-    #475569;
+  color: var(--color-text-secondary);
 
   font-size: 8px;
-
   font-weight: 850;
 
-  letter-spacing:
-    0.055em;
+  letter-spacing: 0.055em;
 
   text-align: left;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
+
+/* =========================================================
+   CELULAS DA TABELA
+========================================================= */
 
 .compras-card-modal-tabela td {
   padding:
-    12px 10px;
+    12px
+    10px;
 
   border-bottom:
-    1px solid
+    1px
+    solid
     #edf1f5;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
-  color:
-    #334155;
+  color: #334155;
 
-  font-size:
-    10.5px;
+  font-size: 10.5px;
 
-  vertical-align:
-    top;
+  vertical-align: top;
 
   transition:
-    background
-      0.12s ease;
+    background-color
+    var(--transition-fast);
 }
+
 
 .compras-card-modal-tabela tbody tr:nth-child(even) td {
-  background:
-    #fcfdff;
+  background: #fcfdff;
 }
 
+
 .compras-card-modal-tabela tbody tr:hover td {
-  background:
-    #f4f8ff;
+  background: #f4f8ff;
 }
+
 
 .compras-card-modal-tabela tbody tr:last-child td {
   border-bottom: 0;
 }
 
+
 .compras-card-modal-celula-grupo {
   border-right:
-    1px solid
+    1px
+    solid
     #e8edf3;
 }
+
 
 /* =========================================================
    PEDIDO
@@ -790,52 +813,46 @@
 
 .compras-card-modal-pedido {
   display: flex;
-
   flex-direction: column;
 
-  gap: 4px;
+  gap: var(--space-1);
 }
+
 
 .compras-card-modal-pedido > strong {
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    12px;
-
-  font-weight:
-    800;
+  font-size: var(--font-size-caption);
+  font-weight: 800;
 }
+
 
 .compras-card-modal-pedido > span {
-  display:
-    inline-flex;
+  width: max-content;
 
+  display: inline-flex;
   align-items: center;
 
-  gap: 4px;
-
-  width:
-    max-content;
+  gap: var(--space-1);
 
   padding:
-    3px 6px;
+    3px
+    6px;
 
-  border-radius:
-    999px;
+  border-radius: var(--radius-pill);
 
-  background:
-    #fff1f2;
+  background: #fff1f2;
 
-  color:
-    #dc2626;
+  color: var(--color-danger);
 
-  font-size:
-    8.5px;
-
-  font-weight:
-    750;
+  font-size: 8.5px;
+  font-weight: 750;
 }
+
+
+/* =========================================================
+   FORNECEDOR
+========================================================= */
 
 .compras-card-modal-fornecedor {
   display: block;
@@ -844,322 +861,287 @@
 
   overflow: hidden;
 
-  color:
-    #334155;
+  color: #334155;
 
-  font-weight:
-    650;
+  font-weight: 650;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
+
 /* =========================================================
-   REQUISIÇÃO
+   REQUISICAO
 ========================================================= */
 
 .compras-card-modal-requisicao {
-  display:
-    inline-flex;
-
-  align-items:
-    center;
+  display: inline-flex;
+  align-items: center;
 
   padding:
-    3px 7px;
-
-  border:
-    1px solid
-    #dbeafe;
-
-  border-radius:
+    3px
     7px;
 
-  background:
-    #eff6ff;
+  border:
+    1px
+    solid
+    #dbeafe;
 
-  color:
-    #1d4ed8;
+  border-radius: 7px;
 
-  font-size:
-    10.5px;
+  background: var(--color-primary-soft);
 
-  font-weight:
-    850;
+  color: var(--color-primary-hover);
 
-  white-space:
-    nowrap;
+  font-size: 10.5px;
+  font-weight: 850;
+
+  white-space: nowrap;
 }
+
 
 /* =========================================================
    CATEGORIA
 ========================================================= */
 
 .compras-card-modal-categoria {
-  min-width:
-    145px;
+  min-width: 145px;
+  max-width: 200px;
 
-  max-width:
-    200px;
+  color: #334155;
 
-  color:
-    #334155;
+  font-weight: 650;
 
-  font-weight:
-    650;
-
-  line-height:
-    1.35;
+  line-height: 1.35;
 }
+
 
 .compras-card-modal-categoria::first-line {
-  font-weight:
-    750;
+  font-weight: 750;
 }
 
+
 /* =========================================================
-   CÓDIGO
+   CODIGO
 ========================================================= */
 
 .compras-card-modal-codigo {
-  min-width:
-    90px;
+  min-width: 90px;
 
-  color:
-    #1e293b;
+  color: #1e293b;
 
-  font-size:
-    10px;
+  font-size: var(--font-size-micro);
+  font-weight: 800;
 
-  font-weight:
-    800;
-
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
 
 /* =========================================================
    PRODUTO
 ========================================================= */
 
 .compras-card-modal-produto {
-  min-width:
-    220px;
-
-  max-width:
-    360px;
+  min-width: 220px;
+  max-width: 360px;
 }
+
 
 .compras-card-modal-produto > strong {
   display: block;
 
-  color:
-    #334155;
+  color: #334155;
 
-  font-size:
-    10px;
+  font-size: var(--font-size-micro);
+  font-weight: 650;
 
-  font-weight:
-    650;
-
-  line-height:
-    1.4;
+  line-height: 1.4;
 }
+
 
 .compras-card-modal-item-observacao {
   display: inline-block;
 
-  margin-top:
-    5px;
+  margin-top: 5px;
 
   padding:
-    3px 6px;
+    3px
+    6px;
 
-  border-radius:
-    5px;
+  border-radius: 5px;
 
-  background:
-    #f8fafc;
+  background: var(--color-page-background);
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    8.5px;
+  font-size: 8.5px;
 
-  line-height:
-    1.35;
+  line-height: 1.35;
 }
 
+
 /* =========================================================
-   NÚMEROS
+   NUMEROS
 ========================================================= */
 
 .compras-card-modal-col-numero,
 .compras-card-modal-numero {
-  text-align:
-    right !important;
+  text-align: right !important;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
 
 .compras-card-modal-col-valor,
 .compras-card-modal-valor {
-  text-align:
-    right !important;
+  text-align: right !important;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
 
 .compras-card-modal-valor--aberto {
-  color:
-    #2563eb;
+  color: var(--color-primary);
 }
+
 
 .compras-card-modal-valor--requisicao {
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-weight:
-    850;
+  font-weight: 850;
 }
+
 
 /* =========================================================
    BADGES
 ========================================================= */
 
 .compras-card-modal-badge {
-  display:
-    inline-flex;
+  min-height: 22px;
 
+  display: inline-flex;
   align-items: center;
 
-  min-height:
-    22px;
-
   padding:
-    3px 8px;
+    3px
+    var(--space-2);
 
   border:
-    1px solid
+    1px
+    solid
     transparent;
 
-  border-radius:
-    999px;
+  border-radius: var(--radius-pill);
 
-  font-size:
-    8.5px;
+  font-size: 8.5px;
+  font-weight: 800;
 
-  font-weight:
-    800;
-
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
+
+/* =========================================================
+   BADGE - EM ABERTO
+========================================================= */
 
 .compras-card-modal-badge--em-aberto {
-  border-color:
-    #bfdbfe;
+  border-color: #bfdbfe;
 
-  background:
-    #eff6ff;
+  background: var(--color-primary-soft);
 
-  color:
-    #1d4ed8;
+  color: var(--color-primary-hover);
 }
+
+
+/* =========================================================
+   BADGE - EM ATRASO
+========================================================= */
 
 .compras-card-modal-badge--em-atraso {
-  border-color:
-    #fecaca;
+  border-color: #fecaca;
 
-  background:
-    #fff1f2;
+  background: #fff1f2;
 
-  color:
-    #b91c1c;
+  color: var(--color-danger-hover);
 }
+
+
+/* =========================================================
+   BADGE - RECEBIDO PARCIALMENTE
+========================================================= */
 
 .compras-card-modal-badge--recebido-parcialmente {
-  border-color:
-    #fde68a;
+  border-color: #fde68a;
 
-  background:
-    #fffbeb;
+  background: var(--color-warning-soft);
 
-  color:
-    #92400e;
+  color: #92400e;
 }
+
+
+/* =========================================================
+   BADGE - RECEBIDO
+========================================================= */
 
 .compras-card-modal-badge--recebido {
-  border-color:
-    #bbf7d0;
+  border-color: #bbf7d0;
 
-  background:
-    #f0fdf4;
+  background: #f0fdf4;
 
-  color:
-    #15803d;
+  color: #15803d;
 }
+
+
+/* =========================================================
+   SEM STATUS
+========================================================= */
 
 .compras-card-modal-sem-status {
-  color:
-    #94a3b8;
+  color: var(--color-text-light);
 }
+
 
 /* =========================================================
    ESTADO VAZIO
 ========================================================= */
 
 .compras-card-modal-vazio {
-  min-height:
-    260px;
+  min-height: 260px;
 
   display: flex;
-
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 6px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  text-align:
-    center;
+  text-align: center;
 }
+
 
 .compras-card-modal-vazio strong {
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    14px;
+  font-size: var(--font-size-md);
 }
+
 
 .compras-card-modal-vazio span {
-  font-size:
-    11px;
+  font-size: var(--font-size-xs);
 }
+
 
 /* =========================================================
    FOOTER
@@ -1167,90 +1149,108 @@
 
 .compras-card-modal-footer {
   flex:
-    0 0 auto;
+    0
+    0
+    auto;
 
   display: flex;
 
   align-items: center;
-
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   gap: 18px;
 
   padding:
-    13px 28px;
+    13px
+    28px;
 
   border-top:
-    1px solid
-    #e2e8f0;
+    1px
+    solid
+    var(--color-border);
 
-  background:
-    #f8fafc;
+  background: var(--color-page-background);
 }
+
 
 .compras-card-modal-footer > span {
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    9.5px;
+  font-size: 9.5px;
 }
 
+
+/* =========================================================
+   BOTAO FECHAR
+========================================================= */
+
 .compras-card-modal-botao-fechar {
-  min-width:
-    92px;
+  min-width: 92px;
 
   padding:
-    8px 16px;
+    var(--space-2)
+    var(--space-4);
 
   border:
-    1px solid
-    #2563eb;
+    1px
+    solid
+    var(--color-primary);
 
-  border-radius:
-    8px;
+  border-radius: var(--radius-md);
 
-  background:
-    #2563eb;
+  background: var(--color-primary);
 
-  color:
-    #ffffff;
+  color: var(--color-text-inverse);
 
-  font:
-    inherit;
+  font: inherit;
 
-  font-size:
-    10px;
-
-  font-weight:
-    750;
+  font-size: var(--font-size-micro);
+  font-weight: 750;
 
   cursor: pointer;
 
   box-shadow:
-    0 4px 10px
-    rgba(
-      37,
-      99,
-      235,
-      0.16
-    );
+    0
+    4px
+    10px
+    rgb(37 99 235 / 0.16);
 
   transition:
-    transform
-      0.15s ease,
-    background
-      0.15s ease;
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
+
 
 .compras-card-modal-botao-fechar:hover {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 
-  background:
-    #1d4ed8;
+  border-color: var(--color-primary-hover);
+
+  background: var(--color-primary-hover);
 }
+
+
+.compras-card-modal-botao-fechar:active {
+  transform: translateY(0);
+}
+
+
+.compras-card-modal-botao-fechar:focus {
+  outline: none;
+}
+
+
+.compras-card-modal-botao-fechar:focus-visible {
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
 
 /* =========================================================
    SCROLLBAR
@@ -1258,313 +1258,290 @@
 
 .compras-card-modal-body::-webkit-scrollbar,
 .compras-card-modal-tabela-wrapper::-webkit-scrollbar {
-  width:
-    8px;
-
-  height:
-    8px;
+  width: 8px;
+  height: 8px;
 }
+
 
 .compras-card-modal-body::-webkit-scrollbar-track,
 .compras-card-modal-tabela-wrapper::-webkit-scrollbar-track {
-  background:
-    #f1f5f9;
+  background: var(--color-surface-muted);
 }
+
 
 .compras-card-modal-body::-webkit-scrollbar-thumb,
 .compras-card-modal-tabela-wrapper::-webkit-scrollbar-thumb {
   border:
-    2px solid
-    #f1f5f9;
+    2px
+    solid
+    var(--color-surface-muted);
 
-  border-radius:
-    999px;
+  border-radius: var(--radius-pill);
 
-  background:
-    #94a3b8;
+  background: var(--color-text-light);
 }
 
+
 /* =========================================================
-   ANIMAÇÕES
+   ANIMACOES
 ========================================================= */
 
 @keyframes compras-modal-in {
   from {
-    opacity:
-      0;
+    opacity: 0;
 
     transform:
-      translateY(
-        12px
-      )
-      scale(
-        0.985
-      );
+      translateY(12px)
+      scale(0.985);
   }
 
   to {
-    opacity:
-      1;
+    opacity: 1;
 
     transform:
-      translateY(
-        0
-      )
-      scale(
-        1
-      );
+      translateY(0)
+      scale(1);
   }
 }
+
 
 @keyframes compras-modal-backdrop-in {
   from {
-    opacity:
-      0;
+    opacity: 0;
   }
 
   to {
-    opacity:
-      1;
+    opacity: 1;
   }
 }
+
 
 /* =========================================================
    NOTEBOOK / DESKTOP MENOR
 ========================================================= */
 
-@media (
-  max-width:
-    1200px
-) {
+@media (max-width: 1200px) {
   .compras-card-modal-backdrop {
-    top:
-      68px;
+    top: 68px;
 
-    padding:
-      14px;
+    padding: 14px;
   }
+
 
   .compras-card-modal {
     max-height:
-      calc(
-        100vh - 96px
-      );
+      calc(100vh - 96px);
   }
+
 
   .compras-card-modal--requisicao {
     width:
-      calc(
-        100vw - 28px
-      );
+      calc(100vw - 28px);
   }
 
+
   .compras-card-modal-tabela--requisicoes {
-    min-width:
-      1040px;
+    min-width: 1040px;
   }
 }
+
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (
-  max-width:
-    900px
-) {
+@media (max-width: 900px) {
   .compras-card-modal-backdrop {
-    top:
-      64px;
+    top: 64px;
 
-    align-items:
-      flex-end;
+    align-items: flex-end;
 
-    padding:
-      12px;
+    padding: var(--space-3);
   }
+
 
   .compras-card-modal {
-    width:
-      100%;
+    width: 100%;
 
     max-height:
-      calc(
-        100vh - 76px
-      );
+      calc(100vh - 76px);
 
     border-radius:
-      17px 17px
-      10px 10px;
+      17px
+      17px
+      10px
+      10px;
   }
+
 
   .compras-card-modal-header {
     padding:
-      18px 18px
+      18px
+      18px
       15px;
   }
 
+
   .compras-card-modal-heading h2 {
-    font-size:
-      20px;
+    font-size: 20px;
   }
+
 
   .compras-card-modal-resumo {
     grid-template-columns:
-      1fr 1fr;
+      1fr
+      1fr;
 
-    gap:
-      8px;
+    gap: var(--space-2);
 
     padding:
-      12px 18px;
+      var(--space-3)
+      18px;
   }
+
 
   .compras-card-modal-body {
     padding:
-      0 18px;
+      0
+      18px;
   }
+
 
   .compras-card-modal-footer {
     padding:
-      12px 18px;
+      var(--space-3)
+      18px;
   }
 
+
   .compras-card-modal-tabela--requisicoes {
-    min-width:
-      940px;
+    min-width: 940px;
   }
 }
+
 
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media (
-  max-width:
-    560px
-) {
+@media (max-width: 560px) {
   .compras-card-modal-backdrop {
-    top:
-      60px;
+    top: 60px;
 
-    align-items:
-      flex-end;
+    align-items: flex-end;
 
-    padding:
+    padding: 0;
+  }
+
+
+  .compras-card-modal {
+    width: 100%;
+
+    max-height:
+      calc(100vh - 60px);
+
+    border-radius:
+      19px
+      19px
+      0
       0;
   }
 
-  .compras-card-modal {
-    width:
-      100%;
-
-    max-height:
-      calc(
-        100vh - 60px
-      );
-
-    border-radius:
-      19px 19px
-      0 0;
-  }
 
   .compras-card-modal-header {
-    gap:
-      10px;
+    gap: 10px;
 
     padding:
-      16px 14px
+      var(--space-4)
+      14px
       13px;
   }
 
+
   .compras-card-modal-heading {
-    gap:
-      10px;
+    gap: 10px;
   }
+
 
   .compras-card-modal-icon {
-    width:
-      42px;
+    width: var(--control-height-lg);
+    height: var(--control-height-lg);
 
-    height:
-      42px;
-
-    flex-basis:
-      42px;
+    flex-basis: var(--control-height-lg);
   }
+
 
   .compras-card-modal-heading h2 {
-    font-size:
-      18px;
+    font-size: var(--font-size-xl);
   }
+
 
   .compras-card-modal-heading p {
-    font-size:
-      10px;
+    font-size: var(--font-size-micro);
   }
 
+
   .compras-card-modal-eyebrow {
-    font-size:
-      8px;
+    font-size: 8px;
   }
+
 
   .compras-card-modal-resumo {
     grid-template-columns:
-      1fr 1fr;
+      1fr
+      1fr;
 
-    gap:
-      7px;
+    gap: 7px;
 
-    padding:
-      10px;
+    padding: 10px;
   }
+
 
   .compras-card-modal-resumo > div {
-    padding:
-      9px;
+    padding: 9px;
   }
+
 
   .compras-card-modal-resumo span {
-    font-size:
-      8px;
+    font-size: 8px;
   }
 
+
   .compras-card-modal-resumo strong {
-    font-size:
-      14px;
+    font-size: var(--font-size-md);
   }
+
 
   .compras-card-modal-body {
     padding:
-      0 10px;
-  }
-
-  .compras-card-modal-footer {
-    align-items:
-      stretch;
-
-    flex-direction:
-      column;
-
-    gap:
-      8px;
-
-    padding:
+      0
       10px;
   }
 
+
+  .compras-card-modal-footer {
+    align-items: stretch;
+
+    flex-direction: column;
+
+    gap: var(--space-2);
+
+    padding: 10px;
+  }
+
+
   .compras-card-modal-botao-fechar {
-    width:
-      100%;
+    width: 100%;
   }
 }
 
-@media (
-  max-width:
-    390px
-) {
+
+/* =========================================================
+   MOBILE PEQUENO
+========================================================= */
+
+@media (max-width: 390px) {
   .compras-card-modal-resumo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 }

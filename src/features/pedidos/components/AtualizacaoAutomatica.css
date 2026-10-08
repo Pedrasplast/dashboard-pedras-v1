@@ -1,16 +1,22 @@
 /* =========================================================
-   ATUALIZAÇÃO AUTOMÁTICA
-   Versão minimalista integrada ao cabeçalho
+   ATUALIZACAO AUTOMATICA
+   ---------------------------------------------------------
+   Versao minimalista integrada ao cabecalho.
+   Migrada para o Pedrasplast Design System.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER
 ========================================================= */
 
 .pedidos-atualizacao-minimal {
   width: fit-content;
 
   display: inline-flex;
-
   align-items: center;
 
-  gap: 8px;
+  gap: var(--space-2);
 
   margin-left: auto;
 
@@ -18,18 +24,14 @@
     3px
     2px;
 
-  color:
-    var(
-      --text-muted,
-      #64748b
-    );
+  color: var(--color-text-muted);
 
   cursor: default;
 }
 
 
 /* =========================================================
-   ÍCONE
+   ICONE
 ========================================================= */
 
 .pedidos-atualizacao-minimal-icone {
@@ -42,34 +44,23 @@
   height: 28px;
 
   display: grid;
-
   place-items: center;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background:
-    rgba(
-      37,
-      99,
-      235,
-      0.055
+    rgb(
+      37 99 235 / 0.055
     );
 
   color:
-    rgba(
-      37,
-      99,
-      235,
-      0.75
+    rgb(
+      37 99 235 / 0.75
     );
 
   transition:
-    background
-      0.15s
-      ease,
-    color
-      0.15s
-      ease;
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 
@@ -78,32 +69,24 @@
 ========================================================= */
 
 .pedidos-atualizacao-minimal:hover
-.pedidos-atualizacao-minimal-icone {
+  .pedidos-atualizacao-minimal-icone {
   background:
-    rgba(
-      37,
-      99,
-      235,
-      0.085
+    rgb(
+      37 99 235 / 0.085
     );
 
-  color:
-    var(
-      --primary,
-      #2563eb
-    );
+  color: var(--color-primary);
 }
 
 
 /* =========================================================
-   CONTEÚDO
+   CONTEUDO
 ========================================================= */
 
 .pedidos-atualizacao-minimal-conteudo {
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 3px;
@@ -116,7 +99,6 @@
 
 .pedidos-atualizacao-minimal-topo {
   display: flex;
-
   align-items: center;
 }
 
@@ -127,25 +109,18 @@
 
 .pedidos-atualizacao-minimal-status {
   display: inline-flex;
-
   align-items: center;
 
   gap: 5px;
 
-  color:
-    var(
-      --text-light,
-      #94a3b8
-    );
+  color: var(--color-text-light);
 
   font-size: 7.5px;
-
   font-weight: 800;
 
   line-height: 1;
 
-  letter-spacing:
-    0.055em;
+  letter-spacing: 0.055em;
 
   text-transform: uppercase;
 
@@ -166,25 +141,21 @@
     0
     auto;
 
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
 
   background:
-    rgba(
-      37,
-      99,
-      235,
-      0.72
+    rgb(
+      37 99 235 / 0.72
     );
 }
 
 
 /* =========================================================
-   HORÁRIOS
+   HORARIOS
 ========================================================= */
 
 .pedidos-atualizacao-minimal-horarios {
   display: flex;
-
   align-items: center;
 
   gap: 5px;
@@ -199,7 +170,6 @@
 
 .pedidos-atualizacao-minimal-horarios > span {
   display: inline-flex;
-
   align-items: baseline;
 
   gap: 3px;
@@ -211,15 +181,10 @@
 ========================================================= */
 
 .pedidos-atualizacao-minimal-label {
-  color:
-    var(
-      --text-light,
-      #94a3b8
-    );
+  color: var(--color-text-light);
 
   font-size: 8.5px;
-
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 
@@ -228,32 +193,22 @@
 ========================================================= */
 
 .pedidos-atualizacao-minimal-horarios strong {
-  color:
-    var(
-      --text-secondary,
-      #475569
-    );
+  color: var(--color-text-secondary);
 
-  font-size: 10px;
-
+  font-size: var(--font-size-micro);
   font-weight: 750;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 
 /* =========================================================
-   PRÓXIMA ATUALIZAÇÃO
+   PROXIMA ATUALIZACAO
 ========================================================= */
 
 .pedidos-atualizacao-minimal-horarios
-.pedidos-atualizacao-minimal-proxima {
-  color:
-    var(
-      --primary-dark,
-      #1d4ed8
-    );
+  .pedidos-atualizacao-minimal-proxima {
+  color: var(--color-primary-hover);
 
   font-weight: 800;
 }
@@ -264,8 +219,7 @@
 ========================================================= */
 
 .pedidos-atualizacao-minimal-divisor {
-  color:
-    #cbd5e1;
+  color: var(--color-border-strong);
 
   font-size: 7px;
 
@@ -278,27 +232,22 @@
 ========================================================= */
 
 @media (max-width: 900px) {
-
   .pedidos-atualizacao-minimal {
     margin-left: 0;
   }
-
 
   .pedidos-atualizacao-minimal-icone {
     width: 26px;
     height: 26px;
   }
 
-
   .pedidos-atualizacao-minimal-status {
     font-size: 7px;
   }
 
-
   .pedidos-atualizacao-minimal-horarios {
     font-size: 9px;
   }
-
 
   .pedidos-atualizacao-minimal-horarios strong {
     font-size: 9.5px;
@@ -311,7 +260,6 @@
 ========================================================= */
 
 @media (max-width: 520px) {
-
   .pedidos-atualizacao-minimal {
     gap: 6px;
 
@@ -320,7 +268,6 @@
       0;
   }
 
-
   .pedidos-atualizacao-minimal-icone {
     width: 24px;
     height: 24px;
@@ -328,23 +275,19 @@
     border-radius: 7px;
   }
 
-
   .pedidos-atualizacao-minimal-status {
     font-size: 6.5px;
   }
 
-
   .pedidos-atualizacao-minimal-horarios {
-    gap: 4px;
+    gap: var(--space-1);
 
     font-size: 8.5px;
   }
 
-
   .pedidos-atualizacao-minimal-label {
     font-size: 8px;
   }
-
 
   .pedidos-atualizacao-minimal-horarios strong {
     font-size: 9px;
@@ -357,16 +300,13 @@
 ========================================================= */
 
 @media (max-width: 360px) {
-
   .pedidos-atualizacao-minimal-icone {
     display: none;
   }
 
-
   .pedidos-atualizacao-minimal-divisor {
     display: none;
   }
-
 
   .pedidos-atualizacao-minimal-horarios {
     flex-wrap: wrap;

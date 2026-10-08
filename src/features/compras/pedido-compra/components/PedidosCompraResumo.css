@@ -1,5 +1,18 @@
+/* =========================================================
+   PEDIDOS DE COMPRA
+   RESUMO / CARDS
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+========================================================= */
+
+
+/* =========================================================
+   GRID PRINCIPAL
+========================================================= */
+
 .compras-resumo {
   display: grid;
+
   grid-template-columns:
     repeat(
       5,
@@ -8,9 +21,16 @@
         1fr
       )
     );
+
   gap: 14px;
-  margin-bottom: 20px;
+
+  margin-bottom: var(--space-5);
 }
+
+
+/* =========================================================
+   GRID COMPLETO
+========================================================= */
 
 .compras-resumo--completo {
   grid-template-columns:
@@ -21,8 +41,14 @@
         1fr
       )
     );
+
   gap: 10px;
 }
+
+
+/* =========================================================
+   CARD
+========================================================= */
 
 .compras-resumo-card {
   min-width: 0;
@@ -30,289 +56,326 @@
 
   display: flex;
   align-items: center;
+
   gap: 14px;
 
   padding:
-    17px 18px;
+    17px
+    18px;
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius:
-    12px;
+  border-radius: var(--radius-lg);
 
-  background:
-    #fff;
+  background: var(--color-surface);
 
   box-shadow:
-    0 1px 4px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+    0
+    1px
+    4px
+    rgb(15 23 42 / 0.04);
 
   transition:
-    border-color
-      0.15s ease,
-    box-shadow
-      0.15s ease,
-    transform
-      0.15s ease;
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
+
+
+/* =========================================================
+   CARD COMPACTO
+========================================================= */
 
 .compras-resumo-card--compacto {
-  min-height:
-    82px;
+  min-height: 82px;
 
-  gap:
-    10px;
+  gap: 10px;
 
   padding:
-    12px 13px;
+    12px
+    13px;
 }
+
+
+/* =========================================================
+   CARD CLICAVEL
+========================================================= */
 
 .compras-resumo-card--clicavel {
-  cursor:
-    pointer;
+  cursor: pointer;
 }
+
 
 .compras-resumo-card--clicavel:hover {
-  border-color:
-    #cbd5e1;
+  border-color: var(--color-border-strong);
 
   box-shadow:
-    0 4px 14px
-    rgba(
-      15,
-      23,
-      42,
-      0.07
-    );
+    0
+    4px
+    14px
+    rgb(15 23 42 / 0.07);
 
-  transform:
-    translateY(
-      -1px
-    );
+  transform: translateY(-1px);
 }
+
+
+/* =========================================================
+   CARD ATIVO
+========================================================= */
 
 .compras-resumo-card--ativo {
-  border-color:
-    #60a5fa;
+  border-color: #60a5fa;
 
   box-shadow:
-    0 0 0 2px
-    rgba(
-      59,
-      130,
-      246,
-      0.08
-    );
+    0
+    0
+    0
+    2px
+    rgb(59 130 246 / 0.08);
 }
+
+
+/* =========================================================
+   CARD DANGER
+========================================================= */
 
 .compras-resumo-card--danger {
   border-left:
-    3px solid
+    3px
+    solid
     #ef4444;
 
-  background:
-    #fffafa;
+  background: #fffafa;
 }
+
+
+/* =========================================================
+   ICONE
+========================================================= */
 
 .compras-resumo-card-icone {
-  width:
-    44px;
-
-  height:
-    44px;
+  width: 44px;
+  height: 44px;
 
   flex:
-    0 0 auto;
+    0
+    0
+    auto;
 
-  display:
-    flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  align-items:
-    center;
+  border-radius: 10px;
 
-  justify-content:
-    center;
+  background: var(--color-primary-soft);
 
-  border-radius:
-    10px;
-
-  background:
-    #eff6ff;
-
-  color:
-    #2563eb;
+  color: var(--color-primary);
 }
+
+
+/* =========================================================
+   ICONE COMPACTO
+========================================================= */
 
 .compras-resumo-card--compacto
   .compras-resumo-card-icone {
-  width:
-    36px;
+  width: 36px;
+  height: 36px;
 
-  height:
-    36px;
-
-  border-radius:
-    9px;
+  border-radius: 9px;
 }
+
+
+/* =========================================================
+   ICONE DANGER
+========================================================= */
 
 .compras-resumo-card-icone--danger {
-  background:
-    #fee2e2;
+  background: #fee2e2;
 
-  color:
-    #ef4444;
+  color: #ef4444;
 }
+
+
+/* =========================================================
+   ICONE SUCCESS
+========================================================= */
 
 .compras-resumo-card-icone--success {
-  background:
-    #ecfdf5;
+  background: var(--color-success-soft);
 
-  color:
-    #059669;
+  color: var(--color-success);
 }
+
+
+/* =========================================================
+   ICONE PURPLE
+========================================================= */
 
 .compras-resumo-card-icone--purple {
-  background:
-    #f5f3ff;
+  background: #f5f3ff;
 
-  color:
-    #7c3aed;
+  color: #7c3aed;
 }
+
+
+/* =========================================================
+   ICONE CYAN
+========================================================= */
 
 .compras-resumo-card-icone--cyan {
-  background:
-    #ecfeff;
+  background: #ecfeff;
 
-  color:
-    #0891b2;
+  color: #0891b2;
 }
+
+
+/* =========================================================
+   ICONE REQUISICAO
+========================================================= */
 
 .compras-resumo-card-icone--requisicao {
-  background:
-    #eef2ff;
+  background: #eef2ff;
 
-  color:
-    #4f46e5;
+  color: #4f46e5;
 }
+
+
+/* =========================================================
+   ICONE REQUISICAO VALOR
+========================================================= */
 
 .compras-resumo-card-icone--requisicao-valor {
-  background:
-    #f0fdf4;
+  background: #f0fdf4;
 
-  color:
-    #16a34a;
+  color: #16a34a;
 }
+
+
+/* =========================================================
+   ICONE REQUISICAO ITENS
+========================================================= */
 
 .compras-resumo-card-icone--requisicao-itens {
-  background:
-    #fff7ed;
+  background: #fff7ed;
 
-  color:
-    #ea580c;
+  color: #ea580c;
 }
+
+
+/* =========================================================
+   ICONE REQUISICAO FUTURO
+========================================================= */
 
 .compras-resumo-card-icone--requisicao-futuro {
-  background:
-    #faf5ff;
+  background: #faf5ff;
 
-  color:
-    #9333ea;
+  color: #9333ea;
 }
+
+
+/* =========================================================
+   ICONE REQUISICAO HOJE
+========================================================= */
 
 .compras-resumo-card-icone--requisicao-hoje {
-  background:
-    #ecfeff;
+  background: #ecfeff;
 
-  color:
-    #0e7490;
+  color: #0e7490;
 }
+
+
+/* =========================================================
+   CONTEUDO
+========================================================= */
 
 .compras-resumo-card-conteudo {
-  min-width:
-    0;
+  min-width: 0;
 
-  display:
-    flex;
+  display: flex;
+  flex-direction: column;
 
-  flex-direction:
-    column;
-
-  gap:
-    5px;
+  gap: 5px;
 }
+
+
+/* =========================================================
+   TITULO
+========================================================= */
 
 .compras-resumo-card-titulo {
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    10px;
+  font-size: var(--font-size-micro);
+  font-weight: 650;
 
-  font-weight:
-    650;
+  line-height: 1.25;
 
-  line-height:
-    1.25;
-
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 }
+
+
+/* =========================================================
+   VALOR
+========================================================= */
 
 .compras-resumo-card-valor {
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    19px;
+  font-size: 19px;
+  font-weight: 800;
 
-  font-weight:
-    800;
+  line-height: 1.15;
 
-  line-height:
-    1.15;
+  text-overflow: ellipsis;
 
-  text-overflow:
-    ellipsis;
-
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
+
+
+/* =========================================================
+   TITULO COMPACTO
+========================================================= */
 
 .compras-resumo-card--compacto
   .compras-resumo-card-titulo {
-  font-size:
-    8.5px;
+  font-size: 8.5px;
 }
+
+
+/* =========================================================
+   VALOR COMPACTO
+========================================================= */
 
 .compras-resumo-card--compacto
   .compras-resumo-card-valor {
-  font-size:
-    15px;
+  font-size: 15px;
 }
+
+
+/* =========================================================
+   VALOR DANGER
+========================================================= */
 
 .compras-resumo-card--danger
   .compras-resumo-card-valor {
-  color:
-    #dc2626;
+  color: var(--color-danger);
 }
 
-@media (
-  max-width:
-    1500px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 1500
+========================================================= */
+
+@media (max-width: 1500px) {
   .compras-resumo {
     grid-template-columns:
       repeat(
@@ -337,18 +400,18 @@
 
   .compras-resumo--completo
     .compras-resumo-card {
-    min-height:
-      76px;
+    min-height: 76px;
 
-    padding:
-      10px;
+    padding: 10px;
   }
 }
 
-@media (
-  max-width:
-    1200px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 1200
+========================================================= */
+
+@media (max-width: 1200px) {
   .compras-resumo--completo {
     grid-template-columns:
       repeat(
@@ -361,10 +424,12 @@
   }
 }
 
-@media (
-  max-width:
-    950px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 950
+========================================================= */
+
+@media (max-width: 950px) {
   .compras-resumo,
   .compras-resumo--completo {
     grid-template-columns:
@@ -378,22 +443,23 @@
   }
 }
 
-@media (
-  max-width:
-    560px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 560
+========================================================= */
+
+@media (max-width: 560px) {
   .compras-resumo,
   .compras-resumo--completo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .compras-resumo-card,
   .compras-resumo-card--compacto {
-    min-height:
-      72px;
+    min-height: 72px;
 
     padding:
-      11px 12px;
+      11px
+      12px;
   }
 }

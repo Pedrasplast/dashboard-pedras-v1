@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   AlertTriangle,
   Trash2,
@@ -27,7 +29,14 @@ export default function ConfirmacaoExclusao({
 
 
   return (
-    <div className="confirmacao-exclusao-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={processando}
+      tamanho="pequeno"
+      fecharAoClicarFora={false}
+    >
 
       <div
         className="confirmacao-exclusao"
@@ -36,9 +45,9 @@ export default function ConfirmacaoExclusao({
         aria-labelledby="confirmacao-exclusao-titulo"
       >
 
-        <div className="confirmacao-exclusao-header">
+        <div className="confirmacao-exclusao-header" data-modal-header="">
 
-          <div className="confirmacao-exclusao-icone">
+          <div className="confirmacao-exclusao-icone" data-modal-icone="">
 
             <Trash2
               size={21}
@@ -55,9 +64,11 @@ export default function ConfirmacaoExclusao({
               Exclusão
             </span>
 
-            <h3 id="confirmacao-exclusao-titulo">
-              {titulo}
-            </h3>
+            <ModalTitulo>
+              <h3 id="confirmacao-exclusao-titulo">
+                {titulo}
+              </h3>
+            </ModalTitulo>
 
             <p>
               {descricao}
@@ -76,6 +87,7 @@ export default function ConfirmacaoExclusao({
               processando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
 
             <X
@@ -87,7 +99,7 @@ export default function ConfirmacaoExclusao({
         </div>
 
 
-        <div className="confirmacao-exclusao-conteudo">
+        <div className="confirmacao-exclusao-conteudo" data-modal-body="">
 
           {(itemTitulo ||
             itemDescricao) && (
@@ -180,7 +192,7 @@ export default function ConfirmacaoExclusao({
         </div>
 
 
-        <div className="confirmacao-exclusao-acoes">
+        <div className="confirmacao-exclusao-acoes" data-modal-footer="">
 
           <button
             type="button"
@@ -191,6 +203,7 @@ export default function ConfirmacaoExclusao({
             disabled={
               processando
             }
+            data-modal-acao="secundaria"
           >
             {textoCancelar}
           </button>
@@ -205,6 +218,7 @@ export default function ConfirmacaoExclusao({
             disabled={
               processando
             }
+            data-modal-acao="perigo"
           >
 
             <Trash2
@@ -221,6 +235,6 @@ export default function ConfirmacaoExclusao({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

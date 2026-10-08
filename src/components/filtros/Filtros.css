@@ -1,9 +1,20 @@
 /* =========================================================
+   PEDRASPLAST DESIGN SYSTEM
    FILTROS COMPARTILHADOS
+   ---------------------------------------------------------
+   Base visual comum utilizada pelos filtros do sistema.
 
-   Este arquivo define somente um estilo base seguro.
-   Cada tela pode continuar usando suas classes próprias
-   para preservar o layout existente.
+   IMPORTANTE:
+   Este arquivo não define grid, quantidade de colunas ou
+   largura específica dos campos.
+
+   Cada tela ainda pode controlar seu próprio layout enquanto
+   fazemos a migração progressiva para o Design System.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER PRINCIPAL
 ========================================================= */
 
 .filtros-compartilhados {
@@ -12,6 +23,10 @@
 }
 
 
+/* =========================================================
+   BOTAO LIMPAR FILTROS
+========================================================= */
+
 .filtros-compartilhados-limpar {
   display: inline-flex;
   align-items: center;
@@ -19,40 +34,122 @@
 
   gap: 7px;
 
-  min-height: 36px;
+  min-height: var(--control-height-md);
 
-  padding: 0 12px;
+  padding:
+    0
+    var(--space-3);
 
-  color: #475569;
-  background: #ffffff;
+  color: var(--color-text-secondary);
 
-  border: 1px solid #dbe3ec;
-  border-radius: 8px;
+  background: var(--color-surface);
+
+  border:
+    1px
+    solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
 
   font-family: inherit;
-  font-size: 0.76rem;
-  font-weight: 700;
+
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1;
+
+  white-space: nowrap;
 
   cursor: pointer;
 
   transition:
-    color 0.18s ease,
-    background-color 0.18s ease,
-    border-color 0.18s ease;
+    color var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
 
 
+/* =========================================================
+   HOVER
+========================================================= */
+
 .filtros-compartilhados-limpar:hover {
-  color: #b91c1c;
-  background: #fff7f7;
+  color: var(--color-danger-hover);
+
+  background: var(--color-danger-soft);
+
   border-color: #fecaca;
+}
+
+
+/* =========================================================
+   ACTIVE
+========================================================= */
+
+.filtros-compartilhados-limpar:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+.filtros-compartilhados-limpar:focus {
+  outline: none;
 }
 
 
 .filtros-compartilhados-limpar:focus-visible {
   outline: none;
 
+  border-color: var(--color-primary);
+
   box-shadow:
-    0 0 0 3px
-    rgba(59, 130, 246, 0.12);
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.filtros-compartilhados-limpar:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   ICONE
+========================================================= */
+
+.filtros-compartilhados-limpar svg {
+  flex:
+    0
+    0
+    auto;
+
+  width: 15px;
+  height: 15px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 640px) {
+  .filtros-compartilhados-limpar {
+    min-height: var(--control-height-md);
+  }
 }

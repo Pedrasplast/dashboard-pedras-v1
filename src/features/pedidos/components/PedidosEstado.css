@@ -1,92 +1,167 @@
 /* =========================================================
+   PEDIDOS
    ESTADO VAZIO
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER
 ========================================================= */
 
 .pedidos-empty {
   min-height: 300px;
 
   display: flex;
-
   flex-direction: column;
 
   align-items: center;
-
   justify-content: center;
 
   padding:
-    40px
-    20px;
+    var(--space-10)
+    var(--space-5);
 
   text-align: center;
 }
 
+
+/* =========================================================
+   ICONE
+========================================================= */
+
 .pedidos-empty-icon {
   width: 58px;
-
   height: 58px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
   margin-bottom: 15px;
 
   border-radius: 14px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
+
+
+/* =========================================================
+   TITULO
+========================================================= */
 
 .pedidos-empty h3 {
   margin: 0;
 
+  color: var(--color-text);
+
   font-size: 17px;
-
   font-weight: 750;
-
-  color: var(--text);
 }
+
+
+/* =========================================================
+   DESCRICAO
+========================================================= */
 
 .pedidos-empty p {
   max-width: 520px;
 
   margin:
-    8px
+    var(--space-2)
     0
     18px;
 
-  font-size: 13px;
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-body);
 
   line-height: 1.55;
-
-  color: var(--text-muted);
 }
+
+
+/* =========================================================
+   BOTAO LIMPAR FILTROS
+========================================================= */
 
 .pedidos-btn-limpar-vazio {
   min-height: 39px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   padding:
     0
     15px;
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 
-  font-size: 12px;
-
+  font-family: inherit;
+  font-size: var(--font-size-caption);
   font-weight: 650;
 
   cursor: pointer;
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
 
 
+/* =========================================================
+   BOTAO - HOVER
+========================================================= */
+
+.pedidos-btn-limpar-vazio:hover {
+  border-color: var(--color-text-light);
+
+  background: var(--color-surface-subtle);
+
+  color: var(--color-text);
+}
+
+
+/* =========================================================
+   BOTAO - ACTIVE
+========================================================= */
+
+.pedidos-btn-limpar-vazio:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   BOTAO - FOCO
+========================================================= */
+
+.pedidos-btn-limpar-vazio:focus {
+  outline: none;
+}
+
+
+.pedidos-btn-limpar-vazio:focus-visible {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
