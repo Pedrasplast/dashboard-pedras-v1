@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   memo,
   useCallback,
@@ -147,46 +149,7 @@ function ModalOcorrenciasParadas({
      - bloqueia scroll da página
   ======================================================= */
 
-  useEffect(() => {
-    if (!aberto) {
-      return undefined;
-    }
 
-    const overflowAnterior =
-      document.body.style.overflow;
-
-    document.body.style.overflow =
-      "hidden";
-
-    function aoPressionarTecla(
-      event,
-    ) {
-      if (
-        event.key ===
-        "Escape"
-      ) {
-        fechar();
-      }
-    }
-
-    window.addEventListener(
-      "keydown",
-      aoPressionarTecla,
-    );
-
-    return () => {
-      document.body.style.overflow =
-        overflowAnterior;
-
-      window.removeEventListener(
-        "keydown",
-        aoPressionarTecla,
-      );
-    };
-  }, [
-    aberto,
-    fechar,
-  ]);
 
   /* =======================================================
      BASE
@@ -308,9 +271,13 @@ function ModalOcorrenciasParadas({
   ======================================================= */
 
   return (
-    <div
-      className="dp-ocorrencias-overlay"
-      onMouseDown={fechar}
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={fechar}
+      bloqueado={false}
+      tamanho="amplo"
+      fecharAoClicarFora={true}
     >
       <section
         className="dp-ocorrencias-modal dp-ocorrencias-modal--novo"
@@ -327,9 +294,9 @@ function ModalOcorrenciasParadas({
             CABEÇALHO
         =============================================== */}
 
-        <header className="dp-ocorrencias-header dp-ocorrencias-header--novo">
-          <div className="dp-ocorrencias-header-conteudo">
-            <div className="dp-ocorrencias-header-icon">
+        <header className="dp-ocorrencias-header dp-ocorrencias-header--novo" data-modal-header="">
+          <div className="dp-ocorrencias-header-conteudo" data-modal-body="">
+            <div className="dp-ocorrencias-header-icon" data-modal-icone="">
               <Icone
                 size={20}
                 strokeWidth={2}
@@ -342,9 +309,11 @@ function ModalOcorrenciasParadas({
                 {eyebrow}
               </span>
 
-              <h3 id="dp-ocorrencias-titulo">
-                {titulo}
-              </h3>
+              <ModalTitulo>
+                <h3 id="dp-ocorrencias-titulo">
+                  {titulo}
+                </h3>
+              </ModalTitulo>
 
               <div className="dp-ocorrencias-header-meta">
                 <span>
@@ -368,6 +337,7 @@ function ModalOcorrenciasParadas({
             className="dp-ocorrencias-fechar"
             onClick={fechar}
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={19} />
           </button>
@@ -379,7 +349,7 @@ function ModalOcorrenciasParadas({
 
         <div className="dp-ocorrencias-resumo dp-ocorrencias-resumo--novo">
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--ocorrencias">
-            <div className="dp-ocorrencias-kpi__icon">
+            <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
               <Activity
                 size={18}
                 strokeWidth={2}
@@ -387,7 +357,7 @@ function ModalOcorrenciasParadas({
               />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo">
+            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
               <span>
                 Total de ocorrências
               </span>
@@ -405,7 +375,7 @@ function ModalOcorrenciasParadas({
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--tempo">
-            <div className="dp-ocorrencias-kpi__icon">
+            <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
               <Clock3
                 size={18}
                 strokeWidth={2}
@@ -413,7 +383,7 @@ function ModalOcorrenciasParadas({
               />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo">
+            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
               <span>
                 Tempo total parado
               </span>
@@ -431,7 +401,7 @@ function ModalOcorrenciasParadas({
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--media">
-            <div className="dp-ocorrencias-kpi__icon">
+            <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
               <Timer
                 size={18}
                 strokeWidth={2}
@@ -439,7 +409,7 @@ function ModalOcorrenciasParadas({
               />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo">
+            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
               <span>
                 Tempo médio
               </span>
@@ -457,7 +427,7 @@ function ModalOcorrenciasParadas({
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--maquinas">
-            <div className="dp-ocorrencias-kpi__icon">
+            <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
               <Factory
                 size={18}
                 strokeWidth={2}
@@ -465,7 +435,7 @@ function ModalOcorrenciasParadas({
               />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo">
+            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
               <span>
                 Injetoras afetadas
               </span>
@@ -692,7 +662,7 @@ function ModalOcorrenciasParadas({
           </table>
         </div>
       </section>
-    </div>
+    </Modal>
   );
 }
 

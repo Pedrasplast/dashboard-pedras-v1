@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useMemo,
@@ -441,7 +443,14 @@ export default function PermissoesModal({
 
 
   return (
-    <div className="pu-overlay">
+    <Modal
+      asChild
+      aberto={true}
+      onFechar={onFechar}
+      bloqueado={salvando}
+      tamanho="amplo"
+      fecharAoClicarFora={false}
+    >
 
       <section
         className="pu-modal"
@@ -454,11 +463,11 @@ export default function PermissoesModal({
             CABEÇALHO
         ===================================================== */}
 
-        <header className="pu-header">
+        <header className="pu-header" data-modal-header="">
 
           <div className="pu-header-main">
 
-            <div className="pu-header-icon">
+            <div className="pu-header-icon" data-modal-icone="">
               <FiSettings />
             </div>
 
@@ -468,9 +477,11 @@ export default function PermissoesModal({
                 Controle de acesso
               </span>
 
-              <h2 id="pu-modal-title">
-                Permissões do usuário
-              </h2>
+              <ModalTitulo>
+                <h2 id="pu-modal-title">
+                  Permissões do usuário
+                </h2>
+              </ModalTitulo>
 
               <p>
                 {usuario.email}
@@ -527,6 +538,7 @@ export default function PermissoesModal({
                 onFechar
               }
               aria-label="Fechar"
+              data-modal-fechar=""
             >
               <FiX />
             </button>
@@ -609,14 +621,14 @@ export default function PermissoesModal({
             CONTEÚDO
         ===================================================== */}
 
-        <main className="pu-content">
+        <main className="pu-content" data-modal-body="">
 
           {abaAtiva ===
           "telas" ? (
 
             <div className="pu-tab-panel">
 
-              <div className="pu-section-header">
+              <div className="pu-section-header" data-modal-header="">
 
                 <div>
                   <h3>
@@ -629,7 +641,7 @@ export default function PermissoesModal({
                 </div>
 
 
-                <div className="pu-bulk-actions">
+                <div className="pu-bulk-actions" data-modal-footer="">
 
                   <button
                     type="button"
@@ -640,6 +652,7 @@ export default function PermissoesModal({
                     onClick={
                       liberarTodasAsTelas
                     }
+                    data-modal-acao="secundaria"
                   >
                     <FiUnlock />
 
@@ -656,6 +669,7 @@ export default function PermissoesModal({
                     onClick={
                       bloquearTodasAsTelas
                     }
+                    data-modal-acao="secundaria"
                   >
                     <FiLock />
 
@@ -725,7 +739,7 @@ export default function PermissoesModal({
                 }
               >
 
-                <div className="pu-report-central-icon">
+                <div className="pu-report-central-icon" data-modal-icone="">
 
                   {relatoriosLiberados
                     ? <FiUnlock />
@@ -785,7 +799,7 @@ export default function PermissoesModal({
               </section>
 
 
-              <div className="pu-section-header pu-report-section-header">
+              <div className="pu-section-header pu-report-section-header" data-modal-header="">
 
                 <div>
                   <h3>
@@ -798,7 +812,7 @@ export default function PermissoesModal({
                 </div>
 
 
-                <div className="pu-bulk-actions">
+                <div className="pu-bulk-actions" data-modal-footer="">
 
                   <button
                     type="button"
@@ -810,6 +824,7 @@ export default function PermissoesModal({
                     onClick={
                       onMarcarTodosRelatorios
                     }
+                    data-modal-acao="secundaria"
                   >
                     <FiUnlock />
 
@@ -827,6 +842,7 @@ export default function PermissoesModal({
                     onClick={
                       onDesmarcarTodosRelatorios
                     }
+                    data-modal-acao="secundaria"
                   >
                     <FiLock />
 
@@ -896,7 +912,7 @@ export default function PermissoesModal({
                         className="pu-report-category"
                       >
 
-                        <header className="pu-report-category-header">
+                        <header className="pu-report-category-header" data-modal-header="">
 
                           <strong>
                             {categoria}
@@ -966,7 +982,7 @@ export default function PermissoesModal({
             RODAPÉ
         ===================================================== */}
 
-        <footer className="pu-footer">
+        <footer className="pu-footer" data-modal-footer="">
 
           <div className="pu-footer-info">
 
@@ -996,7 +1012,7 @@ export default function PermissoesModal({
           </div>
 
 
-          <div className="pu-footer-actions">
+          <div className="pu-footer-actions" data-modal-footer="">
 
             <button
               type="button"
@@ -1007,6 +1023,7 @@ export default function PermissoesModal({
               onClick={
                 onFechar
               }
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -1021,6 +1038,7 @@ export default function PermissoesModal({
               onClick={
                 onSalvar
               }
+              data-modal-acao="secundaria"
             >
               {salvando
                 ? "Salvando..."
@@ -1033,6 +1051,6 @@ export default function PermissoesModal({
 
       </section>
 
-    </div>
+    </Modal>
   );
 }

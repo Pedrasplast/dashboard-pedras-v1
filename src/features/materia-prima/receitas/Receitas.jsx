@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -1275,7 +1277,14 @@ export default function Receitas() {
 
       {receitaEmEdicao && (
 
-        <div className="receitas-editor-overlay">
+        <Modal
+          asChild
+          aberto={Boolean(receitaEmEdicao)}
+          onFechar={fecharEditor}
+          bloqueado={salvandoEdicao}
+          tamanho="grande"
+          fecharAoClicarFora={false}
+        >
 
           <div
             className="receitas-editor"
@@ -1283,9 +1292,9 @@ export default function Receitas() {
             aria-modal="true"
           >
 
-            <div className="receitas-editor-header">
+            <div className="receitas-editor-header" data-modal-header="">
 
-              <div className="receitas-editor-header-icone">
+              <div className="receitas-editor-header-icone" data-modal-icone="">
 
                 <FlaskConical
                   size={22}
@@ -1302,12 +1311,14 @@ export default function Receitas() {
                   Receita de PP
                 </span>
 
-                <h3>
-                  Produto{" "}
-                  {
-                    receitaEmEdicao.codigo
-                  }
-                </h3>
+                <ModalTitulo>
+                  <h3>
+                    Produto{" "}
+                    {
+                      receitaEmEdicao.codigo
+                    }
+                  </h3>
+                </ModalTitulo>
 
                 <p>
                   {receitaEmEdicao
@@ -1327,6 +1338,7 @@ export default function Receitas() {
                 disabled={
                   salvandoEdicao
                 }
+                data-modal-fechar=""
               >
 
                 <X
@@ -1385,7 +1397,7 @@ export default function Receitas() {
             </div>
 
 
-            <div className="receitas-editor-body">
+            <div className="receitas-editor-body" data-modal-body="">
 
               <div className="receitas-editor-titulo">
 
@@ -1702,7 +1714,7 @@ export default function Receitas() {
             </div>
 
 
-            <div className="receitas-editor-acoes">
+            <div className="receitas-editor-acoes" data-modal-footer="">
 
               <button
                 type="button"
@@ -1713,6 +1725,7 @@ export default function Receitas() {
                 disabled={
                   salvandoEdicao
                 }
+                data-modal-acao="secundaria"
               >
                 Cancelar
               </button>
@@ -1729,6 +1742,7 @@ export default function Receitas() {
                   itensEdicao.length ===
                     0
                 }
+                data-modal-acao="primaria"
               >
 
                 <Save
@@ -1749,7 +1763,7 @@ export default function Receitas() {
 
           </div>
 
-        </div>
+        </Modal>
 
       )}
 

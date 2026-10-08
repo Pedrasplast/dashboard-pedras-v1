@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useState,
@@ -266,45 +268,7 @@ export default function ProdutoPPModal({
      ESC
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
 
-
-      function fecharEscape(
-        event,
-      ) {
-        if (
-          event.key ===
-            "Escape" &&
-          !salvando
-        ) {
-          onCancelar?.();
-        }
-      }
-
-
-      document.addEventListener(
-        "keydown",
-        fecharEscape,
-      );
-
-
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
 
 
   /* =======================================================
@@ -447,7 +411,14 @@ export default function ProdutoPPModal({
   ======================================================= */
 
   return (
-    <div className="produto-pp-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
 
       <div
         className="produto-pp-modal"
@@ -456,9 +427,9 @@ export default function ProdutoPPModal({
         aria-labelledby="produto-pp-modal-titulo"
       >
 
-        <div className="produto-pp-modal-header">
+        <div className="produto-pp-modal-header" data-modal-header="">
 
-          <div className="produto-pp-modal-header-icone">
+          <div className="produto-pp-modal-header-icone" data-modal-icone="">
 
             <Boxes
               size={22}
@@ -474,11 +445,13 @@ export default function ProdutoPPModal({
               Matéria-Prima
             </span>
 
-            <h3 id="produto-pp-modal-titulo">
-              {item
-                ? "Editar Produto PP"
-                : "Cadastrar Produto PP"}
-            </h3>
+            <ModalTitulo>
+              <h3 id="produto-pp-modal-titulo">
+                {item
+                  ? "Editar Produto PP"
+                  : "Cadastrar Produto PP"}
+              </h3>
+            </ModalTitulo>
 
             <p>
               Informe os dados do produto e
@@ -498,6 +471,7 @@ export default function ProdutoPPModal({
               salvando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
 
             <X size={19} />
@@ -512,6 +486,7 @@ export default function ProdutoPPModal({
           onSubmit={
             enviar
           }
+          data-modal-form=""
         >
 
           <div className="produto-pp-modal-grid">
@@ -825,7 +800,7 @@ export default function ProdutoPPModal({
           )}
 
 
-          <div className="produto-pp-modal-acoes">
+          <div className="produto-pp-modal-acoes" data-modal-footer="">
 
             <button
               type="button"
@@ -836,6 +811,7 @@ export default function ProdutoPPModal({
               disabled={
                 salvando
               }
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -847,6 +823,7 @@ export default function ProdutoPPModal({
               disabled={
                 salvando
               }
+              data-modal-acao="primaria"
             >
 
               <Save size={17} />
@@ -865,6 +842,6 @@ export default function ProdutoPPModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

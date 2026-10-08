@@ -1,5 +1,20 @@
 /* =========================================================
+   PEDIDOS
    FILTROS
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - estrutura preservada;
+   - responsividade preservada;
+   - altura dos controles mantida em 42px;
+   - tokens locais substituidos pelos globais;
+   - foco e transicoes padronizados.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER
 ========================================================= */
 
 .pedidos-filtros {
@@ -11,60 +26,94 @@
 
   padding: 13px;
 
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  background: var(--surface);
+  background: var(--color-surface);
 
   box-shadow:
-    0 1px 3px
-    rgba(15, 23, 42, 0.025);
+    0
+    1px
+    3px
+    rgb(15 23 42 / 0.025);
 }
+
+
+/* =========================================================
+   PESQUISA
+========================================================= */
 
 .pedidos-pesquisa {
   min-width: 280px;
 
   flex: 1;
 
-  height: 42px;
+  height: var(--control-height-lg);
 
   display: flex;
-
   align-items: center;
 
   gap: 9px;
 
   padding:
     0
-    12px;
+    var(--space-3);
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: var(--text-light);
+  color: var(--color-text-light);
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
+
+
+/* =========================================================
+   PESQUISA - FOCO
+========================================================= */
 
 .pedidos-pesquisa:focus-within {
-  border-color: var(--primary);
+  border-color: var(--color-primary);
 
   box-shadow:
-    0 0 0 3px
-    rgba(37, 99, 235, 0.09);
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
 }
 
+
+/* =========================================================
+   PESQUISA - ICONE
+========================================================= */
+
 .pedidos-pesquisa svg {
-  flex: 0 0 auto;
+  flex:
+    0
+    0
+    auto;
 }
+
+
+/* =========================================================
+   PESQUISA - INPUT
+========================================================= */
 
 .pedidos-pesquisa input {
   width: 100%;
@@ -77,63 +126,99 @@
 
   background: transparent;
 
-  font-size: 13px;
+  color: var(--color-text);
 
-  color: var(--text);
+  font-family: inherit;
+  font-size: var(--font-size-body);
 }
+
+
+/* =========================================================
+   PESQUISA - PLACEHOLDER
+========================================================= */
 
 .pedidos-pesquisa input::placeholder {
-  color: var(--text-light);
+  color: var(--color-text-light);
+
+  opacity: 1;
 }
+
+
+/* =========================================================
+   SELECTS
+========================================================= */
 
 .pedidos-filtros select {
   min-width: 185px;
 
-  height: 42px;
+  height: var(--control-height-lg);
 
   padding:
     0
     34px
     0
-    12px;
+    var(--space-3);
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 
-  font-size: 13px;
+  font-family: inherit;
+  font-size: var(--font-size-body);
 
   cursor: pointer;
-}
 
-.pedidos-filtros select:focus {
-  border-color: var(--primary);
-
-  box-shadow:
-    0 0 0 3px
-    rgba(37, 99, 235, 0.09);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
 
 
 /* =========================================================
-   LIMPAR
+   SELECTS - HOVER
+========================================================= */
+
+.pedidos-filtros select:hover {
+  border-color: var(--color-text-light);
+}
+
+
+/* =========================================================
+   SELECTS - FOCO
+========================================================= */
+
+.pedidos-filtros select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
+
+/* =========================================================
+   LIMPAR FILTROS
 ========================================================= */
 
 .pedidos-btn-limpar {
-  height: 42px;
+  height: var(--control-height-lg);
 
   display: inline-flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 6px;
@@ -143,45 +228,111 @@
     13px;
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: var(--surface-soft);
+  background: var(--color-surface-subtle);
 
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 
-  font-size: 12px;
-
+  font-family: inherit;
+  font-size: var(--font-size-caption);
   font-weight: 650;
 
   cursor: pointer;
+
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
+
+
+/* =========================================================
+   LIMPAR - HOVER
+========================================================= */
 
 .pedidos-btn-limpar:hover {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
+
+
+/* =========================================================
+   LIMPAR - ACTIVE
+========================================================= */
+
+.pedidos-btn-limpar:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   LIMPAR - FOCO
+========================================================= */
+
+.pedidos-btn-limpar:focus {
+  outline: none;
+}
+
+
+.pedidos-btn-limpar:focus-visible {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE - 850px
+========================================================= */
 
 @media (max-width: 850px) {
   .pedidos-filtros {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+      1fr
+      1fr;
   }
 
+
   .pedidos-pesquisa {
-    grid-column: 1 / -1;
+    grid-column:
+      1 / -1;
   }
 }
 
+
+/* =========================================================
+   RESPONSIVIDADE - 520px
+========================================================= */
+
 @media (max-width: 520px) {
   .pedidos-filtros {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
+
 
   .pedidos-pesquisa {
     grid-column: auto;
+  }
+
+
+  .pedidos-filtros select,
+  .pedidos-btn-limpar {
+    width: 100%;
   }
 }

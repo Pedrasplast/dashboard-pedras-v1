@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   CalendarDays,
   RotateCcw,
@@ -252,20 +254,13 @@ export default function CalendarioIndustrialModal({
 
 
   return (
-    <div
-      className="calendario-industrial-modal-backdrop"
-      role="presentation"
-      onMouseDown={
-        (event) => {
-          if (
-            event.target ===
-            event.currentTarget &&
-            !salvando
-          ) {
-            onFechar?.();
-          }
-        }
-      }
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onFechar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={true}
     >
 
       <div
@@ -275,11 +270,11 @@ export default function CalendarioIndustrialModal({
         aria-labelledby="calendario-industrial-modal-titulo"
       >
 
-        <div className="calendario-industrial-modal-header">
+        <div className="calendario-industrial-modal-header" data-modal-header="">
 
           <div className="calendario-industrial-modal-header-info">
 
-            <div className="calendario-industrial-modal-header-icone">
+            <div className="calendario-industrial-modal-header-icone" data-modal-icone="">
 
               <CalendarDays
                 size={20}
@@ -295,9 +290,11 @@ export default function CalendarioIndustrialModal({
                 Calendário Industrial
               </span>
 
-              <h3 id="calendario-industrial-modal-titulo">
-                Alterar disponibilidade
-              </h3>
+              <ModalTitulo>
+                <h3 id="calendario-industrial-modal-titulo">
+                  Alterar disponibilidade
+                </h3>
+              </ModalTitulo>
 
               <p>
                 {dataVisual}
@@ -318,6 +315,7 @@ export default function CalendarioIndustrialModal({
               salvando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
 
             <X
@@ -333,6 +331,7 @@ export default function CalendarioIndustrialModal({
           onSubmit={
             enviarFormulario
           }
+          data-modal-form=""
         >
 
           <div className="calendario-industrial-modal-corpo">
@@ -489,7 +488,7 @@ export default function CalendarioIndustrialModal({
           </div>
 
 
-          <div className="calendario-industrial-modal-footer">
+          <div className="calendario-industrial-modal-footer" data-modal-footer="">
 
             <div>
 
@@ -507,6 +506,7 @@ export default function CalendarioIndustrialModal({
                   disabled={
                     salvando
                   }
+                  data-modal-acao="secundaria"
                 >
 
                   <RotateCcw
@@ -522,7 +522,7 @@ export default function CalendarioIndustrialModal({
             </div>
 
 
-            <div className="calendario-industrial-modal-footer-acoes">
+            <div className="calendario-industrial-modal-footer-acoes" data-modal-footer="">
 
               <button
                 type="button"
@@ -533,6 +533,7 @@ export default function CalendarioIndustrialModal({
                 disabled={
                   salvando
                 }
+                data-modal-acao="secundaria"
               >
 
                 Cancelar
@@ -546,6 +547,7 @@ export default function CalendarioIndustrialModal({
                 disabled={
                   salvando
                 }
+                data-modal-acao="primaria"
               >
 
                 <Save
@@ -566,6 +568,6 @@ export default function CalendarioIndustrialModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

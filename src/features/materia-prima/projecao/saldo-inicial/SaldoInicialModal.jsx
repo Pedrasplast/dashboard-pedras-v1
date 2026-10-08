@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
 
   useEffect,
@@ -478,83 +480,7 @@ export default function SaldoInicialModal({
 
 
 
-  useEffect(
 
-    () => {
-
-      if (!aberto) {
-
-        return undefined;
-
-      }
-
-
-
-
-
-      function fecharComEscape(
-
-        event,
-
-      ) {
-
-        if (
-
-          event.key ===
-
-            "Escape" &&
-
-          !salvando
-
-        ) {
-
-          onCancelar?.();
-
-        }
-
-      }
-
-
-
-
-
-      document.addEventListener(
-
-        "keydown",
-
-        fecharComEscape,
-
-      );
-
-
-
-
-
-      return () => {
-
-        document.removeEventListener(
-
-          "keydown",
-
-          fecharComEscape,
-
-        );
-
-      };
-
-    },
-
-    [
-
-      aberto,
-
-      salvando,
-
-      onCancelar,
-
-    ],
-
-  );
 
 
 
@@ -744,7 +670,14 @@ export default function SaldoInicialModal({
 
   return (
 
-    <div className="saldo-inicial-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="grande"
+      fecharAoClicarFora={false}
+    >
 
 
 
@@ -760,11 +693,11 @@ export default function SaldoInicialModal({
 
 
 
-        <div className="saldo-inicial-modal-header">
+        <div className="saldo-inicial-modal-header" data-modal-header="">
 
 
 
-          <div className="saldo-inicial-modal-icone">
+          <div className="saldo-inicial-modal-icone" data-modal-icone="">
 
 
 
@@ -796,15 +729,17 @@ export default function SaldoInicialModal({
 
 
 
-            <h3>
+            <ModalTitulo>
+              <h3>
 
-              {item
+                {item
 
-                ? "Editar saldo-base"
+                  ? "Editar saldo-base"
 
-                : "Novo saldo-base"}
+                  : "Novo saldo-base"}
 
-            </h3>
+              </h3>
+            </ModalTitulo>
 
 
 
@@ -843,7 +778,7 @@ export default function SaldoInicialModal({
             }
 
             aria-label="Fechar"
-
+            data-modal-fechar=""
           >
 
             <X size={19} />
@@ -867,7 +802,7 @@ export default function SaldoInicialModal({
             enviar
 
           }
-
+          data-modal-form=""
         >
 
 
@@ -1490,7 +1425,7 @@ export default function SaldoInicialModal({
 
 
 
-          <div className="saldo-inicial-modal-acoes">
+          <div className="saldo-inicial-modal-acoes" data-modal-footer="">
 
 
 
@@ -1511,7 +1446,7 @@ export default function SaldoInicialModal({
                 salvando
 
               }
-
+              data-modal-acao="secundaria"
             >
 
               Cancelar
@@ -1533,7 +1468,7 @@ export default function SaldoInicialModal({
                 salvando
 
               }
-
+              data-modal-acao="primaria"
             >
 
 
@@ -1566,7 +1501,7 @@ export default function SaldoInicialModal({
 
 
 
-    </div>
+    </Modal>
 
   );
 

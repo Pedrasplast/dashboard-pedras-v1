@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useState,
@@ -208,52 +210,7 @@ export default function FornecedorModal({
      FECHAR COM ESC
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
 
-
-      function fecharComEscape(
-        event,
-      ) {
-        if (
-          event.key !==
-          "Escape"
-        ) {
-          return;
-        }
-
-
-        if (salvando) {
-          return;
-        }
-
-
-        onCancelar?.();
-      }
-
-
-      document.addEventListener(
-        "keydown",
-        fecharComEscape,
-      );
-
-
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharComEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
 
 
   /* =======================================================
@@ -382,7 +339,14 @@ export default function FornecedorModal({
   ======================================================= */
 
   return (
-    <div className="fornecedor-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
 
       <div
         className="fornecedor-modal"
@@ -395,9 +359,9 @@ export default function FornecedorModal({
             CABEÇALHO
         ================================================= */}
 
-        <div className="fornecedor-modal-header">
+        <div className="fornecedor-modal-header" data-modal-header="">
 
-          <div className="fornecedor-modal-header-icone">
+          <div className="fornecedor-modal-header-icone" data-modal-icone="">
 
             <Truck
               size={22}
@@ -414,11 +378,13 @@ export default function FornecedorModal({
               Matéria-Prima PP
             </span>
 
-            <h3 id="fornecedor-modal-titulo">
-              {fornecedor
-                ? "Editar fornecedor"
-                : "Novo fornecedor"}
-            </h3>
+            <ModalTitulo>
+              <h3 id="fornecedor-modal-titulo">
+                {fornecedor
+                  ? "Editar fornecedor"
+                  : "Novo fornecedor"}
+              </h3>
+            </ModalTitulo>
 
             <p>
               Cadastre o fornecedor e os
@@ -439,6 +405,7 @@ export default function FornecedorModal({
               salvando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
 
             <X
@@ -461,6 +428,7 @@ export default function FornecedorModal({
           onSubmit={
             enviarFormulario
           }
+          data-modal-form=""
         >
 
           {/* ===============================================
@@ -742,7 +710,7 @@ export default function FornecedorModal({
               AÇÕES
           =============================================== */}
 
-          <div className="fornecedor-modal-acoes">
+          <div className="fornecedor-modal-acoes" data-modal-footer="">
 
             <button
               type="button"
@@ -753,6 +721,7 @@ export default function FornecedorModal({
               disabled={
                 salvando
               }
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -764,6 +733,7 @@ export default function FornecedorModal({
               disabled={
                 salvando
               }
+              data-modal-acao="primaria"
             >
 
               <Save
@@ -786,6 +756,6 @@ export default function FornecedorModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

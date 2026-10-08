@@ -3,6 +3,7 @@ import { DayPicker } from "@daypicker/react";
 import { ptBR } from "@daypicker/react/locale";
 
 import "@daypicker/react/style.css";
+import "./CampoDataCalendario.css";
 
 const MODIFIERS_CLASS_NAMES = Object.freeze({
   comDados: "calendar-day-has-data",
@@ -22,6 +23,8 @@ function CampoDataCalendario({
   primeiraData,
   ultimaData,
 }) {
+  const possuiValor = Boolean(valorVisual);
+
   return (
     <div className="calendar-field">
       <button
@@ -30,21 +33,35 @@ function CampoDataCalendario({
         disabled={desabilitado}
         onClick={onAlternar}
         aria-label={titulo}
+        aria-expanded={aberto}
+        aria-haspopup="dialog"
       >
-        <strong className={valorVisual ? undefined : "calendar-trigger-placeholder"}>
+        <strong
+          className={
+            possuiValor
+              ? "calendar-trigger-value"
+              : "calendar-trigger-placeholder"
+          }
+        >
           {valorVisual || titulo}
         </strong>
       </button>
 
       {aberto && (
-        <div className="calendar-popover">
+        <div
+          className="calendar-popover"
+          role="dialog"
+          aria-label={`Selecionar ${titulo}`}
+        >
           <DayPicker
             mode="single"
             locale={ptBR}
             selected={dataSelecionada}
             onSelect={onSelecionar}
             disabled={desabilitarData}
-            modifiers={{ comDados: dataPossuiRegistro }}
+            modifiers={{
+              comDados: dataPossuiRegistro,
+            }}
             modifiersClassNames={MODIFIERS_CLASS_NAMES}
             defaultMonth={mesInicial}
             startMonth={primeiraData}

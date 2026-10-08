@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useRef,
@@ -211,56 +213,13 @@ export default function CadastroProdutoModal({
      FECHAR COM ESC
   ================================================= */
 
-  useEffect(() => {
-    if (!aberto) {
-      return undefined;
-    }
 
-    const fecharEscape = (evento) => {
-      if (
-        evento.key === "Escape" &&
-        !salvando
-      ) {
-        onCancelar?.();
-      }
-    };
-
-    document.addEventListener(
-      "keydown",
-      fecharEscape,
-    );
-
-    return () => {
-      document.removeEventListener(
-        "keydown",
-        fecharEscape,
-      );
-    };
-
-  }, [
-    aberto,
-    salvando,
-    onCancelar,
-  ]);
 
   /* =================================================
      BLOQUEAR ROLAGEM
   ================================================= */
 
-  useEffect(() => {
-    if (!aberto) {
-      return undefined;
-    }
 
-    const anterior = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = anterior;
-    };
-
-  }, [aberto]);
 
   /* =================================================
      ALTERAR CÓDIGO
@@ -548,7 +507,14 @@ export default function CadastroProdutoModal({
   ===================================================== */
 
   return (
-    <div className="produto-pp-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
 
       <div
         className="produto-pp-modal cadastro-produto-modal"
@@ -559,9 +525,9 @@ export default function CadastroProdutoModal({
 
         {/* CABEÇALHO */}
 
-        <div className="produto-pp-modal-header">
+        <div className="produto-pp-modal-header" data-modal-header="">
 
-          <div className="produto-pp-modal-header-icone">
+          <div className="produto-pp-modal-header-icone" data-modal-icone="">
             <Boxes
               size={22}
               aria-hidden="true"
@@ -572,11 +538,13 @@ export default function CadastroProdutoModal({
 
             <span>Cadastro</span>
 
-            <h3 id="cadastro-produto-modal-titulo">
-              {item
-                ? "Editar produto"
-                : "Cadastrar produto"}
-            </h3>
+            <ModalTitulo>
+              <h3 id="cadastro-produto-modal-titulo">
+                {item
+                  ? "Editar produto"
+                  : "Cadastrar produto"}
+              </h3>
+            </ModalTitulo>
 
             <p>
               Dados gerais e parâmetros utilizados
@@ -591,6 +559,7 @@ export default function CadastroProdutoModal({
             onClick={onCancelar}
             disabled={salvando}
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={19} />
           </button>
@@ -602,6 +571,7 @@ export default function CadastroProdutoModal({
         <form
           className="produto-pp-modal-form"
           onSubmit={enviar}
+          data-modal-form=""
         >
 
           {/* CÓDIGO */}
@@ -873,13 +843,14 @@ export default function CadastroProdutoModal({
 
           {/* AÇÕES */}
 
-          <div className="produto-pp-modal-acoes">
+          <div className="produto-pp-modal-acoes" data-modal-footer="">
 
             <button
               type="button"
               className="produto-pp-modal-cancelar"
               onClick={onCancelar}
               disabled={salvando}
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -891,6 +862,7 @@ export default function CadastroProdutoModal({
                 salvando ||
                 buscandoDescricao
               }
+              data-modal-acao="primaria"
             >
 
               <Save size={17} />
@@ -907,6 +879,6 @@ export default function CadastroProdutoModal({
 
       </div>
 
-    </div>
+    </Modal>
   );
 }

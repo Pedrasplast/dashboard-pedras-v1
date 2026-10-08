@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useMemo,
@@ -1042,52 +1044,7 @@ export default function PedidosCompraCardModal({
     ],
   );
 
-  useEffect(
-    () => {
-      if (
-        !aberto
-      ) {
-        return undefined;
-      }
 
-      const overflowAnterior =
-        document.body.style
-          .overflow;
-
-      function handleKeyDown(
-        event,
-      ) {
-        if (
-          event.key ===
-          "Escape"
-        ) {
-          onClose();
-        }
-      }
-
-      document.body.style.overflow =
-        "hidden";
-
-      window.addEventListener(
-        "keydown",
-        handleKeyDown,
-      );
-
-      return () => {
-        document.body.style.overflow =
-          overflowAnterior;
-
-        window.removeEventListener(
-          "keydown",
-          handleKeyDown,
-        );
-      };
-    },
-    [
-      aberto,
-      onClose,
-    ],
-  );
 
   if (
     !aberto ||
@@ -1136,24 +1093,16 @@ export default function PedidosCompraCardModal({
     );
   }
 
-  function handleBackdropClick(
-    event,
-  ) {
-    if (
-      event.target ===
-      event.currentTarget
-    ) {
-      onClose();
-    }
-  }
+
 
   return (
-    <div
-      className="compras-card-modal-backdrop"
-      role="presentation"
-      onMouseDown={
-        handleBackdropClick
-      }
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onClose}
+      bloqueado={false}
+      tamanho={requisicao ? "amplo" : "grande"}
+      fecharAoClicarFora={true}
     >
       <section
         className={`compras-card-modal${
@@ -1165,10 +1114,11 @@ export default function PedidosCompraCardModal({
         aria-modal="true"
         aria-labelledby="compras-card-modal-titulo"
       >
-        <header className="compras-card-modal-header">
+        <header className="compras-card-modal-header" data-modal-header="">
           <div className="compras-card-modal-heading">
             <div
               className={`compras-card-modal-icon compras-card-modal-icon--${configuracao.tipo}`}
+              data-modal-icone=""
             >
               <Icone
                 size={
@@ -1182,11 +1132,13 @@ export default function PedidosCompraCardModal({
                 Detalhes do indicador
               </span>
 
-              <h2 id="compras-card-modal-titulo">
-                {
-                  configuracao.titulo
-                }
-              </h2>
+              <ModalTitulo>
+                <h2 id="compras-card-modal-titulo">
+                  {
+                    configuracao.titulo
+                  }
+                </h2>
+              </ModalTitulo>
 
               <p>
                 {
@@ -1204,6 +1156,7 @@ export default function PedidosCompraCardModal({
             }
             aria-label="Fechar detalhes"
             title="Fechar"
+            data-modal-fechar=""
           >
             <X
               size={
@@ -1282,7 +1235,7 @@ export default function PedidosCompraCardModal({
           </div>
         </div>
 
-        <div className="compras-card-modal-body">
+        <div className="compras-card-modal-body" data-modal-body="">
           {pedidos.length ===
           0 ? (
             <div className="compras-card-modal-vazio">
@@ -1323,7 +1276,7 @@ export default function PedidosCompraCardModal({
           )}
         </div>
 
-        <footer className="compras-card-modal-footer">
+        <footer className="compras-card-modal-footer" data-modal-footer="">
           <span>
             Os dados acima respeitam os filtros atualmente aplicados na tela.
           </span>
@@ -1334,11 +1287,13 @@ export default function PedidosCompraCardModal({
             onClick={
               onClose
             }
+            data-modal-acao="primaria"
+            data-modal-fechar=""
           >
             Fechar
           </button>
         </footer>
       </section>
-    </div>
+    </Modal>
   );
 }

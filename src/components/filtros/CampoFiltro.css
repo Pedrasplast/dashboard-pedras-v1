@@ -1,0 +1,263 @@
+/* =========================================================
+   PEDRASPLAST DESIGN SYSTEM
+   CAMPO DE FILTRO
+   ---------------------------------------------------------
+   Base visual compartilhada para labels, inputs, selects e
+   textareas utilizados nas areas de filtro.
+
+   IMPORTANTE:
+   Os seletores utilizam :where() de proposito.
+
+   Isso reduz a especificidade do Design System e permite que
+   os CSS antigos de cada tela continuem prevalecendo enquanto
+   fazemos a migracao gradualmente.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+:where(.campo-filtro) {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-family: var(--font-family-sans);
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+:where(.campo-filtro__label) {
+  display: block;
+
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+
+  line-height: var(--line-height-tight);
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+:where(.campo-filtro) > input {
+  width: 100%;
+  min-width: 0;
+  height: var(--control-height-md);
+
+  padding:
+    0
+    var(--space-3);
+
+  color: var(--color-text);
+
+  background-color: var(--color-surface);
+
+  border:
+    1px
+    solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+
+  line-height: normal;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+:where(.campo-filtro) > select {
+  width: 100%;
+  min-width: 0;
+  height: var(--control-height-md);
+
+  padding:
+    0
+    34px
+    0
+    var(--space-3);
+
+  color: var(--color-text);
+
+  background-color: var(--color-surface);
+
+  border:
+    1px
+    solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+
+  line-height: normal;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+:where(.campo-filtro) > textarea {
+  width: 100%;
+  min-width: 0;
+
+  min-height: 84px;
+
+  padding:
+    var(--space-3);
+
+  resize: vertical;
+
+  color: var(--color-text);
+
+  background-color: var(--color-surface);
+
+  border:
+    1px
+    solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+
+  line-height: var(--line-height-normal);
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+:where(.campo-filtro) > input:hover,
+:where(.campo-filtro) > select:hover,
+:where(.campo-filtro) > textarea:hover {
+  border-color: var(--color-border-strong);
+}
+
+
+/* =========================================================
+   FOCO
+========================================================= */
+
+:where(.campo-filtro) > input:focus,
+:where(.campo-filtro) > select:focus,
+:where(.campo-filtro) > textarea:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+:where(.campo-filtro) > input::placeholder,
+:where(.campo-filtro) > textarea::placeholder {
+  color: var(--color-text-light);
+
+  opacity: 1;
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+:where(.campo-filtro) > input:disabled,
+:where(.campo-filtro) > select:disabled,
+:where(.campo-filtro) > textarea:disabled {
+  color: var(--color-text-muted);
+
+  background-color: var(--color-surface-muted);
+
+  cursor: not-allowed;
+
+  opacity: 0.72;
+}
+
+
+/* =========================================================
+   READONLY
+========================================================= */
+
+:where(.campo-filtro) > input:read-only,
+:where(.campo-filtro) > textarea:read-only {
+  background-color: var(--color-surface-subtle);
+}
+
+
+/* =========================================================
+   INVALIDO
+========================================================= */
+
+:where(.campo-filtro) > input[aria-invalid="true"],
+:where(.campo-filtro) > select[aria-invalid="true"],
+:where(.campo-filtro) > textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 640px) {
+  :where(.campo-filtro) {
+    width: 100%;
+  }
+}

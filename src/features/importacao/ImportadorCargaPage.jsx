@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import React, {
   useCallback,
   useEffect,
@@ -1205,32 +1207,7 @@ export default function ImportadorCarga() {
      ESC FECHA A CONFIRMAÇÃO
   ===================================================== */
 
-  useEffect(() => {
-    if (!confirmacaoAberta) {
-      return;
-    }
 
-    const aoPressionarTecla = (evento) => {
-      if (evento.key === "Escape") {
-        cancelarConfirmacao();
-      }
-    };
-
-    document.addEventListener(
-      "keydown",
-      aoPressionarTecla
-    );
-
-    return () => {
-      document.removeEventListener(
-        "keydown",
-        aoPressionarTecla
-      );
-    };
-  }, [
-    confirmacaoAberta,
-    cancelarConfirmacao,
-  ]);
 
   /* =====================================================
      NOME DO DESTINO
@@ -1502,17 +1479,13 @@ export default function ImportadorCarga() {
       ================================================= */}
 
       {confirmacaoAberta && arquivoPendente && (
-        <div
-          className="importacao-confirmacao-overlay"
-          role="presentation"
-          onMouseDown={(evento) => {
-            if (
-              evento.target ===
-              evento.currentTarget
-            ) {
-              cancelarConfirmacao();
-            }
-          }}
+        <Modal
+          asChild
+          aberto={confirmacaoAberta}
+          onFechar={cancelarConfirmacao}
+          bloqueado={false}
+          tamanho="grande"
+          fecharAoClicarFora={true}
         >
           <section
             className="importacao-confirmacao-modal"
@@ -1522,8 +1495,8 @@ export default function ImportadorCarga() {
           >
             {/* CABEÇALHO */}
 
-            <div className="importacao-confirmacao-header">
-              <div className="importacao-confirmacao-icone">
+            <div className="importacao-confirmacao-header" data-modal-header="">
+              <div className="importacao-confirmacao-icone" data-modal-icone="">
                 <FiUploadCloud />
               </div>
 
@@ -1532,9 +1505,11 @@ export default function ImportadorCarga() {
                   IMPORTAÇÃO DE DADOS
                 </span>
 
-                <h3 id="titulo-confirmacao-importacao">
-                  Confirmar importação
-                </h3>
+                <ModalTitulo>
+                  <h3 id="titulo-confirmacao-importacao">
+                    Confirmar importação
+                  </h3>
+                </ModalTitulo>
 
                 <p>
                   Confira as informações antes de continuar.
@@ -1546,6 +1521,7 @@ export default function ImportadorCarga() {
                 className="importacao-confirmacao-fechar"
                 onClick={cancelarConfirmacao}
                 aria-label="Fechar confirmação"
+                data-modal-fechar=""
               >
                 <FiX />
               </button>
@@ -1553,11 +1529,11 @@ export default function ImportadorCarga() {
 
             {/* INFORMAÇÕES */}
 
-            <div className="importacao-confirmacao-conteudo">
+            <div className="importacao-confirmacao-conteudo" data-modal-body="">
               {/* ARQUIVO */}
 
               <div className="importacao-confirmacao-arquivo">
-                <div className="importacao-confirmacao-arquivo-icone">
+                <div className="importacao-confirmacao-arquivo-icone" data-modal-icone="">
                   <FiFileText />
                 </div>
 
@@ -1604,7 +1580,7 @@ export default function ImportadorCarga() {
                 className="importacao-confirmacao-arquivo"
                 aria-live="polite"
               >
-                <div className="importacao-confirmacao-arquivo-icone">
+                <div className="importacao-confirmacao-arquivo-icone" data-modal-icone="">
                   <FiFileText />
                 </div>
 
@@ -1674,11 +1650,12 @@ export default function ImportadorCarga() {
 
             {/* AÇÕES */}
 
-            <div className="importacao-confirmacao-acoes">
+            <div className="importacao-confirmacao-acoes" data-modal-footer="">
               <button
                 type="button"
                 className="importacao-confirmacao-cancelar"
                 onClick={cancelarConfirmacao}
+                data-modal-acao="secundaria"
               >
                 Cancelar
               </button>
@@ -1693,6 +1670,7 @@ export default function ImportadorCarga() {
                   Boolean(previa.erro) ||
                   !previa.quantidade
                 }
+                data-modal-acao="secundaria"
               >
                 <FiUploadCloud />
 
@@ -1702,7 +1680,7 @@ export default function ImportadorCarga() {
               </button>
             </div>
           </section>
-        </div>
+        </Modal>
       )}
     </div>
   );

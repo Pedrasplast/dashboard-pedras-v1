@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
   useEffect,
   useState,
@@ -63,66 +65,9 @@ export default function CadastroMaterialModal({
     ],
   );
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
 
-      function fecharEscape(
-        event,
-      ) {
-        if (
-          event.key ===
-            "Escape" &&
-          !salvando
-        ) {
-          onCancelar?.();
-        }
-      }
 
-      document.addEventListener(
-        "keydown",
-        fecharEscape,
-      );
 
-      return () => {
-        document.removeEventListener(
-          "keydown",
-          fecharEscape,
-        );
-      };
-    },
-    [
-      aberto,
-      salvando,
-      onCancelar,
-    ],
-  );
-
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
-
-      const overflowAnterior =
-        document.body
-          .style
-          .overflow;
-
-      document.body.style.overflow =
-        "hidden";
-
-      return () => {
-        document.body.style.overflow =
-          overflowAnterior;
-      };
-    },
-    [
-      aberto,
-    ],
-  );
 
   async function enviar(
     event,
@@ -170,15 +115,22 @@ export default function CadastroMaterialModal({
   }
 
   return (
-    <div className="produto-pp-modal-overlay">
+    <Modal
+      asChild
+      aberto={aberto}
+      onFechar={onCancelar}
+      bloqueado={salvando}
+      tamanho="medio"
+      fecharAoClicarFora={false}
+    >
       <div
         className="produto-pp-modal cadastro-produto-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadastro-material-modal-titulo"
       >
-        <div className="produto-pp-modal-header">
-          <div className="produto-pp-modal-header-icone">
+        <div className="produto-pp-modal-header" data-modal-header="">
+          <div className="produto-pp-modal-header-icone" data-modal-icone="">
             <Boxes
               size={22}
               aria-hidden="true"
@@ -190,11 +142,13 @@ export default function CadastroMaterialModal({
               Cadastro
             </span>
 
-            <h3 id="cadastro-material-modal-titulo">
-              {item
-                ? "Editar material"
-                : "Cadastrar material"}
-            </h3>
+            <ModalTitulo>
+              <h3 id="cadastro-material-modal-titulo">
+                {item
+                  ? "Editar material"
+                  : "Cadastrar material"}
+              </h3>
+            </ModalTitulo>
 
             <p>
               Materiais disponíveis
@@ -213,6 +167,7 @@ export default function CadastroMaterialModal({
               salvando
             }
             aria-label="Fechar"
+            data-modal-fechar=""
           >
             <X size={19} />
           </button>
@@ -223,6 +178,7 @@ export default function CadastroMaterialModal({
           onSubmit={
             enviar
           }
+          data-modal-form=""
         >
           <label className="produto-pp-modal-campo">
             <span>
@@ -300,7 +256,7 @@ export default function CadastroMaterialModal({
             </div>
           )}
 
-          <div className="produto-pp-modal-acoes">
+          <div className="produto-pp-modal-acoes" data-modal-footer="">
             <button
               type="button"
               className="produto-pp-modal-cancelar"
@@ -310,6 +266,7 @@ export default function CadastroMaterialModal({
               disabled={
                 salvando
               }
+              data-modal-acao="secundaria"
             >
               Cancelar
             </button>
@@ -320,6 +277,7 @@ export default function CadastroMaterialModal({
               disabled={
                 salvando
               }
+              data-modal-acao="primaria"
             >
               <Save
                 size={17}
@@ -332,6 +290,6 @@ export default function CadastroMaterialModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

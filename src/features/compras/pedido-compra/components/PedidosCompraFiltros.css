@@ -1,31 +1,54 @@
+/* =========================================================
+   PEDIDOS DE COMPRA
+   FILTROS
+   ---------------------------------------------------------
+   Migrado para o Pedrasplast Design System.
+
+   Nesta etapa:
+   - layout preservado;
+   - responsividade preservada;
+   - altura dos controles preservada em 42px;
+   - cores centralizadas;
+   - bordas centralizadas;
+   - radius centralizados;
+   - estados de foco padronizados.
+========================================================= */
+
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
+
 .compras-filtros {
   display: flex;
   flex-direction: column;
 
-  gap: 12px;
+  gap: var(--space-3);
 
   padding: 14px;
 
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 
   border:
-    1px solid
-    var(--border);
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  background:
-    var(--surface);
+  background: var(--color-surface);
 
   box-shadow:
-    0 1px 3px
-    rgba(
-      15,
-      23,
-      42,
-      0.025
-    );
+    0
+    1px
+    3px
+    rgb(15 23 42 / 0.025);
 }
+
+
+/* =========================================================
+   LINHA PRINCIPAL
+========================================================= */
 
 .compras-filtros-linha-principal {
   display: grid;
@@ -57,6 +80,11 @@
   gap: 10px;
 }
 
+
+/* =========================================================
+   LINHA DE PERIODO
+========================================================= */
+
 .compras-filtros-linha-periodo {
   display: grid;
 
@@ -74,6 +102,7 @@
   gap: 10px;
 }
 
+
 /* =========================================================
    PESQUISA
 ========================================================= */
@@ -81,47 +110,59 @@
 .compras-pesquisa {
   min-width: 0;
 
-  height: 42px;
+  height: var(--control-height-lg);
 
   display: flex;
-
   align-items: center;
 
   gap: 9px;
 
   padding:
-    0 12px;
+    0
+    var(--space-3);
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #fff;
+  background: var(--color-surface);
 
-  color: #a7b1bf;
+  color: var(--color-text-light);
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
+
+
+/* =========================================================
+   PESQUISA - FOCO
+========================================================= */
 
 .compras-pesquisa:focus-within,
 .compras-filtros select:focus,
 .compras-filtro-data input:focus {
-  border-color:
-    var(--primary);
+  border-color: var(--color-primary);
 
   box-shadow:
-    0 0 0 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.09
-    );
+    0
+    0
+    0
+    var(--focus-ring-width)
+    var(--focus-ring-color);
 }
+
+
+/* =========================================================
+   PESQUISA - INPUT
+========================================================= */
 
 .compras-pesquisa input {
   width: 100%;
-
   min-width: 0;
 
   border: 0;
@@ -130,20 +171,26 @@
 
   background: transparent;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  font-size: 12px;
-
-  font-weight: 500;
+  font-family: inherit;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
 }
 
+
+/* =========================================================
+   PESQUISA - PLACEHOLDER
+========================================================= */
+
 .compras-pesquisa input::placeholder {
-  color: #bac3cf;
+  color: var(--color-text-light);
 
   opacity: 1;
 
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
 }
+
 
 /* =========================================================
    SELECTS
@@ -151,64 +198,72 @@
 
 .compras-filtros select {
   min-width: 0;
-
   width: 100%;
 
-  height: 42px;
+  height: var(--control-height-lg);
 
   padding:
-    0 30px
-    0 10px;
+    0
+    30px
+    0
+    10px;
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #fff;
+  background: var(--color-surface);
 
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 
+  font-family: inherit;
   font-size: 11.5px;
 
   cursor: pointer;
 
   transition:
-    background
-      0.15s ease,
-    color
-      0.15s ease,
-    border-color
-      0.15s ease;
+    background-color var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
+
+
+/* =========================================================
+   SELECTS - HOVER
+========================================================= */
+
+.compras-filtros select:hover:not(:disabled) {
+  border-color: var(--color-text-light);
+}
+
 
 /* =========================================================
    FILTROS DESATIVADOS
 ========================================================= */
 
 .compras-filtros select:disabled {
-  border-color: #e5eaf0;
+  border-color: var(--color-border);
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color:
-    #b8c2cf;
+  color: var(--color-text-light);
 
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
 
-  opacity: 1;
+  opacity: 0.72;
 }
+
 
 .compras-filtros select:disabled:hover {
-  border-color:
-    #e5eaf0;
+  border-color: var(--color-border);
 }
+
 
 /* =========================================================
    DATA
@@ -218,68 +273,83 @@
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   gap: 6px;
 }
 
+
+/* =========================================================
+   DATA - LABEL
+========================================================= */
+
 .compras-filtro-data label {
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 
-  font-size: 10px;
-
-  font-weight: 750;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
 }
+
+
+/* =========================================================
+   DATA - INPUT
+========================================================= */
 
 .compras-filtro-data input {
   width: 100%;
 
-  height: 42px;
+  height: var(--control-height-lg);
 
   padding:
-    0 10px;
+    0
+    10px;
 
   border:
-    1px solid
-    var(--border-strong);
+    1px
+    solid
+    var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #fff;
+  background: var(--color-surface);
 
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 
   font-family: inherit;
-
   font-size: 11.5px;
 
   cursor: pointer;
+
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
 
-/*
-  Placeholder nativo dd/mm/aaaa mais apagado
-  quando o input está vazio.
-*/
+
+/* =========================================================
+   DATA - PLACEHOLDER NATIVO
+========================================================= */
 
 .compras-filtro-data
   input[type="date"]:not(:valid) {
-  color: #c2cad4;
+  color: var(--color-text-light);
 }
+
 
 .compras-filtro-data
   input[type="date"]:not(:valid)::-webkit-datetime-edit {
-  color: #c2cad4;
+  color: var(--color-text-light);
 }
+
 
 .compras-filtro-data
   input[type="date"]:not(:valid)::-webkit-datetime-edit-text {
-  color: #c2cad4;
+  color: var(--color-text-light);
 }
+
 
 .compras-filtro-data
   input[type="date"]:not(:valid)::-webkit-datetime-edit-day-field,
@@ -287,31 +357,31 @@
   input[type="date"]:not(:valid)::-webkit-datetime-edit-month-field,
 .compras-filtro-data
   input[type="date"]:not(:valid)::-webkit-datetime-edit-year-field {
-  color: #c2cad4;
+  color: var(--color-text-light);
 }
 
-/*
-  Quando existir uma data selecionada,
-  volta para a cor normal.
-*/
+
+/* =========================================================
+   DATA - VALOR SELECIONADO
+========================================================= */
 
 .compras-filtro-data
   input[type="date"]:valid {
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 }
+
 
 .compras-filtro-data
   input[type="date"]:valid::-webkit-datetime-edit {
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 }
+
 
 .compras-filtro-data
   input[type="date"]:valid::-webkit-datetime-edit-text {
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 }
+
 
 .compras-filtro-data
   input[type="date"]:valid::-webkit-datetime-edit-day-field,
@@ -319,9 +389,13 @@
   input[type="date"]:valid::-webkit-datetime-edit-month-field,
 .compras-filtro-data
   input[type="date"]:valid::-webkit-datetime-edit-year-field {
-  color:
-    var(--text-secondary);
+  color: var(--color-text-secondary);
 }
+
+
+/* =========================================================
+   DATA - ICONE DO CALENDARIO
+========================================================= */
 
 .compras-filtro-data
   input[type="date"]::-webkit-calendar-picker-indicator {
@@ -330,72 +404,85 @@
   cursor: pointer;
 }
 
+
 /* =========================================================
-   TEXTO DO PERÍODO
+   TEXTO DO PERIODO
 ========================================================= */
 
 .compras-periodo-info {
-  min-height: 42px;
+  min-height: var(--control-height-lg);
 
   display: flex;
-
   align-items: center;
 
   padding:
-    0 12px;
+    0
+    var(--space-3);
 
   border:
-    1px solid
-    #e8edf3;
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #fafbfd;
+  background: var(--color-surface-subtle);
 
-  color: #a3adbb;
+  color: var(--color-text-light);
 
-  font-size: 10px;
-
-  font-weight: 400;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-regular);
 }
+
 
 /* =========================================================
    LIMPAR FILTROS
 ========================================================= */
 
 .compras-btn-limpar {
-  height: 42px;
+  height: var(--control-height-lg);
 
   display: inline-flex;
-
   align-items: center;
-
   justify-content: center;
 
   gap: 7px;
 
   padding:
-    0 15px;
+    0
+    15px;
 
   border:
-    1px solid
-    #e2e8f0;
+    1px
+    solid
+    var(--color-border);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #cbd5e1;
+  color: var(--color-border-strong);
 
+  font-family: inherit;
   font-size: 11.5px;
-
-  font-weight: 750;
+  font-weight: var(--font-weight-bold);
 
   white-space: nowrap;
 
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
+
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
 }
+
+
+/* =========================================================
+   LIMPAR FILTROS - ATIVO
+========================================================= */
 
 .compras-btn-limpar--ativo {
   border-color: #fb7185;
@@ -407,6 +494,11 @@
   cursor: pointer;
 }
 
+
+/* =========================================================
+   LIMPAR FILTROS - HOVER
+========================================================= */
+
 .compras-btn-limpar--ativo:hover {
   border-color: #f43f5e;
 
@@ -415,27 +507,58 @@
   color: #be123c;
 
   box-shadow:
-    0 0 0 3px
-    rgba(
-      244,
-      63,
-      94,
-      0.07
-    );
+    0
+    0
+    0
+    var(--focus-ring-width)
+    rgb(244 63 94 / 0.07);
 }
+
+
+/* =========================================================
+   LIMPAR FILTROS - ACTIVE
+========================================================= */
+
+.compras-btn-limpar--ativo:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   LIMPAR FILTROS - FOCO
+========================================================= */
+
+.compras-btn-limpar:focus {
+  outline: none;
+}
+
+
+.compras-btn-limpar--ativo:focus-visible {
+  border-color: #f43f5e;
+
+  box-shadow:
+    0
+    0
+    0
+    var(--focus-ring-width)
+    rgb(244 63 94 / 0.1);
+}
+
+
+/* =========================================================
+   LIMPAR FILTROS - DISABLED
+========================================================= */
 
 .compras-btn-limpar:disabled {
   opacity: 1;
 }
 
+
 /* =========================================================
-   RESPONSIVIDADE
+   RESPONSIVIDADE - 1450px
 ========================================================= */
 
-@media (
-  max-width:
-    1450px
-) {
+@media (max-width: 1450px) {
   .compras-filtros-linha-principal {
     grid-template-columns:
       minmax(
@@ -452,49 +575,59 @@
   }
 }
 
-@media (
-  max-width:
-    1150px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 1150px
+========================================================= */
+
+@media (max-width: 1150px) {
   .compras-filtros-linha-principal {
     grid-template-columns:
       1fr
       1fr;
   }
 
+
   .compras-pesquisa {
     grid-column:
       1 / -1;
   }
+
 
   .compras-filtros-linha-periodo {
     grid-template-columns:
       1fr
       1fr;
   }
+
 
   .compras-periodo-info {
     grid-column:
       1 / 2;
   }
 
+
   .compras-btn-limpar {
     width: 100%;
   }
 }
 
-@media (
-  max-width:
-    700px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 700px
+========================================================= */
+
+@media (max-width: 700px) {
   .compras-filtros-linha-principal {
     grid-template-columns:
       1fr;
   }
 
+
   .compras-pesquisa {
     grid-column: auto;
   }
+
 
   .compras-filtros-linha-periodo {
     grid-template-columns:
@@ -502,10 +635,12 @@
       1fr;
   }
 
+
   .compras-periodo-info {
     grid-column:
       1 / -1;
   }
+
 
   .compras-btn-limpar {
     grid-column:
@@ -513,18 +648,22 @@
   }
 }
 
-@media (
-  max-width:
-    520px
-) {
+
+/* =========================================================
+   RESPONSIVIDADE - 520px
+========================================================= */
+
+@media (max-width: 520px) {
   .compras-filtros {
     padding: 10px;
   }
+
 
   .compras-filtros-linha-periodo {
     grid-template-columns:
       1fr;
   }
+
 
   .compras-periodo-info,
   .compras-btn-limpar {

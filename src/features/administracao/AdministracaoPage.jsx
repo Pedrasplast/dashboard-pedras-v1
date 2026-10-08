@@ -1,3 +1,5 @@
+import Modal from "@/components/Modal/Modal";
+import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
@@ -748,7 +750,14 @@ export default function AdministracaoPage() {
       </section>
 
       {diaSelecionado && (
-        <div className="administracao-modal-overlay" role="presentation" onMouseDown={fecharModal}>
+        <Modal
+          asChild
+          aberto={Boolean(diaSelecionado)}
+          onFechar={fecharModal}
+          bloqueado={salvando}
+          tamanho="medio"
+          fecharAoClicarFora={true}
+        >
           <section
             className="administracao-modal"
             role="dialog"
@@ -756,16 +765,18 @@ export default function AdministracaoPage() {
             aria-labelledby="administracao-modal-titulo"
             onMouseDown={(event) => event.stopPropagation()}
           >
-            <header className="administracao-modal-header">
-              <div className="administracao-modal-icon">
+            <header className="administracao-modal-header" data-modal-header="">
+              <div className="administracao-modal-icon" data-modal-icone="">
                 <CalendarDays size={21} aria-hidden="true" />
               </div>
 
               <div>
                 <span>Calendário industrial</span>
-                <h3 id="administracao-modal-titulo">
-                  {formatarDataPtBr(diaSelecionado.data)}
-                </h3>
+                <ModalTitulo>
+                  <h3 id="administracao-modal-titulo">
+                    {formatarDataPtBr(diaSelecionado.data)}
+                  </h3>
+                </ModalTitulo>
                 <p>{formatarDiaSemana(diaSelecionado.data)}</p>
               </div>
 
@@ -775,6 +786,7 @@ export default function AdministracaoPage() {
                 onClick={fecharModal}
                 disabled={salvando}
                 aria-label="Fechar"
+                data-modal-fechar=""
               >
                 <X size={19} aria-hidden="true" />
               </button>
@@ -789,7 +801,7 @@ export default function AdministracaoPage() {
               </div>
             )}
 
-            <div className="administracao-modal-body">
+            <div className="administracao-modal-body" data-modal-body="">
               <fieldset className="administracao-perfis-fieldset">
                 <legend>Disponibilidade do dia</legend>
 
@@ -809,7 +821,7 @@ export default function AdministracaoPage() {
                         }
                         onClick={() => setPerfilSelecionado(perfil.codigo)}
                       >
-                        <span className="administracao-perfil-opcao-icon">
+                        <span className="administracao-perfil-opcao-icon" data-modal-icone="">
                           <Icon size={17} aria-hidden="true" />
                         </span>
                         <span>
@@ -833,7 +845,7 @@ export default function AdministracaoPage() {
               </label>
             </div>
 
-            <footer className="administracao-modal-footer">
+            <footer className="administracao-modal-footer" data-modal-footer="">
               <div>
                 {diaSelecionado.temExcecao && (
                   <button
@@ -841,6 +853,7 @@ export default function AdministracaoPage() {
                     className="administracao-btn administracao-btn-perigo-suave"
                     onClick={voltarAoPadrao}
                     disabled={salvando}
+                    data-modal-acao="secundaria"
                   >
                     <RotateCcw size={16} aria-hidden="true" />
                     Voltar ao padrão 24h
@@ -854,6 +867,7 @@ export default function AdministracaoPage() {
                   className="administracao-btn administracao-btn-secundario"
                   onClick={fecharModal}
                   disabled={salvando}
+                  data-modal-acao="secundaria"
                 >
                   Cancelar
                 </button>
@@ -863,6 +877,7 @@ export default function AdministracaoPage() {
                   className="administracao-btn administracao-btn-primario"
                   onClick={salvarDia}
                   disabled={salvando}
+                  data-modal-acao="secundaria"
                 >
                   <Save size={16} aria-hidden="true" />
                   {salvando ? "Salvando..." : "Salvar dia"}
@@ -870,7 +885,7 @@ export default function AdministracaoPage() {
               </div>
             </footer>
           </section>
-        </div>
+        </Modal>
       )}
     </main>
   );
