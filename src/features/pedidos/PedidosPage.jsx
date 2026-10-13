@@ -27,7 +27,6 @@ import {
 
 import "./PedidosPage.css";
 
-
 /* =========================================================
    TEXTO
 ========================================================= */
@@ -47,7 +46,6 @@ function normalizarTexto(
     );
 }
 
-
 /* =========================================================
    DATA LOCAL
 ========================================================= */
@@ -59,11 +57,14 @@ function converterDataLocal(
     return null;
   }
 
-
   const texto =
-    String(valor).trim();
+    String(
+      valor,
+    ).trim();
 
-
+  /*
+   * DD/MM/AAAA
+   */
   if (
     /^\d{2}\/\d{2}\/\d{4}$/.test(
       texto,
@@ -76,7 +77,9 @@ function converterDataLocal(
     ] =
       texto
         .split("/")
-        .map(Number);
+        .map(
+          Number,
+        );
 
     return new Date(
       ano,
@@ -89,18 +92,28 @@ function converterDataLocal(
     );
   }
 
-
+  /*
+   * AAAA-MM-DD
+   *
+   * Ignora horário para evitar problema
+   * de fuso ao analisar previsão.
+   */
   const iso =
     texto.match(
       /^(\d{4})-(\d{2})-(\d{2})/,
     );
 
-
   if (iso) {
     return new Date(
-      Number(iso[1]),
-      Number(iso[2]) - 1,
-      Number(iso[3]),
+      Number(
+        iso[1],
+      ),
+      Number(
+        iso[2],
+      ) - 1,
+      Number(
+        iso[3],
+      ),
       0,
       0,
       0,
@@ -108,10 +121,10 @@ function converterDataLocal(
     );
   }
 
-
   const data =
-    new Date(texto);
-
+    new Date(
+      texto,
+    );
 
   if (
     Number.isNaN(
@@ -120,7 +133,6 @@ function converterDataLocal(
   ) {
     return null;
   }
-
 
   return new Date(
     data.getFullYear(),
@@ -132,7 +144,6 @@ function converterDataLocal(
     0,
   );
 }
-
 
 function obterHojeLocal() {
   const agora =
@@ -149,7 +160,6 @@ function obterHojeLocal() {
   );
 }
 
-
 /* =========================================================
    PÁGINA
 ========================================================= */
@@ -159,8 +169,13 @@ export default function PedidosPage() {
     resumoAberto,
     setResumoAberto,
   ] =
-    useState(null);
+    useState(
+      null,
+    );
 
+  /* =======================================================
+     DADOS
+  ======================================================= */
 
   const {
     respostaPedidos,
@@ -173,13 +188,15 @@ export default function PedidosPage() {
   } =
     usePedidosData();
 
+  /* =======================================================
+     VIEW MODEL
+  ======================================================= */
 
   const vm =
     usePedidosViewModel({
       pedidos,
       notificacoesPorPedido,
     });
-
 
   const pedidosOperacionaisUnicos =
     Array.isArray(
@@ -188,255 +205,260 @@ export default function PedidosPage() {
       ? vm.pedidosOperacionaisUnicos
       : [];
 
-
   /* =======================================================
      PEDIDOS ATRASADOS
   ======================================================= */
 
   const listaPedidosAtrasados =
-    useMemo(() => {
-      const hoje =
-        obterHojeLocal();
+    useMemo(
+      () => {
+        const hoje =
+          obterHojeLocal();
 
-      return pedidosOperacionaisUnicos.filter(
-        (
-          pedido,
-        ) => {
-          if (
-            normalizarTexto(
-              pedido?.status,
-            ) !==
-            "pedido"
-          ) {
-            return false;
-          }
+        return pedidosOperacionaisUnicos.filter(
+          (
+            pedido,
+          ) => {
+            if (
+              normalizarTexto(
+                pedido?.status,
+              ) !==
+              "pedido"
+            ) {
+              return false;
+            }
 
+            const previsao =
+              converterDataLocal(
+                pedido?.previsao,
+              );
 
-          const previsao =
-            converterDataLocal(
-              pedido?.previsao,
+            if (
+              !previsao
+            ) {
+              return false;
+            }
+
+            return (
+              previsao <
+              hoje
             );
-
-
-          if (!previsao) {
-            return false;
-          }
-
-
-          return (
-            previsao <
-            hoje
-          );
-        },
-      );
-    }, [
-      pedidosOperacionaisUnicos,
-    ]);
-
+          },
+        );
+      },
+      [
+        pedidosOperacionaisUnicos,
+      ],
+    );
 
   /* =======================================================
      FATURAMENTOS PRÓXIMOS 7 DIAS
   ======================================================= */
 
   const listaProximos7Dias =
-    useMemo(() => {
-      const hoje =
-        obterHojeLocal();
+    useMemo(
+      () => {
+        const hoje =
+          obterHojeLocal();
 
-      const limite =
-        new Date(
-          hoje,
+        const limite =
+          new Date(
+            hoje,
+          );
+
+        limite.setDate(
+          limite.getDate() +
+            7,
         );
 
-      limite.setDate(
-        limite.getDate() +
-          7,
-      );
+        return pedidosOperacionaisUnicos.filter(
+          (
+            pedido,
+          ) => {
+            if (
+              normalizarTexto(
+                pedido?.status,
+              ) !==
+              "pedido"
+            ) {
+              return false;
+            }
 
+            const previsao =
+              converterDataLocal(
+                pedido?.previsao,
+              );
 
-      return pedidosOperacionaisUnicos.filter(
-        (
-          pedido,
-        ) => {
-          if (
-            normalizarTexto(
-              pedido?.status,
-            ) !==
-            "pedido"
-          ) {
-            return false;
-          }
+            if (
+              !previsao
+            ) {
+              return false;
+            }
 
-
-          const previsao =
-            converterDataLocal(
-              pedido?.previsao,
+            return (
+              previsao >=
+                hoje &&
+              previsao <=
+                limite
             );
-
-
-          if (!previsao) {
-            return false;
-          }
-
-
-          return (
-            previsao >=
-              hoje &&
-            previsao <=
-              limite
-          );
-        },
-      );
-    }, [
-      pedidosOperacionaisUnicos,
-    ]);
-
+          },
+        );
+      },
+      [
+        pedidosOperacionaisUnicos,
+      ],
+    );
 
   /* =======================================================
      FATURAMENTO DO DIA
   ======================================================= */
 
   const listaFaturamentoHoje =
-    useMemo(() => {
-      const hoje =
-        obterHojeLocal();
+    useMemo(
+      () => {
+        const hoje =
+          obterHojeLocal();
 
-      const timestampHoje =
-        hoje.getTime();
+        const timestampHoje =
+          hoje.getTime();
 
+        return pedidosOperacionaisUnicos.filter(
+          (
+            pedido,
+          ) => {
+            if (
+              normalizarTexto(
+                pedido?.status,
+              ) !==
+              "pedido"
+            ) {
+              return false;
+            }
 
-      return pedidosOperacionaisUnicos.filter(
-        (
-          pedido,
-        ) => {
-          if (
-            normalizarTexto(
-              pedido?.status,
-            ) !==
-            "pedido"
-          ) {
-            return false;
-          }
+            const previsao =
+              converterDataLocal(
+                pedido?.previsao,
+              );
 
+            if (
+              !previsao
+            ) {
+              return false;
+            }
 
-          const previsao =
-            converterDataLocal(
-              pedido?.previsao,
+            return (
+              previsao.getTime() ===
+              timestampHoje
             );
-
-
-          if (!previsao) {
-            return false;
-          }
-
-
-          return (
-            previsao.getTime() ===
-            timestampHoje
-          );
-        },
-      );
-    }, [
-      pedidosOperacionaisUnicos,
-    ]);
-
+          },
+        );
+      },
+      [
+        pedidosOperacionaisUnicos,
+      ],
+    );
 
   /* =======================================================
      CONFIGURAÇÃO DO MODAL
   ======================================================= */
 
   const configuracaoModal =
-    useMemo(() => {
-      switch (
-        resumoAberto
-      ) {
-        case "abertos":
-          return {
-            titulo:
-              "Pedidos em aberto",
+    useMemo(
+      () => {
+        switch (
+          resumoAberto
+        ) {
+          case "abertos":
+            return {
+              titulo:
+                "Pedidos em aberto",
 
-            descricao:
-              "Pedidos atualmente considerados em aberto pelos filtros da tela.",
+              descricao:
+                "Pedidos atualmente considerados em aberto pelos filtros da tela.",
 
-            pedidos:
-              pedidosOperacionaisUnicos,
-          };
+              pedidos:
+                pedidosOperacionaisUnicos,
+            };
 
+          case "atrasados":
+            return {
+              titulo:
+                "Pedidos atrasados",
 
-        case "atrasados":
-          return {
-            titulo:
-              "Pedidos atrasados",
+              descricao:
+                "Pedidos com previsão de faturamento anterior à data de hoje.",
 
-            descricao:
-              "Pedidos com previsão de faturamento anterior à data de hoje.",
+              pedidos:
+                listaPedidosAtrasados,
+            };
 
-            pedidos:
-              listaPedidosAtrasados,
-          };
+          case "quantidade":
+            return {
+              titulo:
+                "Quantidade total",
 
+              descricao:
+                "Pedidos que compõem a quantidade total exibida no indicador.",
 
-        case "quantidade":
-          return {
-            titulo:
-              "Quantidade total",
+              pedidos:
+                pedidosOperacionaisUnicos,
+            };
 
-            descricao:
-              "Pedidos que compõem a quantidade total exibida no indicador.",
+          case "proximos":
+            return {
+              titulo:
+                "Faturamentos próximos 7 dias",
 
-            pedidos:
-              pedidosOperacionaisUnicos,
-          };
+              descricao:
+                "Pedidos previstos para faturamento entre hoje e os próximos 7 dias.",
 
+              pedidos:
+                listaProximos7Dias,
+            };
 
-        case "proximos":
-          return {
-            titulo:
-              "Faturamentos próximos 7 dias",
+          case "hoje":
+            return {
+              titulo:
+                "Faturamento do dia",
 
-            descricao:
-              "Pedidos previstos para faturamento entre hoje e os próximos 7 dias.",
+              descricao:
+                "Pedidos com previsão de faturamento para hoje.",
 
-            pedidos:
-              listaProximos7Dias,
-          };
+              pedidos:
+                listaFaturamentoHoje,
+            };
 
+          default:
+            return null;
+        }
+      },
+      [
+        resumoAberto,
+        pedidosOperacionaisUnicos,
+        listaPedidosAtrasados,
+        listaProximos7Dias,
+        listaFaturamentoHoje,
+      ],
+    );
 
-        case "hoje":
-          return {
-            titulo:
-              "Faturamento do dia",
-
-            descricao:
-              "Pedidos com previsão de faturamento para hoje.",
-
-            pedidos:
-              listaFaturamentoHoje,
-          };
-
-
-        default:
-          return null;
-      }
-    }, [
-      resumoAberto,
-      pedidosOperacionaisUnicos,
-      listaPedidosAtrasados,
-      listaProximos7Dias,
-      listaFaturamentoHoje,
-    ]);
-
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <main className="pedidos-page">
-
       <div className="pedidos-container">
+        {/* ===============================================
+            CABEÇALHO
+        =============================================== */}
 
         <PageHeader
           eyebrow="Comercial"
           title="Pedidos"
           description="Acompanhamento dos pedidos de venda e consulta dos pedidos cancelados."
-          icon={ShoppingCart}
+          icon={
+            ShoppingCart
+          }
           className="pedidos-header"
           actions={
             <AtualizacaoAutomatica
@@ -448,6 +470,9 @@ export default function PedidosPage() {
           }
         />
 
+        {/* ===============================================
+            RESUMO
+        =============================================== */}
 
         {!vm.visualizandoCancelados && (
           <PedidosResumo
@@ -477,6 +502,9 @@ export default function PedidosPage() {
           />
         )}
 
+        {/* ===============================================
+            FILTROS
+        =============================================== */}
 
         <PedidosFiltros
           pesquisa={
@@ -511,11 +539,17 @@ export default function PedidosPage() {
           }
         />
 
+        {/* ===============================================
+            AVISO DE CANCELADOS
+        =============================================== */}
 
         {vm.visualizandoCancelados && (
           <PedidosAvisoCancelados />
         )}
 
+        {/* ===============================================
+            CONTEÚDO
+        =============================================== */}
 
         <PedidosConteudo
           tituloLista={
@@ -565,6 +599,9 @@ export default function PedidosPage() {
           }
         />
 
+        {/* ===============================================
+            RODAPÉ
+        =============================================== */}
 
         <div className="pedidos-rodape-info">
           <Clock3
@@ -573,9 +610,11 @@ export default function PedidosPage() {
 
           Os pedidos são sincronizados automaticamente com o Omie.
         </div>
-
       </div>
 
+      {/* ===============================================
+          MODAL
+      =============================================== */}
 
       <PedidosResumoModal
         aberto={
@@ -608,7 +647,6 @@ export default function PedidosPage() {
             )
         }
       />
-
     </main>
   );
 }

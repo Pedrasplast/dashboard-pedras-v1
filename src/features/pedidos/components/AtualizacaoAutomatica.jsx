@@ -1,5 +1,4 @@
 import {
-  memo,
   useEffect,
   useMemo,
   useState,
@@ -9,22 +8,187 @@ import {
   Clock3,
 } from "lucide-react";
 
-import {
-  formatarDataHora,
-  formatarHorario,
-  obterProximaAtualizacao,
-} from "../pedidos.utils";
+/* =========================================================
+   ATUALIZACAO AUTOMATICA
+   ---------------------------------------------------------
+   Sincronizacao principal de pedidos:
+   a cada 5 minutos.
 
-import "./AtualizacaoAutomatica.css";
+   Horarios:
+   00, 05, 10, 15, 20, 25,
+   30, 35, 40, 45, 50, 55.
+========================================================= */
 
+const INTERVALO_ATUALIZACAO_MINUTOS =
+  5;
 
 const INTERVALO_RELOGIO =
   1000;
 
 
-function AtualizacaoAutomatica({
+/* =========================================================
+   PROXIMA ATUALIZACAO
+========================================================= */
+
+function obterProximaAtualizacao(
+  dataAtual,
+) {
+  const agora =
+    dataAtual instanceof Date
+      ? dataAtual
+      : new Date();
+
+  const proxima =
+    new Date(
+      agora,
+    );
+
+  proxima.setSeconds(
+    0,
+    0,
+  );
+
+  const minutoAtual =
+    agora.getMinutes();
+
+  const proximoMinuto =
+    (
+      Math.floor(
+        minutoAtual /
+          INTERVALO_ATUALIZACAO_MINUTOS,
+      ) + 1
+    ) *
+    INTERVALO_ATUALIZACAO_MINUTOS;
+
+  if (
+    proximoMinuto >= 60
+  ) {
+    proxima.setHours(
+      proxima.getHours() + 1,
+      0,
+      0,
+      0,
+    );
+
+    return proxima;
+  }
+
+  proxima.setMinutes(
+    proximoMinuto,
+    0,
+    0,
+  );
+
+  return proxima;
+}
+
+
+/* =========================================================
+   FORMATAR HORARIO
+========================================================= */
+
+function formatarHorario(
+  valor,
+) {
+  if (!valor) {
+    return "-";
+  }
+
+  const data =
+    valor instanceof Date
+      ? valor
+      : new Date(
+          valor,
+        );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleTimeString(
+    "pt-BR",
+    {
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+/* =========================================================
+   FORMATAR DATA E HORA
+========================================================= */
+
+function formatarDataHora(
+  valor,
+) {
+  if (!valor) {
+    return "-";
+  }
+
+  const data =
+    valor instanceof Date
+      ? valor
+      : new Date(
+          valor,
+        );
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return data.toLocaleString(
+    "pt-BR",
+    {
+      day:
+        "2-digit",
+
+      month:
+        "2-digit",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit",
+    },
+  );
+}
+
+
+/* =========================================================
+   COMPONENTE
+========================================================= */
+
+export default function AtualizacaoAutomatica({
   atualizadoEm,
 }) {
+  /* =======================================================
+     RELOGIO LOCAL
+
+     Serve apenas para atualizar visualmente
+     o horario da proxima sincronizacao.
+
+     Nao consulta:
+     - Omie
+     - Supabase
+     - Edge Function
+  ======================================================= */
+
   const [
     agora,
     setAgora,
@@ -34,10 +198,6 @@ function AtualizacaoAutomatica({
         new Date(),
     );
 
-
-  /* =======================================================
-     RELÓGIO
-  ======================================================= */
 
   useEffect(
     () => {
@@ -51,7 +211,6 @@ function AtualizacaoAutomatica({
           INTERVALO_RELOGIO,
         );
 
-
       return () => {
         window.clearInterval(
           intervalo,
@@ -63,7 +222,7 @@ function AtualizacaoAutomatica({
 
 
   /* =======================================================
-     PRÓXIMA ATUALIZAÇÃO
+     PROXIMA EXECUCAO
   ======================================================= */
 
   const proximaAtualizacao =
@@ -79,19 +238,23 @@ function AtualizacaoAutomatica({
 
 
   /* =======================================================
-     DESCRIÇÃO COMPLETA
+     TOOLTIP
   ======================================================= */
 
-  const titulo =
+  const tooltip =
     atualizadoEm
-      ? `Atualização automática ativa. Última sincronização: ${formatarDataHora(
-          atualizadoEm,
-        )}. Próxima atualização: ${formatarDataHora(
-          proximaAtualizacao,
-        )}.`
-      : `Atualização automática ativa. Aguardando primeira sincronização. Próxima atualização: ${formatarDataHora(
-          proximaAtualizacao,
-        )}.`;
+      ? (
+          `Última sincronização: ${formatarDataHora(
+            atualizadoEm,
+          )} | Próxima execução automática: ${formatarDataHora(
+            proximaAtualizacao,
+          )}`
+        )
+      : (
+          `Aguardando primeira sincronização. Próxima execução automática: ${formatarDataHora(
+            proximaAtualizacao,
+          )}`
+        );
 
 
   /* =======================================================
@@ -102,42 +265,36 @@ function AtualizacaoAutomatica({
     <div
       className="pedidos-atualizacao-minimal"
       title={
-        titulo
-      }
-      aria-label={
-        titulo
+        tooltip
       }
     >
+      {/* ICONE */}
 
-      <div
-        className="pedidos-atualizacao-minimal-icone"
-        aria-hidden="true"
-      >
+      <div className="pedidos-atualizacao-minimal-icone">
         <Clock3
-          size={14}
+          size={15}
           strokeWidth={2}
         />
       </div>
 
 
+      {/* CONTEUDO */}
+
       <div className="pedidos-atualizacao-minimal-conteudo">
+        {/* STATUS */}
 
         <div className="pedidos-atualizacao-minimal-topo">
-
           <span className="pedidos-atualizacao-minimal-status">
-            <span
-              className="pedidos-atualizacao-minimal-ponto"
-              aria-hidden="true"
-            />
+            <span className="pedidos-atualizacao-minimal-ponto" />
 
             Atualização automática
           </span>
-
         </div>
 
 
-        <div className="pedidos-atualizacao-minimal-horarios">
+        {/* HORARIOS */}
 
+        <div className="pedidos-atualizacao-minimal-horarios">
           <span>
             <span className="pedidos-atualizacao-minimal-label">
               Última
@@ -151,10 +308,7 @@ function AtualizacaoAutomatica({
           </span>
 
 
-          <span
-            className="pedidos-atualizacao-minimal-divisor"
-            aria-hidden="true"
-          >
+          <span className="pedidos-atualizacao-minimal-divisor">
             •
           </span>
 
@@ -170,16 +324,8 @@ function AtualizacaoAutomatica({
               )}
             </strong>
           </span>
-
         </div>
-
       </div>
-
     </div>
   );
 }
-
-
-export default memo(
-  AtualizacaoAutomatica,
-);
