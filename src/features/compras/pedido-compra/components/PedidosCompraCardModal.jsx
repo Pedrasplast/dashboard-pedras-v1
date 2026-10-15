@@ -15,6 +15,7 @@ import {
   CircleDollarSign,
   ClipboardList,
   ListChecks,
+  PackageCheck,
   PackageSearch,
   ShoppingBag,
   WalletCards,
@@ -109,12 +110,12 @@ const CONFIGURACOES = Object.freeze({
     documento: TIPOS_DOCUMENTO.REQUISICAO,
   },
 
-  "requisicoes-hoje": {
-    titulo: "Requisições para hoje",
-    descricao: "Requisições cuja sugestão de entrega é hoje.",
-    icone: CalendarCheck2,
-    tipo: "requisicoes-hoje",
-    documento: TIPOS_DOCUMENTO.REQUISICAO,
+  "recebimentos-fisicos-7-dias": {
+    titulo: "Recebimentos físicos - últimos 7 dias",
+    descricao: "Recebimentos físicos registrados nos últimos 7 dias, considerando hoje e os 6 dias anteriores.",
+    icone: PackageCheck,
+    tipo: "hoje",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
   },
 });
 
@@ -147,8 +148,8 @@ function obterValorPrincipal(cardId, indicadores) {
     case "requisicoes-proximos-7-dias":
       return String(indicadores?.proximos7Dias ?? 0);
 
-    case "requisicoes-hoje":
-      return String(indicadores?.hoje ?? 0);
+    case "recebimentos-fisicos-7-dias":
+      return String(indicadores?.pedidos ?? 0);
 
     default:
       return "0";
@@ -951,11 +952,307 @@ function TabelaRequisicoes({
   );
 }
 
+function formatarDataHoraRecebimento(valor) {
+  if (!valor) {
+    return "-";
+  }
+
+  const data =
+    new Date(valor);
+
+  if (
+    Number.isNaN(
+      data.getTime(),
+    )
+  ) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  ).format(data);
+}
+
+
+function formatarNomeUsuario(usuario) {
+  const texto =
+    String(
+      usuario ?? "",
+    ).trim();
+
+  if (!texto) {
+    return "-";
+  }
+
+  const usuarioSemDominio =
+    texto.includes("@")
+      ? texto.split("@")[0]
+      : texto;
+
+  return usuarioSemDominio
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map(
+      (parte) =>
+        parte.charAt(0).toUpperCase() +
+        parte.slice(1).toLowerCase(),
+    )
+    .join(" ");
+}
+
+function TabelaRecebimentosFisicos({
+  recebimentos,
+  documentosExpandidos,
+  onAlternarItens,
+}) {
+  const gruposPorPedido =
+    new Map();
+
+  for (const recebimento of recebimentos) {
+    const chavePedido = String(
+      recebimento?.cod_ped_compra ??
+        recebimento?.numero_pedido ??
+        recebimento?.id ??
+        "",
+    );
+
+    if (!gruposPorPedido.has(chavePedido)) {
+      gruposPorPedido.set(
+        chavePedido,
+        [],
+      );
+    }
+
+    gruposPorPedido
+      .get(chavePedido)
+      .push(recebimento);
+  }
+
+  const grupos =
+    Array.from(
+      gruposPorPedido.entries(),
+    );
+
+  function renderizarLinhaRecebimento(
+    recebimento,
+    {
+      mostrarPedido = true,
+      totalItens = 1,
+      expandido = false,
+      chavePedido = "",
+    } = {},
+  ) {
+    return (
+      <tr
+        key={
+          recebimento.id ??
+          `${chavePedido}-${recebimento.codigo_item}-${recebimento.registrado_em}`
+        }
+      >
+        <td>
+          {
+            formatarDataHoraRecebimento(
+              recebimento.registrado_em,
+            )
+          }
+        </td>
+
+        <td>
+          {mostrarPedido ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <strong className="compras-card-modal-requisicao">
+                {recebimento.numero_pedido ||
+                  "-"}
+              </strong>
+
+              <BotaoItensModal
+                totalItens={
+                  totalItens
+                }
+                expandido={
+                  expandido
+                }
+                onClick={() =>
+                  onAlternarItens(
+                    chavePedido,
+                  )
+                }
+              />
+            </div>
+          ) : (
+            <span className="compras-card-modal-sem-status">
+              -
+            </span>
+          )}
+        </td>
+
+        <td className="compras-card-modal-codigo">
+          {recebimento.codigo_comercial ||
+            recebimento.codigo_produto ||
+            "-"}
+        </td>
+
+        <td className="compras-card-modal-produto">
+          <strong>
+            {recebimento.descricao_produto ||
+              "Produto não identificado"}
+          </strong>
+        </td>
+
+        <td className="compras-card-modal-numero">
+          {
+            formatarNumero(
+              Number(
+                recebimento.quantidade_movimentada ??
+                  0,
+              ),
+              2,
+            )
+          }
+        </td>
+
+        <td>
+          {recebimento.unidade ||
+            "-"}
+        </td>
+
+        <td
+          title={
+            recebimento.usuario_nome ||
+            undefined
+          }
+        >
+          {formatarNomeUsuario(
+            recebimento.usuario_nome,
+          )}
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <div className="compras-card-modal-tabela-wrapper">
+      <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
+        <thead>
+          <tr>
+            <th>
+              Data / hora
+            </th>
+
+            <th>
+              Pedido
+            </th>
+
+            <th>
+              Código
+            </th>
+
+            <th className="compras-card-modal-col-produto">
+              Produto
+            </th>
+
+            <th className="compras-card-modal-col-numero">
+              Qtd. recebida
+            </th>
+
+            <th>
+              Un.
+            </th>
+
+            <th>
+              Recebido por
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {grupos.flatMap(
+            ([
+              chavePedido,
+              itensPedido,
+            ]) => {
+              const primeiro =
+                itensPedido[0];
+
+              if (!primeiro) {
+                return [];
+              }
+
+              const expandido =
+                documentosExpandidos.has(
+                  chavePedido,
+                );
+
+              const linhaPrincipal =
+                renderizarLinhaRecebimento(
+                  primeiro,
+                  {
+                    mostrarPedido: true,
+                    totalItens:
+                      itensPedido.length,
+                    expandido,
+                    chavePedido,
+                  },
+                );
+
+              if (
+                !expandido ||
+                itensPedido.length <= 1
+              ) {
+                return [
+                  linhaPrincipal,
+                ];
+              }
+
+              const linhasAdicionais =
+                itensPedido
+                  .slice(1)
+                  .map(
+                    (recebimento) =>
+                      renderizarLinhaRecebimento(
+                        recebimento,
+                        {
+                          mostrarPedido: false,
+                          totalItens:
+                            itensPedido.length,
+                          expandido,
+                          chavePedido,
+                        },
+                      ),
+                  );
+
+              return [
+                linhaPrincipal,
+                ...linhasAdicionais,
+              ];
+            },
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function PedidosCompraCardModal({
   aberto,
   cardId,
   indicadores,
   pedidos = [],
+  recebimentosFisicos = [],
   tipoDocumento,
   onClose,
 }) {
@@ -972,6 +1269,10 @@ export default function PedidosCompraCardModal({
     CONFIGURACOES[
       cardId
     ] ?? null;
+
+  const recebimentoFisico =
+    cardId ===
+    "recebimentos-fisicos-7-dias";
 
   const requisicao =
     tipoDocumento ===
@@ -1029,6 +1330,59 @@ export default function PedidosCompraCardModal({
 
       [
         pedidos,
+      ],
+    );
+
+  const resumoRecebimentoFisico =
+    useMemo(
+      () => {
+        const pedidosUnicos =
+          new Set();
+
+        const itensUnicos =
+          new Set();
+
+        for (const item of recebimentosFisicos) {
+          const codigoPedido =
+            Number(
+              item?.cod_ped_compra,
+            );
+
+          if (
+            Number.isFinite(
+              codigoPedido,
+            ) &&
+            codigoPedido > 0
+          ) {
+            pedidosUnicos.add(
+              codigoPedido,
+            );
+          }
+
+          itensUnicos.add(
+            `${
+              item?.cod_ped_compra ??
+              ""
+            }::${
+              item?.codigo_item ??
+              ""
+            }`,
+          );
+        }
+
+        return {
+          pedidos:
+            pedidosUnicos.size,
+
+          lancamentos:
+            recebimentosFisicos.length,
+
+          itens:
+            itensUnicos.size,
+        };
+      },
+      [
+        recebimentosFisicos,
       ],
     );
 
@@ -1173,70 +1527,147 @@ export default function PedidosCompraCardModal({
               : ""
           }`}
         >
-          <div className="compras-card-modal-resumo-destaque">
-            <span>
-              Indicador selecionado
-            </span>
+          {recebimentoFisico ? (
+            <>
+              <div className="compras-card-modal-resumo-destaque">
+                <span>
+                  Pedidos recebidos
+                </span>
 
-            <strong>
-              {
-                valorPrincipal
-              }
-            </strong>
-          </div>
+                <strong>
+                  {
+                    resumoRecebimentoFisico.pedidos
+                  }
+                </strong>
+              </div>
 
-          <div>
-            <span>
-              {requisicao
-                ? "Requisições no indicador"
-                : "Pedidos no indicador"}
-            </span>
+              <div>
+                <span>
+                  Lançamentos
+                </span>
 
-            <strong>
-              {
-                pedidos.length
-              }
-            </strong>
-          </div>
+                <strong>
+                  {
+                    resumoRecebimentoFisico.lancamentos
+                  }
+                </strong>
+              </div>
 
-          <div>
-            <span>
-              {requisicao
-                ? "Valor requisitado"
-                : "Valor dos pedidos"}
-            </span>
+              <div>
+                <span>
+                  Itens recebidos
+                </span>
 
-            <strong>
-              {
-                formatarMoeda(
-                  resumo.valorTotal,
-                )
-              }
-            </strong>
-          </div>
+                <strong>
+                  {
+                    resumoRecebimentoFisico.itens
+                  }
+                </strong>
+              </div>
 
-          <div>
-            <span>
-              {requisicao
-                ? "Itens requisitados"
-                : "Valor em aberto"}
-            </span>
+              <div>
+                <span>
+                  Período
+                </span>
 
-            <strong>
-              {requisicao
-                ? formatarNumero(
-                    resumo.itens,
-                    0,
-                  )
-                : formatarMoeda(
-                    resumo.valorEmAberto,
-                  )}
-            </strong>
-          </div>
+                <strong>
+                  Últimos 7 dias
+                </strong>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="compras-card-modal-resumo-destaque">
+                <span>
+                  Indicador selecionado
+                </span>
+
+                <strong>
+                  {
+                    valorPrincipal
+                  }
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {requisicao
+                    ? "Requisições no indicador"
+                    : "Pedidos no indicador"}
+                </span>
+
+                <strong>
+                  {
+                    pedidos.length
+                  }
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {requisicao
+                    ? "Valor requisitado"
+                    : "Valor dos pedidos"}
+                </span>
+
+                <strong>
+                  {
+                    formatarMoeda(
+                      resumo.valorTotal,
+                    )
+                  }
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  {requisicao
+                    ? "Itens requisitados"
+                    : "Valor em aberto"}
+                </span>
+
+                <strong>
+                  {requisicao
+                    ? formatarNumero(
+                        resumo.itens,
+                        0,
+                      )
+                    : formatarMoeda(
+                        resumo.valorEmAberto,
+                      )}
+                </strong>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="compras-card-modal-body" data-modal-body="">
-          {pedidos.length ===
+          {recebimentoFisico ? (
+            recebimentosFisicos.length ===
+            0 ? (
+              <div className="compras-card-modal-vazio">
+                <strong>
+                  Nenhum recebimento físico nos últimos 7 dias.
+                </strong>
+
+                <span>
+                  O indicador considera os lançamentos físicos registrados no sistema.
+                </span>
+              </div>
+            ) : (
+              <TabelaRecebimentosFisicos
+                recebimentos={
+                  recebimentosFisicos
+                }
+                documentosExpandidos={
+                  documentosExpandidos
+                }
+                onAlternarItens={
+                  alternarItens
+                }
+              />
+            )
+          ) : pedidos.length ===
           0 ? (
             <div className="compras-card-modal-vazio">
               <strong>
@@ -1278,7 +1709,9 @@ export default function PedidosCompraCardModal({
 
         <footer className="compras-card-modal-footer" data-modal-footer="">
           <span>
-            Os dados acima respeitam os filtros atualmente aplicados na tela.
+            {recebimentoFisico
+              ? "Os dados acima mostram os recebimentos físicos registrados nos últimos 7 dias."
+              : "Os dados acima respeitam os filtros atualmente aplicados na tela."}
           </span>
 
           <button

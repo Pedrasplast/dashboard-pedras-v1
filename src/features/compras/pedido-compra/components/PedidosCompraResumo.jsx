@@ -5,6 +5,7 @@ import {
   ClipboardList,
   DollarSign,
   ListChecks,
+  PackageCheck,
   PackageSearch,
   ShoppingBag,
   WalletCards,
@@ -144,6 +145,7 @@ export default function PedidosCompraResumo({
   loading,
   indicadores,
   indicadoresRequisicoes,
+  indicadoresRecebimentoFisico,
   tipoDocumento,
   cardAtivo,
   onCardClick,
@@ -421,14 +423,15 @@ export default function PedidosCompraResumo({
           />
 
           <CardResumo
-            id="requisicoes-hoje"
-            titulo="Requisições para hoje"
+            id="recebimentos-fisicos-7-dias"
+            titulo="Recebimentos físicos 7 dias"
             valor={
-              indicadoresRequisicoes
-                .hoje
+              indicadoresRecebimentoFisico
+                ?.pedidos ??
+              0
             }
             icon={
-              CalendarCheck2
+              PackageCheck
             }
             variante="requisicao-hoje"
             loading={
@@ -436,7 +439,7 @@ export default function PedidosCompraResumo({
             }
             ativo={
               cardAtivo ===
-              "requisicoes-hoje"
+              "recebimentos-fisicos-7-dias"
             }
             clicavel
             compacto={

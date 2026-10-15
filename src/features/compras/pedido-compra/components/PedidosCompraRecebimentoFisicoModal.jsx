@@ -1,16 +1,5 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  CheckCircle2,
-  Clock3,
-  History,
-  PackageCheck,
-  RotateCcw,
-  X,
-} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, Clock3, History, PackageCheck, RotateCcw, X } from "lucide-react";
 
 import {
   buscarHistoricoRecebimentoFisico,
@@ -19,21 +8,14 @@ import {
   receberSaldoFisicoCompleto,
   registrarRecebimentoFisicoItem,
 } from "../services/recebimentoFisico.service";
-import {
-  formatarNumero,
-} from "../utils/pedidosCompra.utils";
+import { formatarNumero } from "../utils/pedidosCompra.utils";
 
 function obterCodigoPedidoCompra(pedido) {
   const codigo = Number(
-    pedido?.cod_ped_compra ??
-      pedido?.codigo_pedido_compra ??
-      pedido?.codigoPedidoCompra ??
-      null,
+    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
   );
 
-  return Number.isFinite(codigo) && codigo > 0
-    ? codigo
-    : null;
+  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
 }
 
 function formatarDataHora(valor) {
@@ -51,9 +33,23 @@ function formatarDataHora(valor) {
 }
 
 function rotuloMovimento(tipo) {
-  return tipo === "ESTORNO"
-    ? "Estorno"
-    : "Recebimento";
+  return tipo === "ESTORNO" ? "Estorno" : "Recebimento";
+}
+
+function formatarNomeUsuario(usuario) {
+  const texto = String(usuario ?? "").trim();
+
+  if (!texto) {
+    return "-";
+  }
+
+  const usuarioSemDominio = texto.includes("@") ? texto.split("@")[0] : texto;
+
+  return usuarioSemDominio
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase())
+    .join(" ");
 }
 
 export default function PedidosCompraRecebimentoFisicoModal({
@@ -62,37 +58,21 @@ export default function PedidosCompraRecebimentoFisicoModal({
   onFechar,
   onAlterado,
 }) {
-  const [itens, setItens] =
-    useState([]);
-  const [historico, setHistorico] =
-    useState([]);
-  const [quantidades, setQuantidades] =
-    useState({});
-  const [observacoes, setObservacoes] =
-    useState({});
-  const [estornoAberto, setEstornoAberto] =
-    useState(null);
-  const [quantidadeEstorno, setQuantidadeEstorno] =
-    useState("");
-  const [motivoEstorno, setMotivoEstorno] =
-    useState("");
-  const [aba, setAba] =
-    useState("itens");
-  const [carregando, setCarregando] =
-    useState(false);
-  const [salvando, setSalvando] =
-    useState(false);
-  const [erro, setErro] =
-    useState("");
-  const [mensagem, setMensagem] =
-    useState("");
-  const [confirmarReceberTudoAberto, setConfirmarReceberTudoAberto] =
-    useState(false);
+  const [itens, setItens] = useState([]);
+  const [historico, setHistorico] = useState([]);
+  const [quantidades, setQuantidades] = useState({});
+  const [observacoes, setObservacoes] = useState({});
+  const [estornoAberto, setEstornoAberto] = useState(null);
+  const [quantidadeEstorno, setQuantidadeEstorno] = useState("");
+  const [motivoEstorno, setMotivoEstorno] = useState("");
+  const [aba, setAba] = useState("itens");
+  const [carregando, setCarregando] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [confirmarReceberTudoAberto, setConfirmarReceberTudoAberto] = useState(false);
 
-  const codPedidoCompra =
-    obterCodigoPedidoCompra(
-      pedido,
-    );
+  const codPedidoCompra = obterCodigoPedidoCompra(pedido);
 
   async function recarregar() {
     if (!codPedidoCompra) {
@@ -105,58 +85,33 @@ export default function PedidosCompraRecebimentoFisicoModal({
     setErro("");
 
     try {
-      const [
-        itensCarregados,
-        historicoCarregado,
-      ] = await Promise.all([
-        buscarItensRecebimentoFisico(
-          codPedidoCompra,
-        ),
-        buscarHistoricoRecebimentoFisico(
-          codPedidoCompra,
-        ),
+      const [itensCarregados, historicoCarregado] = await Promise.all([
+        buscarItensRecebimentoFisico(codPedidoCompra),
+        buscarHistoricoRecebimentoFisico(codPedidoCompra),
       ]);
 
-      const itensOmie = Array.isArray(pedido?.itens)
-        ? pedido.itens
-        : [];
+      const itensOmie = Array.isArray(pedido?.itens) ? pedido.itens : [];
 
-      const mapaOmie = new Map(
-        itensOmie.map((item) => [
-          String(item?.codigo_item ?? ""),
-          item,
-        ]),
-      );
+      const mapaOmie = new Map(itensOmie.map((item) => [String(item?.codigo_item ?? ""), item]));
 
       const itensComSituacaoVisual = itensCarregados.map((item) => {
-        const itemOmie = mapaOmie.get(
-          String(item?.codigo_item ?? ""),
-        );
+        const itemOmie = mapaOmie.get(String(item?.codigo_item ?? ""));
 
         const quantidadePedida = Math.max(
           Number(item?.quantidade_pedida ?? itemOmie?.quantidade ?? 0),
           0,
         );
 
-        const recebidoManual = Math.max(
-          Number(item?.quantidade_recebida_fisica ?? 0),
-          0,
-        );
+        const recebidoManual = Math.max(Number(item?.quantidade_recebida_fisica ?? 0), 0);
 
         const recebidoOmie = Math.min(
           Math.max(Number(itemOmie?.quantidade_recebida ?? 0), 0),
           quantidadePedida,
         );
 
-        const recebidoConsiderado = Math.max(
-          recebidoManual,
-          recebidoOmie,
-        );
+        const recebidoConsiderado = Math.max(recebidoManual, recebidoOmie);
 
-        const pendenteConsiderado = Math.max(
-          quantidadePedida - recebidoConsiderado,
-          0,
-        );
+        const pendenteConsiderado = Math.max(quantidadePedida - recebidoConsiderado, 0);
 
         const situacaoVisual =
           quantidadePedida > 0 && pendenteConsiderado <= 0
@@ -185,145 +140,99 @@ export default function PedidosCompraRecebimentoFisicoModal({
         };
       });
 
-      setItens(
-        itensComSituacaoVisual,
-      );
-      setHistorico(
-        historicoCarregado,
-      );
+      setItens(itensComSituacaoVisual);
+      setHistorico(historicoCarregado);
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível carregar o recebimento físico.",
-      );
+      setErro(error?.message || "Não foi possível carregar o recebimento físico.");
     } finally {
       setCarregando(false);
     }
   }
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return;
-      }
+  useEffect(() => {
+    if (!aberto) {
+      return;
+    }
 
-      setAba("itens");
-      setQuantidades({});
-      setObservacoes({});
-      setEstornoAberto(null);
-      setQuantidadeEstorno("");
-      setMotivoEstorno("");
-      setErro("");
-      setMensagem("");
-      setConfirmarReceberTudoAberto(false);
+    setAba("itens");
+    setQuantidades({});
+    setObservacoes({});
+    setEstornoAberto(null);
+    setQuantidadeEstorno("");
+    setMotivoEstorno("");
+    setErro("");
+    setMensagem("");
+    setConfirmarReceberTudoAberto(false);
 
-      recarregar();
-    },
-    [aberto, codPedidoCompra],
-  );
+    recarregar();
+  }, [aberto, codPedidoCompra]);
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return undefined;
-      }
+  useEffect(() => {
+    if (!aberto) {
+      return undefined;
+    }
 
-      const overflowAnterior =
-        document.body.style.overflow;
+    const overflowAnterior = document.body.style.overflow;
 
-      document.body.style.overflow =
-        "hidden";
+    document.body.style.overflow = "hidden";
 
-      return () => {
-        document.body.style.overflow =
-          overflowAnterior;
-      };
-    },
-    [aberto],
-  );
+    return () => {
+      document.body.style.overflow = overflowAnterior;
+    };
+  }, [aberto]);
 
-  const resumo =
-    useMemo(
-      () => {
-        const totalItens =
-          itens.length;
-        const completos =
-          itens.filter(
-            (item) =>
-              item.situacao_recebimento_fisico ===
-              "COMPLETO",
-          ).length;
-        const parcial =
-          itens.some(
-            (item) =>
-              Number(
-                item.quantidade_recebida_fisica ??
-                  0,
-              ) > 0,
-          );
+  const resumo = useMemo(() => {
+    const totalItens = itens.length;
 
-        const situacao =
-          totalItens > 0 &&
-          completos === totalItens
-            ? "COMPLETO"
-            : parcial
-              ? "PARCIAL"
-              : "NAO_RECEBIDO";
+    const completos = itens.filter(
+      (item) => item.situacao_recebimento_fisico === "COMPLETO",
+    ).length;
 
-        return {
-          totalItens,
-          completos,
-          situacao,
-        };
-      },
-      [itens],
-    );
+    const parcial = itens.some((item) => Number(item.quantidade_recebida_fisica ?? 0) > 0);
+
+    const situacao =
+      totalItens > 0 && completos === totalItens
+        ? "COMPLETO"
+        : parcial
+          ? "PARCIAL"
+          : "NAO_RECEBIDO";
+
+    return {
+      totalItens,
+      completos,
+      situacao,
+    };
+  }, [itens]);
 
   if (!aberto || !pedido) {
     return null;
   }
 
-  async function depoisDeAlterar(
-    mensagemSucesso,
-  ) {
+  async function depoisDeAlterar(mensagemSucesso) {
     await recarregar();
-    setMensagem(
-      mensagemSucesso,
-    );
+
+    setMensagem(mensagemSucesso);
+
     onAlterado?.();
   }
 
   async function registrarItem(item) {
-    const quantidade = Number(
-      String(
-        quantidades[item.codigo_item] ??
-          "",
-      ).replace(",", "."),
-    );
+    const quantidade = Number(String(quantidades[item.codigo_item] ?? "").replace(",", "."));
 
-    if (
-      !Number.isFinite(quantidade) ||
-      quantidade <= 0
-    ) {
-      setErro(
-        "Informe uma quantidade válida para o recebimento.",
-      );
+    if (!Number.isFinite(quantidade) || quantidade <= 0) {
+      setErro("Informe uma quantidade válida para o recebimento.");
+
       return;
     }
 
-    if (
-      quantidade >
-      Number(
-        item.quantidade_pendente_fisica ??
-          0,
-      )
-    ) {
+    if (quantidade > Number(item.quantidade_pendente_fisica ?? 0)) {
       setErro(
         `A quantidade máxima para este item é ${formatarNumero(
           item.quantidade_pendente_fisica,
           2,
         )}.`,
       );
+
       return;
     }
 
@@ -334,46 +243,31 @@ export default function PedidosCompraRecebimentoFisicoModal({
     try {
       await registrarRecebimentoFisicoItem({
         codPedidoCompra,
-        codigoItem:
-          item.codigo_item,
+        codigoItem: item.codigo_item,
         quantidade,
-        observacao:
-          observacoes[
-            item.codigo_item
-          ],
+        observacao: observacoes[item.codigo_item],
       });
 
-      setQuantidades(
-        (atual) => ({
-          ...atual,
-          [item.codigo_item]: "",
-        }),
-      );
-      setObservacoes(
-        (atual) => ({
-          ...atual,
-          [item.codigo_item]: "",
-        }),
-      );
+      setQuantidades((atual) => ({
+        ...atual,
+        [item.codigo_item]: "",
+      }));
 
-      await depoisDeAlterar(
-        "Recebimento físico registrado.",
-      );
+      setObservacoes((atual) => ({
+        ...atual,
+        [item.codigo_item]: "",
+      }));
+
+      await depoisDeAlterar("Recebimento físico registrado.");
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível registrar o recebimento.",
-      );
+      setErro(error?.message || "Não foi possível registrar o recebimento.");
     } finally {
       setSalvando(false);
     }
   }
 
   async function receberRestanteItem(item) {
-    const restante = Number(
-      item.quantidade_pendente_fisica ??
-        0,
-    );
+    const restante = Number(item.quantidade_pendente_fisica ?? 0);
 
     if (restante <= 0) {
       return;
@@ -386,37 +280,21 @@ export default function PedidosCompraRecebimentoFisicoModal({
     try {
       await registrarRecebimentoFisicoItem({
         codPedidoCompra,
-        codigoItem:
-          item.codigo_item,
+        codigoItem: item.codigo_item,
         quantidade: restante,
-        observacao:
-          observacoes[
-            item.codigo_item
-          ],
+        observacao: observacoes[item.codigo_item],
       });
 
-      await depoisDeAlterar(
-        "Saldo físico do item recebido.",
-      );
+      await depoisDeAlterar("Saldo físico do item recebido.");
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível receber o saldo do item.",
-      );
+      setErro(error?.message || "Não foi possível receber o saldo do item.");
     } finally {
       setSalvando(false);
     }
   }
 
   function receberTudo() {
-    const existemPendentes =
-      itens.some(
-        (item) =>
-          Number(
-            item.quantidade_pendente_fisica ??
-              0,
-          ) > 0,
-      );
+    const existemPendentes = itens.some((item) => Number(item.quantidade_pendente_fisica ?? 0) > 0);
 
     if (!existemPendentes) {
       return;
@@ -431,63 +309,40 @@ export default function PedidosCompraRecebimentoFisicoModal({
     setMensagem("");
 
     try {
-      const total =
-        await receberSaldoFisicoCompleto({
-          codPedidoCompra,
-          itens,
-          observacao:
-            "Recebimento físico completo pelo botão Receber tudo.",
-        });
+      const total = await receberSaldoFisicoCompleto({
+        codPedidoCompra,
+        itens,
+        observacao: "Recebimento físico completo pelo botão Receber tudo.",
+      });
 
       setConfirmarReceberTudoAberto(false);
 
-      await depoisDeAlterar(
-        `${total} item(ns) atualizado(s) como recebido(s) fisicamente.`,
-      );
+      await depoisDeAlterar(`${total} item(ns) atualizado(s) como recebido(s) fisicamente.`);
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível receber todo o pedido.",
-      );
+      setErro(error?.message || "Não foi possível receber todo o pedido.");
     } finally {
       setSalvando(false);
     }
   }
 
   async function confirmarEstorno(item) {
-    const quantidade = Number(
-      String(
-        quantidadeEstorno ?? "",
-      ).replace(",", "."),
-    );
+    const quantidade = Number(String(quantidadeEstorno ?? "").replace(",", "."));
 
-    if (
-      !Number.isFinite(quantidade) ||
-      quantidade <= 0
-    ) {
-      setErro(
-        "Informe uma quantidade válida para o estorno.",
-      );
+    if (!Number.isFinite(quantidade) || quantidade <= 0) {
+      setErro("Informe uma quantidade válida para o estorno.");
+
       return;
     }
 
-    if (
-      quantidade >
-      Number(
-        item.quantidade_recebida_fisica ??
-          0,
-      )
-    ) {
-      setErro(
-        "O estorno não pode ser maior que o total físico recebido.",
-      );
+    if (quantidade > Number(item.quantidade_recebida_fisica ?? 0)) {
+      setErro("O estorno não pode ser maior que o total físico recebido.");
+
       return;
     }
 
     if (!motivoEstorno.trim()) {
-      setErro(
-        "Informe o motivo do estorno.",
-      );
+      setErro("Informe o motivo do estorno.");
+
       return;
     }
 
@@ -498,25 +353,18 @@ export default function PedidosCompraRecebimentoFisicoModal({
     try {
       await estornarRecebimentoFisicoItem({
         codPedidoCompra,
-        codigoItem:
-          item.codigo_item,
+        codigoItem: item.codigo_item,
         quantidade,
-        observacao:
-          motivoEstorno,
+        observacao: motivoEstorno,
       });
 
       setEstornoAberto(null);
       setQuantidadeEstorno("");
       setMotivoEstorno("");
 
-      await depoisDeAlterar(
-        "Estorno registrado no histórico.",
-      );
+      await depoisDeAlterar("Estorno registrado no histórico.");
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível registrar o estorno.",
-      );
+      setErro(error?.message || "Não foi possível registrar o estorno.");
     } finally {
       setSalvando(false);
     }
@@ -527,10 +375,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
       className="compras-rf-backdrop"
       role="presentation"
       onMouseDown={(event) => {
-        if (
-          event.target ===
-          event.currentTarget
-        ) {
+        if (event.target === event.currentTarget) {
           onFechar?.();
         }
       }}
@@ -543,17 +388,11 @@ export default function PedidosCompraRecebimentoFisicoModal({
       >
         <header className="compras-rf-cabecalho">
           <div>
-            <span className="compras-rf-sobretitulo">
-              Recebimento físico
-            </span>
+            <span className="compras-rf-sobretitulo">Recebimento físico</span>
 
-            <h2>
-              Pedido {pedido.numero_pedido || "-"}
-            </h2>
+            <h2>Pedido {pedido.numero_pedido || "-"}</h2>
 
-            <p>
-              {pedido.fornecedor_nome || "Fornecedor não informado"}
-            </p>
+            <p>{pedido.fornecedor_nome || "Fornecedor não informado"}</p>
           </div>
 
           <button
@@ -569,6 +408,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
         <div className="compras-rf-resumo">
           <div>
             <span>Status físico</span>
+
             <strong>
               {resumo.situacao === "COMPLETO"
                 ? "Completo"
@@ -580,6 +420,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
           <div>
             <span>Itens completos</span>
+
             <strong>
               {resumo.completos}/{resumo.totalItens}
             </strong>
@@ -589,11 +430,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
             type="button"
             className="compras-rf-btn compras-rf-btn--sucesso"
             onClick={receberTudo}
-            disabled={
-              salvando ||
-              carregando ||
-              resumo.situacao === "COMPLETO"
-            }
+            disabled={salvando || carregando || resumo.situacao === "COMPLETO"}
           >
             <PackageCheck size={16} />
             Receber tudo
@@ -603,14 +440,8 @@ export default function PedidosCompraRecebimentoFisicoModal({
         <nav className="compras-rf-abas">
           <button
             type="button"
-            className={
-              aba === "itens"
-                ? "ativo"
-                : ""
-            }
-            onClick={() =>
-              setAba("itens")
-            }
+            className={aba === "itens" ? "ativo" : ""}
+            onClick={() => setAba("itens")}
           >
             <PackageCheck size={15} />
             Itens
@@ -618,140 +449,98 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
           <button
             type="button"
-            className={
-              aba === "historico"
-                ? "ativo"
-                : ""
-            }
-            onClick={() =>
-              setAba("historico")
-            }
+            className={aba === "historico" ? "ativo" : ""}
+            onClick={() => setAba("historico")}
           >
             <History size={15} />
             Histórico
           </button>
         </nav>
 
-        {erro && (
-          <div className="compras-rf-mensagem compras-rf-mensagem--erro">
-            {erro}
-          </div>
-        )}
+        {erro && <div className="compras-rf-mensagem compras-rf-mensagem--erro">{erro}</div>}
 
         {mensagem && (
-          <div className="compras-rf-mensagem compras-rf-mensagem--sucesso">
-            {mensagem}
-          </div>
+          <div className="compras-rf-mensagem compras-rf-mensagem--sucesso">{mensagem}</div>
         )}
 
         <div className="compras-rf-conteudo">
           {carregando ? (
-            <div className="compras-rf-vazio">
-              Carregando recebimento físico...
-            </div>
+            <div className="compras-rf-vazio">Carregando recebimento físico...</div>
           ) : aba === "historico" ? (
             historico.length ? (
               <div className="compras-rf-historico">
-                {historico.map(
-                  (movimento) => (
-                    <article
-                      key={movimento.id}
-                      className={`compras-rf-historico-item compras-rf-historico-item--${String(
-                        movimento.tipo_movimento,
-                      ).toLowerCase()}`}
-                    >
-                      <div className="compras-rf-historico-icone">
-                        {movimento.tipo_movimento ===
-                        "ESTORNO" ? (
-                          <RotateCcw size={16} />
-                        ) : (
-                          <CheckCircle2 size={16} />
-                        )}
+                {historico.map((movimento) => (
+                  <article
+                    key={movimento.id}
+                    className={`compras-rf-historico-item compras-rf-historico-item--${String(
+                      movimento.tipo_movimento,
+                    ).toLowerCase()}`}
+                  >
+                    <div className="compras-rf-historico-icone">
+                      {movimento.tipo_movimento === "ESTORNO" ? (
+                        <RotateCcw size={16} />
+                      ) : (
+                        <CheckCircle2 size={16} />
+                      )}
+                    </div>
+
+                    <div className="compras-rf-historico-corpo">
+                      <div className="compras-rf-historico-topo">
+                        <strong>{rotuloMovimento(movimento.tipo_movimento)}</strong>
+
+                        <span>
+                          {movimento.tipo_movimento === "ESTORNO" ? "-" : "+"}
+                          {formatarNumero(movimento.quantidade_movimentada, 2)}{" "}
+                          {movimento.unidade || ""}
+                        </span>
                       </div>
 
-                      <div className="compras-rf-historico-corpo">
-                        <div className="compras-rf-historico-topo">
-                          <strong>
-                            {rotuloMovimento(
-                              movimento.tipo_movimento,
-                            )}
-                          </strong>
+                      <p>
+                        {movimento.codigo_comercial || "-"} -{" "}
+                        {movimento.descricao_produto || "Item"}
+                      </p>
 
-                          <span>
-                            {movimento.tipo_movimento ===
-                            "ESTORNO"
-                              ? "-"
-                              : "+"}
-                            {formatarNumero(
-                              movimento.quantidade_movimentada,
-                              2,
-                            )}{" "}
-                            {movimento.unidade || ""}
-                          </span>
-                        </div>
+                      <small>
+                        <Clock3 size={13} />
 
-                        <p>
-                          {movimento.codigo_comercial || "-"} - {movimento.descricao_produto || "Item"}
-                        </p>
+                        {formatarDataHora(movimento.registrado_em)}
 
-                        <small>
-                          <Clock3 size={13} />
-                          {formatarDataHora(
-                            movimento.registrado_em,
-                          )}
-                          {" · "}
-                          {movimento.usuario_nome || "-"}
-                        </small>
+                        {" · "}
 
-                        {movimento.observacao && (
-                          <em>
-                            {movimento.observacao}
-                          </em>
-                        )}
-                      </div>
-                    </article>
-                  ),
-                )}
+                        <span title={movimento.usuario_nome || undefined}>
+                          {formatarNomeUsuario(movimento.usuario_nome)}
+                        </span>
+                      </small>
+
+                      {movimento.observacao && <em>{movimento.observacao}</em>}
+                    </div>
+                  </article>
+                ))}
               </div>
             ) : (
-              <div className="compras-rf-vazio">
-                Nenhuma movimentação física registrada.
-              </div>
+              <div className="compras-rf-vazio">Nenhuma movimentação física registrada.</div>
             )
           ) : (
             <div className="compras-rf-itens">
               {itens.map((item) => {
-                const recebido = Number(
-                  item.quantidade_recebida_fisica ??
-                    0,
-                );
-                const pendente = Number(
-                  item.quantidade_pendente_fisica ??
-                    0,
-                );
-                const completo =
-                  item.situacao_recebimento_fisico ===
-                  "COMPLETO";
+                const recebido = Number(item.quantidade_recebida_fisica ?? 0);
+
+                const pendente = Number(item.quantidade_pendente_fisica ?? 0);
+
+                const completo = item.situacao_recebimento_fisico === "COMPLETO";
 
                 return (
                   <article
                     key={item.codigo_item}
-                    className={`compras-rf-item${
-                      completo
-                        ? " compras-rf-item--completo"
-                        : ""
-                    }`}
+                    className={`compras-rf-item${completo ? " compras-rf-item--completo" : ""}`}
                   >
                     <div className="compras-rf-item-cabecalho">
                       <div>
                         <strong>
-                          {item.codigo_comercial ||
-                            `OMIE ${item.codigo_produto || "-"}`}
+                          {item.codigo_comercial || `OMIE ${item.codigo_produto || "-"}`}
                         </strong>
-                        <span>
-                          {item.descricao_produto ||
-                            "Produto não identificado"}
-                        </span>
+
+                        <span>{item.descricao_produto || "Produto não identificado"}</span>
                       </div>
 
                       <span
@@ -761,39 +550,27 @@ export default function PedidosCompraRecebimentoFisicoModal({
                           .toLowerCase()
                           .replaceAll("_", "-")}`}
                       >
-                        {completo
-                          ? "Completo"
-                          : recebido > 0
-                            ? "Parcial"
-                            : "Não recebido"}
+                        {completo ? "Completo" : recebido > 0 ? "Parcial" : "Não recebido"}
                       </span>
                     </div>
 
                     <div className="compras-rf-item-numeros">
                       <span>
                         <small>Pedido</small>
+
                         <strong>
-                          {formatarNumero(
-                            item.quantidade_pedida,
-                            2,
-                          )}{" "}
-                          {item.unidade || ""}
+                          {formatarNumero(item.quantidade_pedida, 2)} {item.unidade || ""}
                         </strong>
                       </span>
 
                       <span>
                         <small>Recebido físico</small>
+
                         <strong>
-                          {formatarNumero(
-                            recebido,
-                            2,
-                          )}{" "}
-                          {item.unidade || ""}
+                          {formatarNumero(recebido, 2)} {item.unidade || ""}
                         </strong>
 
-                        {item.origem_recebimento_visual === "OMIE" && (
-                          <small>Origem: Omie</small>
-                        )}
+                        {item.origem_recebimento_visual === "OMIE" && <small>Origem: Omie</small>}
 
                         {item.origem_recebimento_visual === "MANUAL" && (
                           <small>Origem: controle físico</small>
@@ -806,12 +583,9 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
                       <span>
                         <small>Pendente físico</small>
+
                         <strong>
-                          {formatarNumero(
-                            pendente,
-                            2,
-                          )}{" "}
-                          {item.unidade || ""}
+                          {formatarNumero(pendente, 2)} {item.unidade || ""}
                         </strong>
                       </span>
                     </div>
@@ -825,24 +599,14 @@ export default function PedidosCompraRecebimentoFisicoModal({
                             min="0"
                             step="any"
                             max={pendente}
-                            value={
-                              quantidades[
-                                item.codigo_item
-                              ] ?? ""
-                            }
+                            value={quantidades[item.codigo_item] ?? ""}
                             onChange={(event) =>
-                              setQuantidades(
-                                (atual) => ({
-                                  ...atual,
-                                  [item.codigo_item]:
-                                    event.target.value,
-                                }),
-                              )
+                              setQuantidades((atual) => ({
+                                ...atual,
+                                [item.codigo_item]: event.target.value,
+                              }))
                             }
-                            placeholder={`Máx. ${formatarNumero(
-                              pendente,
-                              2,
-                            )}`}
+                            placeholder={`Máx. ${formatarNumero(pendente, 2)}`}
                           />
                         </label>
 
@@ -850,19 +614,12 @@ export default function PedidosCompraRecebimentoFisicoModal({
                           Observação opcional
                           <input
                             type="text"
-                            value={
-                              observacoes[
-                                item.codigo_item
-                              ] ?? ""
-                            }
+                            value={observacoes[item.codigo_item] ?? ""}
                             onChange={(event) =>
-                              setObservacoes(
-                                (atual) => ({
-                                  ...atual,
-                                  [item.codigo_item]:
-                                    event.target.value,
-                                }),
-                              )
+                              setObservacoes((atual) => ({
+                                ...atual,
+                                [item.codigo_item]: event.target.value,
+                              }))
                             }
                             placeholder="Ex.: entrega parcial, avaria..."
                           />
@@ -873,9 +630,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                             type="button"
                             className="compras-rf-btn"
                             disabled={salvando}
-                            onClick={() =>
-                              registrarItem(item)
-                            }
+                            onClick={() => registrarItem(item)}
                           >
                             Registrar
                           </button>
@@ -884,11 +639,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                             type="button"
                             className="compras-rf-btn compras-rf-btn--secundario"
                             disabled={salvando}
-                            onClick={() =>
-                              receberRestanteItem(
-                                item,
-                              )
-                            }
+                            onClick={() => receberRestanteItem(item)}
                           >
                             Receber saldo
                           </button>
@@ -898,8 +649,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
                     {recebido > 0 && (
                       <div className="compras-rf-estorno-area">
-                        {estornoAberto ===
-                        item.codigo_item ? (
+                        {estornoAberto === item.codigo_item ? (
                           <div className="compras-rf-estorno-form">
                             <label>
                               Quantidade a estornar
@@ -908,14 +658,8 @@ export default function PedidosCompraRecebimentoFisicoModal({
                                 min="0"
                                 step="any"
                                 max={recebido}
-                                value={
-                                  quantidadeEstorno
-                                }
-                                onChange={(event) =>
-                                  setQuantidadeEstorno(
-                                    event.target.value,
-                                  )
-                                }
+                                value={quantidadeEstorno}
+                                onChange={(event) => setQuantidadeEstorno(event.target.value)}
                               />
                             </label>
 
@@ -924,11 +668,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                               <input
                                 type="text"
                                 value={motivoEstorno}
-                                onChange={(event) =>
-                                  setMotivoEstorno(
-                                    event.target.value,
-                                  )
-                                }
+                                onChange={(event) => setMotivoEstorno(event.target.value)}
                                 placeholder="Obrigatório"
                               />
                             </label>
@@ -938,11 +678,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                                 type="button"
                                 className="compras-rf-btn compras-rf-btn--perigo"
                                 disabled={salvando}
-                                onClick={() =>
-                                  confirmarEstorno(
-                                    item,
-                                  )
-                                }
+                                onClick={() => confirmarEstorno(item)}
                               >
                                 Confirmar estorno
                               </button>
@@ -952,15 +688,11 @@ export default function PedidosCompraRecebimentoFisicoModal({
                                 className="compras-rf-btn compras-rf-btn--secundario"
                                 disabled={salvando}
                                 onClick={() => {
-                                  setEstornoAberto(
-                                    null,
-                                  );
-                                  setQuantidadeEstorno(
-                                    "",
-                                  );
-                                  setMotivoEstorno(
-                                    "",
-                                  );
+                                  setEstornoAberto(null);
+
+                                  setQuantidadeEstorno("");
+
+                                  setMotivoEstorno("");
                                 }}
                               >
                                 Cancelar
@@ -972,15 +704,11 @@ export default function PedidosCompraRecebimentoFisicoModal({
                             type="button"
                             className="compras-rf-link-estorno"
                             onClick={() => {
-                              setEstornoAberto(
-                                item.codigo_item,
-                              );
-                              setQuantidadeEstorno(
-                                "",
-                              );
-                              setMotivoEstorno(
-                                "",
-                              );
+                              setEstornoAberto(item.codigo_item);
+
+                              setQuantidadeEstorno("");
+
+                              setMotivoEstorno("");
                             }}
                           >
                             <RotateCcw size={14} />
@@ -1001,11 +729,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
             className="compras-rf-confirmacao-backdrop"
             role="presentation"
             onMouseDown={(event) => {
-              if (
-                event.target ===
-                event.currentTarget &&
-                !salvando
-              ) {
+              if (event.target === event.currentTarget && !salvando) {
                 setConfirmarReceberTudoAberto(false);
               }
             }}
@@ -1021,36 +745,31 @@ export default function PedidosCompraRecebimentoFisicoModal({
               </div>
 
               <div className="compras-rf-confirmacao-conteudo">
-                <span className="compras-rf-sobretitulo">
-                  Confirmar recebimento
-                </span>
+                <span className="compras-rf-sobretitulo">Confirmar recebimento</span>
 
-                <h3>
-                  Receber todo o saldo físico do pedido {pedido.numero_pedido || "-"}?
-                </h3>
+                <h3>Receber todo o saldo físico do pedido {pedido.numero_pedido || "-"}?</h3>
 
                 <p>
-                  Todos os itens que ainda possuem saldo físico pendente serão marcados como recebidos.
+                  Todos os itens que ainda possuem saldo físico pendente serão marcados como
+                  recebidos.
                 </p>
 
                 <div className="compras-rf-confirmacao-resumo">
                   <span>
                     <small>Itens pendentes</small>
+
                     <strong>
-                      {itens.filter(
-                        (item) =>
-                          Number(
-                            item.quantidade_pendente_fisica ?? 0,
-                          ) > 0,
-                      ).length}
+                      {
+                        itens.filter((item) => Number(item.quantidade_pendente_fisica ?? 0) > 0)
+                          .length
+                      }
                     </strong>
                   </span>
 
                   <span>
                     <small>Fornecedor</small>
-                    <strong>
-                      {pedido.fornecedor_nome || "-"}
-                    </strong>
+
+                    <strong>{pedido.fornecedor_nome || "-"}</strong>
                   </span>
                 </div>
               </div>
@@ -1059,9 +778,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                 <button
                   type="button"
                   className="compras-rf-btn compras-rf-btn--secundario"
-                  onClick={() =>
-                    setConfirmarReceberTudoAberto(false)
-                  }
+                  onClick={() => setConfirmarReceberTudoAberto(false)}
                   disabled={salvando}
                 >
                   Cancelar
@@ -1074,15 +791,13 @@ export default function PedidosCompraRecebimentoFisicoModal({
                   disabled={salvando}
                 >
                   <PackageCheck size={16} />
-                  {salvando
-                    ? "Confirmando..."
-                    : "Confirmar recebimento"}
+
+                  {salvando ? "Confirmando..." : "Confirmar recebimento"}
                 </button>
               </div>
             </section>
           </div>
         )}
-
       </section>
     </div>
   );
