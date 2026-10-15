@@ -10,6 +10,21 @@ import {
 const TAMANHO_PAGINA =
   1000;
 
+
+/*
+ * Os nomes de fornecedores/compradores mudam com muito menos
+ * frequência do que os pedidos.
+ *
+ * Mantemos essa resposta em memória por 15 minutos para que o
+ * refresh da tela a cada 30 segundos não invoque a Edge Function
+ * repetidamente.
+ */
+const TEMPO_CACHE_NOMES_OMIE =
+  15 * 60 * 1000;
+
+let cacheNomesOmie = null;
+let cacheNomesOmieEm = 0;
+
 async function buscarTodos(
   nomeTabela,
   colunas,
@@ -169,6 +184,18 @@ async function buscarFornecedoresCache() {
 }
 
 async function buscarNomesOmie() {
+  const agora =
+    Date.now();
+
+  if (
+    cacheNomesOmie &&
+    agora -
+      cacheNomesOmieEm <
+      TEMPO_CACHE_NOMES_OMIE
+  ) {
+    return cacheNomesOmie;
+  }
+
   const {
     data,
     error,
@@ -190,6 +217,20 @@ async function buscarNomesOmie() {
       error.message,
     );
 
+    /*
+     * Se já existe um cache válido anterior, preservamos os nomes
+     * conhecidos em vez de trocar tudo por 'não identificado'.
+     */
+    if (
+      cacheNomesOmie
+    ) {
+      return {
+        ...cacheNomesOmie,
+        consulta_omie_falhou:
+          true,
+      };
+    }
+
     return {
       fornecedores:
         {},
@@ -202,7 +243,7 @@ async function buscarNomesOmie() {
     };
   }
 
-  return {
+  const resultado = {
     fornecedores:
       data
         ?.fornecedores &&
@@ -227,13 +268,24 @@ async function buscarNomesOmie() {
           ?.consulta_omie_falhou,
       ),
   };
+
+  cacheNomesOmie =
+    resultado;
+
+  cacheNomesOmieEm =
+    agora;
+
+  return resultado;
 }
 
 export async function buscarPedidosCompra() {
-  const estado =
-    await buscarEstadoSincronizacao();
-
+  /*
+   * Todas as leituras independentes começam juntas.
+   * Antes o estado de sincronização precisava terminar para só
+   * então iniciar documentos, itens, fornecedores e nomes.
+   */
   const [
+    estado,
     documentos,
     itens,
     fornecedoresCache,
@@ -241,6 +293,8 @@ export async function buscarPedidosCompra() {
   ] =
     await Promise.all(
       [
+        buscarEstadoSincronizacao(),
+
         buscarDocumentosAtuais(),
 
         buscarItens(),

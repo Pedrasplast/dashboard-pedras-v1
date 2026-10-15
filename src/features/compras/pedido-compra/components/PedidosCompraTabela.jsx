@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+
+import {
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import {
   AlertTriangle,
@@ -23,8 +27,9 @@ import {
 
 import PedidosCompraRecebimentoFisicoModal from "./PedidosCompraRecebimentoFisicoModal";
 import {
-  buscarResumosRecebimentoFisico,
-} from "../services/recebimentoFisico.service";
+  QUERY_KEY_RECEBIMENTO_FISICO,
+  useResumosRecebimentoFisico,
+} from "../hooks/useResumosRecebimentoFisico";
 
 import "./PedidosCompraTabela.css";
 import "./PedidosCompraRecebimentoFisico.css";
@@ -1223,20 +1228,13 @@ export default function PedidosCompraTabela({
   ] =
     useState(null);
 
-  const [
-    resumosFisicos,
-    setResumosFisicos,
-  ] = useState({});
+  const queryClient =
+    useQueryClient();
 
   const [
     pedidoRecebimentoFisico,
     setPedidoRecebimentoFisico,
   ] = useState(null);
-
-  const [
-    versaoRecebimentoFisico,
-    setVersaoRecebimentoFisico,
-  ] = useState(0);
 
   const codigosPedidosVisiveis =
     useMemo(
@@ -1258,51 +1256,22 @@ export default function PedidosCompraTabela({
       [pedidos],
     );
 
-  useEffect(
-    () => {
-      let ativo = true;
-
-      async function carregarResumosFisicos() {
-        try {
-          const dados =
-            await buscarResumosRecebimentoFisico(
-              codigosPedidosVisiveis,
-            );
-
-          if (!ativo) return;
-
-          const mapa = {};
-
-          for (const item of dados) {
-            mapa[
-              String(
-                item.cod_ped_compra,
-              )
-            ] = item;
-          }
-
-          setResumosFisicos(
-            mapa,
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao carregar recebimento físico:",
-            error,
-          );
-        }
-      }
-
-      carregarResumosFisicos();
-
-      return () => {
-        ativo = false;
-      };
-    },
-    [
+  /*
+   * A tabela consulta apenas os resumos físicos dos pedidos que
+   * estão visíveis na página atual. O resultado fica no cache do
+   * React Query e é reaproveitado ao navegar entre telas.
+   */
+  const {
+    resumos:
+      resumosFisicos,
+  } =
+    useResumosRecebimentoFisico(
       codigosPedidosVisiveis,
-      versaoRecebimentoFisico,
-    ],
-  );
+      {
+        enabled:
+          codigosPedidosVisiveis.length > 0,
+      },
+    );
 
   const somenteRequisicoes =
     tipoDocumento ===
@@ -1921,11 +1890,17 @@ export default function PedidosCompraTabela({
             null,
           )
         }
-        onAlterado={() =>
-          setVersaoRecebimentoFisico(
-            (valor) => valor + 1,
-          )
-        }
+        onAlterado={() => {
+          /*
+           * Invalida qualquer resumo físico ativo, inclusive o
+           * usado pelo filtro da página. Assim a atualização feita
+           * no modal aparece sem recarregar a tela inteira.
+           */
+          queryClient.invalidateQueries({
+            queryKey:
+              QUERY_KEY_RECEBIMENTO_FISICO,
+          });
+        }}
       />
     </>
   );

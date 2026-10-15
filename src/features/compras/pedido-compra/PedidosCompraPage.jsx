@@ -34,8 +34,12 @@ import {
 } from "./hooks/usePedidosCompra";
 
 import {
-  buscarResumosRecebimentoFisico,
-} from "./services/recebimentoFisico.service";
+  useResumosRecebimentoFisico,
+} from "./hooks/useResumosRecebimentoFisico";
+
+import {
+  useRecebimentosFisicosUltimos7Dias,
+} from "./hooks/useRecebimentosFisicosUltimos7Dias";
 
 import {
   converterDataLocal,
@@ -98,8 +102,8 @@ const CARDS_RESUMO =
     REQUISICOES_PROXIMOS_7_DIAS:
       "requisicoes-proximos-7-dias",
 
-    REQUISICOES_HOJE:
-      "requisicoes-hoje",
+    RECEBIMENTOS_FISICOS_7_DIAS:
+      "recebimentos-fisicos-7-dias",
   });
 
 function ehPedido(
@@ -440,6 +444,32 @@ export default function PedidosCompraPage() {
   } =
     usePedidosCompra();
 
+  /*
+   * isLoading só deve bloquear a página quando ainda não existe
+   * nenhum dado disponível.
+   *
+   * Se já existe cache, a tabela permanece visível enquanto o
+   * React Query atualiza silenciosamente em segundo plano.
+   */
+  const possuiDados =
+    pedidos.length > 0;
+
+  const carregamentoInicial =
+    isLoading &&
+    !possuiDados;
+
+  const erroSemDados =
+    Boolean(error) &&
+    !possuiDados;
+
+  const {
+    recebimentos:
+      recebimentosFisicosUltimos7Dias,
+    indicadores:
+      indicadoresRecebimentoFisico,
+  } =
+    useRecebimentosFisicosUltimos7Dias();
+
   const [
     filtros,
     setFiltros,
@@ -459,12 +489,6 @@ export default function PedidosCompraPage() {
     setPaginaAtual,
   ] =
     useState(1);
-
-  const [
-    resumosRecebimentoFisico,
-    setResumosRecebimentoFisico,
-  ] =
-    useState({});
 
   const somenteRequisicoes =
     filtros
@@ -491,59 +515,29 @@ export default function PedidosCompraPage() {
       ],
     );
 
-  useEffect(
-    () => {
-      let ativo = true;
+  /*
+   * O resumo físico de TODOS os pedidos só é necessário quando
+   * o usuário realmente utiliza o filtro de recebimento físico.
+   *
+   * Na abertura normal da tela evitamos essa consulta grande.
+   * A tabela carrega apenas os resumos dos pedidos visíveis.
+   */
+  const precisaResumosRecebimentoFisico =
+    !somenteRequisicoes &&
+    filtros.recebimentoFisico !==
+      "TODOS";
 
-      async function carregarResumosRecebimentoFisico() {
-        try {
-          const dados =
-            await buscarResumosRecebimentoFisico(
-              codigosPedidosRecebimentoFisico,
-            );
-
-          if (!ativo) {
-            return;
-          }
-
-          const mapa = {};
-
-          for (const item of dados) {
-            mapa[
-              String(
-                item.cod_ped_compra,
-              )
-            ] = item;
-          }
-
-          setResumosRecebimentoFisico(
-            mapa,
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao carregar filtro de recebimento físico:",
-            error,
-          );
-
-          if (ativo) {
-            setResumosRecebimentoFisico(
-              {},
-            );
-          }
-        }
-      }
-
-      carregarResumosRecebimentoFisico();
-
-      return () => {
-        ativo = false;
-      };
-    },
-    [
+  const {
+    resumos:
+      resumosRecebimentoFisico,
+  } =
+    useResumosRecebimentoFisico(
       codigosPedidosRecebimentoFisico,
-      filtros.recebimentoFisico,
-    ],
-  );
+      {
+        enabled:
+          precisaResumosRecebimentoFisico,
+      },
+    );
 
   const fornecedores =
     useMemo(
@@ -1017,6 +1011,13 @@ export default function PedidosCompraPage() {
             7,
         );
 
+        if (
+          cardModalAberto ===
+          CARDS_RESUMO.RECEBIMENTOS_FISICOS_7_DIAS
+        ) {
+          return [];
+        }
+
         return documentosFiltrados.filter(
           (
             documento,
@@ -1041,7 +1042,6 @@ export default function PedidosCompraPage() {
       CARDS_RESUMO.REQUISICOES_VALOR,
       CARDS_RESUMO.REQUISICOES_ITENS,
       CARDS_RESUMO.REQUISICOES_PROXIMOS_7_DIAS,
-      CARDS_RESUMO.REQUISICOES_HOJE,
     ].includes(
       cardModalAberto,
     );
@@ -1348,13 +1348,16 @@ export default function PedidosCompraPage() {
 
         <PedidosCompraResumo
           loading={
-            isLoading
+            carregamentoInicial
           }
           indicadores={
             indicadores
           }
           indicadoresRequisicoes={
             indicadoresRequisicoes
+          }
+          indicadoresRecebimentoFisico={
+            indicadoresRecebimentoFisico
           }
           tipoDocumento={
             filtros
@@ -1399,7 +1402,7 @@ export default function PedidosCompraPage() {
               </h2>
 
               <p>
-                {isLoading
+                {carregamentoInicial
                   ? "Carregando documentos..."
                   : filtros.tipoDocumento ===
                       TIPOS_DOCUMENTO.TODOS
@@ -1442,7 +1445,7 @@ export default function PedidosCompraPage() {
                         }`}
 
                 {isFetching &&
-                !isLoading
+                !carregamentoInicial
                   ? " • atualizando"
                   : ""}
               </p>
@@ -1481,8 +1484,8 @@ export default function PedidosCompraPage() {
             </div>
           )}
 
-          {!error &&
-            isLoading && (
+          {!erroSemDados &&
+            carregamentoInicial && (
               <div className="compras-estado">
                 <strong>
                   Carregando compras...
@@ -1494,8 +1497,8 @@ export default function PedidosCompraPage() {
               </div>
             )}
 
-          {!error &&
-            !isLoading &&
+          {!erroSemDados &&
+            !carregamentoInicial &&
             pedidosPagina
               .length >
               0 && (
@@ -1528,8 +1531,8 @@ export default function PedidosCompraPage() {
               </>
             )}
 
-          {!error &&
-            !isLoading &&
+          {!erroSemDados &&
+            !carregamentoInicial &&
             pedidosPagina
               .length ===
               0 && (
@@ -1567,12 +1570,18 @@ export default function PedidosCompraPage() {
           cardModalAberto
         }
         indicadores={
-          modalEhRequisicao
-            ? indicadoresRequisicoes
-            : indicadores
+          cardModalAberto ===
+          CARDS_RESUMO.RECEBIMENTOS_FISICOS_7_DIAS
+            ? indicadoresRecebimentoFisico
+            : modalEhRequisicao
+              ? indicadoresRequisicoes
+              : indicadores
         }
         pedidos={
           pedidosDoModal
+        }
+        recebimentosFisicos={
+          recebimentosFisicosUltimos7Dias
         }
         tipoDocumento={
           modalEhRequisicao

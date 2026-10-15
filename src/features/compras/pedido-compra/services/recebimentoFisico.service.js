@@ -245,3 +245,63 @@ export async function receberSaldoFisicoCompleto({
 
   return pendentes.length;
 }
+
+export async function buscarRecebimentosFisicosUltimos7Dias() {
+  const inicio = new Date();
+
+  inicio.setHours(
+    0,
+    0,
+    0,
+    0,
+  );
+
+  inicio.setDate(
+    inicio.getDate() -
+      6,
+  );
+
+  const resultado = await supabase
+    .from(
+      "pedidos_compra_recebimentos_fisicos",
+    )
+    .select(
+      [
+        "id",
+        "cod_ped_compra",
+        "numero_pedido",
+        "codigo_item",
+        "codigo_produto",
+        "codigo_comercial",
+        "descricao_produto",
+        "unidade",
+        "quantidade_movimentada",
+        "tipo_movimento",
+        "usuario_id",
+        "usuario_nome",
+        "registrado_em",
+        "observacao",
+      ].join(","),
+    )
+    .eq(
+      "tipo_movimento",
+      "RECEBIMENTO",
+    )
+    .gte(
+      "registrado_em",
+      inicio.toISOString(),
+    )
+    .order(
+      "registrado_em",
+      { ascending: false },
+    )
+    .order(
+      "id",
+      { ascending: false },
+    );
+
+  return garantirSemErro(
+    resultado,
+    "Não foi possível carregar os recebimentos físicos dos últimos 7 dias.",
+  );
+}
