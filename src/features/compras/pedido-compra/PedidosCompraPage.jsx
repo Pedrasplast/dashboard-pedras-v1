@@ -34,6 +34,10 @@ import {
 } from "./hooks/usePedidosCompra";
 
 import {
+  buscarResumosRecebimentoFisico,
+} from "./services/recebimentoFisico.service";
+
+import {
   converterDataLocal,
   normalizarTexto,
   obterHojeLocal,
@@ -56,6 +60,9 @@ const FILTROS_INICIAIS =
 
     recebimento:
       SITUACOES_RECEBIMENTO.TODOS,
+
+    recebimentoFisico:
+      "TODOS",
 
     dataInicio: "",
 
@@ -331,6 +338,97 @@ function documentoEstaNoPeriodo(
   return true;
 }
 
+function obterCodigoPedidoCompra(
+  pedido,
+) {
+  const codigo = Number(
+    pedido?.cod_ped_compra ??
+      pedido?.codigo_pedido_compra ??
+      pedido?.codigoPedidoCompra ??
+      null,
+  );
+
+  return Number.isFinite(codigo) &&
+    codigo > 0
+    ? codigo
+    : null;
+}
+
+function obterSituacaoRecebimentoFisicoVisual(
+  pedido,
+  resumoManual,
+) {
+  const itens = Array.isArray(
+    pedido?.itens,
+  )
+    ? pedido.itens
+    : [];
+
+  if (!itens.length) {
+    return (
+      resumoManual
+        ?.situacao_recebimento_fisico ||
+      "NAO_RECEBIDO"
+    );
+  }
+
+  let todosCompletosOmie = true;
+  let algumRecebimentoOmie = false;
+
+  for (const item of itens) {
+    const quantidade = Math.max(
+      Number(
+        item?.quantidade ?? 0,
+      ),
+      0,
+    );
+
+    const recebidoOmie =
+      Math.min(
+        Math.max(
+          Number(
+            item?.quantidade_recebida ??
+              0,
+          ),
+          0,
+        ),
+        quantidade,
+      );
+
+    if (recebidoOmie > 0) {
+      algumRecebimentoOmie = true;
+    }
+
+    if (
+      quantidade <= 0 ||
+      recebidoOmie < quantidade
+    ) {
+      todosCompletosOmie = false;
+    }
+  }
+
+  const situacaoManual =
+    resumoManual
+      ?.situacao_recebimento_fisico ||
+    "NAO_RECEBIDO";
+
+  if (
+    todosCompletosOmie ||
+    situacaoManual === "COMPLETO"
+  ) {
+    return "COMPLETO";
+  }
+
+  if (
+    algumRecebimentoOmie ||
+    situacaoManual === "PARCIAL"
+  ) {
+    return "PARCIAL";
+  }
+
+  return "NAO_RECEBIDO";
+}
+
 export default function PedidosCompraPage() {
   const {
     pedidos,
@@ -362,10 +460,90 @@ export default function PedidosCompraPage() {
   ] =
     useState(1);
 
+  const [
+    resumosRecebimentoFisico,
+    setResumosRecebimentoFisico,
+  ] =
+    useState({});
+
   const somenteRequisicoes =
     filtros
       .tipoDocumento ===
     TIPOS_DOCUMENTO.REQUISICAO;
+
+  const codigosPedidosRecebimentoFisico =
+    useMemo(
+      () =>
+        [
+          ...new Set(
+            pedidos
+              .filter(
+                ehPedido,
+              )
+              .map(
+                obterCodigoPedidoCompra,
+              )
+              .filter(Boolean),
+          ),
+        ],
+      [
+        pedidos,
+      ],
+    );
+
+  useEffect(
+    () => {
+      let ativo = true;
+
+      async function carregarResumosRecebimentoFisico() {
+        try {
+          const dados =
+            await buscarResumosRecebimentoFisico(
+              codigosPedidosRecebimentoFisico,
+            );
+
+          if (!ativo) {
+            return;
+          }
+
+          const mapa = {};
+
+          for (const item of dados) {
+            mapa[
+              String(
+                item.cod_ped_compra,
+              )
+            ] = item;
+          }
+
+          setResumosRecebimentoFisico(
+            mapa,
+          );
+        } catch (error) {
+          console.error(
+            "Erro ao carregar filtro de recebimento físico:",
+            error,
+          );
+
+          if (ativo) {
+            setResumosRecebimentoFisico(
+              {},
+            );
+          }
+        }
+      }
+
+      carregarResumosRecebimentoFisico();
+
+      return () => {
+        ativo = false;
+      };
+    },
+    [
+      codigosPedidosRecebimentoFisico,
+      filtros.recebimentoFisico,
+    ],
+  );
 
   const fornecedores =
     useMemo(
@@ -581,6 +759,57 @@ export default function PedidosCompraPage() {
         pedidos,
         filtros,
         somenteRequisicoes,
+      ],
+    );
+
+  const documentosFiltradosTabela =
+    useMemo(
+      () => {
+        if (
+          filtros.recebimentoFisico ===
+          "TODOS"
+        ) {
+          return documentosFiltrados;
+        }
+
+        return documentosFiltrados.filter(
+          (documento) => {
+            if (
+              !ehPedido(
+                documento,
+              )
+            ) {
+              return false;
+            }
+
+            const codigoPedido =
+              obterCodigoPedidoCompra(
+                documento,
+              );
+
+            const resumoManual =
+              codigoPedido
+                ? resumosRecebimentoFisico[
+                    String(
+                      codigoPedido,
+                    )
+                  ] || null
+                : null;
+
+            return (
+              obterSituacaoRecebimentoFisicoVisual(
+                documento,
+                resumoManual,
+              ) ===
+              filtros.recebimentoFisico
+            );
+          },
+        );
+      },
+      [
+        documentosFiltrados,
+        filtros.recebimentoFisico,
+        resumosRecebimentoFisico,
       ],
     );
 
@@ -821,7 +1050,7 @@ export default function PedidosCompraPage() {
     Math.max(
       1,
       Math.ceil(
-        documentosFiltrados
+        documentosFiltradosTabela
           .length /
           PEDIDOS_COMPRA_POR_PAGINA,
       ),
@@ -856,7 +1085,7 @@ export default function PedidosCompraPage() {
 
         const documentosOrdenados =
           [
-            ...documentosFiltrados,
+            ...documentosFiltradosTabela,
           ].sort(
             (
               a,
@@ -927,7 +1156,7 @@ export default function PedidosCompraPage() {
         );
       },
       [
-        documentosFiltrados,
+        documentosFiltradosTabela,
         paginaAtual,
       ],
     );
@@ -958,6 +1187,12 @@ export default function PedidosCompraPage() {
       filtros
         .recebimento !==
         SITUACOES_RECEBIMENTO.TODOS
+    ) ||
+    (
+      !somenteRequisicoes &&
+      filtros
+        .recebimentoFisico !==
+        "TODOS"
     ) ||
     Boolean(
       filtros
@@ -1036,6 +1271,9 @@ export default function PedidosCompraPage() {
 
             recebimento:
               SITUACOES_RECEBIMENTO.TODOS,
+
+            recebimentoFisico:
+              "TODOS",
           };
         }
 
@@ -1166,38 +1404,38 @@ export default function PedidosCompraPage() {
                   : filtros.tipoDocumento ===
                       TIPOS_DOCUMENTO.TODOS
                     ? `${
-                        documentosFiltrados.filter(
+                        documentosFiltradosTabela.filter(
                           ehPedido,
                         ).length
                       } pedidos • ${
-                        documentosFiltrados.filter(
+                        documentosFiltradosTabela.filter(
                           ehRequisicao,
                         ).length
                       } requisições`
                     : filtros.tipoDocumento ===
                         TIPOS_DOCUMENTO.PEDIDO
                       ? `${
-                          documentosFiltrados.length
+                          documentosFiltradosTabela.length
                         } pedido${
-                          documentosFiltrados.length !==
+                          documentosFiltradosTabela.length !==
                           1
                             ? "s"
                             : ""
                         } encontrado${
-                          documentosFiltrados.length !==
+                          documentosFiltradosTabela.length !==
                           1
                             ? "s"
                             : ""
                         }`
                       : `${
-                          documentosFiltrados.length
+                          documentosFiltradosTabela.length
                         } requisição${
-                          documentosFiltrados.length !==
+                          documentosFiltradosTabela.length !==
                           1
                             ? "ões"
                             : ""
                         } encontrada${
-                          documentosFiltrados.length !==
+                          documentosFiltradosTabela.length !==
                           1
                             ? "s"
                             : ""
@@ -1277,7 +1515,7 @@ export default function PedidosCompraPage() {
                     paginaAtual
                   }
                   totalItens={
-                    documentosFiltrados
+                    documentosFiltradosTabela
                       .length
                   }
                   itensPorPagina={

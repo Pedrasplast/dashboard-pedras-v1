@@ -1,0 +1,1143 @@
+/* =========================================================
+   RECEBIMENTO FÍSICO - BASE
+========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.compras-col-recebimento-fisico {
+  min-width: 145px;
+  text-align: center;
+}
+
+.compras-recebimento-fisico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 30px;
+  padding: 5px 9px;
+
+  border: 1px solid #d9dee7;
+  border-radius: 999px;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.compras-recebimento-fisico:hover {
+  transform: translateY(-1px);
+}
+
+.compras-recebimento-fisico small {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.78;
+}
+
+.compras-recebimento-fisico--completo {
+  border-color: #a7d8b6;
+  background: #edf9f0;
+  color: #1f7a3d;
+}
+
+.compras-recebimento-fisico--parcial {
+  border-color: #f0cf87;
+  background: #fff8e8;
+  color: #986b00;
+}
+
+.compras-recebimento-fisico--nao-recebido {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.compras-mobile-status-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* =========================================================
+   BACKDROP DO MODAL
+========================================================= */
+
+.compras-rf-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  /*
+   * IMPORTANTE:
+   * fica acima da navbar, header, dropdowns e demais elementos.
+   */
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100dvh;
+
+  padding:
+    clamp(12px, 2vh, 24px)
+    clamp(12px, 2vw, 28px);
+
+  background: rgba(15, 23, 42, 0.58);
+
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   MODAL PRINCIPAL
+========================================================= */
+
+.compras-rf-modal {
+  position: relative;
+
+  z-index: 100000;
+
+  width: min(980px, 100%);
+
+  /*
+   * Nunca ultrapassa a altura visível da tela.
+   */
+  max-height: calc(100dvh - 32px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 28px 80px rgba(15, 23, 42, 0.32),
+    0 8px 24px rgba(15, 23, 42, 0.12);
+
+  animation: compras-rf-modal-entrar 160ms ease-out;
+}
+
+@keyframes compras-rf-modal-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.compras-rf-cabecalho {
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 22px 24px 18px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.compras-rf-sobretitulo {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #2563eb;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.compras-rf-cabecalho h2,
+.compras-rf-cabecalho p {
+  margin: 0;
+}
+
+.compras-rf-cabecalho h2 {
+  color: #0f172a;
+
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.2;
+}
+
+.compras-rf-cabecalho p {
+  margin-top: 5px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.compras-rf-fechar {
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: #f1f5f9;
+  color: #0f172a;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.compras-rf-fechar:hover {
+  background: #e2e8f0;
+  transform: scale(1.03);
+}
+
+/* =========================================================
+   RESUMO SUPERIOR
+========================================================= */
+
+.compras-rf-resumo {
+  flex: 0 0 auto;
+
+  display: grid;
+  grid-template-columns:
+    minmax(140px, 1fr)
+    minmax(140px, 1fr)
+    auto;
+
+  gap: 14px;
+  align-items: center;
+
+  padding: 14px 24px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #f8fafc;
+}
+
+.compras-rf-resumo > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.compras-rf-resumo span,
+.compras-rf-item-numeros small {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+.compras-rf-resumo strong {
+  color: #0f172a;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   ABAS
+========================================================= */
+
+.compras-rf-abas {
+  flex: 0 0 auto;
+
+  display: flex;
+  gap: 4px;
+
+  padding: 10px 24px 0;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.compras-rf-abas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 9px 12px;
+
+  border: 0;
+  border-bottom: 2px solid transparent;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.compras-rf-abas button.ativo {
+  border-bottom-color: #2563eb;
+  color: #1d4ed8;
+}
+
+/* =========================================================
+   CONTEÚDO / SCROLL
+========================================================= */
+
+.compras-rf-conteudo {
+  /*
+   * Essa é a parte que rola.
+   * Cabeçalho/resumo/abas permanecem visíveis.
+   */
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 18px 24px 24px;
+
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.compras-rf-conteudo::-webkit-scrollbar {
+  width: 8px;
+}
+
+.compras-rf-conteudo::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.compras-rf-conteudo::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.compras-rf-itens,
+.compras-rf-historico {
+  display: grid;
+  gap: 14px;
+}
+
+/* =========================================================
+   ITEM
+========================================================= */
+
+.compras-rf-item {
+  padding: 16px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.compras-rf-item--completo {
+  border-color: #b7dfc2;
+  background: #fbfffc;
+}
+
+.compras-rf-item-cabecalho,
+.compras-rf-historico-topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.compras-rf-item-cabecalho > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.compras-rf-item-cabecalho strong {
+  overflow-wrap: anywhere;
+}
+
+.compras-rf-item-cabecalho span {
+  color: #64748b;
+
+  font-size: 12px;
+
+  overflow-wrap: anywhere;
+}
+
+.compras-rf-status {
+  flex: 0 0 auto;
+
+  align-self: flex-start;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background: #f1f5f9;
+  color: #64748b;
+
+  font-size: 11px !important;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.compras-rf-status--completo {
+  background: #e9f8ed;
+  color: #1f7a3d !important;
+}
+
+.compras-rf-status--parcial {
+  background: #fff5d9;
+  color: #946200 !important;
+}
+
+/* =========================================================
+   NÚMEROS
+========================================================= */
+
+.compras-rf-item-numeros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.compras-rf-item-numeros span {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+}
+
+.compras-rf-item-numeros strong {
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   FORMULÁRIOS
+========================================================= */
+
+.compras-rf-lancamento,
+.compras-rf-estorno-form {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 0.7fr)
+    minmax(220px, 1.3fr);
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.compras-rf-lancamento label,
+.compras-rf-estorno-form label {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  color: #475569;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.compras-rf-lancamento input,
+.compras-rf-estorno-form input,
+.compras-rf-lancamento textarea,
+.compras-rf-estorno-form textarea {
+  width: 100%;
+
+  min-height: 40px;
+
+  padding: 9px 11px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  font: inherit;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.compras-rf-lancamento input:focus,
+.compras-rf-estorno-form input:focus,
+.compras-rf-lancamento textarea:focus,
+.compras-rf-estorno-form textarea:focus {
+  border-color: #3b82f6;
+
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.compras-rf-acoes-item {
+  grid-column: 1 / -1;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.compras-rf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 38px;
+
+  padding: 8px 13px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.compras-rf-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.compras-rf-btn:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.5;
+}
+
+.compras-rf-btn--sucesso {
+  background: #198754;
+}
+
+.compras-rf-btn--secundario {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.compras-rf-btn--perigo {
+  background: #b42318;
+}
+
+/* =========================================================
+   ESTORNO
+========================================================= */
+
+.compras-rf-estorno-area {
+  margin-top: 12px;
+  padding-top: 12px;
+
+  border-top: 1px dashed #e2e8f0;
+}
+
+.compras-rf-link-estorno {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #b42318;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   HISTÓRICO
+========================================================= */
+
+.compras-rf-historico-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+
+  gap: 12px;
+
+  padding: 14px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.compras-rf-historico-icone {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: #eaf7ee;
+  color: #198754;
+}
+
+.compras-rf-historico-item--estorno
+  .compras-rf-historico-icone {
+  background: #fff0ee;
+  color: #b42318;
+}
+
+.compras-rf-historico-corpo {
+  min-width: 0;
+}
+
+.compras-rf-historico-corpo p,
+.compras-rf-historico-corpo small,
+.compras-rf-historico-corpo em {
+  display: block;
+
+  margin-top: 5px;
+}
+
+.compras-rf-historico-corpo p {
+  margin-bottom: 0;
+
+  color: #334155;
+
+  overflow-wrap: anywhere;
+}
+
+.compras-rf-historico-corpo small {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #64748b;
+}
+
+.compras-rf-historico-corpo em {
+  color: #475569;
+
+  font-size: 12px;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+.compras-rf-mensagem {
+  flex: 0 0 auto;
+
+  margin: 12px 24px 0;
+
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+}
+
+.compras-rf-mensagem--erro {
+  background: #fff0ee;
+  color: #b42318;
+}
+
+.compras-rf-mensagem--sucesso {
+  background: #eaf7ee;
+  color: #166534;
+}
+
+.compras-rf-vazio {
+  padding: 28px;
+
+  text-align: center;
+
+  color: #64748b;
+}
+
+/* =========================================================
+   CONFIRMAÇÃO - RECEBER TUDO
+========================================================= */
+
+.compras-rf-confirmacao-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 30;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.48);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.compras-rf-confirmacao {
+  width: min(520px, 100%);
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.3),
+    0 6px 20px rgba(15, 23, 42, 0.12);
+
+  animation: compras-rf-confirmacao-entrar 160ms ease-out;
+}
+
+.compras-rf-confirmacao-icone {
+  display: grid;
+  place-items: center;
+
+  width: 48px;
+  height: 48px;
+
+  margin: 22px 22px 0;
+
+  border-radius: 14px;
+
+  background: #eaf7ee;
+  color: #17833a;
+}
+
+.compras-rf-confirmacao-conteudo {
+  padding: 14px 22px 6px;
+}
+
+.compras-rf-confirmacao-conteudo h3 {
+  margin: 2px 0 8px;
+
+  color: #0f172a;
+
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.compras-rf-confirmacao-conteudo p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.compras-rf-confirmacao-resumo {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.compras-rf-confirmacao-resumo span {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  padding: 11px 12px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+}
+
+.compras-rf-confirmacao-resumo small {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+.compras-rf-confirmacao-resumo strong {
+  color: #0f172a;
+
+  font-size: 13px;
+
+  overflow-wrap: anywhere;
+}
+
+.compras-rf-confirmacao-acoes {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  padding: 16px 22px 20px;
+
+  border-top: 1px solid #eef2f7;
+}
+
+@keyframes compras-rf-confirmacao-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   NOTEBOOK / TELAS COM MENOR ALTURA
+   Ex.: 1366 x 768
+========================================================= */
+
+@media (max-height: 820px) and (min-width: 761px) {
+  .compras-rf-backdrop {
+    padding: 12px 20px;
+  }
+
+  .compras-rf-modal {
+    max-height: calc(100dvh - 24px);
+  }
+
+  .compras-rf-cabecalho {
+    padding-top: 16px;
+    padding-bottom: 14px;
+  }
+
+  .compras-rf-resumo {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .compras-rf-abas {
+    padding-top: 6px;
+  }
+
+  .compras-rf-conteudo {
+    padding-top: 12px;
+    padding-bottom: 16px;
+  }
+
+  .compras-rf-item {
+    padding: 13px;
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .compras-rf-backdrop {
+    padding: 14px;
+  }
+
+  .compras-rf-modal {
+    width: 100%;
+    max-height: calc(100dvh - 28px);
+  }
+
+  .compras-rf-cabecalho {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .compras-rf-resumo {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .compras-rf-abas {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .compras-rf-conteudo {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .compras-rf-mensagem {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+}
+
+/* =========================================================
+   CELULAR / TABLET PEQUENO
+========================================================= */
+
+@media (max-width: 760px) {
+  .compras-rf-backdrop {
+    align-items: flex-end;
+
+    padding: 0;
+
+    background: rgba(15, 23, 42, 0.62);
+  }
+
+  .compras-rf-modal {
+    width: 100%;
+    height: auto;
+
+    max-height: calc(100dvh - 8px);
+
+    border-radius: 18px 18px 0 0;
+  }
+
+  .compras-rf-cabecalho {
+    padding: 16px;
+  }
+
+  .compras-rf-cabecalho h2 {
+    font-size: 20px;
+  }
+
+  .compras-rf-resumo {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    padding: 12px 16px;
+  }
+
+  .compras-rf-resumo .compras-rf-btn {
+    grid-column: 1 / -1;
+
+    width: 100%;
+  }
+
+  .compras-rf-abas {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .compras-rf-conteudo {
+    padding:
+      14px
+      16px
+      calc(20px + env(safe-area-inset-bottom));
+  }
+
+  .compras-rf-mensagem {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .compras-rf-item {
+    padding: 14px;
+  }
+
+  .compras-rf-item-numeros {
+    grid-template-columns: 1fr;
+  }
+
+  .compras-rf-lancamento,
+  .compras-rf-estorno-form {
+    grid-template-columns: 1fr;
+  }
+
+  .compras-rf-acoes-item {
+    grid-column: auto;
+  }
+
+  .compras-rf-acoes-item .compras-rf-btn {
+    flex: 1 1 auto;
+  }
+
+  .compras-rf-confirmacao-backdrop {
+    padding: 14px;
+  }
+
+  .compras-rf-confirmacao-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .compras-rf-confirmacao-acoes {
+    flex-direction: column-reverse;
+  }
+
+  .compras-rf-confirmacao-acoes
+    .compras-rf-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   CELULARES ESTREITOS
+========================================================= */
+
+@media (max-width: 480px) {
+  .compras-rf-cabecalho {
+    padding: 14px;
+  }
+
+  .compras-rf-sobretitulo {
+    font-size: 11px;
+  }
+
+  .compras-rf-cabecalho h2 {
+    font-size: 18px;
+  }
+
+  .compras-rf-resumo {
+    grid-template-columns: 1fr;
+    padding: 10px 14px;
+  }
+
+  .compras-rf-resumo .compras-rf-btn {
+    grid-column: auto;
+  }
+
+  .compras-rf-abas {
+    padding-left: 14px;
+    padding-right: 14px;
+
+    overflow-x: auto;
+  }
+
+  .compras-rf-conteudo {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .compras-rf-item {
+    padding: 12px;
+  }
+
+  .compras-rf-item-cabecalho {
+    align-items: flex-start;
+  }
+
+  .compras-rf-btn {
+    min-height: 40px;
+  }
+
+  .compras-rf-acoes-item {
+    flex-direction: column;
+  }
+
+  .compras-rf-acoes-item
+    .compras-rf-btn {
+    width: 100%;
+  }
+
+  .compras-rf-confirmacao {
+    border-radius: 16px;
+  }
+
+  .compras-rf-confirmacao-icone {
+    margin:
+      18px
+      18px
+      0;
+  }
+
+  .compras-rf-confirmacao-conteudo {
+    padding:
+      12px
+      18px
+      4px;
+  }
+
+  .compras-rf-confirmacao-conteudo h3 {
+    font-size: 18px;
+  }
+
+  .compras-rf-confirmacao-acoes {
+    padding:
+      14px
+      18px
+      18px;
+  }
+}
