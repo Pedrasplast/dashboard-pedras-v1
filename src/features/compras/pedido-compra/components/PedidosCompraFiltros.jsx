@@ -244,6 +244,51 @@ export default function PedidosCompraFiltros({
             </>
           )}
         </select>
+
+        <select
+          value={
+            filtros.recebimentoFisico ??
+            "TODOS"
+          }
+          disabled={
+            somenteRequisicoes
+          }
+          onChange={(
+            event,
+          ) =>
+            onChange(
+              "recebimentoFisico",
+              event.target.value,
+            )
+          }
+          title={
+            somenteRequisicoes
+              ? "Filtro não utilizado em requisições"
+              : "Filtrar pelo controle visual de recebimento físico"
+          }
+        >
+          <option value="TODOS">
+            {somenteRequisicoes
+              ? "Recebimento físico não se aplica"
+              : "Recebimento físico: todos"}
+          </option>
+
+          {!somenteRequisicoes && (
+            <>
+              <option value="NAO_RECEBIDO">
+                Físico: não recebido
+              </option>
+
+              <option value="PARCIAL">
+                Físico: parcial
+              </option>
+
+              <option value="COMPLETO">
+                Físico: completo
+              </option>
+            </>
+          )}
+        </select>
       </div>
 
       <div className="compras-filtros-linha-periodo">

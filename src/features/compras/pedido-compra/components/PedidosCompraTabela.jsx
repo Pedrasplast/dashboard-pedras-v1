@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   AlertTriangle,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
+  CircleDashed,
+  Info,
 } from "lucide-react";
 
 import {
@@ -18,7 +21,13 @@ import {
   obterRotuloSituacaoRecebimento,
 } from "../utils/pedidosCompra.utils";
 
+import PedidosCompraRecebimentoFisicoModal from "./PedidosCompraRecebimentoFisicoModal";
+import {
+  buscarResumosRecebimentoFisico,
+} from "../services/recebimentoFisico.service";
+
 import "./PedidosCompraTabela.css";
+import "./PedidosCompraRecebimentoFisico.css";
 
 function obterNomeCategoria(pedido) {
   return (
@@ -98,6 +107,210 @@ function obterValorItem(item) {
   return (
     quantidade *
     precoUnitario
+  );
+}
+
+function obterCodigoPedidoCompra(pedido) {
+  const codigo = Number(
+    pedido?.cod_ped_compra ??
+      pedido?.codigo_pedido_compra ??
+      pedido?.codigoPedidoCompra ??
+      null,
+  );
+
+  return Number.isFinite(codigo) && codigo > 0
+    ? codigo
+    : null;
+}
+
+
+function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
+  const itens = Array.isArray(pedido?.itens)
+    ? pedido.itens
+    : [];
+
+  let totalItens = itens.length;
+  let itensCompletosOmie = 0;
+  let algumRecebimentoOmie = false;
+  let quantidadeOmieRecebida = 0;
+  let quantidadeOmiePedida = 0;
+
+  for (const item of itens) {
+    const quantidade = Math.max(Number(item?.quantidade ?? 0), 0);
+    const recebidaOmie = Math.min(
+      Math.max(Number(item?.quantidade_recebida ?? 0), 0),
+      quantidade,
+    );
+    const saldoOmie = Math.max(quantidade - recebidaOmie, 0);
+
+    quantidadeOmiePedida += quantidade;
+    quantidadeOmieRecebida += recebidaOmie;
+
+    if (recebidaOmie > 0) {
+      algumRecebimentoOmie = true;
+    }
+
+    if (quantidade > 0 && saldoOmie <= 0) {
+      itensCompletosOmie += 1;
+    }
+  }
+
+  const situacaoManual =
+    resumoManual?.situacao_recebimento_fisico ||
+    "NAO_RECEBIDO";
+
+  const completoOmie =
+    totalItens > 0 &&
+    itensCompletosOmie === totalItens;
+
+  const completoManual =
+    situacaoManual === "COMPLETO";
+
+  const parcialManual =
+    situacaoManual === "PARCIAL";
+
+  let situacao = "NAO_RECEBIDO";
+
+  if (completoOmie || completoManual) {
+    situacao = "COMPLETO";
+  } else if (algumRecebimentoOmie || parcialManual) {
+    situacao = "PARCIAL";
+  }
+
+  const origem = completoOmie
+    ? "OMIE"
+    : completoManual
+      ? "MANUAL"
+      : algumRecebimentoOmie && parcialManual
+        ? "OMIE_E_MANUAL"
+        : algumRecebimentoOmie
+          ? "OMIE"
+          : parcialManual
+            ? "MANUAL"
+            : "NENHUMA";
+
+  return {
+    ...(resumoManual || {}),
+    situacao_recebimento_fisico: situacao,
+    origem_recebimento_visual: origem,
+    total_itens: totalItens || resumoManual?.total_itens || 0,
+    itens_completos:
+      situacao === "COMPLETO" && completoOmie
+        ? totalItens
+        : Math.max(
+            itensCompletosOmie,
+            Number(resumoManual?.itens_completos ?? 0),
+          ),
+    omie_quantidade_recebida: quantidadeOmieRecebida,
+    omie_quantidade_pedida: quantidadeOmiePedida,
+  };
+}
+
+function formatarDataHoraRecebimentoFisico(valor) {
+  if (!valor) return "-";
+
+  const data = new Date(valor);
+
+  if (Number.isNaN(data.getTime())) {
+    return "-";
+  }
+
+  return data.toLocaleString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+  });
+}
+
+function RecebimentoFisicoResumo({ resumo, onClick }) {
+  const situacao =
+    resumo?.situacao_recebimento_fisico ||
+    "NAO_RECEBIDO";
+
+  const configuracao =
+    situacao === "COMPLETO"
+      ? {
+          classe: "completo",
+          rotulo: "Completo",
+          Icone: CheckCircle2,
+        }
+      : situacao === "PARCIAL"
+        ? {
+            classe: "parcial",
+            rotulo: "Parcial",
+            Icone: CircleDashed,
+          }
+        : {
+            classe: "nao-recebido",
+            rotulo: "Não recebido",
+            Icone: CircleDashed,
+          };
+
+  const { Icone } = configuracao;
+
+  const origem = resumo?.origem_recebimento_visual;
+
+  const linhasTitulo = [];
+
+  if (origem === "OMIE" || origem === "OMIE_E_MANUAL") {
+    linhasTitulo.push(
+      situacao === "COMPLETO"
+        ? "Recebimento confirmado pelo Omie"
+        : "Recebimento parcial identificado no Omie",
+    );
+
+    if (Number(resumo?.omie_quantidade_pedida ?? 0) > 0) {
+      linhasTitulo.push(
+        `Omie: ${formatarNumero(
+          resumo.omie_quantidade_recebida,
+          2,
+        )} de ${formatarNumero(
+          resumo.omie_quantidade_pedida,
+          2,
+        )}`,
+      );
+    }
+  }
+
+  if (resumo?.ultima_movimentacao_em) {
+    linhasTitulo.push(
+      `Última movimentação física: ${formatarDataHoraRecebimentoFisico(
+        resumo.ultima_movimentacao_em,
+      )}`,
+      `Por: ${resumo.ultima_movimentacao_usuario || "-"}`,
+    );
+
+    if (resumo.ultima_movimentacao_produto) {
+      linhasTitulo.push(
+        `Item: ${resumo.ultima_movimentacao_produto}`,
+      );
+    }
+  }
+
+  if (!linhasTitulo.length) {
+    linhasTitulo.push("Nenhum recebimento registrado");
+  }
+
+  const titulo = linhasTitulo.join("\n");
+
+  return (
+    <button
+      type="button"
+      className={`compras-recebimento-fisico compras-recebimento-fisico--${configuracao.classe}`}
+      onClick={onClick}
+      title={titulo}
+    >
+      <Icone size={15} />
+      <span>{configuracao.rotulo}</span>
+
+      {situacao === "PARCIAL" &&
+        resumo?.total_itens > 0 && (
+          <small>
+            {resumo.itens_completos || 0}/
+            {resumo.total_itens} itens
+          </small>
+        )}
+
+      <Info size={13} aria-hidden="true" />
+    </button>
   );
 }
 
@@ -555,6 +768,8 @@ function TabelaPedidos({
   documentoEmFoco,
   onEntrarDocumento,
   onSairDocumento,
+  resumosFisicos,
+  onAbrirRecebimentoFisico,
 }) {
   return (
     <div className="compras-tabela-wrapper">
@@ -607,6 +822,10 @@ function TabelaPedidos({
 
             <th className="compras-col-numero">
               Saldo
+            </th>
+
+            <th className="compras-col-recebimento-fisico">
+              Recebido físico
             </th>
 
             <th>
@@ -672,6 +891,26 @@ function TabelaPedidos({
                 pedido
                   .situacao_recebimento ===
                 "EM_ATRASO";
+
+              const codigoPedidoCompra =
+                obterCodigoPedidoCompra(
+                  pedido,
+                );
+
+              const resumoFisicoManual =
+                codigoPedidoCompra
+                  ? resumosFisicos?.[
+                      String(
+                        codigoPedidoCompra,
+                      )
+                    ] || null
+                  : null;
+
+              const resumoFisico =
+                calcularResumoRecebimentoFisicoVisual(
+                  pedido,
+                  resumoFisicoManual,
+                );
 
               return itensVisiveis.map(
                 (
@@ -875,6 +1114,32 @@ function TabelaPedidos({
                         }
                       </td>
 
+                      {primeiro && (
+                        <td
+                          rowSpan={
+                            itensVisiveis.length
+                          }
+                          className="compras-celula-grupo compras-col-recebimento-fisico"
+                        >
+                          {codigoPedidoCompra ? (
+                            <RecebimentoFisicoResumo
+                              resumo={
+                                resumoFisico
+                              }
+                              onClick={() =>
+                                onAbrirRecebimentoFisico(
+                                  pedido,
+                                )
+                              }
+                            />
+                          ) : (
+                            <span className="compras-sem-status">
+                              -
+                            </span>
+                          )}
+                        </td>
+                      )}
+
                       <td>
                         {item?.unidade ||
                           "-"}
@@ -957,6 +1222,87 @@ export default function PedidosCompraTabela({
     setDocumentoEmFoco,
   ] =
     useState(null);
+
+  const [
+    resumosFisicos,
+    setResumosFisicos,
+  ] = useState({});
+
+  const [
+    pedidoRecebimentoFisico,
+    setPedidoRecebimentoFisico,
+  ] = useState(null);
+
+  const [
+    versaoRecebimentoFisico,
+    setVersaoRecebimentoFisico,
+  ] = useState(0);
+
+  const codigosPedidosVisiveis =
+    useMemo(
+      () =>
+        [
+          ...new Set(
+            (pedidos || [])
+              .filter(
+                (pedido) =>
+                  pedido?.tipo_documento !==
+                  TIPOS_DOCUMENTO.REQUISICAO,
+              )
+              .map(
+                obterCodigoPedidoCompra,
+              )
+              .filter(Boolean),
+          ),
+        ],
+      [pedidos],
+    );
+
+  useEffect(
+    () => {
+      let ativo = true;
+
+      async function carregarResumosFisicos() {
+        try {
+          const dados =
+            await buscarResumosRecebimentoFisico(
+              codigosPedidosVisiveis,
+            );
+
+          if (!ativo) return;
+
+          const mapa = {};
+
+          for (const item of dados) {
+            mapa[
+              String(
+                item.cod_ped_compra,
+              )
+            ] = item;
+          }
+
+          setResumosFisicos(
+            mapa,
+          );
+        } catch (error) {
+          console.error(
+            "Erro ao carregar recebimento físico:",
+            error,
+          );
+        }
+      }
+
+      carregarResumosFisicos();
+
+      return () => {
+        ativo = false;
+      };
+    },
+    [
+      codigosPedidosVisiveis,
+      versaoRecebimentoFisico,
+    ],
+  );
 
   const somenteRequisicoes =
     tipoDocumento ===
@@ -1295,6 +1641,12 @@ export default function PedidosCompraTabela({
           onSairDocumento={
             sairDocumento
           }
+          resumosFisicos={
+            resumosFisicos
+          }
+          onAbrirRecebimentoFisico={
+            setPedidoRecebimentoFisico
+          }
         />
       </div>
 
@@ -1360,11 +1712,37 @@ export default function PedidosCompraTabela({
                     </strong>
                   </div>
 
-                  <BadgeRecebimento
-                    situacao={
-                      pedido.situacao_recebimento
-                    }
-                  />
+                  <div className="compras-mobile-status-grupo">
+                    <BadgeRecebimento
+                      situacao={
+                        pedido.situacao_recebimento
+                      }
+                    />
+
+                    {obterCodigoPedidoCompra(
+                      pedido,
+                    ) && (
+                      <RecebimentoFisicoResumo
+                        resumo={
+                          calcularResumoRecebimentoFisicoVisual(
+                            pedido,
+                            resumosFisicos?.[
+                              String(
+                                obterCodigoPedidoCompra(
+                                  pedido,
+                                ),
+                              )
+                            ] || null,
+                          )
+                        }
+                        onClick={() =>
+                          setPedidoRecebimentoFisico(
+                            pedido,
+                          )
+                        }
+                      />
+                    )}
+                  </div>
                 </div>
 
                 <h3>
@@ -1532,6 +1910,23 @@ export default function PedidosCompraTabela({
           },
         )}
       </div>
+
+      <PedidosCompraRecebimentoFisicoModal
+        pedido={pedidoRecebimentoFisico}
+        aberto={Boolean(
+          pedidoRecebimentoFisico,
+        )}
+        onFechar={() =>
+          setPedidoRecebimentoFisico(
+            null,
+          )
+        }
+        onAlterado={() =>
+          setVersaoRecebimentoFisico(
+            (valor) => valor + 1,
+          )
+        }
+      />
     </>
   );
 }
