@@ -2327,7 +2327,7 @@ export default function ProgramacaoModal({
           <div className="programacao-modal-header-texto">
 
             <span>
-              Planejamento de produção · PP
+              Planejamento de produção
             </span>
 
 
@@ -2343,7 +2343,7 @@ export default function ProgramacaoModal({
 
 
             <p>
-              Defina a máquina, o produto e os dias de produção. O sistema calcula automaticamente horas, peças e consumo de PP.
+              Defina a máquina, o produto e os dias de produção. O sistema calcula automaticamente horas, peças e consumo da produção.
             </p>
 
           </div>
@@ -2566,6 +2566,9 @@ export default function ProgramacaoModal({
                         {" - "}
                         {produto.descricao ||
                           "Sem descrição"}
+                        {produto.materialNome
+                          ? ` · ${produto.materialNome}`
+                          : ""}
                       </option>
 
                     ),
@@ -2581,6 +2584,20 @@ export default function ProgramacaoModal({
             {produtoSelecionado && (
 
               <div className="programacao-calendario-config-tecnico">
+
+                <div>
+
+                  <span>
+                    Material
+                  </span>
+
+
+                  <strong>
+                    {produtoSelecionado.materialNome || "-"}
+                  </strong>
+
+                </div>
+
 
                 <div>
 
@@ -3541,7 +3558,7 @@ export default function ProgramacaoModal({
                   <div className="pp">
 
                     <span>
-                      PP previsto
+                      Consumo previsto
                     </span>
 
 
@@ -3611,7 +3628,7 @@ export default function ProgramacaoModal({
 
 
                 <span>
-                  Quando ativa, esta programação entra automaticamente na projeção de consumo de PP.
+                  Quando ativa, esta programação fica disponível para os cálculos de consumo e projeção.
                 </span>
 
               </div>

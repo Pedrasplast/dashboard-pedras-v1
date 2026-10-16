@@ -451,20 +451,23 @@ export async function buscarReceitas() {
 
 
   /* =======================================================
-     PRODUTOS PP ATIVOS
+     PRODUTOS ATIVOS COM MATERIAL CADASTRADO
   ======================================================= */
 
-  const produtosPP =
+  const produtosComMaterial =
     produtos.filter(
       (
         produto,
       ) =>
         produto
-          ?.usaPP ===
-          true &&
-        produto
           ?.ativo !==
-          false,
+          false &&
+        produto
+          ?.materialId !==
+          null &&
+        produto
+          ?.materialId !==
+          undefined,
     );
 
 
@@ -473,7 +476,7 @@ export async function buscarReceitas() {
   ======================================================= */
 
   const receitas =
-    produtosPP.map(
+    produtosComMaterial.map(
       (
         produto,
       ) => {
@@ -543,6 +546,16 @@ export async function buscarReceitas() {
 
           descricao:
             nomeProduto,
+
+          materialId:
+            produto
+              ?.materialId ??
+            null,
+
+          materialNome:
+            produto
+              ?.materialNome ??
+            "-",
 
           pesoKg:
             produto
@@ -1208,7 +1221,7 @@ export async function salvarReceita({
 
    Exclusão lógica:
    - desativa todos os itens ativos da receita;
-   - mantém o Produto PP;
+   - mantém o produto e seu material cadastrado;
    - o produto volta para "A configurar".
 ========================================================= */
 

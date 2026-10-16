@@ -18,8 +18,8 @@
 ========================================================= */
 
 .gerenciar-usuarios-container {
-  width: 70%;
-  max-width: 1400px;
+  width: min(96%, 1560px);
+  max-width: 1560px;
   min-width: 0;
 
   margin: 70px auto 0;
@@ -31,7 +31,8 @@
 
 @media (max-width: 1200px) {
   .gerenciar-usuarios-container {
-    width: 90%;
+    width: 96%;
+    padding-inline: 14px;
   }
 }
 
@@ -41,8 +42,6 @@
     padding: 14px 12px 24px;
   }
 }
-
-
 
 /* =========================================================
    CABEÇALHO
@@ -172,12 +171,38 @@
 .usuarios-table {
   width: 100%;
 
-  min-width: 960px;
+  min-width: 1040px;
 
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
 
   font-size: 12px;
+}
+
+.usuarios-table th:nth-child(1),
+.usuarios-table td:nth-child(1) {
+  width: 34%;
+}
+
+.usuarios-table th:nth-child(2),
+.usuarios-table td:nth-child(2) {
+  width: 14%;
+}
+
+.usuarios-table th:nth-child(3),
+.usuarios-table td:nth-child(3) {
+  width: 20%;
+}
+
+.usuarios-table th:nth-child(4),
+.usuarios-table td:nth-child(4) {
+  width: 20%;
+}
+
+.usuarios-table th:nth-child(5),
+.usuarios-table td:nth-child(5) {
+  width: 12%;
 }
 
 .usuarios-table th {
@@ -221,11 +246,14 @@
 }
 
 .user-email-col {
-  min-width: 240px;
+  min-width: 0;
 
   color: var(--color-text, #0f172a) !important;
 
   font-weight: 650;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .col-centralizada {
@@ -365,6 +393,8 @@
 .btn-delete-user {
   min-height: 31px;
 
+  max-width: 100%;
+
   padding: 0 10px;
 
   border-radius: 7px;
@@ -374,6 +404,8 @@
   font-weight: 700;
 
   cursor: pointer;
+
+  white-space: nowrap;
 
   transition: filter 0.15s ease;
 }
@@ -850,12 +882,169 @@
 }
 
 /* =========================================================
-   RESPONSIVO — TABLET
+   RESPONSIVO — NOTEBOOK / TABLET HORIZONTAL
+========================================================= */
+
+@media (max-width: 1200px) {
+  .gerenciar-usuarios-container {
+    padding: 14px 12px 24px;
+  }
+
+  .usuarios-table {
+    min-width: 960px;
+  }
+
+  .usuarios-table th,
+  .usuarios-table td {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .btn-gerenciar-permissoes {
+    gap: 5px;
+    padding-inline: 8px;
+  }
+
+  .btn-change-role,
+  .btn-delete-user {
+    padding-inline: 8px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVO — TABLET / CELULAR
+
+   A partir daqui a tabela vira cartões. Dessa forma nenhum
+   botão fica cortado e não é necessário arrastar a tabela
+   horizontalmente para encontrar a ação Excluir.
 ========================================================= */
 
 @media (max-width: 900px) {
   .gerenciar-usuarios-container {
+    width: 100%;
     padding: 14px 12px 24px;
+  }
+
+  .table-responsive {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .usuarios-table {
+    width: 100%;
+    min-width: 0;
+    display: block;
+    table-layout: auto;
+    border-collapse: separate;
+  }
+
+  .usuarios-table thead {
+    display: none;
+  }
+
+  .usuarios-table tbody {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .usuarios-table tbody tr {
+    display: grid;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
+  }
+
+  .usuarios-table tbody tr:hover td {
+    background: #ffffff;
+  }
+
+  .usuarios-table td,
+  .usuarios-table th:nth-child(n),
+  .usuarios-table td:nth-child(n) {
+    width: 100%;
+  }
+
+  .usuarios-table td {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(118px, 36%) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 11px 13px;
+    border-bottom: 1px solid #edf1f5;
+    text-align: left !important;
+  }
+
+  .usuarios-table tbody tr:last-child td,
+  .usuarios-table tbody tr td:last-child {
+    border-bottom: 0;
+  }
+
+  .usuarios-table td::before {
+    color: var(--color-text-muted, #64748b);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .usuarios-table td:nth-child(1)::before {
+    content: "E-mail";
+  }
+
+  .usuarios-table td:nth-child(2)::before {
+    content: "Perfil atual";
+  }
+
+  .usuarios-table td:nth-child(3)::before {
+    content: "Acessos liberados";
+  }
+
+  .usuarios-table td:nth-child(4)::before {
+    content: "Nível de acesso";
+  }
+
+  .usuarios-table td:nth-child(5)::before {
+    content: "Ações";
+  }
+
+  .usuarios-table .tabela-vazia {
+    display: block;
+    width: 100%;
+  }
+
+  .usuarios-table .tabela-vazia::before {
+    content: none;
+  }
+
+  .user-email-col {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .badge-role,
+  .acesso-total-admin,
+  .btn-gerenciar-permissoes,
+  .btn-change-role,
+  .btn-delete-user {
+    justify-self: start;
+  }
+
+  .btn-gerenciar-permissoes,
+  .btn-change-role,
+  .btn-delete-user {
+    width: min(100%, 240px);
+  }
+
+  .modal-overlay {
+    padding: 10px;
   }
 }
 
@@ -866,6 +1055,40 @@
 @media (max-width: 600px) {
   .gerenciar-usuarios-container {
     padding: 10px 8px 20px;
+  }
+
+  .admin-header-block {
+    margin-bottom: 12px;
+  }
+
+  .btn-novo-usuario {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .usuarios-table td {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 12px;
+  }
+
+  .usuarios-table td::before {
+    display: block;
+  }
+
+  .badge-role,
+  .acesso-total-admin,
+  .btn-gerenciar-permissoes,
+  .btn-change-role,
+  .btn-delete-user {
+    width: 100%;
+    max-width: none;
+  }
+
+  .btn-gerenciar-permissoes,
+  .btn-change-role,
+  .btn-delete-user {
+    min-height: 38px;
   }
 
   .modal-overlay {
@@ -922,10 +1145,6 @@
 ========================================================= */
 
 @media (max-width: 420px) {
-  .usuarios-table {
-    min-width: 850px;
-  }
-
   .btn-voltar-home,
   .btn-novo-usuario {
     font-size: 10px;

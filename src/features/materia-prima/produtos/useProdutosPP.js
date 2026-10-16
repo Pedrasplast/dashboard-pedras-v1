@@ -5,323 +5,205 @@ import {
 } from "react";
 
 import {
+  buscarMateriaisProdutos,
   buscarProdutosPP,
-
   excluirProdutoPP as excluirProdutoPPService,
-
   salvarProdutoPP,
 } from "./produtosPPService";
-
 
 export default function useProdutosPP({
   carregar = true,
 } = {}) {
-  const [
-    produtos,
-    setProdutos,
-  ] = useState([]);
+  const [produtos, setProdutos] = useState([]);
+  const [materiais, setMateriais] = useState([]);
 
-  const [
-    carregando,
-    setCarregando,
-  ] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const [carregado, setCarregado] = useState(false);
+  const [erro, setErro] = useState("");
 
-  const [
-    carregado,
-    setCarregado,
-  ] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [salvandoCodigo, setSalvandoCodigo] = useState(null);
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
-
-  const [
-    salvando,
-    setSalvando,
-  ] = useState(false);
-
-  const [
-    salvandoCodigo,
-    setSalvandoCodigo,
-  ] = useState(null);
-
-  const [
-    excluindo,
-    setExcluindo,
-  ] = useState(false);
-
-  const [
-    excluindoCodigo,
-    setExcluindoCodigo,
-  ] = useState(null);
-
+  const [excluindo, setExcluindo] = useState(false);
+  const [excluindoCodigo, setExcluindoCodigo] = useState(null);
 
   /* =======================================================
      CARREGAR
   ======================================================= */
 
-  const carregarProdutos =
-    useCallback(
-      async () => {
-        setCarregando(
-          true,
-        );
+  const carregarProdutos = useCallback(async () => {
+    setCarregando(true);
+    setErro("");
 
-        setErro(
-          "",
-        );
+    try {
+      const [
+        produtosResultado,
+        materiaisResultado,
+      ] = await Promise.all([
+        buscarProdutosPP(),
+        buscarMateriaisProdutos(),
+      ]);
 
+      setProdutos(
+        Array.isArray(produtosResultado)
+          ? produtosResultado
+          : [],
+      );
 
-        try {
-          const resultado =
-            await buscarProdutosPP();
+      setMateriais(
+        Array.isArray(materiaisResultado)
+          ? materiaisResultado
+          : [],
+      );
 
+      setCarregado(true);
+    } catch (error) {
+      console.error(
+        "Erro ao carregar produtos por material:",
+        error,
+      );
 
-          setProdutos(
-            Array.isArray(
-              resultado,
-            )
-              ? resultado
-              : [],
-          );
+      setProdutos([]);
+      setMateriais([]);
 
+      setErro(
+        error?.message ||
+          "Não foi possível carregar os produtos por material.",
+      );
 
-          setCarregado(
-            true,
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao carregar Produtos PP:",
-            error,
-          );
-
-
-          setProdutos(
-            [],
-          );
-
-          setErro(
-            error
-              ?.message ||
-            "Não foi possível carregar os Produtos PP.",
-          );
-
-          setCarregado(
-            true,
-          );
-        } finally {
-          setCarregando(
-            false,
-          );
-        }
-      },
-      [],
-    );
-
+      setCarregado(true);
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
 
   /* =======================================================
      CARREGAMENTO AUTOMÁTICO
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (
-        !carregar ||
-        carregado ||
-        carregando
-      ) {
-        return;
-      }
+  useEffect(() => {
+    if (
+      !carregar ||
+      carregado ||
+      carregando
+    ) {
+      return;
+    }
 
-
-      void carregarProdutos();
-    },
-    [
-      carregar,
-      carregado,
-      carregando,
-      carregarProdutos,
-    ],
-  );
-
+    void carregarProdutos();
+  }, [
+    carregar,
+    carregado,
+    carregando,
+    carregarProdutos,
+  ]);
 
   /* =======================================================
      RECARREGAR
   ======================================================= */
 
-  const recarregar =
-    useCallback(
-      async () => {
-        await carregarProdutos();
-      },
-      [
-        carregarProdutos,
-      ],
-    );
-
+  const recarregar = useCallback(async () => {
+    await carregarProdutos();
+  }, [carregarProdutos]);
 
   /* =======================================================
      SALVAR
   ======================================================= */
 
-  const salvarProduto =
-    useCallback(
-      async (
-        dados,
-      ) => {
-        const codigo =
-          dados
-            ?.codigoProdutoOriginal ??
-          dados
-            ?.codigoProduto ??
-          null;
+  const salvarProduto = useCallback(
+    async (dados) => {
+      const codigo =
+        dados?.codigoProdutoOriginal ??
+        dados?.codigoProduto ??
+        null;
 
+      setSalvando(true);
+      setSalvandoCodigo(codigo);
 
-        setSalvando(
-          true,
-        );
+      try {
+        const resultado =
+          await salvarProdutoPP(dados);
 
-        setSalvandoCodigo(
-          codigo,
-        );
+        await carregarProdutos();
 
-
-        try {
-          const resultado =
-            await salvarProdutoPP(
-              dados,
-            );
-
-
-          await carregarProdutos();
-
-
-          return resultado;
-        } finally {
-          setSalvando(
-            false,
-          );
-
-          setSalvandoCodigo(
-            null,
-          );
-        }
-      },
-      [
-        carregarProdutos,
-      ],
-    );
-
+        return resultado;
+      } finally {
+        setSalvando(false);
+        setSalvandoCodigo(null);
+      }
+    },
+    [carregarProdutos],
+  );
 
   /* =======================================================
      EXCLUIR
   ======================================================= */
 
-  const excluirProduto =
-    useCallback(
-      async (
-        codigoProduto,
-      ) => {
-        setExcluindo(
-          true,
-        );
+  const excluirProduto = useCallback(
+    async (codigoProduto) => {
+      setExcluindo(true);
+      setExcluindoCodigo(codigoProduto);
 
-        setExcluindoCodigo(
-          codigoProduto,
-        );
-
-
-        try {
-          const resultado =
-            await excluirProdutoPPService(
-              codigoProduto,
-            );
-
-
-          await carregarProdutos();
-
-
-          return resultado;
-        } finally {
-          setExcluindo(
-            false,
+      try {
+        const resultado =
+          await excluirProdutoPPService(
+            codigoProduto,
           );
 
-          setExcluindoCodigo(
-            null,
-          );
-        }
-      },
-      [
-        carregarProdutos,
-      ],
-    );
+        await carregarProdutos();
 
+        return resultado;
+      } finally {
+        setExcluindo(false);
+        setExcluindoCodigo(null);
+      }
+    },
+    [carregarProdutos],
+  );
 
   /* =======================================================
      ESTADOS POR ITEM
   ======================================================= */
 
-  const produtoEstaSalvando =
-    useCallback(
-      (
-        codigo,
-      ) =>
-        salvando &&
-        String(
-          codigo ?? "",
-        ) ===
-          String(
-            salvandoCodigo ?? "",
-          ),
-      [
-        salvando,
-        salvandoCodigo,
-      ],
-    );
+  const produtoEstaSalvando = useCallback(
+    (codigo) =>
+      salvando &&
+      String(codigo ?? "") ===
+        String(salvandoCodigo ?? ""),
+    [
+      salvando,
+      salvandoCodigo,
+    ],
+  );
 
-
-  const produtoEstaExcluindo =
-    useCallback(
-      (
-        codigo,
-      ) =>
-        excluindo &&
-        String(
-          codigo ?? "",
-        ) ===
-          String(
-            excluindoCodigo ?? "",
-          ),
-      [
-        excluindo,
-        excluindoCodigo,
-      ],
-    );
-
+  const produtoEstaExcluindo = useCallback(
+    (codigo) =>
+      excluindo &&
+      String(codigo ?? "") ===
+        String(excluindoCodigo ?? ""),
+    [
+      excluindo,
+      excluindoCodigo,
+    ],
+  );
 
   return {
     produtos,
+    materiais,
 
     carregando,
-
     carregado,
-
     erro,
 
     salvando,
-
     excluindo,
 
     recarregar,
 
     salvarProduto,
-
     excluirProduto,
 
     produtoEstaSalvando,
-
     produtoEstaExcluindo,
   };
 }

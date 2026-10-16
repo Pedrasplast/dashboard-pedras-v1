@@ -572,7 +572,7 @@ export default function Programacao() {
             <div>
 
               <span>
-                PP período
+                Consumo período
               </span>
 
               <strong>
@@ -708,7 +708,7 @@ export default function Programacao() {
             <p>
               Calculando período real,
               ciclos, cavidades e consumo
-              previsto de PP.
+              previsto da produção.
             </p>
 
           </div>
@@ -759,7 +759,7 @@ export default function Programacao() {
             <p>
               Cadastre o período real de
               produção para calcular o
-              consumo previsto de PP.
+              consumo previsto da produção.
             </p>
 
 
@@ -808,11 +808,12 @@ export default function Programacao() {
                     <th>Injetora</th>
                     <th>Código</th>
                     <th>Produto</th>
+                    <th>Material</th>
                     <th>Ciclo</th>
                     <th>Cavidades</th>
                     <th>Peças previstas</th>
                     <th>Peso</th>
-                    <th>PP período</th>
+                    <th>Consumo período</th>
                     <th>Receita</th>
                     <th>Status</th>
                     <th>Ações</th>
@@ -940,6 +941,13 @@ export default function Programacao() {
                               </small>
 
                             )}
+
+                          </td>
+
+
+                          <td>
+
+                            {item.materialNome || "-"}
 
                           </td>
 

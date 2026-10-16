@@ -1,675 +1,303 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
 import {
-
   useEffect,
-
   useState,
-
 } from "react";
 
-
-
 import {
-
   Save,
-
   Scale,
-
   X,
-
 } from "lucide-react";
-
-
 
 import "./SaldoInicialModal.css";
 
-
-
-
-
 /* =========================================================
-
    UTILITÁRIOS
-
-\========================================================= */
-
-
+========================================================= */
 
 function dataHojeLocal() {
-
   const agora =
-
     new Date();
 
-
-
   const ano =
-
     agora.getFullYear();
 
-
-
   const mes =
-
     String(
-
       agora.getMonth() +
-
         1,
-
     ).padStart(
-
       2,
-
       "0",
-
     );
-
-
 
   const dia =
-
     String(
-
       agora.getDate(),
-
     ).padStart(
-
       2,
-
       "0",
-
     );
-
-
-
-
 
   return `${ano}-${mes}-${dia}`;
-
 }
-
-
-
-
 
 function normalizarQuantidade(
-
   valor,
-
 ) {
-
   const texto =
-
     String(
-
       valor ?? "",
-
     ).trim();
 
-
-
-
-
   if (!texto) {
-
     return null;
-
   }
 
-
-
-
-
   const normalizado =
-
     texto.includes(",")
-
       ? texto
-
           .replace(/\./g, "")
-
           .replace(",", ".")
-
       : texto;
 
-
-
-
-
   const numero =
-
     Number(
-
       normalizado,
-
     );
 
-
-
-
-
   return Number.isFinite(numero)
-
     ? numero
-
     : null;
-
 }
 
-
-
-
-
 /* =========================================================
-
    MODAL
-
-\========================================================= */
-
-
+========================================================= */
 
 export default function SaldoInicialModal({
-
   aberto,
-
   item = null,
-
   fornecedores = [],
-
   materiais = [],
-
   salvando = false,
-
   onCancelar,
-
   onSalvar,
-
 }) {
-
   const [
-
     materialId,
-
     setMaterialId,
-
-  ] = useState("1");
-
-
+  ] = useState("");
 
   const [
-
     fornecedorId,
-
     setFornecedorId,
-
   ] = useState("");
 
-
-
   const [
-
     dataBase,
-
     setDataBase,
-
   ] = useState("");
 
-
-
   const [
-
     quantidadeKg,
-
     setQuantidadeKg,
-
   ] = useState("");
 
-
-
   const [
-
     observacao,
-
     setObservacao,
-
   ] = useState("");
 
-
-
   const [
-
     ativo,
-
     setAtivo,
-
   ] = useState(true);
 
-
-
   const [
-
     erro,
-
     setErro,
-
   ] = useState("");
 
-
-
-
-
   /* =======================================================
-
      CARREGAR
-
   ======================================================= */
 
-
-
   useEffect(
-
     () => {
-
       if (!aberto) {
-
         return;
-
       }
 
-
-
-
-
       if (item) {
-
         setMaterialId(
-
           String(
-
             item.materialId ??
-
-              "1",
-
+              "",
           ),
-
         );
-
-
 
         setFornecedorId(
-
           String(
-
             item.fornecedorId ??
-
               "",
-
           ),
-
         );
-
-
 
         setDataBase(
-
           item.dataBase ||
-
             dataHojeLocal(),
-
         );
-
-
 
         setQuantidadeKg(
-
           String(
-
             item.quantidadeKg ??
-
               "",
-
           ).replace(
-
             ".",
-
             ",",
-
           ),
-
         );
-
-
 
         setObservacao(
-
           item.observacao ||
-
             "",
-
         );
-
-
 
         setAtivo(
-
           item.ativo !==
-
             false,
-
         );
-
       } else {
-
         const materialPadrao =
-
           materiais.find(
-
             (
-
               material,
-
             ) =>
-
-              String(
-
-                material.nome ??
-
-                  "",
-
-              )
-
-                .trim()
-
-                .toUpperCase() ===
-
-              "PP" &&
-
               material.ativo !==
-
-                false,
-
-          ) ??
-
-          materiais.find(
-
-            (
-
-              material,
-
-            ) =>
-
-              material.ativo !==
-
               false,
-
           );
 
-
-
         setMaterialId(
-
           materialPadrao
-
             ? String(
-
                 materialPadrao.id,
-
               )
-
-            : "1",
-
+            : "",
         );
-
-
 
         setFornecedorId("");
 
-
-
         setDataBase(
-
           dataHojeLocal(),
-
         );
-
-
 
         setQuantidadeKg("");
 
-
-
         setObservacao("");
 
-
-
         setAtivo(true);
-
       }
 
-
-
-
-
       setErro("");
-
     },
-
     [
-
       aberto,
-
       item,
-
       materiais,
-
     ],
-
   );
 
-
-
-
-
   /* =======================================================
-
      ESC
-
   ======================================================= */
-
-
-
-
-
-
-
-
 
   /* =======================================================
-
      SALVAR
-
   ======================================================= */
-
-
 
   async function enviar(
-
     event,
-
   ) {
-
     event.preventDefault();
-
-
 
     setErro("");
 
-
-
-
-
     const quantidade =
-
       normalizarQuantidade(
-
         quantidadeKg,
-
       );
-
-
-
-
 
     if (!materialId) {
-
       setErro(
-
         "Selecione o material.",
-
       );
 
-
-
       return;
-
     }
-
-
-
-
 
     if (!fornecedorId) {
-
       setErro(
-
         "Selecione o fornecedor.",
-
       );
 
-
-
       return;
-
     }
-
-
-
-
 
     if (!dataBase) {
-
       setErro(
-
         "Informe a data-base.",
-
       );
 
-
-
       return;
-
     }
-
-
-
-
 
     if (
-
       quantidade ===
-
         null ||
-
       quantidade < 0
-
     ) {
-
       setErro(
-
         "Informe uma quantidade válida.",
-
       );
 
-
-
       return;
-
     }
 
-
-
-
-
     try {
-
       await onSalvar?.({
-
         id:
-
           item?.id ??
-
           null,
-
-
 
         materialId,
 
-
-
         fornecedorId,
-
-
 
         dataBase,
 
-
-
         quantidadeKg:
-
           quantidade,
-
-
 
         observacao,
 
-
-
         ativo,
-
       });
-
     } catch (error) {
-
       setErro(
-
         error?.message ||
-
           "Não foi possível salvar o saldo.",
-
       );
-
     }
-
   }
-
-
-
-
 
   if (!aberto) {
-
     return null;
-
   }
 
-
-
-
-
   return (
-
     <Modal
       asChild
       aberto={aberto}
@@ -678,831 +306,372 @@ export default function SaldoInicialModal({
       tamanho="grande"
       fecharAoClicarFora={false}
     >
-
-
-
       <div
-
         className="saldo-inicial-modal"
-
         role="dialog"
-
         aria-modal="true"
-
       >
-
-
-
-        <div className="saldo-inicial-modal-header" data-modal-header="">
-
-
-
-          <div className="saldo-inicial-modal-icone" data-modal-icone="">
-
-
-
+        <div
+          className="saldo-inicial-modal-header"
+          data-modal-header=""
+        >
+          <div
+            className="saldo-inicial-modal-icone"
+            data-modal-icone=""
+          >
             <Scale
-
               size={22}
-
               aria-hidden="true"
-
             />
-
-
-
           </div>
 
-
-
-
-
           <div className="saldo-inicial-modal-header-texto">
-
-
-
             <span>
-
               Projeção de matéria-prima
-
             </span>
-
-
 
             <ModalTitulo>
               <h3>
-
                 {item
-
                   ? "Editar saldo-base"
-
                   : "Novo saldo-base"}
-
               </h3>
             </ModalTitulo>
 
-
-
             <p>
-
               Informe a quantidade disponível
-
               do fornecedor na data-base.
-
             </p>
-
-
-
           </div>
 
-
-
-
-
           <button
-
             type="button"
-
             className="saldo-inicial-modal-fechar"
-
             onClick={
-
               onCancelar
-
             }
-
             disabled={
-
               salvando
-
             }
-
             aria-label="Fechar"
             data-modal-fechar=""
           >
-
             <X size={19} />
-
           </button>
-
-
-
         </div>
 
-
-
-
-
         <form
-
           className="saldo-inicial-modal-form"
-
           onSubmit={
-
             enviar
-
           }
           data-modal-form=""
         >
-
-
-
           <label className="saldo-inicial-modal-campo">
-
-
-
             <span>
-
               Material
-
             </span>
 
-
-
             <select
-
               value={
-
                 materialId
-
               }
-
               onChange={
-
                 (
-
                   event,
-
                 ) => {
-
                   setMaterialId(
-
                     event.target.value,
-
                   );
 
-
-
                   setErro("");
-
                 }
-
               }
-
               disabled={
-
                 salvando
-
               }
-
             >
-
-
-
               <option value="">
-
                 Selecione o material
-
               </option>
-
-
 
               {materiais
-
                 .filter(
-
                   (
-
                     material,
-
                   ) =>
-
                     material.ativo ||
-
                     String(
-
                       material.id,
-
                     ) ===
-
                       String(
-
                         materialId,
-
                       ),
-
                 )
-
                 .map(
-
                   (
-
                     material,
-
                   ) => (
-
-
-
                     <option
-
                       key={
-
                         material.id
-
                       }
-
                       value={
-
                         material.id
-
                       }
-
                     >
-
                       {material.nome}
 
-
-
                       {!material.ativo
-
                         ? " (Inativo)"
-
                         : ""}
-
                     </option>
-
-
-
                   ),
-
                 )}
-
-
-
             </select>
-
-
-
           </label>
 
-
-
-
-
           <label className="saldo-inicial-modal-campo">
-
-
-
             <span>
-
               Fornecedor / fonte
-
             </span>
-
-
 
             <select
-
               value={
-
                 fornecedorId
-
               }
-
               onChange={
-
                 (
-
                   event,
-
                 ) => {
-
                   setFornecedorId(
-
                     event.target.value,
-
                   );
 
-
-
                   setErro("");
-
                 }
-
               }
-
               disabled={
-
                 salvando
-
               }
-
             >
-
-
-
               <option value="">
-
                 Selecione o fornecedor
-
               </option>
 
-
-
-
-
               {fornecedores
-
                 .filter(
-
                   (
-
                     fornecedor,
-
                   ) =>
-
                     fornecedor.ativo ||
-
                     String(
-
                       fornecedor.id,
-
                     ) ===
-
                       String(
-
                         fornecedorId,
-
                       ),
-
                 )
-
                 .map(
-
                   (
-
                     fornecedor,
-
                   ) => (
-
-
-
                     <option
-
                       key={
-
                         fornecedor.id
-
                       }
-
                       value={
-
                         fornecedor.id
-
                       }
-
                     >
-
                       {fornecedor.nome}
 
-
-
                       {!fornecedor.ativo
-
                         ? " (Inativo)"
-
                         : ""}
-
                     </option>
-
-
-
                   ),
-
                 )}
-
-
-
             </select>
-
-
-
           </label>
-
-
-
-
 
           <div className="saldo-inicial-modal-grid">
-
-
-
             <label className="saldo-inicial-modal-campo">
-
-
-
               <span>
-
                 Data-base
-
               </span>
-
-
 
               <input
-
                 type="date"
-
                 value={
-
                   dataBase
-
                 }
-
                 onChange={
-
                   (
-
                     event,
-
                   ) => {
-
                     setDataBase(
-
                       event.target.value,
-
                     );
 
-
-
                     setErro("");
-
                   }
-
                 }
-
                 disabled={
-
                   salvando
-
                 }
-
               />
-
-
-
             </label>
-
-
-
-
 
             <label className="saldo-inicial-modal-campo">
-
-
-
               <span>
-
                 Quantidade disponível
-
               </span>
-
-
 
               <div className="saldo-inicial-modal-quantidade">
-
-
-
                 <input
-
                   type="text"
-
                   inputMode="decimal"
-
                   value={
-
                     quantidadeKg
-
                   }
-
                   onChange={
-
                     (
-
                       event,
-
                     ) => {
+                      setQuantidadeKg(
+                        event.target.value,
+                      );
 
-                    setQuantidadeKg(
-
-                      event.target.value,
-
-                    );
-
-
-
-                    setErro("");
-
+                      setErro("");
+                    }
                   }
-
-                }
-
-                placeholder="Ex.: 8500"
-
-                disabled={
-
-                  salvando
-
-                }
-
-              />
-
-
+                  placeholder="Ex.: 8500"
+                  disabled={
+                    salvando
+                  }
+                />
 
                 <span>
-
                   kg
-
                 </span>
-
-
-
               </div>
-
-
-
             </label>
-
-
-
           </div>
-
-
-
-
 
           <div className="saldo-inicial-modal-aviso">
-
-
-
             <strong>
-
               Como funciona a data-base?
-
             </strong>
 
-
-
             <p>
-
               Este valor passa a ser o ponto
-
               de partida do estoque deste
-
               fornecedor a partir da data
-
               informada. Um saldo-base mais
-
               recente poderá substituir este
-
               ponto de partida no futuro sem
-
               apagar o histórico.
-
             </p>
-
-
-
           </div>
 
-
-
-
-
           <label className="saldo-inicial-modal-campo">
-
-
-
             <span>
-
               Observação
-
             </span>
 
-
-
             <textarea
-
               rows={3}
-
               value={
-
                 observacao
-
               }
-
               onChange={
-
                 (
-
                   event,
-
                 ) =>
-
                   setObservacao(
-
                     event.target.value,
-
                   )
-
               }
-
               placeholder="Ex.: Inventário físico realizado no início do mês..."
-
               disabled={
-
                 salvando
-
               }
-
             />
-
-
-
           </label>
-
-
-
-
 
           <label className="saldo-inicial-modal-status">
-
-
-
             <input
-
               type="checkbox"
-
               checked={
-
                 ativo
-
               }
-
               onChange={
-
                 (
-
                   event,
-
                 ) =>
-
                   setAtivo(
-
                     event.target.checked,
-
                   )
-
               }
-
               disabled={
-
                 salvando
-
               }
-
             />
 
-
-
             <div>
-
-
-
               <strong>
-
                 Saldo ativo
-
               </strong>
 
-
-
               <span>
-
                 Somente saldos ativos serão
-
                 utilizados pela projeção.
-
               </span>
-
-
-
             </div>
-
-
-
           </label>
 
-
-
-
-
           {erro && (
-
-
-
             <div className="saldo-inicial-modal-erro">
-
               {erro}
-
             </div>
-
-
-
           )}
 
-
-
-
-
-          <div className="saldo-inicial-modal-acoes" data-modal-footer="">
-
-
-
+          <div
+            className="saldo-inicial-modal-acoes"
+            data-modal-footer=""
+          >
             <button
-
               type="button"
-
               className="saldo-inicial-modal-cancelar"
-
               onClick={
-
                 onCancelar
-
               }
-
               disabled={
-
                 salvando
-
               }
               data-modal-acao="secundaria"
             >
-
               Cancelar
-
             </button>
 
-
-
-
-
             <button
-
               type="submit"
-
               className="saldo-inicial-modal-salvar"
-
               disabled={
-
                 salvando
-
               }
               data-modal-acao="primaria"
             >
-
-
-
               <Save size={17} />
 
-
-
               {salvando
-
                 ? "Salvando..."
-
                 : "Salvar saldo"}
-
-
-
             </button>
-
-
-
           </div>
-
-
-
         </form>
-
-
-
       </div>
-
-
-
     </Modal>
-
   );
-
 }

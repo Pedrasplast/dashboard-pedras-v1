@@ -9,7 +9,6 @@ import {
   salvarReceita as salvarReceitaService,
 } from "./receitasService";
 
-
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
@@ -32,7 +31,6 @@ function compararCodigos(
   );
 }
 
-
 function montarItemComFornecedor(
   item,
   fornecedores,
@@ -52,7 +50,6 @@ function montarItemComFornecedor(
         ),
     );
 
-
   return {
     ...item,
 
@@ -67,7 +64,6 @@ function montarItemComFornecedor(
       false,
   };
 }
-
 
 /* =========================================================
    HOOK RECEITAS
@@ -106,88 +102,54 @@ export default function useReceitas({
     setSalvandoCodigo,
   ] = useState(null);
 
-
-  /* =======================================================
-     CARREGAR RECEITAS
-  ======================================================= */
-
   const carregarReceitas =
     useCallback(
       async () => {
-        setCarregando(
-          true,
-        );
-
-        setErro(
-          "",
-        );
-
+        setCarregando(true);
+        setErro("");
 
         try {
           const resultado =
             await buscarReceitas();
 
-
           setReceitas(
             Array.isArray(
-              resultado
-                ?.receitas,
+              resultado?.receitas,
             )
-              ? resultado
-                  .receitas
+              ? resultado.receitas
               : [],
           );
-
 
           setFornecedores(
             Array.isArray(
-              resultado
-                ?.fornecedores,
+              resultado?.fornecedores,
             )
-              ? resultado
-                  .fornecedores
+              ? resultado.fornecedores
               : [],
           );
 
-
-          setCarregado(
-            true,
-          );
+          setCarregado(true);
         } catch (error) {
           console.error(
-            "Erro ao carregar receitas de PP:",
+            "Erro ao carregar receitas por material:",
             error,
           );
 
-
-          setReceitas(
-            [],
-          );
-
-          setFornecedores(
-            [],
-          );
+          setReceitas([]);
+          setFornecedores([]);
 
           setErro(
-            "Não foi possível carregar as receitas de PP.",
+            error?.message ||
+              "Não foi possível carregar as receitas por material.",
           );
 
-          setCarregado(
-            true,
-          );
+          setCarregado(true);
         } finally {
-          setCarregando(
-            false,
-          );
+          setCarregando(false);
         }
       },
       [],
     );
-
-
-  /* =======================================================
-     CARREGAMENTO AUTOMÁTICO
-  ======================================================= */
 
   useEffect(
     () => {
@@ -199,7 +161,6 @@ export default function useReceitas({
         return;
       }
 
-
       void carregarReceitas();
     },
     [
@@ -209,11 +170,6 @@ export default function useReceitas({
       carregarReceitas,
     ],
   );
-
-
-  /* =======================================================
-     RECARREGAR
-  ======================================================= */
 
   const recarregar =
     useCallback(
@@ -225,11 +181,6 @@ export default function useReceitas({
       ],
     );
 
-
-  /* =======================================================
-     SALVAR RECEITA
-  ======================================================= */
-
   const salvarReceita =
     useCallback(
       async ({
@@ -238,10 +189,8 @@ export default function useReceitas({
       }) => {
         const codigo =
           String(
-            codigoProduto ??
-              "",
+            codigoProduto ?? "",
           ).trim();
-
 
         if (!codigo) {
           throw new Error(
@@ -249,36 +198,25 @@ export default function useReceitas({
           );
         }
 
-
-        setSalvandoCodigo(
-          codigo,
-        );
-
+        setSalvandoCodigo(codigo);
 
         try {
           const resultado =
             await salvarReceitaService({
-              codigoProduto:
-                codigo,
-
+              codigoProduto: codigo,
               itens,
             });
-
 
           const itensComFornecedores =
             (
               Array.isArray(
-                resultado
-                  ?.itens,
+                resultado?.itens,
               )
-                ? resultado
-                    .itens
+                ? resultado.itens
                 : []
             )
               .map(
-                (
-                  item,
-                ) =>
+                (item) =>
                   montarItemComFornecedor(
                     item,
                     fornecedores,
@@ -290,44 +228,33 @@ export default function useReceitas({
                   itemB,
                 ) =>
                   String(
-                    itemA
-                      ?.fornecedorNome ??
+                    itemA?.fornecedorNome ??
                       "",
                   ).localeCompare(
                     String(
-                      itemB
-                        ?.fornecedorNome ??
+                      itemB?.fornecedorNome ??
                         "",
                     ),
                     "pt-BR",
                     {
-                      sensitivity:
-                        "base",
+                      sensitivity: "base",
                     },
                   ),
               );
 
-
           setReceitas(
-            (
-              receitasAtuais,
-            ) =>
+            (receitasAtuais) =>
               receitasAtuais
                 .map(
-                  (
-                    receita,
-                  ) => {
+                  (receita) => {
                     if (
                       String(
-                        receita
-                          ?.codigo ??
+                        receita?.codigo ??
                           "",
-                      ) !==
-                      codigo
+                      ) !== codigo
                     ) {
                       return receita;
                     }
-
 
                     return {
                       ...receita,
@@ -336,20 +263,17 @@ export default function useReceitas({
                         itensComFornecedores,
 
                       quantidadeFornecedores:
-                        itensComFornecedores
-                          .length,
+                        itensComFornecedores.length,
 
                       percentualTotal:
                         resultado
                           ?.percentualTotal ??
                         100,
 
-                      configurada:
-                        true,
+                      configurada: true,
 
                       possuiItens:
-                        itensComFornecedores
-                          .length >
+                        itensComFornecedores.length >
                         0,
                     };
                   },
@@ -360,28 +284,22 @@ export default function useReceitas({
                     receitaB,
                   ) =>
                     compararCodigos(
-                      receitaA
-                        ?.codigo,
-                      receitaB
-                        ?.codigo,
+                      receitaA?.codigo,
+                      receitaB?.codigo,
                     ),
                 ),
           );
 
-
           return resultado;
         } catch (error) {
           console.error(
-            `Erro ao salvar receita PP do produto ${codigo}:`,
+            `Erro ao salvar receita do produto ${codigo}:`,
             error,
           );
 
-
           throw error;
         } finally {
-          setSalvandoCodigo(
-            null,
-          );
+          setSalvandoCodigo(null);
         }
       },
       [
@@ -389,24 +307,17 @@ export default function useReceitas({
       ],
     );
 
-
-  /* =======================================================
-     RECEITA ESTÁ SENDO SALVA?
-  ======================================================= */
-
   const receitaEstaSalvando =
     useCallback(
       (
         codigoProduto,
       ) =>
         String(
-          codigoProduto ??
-            "",
+          codigoProduto ?? "",
         ) ===
-        String(
-          salvandoCodigo ??
-            "",
-        ) &&
+          String(
+            salvandoCodigo ?? "",
+          ) &&
         Boolean(
           salvandoCodigo,
         ),
@@ -415,28 +326,18 @@ export default function useReceitas({
       ],
     );
 
-
-  /* =======================================================
-     RETORNO
-  ======================================================= */
-
   return {
     receitas,
-
     fornecedores,
 
     carregando,
-
     carregado,
-
     erro,
 
     salvandoCodigo,
 
     recarregar,
-
     salvarReceita,
-
     receitaEstaSalvando,
   };
 }
