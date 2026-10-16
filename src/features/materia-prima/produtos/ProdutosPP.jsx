@@ -13,38 +13,26 @@ import {
   useState,
 } from "react";
 
-import ConfirmacaoExclusao
-  from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
+import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import ProdutoPPModal from "./ProdutoPPModal";
 import useProdutosPP from "./useProdutosPP";
 
 import "./ProdutosPP.css";
 
-
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function normalizarTexto(
-  valor,
-) {
-  return String(
-    valor ?? "",
-  )
+function normalizarTexto(valor) {
+  return String(valor ?? "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
-
-function formatarKg(
-  valor,
-) {
+function formatarKg(valor) {
   if (
     valor === null ||
     valor === undefined
@@ -52,23 +40,17 @@ function formatarKg(
     return "-";
   }
 
-
-  return `${Number(
-    valor,
-  ).toLocaleString(
+  return `${Number(valor).toLocaleString(
     "pt-BR",
     {
-      minimumFractionDigits:
-        3,
-      maximumFractionDigits:
-        6,
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 6,
     },
   )} kg`;
 }
 
-
 /* =========================================================
-   PRODUTOS PP
+   PRODUTOS POR MATERIAL
 ========================================================= */
 
 export default function ProdutosPP() {
@@ -80,9 +62,12 @@ export default function ProdutosPP() {
   const [
     filtroStatus,
     setFiltroStatus,
-  ] = useState(
-    "todos",
-  );
+  ] = useState("todos");
+
+  const [
+    filtroMaterial,
+    setFiltroMaterial,
+  ] = useState("todos");
 
   const [
     modalAberto,
@@ -104,83 +89,86 @@ export default function ProdutosPP() {
     setErroExclusao,
   ] = useState("");
 
-
   const {
     produtos,
+    materiais,
+
     carregando,
     carregado,
     erro,
+
     salvando,
     excluindo,
+
     recarregar,
     salvarProduto,
     excluirProduto,
+
     produtoEstaSalvando,
     produtoEstaExcluindo,
-  } =
-    useProdutosPP();
-
+  } = useProdutosPP();
 
   /* =======================================================
      FILTROS
   ======================================================= */
 
   const produtosFiltrados =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            busca,
-          );
+    useMemo(() => {
+      const termo =
+        normalizarTexto(busca);
 
+      return produtos.filter(
+        (produto) => {
+          const buscaOk =
+            !termo ||
+            normalizarTexto(
+              produto.codigoProduto,
+            ).includes(termo) ||
+            normalizarTexto(
+              produto.nomeProduto,
+            ).includes(termo) ||
+            normalizarTexto(
+              produto.materialNome,
+            ).includes(termo);
 
-        return produtos.filter(
-          (
-            produto,
-          ) => {
-            const buscaOk =
-              !termo ||
-              normalizarTexto(
-                produto.codigoProduto,
-              ).includes(
-                termo,
-              ) ||
-              normalizarTexto(
-                produto.nomeProduto,
-              ).includes(
-                termo,
-              );
-
-
-            const statusOk =
+          const statusOk =
+            filtroStatus ===
+              "todos" ||
+            (
               filtroStatus ===
-                "todos" ||
-              (
-                filtroStatus ===
-                  "ativos" &&
-                produto.ativo
-              ) ||
-              (
-                filtroStatus ===
-                  "inativos" &&
-                !produto.ativo
+                "ativos" &&
+              produto.ativo
+            ) ||
+            (
+              filtroStatus ===
+                "inativos" &&
+              !produto.ativo
+            );
+
+          const materialOk =
+            filtroMaterial ===
+              "todos" ||
+            String(
+              produto.materialId ??
+                "",
+            ) ===
+              String(
+                filtroMaterial,
               );
 
-
-            return (
-              buscaOk &&
-              statusOk
-            );
-          },
-        );
-      },
-      [
-        produtos,
-        busca,
-        filtroStatus,
-      ],
-    );
-
+          return (
+            buscaOk &&
+            statusOk &&
+            materialOk
+          );
+        },
+      );
+    }, [
+      produtos,
+      busca,
+      filtroStatus,
+      filtroMaterial,
+    ]);
 
   /* =======================================================
      INDICADORES
@@ -194,25 +182,28 @@ export default function ProdutosPP() {
 
         ativos:
           produtos.filter(
-            (
-              produto,
-            ) =>
+            (produto) =>
               produto.ativo,
           ).length,
 
-        inativos:
-          produtos.filter(
-            (
-              produto,
-            ) =>
-              !produto.ativo,
-          ).length,
+        materiais:
+          new Set(
+            produtos
+              .map(
+                (produto) =>
+                  produto.materialId,
+              )
+              .filter(
+                (id) =>
+                  id !== null &&
+                  id !== undefined,
+              ),
+          ).size,
       }),
       [
         produtos,
       ],
     );
-
 
   /* =======================================================
      NOVO
@@ -226,16 +217,9 @@ export default function ProdutosPP() {
       return;
     }
 
-
-    setProdutoEdicao(
-      null,
-    );
-
-    setModalAberto(
-      true,
-    );
+    setProdutoEdicao(null);
+    setModalAberto(true);
   }
-
 
   /* =======================================================
      EDITAR
@@ -252,16 +236,12 @@ export default function ProdutosPP() {
       return;
     }
 
-
     setProdutoEdicao(
       produto,
     );
 
-    setModalAberto(
-      true,
-    );
+    setModalAberto(true);
   }
-
 
   /* =======================================================
      FECHAR
@@ -272,16 +252,9 @@ export default function ProdutosPP() {
       return;
     }
 
-
-    setModalAberto(
-      false,
-    );
-
-    setProdutoEdicao(
-      null,
-    );
+    setModalAberto(false);
+    setProdutoEdicao(null);
   }
-
 
   /* =======================================================
      SALVAR
@@ -294,16 +267,9 @@ export default function ProdutosPP() {
       dados,
     );
 
-
-    setModalAberto(
-      false,
-    );
-
-    setProdutoEdicao(
-      null,
-    );
+    setModalAberto(false);
+    setProdutoEdicao(null);
   }
-
 
   /* =======================================================
      EXCLUSÃO
@@ -320,32 +286,20 @@ export default function ProdutosPP() {
       return;
     }
 
-
-    setErroExclusao(
-      "",
-    );
-
+    setErroExclusao("");
     setProdutoParaExcluir(
       produto,
     );
   }
-
 
   function cancelarExclusao() {
     if (excluindo) {
       return;
     }
 
-
-    setErroExclusao(
-      "",
-    );
-
-    setProdutoParaExcluir(
-      null,
-    );
+    setErroExclusao("");
+    setProdutoParaExcluir(null);
   }
-
 
   async function confirmarExclusao() {
     if (
@@ -355,11 +309,7 @@ export default function ProdutosPP() {
       return;
     }
 
-
-    setErroExclusao(
-      "",
-    );
-
+    setErroExclusao("");
 
     try {
       await excluirProduto(
@@ -367,19 +317,16 @@ export default function ProdutosPP() {
           .codigoProduto,
       );
 
-
       setProdutoParaExcluir(
         null,
       );
     } catch (error) {
       setErroExclusao(
-        error
-          ?.message ||
-        "Não foi possível excluir o Produto PP.",
+        error?.message ||
+          "Não foi possível excluir o produto.",
       );
     }
   }
-
 
   /* =======================================================
      RENDER
@@ -388,26 +335,19 @@ export default function ProdutosPP() {
   return (
     <>
       <div className="produtos-pp">
-
         <div className="produtos-pp-toolbar">
-
           <div className="produtos-pp-indicadores">
-
             <div>
-
               <span>
-                Produtos PP
+                Produtos
               </span>
 
               <strong>
                 {indicadores.total}
               </strong>
-
             </div>
 
-
             <div>
-
               <span>
                 Ativos
               </span>
@@ -415,112 +355,104 @@ export default function ProdutosPP() {
               <strong>
                 {indicadores.ativos}
               </strong>
-
             </div>
 
-
             <div>
-
               <span>
-                Inativos
+                Materiais
               </span>
 
               <strong>
-                {indicadores.inativos}
+                {indicadores.materiais}
               </strong>
-
             </div>
-
           </div>
-
 
           <button
             type="button"
             className="produtos-pp-novo"
-            onClick={
-              novoProduto
-            }
+            onClick={novoProduto}
             disabled={
               salvando ||
               excluindo
             }
           >
-
             <Plus size={17} />
-
             Cadastrar produto
-
           </button>
-
         </div>
 
-
         <div className="produtos-pp-explicacao">
-
           <Boxes
             size={18}
             aria-hidden="true"
           />
 
-
           <div>
-
             <strong>
-              Cadastro próprio de Produtos PP
+              Produtos por material
             </strong>
 
             <p>
-              Os produtos desta tela são
-              cadastrados diretamente no módulo
-              de Matéria-Prima. Não existe mais
-              vínculo com os produtos dos
-              pedidos.
+              Os produtos utilizam o material
+              definido no cadastro central.
+              Receitas e programação serão
+              migradas para essa mesma referência.
             </p>
-
           </div>
-
         </div>
 
-
         <div className="produtos-pp-filtros">
-
           <label className="produtos-pp-busca">
-
             <Search size={16} />
 
             <input
               type="search"
-              value={
-                busca
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setBusca(
-                    event.target.value,
-                  )
-              }
-              placeholder="Buscar por código ou produto..."
-            />
-
-          </label>
-
-
-          <select
-            value={
-              filtroStatus
-            }
-            onChange={
-              (
-                event,
-              ) =>
-                setFiltroStatus(
+              value={busca}
+              onChange={(event) =>
+                setBusca(
                   event.target.value,
                 )
+              }
+              placeholder="Buscar código, produto ou material..."
+            />
+          </label>
+
+          <select
+            value={filtroMaterial}
+            onChange={(event) =>
+              setFiltroMaterial(
+                event.target.value,
+              )
             }
           >
+            <option value="todos">
+              Todos os materiais
+            </option>
 
+            {materiais.map(
+              (material) => (
+                <option
+                  key={material.id}
+                  value={material.id}
+                >
+                  {material.nome}
+                  {!material.ativo
+                    ? " (inativo)"
+                    : ""}
+                </option>
+              ),
+            )}
+          </select>
+
+          <select
+            value={filtroStatus}
+            onChange={(event) =>
+              setFiltroStatus(
+                event.target.value,
+              )
+            }
+          >
             <option value="todos">
               Todos os status
             </option>
@@ -532,23 +464,18 @@ export default function ProdutosPP() {
             <option value="inativos">
               Inativos
             </option>
-
           </select>
-
 
           <button
             type="button"
             className="produtos-pp-atualizar"
-            onClick={
-              recarregar
-            }
+            onClick={recarregar}
             disabled={
               carregando ||
               salvando ||
               excluindo
             }
           >
-
             <RefreshCw
               size={16}
               className={
@@ -559,35 +486,23 @@ export default function ProdutosPP() {
             />
 
             Atualizar
-
           </button>
-
         </div>
 
-
         {carregando && (
-
           <div className="produtos-pp-estado">
-
             <span className="produtos-pp-loading" />
 
             <strong>
               Carregando produtos
             </strong>
-
           </div>
-
         )}
-
 
         {!carregando &&
           erro && (
-
           <div className="produtos-pp-estado produtos-pp-erro">
-
-            <AlertTriangle
-              size={30}
-            />
+            <AlertTriangle size={30} />
 
             <strong>
               Erro ao carregar produtos
@@ -596,296 +511,258 @@ export default function ProdutosPP() {
             <p>
               {erro}
             </p>
-
           </div>
-
         )}
-
 
         {!carregando &&
           !erro &&
           carregado &&
-          produtos.length ===
-            0 && (
-
+          produtos.length === 0 && (
           <div className="produtos-pp-estado">
-
             <Boxes
               size={35}
               strokeWidth={1.7}
             />
 
             <strong>
-              Nenhum Produto PP cadastrado
+              Nenhum produto cadastrado
             </strong>
 
             <p>
-              Cadastre os produtos que utilizam
-              matéria-prima PP e informe os
-              parâmetros de produção.
+              Cadastre o produto, selecione seu
+              material e informe os parâmetros de
+              produção.
             </p>
-
 
             <button
               type="button"
               className="produtos-pp-vazio-novo"
-              onClick={
-                novoProduto
-              }
+              onClick={novoProduto}
             >
-
               <Plus size={16} />
-
               Cadastrar primeiro produto
-
             </button>
-
           </div>
-
         )}
-
 
         {!carregando &&
           !erro &&
-          produtos.length >
-            0 && (
-
+          produtos.length > 0 && (
           <>
-
             <div className="produtos-pp-tabela-container">
-
               <table className="produtos-pp-tabela">
-
                 <thead>
-
                   <tr>
-                    <th>Código</th>
-                    <th>Produto</th>
-                    <th>Material</th>
-                    <th>Peso por peça</th>
-                    <th>Ciclo</th>
-                    <th>Cavidades</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
+                    <th>
+                      Código
+                    </th>
 
+                    <th>
+                      Produto
+                    </th>
+
+                    <th>
+                      Material
+                    </th>
+
+                    <th>
+                      Peso por peça
+                    </th>
+
+                    <th>
+                      Ciclo
+                    </th>
+
+                    <th>
+                      Cavidades
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
+                    <th>
+                      Ações
+                    </th>
+                  </tr>
                 </thead>
 
-
                 <tbody>
-
                   {produtosFiltrados.map(
-                    (
-                      produto,
-                    ) => (
-
-                    <tr
-                      key={
-                        produto.codigoProduto
-                      }
-                    >
-
-                      <td className="produtos-pp-codigo">
-                        {produto.codigoProduto}
-                      </td>
-
-
-                      <td className="produtos-pp-produto">
-
-                        <strong>
-                          {produto.nomeProduto}
-                        </strong>
-
-                      </td>
-
-
-                      <td>
-
-                        <span className="produtos-pp-material">
-                          PP
-                        </span>
-
-                      </td>
-
-
-                      <td className="produtos-pp-peso">
-
-                        {formatarKg(
-                          produto.pesoKg,
-                        )}
-
-                      </td>
-
-
-                      <td className="produtos-pp-ciclo">
-
-                        {produto
-                          .cicloSegundos !==
-                            null &&
-                        produto
-                          .cicloSegundos !==
-                            undefined
-                          ? `${Number(
-                              produto
-                                .cicloSegundos,
-                            ).toLocaleString(
-                              "pt-BR",
-                              {
-                                maximumFractionDigits:
-                                  2,
-                              },
-                            )} s`
-                          : "-"}
-
-                      </td>
-
-
-                      <td className="produtos-pp-cavidades">
-
-                        {produto
-                          .cavidadeMolde ??
-                          "-"}
-
-                      </td>
-
-
-                      <td>
-
-                        <span
-                          className={
-                            produto.ativo
-                              ? "produtos-pp-status ativo"
-                              : "produtos-pp-status inativo"
+                    (produto) => (
+                      <tr
+                        key={
+                          produto
+                            .codigoProduto
+                        }
+                      >
+                        <td className="produtos-pp-codigo">
+                          {
+                            produto
+                              .codigoProduto
                           }
-                        >
-                          {produto.ativo
-                            ? "Ativo"
-                            : "Inativo"}
-                        </span>
+                        </td>
 
-                      </td>
+                        <td className="produtos-pp-produto">
+                          <strong>
+                            {
+                              produto
+                                .nomeProduto
+                            }
+                          </strong>
+                        </td>
 
+                        <td>
+                          <span className="produtos-pp-material">
+                            {
+                              produto
+                                .materialNome ||
+                              "-"
+                            }
+                          </span>
+                        </td>
 
-                      <td>
+                        <td className="produtos-pp-peso">
+                          {formatarKg(
+                            produto
+                              .pesoKg,
+                          )}
+                        </td>
 
-                        <div
-                          style={{
-                            display:
-                              "flex",
+                        <td className="produtos-pp-ciclo">
+                          {produto.cicloSegundos !==
+                            null &&
+                          produto.cicloSegundos !==
+                            undefined
+                            ? `${Number(
+                                produto
+                                  .cicloSegundos,
+                              ).toLocaleString(
+                                "pt-BR",
+                                {
+                                  maximumFractionDigits:
+                                    2,
+                                },
+                              )} s`
+                            : "-"}
+                        </td>
 
-                            alignItems:
-                              "center",
+                        <td className="produtos-pp-cavidades">
+                          {
+                            produto
+                              .cavidadeMolde ??
+                            "-"
+                          }
+                        </td>
 
-                            gap:
-                              "6px",
-                          }}
-                        >
+                        <td>
+                          <span
+                            className={
+                              produto.ativo
+                                ? "produtos-pp-status ativo"
+                                : "produtos-pp-status inativo"
+                            }
+                          >
+                            {produto.ativo
+                              ? "Ativo"
+                              : "Inativo"}
+                          </span>
+                        </td>
 
-                          <button
-                            type="button"
-                            className="produtos-pp-editar"
-                            onClick={
-                              () =>
+                        <td>
+                          <div
+                            style={{
+                              display:
+                                "flex",
+                              alignItems:
+                                "center",
+                              gap:
+                                "6px",
+                            }}
+                          >
+                            <button
+                              type="button"
+                              className="produtos-pp-editar"
+                              onClick={() =>
                                 editarProduto(
                                   produto,
                                 )
-                            }
-                            disabled={
-                              salvando ||
-                              excluindo
-                            }
-                          >
+                              }
+                              disabled={
+                                salvando ||
+                                excluindo
+                              }
+                            >
+                              <Pencil
+                                size={14}
+                              />
 
-                            <Pencil
-                              size={14}
-                            />
+                              {produtoEstaSalvando(
+                                produto
+                                  .codigoProduto,
+                              )
+                                ? "Salvando..."
+                                : "Editar"}
+                            </button>
 
-                            {produtoEstaSalvando(
-                              produto.codigoProduto,
-                            )
-                              ? "Salvando..."
-                              : "Editar"}
-
-                          </button>
-
-
-                          <button
-                            type="button"
-                            className="produtos-pp-editar"
-                            onClick={
-                              () =>
+                            <button
+                              type="button"
+                              className="produtos-pp-editar"
+                              onClick={() =>
                                 solicitarExclusao(
                                   produto,
                                 )
-                            }
-                            disabled={
-                              salvando ||
-                              excluindo
-                            }
-                            style={{
-                              color:
-                                "#dc2626",
+                              }
+                              disabled={
+                                salvando ||
+                                excluindo
+                              }
+                              style={{
+                                color:
+                                  "#dc2626",
+                                borderColor:
+                                  "#fecaca",
+                                background:
+                                  "#ffffff",
+                              }}
+                            >
+                              <Trash2
+                                size={14}
+                              />
 
-                              borderColor:
-                                "#fecaca",
-
-                              background:
-                                "#ffffff",
-                            }}
-                          >
-
-                            <Trash2
-                              size={14}
-                            />
-
-                            {produtoEstaExcluindo(
-                              produto.codigoProduto,
-                            )
-                              ? "Excluindo..."
-                              : "Excluir"}
-
-                          </button>
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-
+                              {produtoEstaExcluindo(
+                                produto
+                                  .codigoProduto,
+                              )
+                                ? "Excluindo..."
+                                : "Excluir"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
                     ),
                   )}
-
                 </tbody>
-
               </table>
-
             </div>
-
 
             <div className="produtos-pp-rodape">
-
               Exibindo{" "}
-
               <strong>
-                {produtosFiltrados.length}
-              </strong>
-
-              {" "}de{" "}
-
+                {
+                  produtosFiltrados.length
+                }
+              </strong>{" "}
+              de{" "}
               <strong>
                 {produtos.length}
-              </strong>
-
-              {" "}produtos
-
+              </strong>{" "}
+              produtos
             </div>
-
 
             {produtosFiltrados.length ===
               0 && (
-
               <div className="produtos-pp-sem-resultado">
-
                 <Search size={27} />
 
                 <strong>
@@ -896,44 +773,26 @@ export default function ProdutosPP() {
                   Altere os filtros para
                   visualizar outros produtos.
                 </p>
-
               </div>
-
             )}
-
           </>
-
         )}
-
       </div>
 
-
       <ProdutoPPModal
-        aberto={
-          modalAberto
-        }
-        item={
-          produtoEdicao
-        }
-        salvando={
-          salvando
-        }
-        onCancelar={
-          fecharModal
-        }
-        onSalvar={
-          salvar
-        }
+        aberto={modalAberto}
+        item={produtoEdicao}
+        materiais={materiais}
+        salvando={salvando}
+        onCancelar={fecharModal}
+        onSalvar={salvar}
       />
 
-
       <ConfirmacaoExclusao
-        aberto={
-          Boolean(
-            produtoParaExcluir,
-          )
-        }
-        titulo="Excluir Produto PP?"
+        aberto={Boolean(
+          produtoParaExcluir,
+        )}
+        titulo="Excluir produto?"
         descricao="O produto e seus parâmetros técnicos serão removidos definitivamente."
         itemTitulo={
           produtoParaExcluir
@@ -946,6 +805,15 @@ export default function ProdutosPP() {
             : ""
         }
         detalhes={[
+          {
+            label:
+              "Material",
+
+            valor:
+              produtoParaExcluir
+                ?.materialNome ||
+              "-",
+          },
           {
             label:
               "Peso da peça",
@@ -988,21 +856,12 @@ export default function ProdutosPP() {
                 : "Inativo",
           },
         ]}
-        erro={
-          erroExclusao
-        }
-        processando={
-          excluindo
-        }
+        erro={erroExclusao}
+        processando={excluindo}
         textoConfirmar="Excluir produto"
-        onCancelar={
-          cancelarExclusao
-        }
-        onConfirmar={
-          confirmarExclusao
-        }
+        onCancelar={cancelarExclusao}
+        onConfirmar={confirmarExclusao}
       />
-
     </>
   );
 }

@@ -208,6 +208,12 @@ export default function Receitas() {
                 ?.descricao,
             ).includes(
               termo,
+            ) ||
+            normalizarTexto(
+              receita
+                ?.materialNome,
+            ).includes(
+              termo,
             ),
         );
       },
@@ -766,7 +772,7 @@ export default function Receitas() {
             <div className="receitas-pp-indicador">
 
               <span>
-                Produtos PP
+                Produtos
               </span>
 
               <strong>
@@ -835,7 +841,7 @@ export default function Receitas() {
                         .value,
                     )
                 }
-                placeholder="Buscar por código ou produto..."
+                placeholder="Buscar por código, produto ou material..."
               />
 
             </label>
@@ -944,7 +950,7 @@ export default function Receitas() {
               />
 
               <strong>
-                Nenhum produto PP disponível
+                Nenhum produto com material disponível
               </strong>
 
               <p>
@@ -980,6 +986,10 @@ export default function Receitas() {
 
                       <th>
                         Produto
+                      </th>
+
+                      <th>
+                        Material
                       </th>
 
                       <th>
@@ -1068,6 +1078,14 @@ export default function Receitas() {
 
                             </td>
 
+
+                            <td>
+                              <strong>
+                                {receita
+                                  .materialNome ||
+                                  "-"}
+                              </strong>
+                            </td>
 
                             <td>
                               {
@@ -1230,7 +1248,7 @@ export default function Receitas() {
                   }
                 </strong>
 
-                {" "}produtos PP
+                {" "}produtos
 
               </div>
 
@@ -1308,7 +1326,7 @@ export default function Receitas() {
               <div className="receitas-editor-header-texto">
 
                 <span>
-                  Receita de PP
+                  Receita por material
                 </span>
 
                 <ModalTitulo>
@@ -1321,6 +1339,13 @@ export default function Receitas() {
                 </ModalTitulo>
 
                 <p>
+                  Material:{" "}
+                  <strong>
+                    {receitaEmEdicao
+                      .materialNome ||
+                      "-"}
+                  </strong>
+                  {" • "}
                   {receitaEmEdicao
                     .descricao ||
                     "Sem descrição"}

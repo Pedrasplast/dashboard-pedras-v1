@@ -39,11 +39,14 @@ export async function buscarProdutosCadastro() {
     parametrosResultado,
   ] = await Promise.all([
     supabase
-      .from("materia_prima_produtos")
+      .from("materia_prima_produtos_cadastro")
       .select(`
         codigo_produto,
         nome_produto,
         usa_pp,
+        material_id,
+        material_nome,
+        material_ativo,
         peso_kg,
         ativo,
         criado_em,
@@ -148,6 +151,19 @@ export async function buscarProdutosCadastro() {
         usaPp:
           produto.usa_pp === true,
 
+        materialId:
+          numero(
+            produto.material_id,
+          ),
+
+        materialNome:
+          texto(
+            produto.material_nome,
+          ),
+
+        materialAtivo:
+          produto.material_ativo === true,
+
         pesoKg:
           numero(
             produto.peso_kg,
@@ -218,7 +234,8 @@ export async function salvarProdutoCadastro({
   codigoProduto,
   codigoOriginal,
   nomeProduto,
-  usaPp,
+  materialId,
+  usaPp = true,
   pesoKg,
   ativo,
   cavidadeMolde,
@@ -233,7 +250,7 @@ export async function salvarProdutoCadastro({
     error,
   } =
     await supabase.rpc(
-      "salvar_cadastro_produto",
+      "salvar_cadastro_produto_v2",
       {
         p_codigo_produto:
           codigoProduto,
@@ -241,8 +258,16 @@ export async function salvarProdutoCadastro({
         p_nome_produto:
           nomeProduto,
 
+        /*
+         * Compatibilidade temporária:
+         * as telas antigas ainda filtram usa_pp = true.
+         * A origem correta passa a ser material_id.
+         */
         p_usa_pp:
-          usaPp,
+          usaPp !== false,
+
+        p_material_id:
+          materialId,
 
         p_peso_kg:
           pesoKg,

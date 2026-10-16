@@ -54,6 +54,7 @@ function normalizarNumero(valor) {
 export default function CadastroProdutoModal({
   aberto,
   item = null,
+  materiais = [],
   salvando = false,
   onCancelar,
   onSalvar,
@@ -94,9 +95,9 @@ export default function CadastroProdutoModal({
   ] = useState("");
 
   const [
-    usaPp,
-    setUsaPp,
-  ] = useState(true);
+    materialId,
+    setMaterialId,
+  ] = useState("");
 
   const [
     ativo,
@@ -183,8 +184,11 @@ export default function CadastroProdutoModal({
       valorParaCampo(item?.kgHaste),
     );
 
-    setUsaPp(
-      item ? item.usaPp === true : true,
+    setMaterialId(
+      item?.materialId !== null &&
+      item?.materialId !== undefined
+        ? String(item.materialId)
+        : "",
     );
 
     setAtivo(item?.ativo !== false);
@@ -449,6 +453,21 @@ export default function CadastroProdutoModal({
       return;
     }
 
+    const materialIdFinal =
+      Number(materialId);
+
+    if (
+      !materialId ||
+      !Number.isInteger(materialIdFinal) ||
+      materialIdFinal <= 0
+    ) {
+      setErro(
+        "Selecione o material do produto.",
+      );
+
+      return;
+    }
+
     /* =================================================
        ENVIAR PARA O SERVIÇO
 
@@ -468,7 +487,14 @@ export default function CadastroProdutoModal({
 
         nomeProduto: nomeFinal,
 
-        usaPp,
+        materialId:
+          materialIdFinal,
+
+        /*
+         * Compatibilidade temporária com telas
+         * ainda não migradas para material_id.
+         */
+        usaPp: true,
 
         pesoKg:
           item?.pesoKg ?? null,
@@ -774,34 +800,49 @@ export default function CadastroProdutoModal({
 
           </div>
 
+          {/* MATERIAL */}
+
+          <label className="produto-pp-modal-campo">
+
+            <span>Material</span>
+
+            <select
+              value={materialId}
+              onChange={(evento) => {
+                setMaterialId(evento.target.value);
+                setErro("");
+              }}
+              disabled={salvando}
+              required
+            >
+              <option value="">
+                Selecione o material
+              </option>
+
+              {materiais
+                .filter((material) =>
+                  material.ativo ||
+                  String(material.id) === String(materialId),
+                )
+                .map((material) => (
+                  <option
+                    key={material.id}
+                    value={String(material.id)}
+                  >
+                    {material.nome}
+                  </option>
+                ))}
+            </select>
+
+            <small>
+              Material utilizado na fabricação deste produto.
+            </small>
+
+          </label>
+
           {/* OPÇÕES */}
 
           <div className="cadastro-produto-modal-status-grid">
-
-            <label className="produto-pp-modal-status">
-
-              <input
-                type="checkbox"
-                checked={usaPp}
-                onChange={(evento) => {
-                  setUsaPp(evento.target.checked);
-                  setErro("");
-                }}
-                disabled={salvando}
-              />
-
-              <div>
-
-                <strong>Usa PP</strong>
-
-                <span>
-                  Produto utiliza PP no cálculo
-                  de matéria-prima.
-                </span>
-
-              </div>
-
-            </label>
 
             <label className="produto-pp-modal-status">
 

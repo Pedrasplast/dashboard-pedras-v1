@@ -155,7 +155,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
     }
 
     return produtos.filter((produto) =>
-      normalizarTexto(`${produto.codigoProduto} ${produto.nomeProduto}`).includes(termo),
+      normalizarTexto(`${produto.codigoProduto} ${produto.nomeProduto} ${produto.materialNome ?? ""}`).includes(termo),
     );
   }, [produtos, pesquisa]);
 
@@ -597,7 +597,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
 
                       <th>Produto</th>
 
-                      <th>PP</th>
+                      <th>Material</th>
 
                       <th className="numero">Cavidades</th>
 
@@ -652,9 +652,9 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                             </strong>
                           </td>
 
-                          {/* UTILIZA PP */}
+                          {/* MATERIAL */}
 
-                          <td>{produto.usaPp ? "Sim" : "Não"}</td>
+                          <td>{produto.materialNome || "-"}</td>
 
                           {/* CAVIDADES */}
 
@@ -919,6 +919,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
       <CadastroProdutoModal
         aberto={modalProdutoAberto}
         item={produtoEdicao}
+        materiais={materiais}
         salvando={salvandoProduto}
         onCancelar={fecharModalProduto}
         onSalvar={handleSalvarProduto}

@@ -1,7 +1,9 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
+
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -13,24 +15,17 @@ import {
 
 import "./ProdutoPPModal.css";
 
-
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function normalizarNumero(
-  valor,
-) {
+function normalizarNumero(valor) {
   const texto =
-    String(
-      valor ?? "",
-    ).trim();
-
+    String(valor ?? "").trim();
 
   if (!texto) {
     return null;
   }
-
 
   const normalizado =
     texto.includes(",")
@@ -39,43 +34,27 @@ function normalizarNumero(
           .replace(",", ".")
       : texto;
 
-
   const numero =
-    Number(
-      normalizado,
-    );
+    Number(normalizado);
 
-
-  return Number.isFinite(
-    numero,
-  )
+  return Number.isFinite(numero)
     ? numero
     : null;
 }
 
-
-function normalizarInteiro(
-  valor,
-) {
+function normalizarInteiro(valor) {
   const numero =
-    normalizarNumero(
-      valor,
-    );
-
+    normalizarNumero(valor);
 
   if (
     numero === null ||
-    !Number.isInteger(
-      numero,
-    )
+    !Number.isInteger(numero)
   ) {
     return null;
   }
 
-
   return numero;
 }
-
 
 function formatarValor(
   valor,
@@ -83,17 +62,11 @@ function formatarValor(
   casasMaximas = 2,
 ) {
   const numero =
-    normalizarNumero(
-      valor,
-    );
+    normalizarNumero(valor);
 
-
-  if (
-    numero === null
-  ) {
+  if (numero === null) {
     return "-";
   }
-
 
   return numero.toLocaleString(
     "pt-BR",
@@ -107,14 +80,14 @@ function formatarValor(
   );
 }
 
-
 /* =========================================================
-   MODAL PRODUTO PP
+   MODAL PRODUTO POR MATERIAL
 ========================================================= */
 
 export default function ProdutoPPModal({
   aberto,
   item = null,
+  materiais = [],
   salvando = false,
   onCancelar,
   onSalvar,
@@ -127,6 +100,11 @@ export default function ProdutoPPModal({
   const [
     nomeProduto,
     setNomeProduto,
+  ] = useState("");
+
+  const [
+    materialId,
+    setMaterialId,
   ] = useState("");
 
   const [
@@ -154,143 +132,115 @@ export default function ProdutoPPModal({
     setErro,
   ] = useState("");
 
+  const materiaisDisponiveis =
+    useMemo(
+      () =>
+        (Array.isArray(materiais)
+          ? materiais
+          : []
+        ).filter(
+          (material) =>
+            material.ativo ||
+            String(material.id) ===
+              String(materialId),
+        ),
+      [
+        materiais,
+        materialId,
+      ],
+    );
 
   /* =======================================================
      CARREGAR
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return;
-      }
+  useEffect(() => {
+    if (!aberto) {
+      return;
+    }
 
-
-      if (item) {
-        setCodigoProduto(
-          item.codigoProduto ||
-            "",
-        );
-
-
-        setNomeProduto(
-          item.nomeProduto ||
-            item.produto ||
-            "",
-        );
-
-
-        setPesoKg(
-          item.pesoKg ===
-              null ||
-          item.pesoKg ===
-              undefined
-            ? ""
-            : String(
-                item.pesoKg,
-              ).replace(
-                ".",
-                ",",
-              ),
-        );
-
-
-        setCicloSegundos(
-          item.cicloSegundos ===
-              null ||
-          item.cicloSegundos ===
-              undefined
-            ? ""
-            : String(
-                item.cicloSegundos,
-              ).replace(
-                ".",
-                ",",
-              ),
-        );
-
-
-        setCavidadeMolde(
-          item.cavidadeMolde ===
-              null ||
-          item.cavidadeMolde ===
-              undefined
-            ? ""
-            : String(
-                item.cavidadeMolde,
-              ),
-        );
-
-
-        setAtivo(
-          item.ativo !==
-            false,
-        );
-      } else {
-        setCodigoProduto(
-          "",
-        );
-
-        setNomeProduto(
-          "",
-        );
-
-        setPesoKg(
-          "",
-        );
-
-        setCicloSegundos(
-          "",
-        );
-
-        setCavidadeMolde(
-          "",
-        );
-
-        setAtivo(
-          true,
-        );
-      }
-
-
-      setErro(
-        "",
+    if (item) {
+      setCodigoProduto(
+        item.codigoProduto || "",
       );
-    },
-    [
-      aberto,
-      item,
-    ],
-  );
 
+      setNomeProduto(
+        item.nomeProduto ||
+          item.produto ||
+          "",
+      );
 
-  /* =======================================================
-     ESC
-  ======================================================= */
+      setMaterialId(
+        item.materialId === null ||
+        item.materialId === undefined
+          ? ""
+          : String(item.materialId),
+      );
 
+      setPesoKg(
+        item.pesoKg === null ||
+        item.pesoKg === undefined
+          ? ""
+          : String(item.pesoKg)
+              .replace(".", ","),
+      );
 
+      setCicloSegundos(
+        item.cicloSegundos === null ||
+        item.cicloSegundos === undefined
+          ? ""
+          : String(
+              item.cicloSegundos,
+            ).replace(".", ","),
+      );
 
+      setCavidadeMolde(
+        item.cavidadeMolde === null ||
+        item.cavidadeMolde === undefined
+          ? ""
+          : String(
+              item.cavidadeMolde,
+            ),
+      );
+
+      setAtivo(
+        item.ativo !== false,
+      );
+    } else {
+      setCodigoProduto("");
+      setNomeProduto("");
+      setMaterialId("");
+      setPesoKg("");
+      setCicloSegundos("");
+      setCavidadeMolde("");
+      setAtivo(true);
+    }
+
+    setErro("");
+  }, [
+    aberto,
+    item,
+  ]);
 
   /* =======================================================
      SALVAR
   ======================================================= */
 
-  async function enviar(
-    event,
-  ) {
+  async function enviar(event) {
     event.preventDefault();
 
-
-    setErro(
-      "",
-    );
-
+    setErro("");
 
     const codigoFinal =
       codigoProduto.trim();
 
     const nomeFinal =
       nomeProduto.trim();
+
+    const materialFinal =
+      normalizarInteiro(
+        materialId,
+      );
 
     const pesoFinal =
       normalizarNumero(
@@ -307,7 +257,6 @@ export default function ProdutoPPModal({
         cavidadeMolde,
       );
 
-
     if (!codigoFinal) {
       setErro(
         "Informe o código do produto.",
@@ -315,7 +264,6 @@ export default function ProdutoPPModal({
 
       return;
     }
-
 
     if (!nomeFinal) {
       setErro(
@@ -325,12 +273,20 @@ export default function ProdutoPPModal({
       return;
     }
 
+    if (
+      materialFinal === null ||
+      materialFinal <= 0
+    ) {
+      setErro(
+        "Selecione o material do produto.",
+      );
+
+      return;
+    }
 
     if (
-      pesoFinal ===
-        null ||
-      pesoFinal <=
-        0
+      pesoFinal === null ||
+      pesoFinal <= 0
     ) {
       setErro(
         "Informe um peso por peça maior que zero.",
@@ -339,12 +295,9 @@ export default function ProdutoPPModal({
       return;
     }
 
-
     if (
-      cicloFinal ===
-        null ||
-      cicloFinal <=
-        0
+      cicloFinal === null ||
+      cicloFinal <= 0
     ) {
       setErro(
         "Informe um ciclo maior que zero.",
@@ -353,12 +306,9 @@ export default function ProdutoPPModal({
       return;
     }
 
-
     if (
-      cavidadeFinal ===
-        null ||
-      cavidadeFinal <=
-        0
+      cavidadeFinal === null ||
+      cavidadeFinal <= 0
     ) {
       setErro(
         "Informe uma quantidade de cavidades inteira e maior que zero.",
@@ -367,12 +317,10 @@ export default function ProdutoPPModal({
       return;
     }
 
-
     try {
       await onSalvar?.({
         codigoProdutoOriginal:
-          item
-            ?.codigoProduto ??
+          item?.codigoProduto ??
           null,
 
         codigoProduto:
@@ -380,6 +328,9 @@ export default function ProdutoPPModal({
 
         nomeProduto:
           nomeFinal,
+
+        materialId:
+          materialFinal,
 
         pesoKg:
           pesoFinal,
@@ -400,11 +351,9 @@ export default function ProdutoPPModal({
     }
   }
 
-
   if (!aberto) {
     return null;
   }
-
 
   /* =======================================================
      RENDER
@@ -419,28 +368,27 @@ export default function ProdutoPPModal({
       tamanho="medio"
       fecharAoClicarFora={false}
     >
-
       <div
         className="produto-pp-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="produto-pp-modal-titulo"
       >
-
-        <div className="produto-pp-modal-header" data-modal-header="">
-
-          <div className="produto-pp-modal-header-icone" data-modal-icone="">
-
+        <div
+          className="produto-pp-modal-header"
+          data-modal-header=""
+        >
+          <div
+            className="produto-pp-modal-header-icone"
+            data-modal-icone=""
+          >
             <Boxes
               size={22}
               aria-hidden="true"
             />
-
           </div>
 
-
           <div className="produto-pp-modal-header-texto">
-
             <span>
               Matéria-Prima
             </span>
@@ -448,209 +396,175 @@ export default function ProdutoPPModal({
             <ModalTitulo>
               <h3 id="produto-pp-modal-titulo">
                 {item
-                  ? "Editar Produto PP"
-                  : "Cadastrar Produto PP"}
+                  ? "Editar produto"
+                  : "Cadastrar produto"}
               </h3>
             </ModalTitulo>
 
             <p>
-              Informe os dados do produto e
-              seus parâmetros de produção.
+              Informe o material e os parâmetros
+              utilizados na produção.
             </p>
-
           </div>
-
 
           <button
             type="button"
             className="produto-pp-modal-fechar"
-            onClick={
-              onCancelar
-            }
-            disabled={
-              salvando
-            }
+            onClick={onCancelar}
+            disabled={salvando}
             aria-label="Fechar"
             data-modal-fechar=""
           >
-
             <X size={19} />
-
           </button>
-
         </div>
-
 
         <form
           className="produto-pp-modal-form"
-          onSubmit={
-            enviar
-          }
+          onSubmit={enviar}
           data-modal-form=""
         >
-
           <div className="produto-pp-modal-grid">
-
             <label className="produto-pp-modal-campo">
-
               <span>
                 Código
               </span>
 
               <input
                 type="text"
-                value={
-                  codigoProduto
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setCodigoProduto(
-                      event.target.value,
-                    );
+                value={codigoProduto}
+                onChange={(event) => {
+                  setCodigoProduto(
+                    event.target.value,
+                  );
 
-                    setErro(
-                      "",
-                    );
-                  }
-                }
+                  setErro("");
+                }}
                 placeholder="Ex.: 10187"
                 autoComplete="off"
                 disabled={
-                  salvando
+                  salvando ||
+                  Boolean(item)
                 }
               />
-
             </label>
-
 
             <label className="produto-pp-modal-campo">
-
               <span>
-                Peso por peça
+                Material
               </span>
 
-              <div className="produto-pp-modal-peso">
+              <select
+                value={materialId}
+                onChange={(event) => {
+                  setMaterialId(
+                    event.target.value,
+                  );
 
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={
-                    pesoKg
-                  }
-                  onChange={
-                    (
-                      event,
-                    ) => {
-                    setPesoKg(
-                      event.target.value,
-                    );
+                  setErro("");
+                }}
+                disabled={salvando}
+              >
+                <option value="">
+                  Selecione o material
+                </option>
 
-                    setErro(
-                      "",
-                    );
-                  }
-                }
-                  placeholder="Ex.: 0,840"
-                  autoComplete="off"
-                  disabled={
-                    salvando
-                  }
-                />
-
-                <span>
-                  kg
-                </span>
-
-              </div>
-
+                {materiaisDisponiveis.map(
+                  (material) => (
+                    <option
+                      key={material.id}
+                      value={material.id}
+                    >
+                      {material.nome}
+                      {!material.ativo
+                        ? " (inativo)"
+                        : ""}
+                    </option>
+                  ),
+                )}
+              </select>
             </label>
-
           </div>
 
-
           <label className="produto-pp-modal-campo">
-
             <span>
               Nome do produto
             </span>
 
             <input
               type="text"
-              value={
-                nomeProduto
-              }
-              onChange={
-                (
-                  event,
-                ) => {
-                  setNomeProduto(
-                    event.target.value,
-                  );
+              value={nomeProduto}
+              onChange={(event) => {
+                setNomeProduto(
+                  event.target.value,
+                );
 
-                  setErro(
-                    "",
-                  );
-                }
-              }
+                setErro("");
+              }}
               placeholder="Ex.: Suporte Econômico"
               autoComplete="off"
-              disabled={
-                salvando
-              }
+              disabled={salvando}
             />
-
           </label>
 
-
           <div className="produto-pp-modal-grid">
+            <label className="produto-pp-modal-campo">
+              <span>
+                Peso por peça
+              </span>
+
+              <div className="produto-pp-modal-peso">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={pesoKg}
+                  onChange={(event) => {
+                    setPesoKg(
+                      event.target.value,
+                    );
+
+                    setErro("");
+                  }}
+                  placeholder="Ex.: 0,840"
+                  autoComplete="off"
+                  disabled={salvando}
+                />
+
+                <span>
+                  kg
+                </span>
+              </div>
+            </label>
 
             <label className="produto-pp-modal-campo">
-
               <span>
                 Ciclo
               </span>
 
               <div className="produto-pp-modal-peso">
-
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    cicloSegundos
-                  }
-                  onChange={
-                    (
-                      event,
-                    ) => {
+                  value={cicloSegundos}
+                  onChange={(event) => {
                     setCicloSegundos(
                       event.target.value,
                     );
 
-                    setErro(
-                      "",
-                    );
-                  }
-                }
+                    setErro("");
+                  }}
                   placeholder="Ex.: 79"
                   autoComplete="off"
-                  disabled={
-                    salvando
-                  }
+                  disabled={salvando}
                 />
 
                 <span>
                   s
                 </span>
-
               </div>
-
             </label>
 
-
             <label className="produto-pp-modal-campo">
-
               <span>
                 Cavidades
               </span>
@@ -660,38 +574,39 @@ export default function ProdutoPPModal({
                 inputMode="numeric"
                 min="1"
                 step="1"
-                value={
-                  cavidadeMolde
-                }
-                onChange={
-                  (
-                    event,
-                  ) => {
-                    setCavidadeMolde(
-                      event.target.value,
-                    );
+                value={cavidadeMolde}
+                onChange={(event) => {
+                  setCavidadeMolde(
+                    event.target.value,
+                  );
 
-                    setErro(
-                      "",
-                    );
-                  }
-                }
+                  setErro("");
+                }}
                 placeholder="Ex.: 1"
                 autoComplete="off"
-                disabled={
-                  salvando
-                }
+                disabled={salvando}
               />
-
             </label>
-
           </div>
 
-
           <div className="produto-pp-modal-resumo">
+            <div>
+              <span>
+                Material
+              </span>
+
+              <strong>
+                {
+                  materiaisDisponiveis.find(
+                    (material) =>
+                      String(material.id) ===
+                      String(materialId),
+                  )?.nome || "-"
+                }
+              </strong>
+            </div>
 
             <div>
-
               <span>
                 Peso
               </span>
@@ -707,12 +622,9 @@ export default function ProdutoPPModal({
                     )} kg`
                   : "-"}
               </strong>
-
             </div>
 
-
             <div>
-
               <span>
                 Ciclo
               </span>
@@ -728,12 +640,9 @@ export default function ProdutoPPModal({
                     )} s`
                   : "-"}
               </strong>
-
             </div>
 
-
             <div>
-
               <span>
                 Cavidades
               </span>
@@ -747,85 +656,60 @@ export default function ProdutoPPModal({
                     )
                   : "-"}
               </strong>
-
             </div>
-
           </div>
 
-
           <label className="produto-pp-modal-status">
-
             <input
               type="checkbox"
-              checked={
-                ativo
+              checked={ativo}
+              onChange={(event) =>
+                setAtivo(
+                  event.target.checked,
+                )
               }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setAtivo(
-                    event.target.checked,
-                  )
-              }
-              disabled={
-                salvando
-              }
+              disabled={salvando}
             />
 
             <div>
-
               <strong>
                 Produto ativo
               </strong>
 
               <span>
-                Produtos inativos permanecem
-                no histórico, mas não devem
-                ser utilizados em novas
-                programações.
+                Produtos inativos permanecem no
+                histórico, mas não devem ser
+                utilizados em novas programações.
               </span>
-
             </div>
-
           </label>
 
-
           {erro && (
-
             <div className="produto-pp-modal-erro">
               {erro}
             </div>
-
           )}
 
-
-          <div className="produto-pp-modal-acoes" data-modal-footer="">
-
+          <div
+            className="produto-pp-modal-acoes"
+            data-modal-footer=""
+          >
             <button
               type="button"
               className="produto-pp-modal-cancelar"
-              onClick={
-                onCancelar
-              }
-              disabled={
-                salvando
-              }
+              onClick={onCancelar}
+              disabled={salvando}
               data-modal-acao="secundaria"
             >
               Cancelar
             </button>
 
-
             <button
               type="submit"
               className="produto-pp-modal-salvar"
-              disabled={
-                salvando
-              }
+              disabled={salvando}
               data-modal-acao="primaria"
             >
-
               <Save size={17} />
 
               {salvando
@@ -833,15 +717,10 @@ export default function ProdutoPPModal({
                 : item
                   ? "Salvar alterações"
                   : "Salvar produto"}
-
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </Modal>
   );
 }

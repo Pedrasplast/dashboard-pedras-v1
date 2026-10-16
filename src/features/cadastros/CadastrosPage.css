@@ -471,6 +471,26 @@
   white-space: nowrap;
 }
 
+/* =========================================================
+   COLUNA DE AÇÕES
+   Mantém o botão Editar afastado da borda direita
+========================================================= */
+
+.cadastros-tabela th:last-child,
+.cadastros-tabela td:last-child {
+  width: 118px;
+  min-width: 118px;
+  padding-left: 16px;
+  padding-right: 24px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cadastros-tabela td:last-child .cadastros-editar {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .cadastros-codigo {
   display: inline-flex;
   padding: 5px 8px;
@@ -520,9 +540,11 @@
 .cadastros-editar {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-width: 82px;
   min-height: 32px;
-  padding: 0 10px;
+  padding: 0 11px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
@@ -530,6 +552,10 @@
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .cadastros-editar:hover {
@@ -563,6 +589,14 @@
 ========================================================= */
 
 @media (max-width: 1100px) {
+  .cadastros-tabela th:last-child,
+  .cadastros-tabela td:last-child {
+    width: 108px;
+    min-width: 108px;
+    padding-left: 12px;
+    padding-right: 18px;
+  }
+
   .cadastros-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -573,6 +607,19 @@
 }
 
 @media (max-width: 700px) {
+  .cadastros-tabela th:last-child,
+  .cadastros-tabela td:last-child {
+    width: 100px;
+    min-width: 100px;
+    padding-left: 10px;
+    padding-right: 14px;
+  }
+
+  .cadastros-editar {
+    min-width: 76px;
+    padding: 0 9px;
+  }
+
   .cadastros-container {
     padding: 16px;
   }
