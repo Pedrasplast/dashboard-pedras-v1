@@ -29,9 +29,11 @@ import { Route as FinanceiroEvolucaoMensalRouteImport } from './routes/financeir
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MateriaPrimaRouteImport } from './routes/materia-prima'
+import { Route as NecessidadeMateriaPrimaRouteImport } from './routes/necessidade-materia-prima'
 import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as PedidosCompraRouteImport } from './routes/pedidos-compra'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as TabelaPrecosMateriaPrimaRouteImport } from './routes/tabela-precos-materia-prima'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 
 const IndexRoute = IndexRouteImport.update({
@@ -135,6 +137,11 @@ const MateriaPrimaRoute = MateriaPrimaRouteImport.update({
   path: '/materia-prima',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NecessidadeMateriaPrimaRoute = NecessidadeMateriaPrimaRouteImport.update({
+  id: '/necessidade-materia-prima',
+  path: '/necessidade-materia-prima',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PedidosRoute = PedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -150,6 +157,12 @@ const RelatoriosRoute = RelatoriosRouteImport.update({
   path: '/relatorios',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TabelaPrecosMateriaPrimaRoute =
+  TabelaPrecosMateriaPrimaRouteImport.update({
+    id: '/tabela-precos-materia-prima',
+    path: '/tabela-precos-materia-prima',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const UsuariosRoute = UsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -177,9 +190,11 @@ export interface FileRoutesByFullPath {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
+  '/tabela-precos-materia-prima': typeof TabelaPrecosMateriaPrimaRoute
   '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesByTo {
@@ -203,9 +218,11 @@ export interface FileRoutesByTo {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
+  '/tabela-precos-materia-prima': typeof TabelaPrecosMateriaPrimaRoute
   '/usuarios': typeof UsuariosRoute
 }
 export interface FileRoutesById {
@@ -230,9 +247,11 @@ export interface FileRoutesById {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
   '/relatorios': typeof RelatoriosRoute
+  '/tabela-precos-materia-prima': typeof TabelaPrecosMateriaPrimaRoute
   '/usuarios': typeof UsuariosRoute
 }
 export interface FileRouteTypes {
@@ -258,9 +277,11 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
     | '/relatorios'
+    | '/tabela-precos-materia-prima'
     | '/usuarios'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -284,9 +305,11 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
     | '/relatorios'
+    | '/tabela-precos-materia-prima'
     | '/usuarios'
   id:
     | '__root__'
@@ -310,9 +333,11 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
     | '/relatorios'
+    | '/tabela-precos-materia-prima'
     | '/usuarios'
   fileRoutesById: FileRoutesById
 }
@@ -337,9 +362,11 @@ export interface RootRouteChildren {
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
   MateriaPrimaRoute: typeof MateriaPrimaRoute
+  NecessidadeMateriaPrimaRoute: typeof NecessidadeMateriaPrimaRoute
   PedidosRoute: typeof PedidosRoute
   PedidosCompraRoute: typeof PedidosCompraRoute
   RelatoriosRoute: typeof RelatoriosRoute
+  TabelaPrecosMateriaPrimaRoute: typeof TabelaPrecosMateriaPrimaRoute
   UsuariosRoute: typeof UsuariosRoute
 }
 
@@ -485,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MateriaPrimaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/necessidade-materia-prima': {
+      id: '/necessidade-materia-prima'
+      path: '/necessidade-materia-prima'
+      fullPath: '/necessidade-materia-prima'
+      preLoaderRoute: typeof NecessidadeMateriaPrimaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pedidos': {
       id: '/pedidos'
       path: '/pedidos'
@@ -504,6 +538,13 @@ declare module '@tanstack/react-router' {
       path: '/relatorios'
       fullPath: '/relatorios'
       preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tabela-precos-materia-prima': {
+      id: '/tabela-precos-materia-prima'
+      path: '/tabela-precos-materia-prima'
+      fullPath: '/tabela-precos-materia-prima'
+      preLoaderRoute: typeof TabelaPrecosMateriaPrimaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/usuarios': {
@@ -537,9 +578,11 @@ const rootRouteChildren: RootRouteChildren = {
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
   MateriaPrimaRoute: MateriaPrimaRoute,
+  NecessidadeMateriaPrimaRoute: NecessidadeMateriaPrimaRoute,
   PedidosRoute: PedidosRoute,
   PedidosCompraRoute: PedidosCompraRoute,
   RelatoriosRoute: RelatoriosRoute,
+  TabelaPrecosMateriaPrimaRoute: TabelaPrecosMateriaPrimaRoute,
   UsuariosRoute: UsuariosRoute,
 }
 export const routeTree = rootRouteImport
