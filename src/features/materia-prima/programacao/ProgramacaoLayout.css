@@ -1,9 +1,15 @@
-/* Layout operacional: calendario e controles visiveis lado a lado. */
 .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-  height: min(1000px, calc(100dvh - 114px));
+  width: min(1640px, calc(100vw - 32px));
+  height: calc(100dvh - 112px);
+  max-height: calc(100dvh - 112px);
+  margin-top: 0;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  > [data-modal-header] {
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+  flex: 0 0 auto;
   padding: 10px 18px;
   gap: 12px;
 }
@@ -12,29 +18,44 @@
   [data-modal-icone] {
   width: 36px;
   height: 36px;
-  flex-basis: 36px;
+  flex: 0 0 36px;
 }
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  .programacao-modal-form {
-  overflow: hidden;
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+}
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+  margin: 3px 0 0;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] .programacao-modal-form {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   gap: 0;
+  overflow: hidden;
 }
 .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
   .programacao-modal-form
   > .programacao-modal-conteudo {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
-  overflow: auto;
   padding: 10px 14px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
-  gap: 8px;
-  grid-template-areas: "calendario configuracao" "calendario controles" "resumo resumo";
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-areas: "calendario configuracao" "calendario controles" "resumo resumo" "status status";
   grid-auto-rows: min-content;
+  gap: 8px;
   align-content: start;
   align-items: start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 .programacao-modal-conteudo *,
 .programacao-modal-conteudo *::before,
@@ -47,22 +68,21 @@
 .programacao-modal-conteudo .programacao-calendario-area {
   display: contents;
 }
-.programacao-modal-conteudo .programacao-calendario-configuracao {
-  grid-area: configuracao;
-}
 .programacao-modal-conteudo .programacao-calendario-bloco {
   grid-area: calendario;
 }
+.programacao-modal-conteudo .programacao-calendario-configuracao {
+  grid-area: configuracao;
+}
 .programacao-modal-conteudo .programacao-calendario-lote {
   grid-area: controles;
-  margin: 0;
-  padding: 10px;
-  gap: 8px;
 }
 .programacao-modal-conteudo .programacao-calendario-resumo-bloco {
   grid-area: resumo;
 }
-.programacao-modal-conteudo > .programacao-modal-status,
+.programacao-modal-conteudo > .programacao-modal-status {
+  grid-area: status;
+}
 .programacao-modal-conteudo > .programacao-modal-erro,
 .programacao-modal-conteudo > .programacao-calendario-legado {
   grid-column: 1 / -1;
@@ -87,23 +107,35 @@
 .programacao-modal-conteudo .programacao-calendario-config {
   padding: 8px 10px;
   gap: 8px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .programacao-modal-conteudo .programacao-modal-campo {
+  min-width: 0;
   gap: 4px;
 }
 .programacao-modal-conteudo .programacao-modal-campo select {
-  min-width: 0;
   width: 100%;
-  height: 32px;
-  padding: 0 7px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 8px;
   font-size: 11px;
 }
 .programacao-modal-conteudo .programacao-calendario-config-tecnico {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 .programacao-modal-conteudo .programacao-calendario-config-tecnico > div {
-  padding: 4px 7px;
+  min-width: 0;
+  padding: 5px;
+}
+.programacao-modal-conteudo .programacao-calendario-config-tecnico span {
+  font-size: 7px;
+}
+.programacao-modal-conteudo .programacao-calendario-config-tecnico strong {
+  display: block;
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .programacao-modal-conteudo .programacao-calendario-cabecalho {
   padding: 8px 10px;
@@ -115,39 +147,92 @@
   font-size: 14px;
 }
 .programacao-modal-conteudo .programacao-calendario-cabecalho-texto p {
+  margin-top: 2px;
   font-size: 10px;
+  line-height: 1.25;
 }
 .programacao-modal-conteudo .programacao-calendario-legenda {
   padding: 5px 10px;
   gap: 8px;
 }
 .programacao-modal-conteudo .programacao-calendario-grade {
-  gap: 4px;
   padding: 6px;
+  gap: 4px;
+}
+.programacao-modal-conteudo .programacao-calendario-semana {
+  padding: 3px 2px;
+  font-size: 8px;
 }
 .programacao-modal-conteudo .programacao-calendario-dia {
-  height: clamp(38px, calc((100dvh - 500px) / 6), 76px);
-  min-height: 0;
+  position: relative;
+  min-width: 0;
+  height: 72px;
+  min-height: 72px;
   padding: 5px;
+  overflow: hidden;
+}
+.programacao-modal-conteudo .programacao-calendario-dia-topo > strong {
+  font-size: 11px;
+}
+.programacao-modal-conteudo .programacao-calendario-dia-topo .programacao-calendario-check {
+  width: 13px;
+  height: 13px;
 }
 .programacao-modal-conteudo .programacao-calendario-dia-conteudo {
+  min-width: 0;
   padding: 0;
-  overflow: hidden;
+  margin-top: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   gap: 2px;
+  overflow: hidden;
+}
+.programacao-modal-conteudo .programacao-calendario-horas-programadas {
+  flex-shrink: 0;
+  font-size: 13px;
+  line-height: 1.05;
+}
+.programacao-modal-conteudo .programacao-calendario-dia-conteudo small {
+  font-size: 7px;
+  line-height: 1.1;
+}
+.programacao-modal-conteudo .programacao-calendario-dia.programado {
+  position: relative;
+  padding-bottom: 20px;
+}
+.programacao-modal-conteudo
+  .programacao-calendario-dia.programado
+  .programacao-calendario-dia-receita {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 4px;
+  z-index: 2;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 2px 4px;
+  display: block;
+  overflow: hidden;
+  font-size: 7px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.programacao-modal-conteudo .programacao-calendario-lote {
+  margin: 0;
+  padding: 10px;
+  gap: 8px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-info > strong {
-  font-size: 13px;
   margin-top: 2px;
+  font-size: 13px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-info > small {
   margin-top: 3px;
   font-size: 10px;
   line-height: 1.3;
-}
-.programacao-modal-conteudo .programacao-calendario-lote-acoes {
-  display: flex;
-  gap: 6px;
-  padding: 0;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-presets {
   width: 100%;
@@ -156,15 +241,16 @@
   gap: 5px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-presets button {
-  min-width: 0;
   width: 100%;
+  min-width: 0;
   height: 32px;
+  min-height: 32px;
   padding: 0 6px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-outro {
-  height: 32px;
-  flex: 1 1 100%;
+  width: 100%;
   min-width: 0;
+  height: 32px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-outro input {
   flex: 1;
@@ -180,15 +266,26 @@
   display: none;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-receita select {
-  min-width: 0;
   width: 100%;
+  min-width: 0;
   flex: 1 1 100%;
-  height: 32px;
+  height: 34px;
 }
 .programacao-modal-conteudo .programacao-calendario-lote-receita button {
-  min-height: 32px;
   width: 100%;
+  min-height: 32px;
   padding: 0 8px;
+}
+.programacao-modal-conteudo .programacao-calendario-lote-acoes {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+}
+.programacao-modal-conteudo .programacao-calendario-lote-acoes button {
+  min-height: 32px;
+  height: 32px;
 }
 .programacao-modal-conteudo .programacao-calendario-resumo-cabecalho {
   padding: 6px 10px;
@@ -199,54 +296,269 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .programacao-modal-conteudo .programacao-calendario-resumo > div {
+  min-width: 0;
   padding: 6px 10px;
 }
 .programacao-modal-conteudo .programacao-calendario-resumo strong {
-  font-size: 17px;
   margin-top: 2px;
+  font-size: 17px;
 }
 .programacao-modal-conteudo .programacao-modal-status {
   margin: 0;
-  padding: 6px 10px;
+  padding: 7px 10px;
 }
 .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
   .programacao-modal-form
   > .programacao-modal-acoes {
-  position: static;
+  position: relative !important;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: 20;
+  flex: 0 0 auto;
+  width: 100%;
   margin: 0;
-  padding: 8px 14px;
+  padding: 9px 16px 11px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
 }
-@media (max-height: 800px) {
-  .programacao-modal-conteudo .programacao-calendario-disponibilidade,
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+  .programacao-modal-form
+  > .programacao-modal-acoes
+  .programacao-modal-cancelar,
+.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+  .programacao-modal-form
+  > .programacao-modal-acoes
+  .programacao-modal-salvar {
+  min-height: 38px;
+  padding: 0 16px;
+}
+@media (min-width: 1500px) and (min-height: 950px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    width: min(1640px, calc(100vw - 42px));
+    height: calc(100dvh - 118px);
+    max-height: calc(100dvh - 118px);
+    margin-bottom: 20px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    grid-template-columns: minmax(0, 1fr) 390px;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 76px;
+    min-height: 76px;
+  }
+}
+@media (min-width: 1101px) and (min-height: 820px) and (max-height: 949px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    height: calc(100dvh - 128px);
+    max-height: calc(100dvh - 128px);
+    margin-bottom: 18px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+    margin-top: 1px;
+    font-size: 10px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    padding: 7px 10px;
+    gap: 6px;
+    grid-template-columns: minmax(0, 1fr) 350px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 62px;
+    min-height: 62px;
+    padding: 4px 5px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-legenda {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-grade {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho,
+  .programacao-modal-conteudo .programacao-calendario-config,
+  .programacao-modal-conteudo .programacao-calendario-lote {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo-cabecalho {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo > div {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+@media (min-width: 901px) and (max-height: 819px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    width: calc(100vw - 28px);
+    height: calc(100dvh - 112px);
+    max-height: calc(100dvh - 112px);
+    margin-bottom: 14px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    padding: 5px 12px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+    font-size: 18px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+    display: none;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    padding: 5px 8px;
+    gap: 5px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    overflow-y: auto;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho {
+    padding: 5px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho-texto p {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-legenda {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-grade {
+    gap: 3px;
+    padding: 3px 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-semana {
+    padding: 1px 2px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 51px;
+    min-height: 51px;
+    padding: 3px 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-topo > strong {
+    font-size: 9px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-conteudo {
+    margin-top: 1px;
+  }
   .programacao-modal-conteudo .programacao-calendario-dia-conteudo small {
     display: none;
   }
-}
-@media (max-width: 1200px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 96px);
+  .programacao-modal-conteudo .programacao-calendario-dia.programado {
+    padding-bottom: 16px;
+  }
+  .programacao-modal-conteudo
+    .programacao-calendario-dia.programado
+    .programacao-calendario-dia-receita {
+    left: 4px;
+    right: 4px;
+    bottom: 3px;
+    padding: 1px 3px;
+    font-size: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho {
+    padding: 5px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config {
+    padding: 5px 7px;
+  }
+  .programacao-modal-conteudo .programacao-modal-campo select {
+    height: 29px;
+    font-size: 10px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote {
+    padding: 6px 7px;
+    gap: 5px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-info > small {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-presets button,
+  .programacao-modal-conteudo .programacao-calendario-lote-outro,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita select,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita button {
+    height: 28px;
+    min-height: 28px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo-cabecalho {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo > div {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo strong {
+    margin-top: 0;
+    font-size: 14px;
+  }
+  .programacao-modal-conteudo .programacao-modal-status {
+    padding: 5px 8px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes {
+    padding-top: 6px;
+    padding-bottom: 8px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-cancelar,
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-salvar {
+    min-height: 34px;
   }
 }
-@media (min-width: 761px) and (max-width: 1050px) {
+@media (min-width: 761px) and (max-width: 1100px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    width: calc(100vw - 24px);
+    height: calc(100dvh - 76px);
+    max-height: calc(100dvh - 76px);
+    margin-bottom: 12px;
+  }
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
     .programacao-modal-form
     > .programacao-modal-conteudo {
     grid-template-columns: minmax(0, 1fr) 290px;
+    padding: 7px;
+    gap: 6px;
+    overflow-y: auto;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 58px;
+    min-height: 58px;
   }
 }
 @media (max-width: 900px) {
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 88px);
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+    margin: 8px auto 12px;
   }
-}
-@media (max-width: 760px) {
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
     .programacao-modal-form
     > .programacao-modal-conteudo {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "configuracao" "calendario" "controles" "resumo";
-    padding: 8px;
-    gap: 8px;
+    grid-template-areas: "configuracao" "calendario" "controles" "resumo" "status";
+    overflow-y: auto;
   }
   .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho {
     flex-direction: row;
@@ -255,94 +567,412 @@
   .programacao-modal-conteudo .programacao-calendario-configuracao-status {
     width: auto;
   }
-  .programacao-modal-conteudo .programacao-calendario-dia {
-    height: 42px;
-    padding: 4px;
-  }
-  .programacao-modal-conteudo .programacao-calendario-dia-receita {
-    max-width: 100%;
-  }
-  .programacao-modal-conteudo .programacao-calendario-lote-info > small {
-    max-width: none;
-  }
   .programacao-modal-conteudo .programacao-calendario-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 60px);
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    > [data-modal-header]
-    h3 {
-    font-size: 18px;
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    padding: 7px 10px;
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    > [data-modal-header]
-    p {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+    font-size: 17px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
     display: none;
   }
-  .programacao-modal-conteudo .programacao-calendario-cabecalho-texto p {
-    display: none;
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    padding: 6px;
+    gap: 6px;
+    overflow-y: auto;
+    padding-bottom: 10px;
   }
-}
-
-/* Dados tecnicos em uma faixa, sem aumentar a altura dos controles. */
-.programacao-modal-conteudo
-  .programacao-calendario-configuracao
-  .programacao-calendario-config-tecnico {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-.programacao-modal-conteudo .programacao-calendario-config-tecnico > div {
-  padding: 5px;
-}
-.programacao-modal-conteudo .programacao-calendario-config-tecnico span {
-  font-size: 7px;
-}
-.programacao-modal-conteudo .programacao-calendario-config-tecnico strong {
-  font-size: 10px;
-}
-.programacao-modal-conteudo .programacao-calendario-lote-acoes button {
-  min-height: 32px;
-  height: 32px;
-}
-.programacao-modal-conteudo
-  .programacao-calendario-dia-topo
-  .programacao-calendario-check {
-  width: 12px;
-  height: 12px;
-}
-.programacao-modal-conteudo .programacao-calendario-dia-conteudo {
-  justify-content: flex-start;
-}
-.programacao-modal-conteudo .programacao-calendario-horas-programadas {
-  font-size: 13px;
-}
-.programacao-modal-conteudo .programacao-calendario-dia-receita {
-  flex-shrink: 0;
-  padding: 1px 3px;
-  font-size: 7px;
-}
-
-/* Em dias compactos, horas e receita compartilham a mesma linha. */
-@media (max-height: 800px), (max-width: 760px) {
+  .programacao-modal-conteudo .programacao-calendario-config {
+    grid-template-columns: 1fr;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .programacao-modal-conteudo .programacao-calendario-grade {
+    gap: 2px;
+    padding: 3px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 48px;
+    min-height: 48px;
+    padding: 3px;
+  }
   .programacao-modal-conteudo .programacao-calendario-dia-conteudo {
     flex-direction: row;
     align-items: center;
     gap: 3px;
-    margin-top: 2px;
   }
-  .programacao-modal-conteudo .programacao-calendario-horas-programadas {
-    flex-shrink: 0;
-    font-size: 11px;
+  .programacao-modal-conteudo .programacao-calendario-dia-conteudo small {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-presets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo {
+    grid-template-columns: 1fr;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes {
+    flex: 0 0 auto;
+    position: relative !important;
+    bottom: auto;
+    padding: 8px 10px max(12px, env(safe-area-inset-bottom));
+    background: #ffffff;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-cancelar,
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-salvar {
+    flex: 1;
+    min-width: 0;
+  }
+}
+@media (max-width: 430px) {
+  .programacao-modal-conteudo .programacao-calendario-cabecalho {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico {
+    grid-template-columns: 1fr 1fr;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 44px;
+    min-height: 44px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-topo > strong {
+    font-size: 9px;
   }
   .programacao-modal-conteudo .programacao-calendario-dia-receita {
-    flex: 1 1 0;
-    min-width: 0;
+    font-size: 6px;
+  }
+}
+@media (min-width: 901px) and (max-height: 900px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    height: calc(100dvh - 105px);
+    max-height: calc(100dvh - 105px);
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    padding: 7px 14px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+    font-size: 18px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+    margin-top: 1px;
+    font-size: 9px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    padding: 6px 9px;
+    gap: 5px;
+    overflow: hidden;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho {
+    padding: 5px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho-texto p {
+    font-size: 8px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-legenda {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-grade {
+    padding: 3px 4px;
+    gap: 3px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-semana {
+    padding: 1px 2px;
+    font-size: 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 56px;
+    min-height: 56px;
+    padding: 3px 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-topo > strong {
+    font-size: 9px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-conteudo {
+    margin-top: 1px;
+    gap: 1px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-conteudo small {
+    font-size: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho,
+  .programacao-modal-conteudo .programacao-calendario-config,
+  .programacao-modal-conteudo .programacao-calendario-lote {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .programacao-modal-conteudo .programacao-modal-campo select {
+    height: 28px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico > div {
+    padding: 2px 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-info > small {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-presets button,
+  .programacao-modal-conteudo .programacao-calendario-lote-outro,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita select,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita button {
+    height: 27px;
+    min-height: 27px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo-cabecalho {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo > div {
+    padding: 3px 7px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo strong {
+    font-size: 13px;
+  }
+  .programacao-modal-conteudo .programacao-modal-status {
+    padding: 4px 8px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes {
+    padding: 5px 10px 7px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-cancelar,
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-salvar {
+    min-height: 32px;
+    padding: 0 12px;
+  }
+}
+@media (min-width: 901px) and (max-height: 800px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    height: calc(100dvh - 92px);
+    max-height: calc(100dvh - 92px);
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    padding: 4px 10px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    > [data-modal-header]
+    [data-modal-icone] {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+    font-size: 16px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+    display: none;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    padding: 4px 6px;
+    gap: 4px;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    overflow: hidden;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho {
+    padding: 4px 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-cabecalho-texto p {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-legenda {
+    padding: 2px 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-grade {
+    padding: 2px 3px;
+    gap: 2px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-semana {
+    padding: 1px;
+    font-size: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia {
+    height: 46px;
+    min-height: 46px;
+    padding: 2px 3px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-topo > strong {
+    font-size: 8px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia-conteudo {
     margin-top: 0;
   }
   .programacao-modal-conteudo .programacao-calendario-dia-conteudo small {
     display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-horas-programadas {
+    font-size: 10px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia.programado {
+    padding-bottom: 14px;
+  }
+  .programacao-modal-conteudo
+    .programacao-calendario-dia.programado
+    .programacao-calendario-dia-receita {
+    bottom: 2px;
+    left: 3px;
+    right: 3px;
+    padding: 1px 2px;
+    font-size: 5px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho {
+    padding: 4px 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .programacao-modal-conteudo .programacao-modal-campo select {
+    height: 26px;
+    font-size: 9px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico > div {
+    padding: 2px 3px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico span {
+    font-size: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-config-tecnico strong {
+    font-size: 8px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-info > strong {
+    font-size: 11px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-info > small {
+    display: none;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-presets {
+    gap: 3px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-lote-presets button,
+  .programacao-modal-conteudo .programacao-calendario-lote-outro,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita select,
+  .programacao-modal-conteudo .programacao-calendario-lote-receita button {
+    height: 25px;
+    min-height: 25px;
+    font-size: 9px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo-cabecalho {
+    padding: 2px 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo > div {
+    padding: 2px 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo span {
+    font-size: 6px;
+  }
+  .programacao-modal-conteudo .programacao-calendario-resumo strong {
+    font-size: 12px;
+  }
+  .programacao-modal-conteudo .programacao-modal-status {
+    padding: 3px 6px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes {
+    padding: 4px 8px 6px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-cancelar,
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-salvar {
+    min-height: 30px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+}
+@media (min-width: 901px) and (max-height: 650px) {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    overflow-y: auto;
+  }
+}
+.programacao-modal-conteudo
+  .programacao-calendario-dia.programado
+  .programacao-calendario-dia-conteudo
+  > small {
+  display: block !important;
+  margin: 0;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 6px;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.programacao-modal-conteudo
+  .programacao-calendario-dia.programado
+  .programacao-calendario-dia-conteudo {
+  min-height: 0;
+  padding-bottom: 1px;
+  overflow: visible;
+}
+.programacao-modal-conteudo
+  .programacao-calendario-dia.programado
+  .programacao-calendario-dia-receita {
+  z-index: 3;
+}
+@media (min-width: 901px) and (max-height: 800px) {
+  .programacao-modal-conteudo
+    .programacao-calendario-dia.programado
+    .programacao-calendario-dia-conteudo
+    > small {
+    display: block !important;
+    font-size: 5px;
+    line-height: 1;
+  }
+  .programacao-modal-conteudo .programacao-calendario-dia.programado {
+    min-height: 49px;
+    height: 49px;
+    padding-bottom: 14px;
+  }
+}
+@media (min-width: 901px) and (max-height: 620px) {
+  .programacao-modal-conteudo
+    .programacao-calendario-dia.programado
+    .programacao-calendario-dia-conteudo
+    > small {
+    display: none !important;
   }
 }

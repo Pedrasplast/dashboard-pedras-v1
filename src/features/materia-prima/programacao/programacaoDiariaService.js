@@ -15,148 +15,472 @@ function numero(valor, fallback = 0) {
 function arredondar(valor, casas = 6) {
   const fator = 10 ** casas;
 
-  return Math.round((numero(valor) + Number.EPSILON) * fator) / fator;
+  return Math.round(
+    (numero(valor) + Number.EPSILON) * fator,
+  ) / fator;
 }
 
 function normalizarReceitaItens(valor) {
   return (Array.isArray(valor) ? valor : [])
     .map((item) => ({
-      fornecedorId: item?.fornecedorId ?? null,
-      fornecedorNome: String(item?.fornecedorNome ?? "Fornecedor").trim(),
-      percentual: numero(item?.percentual),
+      fornecedorId:
+        item?.fornecedorId ??
+        null,
+
+      fornecedorNome:
+        String(
+          item?.fornecedorNome ??
+          "Fornecedor",
+        ).trim(),
+
+      percentual:
+        numero(
+          item?.percentual,
+        ),
     }))
-    .filter((item) => item.fornecedorId !== null && item.percentual > 0);
+    .filter(
+      (item) =>
+        item.fornecedorId !== null &&
+        item.percentual > 0,
+    );
 }
 
-function distribuirConsumoReceita(consumoTotalKg, itens, configurada) {
-  if (!configurada || itens.length === 0) {
+function distribuirConsumoReceita(
+  consumoTotalKg,
+  itens,
+  configurada,
+) {
+  if (
+    !configurada ||
+    itens.length === 0
+  ) {
     return [];
   }
 
-  const total = arredondar(consumoTotalKg);
+  const total =
+    arredondar(
+      consumoTotalKg,
+    );
+
   let acumulado = 0;
 
-  return itens.map((item, indice) => {
-    const ultimo = indice === itens.length - 1;
+  return itens.map(
+    (
+      item,
+      indice,
+    ) => {
+      const ultimo =
+        indice ===
+        itens.length - 1;
 
-    const consumoPeriodoKg = ultimo
-      ? arredondar(total - acumulado)
-      : arredondar(total * (item.percentual / 100));
+      const consumoPeriodoKg =
+        ultimo
+          ? arredondar(
+              total -
+              acumulado,
+            )
+          : arredondar(
+              total *
+                (
+                  item.percentual /
+                  100
+                ),
+            );
 
-    acumulado = arredondar(acumulado + consumoPeriodoKg);
+      acumulado =
+        arredondar(
+          acumulado +
+          consumoPeriodoKg,
+        );
 
-    return {
-      ...item,
-      consumoPeriodoKg,
-      consumoKg: consumoPeriodoKg,
-    };
-  });
+      return {
+        ...item,
+
+        consumoPeriodoKg,
+
+        consumoKg:
+          consumoPeriodoKg,
+      };
+    },
+  );
 }
 
-function normalizarDia(registro) {
-  const receitaItens = normalizarReceitaItens(registro?.receita_itens);
-  const receitaConfigurada = registro?.receita_configurada === true;
-  const consumoTotalKg = numero(registro?.consumo_total_kg);
+function normalizarDia(
+  registro,
+) {
+  const receitaItens =
+    normalizarReceitaItens(
+      registro
+        ?.receita_itens,
+    );
+
+  const receitaConfigurada =
+    registro
+      ?.receita_configurada ===
+    true;
+
+  const consumoTotalKg =
+    numero(
+      registro
+        ?.consumo_total_kg,
+    );
 
   return {
-    programacaoId: registro?.programacao_id ?? null,
-    diaId: registro?.dia_id ?? null,
-    data: String(registro?.data ?? "").trim(),
-    codigoProduto: String(registro?.codigo_produto ?? "").trim(),
-    descricao: String(registro?.produto ?? "").trim(),
-    injetora: String(registro?.injetora ?? "").trim(),
-    ativo: registro?.ativo !== false,
-    perfilHoras: String(registro?.perfil_horas ?? "").trim(),
-    minutosSolicitados: numero(registro?.minutos_solicitados),
-    minutosDescontados: numero(registro?.minutos_descontados),
-    minutosEfetivos: numero(registro?.minutos_efetivos),
-    horasEfetivas: numero(registro?.horas_efetivas),
-    cicloSegundos: numero(registro?.ciclo_segundos, null),
-    cavidadeMolde: numero(registro?.cavidade_molde, null),
-    pesoKg: numero(registro?.peso_kg, null),
-    ciclosCompletos: Math.trunc(numero(registro?.ciclos_completos)),
-    pecasPrevistas: Math.trunc(numero(registro?.pecas_previstas)),
+    programacaoId:
+      registro
+        ?.programacao_id ??
+      null,
+
+    diaId:
+      registro
+        ?.dia_id ??
+      null,
+
+    data:
+      String(
+        registro
+          ?.data ??
+        "",
+      ).trim(),
+
+    codigoProduto:
+      String(
+        registro
+          ?.codigo_produto ??
+        "",
+      ).trim(),
+
+    descricao:
+      String(
+        registro
+          ?.produto ??
+        "",
+      ).trim(),
+
+    materialId:
+      registro
+        ?.material_id ===
+        null ||
+      registro
+        ?.material_id ===
+        undefined
+        ? null
+        : Number(
+            registro
+              .material_id,
+          ),
+
+    materialNome:
+      String(
+        registro
+          ?.material_nome ??
+        "",
+      ).trim(),
+
+    injetora:
+      String(
+        registro
+          ?.injetora ??
+        "",
+      ).trim(),
+
+    ativo:
+      registro
+        ?.ativo !==
+      false,
+
+    perfilHoras:
+      String(
+        registro
+          ?.perfil_horas ??
+        "",
+      ).trim(),
+
+    minutosSolicitados:
+      numero(
+        registro
+          ?.minutos_solicitados,
+      ),
+
+    minutosDescontados:
+      numero(
+        registro
+          ?.minutos_descontados,
+      ),
+
+    minutosEfetivos:
+      numero(
+        registro
+          ?.minutos_efetivos,
+      ),
+
+    horasEfetivas:
+      numero(
+        registro
+          ?.horas_efetivas,
+      ),
+
+    cicloSegundos:
+      numero(
+        registro
+          ?.ciclo_segundos,
+        null,
+      ),
+
+    cavidadeMolde:
+      numero(
+        registro
+          ?.cavidade_molde,
+        null,
+      ),
+
+    pesoKg:
+      numero(
+        registro
+          ?.peso_kg,
+        null,
+      ),
+
+    ciclosCompletos:
+      Math.trunc(
+        numero(
+          registro
+            ?.ciclos_completos,
+        ),
+      ),
+
+    pecasPrevistas:
+      Math.trunc(
+        numero(
+          registro
+            ?.pecas_previstas,
+        ),
+      ),
+
     consumoTotalKg,
-    receitaId: registro?.receita_id ?? null,
-    receitaNome: String(registro?.receita_nome ?? "").trim(),
-    receitaPercentualTotal: numero(registro?.receita_percentual_total),
+
+    receitaId:
+      registro
+        ?.receita_id ??
+      null,
+
+    receitaNome:
+      String(
+        registro
+          ?.receita_nome ??
+        "",
+      ).trim(),
+
+    receitaPercentualTotal:
+      numero(
+        registro
+          ?.receita_percentual_total,
+      ),
+
     receitaConfigurada,
+
     receitaItens,
-    consumosFornecedores: distribuirConsumoReceita(
-      consumoTotalKg,
-      receitaItens,
-      receitaConfigurada,
-    ),
+
+    consumosFornecedores:
+      distribuirConsumoReceita(
+        consumoTotalKg,
+        receitaItens,
+        receitaConfigurada,
+      ),
+
     parametrosValidos:
-      numero(registro?.ciclo_segundos) > 0 &&
-      Number.isInteger(numero(registro?.cavidade_molde)) &&
-      numero(registro?.cavidade_molde) > 0 &&
-      numero(registro?.peso_kg) > 0,
+      numero(
+        registro
+          ?.ciclo_segundos,
+      ) > 0 &&
+      Number.isInteger(
+        numero(
+          registro
+            ?.cavidade_molde,
+        ),
+      ) &&
+      numero(
+        registro
+          ?.cavidade_molde,
+      ) > 0 &&
+      numero(
+        registro
+          ?.peso_kg,
+      ) > 0,
   };
 }
 
-function agregarConsumosFornecedores(dias = []) {
-  const mapa = new Map();
+function agregarConsumosFornecedores(
+  dias = [],
+) {
+  const mapa =
+    new Map();
 
-  for (const dia of dias) {
-    for (const consumo of dia?.consumosFornecedores ?? []) {
-      const chave = String(consumo?.fornecedorId ?? "");
+  for (
+    const dia
+    of dias
+  ) {
+    for (
+      const consumo
+      of dia
+        ?.consumosFornecedores ??
+      []
+    ) {
+      const chave =
+        String(
+          consumo
+            ?.fornecedorId ??
+          "",
+        );
 
       if (!chave) {
         continue;
       }
 
-      if (!mapa.has(chave)) {
-        mapa.set(chave, {
-          fornecedorId: consumo.fornecedorId,
-          fornecedorNome: consumo.fornecedorNome,
-          consumoPeriodoKg: 0,
-          consumoKg: 0,
-        });
+      if (
+        !mapa.has(
+          chave,
+        )
+      ) {
+        mapa.set(
+          chave,
+          {
+            fornecedorId:
+              consumo
+                .fornecedorId,
+
+            fornecedorNome:
+              consumo
+                .fornecedorNome,
+
+            consumoPeriodoKg:
+              0,
+
+            consumoKg:
+              0,
+          },
+        );
       }
 
-      const atual = mapa.get(chave);
-      atual.consumoPeriodoKg = arredondar(
-        atual.consumoPeriodoKg + numero(consumo?.consumoPeriodoKg),
-      );
-      atual.consumoKg = atual.consumoPeriodoKg;
+      const atual =
+        mapa.get(
+          chave,
+        );
+
+      atual.consumoPeriodoKg =
+        arredondar(
+          atual
+            .consumoPeriodoKg +
+          numero(
+            consumo
+              ?.consumoPeriodoKg,
+          ),
+        );
+
+      atual.consumoKg =
+        atual
+          .consumoPeriodoKg;
     }
   }
 
-  return [...mapa.values()].sort((a, b) =>
-    String(a.fornecedorNome).localeCompare(String(b.fornecedorNome), "pt-BR", {
-      sensitivity: "base",
-      numeric: true,
-    }),
+  return [
+    ...mapa.values(),
+  ].sort(
+    (
+      a,
+      b,
+    ) =>
+      String(
+        a.fornecedorNome,
+      ).localeCompare(
+        String(
+          b.fornecedorNome,
+        ),
+        "pt-BR",
+        {
+          sensitivity:
+            "base",
+
+          numeric:
+            true,
+        },
+      ),
   );
 }
 
-function listarReceitasUtilizadas(dias = []) {
-  const mapa = new Map();
+function listarReceitasUtilizadas(
+  dias = [],
+) {
+  const mapa =
+    new Map();
 
-  for (const dia of dias) {
-    if (dia?.receitaId === null || dia?.receitaId === undefined) {
+  for (
+    const dia
+    of dias
+  ) {
+    if (
+      dia?.receitaId ===
+        null ||
+      dia?.receitaId ===
+        undefined
+    ) {
       continue;
     }
 
-    const chave = String(dia.receitaId);
+    const chave =
+      String(
+        dia.receitaId,
+      );
 
-    if (!mapa.has(chave)) {
-      mapa.set(chave, {
-        id: dia.receitaId,
-        nome: dia.receitaNome || `Receita ${dia.receitaId}`,
-        quantidadeDias: 0,
-      });
+    if (
+      !mapa.has(
+        chave,
+      )
+    ) {
+      mapa.set(
+        chave,
+        {
+          id:
+            dia.receitaId,
+
+          nome:
+            dia.receitaNome ||
+            `Receita ${dia.receitaId}`,
+
+          quantidadeDias:
+            0,
+        },
+      );
     }
 
-    mapa.get(chave).quantidadeDias += 1;
+    mapa.get(
+      chave,
+    ).quantidadeDias +=
+      1;
   }
 
-  return [...mapa.values()].sort((a, b) =>
-    String(a.nome).localeCompare(String(b.nome), "pt-BR", {
-      sensitivity: "base",
-      numeric: true,
-    }),
+  return [
+    ...mapa.values(),
+  ].sort(
+    (
+      a,
+      b,
+    ) =>
+      String(
+        a.nome,
+      ).localeCompare(
+        String(
+          b.nome,
+        ),
+        "pt-BR",
+        {
+          sensitivity:
+            "base",
+
+          numeric:
+            true,
+        },
+      ),
   );
 }
 
@@ -169,182 +493,480 @@ export async function buscarProgramacaoDiaria({
   dataFim = null,
   apenasAtivas = true,
 } = {}) {
-  const { data, error } = await supabase.rpc(
-    "listar_programacao_diaria_v2",
-    {
-      p_data_inicio: dataInicio || null,
-      p_data_fim: dataFim || null,
-      p_apenas_ativas: Boolean(apenasAtivas),
-    },
-  );
+  const {
+    data,
+    error,
+  } =
+    await supabase.rpc(
+      "listar_programacao_diaria_v3",
+      {
+        p_data_inicio:
+          dataInicio ||
+          null,
+
+        p_data_fim:
+          dataFim ||
+          null,
+
+        p_apenas_ativas:
+          Boolean(
+            apenasAtivas,
+          ),
+      },
+    );
 
   if (error) {
     throw error;
   }
 
-  return (Array.isArray(data) ? data : []).map(normalizarDia);
+  return (
+    Array.isArray(data)
+      ? data
+      : []
+  ).map(
+    normalizarDia,
+  );
 }
 
 /* =========================================================
    AGRUPAR PARA A TELA DE PROGRAMAÇÃO
 ========================================================= */
 
-export function agruparProgramacaoDiaria(dias = []) {
-  const mapa = new Map();
+export function agruparProgramacaoDiaria(
+  dias = [],
+) {
+  const mapa =
+    new Map();
 
-  for (const dia of Array.isArray(dias) ? dias : []) {
-    const chave = String(dia.programacaoId ?? "");
+  for (
+    const dia
+    of Array.isArray(
+      dias,
+    )
+      ? dias
+      : []
+  ) {
+    const chave =
+      String(
+        dia
+          .programacaoId ??
+        "",
+      );
 
     if (!chave) {
       continue;
     }
 
-    if (!mapa.has(chave)) {
-      mapa.set(chave, {
-        id: dia.programacaoId,
-        codigoProduto: dia.codigoProduto,
-        descricao: dia.descricao,
-        injetora: dia.injetora,
-        ativo: dia.ativo,
-        tipoProgramacao: "CALENDARIO",
-        cicloSegundos: dia.cicloSegundos,
-        cavidadeMolde: dia.cavidadeMolde,
-        pesoKg: dia.pesoKg,
-        diasProgramacao: [],
-      });
+    if (
+      !mapa.has(
+        chave,
+      )
+    ) {
+      mapa.set(
+        chave,
+        {
+          id:
+            dia
+              .programacaoId,
+
+          codigoProduto:
+            dia
+              .codigoProduto,
+
+          descricao:
+            dia
+              .descricao,
+
+          materialId:
+            dia
+              .materialId,
+
+          materialNome:
+            dia
+              .materialNome,
+
+          injetora:
+            dia
+              .injetora,
+
+          ativo:
+            dia
+              .ativo,
+
+          tipoProgramacao:
+            "CALENDARIO",
+
+          cicloSegundos:
+            dia
+              .cicloSegundos,
+
+          cavidadeMolde:
+            dia
+              .cavidadeMolde,
+
+          pesoKg:
+            dia
+              .pesoKg,
+
+          diasProgramacao:
+            [],
+        },
+      );
     }
 
-    mapa.get(chave).diasProgramacao.push({
-      id: dia.diaId,
-      programacaoId: dia.programacaoId,
-      data: dia.data,
-      perfilHoras: dia.perfilHoras,
-      minutosSolicitados: dia.minutosSolicitados,
-      minutosDescontados: dia.minutosDescontados,
-      minutosEfetivos: dia.minutosEfetivos,
-      horasEfetivas: dia.horasEfetivas,
-      ciclosCompletos: dia.ciclosCompletos,
-      pecasPrevistas: dia.pecasPrevistas,
-      consumoTotalKg: dia.consumoTotalKg,
-      receitaId: dia.receitaId,
-      receitaNome: dia.receitaNome,
-      receitaPercentualTotal: dia.receitaPercentualTotal,
-      receitaConfigurada: dia.receitaConfigurada,
-      receitaItens: dia.receitaItens,
-      consumosFornecedores: dia.consumosFornecedores,
-    });
+    mapa
+      .get(
+        chave,
+      )
+      .diasProgramacao
+      .push({
+        id:
+          dia
+            .diaId,
+
+        programacaoId:
+          dia
+            .programacaoId,
+
+        data:
+          dia
+            .data,
+
+        perfilHoras:
+          dia
+            .perfilHoras,
+
+        minutosSolicitados:
+          dia
+            .minutosSolicitados,
+
+        minutosDescontados:
+          dia
+            .minutosDescontados,
+
+        minutosEfetivos:
+          dia
+            .minutosEfetivos,
+
+        horasEfetivas:
+          dia
+            .horasEfetivas,
+
+        ciclosCompletos:
+          dia
+            .ciclosCompletos,
+
+        pecasPrevistas:
+          dia
+            .pecasPrevistas,
+
+        consumoTotalKg:
+          dia
+            .consumoTotalKg,
+
+        receitaId:
+          dia
+            .receitaId,
+
+        receitaNome:
+          dia
+            .receitaNome,
+
+        receitaPercentualTotal:
+          dia
+            .receitaPercentualTotal,
+
+        receitaConfigurada:
+          dia
+            .receitaConfigurada,
+
+        receitaItens:
+          dia
+            .receitaItens,
+
+        consumosFornecedores:
+          dia
+            .consumosFornecedores,
+      });
   }
 
-  return [...mapa.values()]
-    .map((item) => {
-      const diasOrdenados = [...item.diasProgramacao].sort((a, b) =>
-        a.data.localeCompare(b.data),
-      );
+  return [
+    ...mapa.values(),
+  ]
+    .map(
+      (
+        item,
+      ) => {
+        const diasOrdenados =
+          [
+            ...item
+              .diasProgramacao,
+          ].sort(
+            (
+              a,
+              b,
+            ) =>
+              a.data
+                .localeCompare(
+                  b.data,
+                ),
+          );
 
-      const minutosEfetivos = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.minutosEfetivos),
-        0,
-      );
+        const minutosEfetivos =
+          diasOrdenados
+            .reduce(
+              (
+                total,
+                dia,
+              ) =>
+                total +
+                numero(
+                  dia
+                    .minutosEfetivos,
+                ),
+              0,
+            );
 
-      const ciclosCompletos = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.ciclosCompletos),
-        0,
-      );
+        const ciclosCompletos =
+          diasOrdenados
+            .reduce(
+              (
+                total,
+                dia,
+              ) =>
+                total +
+                numero(
+                  dia
+                    .ciclosCompletos,
+                ),
+              0,
+            );
 
-      const pecasPrevistas = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.pecasPrevistas),
-        0,
-      );
+        const pecasPrevistas =
+          diasOrdenados
+            .reduce(
+              (
+                total,
+                dia,
+              ) =>
+                total +
+                numero(
+                  dia
+                    .pecasPrevistas,
+                ),
+              0,
+            );
 
-      const consumoPeriodoKg = arredondar(
-        diasOrdenados.reduce(
-          (total, dia) => total + numero(dia.consumoTotalKg),
-          0,
-        ),
-      );
+        const consumoPeriodoKg =
+          arredondar(
+            diasOrdenados
+              .reduce(
+                (
+                  total,
+                  dia,
+                ) =>
+                  total +
+                  numero(
+                    dia
+                      .consumoTotalKg,
+                  ),
+                0,
+              ),
+          );
 
-      const receitasUtilizadas = listarReceitasUtilizadas(diasOrdenados);
-
-      const receitaConfigurada =
-        diasOrdenados.length > 0 &&
-        diasOrdenados.every((dia) => dia.receitaConfigurada === true);
-
-      return {
-        ...item,
-        diasProgramacao: diasOrdenados,
-        quantidadeDias: diasOrdenados.length,
-        dataInicio: diasOrdenados[0]?.data ?? null,
-        dataFim: diasOrdenados.at(-1)?.data ?? null,
-        horaInicio: null,
-        horaFim: null,
-        horasPeriodo: arredondar(minutosEfetivos / 60, 4),
-        minutosEfetivos,
-        ciclosCompletos: Math.trunc(ciclosCompletos),
-        pecasPrevistas: Math.trunc(pecasPrevistas),
-        quantidade: Math.trunc(pecasPrevistas),
-
-        pecasPorHora:
-          numero(item.cicloSegundos) > 0 &&
-          numero(item.cavidadeMolde) > 0
-            ? arredondar(
-                (3600 / item.cicloSegundos) *
-                  item.cavidadeMolde,
-                2,
-              )
-            : 0,
-
-        consumoPorHoraKg:
-          numero(item.cicloSegundos) > 0 &&
-          numero(item.cavidadeMolde) > 0 &&
-          numero(item.pesoKg) > 0
-            ? arredondar(
-                (3600 / item.cicloSegundos) *
-                  item.cavidadeMolde *
-                  item.pesoKg,
-              )
-            : 0,
-
-        consumoPeriodoKg,
-        receitaConfigurada,
-        receitaPercentualTotal:
-          receitaConfigurada ? 100 : 0,
-        receitasUtilizadas,
-        receitaNomes:
-          receitasUtilizadas.map(
-            (receita) => receita.nome,
-          ),
-        receitaItens: [],
-        consumosFornecedores:
-          agregarConsumosFornecedores(
+        const receitasUtilizadas =
+          listarReceitasUtilizadas(
             diasOrdenados,
-          ),
-        calculoLegado: false,
-      };
-    })
+          );
+
+        const receitaConfigurada =
+          diasOrdenados
+            .length >
+            0 &&
+          diasOrdenados
+            .every(
+              (
+                dia,
+              ) =>
+                dia
+                  .receitaConfigurada ===
+                true,
+            );
+
+        return {
+          ...item,
+
+          diasProgramacao:
+            diasOrdenados,
+
+          quantidadeDias:
+            diasOrdenados
+              .length,
+
+          dataInicio:
+            diasOrdenados[0]
+              ?.data ??
+            null,
+
+          dataFim:
+            diasOrdenados
+              .at(-1)
+              ?.data ??
+            null,
+
+          horaInicio:
+            null,
+
+          horaFim:
+            null,
+
+          horasPeriodo:
+            arredondar(
+              minutosEfetivos /
+                60,
+              4,
+            ),
+
+          minutosEfetivos,
+
+          ciclosCompletos:
+            Math.trunc(
+              ciclosCompletos,
+            ),
+
+          pecasPrevistas:
+            Math.trunc(
+              pecasPrevistas,
+            ),
+
+          quantidade:
+            Math.trunc(
+              pecasPrevistas,
+            ),
+
+          pecasPorHora:
+            numero(
+              item
+                .cicloSegundos,
+            ) > 0 &&
+            numero(
+              item
+                .cavidadeMolde,
+            ) > 0
+              ? arredondar(
+                  (
+                    3600 /
+                    item
+                      .cicloSegundos
+                  ) *
+                    item
+                      .cavidadeMolde,
+                  2,
+                )
+              : 0,
+
+          consumoPorHoraKg:
+            numero(
+              item
+                .cicloSegundos,
+            ) > 0 &&
+            numero(
+              item
+                .cavidadeMolde,
+            ) > 0 &&
+            numero(
+              item
+                .pesoKg,
+            ) > 0
+              ? arredondar(
+                  (
+                    3600 /
+                    item
+                      .cicloSegundos
+                  ) *
+                    item
+                      .cavidadeMolde *
+                    item
+                      .pesoKg,
+                )
+              : 0,
+
+          consumoPeriodoKg,
+
+          receitaConfigurada,
+
+          receitaPercentualTotal:
+            receitaConfigurada
+              ? 100
+              : 0,
+
+          receitasUtilizadas,
+
+          receitaNomes:
+            receitasUtilizadas
+              .map(
+                (
+                  receita,
+                ) =>
+                  receita.nome,
+              ),
+
+          receitaItens:
+            [],
+
+          consumosFornecedores:
+            agregarConsumosFornecedores(
+              diasOrdenados,
+            ),
+
+          calculoLegado:
+            false,
+        };
+      },
+    )
     .sort(
-      (a, b) =>
+      (
+        a,
+        b,
+      ) =>
         String(
-          a.dataInicio ?? "",
+          a.dataInicio ??
+          "",
         ).localeCompare(
           String(
-            b.dataInicio ?? "",
+            b.dataInicio ??
+            "",
           ),
         ) ||
         String(
-          a.injetora ?? "",
+          a.injetora ??
+          "",
         ).localeCompare(
           String(
-            b.injetora ?? "",
+            b.injetora ??
+            "",
           ),
           "pt-BR",
           {
-            numeric: true,
+            numeric:
+              true,
           },
         ) ||
-        Number(a.id ?? 0) -
-          Number(b.id ?? 0),
+        Number(
+          a.id ??
+          0,
+        ) -
+          Number(
+            b.id ??
+            0,
+          ),
     );
 }
+
+/* =========================================================
+   IMPORTANTE:
+   ESTE EXPORT É USADO PELO programacaoCalendarioService.js
+========================================================= */
 
 export async function buscarProgramacaoAgrupada({
   dataInicio = null,
@@ -371,112 +993,162 @@ export function converterDiasParaProjecao(
   dias = [],
 ) {
   return (
-    Array.isArray(dias)
+    Array.isArray(
+      dias,
+    )
       ? dias
       : []
-  ).map((dia) => ({
-    id:
-      `${dia.programacaoId}:${dia.diaId}`,
+  ).map(
+    (
+      dia,
+    ) => ({
+      id:
+        `${dia.programacaoId}:${dia.diaId}`,
 
-    programacaoId:
-      dia.programacaoId,
+      programacaoId:
+        dia
+          .programacaoId,
 
-    diaId:
-      dia.diaId,
+      diaId:
+        dia
+          .diaId,
 
-    codigoProduto:
-      dia.codigoProduto,
+      codigoProduto:
+        dia
+          .codigoProduto,
 
-    codigo_produto:
-      dia.codigoProduto,
+      codigo_produto:
+        dia
+          .codigoProduto,
 
-    descricao:
-      dia.descricao,
+      descricao:
+        dia
+          .descricao,
 
-    injetora:
-      dia.injetora,
+      materialId:
+        dia
+          .materialId,
 
-    ativo:
-      dia.ativo,
+      material_id:
+        dia
+          .materialId,
 
-    dataInicio:
-      dia.data,
+      materialNome:
+        dia
+          .materialNome,
 
-    data_inicio:
-      dia.data,
+      material_nome:
+        dia
+          .materialNome,
 
-    dataFim:
-      dia.data,
+      injetora:
+        dia
+          .injetora,
 
-    data_fim:
-      dia.data,
+      ativo:
+        dia
+          .ativo,
 
-    horaInicio:
-      null,
+      dataInicio:
+        dia
+          .data,
 
-    hora_inicio:
-      null,
+      data_inicio:
+        dia
+          .data,
 
-    horaFim:
-      null,
+      dataFim:
+        dia
+          .data,
 
-    hora_fim:
-      null,
+      data_fim:
+        dia
+          .data,
 
-    quantidade:
-      dia.pecasPrevistas,
+      horaInicio:
+        null,
 
-    pesoKg:
-      dia.pesoKg,
+      hora_inicio:
+        null,
 
-    peso_kg:
-      dia.pesoKg,
+      horaFim:
+        null,
 
-    cicloSegundos:
-      dia.cicloSegundos,
+      hora_fim:
+        null,
 
-    ciclo_segundos:
-      dia.cicloSegundos,
+      quantidade:
+        dia
+          .pecasPrevistas,
 
-    cavidadeMolde:
-      dia.cavidadeMolde,
+      pesoKg:
+        dia
+          .pesoKg,
 
-    cavidade_molde:
-      dia.cavidadeMolde,
+      peso_kg:
+        dia
+          .pesoKg,
 
-    consumoPeriodoKg:
-      dia.consumoTotalKg,
+      cicloSegundos:
+        dia
+          .cicloSegundos,
 
-    consumo_periodo_kg:
-      dia.consumoTotalKg,
+      ciclo_segundos:
+        dia
+          .cicloSegundos,
 
-    receitaId:
-      dia.receitaId,
+      cavidadeMolde:
+        dia
+          .cavidadeMolde,
 
-    receitaNome:
-      dia.receitaNome,
+      cavidade_molde:
+        dia
+          .cavidadeMolde,
 
-    receitaConfigurada:
-      dia.receitaConfigurada,
+      consumoPeriodoKg:
+        dia
+          .consumoTotalKg,
 
-    receitaPercentualTotal:
-      dia.receitaPercentualTotal,
+      consumo_periodo_kg:
+        dia
+          .consumoTotalKg,
 
-    receitaItens:
-      dia.receitaItens,
+      receitaId:
+        dia
+          .receitaId,
 
-    consumosFornecedores:
-      dia.consumosFornecedores,
+      receitaNome:
+        dia
+          .receitaNome,
 
-    minutosEfetivos:
-      dia.minutosEfetivos,
+      receitaConfigurada:
+        dia
+          .receitaConfigurada,
 
-    horasPeriodo:
-      dia.horasEfetivas,
+      receitaPercentualTotal:
+        dia
+          .receitaPercentualTotal,
 
-    calculoLegado:
-      false,
-  }));
+      receitaItens:
+        dia
+          .receitaItens,
+
+      consumosFornecedores:
+        dia
+          .consumosFornecedores,
+
+      minutosEfetivos:
+        dia
+          .minutosEfetivos,
+
+      horasPeriodo:
+        dia
+          .horasEfetivas,
+
+      calculoLegado:
+        false,
+    }),
+  );
 }
 
 export async function buscarProgramacaoParaProjecao({

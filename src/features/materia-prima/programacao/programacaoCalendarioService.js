@@ -38,6 +38,15 @@ function montarProdutos(produtos = []) {
           produto?.nomeProduto ??
           produto?.descricao ??
           "Sem descrição",
+        materialId:
+          produto?.materialId ??
+          produto?.material_id ??
+          null,
+        materialNome: String(
+          produto?.materialNome ??
+          produto?.material_nome ??
+          "",
+        ).trim(),
         pesoKg: numero(produto?.pesoKg, null),
         cicloSegundos: numero(produto?.cicloSegundos, null),
         cavidadeMolde: numero(produto?.cavidadeMolde, null),
@@ -90,7 +99,7 @@ function montarReceitas(receitas = []) {
 ========================================================= */
 
 export async function buscarProgramacaoComCalendario() {
-  const [programacao, produtosBrutos, cadastroReceitas] = await Promise.all([
+  const [programacaoBruta, produtosBrutos, cadastroReceitas] = await Promise.all([
     buscarProgramacaoAgrupada({
       apenasAtivas: false,
     }),
@@ -98,9 +107,33 @@ export async function buscarProgramacaoComCalendario() {
     buscarCadastroReceitas(),
   ]);
 
+  const produtos = montarProdutos(produtosBrutos);
+
+  const produtosPorCodigo = new Map(
+    produtos.map((produto) => [
+      String(produto.codigo),
+      produto,
+    ]),
+  );
+
+  const programacao = (Array.isArray(programacaoBruta)
+    ? programacaoBruta
+    : []
+  ).map((item) => {
+    const produto = produtosPorCodigo.get(
+      String(item?.codigoProduto ?? ""),
+    );
+
+    return {
+      ...item,
+      materialId: produto?.materialId ?? null,
+      materialNome: produto?.materialNome ?? "",
+    };
+  });
+
   return {
     programacao,
-    produtos: montarProdutos(produtosBrutos),
+    produtos,
     receitas: montarReceitas(cadastroReceitas?.receitas ?? []),
   };
 }

@@ -60,10 +60,6 @@ export default function CadastroProdutoModal({
   onSalvar,
   buscarDescricaoEstoque,
 }) {
-  /* =================================================
-     CAMPOS
-  ================================================= */
-
   const [
     codigoProduto,
     setCodigoProduto,
@@ -104,12 +100,6 @@ export default function CadastroProdutoModal({
     setAtivo,
   ] = useState(true);
 
-  /* =================================================
-     CAMPOS TÉCNICOS OCULTOS
-
-     Preservados para não perder dados existentes.
-  ================================================= */
-
   const [
     tempoInjecaoSegundos,
     setTempoInjecaoSegundos,
@@ -119,10 +109,6 @@ export default function CadastroProdutoModal({
     tempoResfriamentoSegundos,
     setTempoResfriamentoSegundos,
   ] = useState("");
-
-  /* =================================================
-     CONSULTA OMIE
-  ================================================= */
 
   const [
     descricaoEstoque,
@@ -139,17 +125,19 @@ export default function CadastroProdutoModal({
     setAvisoDescricao,
   ] = useState("");
 
-  const [erro, setErro] = useState("");
+  const [
+    erro,
+    setErro,
+  ] = useState("");
 
-  const consultaRef = useRef(0);
+  const consultaRef =
+    useRef(0);
 
-  const codigoRef = useRef("");
+  const codigoRef =
+    useRef("");
 
-  const nomeAutomaticoRef = useRef("");
-
-  /* =================================================
-     CARREGAR PRODUTO
-  ================================================= */
+  const nomeAutomaticoRef =
+    useRef("");
 
   useEffect(() => {
     ++consultaRef.current;
@@ -158,198 +146,239 @@ export default function CadastroProdutoModal({
       return;
     }
 
-    const codigo = item?.codigoProduto ?? "";
+    const codigo =
+      item?.codigoProduto ?? "";
 
-    codigoRef.current = codigo;
+    codigoRef.current =
+      codigo;
 
-    nomeAutomaticoRef.current = "";
+    nomeAutomaticoRef.current =
+      "";
 
-    setCodigoProduto(codigo);
+    setCodigoProduto(
+      codigo,
+    );
 
-    setNomeProduto(item?.nomeProduto ?? "");
+    setNomeProduto(
+      item?.nomeProduto ?? "",
+    );
 
     setCavidadeMolde(
-      valorParaCampo(item?.cavidadeMolde ?? 1),
+      valorParaCampo(
+        item?.cavidadeMolde ?? 1,
+      ),
     );
 
     setCicloSegundos(
-      valorParaCampo(item?.cicloSegundos),
+      valorParaCampo(
+        item?.cicloSegundos,
+      ),
     );
 
     setKgUn(
-      valorParaCampo(item?.kgUn),
+      valorParaCampo(
+        item?.kgUn,
+      ),
     );
 
     setKgHaste(
-      valorParaCampo(item?.kgHaste),
+      valorParaCampo(
+        item?.kgHaste,
+      ),
     );
 
     setMaterialId(
       item?.materialId !== null &&
       item?.materialId !== undefined
-        ? String(item.materialId)
+        ? String(
+            item.materialId,
+          )
         : "",
     );
 
-    setAtivo(item?.ativo !== false);
+    setAtivo(
+      item?.ativo !== false,
+    );
 
     setTempoInjecaoSegundos(
-      valorParaCampo(item?.tempoInjecaoSegundos),
+      valorParaCampo(
+        item?.tempoInjecaoSegundos,
+      ),
     );
 
     setTempoResfriamentoSegundos(
-      valorParaCampo(item?.tempoResfriamentoSegundos),
+      valorParaCampo(
+        item?.tempoResfriamentoSegundos,
+      ),
     );
 
     setDescricaoEstoque(
       item?.descricaoEstoque ?? "",
     );
 
-    setBuscandoDescricao(false);
+    setBuscandoDescricao(
+      false,
+    );
 
-    setAvisoDescricao("");
+    setAvisoDescricao(
+      "",
+    );
 
-    setErro("");
-
-  }, [aberto, item]);
-
-  /* =================================================
-     FECHAR COM ESC
-  ================================================= */
-
-
-
-  /* =================================================
-     BLOQUEAR ROLAGEM
-  ================================================= */
-
-
-
-  /* =================================================
-     ALTERAR CÓDIGO
-  ================================================= */
+    setErro(
+      "",
+    );
+  }, [
+    aberto,
+    item,
+  ]);
 
   function alterarCodigo(valor) {
     ++consultaRef.current;
 
-    codigoRef.current = valor;
+    codigoRef.current =
+      valor;
 
-    setCodigoProduto(valor);
+    setCodigoProduto(
+      valor,
+    );
 
-    setDescricaoEstoque("");
+    setDescricaoEstoque(
+      "",
+    );
 
-    setAvisoDescricao("");
+    setAvisoDescricao(
+      "",
+    );
 
-    setBuscandoDescricao(false);
+    setBuscandoDescricao(
+      false,
+    );
 
-    /* Remove apenas nomes preenchidos automaticamente. */
+    setNomeProduto(
+      (atual) => {
+        if (
+          nomeAutomaticoRef.current &&
+          atual ===
+            nomeAutomaticoRef.current
+        ) {
+          nomeAutomaticoRef.current =
+            "";
 
-    setNomeProduto((atual) => {
-      if (
-        nomeAutomaticoRef.current &&
-        atual === nomeAutomaticoRef.current
-      ) {
-        nomeAutomaticoRef.current = "";
+          return "";
+        }
 
-        return "";
-      }
+        nomeAutomaticoRef.current =
+          "";
 
-      nomeAutomaticoRef.current = "";
+        return atual;
+      },
+    );
 
-      return atual;
-    });
-
-    setErro("");
+    setErro(
+      "",
+    );
   }
 
-  /* =================================================
-     BUSCAR DESCRIÇÃO NO ESTOQUE
-
-     Executado quando o usuário sai
-     do campo Código.
-
-     Não substitui nomes digitados manualmente.
-  ================================================= */
-
   async function consultarEstoque() {
-    const codigo = codigoProduto.trim();
+    const codigo =
+      codigoProduto.trim();
 
     if (
       item ||
       !codigo ||
-      typeof buscarDescricaoEstoque !== "function"
+      typeof buscarDescricaoEstoque !==
+        "function"
     ) {
       return;
     }
 
-    const consulta = ++consultaRef.current;
+    const consulta =
+      ++consultaRef.current;
 
-    setBuscandoDescricao(true);
+    setBuscandoDescricao(
+      true,
+    );
 
-    setAvisoDescricao("");
+    setAvisoDescricao(
+      "",
+    );
 
     try {
-      const descricao = await buscarDescricaoEstoque(
-        codigo,
-      );
+      const descricao =
+        await buscarDescricaoEstoque(
+          codigo,
+        );
 
       if (
-        consulta !== consultaRef.current ||
-        codigoRef.current.trim() !== codigo
+        consulta !==
+          consultaRef.current ||
+        codigoRef.current.trim() !==
+          codigo
       ) {
         return;
       }
 
-      const encontrada = String(
-        descricao ?? "",
-      ).trim();
+      const encontrada =
+        String(
+          descricao ?? "",
+        ).trim();
 
-      setDescricaoEstoque(encontrada);
+      setDescricaoEstoque(
+        encontrada,
+      );
 
       if (encontrada) {
-        setNomeProduto((atual) => {
-          /* Preserva o nome digitado manualmente. */
+        setNomeProduto(
+          (atual) => {
+            if (
+              atual.trim()
+            ) {
+              return atual;
+            }
 
-          if (atual.trim()) {
-            return atual;
-          }
+            nomeAutomaticoRef.current =
+              encontrada;
 
-          nomeAutomaticoRef.current = encontrada;
-
-          return encontrada;
-        });
+            return encontrada;
+          },
+        );
       } else {
         setAvisoDescricao(
           "Código não encontrado no estoque Omie. Informe o nome manualmente.",
         );
       }
-
     } catch (error) {
-      if (consulta === consultaRef.current) {
+      if (
+        consulta ===
+        consultaRef.current
+      ) {
         setAvisoDescricao(
           `Consulta ao estoque indisponível: ${
-            error?.message || "tente novamente"
+            error?.message ||
+            "tente novamente"
           }. Informe o nome manualmente.`,
         );
       }
-
     } finally {
-      if (consulta === consultaRef.current) {
-        setBuscandoDescricao(false);
+      if (
+        consulta ===
+        consultaRef.current
+      ) {
+        setBuscandoDescricao(
+          false,
+        );
       }
     }
   }
-
-  /* =================================================
-     SALVAR
-  ================================================= */
 
   async function enviar(evento) {
     evento.preventDefault();
 
     setErro("");
 
-    if (buscandoDescricao) {
+    if (
+      buscandoDescricao
+    ) {
       setErro(
         "Aguarde a consulta da descrição do produto.",
       );
@@ -357,51 +386,63 @@ export default function CadastroProdutoModal({
       return;
     }
 
-    const codigoFinal = codigoProduto.trim();
+    const codigoFinal =
+      codigoProduto.trim();
 
-    const nomeFinal = nomeProduto.trim();
+    const nomeFinal =
+      nomeProduto.trim();
 
     if (!codigoFinal) {
-      setErro("Informe o código do produto.");
+      setErro(
+        "Informe o código do produto.",
+      );
+
       return;
     }
 
     if (!nomeFinal) {
-      setErro("Informe o nome do produto.");
+      setErro(
+        "Informe o nome do produto.",
+      );
+
       return;
     }
 
-    /* CONVERSÃO */
+    const cavidadeFinal =
+      normalizarNumero(
+        cavidadeMolde,
+      );
 
-    const cavidadeFinal = normalizarNumero(
-      cavidadeMolde,
-    );
+    const cicloFinal =
+      normalizarNumero(
+        cicloSegundos,
+      );
 
-    const cicloFinal = normalizarNumero(
-      cicloSegundos,
-    );
+    const kgUnFinal =
+      normalizarNumero(
+        kgUn,
+      );
 
-    const kgUnFinal = normalizarNumero(
-      kgUn,
-    );
+    const kgHasteFinal =
+      normalizarNumero(
+        kgHaste,
+      );
 
-    const kgHasteFinal = normalizarNumero(
-      kgHaste,
-    );
+    const injecaoFinal =
+      normalizarNumero(
+        tempoInjecaoSegundos,
+      );
 
-    const injecaoFinal = normalizarNumero(
-      tempoInjecaoSegundos,
-    );
-
-    const resfriamentoFinal = normalizarNumero(
-      tempoResfriamentoSegundos,
-    );
-
-    /* VALIDAÇÕES */
+    const resfriamentoFinal =
+      normalizarNumero(
+        tempoResfriamentoSegundos,
+      );
 
     if (
       cavidadeFinal === null ||
-      !Number.isInteger(cavidadeFinal) ||
+      !Number.isInteger(
+        cavidadeFinal,
+      ) ||
       cavidadeFinal <= 0
     ) {
       setErro(
@@ -454,11 +495,15 @@ export default function CadastroProdutoModal({
     }
 
     const materialIdFinal =
-      Number(materialId);
+      Number(
+        materialId,
+      );
 
     if (
       !materialId ||
-      !Number.isInteger(materialIdFinal) ||
+      !Number.isInteger(
+        materialIdFinal,
+      ) ||
       materialIdFinal <= 0
     ) {
       setErro(
@@ -468,42 +513,32 @@ export default function CadastroProdutoModal({
       return;
     }
 
-    /* =================================================
-       ENVIAR PARA O SERVIÇO
-
-       Peso duplicado:
-       preserva o valor antigo para compatibilidade.
-
-       KG/UN:
-       continua sendo o peso utilizado nos cálculos.
-    ================================================= */
-
     try {
       await onSalvar?.({
-        codigoProduto: codigoFinal,
+        codigoProduto:
+          codigoFinal,
 
         codigoOriginal:
-          item?.codigoProduto ?? null,
+          item?.codigoProduto ??
+          null,
 
-        nomeProduto: nomeFinal,
+        nomeProduto:
+          nomeFinal,
 
         materialId:
           materialIdFinal,
 
-        /*
-         * Compatibilidade temporária com telas
-         * ainda não migradas para material_id.
-         */
-        usaPp: true,
-
         pesoKg:
-          item?.pesoKg ?? null,
+          item?.pesoKg ??
+          null,
 
         ativo,
 
-        cavidadeMolde: cavidadeFinal,
+        cavidadeMolde:
+          cavidadeFinal,
 
-        cicloSegundos: cicloFinal,
+        cicloSegundos:
+          cicloFinal,
 
         tempoInjecaoSegundos:
           injecaoFinal,
@@ -511,15 +546,16 @@ export default function CadastroProdutoModal({
         tempoResfriamentoSegundos:
           resfriamentoFinal,
 
-        kgUn: kgUnFinal,
+        kgUn:
+          kgUnFinal,
 
-        kgHaste: kgHasteFinal,
+        kgHaste:
+          kgHasteFinal,
       });
-
     } catch (error) {
       setErro(
         error?.message ||
-        "Não foi possível salvar o produto.",
+          "Não foi possível salvar o produto.",
       );
     }
   }
@@ -527,10 +563,6 @@ export default function CadastroProdutoModal({
   if (!aberto) {
     return null;
   }
-
-  /* =====================================================
-     INTERFACE
-  ===================================================== */
 
   return (
     <Modal
@@ -541,19 +573,20 @@ export default function CadastroProdutoModal({
       tamanho="medio"
       fecharAoClicarFora={false}
     >
-
       <div
         className="produto-pp-modal cadastro-produto-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadastro-produto-modal-titulo"
       >
-
-        {/* CABEÇALHO */}
-
-        <div className="produto-pp-modal-header" data-modal-header="">
-
-          <div className="produto-pp-modal-header-icone" data-modal-icone="">
+        <div
+          className="produto-pp-modal-header"
+          data-modal-header=""
+        >
+          <div
+            className="produto-pp-modal-header-icone"
+            data-modal-icone=""
+          >
             <Boxes
               size={22}
               aria-hidden="true"
@@ -561,8 +594,9 @@ export default function CadastroProdutoModal({
           </div>
 
           <div className="produto-pp-modal-header-texto">
-
-            <span>Cadastro</span>
+            <span>
+              Cadastro
+            </span>
 
             <ModalTitulo>
               <h3 id="cadastro-produto-modal-titulo">
@@ -576,41 +610,48 @@ export default function CadastroProdutoModal({
               Dados gerais e parâmetros utilizados
               no planejamento de produção.
             </p>
-
           </div>
 
           <button
             type="button"
             className="produto-pp-modal-fechar"
-            onClick={onCancelar}
-            disabled={salvando}
+            onClick={
+              onCancelar
+            }
+            disabled={
+              salvando
+            }
             aria-label="Fechar"
             data-modal-fechar=""
           >
             <X size={19} />
           </button>
-
         </div>
-
-        {/* FORMULÁRIO */}
 
         <form
           className="produto-pp-modal-form"
-          onSubmit={enviar}
+          onSubmit={
+            enviar
+          }
           data-modal-form=""
         >
-
-          {/* CÓDIGO */}
-
           <label className="produto-pp-modal-campo">
-
-            <span>Código</span>
+            <span>
+              Código
+            </span>
 
             <input
               type="text"
-              value={codigoProduto}
-              onChange={(evento) =>
-                alterarCodigo(evento.target.value)
+              value={
+                codigoProduto
+              }
+              onChange={
+                (
+                  evento,
+                ) =>
+                  alterarCodigo(
+                    evento.target.value,
+                  )
               }
               onBlur={() => {
                 void consultarEstoque();
@@ -622,46 +663,48 @@ export default function CadastroProdutoModal({
                 Boolean(item)
               }
             />
-
           </label>
-
-          {/* DESCRIÇÃO OMIE */}
 
           {descricaoEstoque && (
             <div
               className="produto-pp-modal-campo"
               style={{
-                padding: "10px 12px",
-                background: "#eff6ff",
-                borderRadius: 8,
+                padding:
+                  "10px 12px",
+
+                background:
+                  "#eff6ff",
+
+                borderRadius:
+                  8,
               }}
             >
-
               <span>
                 Descrição encontrada no estoque Omie
               </span>
 
               <strong
                 style={{
-                  display: "block",
-                  marginTop: 4,
+                  display:
+                    "block",
+
+                  marginTop:
+                    4,
                 }}
               >
                 {descricaoEstoque}
               </strong>
 
               {item &&
-                descricaoEstoque !== item.nomeProduto && (
+                descricaoEstoque !==
+                  item.nomeProduto && (
                   <small>
                     O nome cadastrado permanece inalterado
                     até você decidir editá-lo.
                   </small>
                 )}
-
             </div>
           )}
-
-          {/* CARREGAMENTO DA CONSULTA */}
 
           {buscandoDescricao && (
             <small role="status">
@@ -675,144 +718,199 @@ export default function CadastroProdutoModal({
             </small>
           )}
 
-          {/* NOME */}
-
           <label className="produto-pp-modal-campo">
-
-            <span>Nome do produto</span>
+            <span>
+              Nome do produto
+            </span>
 
             <input
               type="text"
-              value={nomeProduto}
-              onChange={(evento) => {
-                nomeAutomaticoRef.current = "";
+              value={
+                nomeProduto
+              }
+              onChange={
+                (
+                  evento,
+                ) => {
+                  nomeAutomaticoRef.current =
+                    "";
 
-                setNomeProduto(evento.target.value);
+                  setNomeProduto(
+                    evento.target.value,
+                  );
 
-                setErro("");
-              }}
+                  setErro("");
+                }
+              }
               placeholder="Ex.: Suporte 90x90"
               autoComplete="off"
-              disabled={salvando}
+              disabled={
+                salvando
+              }
             />
-
           </label>
 
-          {/* CAVIDADES E CICLO */}
-
           <div className="produto-pp-modal-grid">
-
             <label className="produto-pp-modal-campo">
-
-              <span>Cavidades</span>
+              <span>
+                Cavidades
+              </span>
 
               <input
                 type="number"
                 min="1"
                 step="1"
-                value={cavidadeMolde}
-                onChange={(evento) => {
-                  setCavidadeMolde(evento.target.value);
-                  setErro("");
-                }}
-                disabled={salvando}
-              />
+                value={
+                  cavidadeMolde
+                }
+                onChange={
+                  (
+                    evento,
+                  ) => {
+                    setCavidadeMolde(
+                      evento.target.value,
+                    );
 
+                    setErro("");
+                  }
+                }
+                disabled={
+                  salvando
+                }
+              />
             </label>
 
             <label className="produto-pp-modal-campo">
-
-              <span>Ciclo</span>
+              <span>
+                Ciclo
+              </span>
 
               <div className="produto-pp-modal-peso">
-
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={cicloSegundos}
-                  onChange={(evento) => {
-                    setCicloSegundos(evento.target.value);
-                    setErro("");
-                  }}
+                  value={
+                    cicloSegundos
+                  }
+                  onChange={
+                    (
+                      evento,
+                    ) => {
+                      setCicloSegundos(
+                        evento.target.value,
+                      );
+
+                      setErro("");
+                    }
+                  }
                   placeholder="Ex.: 45"
-                  disabled={salvando}
+                  disabled={
+                    salvando
+                  }
                 />
 
-                <span>s</span>
-
+                <span>
+                  s
+                </span>
               </div>
-
             </label>
-
           </div>
-
-          {/* KG/UN E KG/HASTE */}
 
           <div className="produto-pp-modal-grid">
-
             <label className="produto-pp-modal-campo">
-
-              <span>Kg/unidade</span>
+              <span>
+                Kg/unidade
+              </span>
 
               <div className="produto-pp-modal-peso">
-
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={kgUn}
-                  onChange={(evento) => {
-                    setKgUn(evento.target.value);
-                    setErro("");
-                  }}
+                  value={
+                    kgUn
+                  }
+                  onChange={
+                    (
+                      evento,
+                    ) => {
+                      setKgUn(
+                        evento.target.value,
+                      );
+
+                      setErro("");
+                    }
+                  }
                   placeholder="Ex.: 0,2470"
-                  disabled={salvando}
+                  disabled={
+                    salvando
+                  }
                 />
 
-                <span>kg</span>
-
+                <span>
+                  kg
+                </span>
               </div>
-
             </label>
 
             <label className="produto-pp-modal-campo">
-
-              <span>Kg/haste</span>
+              <span>
+                Kg/haste
+              </span>
 
               <div className="produto-pp-modal-peso">
-
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={kgHaste}
-                  onChange={(evento) => {
-                    setKgHaste(evento.target.value);
-                    setErro("");
-                  }}
+                  value={
+                    kgHaste
+                  }
+                  onChange={
+                    (
+                      evento,
+                    ) => {
+                      setKgHaste(
+                        evento.target.value,
+                      );
+
+                      setErro("");
+                    }
+                  }
                   placeholder="Ex.: 0,1040"
-                  disabled={salvando}
+                  disabled={
+                    salvando
+                  }
                 />
 
-                <span>kg</span>
-
+                <span>
+                  kg
+                </span>
               </div>
-
             </label>
-
           </div>
 
-          {/* MATERIAL */}
-
           <label className="produto-pp-modal-campo">
-
-            <span>Material</span>
+            <span>
+              Material
+            </span>
 
             <select
-              value={materialId}
-              onChange={(evento) => {
-                setMaterialId(evento.target.value);
-                setErro("");
-              }}
-              disabled={salvando}
+              value={
+                materialId
+              }
+              onChange={
+                (
+                  evento,
+                ) => {
+                  setMaterialId(
+                    evento.target.value,
+                  );
+
+                  setErro("");
+                }
+              }
+              disabled={
+                salvando
+              }
               required
             >
               <option value="">
@@ -820,58 +918,78 @@ export default function CadastroProdutoModal({
               </option>
 
               {materiais
-                .filter((material) =>
-                  material.ativo ||
-                  String(material.id) === String(materialId),
+                .filter(
+                  (
+                    material,
+                  ) =>
+                    material.ativo ||
+                    String(
+                      material.id,
+                    ) ===
+                      String(
+                        materialId,
+                      ),
                 )
-                .map((material) => (
-                  <option
-                    key={material.id}
-                    value={String(material.id)}
-                  >
-                    {material.nome}
-                  </option>
-                ))}
+                .map(
+                  (
+                    material,
+                  ) => (
+                    <option
+                      key={
+                        material.id
+                      }
+                      value={
+                        String(
+                          material.id,
+                        )
+                      }
+                    >
+                      {material.nome}
+                    </option>
+                  ),
+                )}
             </select>
 
             <small>
               Material utilizado na fabricação deste produto.
             </small>
-
           </label>
 
-          {/* OPÇÕES */}
-
           <div className="cadastro-produto-modal-status-grid">
-
             <label className="produto-pp-modal-status">
-
               <input
                 type="checkbox"
-                checked={ativo}
-                onChange={(evento) => {
-                  setAtivo(evento.target.checked);
-                  setErro("");
-                }}
-                disabled={salvando}
+                checked={
+                  ativo
+                }
+                onChange={
+                  (
+                    evento,
+                  ) => {
+                    setAtivo(
+                      evento.target.checked,
+                    );
+
+                    setErro("");
+                  }
+                }
+                disabled={
+                  salvando
+                }
               />
 
               <div>
-
-                <strong>Produto ativo</strong>
+                <strong>
+                  Produto ativo
+                </strong>
 
                 <span>
                   Produtos inativos permanecem
                   no histórico do sistema.
                 </span>
-
               </div>
-
             </label>
-
           </div>
-
-          {/* ERRO */}
 
           {erro && (
             <div
@@ -882,15 +1000,19 @@ export default function CadastroProdutoModal({
             </div>
           )}
 
-          {/* AÇÕES */}
-
-          <div className="produto-pp-modal-acoes" data-modal-footer="">
-
+          <div
+            className="produto-pp-modal-acoes"
+            data-modal-footer=""
+          >
             <button
               type="button"
               className="produto-pp-modal-cancelar"
-              onClick={onCancelar}
-              disabled={salvando}
+              onClick={
+                onCancelar
+              }
+              disabled={
+                salvando
+              }
               data-modal-acao="secundaria"
             >
               Cancelar
@@ -905,21 +1027,15 @@ export default function CadastroProdutoModal({
               }
               data-modal-acao="primaria"
             >
-
               <Save size={17} />
 
               {salvando
                 ? "Salvando..."
                 : "Salvar produto"}
-
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </Modal>
   );
 }

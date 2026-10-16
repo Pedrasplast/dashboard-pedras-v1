@@ -122,7 +122,7 @@ const NAVIGATION_GROUPS = Object.freeze([
 
         icon: FlaskConical,
 
-        permissao: "materia_prima",
+        permissao: "cadastro_receita",
       },
     ],
   },
@@ -232,58 +232,58 @@ const NAVIGATION_GROUPS = Object.freeze([
     ===================================================== */
 
   {
-  type: "group",
+    type: "group",
 
-  id: "compras",
+    id: "compras",
 
-  label: "Compras",
+    label: "Compras",
 
-  icon: ShoppingBag,
+    icon: ShoppingBag,
 
-  children: [
-    {
-      type: "link",
+    children: [
+      {
+        type: "link",
 
-      id: "pedidos-compra",
+        id: "pedidos-compra",
 
-      label: "Pedidos de Compra",
+        label: "Pedidos de Compra",
 
-      path: "/pedidos-compra",
+        path: "/pedidos-compra",
 
-      icon: ShoppingBag,
+        icon: ShoppingBag,
 
-      permissao: "pedidos_compra",
-    },
+        permissao: "pedidos_compra",
+      },
 
-    {
-      type: "link",
+      {
+        type: "link",
 
-      id: "compras-futuras",
+        id: "compras-futuras",
 
-      label: "Compras Futuras",
+        label: "Compras Futuras",
 
-      path: "/compras-futuras",
+        path: "/compras-futuras",
 
-      icon: ShoppingBag,
+        icon: ShoppingBag,
 
-      permissao: "compras_futuras",
-    },
+        permissao: "compras_futuras",
+      },
 
-    {
-      type: "link",
+      {
+        type: "link",
 
-      id: "entradas-materia-prima",
+        id: "entradas-materia-prima",
 
-      label: "Entradas",
+        label: "Entradas",
 
-      path: "/entradas-materia-prima",
+        path: "/entradas-materia-prima",
 
-      icon: ArrowDownToLine,
+        icon: ArrowDownToLine,
 
-      permissao: "entradas_materia_prima",
-    },
-  ],
-},
+        permissao: "entradas_materia_prima",
+      },
+    ],
+  },
 
   /* =====================================================
        PEDIDOS
@@ -367,6 +367,7 @@ const NAVIGATION_GROUPS = Object.freeze([
     permissao: "relatorios",
   },
 ]);
+
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
@@ -374,7 +375,9 @@ const NAVIGATION_GROUPS = Object.freeze([
 function normalizarCaminho(path) {
   const caminho = String(path || "/").trim();
 
-  return caminho === "/" ? "/" : caminho.replace(/\/+$/, "");
+  return caminho === "/"
+    ? "/"
+    : caminho.replace(/\/+$/, "");
 }
 
 function obterNomeUsuario(email) {
@@ -385,7 +388,11 @@ function obterNomeUsuario(email) {
   return String(email)
     .split("@")[0]
     .replace(/[._-]+/g, " ")
-    .replace(/\b\w/g, (letra) => letra.toUpperCase());
+    .replace(
+      /\b\w/g,
+      (letra) =>
+        letra.toUpperCase(),
+    );
 }
 
 function obterIniciais(nome) {
@@ -393,190 +400,400 @@ function obterIniciais(nome) {
     return "US";
   }
 
-  const palavras = String(nome).trim().split(/\s+/).filter(Boolean);
+  const palavras =
+    String(nome)
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
 
-  if (palavras.length === 0) {
+  if (
+    palavras.length === 0
+  ) {
     return "US";
   }
 
-  if (palavras.length === 1) {
-    return palavras[0].slice(0, 2).toUpperCase();
+  if (
+    palavras.length === 1
+  ) {
+    return palavras[0]
+      .slice(0, 2)
+      .toUpperCase();
   }
 
   return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
 }
 
-function obterTipoNotificacao(notificacao) {
-  const tipo = String(notificacao?.tipo_ultima_ocorrencia ?? notificacao?.tipo ?? "novo")
-    .trim()
-    .toLowerCase();
+function obterTipoNotificacao(
+  notificacao,
+) {
+  const tipo =
+    String(
+      notificacao
+        ?.tipo_ultima_ocorrencia ??
+        notificacao?.tipo ??
+        "novo",
+    )
+      .trim()
+      .toLowerCase();
 
-  return tipo === "alterado" ? "alterado" : "novo";
+  return tipo === "alterado"
+    ? "alterado"
+    : "novo";
 }
 
-function formatarBadgePedidos(quantidade) {
-  const numero = Number(quantidade || 0);
+function formatarBadgePedidos(
+  quantidade,
+) {
+  const numero =
+    Number(
+      quantidade || 0,
+    );
 
-  if (!Number.isFinite(numero) || numero <= 0) {
+  if (
+    !Number.isFinite(numero) ||
+    numero <= 0
+  ) {
     return null;
   }
 
-  return numero > 99 ? "99+" : String(numero);
+  return numero > 99
+    ? "99+"
+    : String(numero);
 }
 
 /* =========================================================
    NAVBAR
 ========================================================= */
 
-function Navbar({ user, isAdmin }) {
-  const navigate = useNavigate();
+function Navbar({
+  user,
+  isAdmin,
+}) {
+  const navigate =
+    useNavigate();
 
-  const menuRef = useRef(null);
+  const menuRef =
+    useRef(null);
 
-  const navigationRef = useRef(null);
+  const navigationRef =
+    useRef(null);
 
-  const alertaTimeoutRef = useRef(null);
+  const alertaTimeoutRef =
+    useRef(null);
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [
+    userMenuOpen,
+    setUserMenuOpen,
+  ] =
+    useState(false);
 
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(null);
+  const [
+    desktopMenuOpen,
+    setDesktopMenuOpen,
+  ] =
+    useState(null);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] =
+    useState(false);
 
-  const [mobileGroupOpen, setMobileGroupOpen] = useState(null);
+  const [
+    mobileGroupOpen,
+    setMobileGroupOpen,
+  ] =
+    useState(null);
 
-  const [pedidosNaoLidos, setPedidosNaoLidos] = useState(0);
+  const [
+    pedidosNaoLidos,
+    setPedidosNaoLidos,
+  ] =
+    useState(0);
 
-  const [ultimaNotificacaoPedido, setUltimaNotificacaoPedido] = useState(null);
+  const [
+    ultimaNotificacaoPedido,
+    setUltimaNotificacaoPedido,
+  ] =
+    useState(null);
 
-  const [mostrarAlertaPedido, setMostrarAlertaPedido] = useState(false);
+  const [
+    mostrarAlertaPedido,
+    setMostrarAlertaPedido,
+  ] =
+    useState(false);
 
-  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
+  const {
+    podeAcessarTela,
+    loadingPermissoes,
+  } =
+    usePermissoes();
 
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
+  const pathname =
+    useRouterState({
+      select:
+        (state) =>
+          state.location.pathname,
+    });
 
-  const currentPath = useMemo(() => normalizarCaminho(pathname), [pathname]);
+  const currentPath =
+    useMemo(
+      () =>
+        normalizarCaminho(
+          pathname,
+        ),
+      [pathname],
+    );
 
-  const userName = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
+  const userName =
+    useMemo(
+      () =>
+        obterNomeUsuario(
+          user?.email,
+        ),
+      [user?.email],
+    );
 
-  const userInitials = useMemo(() => obterIniciais(userName), [userName]);
+  const userInitials =
+    useMemo(
+      () =>
+        obterIniciais(
+          userName,
+        ),
+      [userName],
+    );
 
-  const podeAcessarPedidos = useMemo(() => {
-    if (!user) {
-      return false;
-    }
-
-    if (isAdmin) {
-      return true;
-    }
-
-    if (loadingPermissoes) {
-      return false;
-    }
-
-    return podeAcessarTela("pedidos");
-  }, [user, isAdmin, loadingPermissoes, podeAcessarTela]);
-
-  const podeImportar = useMemo(() => {
-    if (!user) {
-      return false;
-    }
-
-    if (isAdmin) {
-      return true;
-    }
-
-    if (loadingPermissoes) {
-      return false;
-    }
-
-    return podeAcessarTela("importar");
-  }, [user, isAdmin, loadingPermissoes, podeAcessarTela]);
-
-  const podeVerItem = useCallback(
-    (item) => {
-      if (!item?.permissao) {
-        return true;
+  const podeAcessarPedidos =
+    useMemo(() => {
+      if (!user) {
+        return false;
       }
 
       if (isAdmin) {
         return true;
       }
 
-      if (loadingPermissoes) {
+      if (
+        loadingPermissoes
+      ) {
         return false;
       }
 
-      return podeAcessarTela(item.permissao);
-    },
-    [isAdmin, loadingPermissoes, podeAcessarTela],
-  );
+      return podeAcessarTela(
+        "pedidos",
+      );
+    }, [
+      user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
+    ]);
 
-  const navigationGroupsVisiveis = useMemo(() => {
-    if (!user) {
-      return [];
-    }
-
-    return NAVIGATION_GROUPS.map((item) => {
-      if (item.type === "link") {
-        return podeVerItem(item) ? item : null;
+  const podeImportar =
+    useMemo(() => {
+      if (!user) {
+        return false;
       }
 
-      const children = (item.children || []).filter(podeVerItem);
-
-      if (children.length === 0) {
-        return null;
+      if (isAdmin) {
+        return true;
       }
 
-      return {
-        ...item,
-
-        children,
-      };
-    }).filter(Boolean);
-  }, [user, podeVerItem]);
-
-  const caminhoAtivo = useCallback(
-    (path) => currentPath === normalizarCaminho(path),
-    [currentPath],
-  );
-
-  const grupoAtivo = useCallback(
-    (grupo) => (grupo?.children || []).some((child) => caminhoAtivo(child.path)),
-    [caminhoAtivo],
-  );
-
-  const badgePedidos = useMemo(() => formatarBadgePedidos(pedidosNaoLidos), [pedidosNaoLidos]);
-
-  const atualizarQuantidadePedidosNovos = useCallback(async () => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
-
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.rpc("contar_notificacoes_pedidos_nao_lidas");
-
-      if (error) {
-        console.error("Erro ao consultar notificações de pedidos:", error);
-
-        return;
+      if (
+        loadingPermissoes
+      ) {
+        return false;
       }
 
-      const quantidade = Number(data ?? 0);
+      return podeAcessarTela(
+        "importar",
+      );
+    }, [
+      user,
+      isAdmin,
+      loadingPermissoes,
+      podeAcessarTela,
+    ]);
 
-      setPedidosNaoLidos(Number.isFinite(quantidade) ? quantidade : 0);
-    } catch (error) {
-      console.error("Erro inesperado ao consultar notificações de pedidos:", error);
-    }
-  }, [user, podeAcessarPedidos]);
+  const podeVerItem =
+    useCallback(
+      (item) => {
+        if (
+          !item?.permissao
+        ) {
+          return true;
+        }
+
+        if (isAdmin) {
+          return true;
+        }
+
+        if (
+          loadingPermissoes
+        ) {
+          return false;
+        }
+
+        return podeAcessarTela(
+          item.permissao,
+        );
+      },
+      [
+        isAdmin,
+        loadingPermissoes,
+        podeAcessarTela,
+      ],
+    );
+
+  const navigationGroupsVisiveis =
+    useMemo(() => {
+      if (!user) {
+        return [];
+      }
+
+      return NAVIGATION_GROUPS
+        .map(
+          (item) => {
+            if (
+              item.type ===
+              "link"
+            ) {
+              return podeVerItem(
+                item,
+              )
+                ? item
+                : null;
+            }
+
+            const children =
+              (
+                item.children ||
+                []
+              ).filter(
+                podeVerItem,
+              );
+
+            if (
+              children.length ===
+              0
+            ) {
+              return null;
+            }
+
+            return {
+              ...item,
+
+              children,
+            };
+          },
+        )
+        .filter(
+          Boolean,
+        );
+    }, [
+      user,
+      podeVerItem,
+    ]);
+
+  const caminhoAtivo =
+    useCallback(
+      (path) =>
+        currentPath ===
+        normalizarCaminho(
+          path,
+        ),
+      [currentPath],
+    );
+
+  const grupoAtivo =
+    useCallback(
+      (grupo) =>
+        (
+          grupo?.children ||
+          []
+        ).some(
+          (child) =>
+            caminhoAtivo(
+              child.path,
+            ),
+        ),
+      [caminhoAtivo],
+    );
+
+  const badgePedidos =
+    useMemo(
+      () =>
+        formatarBadgePedidos(
+          pedidosNaoLidos,
+        ),
+      [pedidosNaoLidos],
+    );
+
+  const atualizarQuantidadePedidosNovos =
+    useCallback(
+      async () => {
+        if (
+          !user ||
+          !podeAcessarPedidos
+        ) {
+          setPedidosNaoLidos(
+            0,
+          );
+
+          return;
+        }
+
+        try {
+          const {
+            data,
+            error,
+          } =
+            await supabase.rpc(
+              "contar_notificacoes_pedidos_nao_lidas",
+            );
+
+          if (error) {
+            console.error(
+              "Erro ao consultar notificações de pedidos:",
+              error,
+            );
+
+            return;
+          }
+
+          const quantidade =
+            Number(
+              data ?? 0,
+            );
+
+          setPedidosNaoLidos(
+            Number.isFinite(
+              quantidade,
+            )
+              ? quantidade
+              : 0,
+          );
+        } catch (error) {
+          console.error(
+            "Erro inesperado ao consultar notificações de pedidos:",
+            error,
+          );
+        }
+      },
+      [
+        user,
+        podeAcessarPedidos,
+      ],
+    );
 
   useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
+    if (
+      !user ||
+      !podeAcessarPedidos
+    ) {
+      setPedidosNaoLidos(
+        0,
+      );
 
       return undefined;
     }
@@ -584,291 +801,555 @@ function Navbar({ user, isAdmin }) {
     void atualizarQuantidadePedidosNovos();
 
     return undefined;
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
+  }, [
+    user,
+    podeAcessarPedidos,
+    atualizarQuantidadePedidosNovos,
+  ]);
 
   useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
+    if (
+      !user ||
+      !podeAcessarPedidos
+    ) {
       return undefined;
     }
 
-    const canal = supabase
-      .channel(`navbar-pedidos-${user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
+    const canal =
+      supabase
+        .channel(
+          `navbar-pedidos-${user.id}`,
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
 
-          schema: "public",
+            schema:
+              "public",
 
-          table: "pedidos_notificacoes",
-        },
-        (payload) => {
-          const notificacao = payload?.new;
+            table:
+              "pedidos_notificacoes",
+          },
+          (payload) => {
+            const notificacao =
+              payload?.new;
 
-          if (!notificacao) {
+            if (
+              !notificacao
+            ) {
+              void atualizarQuantidadePedidosNovos();
+
+              return;
+            }
+
+            if (
+              notificacao.notificar !==
+              true
+            ) {
+              void atualizarQuantidadePedidosNovos();
+
+              return;
+            }
+
+            const tipo =
+              obterTipoNotificacao(
+                notificacao,
+              );
+
             void atualizarQuantidadePedidosNovos();
 
-            return;
-          }
+            setUltimaNotificacaoPedido({
+              id:
+                notificacao.id,
 
-          if (notificacao.notificar !== true) {
-            void atualizarQuantidadePedidosNovos();
+              codigoPedidoOmie:
+                notificacao.codigo_pedido_omie,
 
-            return;
-          }
+              numeroPedido:
+                notificacao.numero_pedido,
 
-          const tipo = obterTipoNotificacao(notificacao);
+              cliente:
+                notificacao.cliente,
 
-          void atualizarQuantidadePedidosNovos();
+              vendedor:
+                notificacao.vendedor,
 
-          setUltimaNotificacaoPedido({
-            id: notificacao.id,
+              tipo,
 
-            codigoPedidoOmie: notificacao.codigo_pedido_omie,
+              resumo:
+                notificacao.resumo ||
+                (
+                  tipo ===
+                  "alterado"
+                    ? "Pedido alterado"
+                    : "Novo pedido recebido"
+                ),
 
-            numeroPedido: notificacao.numero_pedido,
+              camposAlterados:
+                Array.isArray(
+                  notificacao.campos_alterados,
+                )
+                  ? notificacao.campos_alterados
+                  : [],
+            });
 
-            cliente: notificacao.cliente,
+            setMostrarAlertaPedido(
+              true,
+            );
 
-            vendedor: notificacao.vendedor,
+            if (
+              alertaTimeoutRef.current
+            ) {
+              window.clearTimeout(
+                alertaTimeoutRef.current,
+              );
+            }
 
-            tipo,
-
-            resumo:
-              notificacao.resumo ||
-              (tipo === "alterado" ? "Pedido alterado" : "Novo pedido recebido"),
-
-            camposAlterados: Array.isArray(notificacao.campos_alterados)
-              ? notificacao.campos_alterados
-              : [],
-          });
-
-          setMostrarAlertaPedido(true);
-
-          if (alertaTimeoutRef.current) {
-            window.clearTimeout(alertaTimeoutRef.current);
-          }
-
-          alertaTimeoutRef.current = window.setTimeout(() => {
-            setMostrarAlertaPedido(false);
-          }, 10000);
-        },
-      )
-      .subscribe();
+            alertaTimeoutRef.current =
+              window.setTimeout(
+                () => {
+                  setMostrarAlertaPedido(
+                    false,
+                  );
+                },
+                10000,
+              );
+          },
+        )
+        .subscribe();
 
     return () => {
-      if (alertaTimeoutRef.current) {
-        window.clearTimeout(alertaTimeoutRef.current);
+      if (
+        alertaTimeoutRef.current
+      ) {
+        window.clearTimeout(
+          alertaTimeoutRef.current,
+        );
 
-        alertaTimeoutRef.current = null;
+        alertaTimeoutRef.current =
+          null;
       }
 
-      supabase.removeChannel(canal);
+      supabase.removeChannel(
+        canal,
+      );
     };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
+  }, [
+    user,
+    podeAcessarPedidos,
+    atualizarQuantidadePedidosNovos,
+  ]);
 
   useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
+    if (
+      !user ||
+      !podeAcessarPedidos
+    ) {
       return undefined;
     }
 
-    const atualizarContador = () => {
-      void atualizarQuantidadePedidosNovos();
-    };
-
-    window.addEventListener("pedidos-notificacoes-atualizadas", atualizarContador);
-
-    return () => {
-      window.removeEventListener("pedidos-notificacoes-atualizadas", atualizarContador);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const intervalo = window.setInterval(() => {
-      void atualizarQuantidadePedidosNovos();
-    }, 60_000);
-
-    return () => {
-      window.clearInterval(intervalo);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const verificarAoVoltar = () => {
-      if (document.visibilityState === "visible") {
+    const atualizarContador =
+      () => {
         void atualizarQuantidadePedidosNovos();
-      }
-    };
+      };
 
-    document.addEventListener("visibilitychange", verificarAoVoltar);
-
-    return () => {
-      document.removeEventListener("visibilitychange", verificarAoVoltar);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  const goTo = useCallback(
-    (path) => {
-      setUserMenuOpen(false);
-
-      setDesktopMenuOpen(null);
-
-      setMobileMenuOpen(false);
-
-      setMobileGroupOpen(null);
-
-      navigate(normalizarCaminho(path));
-    },
-    [navigate],
-  );
-
-  const toggleDesktopMenu = useCallback((id) => {
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen((atual) => (atual === id ? null : id));
-  }, []);
-
-  const abrirMenuMobile = useCallback(() => {
-    const grupoAtual = navigationGroupsVisiveis.find(
-      (item) => item.type === "group" && grupoAtivo(item),
+    window.addEventListener(
+      "pedidos-notificacoes-atualizadas",
+      atualizarContador,
     );
 
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen(null);
-
-    setMobileGroupOpen(grupoAtual?.id || null);
-
-    setMobileMenuOpen(true);
-  }, [navigationGroupsVisiveis, grupoAtivo]);
-
-  const fecharMenuMobile = useCallback(() => {
-    setMobileMenuOpen(false);
-
-    setMobileGroupOpen(null);
-  }, []);
-
-  const toggleMobileGroup = useCallback((id) => {
-    setMobileGroupOpen((atual) => (atual === id ? null : id));
-  }, []);
-
-  const abrirPedidosPeloAlerta = useCallback(() => {
-    setMostrarAlertaPedido(false);
-
-    goTo("/pedidos");
-  }, [goTo]);
-
-  const fecharAlertaPedido = useCallback((event) => {
-    event?.stopPropagation?.();
-
-    setMostrarAlertaPedido(false);
-
-    if (alertaTimeoutRef.current) {
-      window.clearTimeout(alertaTimeoutRef.current);
-
-      alertaTimeoutRef.current = null;
-    }
-  }, []);
-
-  const handleLogout = useCallback(async () => {
-    setUserMenuOpen(false);
-
-    setDesktopMenuOpen(null);
-
-    setMobileMenuOpen(false);
-
-    setMobileGroupOpen(null);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("expiracao_login");
-    }
-
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        console.error("Erro ao encerrar a sessão:", error);
-      }
-    } catch (error) {
-      console.error("Erro inesperado ao encerrar a sessão:", error);
-    } finally {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  const toggleUserMenu = useCallback(() => {
-    setDesktopMenuOpen(null);
-
-    setUserMenuOpen((aberto) => !aberto);
-  }, []);
-
-  useEffect(() => {
-    const fecharAoClicarFora = (event) => {
-      if (userMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
-      }
-
-      if (
-        desktopMenuOpen &&
-        navigationRef.current &&
-        !navigationRef.current.contains(event.target)
-      ) {
-        setDesktopMenuOpen(null);
-      }
-    };
-
-    document.addEventListener("mousedown", fecharAoClicarFora);
-
     return () => {
-      document.removeEventListener("mousedown", fecharAoClicarFora);
+      window.removeEventListener(
+        "pedidos-notificacoes-atualizadas",
+        atualizarContador,
+      );
     };
-  }, [userMenuOpen, desktopMenuOpen]);
+  }, [
+    user,
+    podeAcessarPedidos,
+    atualizarQuantidadePedidosNovos,
+  ]);
 
   useEffect(() => {
-    const fecharComEscape = (event) => {
-      if (event.key !== "Escape") {
-        return;
-      }
-
-      setUserMenuOpen(false);
-
-      setDesktopMenuOpen(null);
-
-      setMobileMenuOpen(false);
-
-      setMobileGroupOpen(null);
-    };
-
-    document.addEventListener("keydown", fecharComEscape);
-
-    return () => {
-      document.removeEventListener("keydown", fecharComEscape);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!mobileMenuOpen) {
+    if (
+      !user ||
+      !podeAcessarPedidos
+    ) {
       return undefined;
     }
 
-    const overflowAnterior = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
+    const intervalo =
+      window.setInterval(
+        () => {
+          void atualizarQuantidadePedidosNovos();
+        },
+        60_000,
+      );
 
     return () => {
-      document.body.style.overflow = overflowAnterior;
+      window.clearInterval(
+        intervalo,
+      );
     };
-  }, [mobileMenuOpen]);
+  }, [
+    user,
+    podeAcessarPedidos,
+    atualizarQuantidadePedidosNovos,
+  ]);
 
-  const alertaPedidoAlterado = ultimaNotificacaoPedido?.tipo === "alterado";
+  useEffect(() => {
+    if (
+      !user ||
+      !podeAcessarPedidos
+    ) {
+      return undefined;
+    }
+
+    const verificarAoVoltar =
+      () => {
+        if (
+          document.visibilityState ===
+          "visible"
+        ) {
+          void atualizarQuantidadePedidosNovos();
+        }
+      };
+
+    document.addEventListener(
+      "visibilitychange",
+      verificarAoVoltar,
+    );
+
+    return () => {
+      document.removeEventListener(
+        "visibilitychange",
+        verificarAoVoltar,
+      );
+    };
+  }, [
+    user,
+    podeAcessarPedidos,
+    atualizarQuantidadePedidosNovos,
+  ]);
+
+  const goTo =
+    useCallback(
+      (path) => {
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+
+        navigate(
+          normalizarCaminho(
+            path,
+          ),
+        );
+      },
+      [
+        navigate,
+      ],
+    );
+
+  const toggleDesktopMenu =
+    useCallback(
+      (id) => {
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          (atual) =>
+            atual === id
+              ? null
+              : id,
+        );
+      },
+      [],
+    );
+
+  const abrirMenuMobile =
+    useCallback(() => {
+      const grupoAtual =
+        navigationGroupsVisiveis.find(
+          (item) =>
+            item.type ===
+              "group" &&
+            grupoAtivo(
+              item,
+            ),
+        );
+
+      setUserMenuOpen(
+        false,
+      );
+
+      setDesktopMenuOpen(
+        null,
+      );
+
+      setMobileGroupOpen(
+        grupoAtual?.id ||
+          null,
+      );
+
+      setMobileMenuOpen(
+        true,
+      );
+    }, [
+      navigationGroupsVisiveis,
+      grupoAtivo,
+    ]);
+
+  const fecharMenuMobile =
+    useCallback(() => {
+      setMobileMenuOpen(
+        false,
+      );
+
+      setMobileGroupOpen(
+        null,
+      );
+    }, []);
+
+  const toggleMobileGroup =
+    useCallback(
+      (id) => {
+        setMobileGroupOpen(
+          (atual) =>
+            atual === id
+              ? null
+              : id,
+        );
+      },
+      [],
+    );
+
+  const abrirPedidosPeloAlerta =
+    useCallback(() => {
+      setMostrarAlertaPedido(
+        false,
+      );
+
+      goTo(
+        "/pedidos",
+      );
+    }, [
+      goTo,
+    ]);
+
+  const fecharAlertaPedido =
+    useCallback(
+      (event) => {
+        event?.stopPropagation?.();
+
+        setMostrarAlertaPedido(
+          false,
+        );
+
+        if (
+          alertaTimeoutRef.current
+        ) {
+          window.clearTimeout(
+            alertaTimeoutRef.current,
+          );
+
+          alertaTimeoutRef.current =
+            null;
+        }
+      },
+      [],
+    );
+
+  const handleLogout =
+    useCallback(
+      async () => {
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+
+        if (
+          typeof window !==
+          "undefined"
+        ) {
+          window.localStorage.removeItem(
+            "expiracao_login",
+          );
+        }
+
+        try {
+          const {
+            error,
+          } =
+            await supabase.auth.signOut();
+
+          if (error) {
+            console.error(
+              "Erro ao encerrar a sessão:",
+              error,
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Erro inesperado ao encerrar a sessão:",
+            error,
+          );
+        } finally {
+          navigate(
+            "/",
+          );
+        }
+      },
+      [
+        navigate,
+      ],
+    );
+
+  const toggleUserMenu =
+    useCallback(() => {
+      setDesktopMenuOpen(
+        null,
+      );
+
+      setUserMenuOpen(
+        (aberto) =>
+          !aberto,
+      );
+    }, []);
+
+  useEffect(() => {
+    const fecharAoClicarFora =
+      (event) => {
+        if (
+          userMenuOpen &&
+          menuRef.current &&
+          !menuRef.current.contains(
+            event.target,
+          )
+        ) {
+          setUserMenuOpen(
+            false,
+          );
+        }
+
+        if (
+          desktopMenuOpen &&
+          navigationRef.current &&
+          !navigationRef.current.contains(
+            event.target,
+          )
+        ) {
+          setDesktopMenuOpen(
+            null,
+          );
+        }
+      };
+
+    document.addEventListener(
+      "mousedown",
+      fecharAoClicarFora,
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        fecharAoClicarFora,
+      );
+    };
+  }, [
+    userMenuOpen,
+    desktopMenuOpen,
+  ]);
+
+  useEffect(() => {
+    const fecharComEscape =
+      (event) => {
+        if (
+          event.key !==
+          "Escape"
+        ) {
+          return;
+        }
+
+        setUserMenuOpen(
+          false,
+        );
+
+        setDesktopMenuOpen(
+          null,
+        );
+
+        setMobileMenuOpen(
+          false,
+        );
+
+        setMobileGroupOpen(
+          null,
+        );
+      };
+
+    document.addEventListener(
+      "keydown",
+      fecharComEscape,
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        fecharComEscape,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      !mobileMenuOpen
+    ) {
+      return undefined;
+    }
+
+    const overflowAnterior =
+      document.body.style.overflow;
+
+    document.body.style.overflow =
+      "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        overflowAnterior;
+    };
+  }, [
+    mobileMenuOpen,
+  ]);
+
+  const alertaPedidoAlterado =
+    ultimaNotificacaoPedido
+      ?.tipo ===
+    "alterado";
 
   return (
     <>
@@ -877,120 +1358,238 @@ function Navbar({ user, isAdmin }) {
           <button
             type="button"
             className="navbar-brand"
-            onClick={() => goTo("/")}
+            onClick={() =>
+              goTo("/")
+            }
             aria-label="Ir para o início"
           >
-            <img src="/Logo_Pedrasplast.png" alt="Pedrasplast" className="brand-logo-img" />
+            <img
+              src="/Logo_Pedrasplast.png"
+              alt="Pedrasplast"
+              className="brand-logo-img"
+            />
           </button>
 
           {user && (
             <nav
-              ref={navigationRef}
+              ref={
+                navigationRef
+              }
               className="navbar-navigation navbar-navigation-modulos"
               aria-label="Navegação principal"
             >
-              {navigationGroupsVisiveis.map((item) => {
-                const Icon = item.icon;
+              {navigationGroupsVisiveis.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
 
-                if (item.type === "link") {
-                  const active = caminhoAtivo(item.path);
+                  if (
+                    item.type ===
+                    "link"
+                  ) {
+                    const active =
+                      caminhoAtivo(
+                        item.path,
+                      );
+
+                    return (
+                      <button
+                        key={
+                          item.id
+                        }
+                        type="button"
+                        className={
+                          active
+                            ? "navbar-navigation-link active"
+                            : "navbar-navigation-link"
+                        }
+                        onClick={() =>
+                          goTo(
+                            item.path,
+                          )
+                        }
+                        aria-current={
+                          active
+                            ? "page"
+                            : undefined
+                        }
+                      >
+                        <span className="navbar-navigation-icon">
+                          <Icon
+                            size={
+                              18
+                            }
+                            strokeWidth={
+                              2
+                            }
+                            aria-hidden="true"
+                          />
+                        </span>
+
+                        <span className="navbar-label-desktop">
+                          {
+                            item.label
+                          }
+                        </span>
+                      </button>
+                    );
+                  }
+
+                  const active =
+                    grupoAtivo(
+                      item,
+                    );
+
+                  const aberto =
+                    desktopMenuOpen ===
+                    item.id;
+
+                  const ehPedidos =
+                    item.id ===
+                    "pedidos";
 
                   return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={
-                        active ? "navbar-navigation-link active" : "navbar-navigation-link"
+                    <div
+                      key={
+                        item.id
                       }
-                      onClick={() => goTo(item.path)}
-                      aria-current={active ? "page" : undefined}
+                      className="navbar-modulo"
                     >
-                      <span className="navbar-navigation-icon">
-                        <Icon size={18} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-label-desktop">{item.label}</span>
-                    </button>
-                  );
-                }
-
-                const active = grupoAtivo(item);
-
-                const aberto = desktopMenuOpen === item.id;
-
-                const ehPedidos = item.id === "pedidos";
-
-                return (
-                  <div key={item.id} className="navbar-modulo">
-                    <button
-                      type="button"
-                      className={
-                        active
-                          ? "navbar-navigation-link navbar-modulo-trigger active"
-                          : "navbar-navigation-link navbar-modulo-trigger"
-                      }
-                      onClick={() => toggleDesktopMenu(item.id)}
-                      aria-expanded={aberto}
-                      aria-haspopup="menu"
-                    >
-                      <span className="navbar-navigation-icon">
-                        <Icon size={18} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-label-desktop">{item.label}</span>
-
-                      {ehPedidos && badgePedidos && (
-                        <span className="navbar-pedidos-badge navbar-pedidos-badge-modulo">
-                          {badgePedidos}
+                      <button
+                        type="button"
+                        className={
+                          active
+                            ? "navbar-navigation-link navbar-modulo-trigger active"
+                            : "navbar-navigation-link navbar-modulo-trigger"
+                        }
+                        onClick={() =>
+                          toggleDesktopMenu(
+                            item.id,
+                          )
+                        }
+                        aria-expanded={
+                          aberto
+                        }
+                        aria-haspopup="menu"
+                      >
+                        <span className="navbar-navigation-icon">
+                          <Icon
+                            size={
+                              18
+                            }
+                            strokeWidth={
+                              2
+                            }
+                            aria-hidden="true"
+                          />
                         </span>
-                      )}
 
-                      <ChevronDown
-                        size={14}
-                        strokeWidth={2.2}
-                        className={aberto ? "navbar-modulo-chevron open" : "navbar-modulo-chevron"}
-                        aria-hidden="true"
-                      />
-                    </button>
+                        <span className="navbar-label-desktop">
+                          {
+                            item.label
+                          }
+                        </span>
 
-                    {aberto && (
-                      <div className="navbar-modulo-dropdown" role="menu">
-                        {item.children.map((child) => {
-                          const ChildIcon = child.icon;
-
-                          const childActive = caminhoAtivo(child.path);
-
-                          const childPedidos = child.notificationKey === "pedidos";
-
-                          return (
-                            <button
-                              key={child.path}
-                              type="button"
-                              className={
-                                childActive
-                                  ? "navbar-modulo-dropdown-item active"
-                                  : "navbar-modulo-dropdown-item"
+                        {ehPedidos &&
+                          badgePedidos && (
+                            <span className="navbar-pedidos-badge navbar-pedidos-badge-modulo">
+                              {
+                                badgePedidos
                               }
-                              onClick={() => goTo(child.path)}
-                              role="menuitem"
-                            >
-                              <span className="navbar-modulo-dropdown-icon">
-                                <ChildIcon size={17} strokeWidth={2} aria-hidden="true" />
-                              </span>
+                            </span>
+                          )}
 
-                              <span className="navbar-modulo-dropdown-text">{child.label}</span>
+                        <ChevronDown
+                          size={
+                            14
+                          }
+                          strokeWidth={
+                            2.2
+                          }
+                          className={
+                            aberto
+                              ? "navbar-modulo-chevron open"
+                              : "navbar-modulo-chevron"
+                          }
+                          aria-hidden="true"
+                        />
+                      </button>
 
-                              {childPedidos && badgePedidos && (
-                                <span className="navbar-mobile-count">{badgePedidos}</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      {aberto && (
+                        <div
+                          className="navbar-modulo-dropdown"
+                          role="menu"
+                        >
+                          {item.children.map(
+                            (
+                              child,
+                            ) => {
+                              const ChildIcon =
+                                child.icon;
+
+                              const childActive =
+                                caminhoAtivo(
+                                  child.path,
+                                );
+
+                              const childPedidos =
+                                child.notificationKey ===
+                                "pedidos";
+
+                              return (
+                                <button
+                                  key={
+                                    child.path
+                                  }
+                                  type="button"
+                                  className={
+                                    childActive
+                                      ? "navbar-modulo-dropdown-item active"
+                                      : "navbar-modulo-dropdown-item"
+                                  }
+                                  onClick={() =>
+                                    goTo(
+                                      child.path,
+                                    )
+                                  }
+                                  role="menuitem"
+                                >
+                                  <span className="navbar-modulo-dropdown-icon">
+                                    <ChildIcon
+                                      size={
+                                        17
+                                      }
+                                      strokeWidth={
+                                        2
+                                      }
+                                      aria-hidden="true"
+                                    />
+                                  </span>
+
+                                  <span className="navbar-modulo-dropdown-text">
+                                    {
+                                      child.label
+                                    }
+                                  </span>
+
+                                  {childPedidos &&
+                                    badgePedidos && (
+                                      <span className="navbar-mobile-count">
+                                        {
+                                          badgePedidos
+                                        }
+                                      </span>
+                                    )}
+                                </button>
+                              );
+                            },
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                },
+              )}
             </nav>
           )}
 
@@ -1000,51 +1599,115 @@ function Navbar({ user, isAdmin }) {
                 <button
                   type="button"
                   className="navbar-hamburger"
-                  onClick={abrirMenuMobile}
-                  aria-expanded={mobileMenuOpen}
+                  onClick={
+                    abrirMenuMobile
+                  }
+                  aria-expanded={
+                    mobileMenuOpen
+                  }
                   aria-controls="navbar-mobile-drawer"
                   aria-label="Abrir menu principal"
                 >
-                  <Menu size={22} strokeWidth={2} aria-hidden="true" />
+                  <Menu
+                    size={22}
+                    strokeWidth={
+                      2
+                    }
+                    aria-hidden="true"
+                  />
 
-                  {badgePedidos && <span className="navbar-hamburger-badge">{badgePedidos}</span>}
+                  {badgePedidos && (
+                    <span className="navbar-hamburger-badge">
+                      {
+                        badgePedidos
+                      }
+                    </span>
+                  )}
                 </button>
 
                 <div className="navbar-user-controls">
-                  <div ref={menuRef} className="navbar-user-area">
+                  <div
+                    ref={
+                      menuRef
+                    }
+                    className="navbar-user-area"
+                  >
                     <button
                       type="button"
-                      className={userMenuOpen ? "navbar-user-trigger open" : "navbar-user-trigger"}
-                      onClick={toggleUserMenu}
-                      aria-expanded={userMenuOpen}
+                      className={
+                        userMenuOpen
+                          ? "navbar-user-trigger open"
+                          : "navbar-user-trigger"
+                      }
+                      onClick={
+                        toggleUserMenu
+                      }
+                      aria-expanded={
+                        userMenuOpen
+                      }
                       aria-haspopup="menu"
                       aria-label="Abrir menu do usuário"
                     >
-                      <span className="user-avatar">{userInitials}</span>
+                      <span className="user-avatar">
+                        {
+                          userInitials
+                        }
+                      </span>
 
                       <span className="user-information">
-                        <strong className="user-name">{userName}</strong>
+                        <strong className="user-name">
+                          {
+                            userName
+                          }
+                        </strong>
 
-                        <span className="user-role">{isAdmin ? "Administrador" : "Operador"}</span>
+                        <span className="user-role">
+                          {isAdmin
+                            ? "Administrador"
+                            : "Operador"}
+                        </span>
                       </span>
 
                       <ChevronDown
-                        size={17}
-                        strokeWidth={2}
-                        className={userMenuOpen ? "user-menu-arrow open" : "user-menu-arrow"}
+                        size={
+                          17
+                        }
+                        strokeWidth={
+                          2
+                        }
+                        className={
+                          userMenuOpen
+                            ? "user-menu-arrow open"
+                            : "user-menu-arrow"
+                        }
                         aria-hidden="true"
                       />
                     </button>
 
                     {userMenuOpen && (
-                      <div className="navbar-user-menu" role="menu">
+                      <div
+                        className="navbar-user-menu"
+                        role="menu"
+                      >
                         <div className="user-menu-header">
-                          <span className="user-menu-avatar">{userInitials}</span>
+                          <span className="user-menu-avatar">
+                            {
+                              userInitials
+                            }
+                          </span>
 
                           <div>
-                            <strong>{userName}</strong>
+                            <strong>
+                              {
+                                userName
+                              }
+                            </strong>
 
-                            <span>{user.email}</span>
+                            <span>
+                              {
+                                user.email
+                              }
+                            </span>
                           </div>
                         </div>
 
@@ -1053,10 +1716,19 @@ function Navbar({ user, isAdmin }) {
                         <button
                           type="button"
                           className="user-menu-item"
-                          onClick={() => goTo("/")}
+                          onClick={() =>
+                            goTo(
+                              "/",
+                            )
+                          }
                           role="menuitem"
                         >
-                          <Home size={17} aria-hidden="true" />
+                          <Home
+                            size={
+                              17
+                            }
+                            aria-hidden="true"
+                          />
                           Página inicial
                         </button>
 
@@ -1064,10 +1736,19 @@ function Navbar({ user, isAdmin }) {
                           <button
                             type="button"
                             className="user-menu-item"
-                            onClick={() => goTo("/importar")}
+                            onClick={() =>
+                              goTo(
+                                "/importar",
+                              )
+                            }
                             role="menuitem"
                           >
-                            <Upload size={17} aria-hidden="true" />
+                            <Upload
+                              size={
+                                17
+                              }
+                              aria-hidden="true"
+                            />
                             Importar dados
                           </button>
                         )}
@@ -1077,20 +1758,38 @@ function Navbar({ user, isAdmin }) {
                             <button
                               type="button"
                               className="user-menu-item"
-                              onClick={() => goTo("/administracao")}
+                              onClick={() =>
+                                goTo(
+                                  "/administracao",
+                                )
+                              }
                               role="menuitem"
                             >
-                              <ShieldCheck size={17} aria-hidden="true" />
+                              <ShieldCheck
+                                size={
+                                  17
+                                }
+                                aria-hidden="true"
+                              />
                               Calendario Industrial
                             </button>
 
                             <button
                               type="button"
                               className="user-menu-item"
-                              onClick={() => goTo("/usuarios")}
+                              onClick={() =>
+                                goTo(
+                                  "/usuarios",
+                                )
+                              }
                               role="menuitem"
                             >
-                              <Users size={17} aria-hidden="true" />
+                              <Users
+                                size={
+                                  17
+                                }
+                                aria-hidden="true"
+                              />
                               Gerenciar usuários
                             </button>
                           </>
@@ -1102,18 +1801,39 @@ function Navbar({ user, isAdmin }) {
                   <button
                     type="button"
                     className="navbar-logout-button"
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                     aria-label="Sair da conta"
                   >
-                    <LogOut size={17} strokeWidth={2} aria-hidden="true" />
+                    <LogOut
+                      size={17}
+                      strokeWidth={
+                        2
+                      }
+                      aria-hidden="true"
+                    />
 
-                    <span>Sair</span>
+                    <span>
+                      Sair
+                    </span>
                   </button>
                 </div>
               </>
             ) : (
-              <button type="button" className="btn-login" onClick={() => goTo("/login")}>
-                <LogIn size={17} aria-hidden="true" />
+              <button
+                type="button"
+                className="btn-login"
+                onClick={() =>
+                  goTo(
+                    "/login",
+                  )
+                }
+              >
+                <LogIn
+                  size={17}
+                  aria-hidden="true"
+                />
                 Entrar
               </button>
             )}
@@ -1121,245 +1841,465 @@ function Navbar({ user, isAdmin }) {
         </div>
       </header>
 
-      {user && mobileMenuOpen && (
-        <>
-          <button
-            type="button"
-            className="navbar-mobile-overlay"
-            onClick={fecharMenuMobile}
-            aria-label="Fechar menu principal"
-          />
+      {user &&
+        mobileMenuOpen && (
+          <>
+            <button
+              type="button"
+              className="navbar-mobile-overlay"
+              onClick={
+                fecharMenuMobile
+              }
+              aria-label="Fechar menu principal"
+            />
 
-          <aside
-            id="navbar-mobile-drawer"
-            className="navbar-mobile-drawer"
-            aria-label="Menu principal"
-          >
-            <div className="navbar-mobile-header">
-              <div>
-                <span className="navbar-mobile-eyebrow">Navegação</span>
+            <aside
+              id="navbar-mobile-drawer"
+              className="navbar-mobile-drawer"
+              aria-label="Menu principal"
+            >
+              <div className="navbar-mobile-header">
+                <div>
+                  <span className="navbar-mobile-eyebrow">
+                    Navegação
+                  </span>
 
-                <strong>Menu</strong>
+                  <strong>
+                    Menu
+                  </strong>
+                </div>
+
+                <button
+                  type="button"
+                  className="navbar-mobile-close"
+                  onClick={
+                    fecharMenuMobile
+                  }
+                  aria-label="Fechar menu"
+                >
+                  <X
+                    size={
+                      20
+                    }
+                    aria-hidden="true"
+                  />
+                </button>
               </div>
 
-              <button
-                type="button"
-                className="navbar-mobile-close"
-                onClick={fecharMenuMobile}
-                aria-label="Fechar menu"
+              <div className="navbar-mobile-user">
+                <span className="navbar-mobile-avatar">
+                  {
+                    userInitials
+                  }
+                </span>
+
+                <div>
+                  <strong>
+                    {
+                      userName
+                    }
+                  </strong>
+
+                  <span>
+                    {isAdmin
+                      ? "Administrador"
+                      : "Operador"}
+                  </span>
+                </div>
+              </div>
+
+              <nav
+                className="navbar-mobile-nav"
+                aria-label="Navegação mobile"
               >
-                <X size={20} aria-hidden="true" />
-              </button>
-            </div>
+                {navigationGroupsVisiveis.map(
+                  (
+                    item,
+                  ) => {
+                    const Icon =
+                      item.icon;
 
-            <div className="navbar-mobile-user">
-              <span className="navbar-mobile-avatar">{userInitials}</span>
+                    if (
+                      item.type ===
+                      "link"
+                    ) {
+                      const active =
+                        caminhoAtivo(
+                          item.path,
+                        );
 
-              <div>
-                <strong>{userName}</strong>
+                      return (
+                        <button
+                          key={
+                            item.id
+                          }
+                          type="button"
+                          className={
+                            active
+                              ? "navbar-mobile-link active"
+                              : "navbar-mobile-link"
+                          }
+                          onClick={() =>
+                            goTo(
+                              item.path,
+                            )
+                          }
+                        >
+                          <span className="navbar-mobile-link-icon">
+                            <Icon
+                              size={
+                                19
+                              }
+                              strokeWidth={
+                                2
+                              }
+                              aria-hidden="true"
+                            />
+                          </span>
 
-                <span>{isAdmin ? "Administrador" : "Operador"}</span>
-              </div>
-            </div>
+                          <span className="navbar-mobile-link-label">
+                            {
+                              item.label
+                            }
+                          </span>
+                        </button>
+                      );
+                    }
 
-            <nav className="navbar-mobile-nav" aria-label="Navegação mobile">
-              {navigationGroupsVisiveis.map((item) => {
-                const Icon = item.icon;
+                    const active =
+                      grupoAtivo(
+                        item,
+                      );
 
-                if (item.type === "link") {
-                  const active = caminhoAtivo(item.path);
+                    const aberto =
+                      mobileGroupOpen ===
+                      item.id;
 
-                  return (
+                    const ehPedidos =
+                      item.id ===
+                      "pedidos";
+
+                    return (
+                      <div
+                        key={
+                          item.id
+                        }
+                        className="navbar-mobile-group"
+                      >
+                        <button
+                          type="button"
+                          className={
+                            active
+                              ? "navbar-mobile-group-trigger active"
+                              : "navbar-mobile-group-trigger"
+                          }
+                          onClick={() =>
+                            toggleMobileGroup(
+                              item.id,
+                            )
+                          }
+                          aria-expanded={
+                            aberto
+                          }
+                        >
+                          <span className="navbar-mobile-link-icon">
+                            <Icon
+                              size={
+                                19
+                              }
+                              strokeWidth={
+                                2
+                              }
+                              aria-hidden="true"
+                            />
+                          </span>
+
+                          <span className="navbar-mobile-link-label">
+                            {
+                              item.label
+                            }
+                          </span>
+
+                          {ehPedidos &&
+                            badgePedidos && (
+                              <span className="navbar-mobile-count">
+                                {
+                                  badgePedidos
+                                }
+                              </span>
+                            )}
+
+                          <ChevronDown
+                            size={
+                              17
+                            }
+                            strokeWidth={
+                              2.2
+                            }
+                            className={
+                              aberto
+                                ? "navbar-mobile-chevron open"
+                                : "navbar-mobile-chevron"
+                            }
+                            aria-hidden="true"
+                          />
+                        </button>
+
+                        {aberto && (
+                          <div className="navbar-mobile-submenu">
+                            {item.children.map(
+                              (
+                                child,
+                              ) => {
+                                const ChildIcon =
+                                  child.icon;
+
+                                const childActive =
+                                  caminhoAtivo(
+                                    child.path,
+                                  );
+
+                                const childPedidos =
+                                  child.notificationKey ===
+                                  "pedidos";
+
+                                return (
+                                  <button
+                                    key={
+                                      child.path
+                                    }
+                                    type="button"
+                                    className={
+                                      childActive
+                                        ? "navbar-mobile-submenu-item active"
+                                        : "navbar-mobile-submenu-item"
+                                    }
+                                    onClick={() =>
+                                      goTo(
+                                        child.path,
+                                      )
+                                    }
+                                  >
+                                    <ChildIcon
+                                      size={
+                                        17
+                                      }
+                                      strokeWidth={
+                                        2
+                                      }
+                                      aria-hidden="true"
+                                    />
+
+                                    <span>
+                                      {
+                                        child.label
+                                      }
+                                    </span>
+
+                                    {childPedidos &&
+                                      badgePedidos && (
+                                        <span className="navbar-mobile-count">
+                                          {
+                                            badgePedidos
+                                          }
+                                        </span>
+                                      )}
+                                  </button>
+                                );
+                              },
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  },
+                )}
+              </nav>
+
+              {(podeImportar ||
+                isAdmin) && (
+                <div className="navbar-mobile-admin">
+                  <span className="navbar-mobile-section-label">
+                    Administração
+                  </span>
+
+                  {podeImportar && (
                     <button
-                      key={item.id}
                       type="button"
-                      className={active ? "navbar-mobile-link active" : "navbar-mobile-link"}
-                      onClick={() => goTo(item.path)}
-                    >
-                      <span className="navbar-mobile-link-icon">
-                        <Icon size={19} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-mobile-link-label">{item.label}</span>
-                    </button>
-                  );
-                }
-
-                const active = grupoAtivo(item);
-
-                const aberto = mobileGroupOpen === item.id;
-
-                const ehPedidos = item.id === "pedidos";
-
-                return (
-                  <div key={item.id} className="navbar-mobile-group">
-                    <button
-                      type="button"
-                      className={
-                        active
-                          ? "navbar-mobile-group-trigger active"
-                          : "navbar-mobile-group-trigger"
+                      className="navbar-mobile-admin-link"
+                      onClick={() =>
+                        goTo(
+                          "/importar",
+                        )
                       }
-                      onClick={() => toggleMobileGroup(item.id)}
-                      aria-expanded={aberto}
                     >
-                      <span className="navbar-mobile-link-icon">
-                        <Icon size={19} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-mobile-link-label">{item.label}</span>
-
-                      {ehPedidos && badgePedidos && (
-                        <span className="navbar-mobile-count">{badgePedidos}</span>
-                      )}
-
-                      <ChevronDown
-                        size={17}
-                        strokeWidth={2.2}
-                        className={aberto ? "navbar-mobile-chevron open" : "navbar-mobile-chevron"}
+                      <Upload
+                        size={
+                          18
+                        }
                         aria-hidden="true"
                       />
+
+                      <span>
+                        Importar dados
+                      </span>
                     </button>
+                  )}
 
-                    {aberto && (
-                      <div className="navbar-mobile-submenu">
-                        {item.children.map((child) => {
-                          const ChildIcon = child.icon;
+                  {isAdmin && (
+                    <>
+                      <button
+                        type="button"
+                        className="navbar-mobile-admin-link"
+                        onClick={() =>
+                          goTo(
+                            "/administracao",
+                          )
+                        }
+                      >
+                        <ShieldCheck
+                          size={
+                            18
+                          }
+                          aria-hidden="true"
+                        />
 
-                          const childActive = caminhoAtivo(child.path);
+                        <span>
+                          Administração
+                        </span>
+                      </button>
 
-                          const childPedidos = child.notificationKey === "pedidos";
+                      <button
+                        type="button"
+                        className="navbar-mobile-admin-link"
+                        onClick={() =>
+                          goTo(
+                            "/usuarios",
+                          )
+                        }
+                      >
+                        <Users
+                          size={
+                            18
+                          }
+                          aria-hidden="true"
+                        />
 
-                          return (
-                            <button
-                              key={child.path}
-                              type="button"
-                              className={
-                                childActive
-                                  ? "navbar-mobile-submenu-item active"
-                                  : "navbar-mobile-submenu-item"
-                              }
-                              onClick={() => goTo(child.path)}
-                            >
-                              <ChildIcon size={17} strokeWidth={2} aria-hidden="true" />
-
-                              <span>{child.label}</span>
-
-                              {childPedidos && badgePedidos && (
-                                <span className="navbar-mobile-count">{badgePedidos}</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
-
-            {(podeImportar || isAdmin) && (
-              <div className="navbar-mobile-admin">
-                <span className="navbar-mobile-section-label">Administração</span>
-
-                {podeImportar && (
-                  <button
-                    type="button"
-                    className="navbar-mobile-admin-link"
-                    onClick={() => goTo("/importar")}
-                  >
-                    <Upload size={18} aria-hidden="true" />
-
-                    <span>Importar dados</span>
-                  </button>
-                )}
-
-                {isAdmin && (
-                  <>
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() => goTo("/administracao")}
-                    >
-                      <ShieldCheck size={18} aria-hidden="true" />
-
-                      <span>Administração</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() => goTo("/usuarios")}
-                    >
-                      <Users size={18} aria-hidden="true" />
-
-                      <span>Gerenciar usuários</span>
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-
-            <div className="navbar-mobile-footer">
-              <button type="button" className="navbar-mobile-logout" onClick={handleLogout}>
-                <LogOut size={18} aria-hidden="true" />
-
-                <span>Sair</span>
-              </button>
-            </div>
-          </aside>
-        </>
-      )}
-
-      {mostrarAlertaPedido && ultimaNotificacaoPedido && (
-        <div
-          className={[
-            "novo-pedido-alerta",
-
-            alertaPedidoAlterado ? "novo-pedido-alerta-alterado" : "novo-pedido-alerta-novo",
-          ].join(" ")}
-          role="status"
-        >
-          <button
-            type="button"
-            className="novo-pedido-alerta-conteudo"
-            onClick={abrirPedidosPeloAlerta}
-          >
-            <span className="novo-pedido-alerta-icone">
-              <Bell size={20} strokeWidth={2.2} aria-hidden="true" />
-            </span>
-
-            <span className="novo-pedido-alerta-textos">
-              <strong>{alertaPedidoAlterado ? "Pedido alterado" : "Novo pedido recebido"}</strong>
-
-              <span>
-                Pedido{" "}
-                <b>
-                  {ultimaNotificacaoPedido.numeroPedido || ultimaNotificacaoPedido.codigoPedidoOmie}
-                </b>
-                {ultimaNotificacaoPedido.cliente ? ` • ${ultimaNotificacaoPedido.cliente}` : ""}
-              </span>
-
-              {alertaPedidoAlterado && ultimaNotificacaoPedido.resumo && (
-                <small className="novo-pedido-alerta-resumo">
-                  {ultimaNotificacaoPedido.resumo}
-                </small>
+                        <span>
+                          Gerenciar usuários
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
               )}
 
-              <small>Clique para abrir Pedidos</small>
-            </span>
-          </button>
+              <div className="navbar-mobile-footer">
+                <button
+                  type="button"
+                  className="navbar-mobile-logout"
+                  onClick={
+                    handleLogout
+                  }
+                >
+                  <LogOut
+                    size={
+                      18
+                    }
+                    aria-hidden="true"
+                  />
 
-          <button
-            type="button"
-            className="novo-pedido-alerta-fechar"
-            onClick={fecharAlertaPedido}
-            aria-label="Fechar aviso"
+                  <span>
+                    Sair
+                  </span>
+                </button>
+              </div>
+            </aside>
+          </>
+        )}
+
+      {mostrarAlertaPedido &&
+        ultimaNotificacaoPedido && (
+          <div
+            className={[
+              "novo-pedido-alerta",
+
+              alertaPedidoAlterado
+                ? "novo-pedido-alerta-alterado"
+                : "novo-pedido-alerta-novo",
+            ].join(" ")}
+            role="status"
           >
-            <X size={16} aria-hidden="true" />
-          </button>
-        </div>
-      )}
+            <button
+              type="button"
+              className="novo-pedido-alerta-conteudo"
+              onClick={
+                abrirPedidosPeloAlerta
+              }
+            >
+              <span className="novo-pedido-alerta-icone">
+                <Bell
+                  size={
+                    20
+                  }
+                  strokeWidth={
+                    2.2
+                  }
+                  aria-hidden="true"
+                />
+              </span>
+
+              <span className="novo-pedido-alerta-textos">
+                <strong>
+                  {alertaPedidoAlterado
+                    ? "Pedido alterado"
+                    : "Novo pedido recebido"}
+                </strong>
+
+                <span>
+                  Pedido{" "}
+                  <b>
+                    {ultimaNotificacaoPedido.numeroPedido ||
+                      ultimaNotificacaoPedido.codigoPedidoOmie}
+                  </b>
+
+                  {ultimaNotificacaoPedido.cliente
+                    ? ` • ${ultimaNotificacaoPedido.cliente}`
+                    : ""}
+                </span>
+
+                {alertaPedidoAlterado &&
+                  ultimaNotificacaoPedido.resumo && (
+                    <small className="novo-pedido-alerta-resumo">
+                      {
+                        ultimaNotificacaoPedido.resumo
+                      }
+                    </small>
+                  )}
+
+                <small>
+                  Clique para abrir Pedidos
+                </small>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="novo-pedido-alerta-fechar"
+              onClick={
+                fecharAlertaPedido
+              }
+              aria-label="Fechar aviso"
+            >
+              <X
+                size={
+                  16
+                }
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+        )}
     </>
   );
 }

@@ -103,10 +103,6 @@ function normalizarProduto(registro) {
       registro?.cavidadeMolde,
   );
 
-  const usaPP =
-    registro?.usa_pp === true ||
-    registro?.usaPP === true;
-
   const ativo =
     registro?.ativo !== false;
 
@@ -121,13 +117,6 @@ function normalizarProduto(registro) {
     pesoKg,
     cicloSegundos,
     cavidadeMolde,
-
-    /*
-     * Compatibilidade temporária.
-     * As próximas telas serão migradas antes
-     * da remoção definitiva de usa_pp.
-     */
-    usaPP,
 
     ativo,
 
@@ -147,19 +136,15 @@ function normalizarProduto(registro) {
     ciclo_segundos: cicloSegundos,
     cavidade_molde: cavidadeMolde,
 
-    usa_pp: usaPP,
-
     configuracao: {
       codigoProduto,
       codigo_produto: codigoProduto,
 
       materialId,
       material_id: materialId,
+
       materialNome,
       material_nome: materialNome,
-
-      usaPP,
-      usa_pp: usaPP,
 
       pesoKg,
       peso_kg: pesoKg,
@@ -225,7 +210,8 @@ export async function buscarMateriaisProdutos() {
       id: material.id,
       nome: texto(material.nome),
       ativo: material.ativo === true,
-      criadoEm: material.criado_em ?? null,
+      criadoEm:
+        material.criado_em ?? null,
       atualizadoEm:
         material.atualizado_em ?? null,
     }))
@@ -250,11 +236,12 @@ export async function buscarProdutosPP() {
     parametrosResultado,
   ] = await Promise.all([
     supabase
-      .from("materia_prima_produtos_cadastro")
+      .from(
+        "materia_prima_produtos_cadastro_v2",
+      )
       .select(`
         codigo_produto,
         nome_produto,
-        usa_pp,
         material_id,
         material_nome,
         material_ativo,
@@ -263,13 +250,22 @@ export async function buscarProdutosPP() {
         criado_em,
         atualizado_em
       `)
-      .not("material_id", "is", null)
-      .order("nome_produto", {
-        ascending: true,
-      }),
+      .not(
+        "material_id",
+        "is",
+        null,
+      )
+      .order(
+        "nome_produto",
+        {
+          ascending: true,
+        },
+      ),
 
     supabase
-      .from("parametros_produto")
+      .from(
+        "parametros_produto",
+      )
       .select(`
         cod_prod,
         kg_un,
@@ -284,38 +280,51 @@ export async function buscarProdutosPP() {
       `),
   ]);
 
-  if (produtosResultado.error) {
+  if (
+    produtosResultado.error
+  ) {
     throw produtosResultado.error;
   }
 
-  if (parametrosResultado.error) {
+  if (
+    parametrosResultado.error
+  ) {
     throw parametrosResultado.error;
   }
 
-  const mapaParametros = new Map(
-    (
-      Array.isArray(
-        parametrosResultado.data,
-      )
-        ? parametrosResultado.data
-        : []
-    ).map((parametro) => [
-      texto(parametro?.cod_prod),
-      parametro,
-    ]),
-  );
+  const mapaParametros =
+    new Map(
+      (
+        Array.isArray(
+          parametrosResultado.data,
+        )
+          ? parametrosResultado.data
+          : []
+      ).map((parametro) => [
+        texto(
+          parametro?.cod_prod,
+        ),
+        parametro,
+      ]),
+    );
 
   return (
-    Array.isArray(produtosResultado.data)
+    Array.isArray(
+      produtosResultado.data,
+    )
       ? produtosResultado.data
       : []
   )
     .map((produto) => {
       const codigo =
-        texto(produto?.codigo_produto);
+        texto(
+          produto?.codigo_produto,
+        );
 
       const parametros =
-        mapaParametros.get(codigo) ?? {};
+        mapaParametros.get(
+          codigo,
+        ) ?? {};
 
       return normalizarProduto({
         ...produto,
@@ -325,16 +334,20 @@ export async function buscarProdutosPP() {
           null,
 
         ciclo_segundos:
-          parametros?.ciclo_segundos ??
+          parametros
+            ?.ciclo_segundos ??
           null,
 
         cavidade_molde:
-          parametros?.cavidade_molde ??
+          parametros
+            ?.cavidade_molde ??
           null,
 
         updated_at:
-          parametros?.updated_at ??
-          produto?.atualizado_em ??
+          parametros
+            ?.updated_at ??
+          produto
+            ?.atualizado_em ??
           null,
       });
     })
@@ -342,97 +355,116 @@ export async function buscarProdutosPP() {
 }
 
 /* =========================================================
-   COMPATIBILIDADE COM RECEITAS / PROGRAMAÇÃO
+   ADAPTADOR PARA RECEITAS / PROGRAMAÇÃO
 
-   Mantido até a migração dessas telas.
+   Mantém os aliases esperados pelos módulos atuais,
+   sem depender de campos legados específicos de material.
 ========================================================= */
 
 export async function buscarProdutosPedidos() {
   const produtos =
     await buscarProdutosPP();
 
-  return produtos.map((produto) => ({
-    ...produto,
+  return produtos.map(
+    (produto) => ({
+      ...produto,
 
-    codigo: produto.codigoProduto,
-    codigo_produto:
-      produto.codigoProduto,
-
-    produto: produto.nomeProduto,
-    nome_produto:
-      produto.nomeProduto,
-    descricao:
-      produto.nomeProduto,
-
-    materialId:
-      produto.materialId,
-    material_id:
-      produto.materialId,
-
-    materialNome:
-      produto.materialNome,
-    material_nome:
-      produto.materialNome,
-
-    /*
-     * Compatibilidade temporária.
-     * Não usar em novas regras.
-     */
-    usaPP: true,
-    usa_pp: true,
-
-    pesoKg: produto.pesoKg,
-    peso_kg: produto.pesoKg,
-    kg_un: produto.pesoKg,
-
-    cicloSegundos:
-      produto.cicloSegundos,
-    ciclo_segundos:
-      produto.cicloSegundos,
-
-    cavidadeMolde:
-      produto.cavidadeMolde,
-    cavidade_molde:
-      produto.cavidadeMolde,
-
-    ativo: produto.ativo,
-
-    configuracao: {
-      codigoProduto:
+      codigo:
         produto.codigoProduto,
+
       codigo_produto:
         produto.codigoProduto,
 
+      produto:
+        produto.nomeProduto,
+
+      nome_produto:
+        produto.nomeProduto,
+
+      descricao:
+        produto.nomeProduto,
+
       materialId:
         produto.materialId,
+
       material_id:
         produto.materialId,
 
       materialNome:
         produto.materialNome,
+
       material_nome:
         produto.materialNome,
 
-      usaPP: true,
-      usa_pp: true,
+      pesoKg:
+        produto.pesoKg,
 
-      pesoKg: produto.pesoKg,
-      peso_kg: produto.pesoKg,
-      kg_un: produto.pesoKg,
+      peso_kg:
+        produto.pesoKg,
+
+      kg_un:
+        produto.pesoKg,
 
       cicloSegundos:
         produto.cicloSegundos,
+
       ciclo_segundos:
         produto.cicloSegundos,
 
       cavidadeMolde:
         produto.cavidadeMolde,
+
       cavidade_molde:
         produto.cavidadeMolde,
 
-      ativo: produto.ativo,
-    },
-  }));
+      ativo:
+        produto.ativo,
+
+      configuracao: {
+        codigoProduto:
+          produto.codigoProduto,
+
+        codigo_produto:
+          produto.codigoProduto,
+
+        materialId:
+          produto.materialId,
+
+        material_id:
+          produto.materialId,
+
+        materialNome:
+          produto.materialNome,
+
+        material_nome:
+          produto.materialNome,
+
+        pesoKg:
+          produto.pesoKg,
+
+        peso_kg:
+          produto.pesoKg,
+
+        kg_un:
+          produto.pesoKg,
+
+        cicloSegundos:
+          produto.cicloSegundos,
+
+        ciclo_segundos:
+          produto.cicloSegundos,
+
+        cavidadeMolde:
+          produto.cavidadeMolde,
+
+        cavidade_molde:
+          produto.cavidadeMolde,
+
+        ativo:
+          produto.ativo,
+      },
+    }),
+  );
 }
 
 /* =========================================================
@@ -456,11 +488,12 @@ async function buscarDadosAtuaisProduto(
     parametrosResultado,
   ] = await Promise.all([
     supabase
-      .from("materia_prima_produtos")
+      .from(
+        "materia_prima_produtos",
+      )
       .select(`
         codigo_produto,
         peso_kg,
-        usa_pp,
         material_id,
         ativo
       `)
@@ -471,7 +504,9 @@ async function buscarDadosAtuaisProduto(
       .maybeSingle(),
 
     supabase
-      .from("parametros_produto")
+      .from(
+        "parametros_produto",
+      )
       .select(`
         cod_prod,
         tempo_injecao_segundos,
@@ -485,27 +520,33 @@ async function buscarDadosAtuaisProduto(
       .maybeSingle(),
   ]);
 
-  if (produtoResultado.error) {
+  if (
+    produtoResultado.error
+  ) {
     throw produtoResultado.error;
   }
 
-  if (parametrosResultado.error) {
+  if (
+    parametrosResultado.error
+  ) {
     throw parametrosResultado.error;
   }
 
   return {
     produto:
-      produtoResultado.data ?? null,
+      produtoResultado.data ??
+      null,
 
     parametros:
-      parametrosResultado.data ?? null,
+      parametrosResultado.data ??
+      null,
   };
 }
 
 /* =========================================================
    SALVAR PRODUTO POR MATERIAL
 
-   Usa a RPC central já migrada para material_id.
+   Usa a RPC central v3, sem depender de campos legados.
 ========================================================= */
 
 export async function salvarProdutoPP({
@@ -519,16 +560,24 @@ export async function salvarProdutoPP({
   ativo = true,
 }) {
   const codigoFinal =
-    texto(codigoProduto);
+    texto(
+      codigoProduto,
+    );
 
   const nomeFinal =
-    texto(nomeProduto);
+    texto(
+      nomeProduto,
+    );
 
   const materialFinal =
-    normalizarInteiro(materialId);
+    normalizarInteiro(
+      materialId,
+    );
 
   const pesoFinal =
-    normalizarNumero(pesoKg);
+    normalizarNumero(
+      pesoKg,
+    );
 
   const cicloFinal =
     normalizarNumero(
@@ -591,18 +640,25 @@ export async function salvarProdutoPP({
   const codigoOriginalFinal =
     codigoProdutoOriginal === null ||
     codigoProdutoOriginal === undefined ||
-    !texto(codigoProdutoOriginal)
+    !texto(
+      codigoProdutoOriginal,
+    )
       ? null
-      : texto(codigoProdutoOriginal);
+      : texto(
+          codigoProdutoOriginal,
+        );
 
   const dadosAtuais =
     await buscarDadosAtuaisProduto(
       codigoOriginalFinal,
     );
 
-  const { data, error } =
+  const {
+    data,
+    error,
+  } =
     await supabase.rpc(
-      "salvar_cadastro_produto_v2",
+      "salvar_cadastro_produto_v3",
       {
         p_codigo_produto:
           codigoFinal,
@@ -611,23 +667,19 @@ export async function salvarProdutoPP({
           nomeFinal,
 
         /*
-         * Mantido temporariamente como true.
-         * As telas dependentes serão migradas
-         * antes da remoção desse campo.
-         */
-        p_usa_pp:
-          true,
-
-        /*
-         * Campo legado separado de kg_un.
+         * Campo separado de kg_un.
          * Em edição preservamos o valor atual.
          */
         p_peso_kg:
-          dadosAtuais.produto?.peso_kg ??
+          dadosAtuais
+            .produto
+            ?.peso_kg ??
           null,
 
         p_ativo:
-          Boolean(ativo),
+          Boolean(
+            ativo,
+          ),
 
         p_cavidade_molde:
           cavidadeFinal,
@@ -636,16 +688,21 @@ export async function salvarProdutoPP({
           cicloFinal,
 
         /*
-         * Estes campos não são editados nesta tela.
-         * Portanto nunca devem ser apagados ao salvar.
+         * Estes campos não são editados
+         * nesta tela.
+         *
+         * Portanto nunca devem ser apagados
+         * ao salvar.
          */
         p_tempo_injecao_segundos:
-          dadosAtuais.parametros
+          dadosAtuais
+            .parametros
             ?.tempo_injecao_segundos ??
           null,
 
         p_tempo_resfriamento_segundos:
-          dadosAtuais.parametros
+          dadosAtuais
+            .parametros
             ?.tempo_resfriamento_segundos ??
           null,
 
@@ -653,7 +710,8 @@ export async function salvarProdutoPP({
           pesoFinal,
 
         p_kg_haste:
-          dadosAtuais.parametros
+          dadosAtuais
+            .parametros
             ?.kg_haste ??
           null,
 
@@ -666,7 +724,10 @@ export async function salvarProdutoPP({
     );
 
   if (error) {
-    if (error.code === "23505") {
+    if (
+      error.code ===
+      "23505"
+    ) {
       throw new Error(
         "Já existe um produto cadastrado com este código.",
       );
@@ -682,18 +743,20 @@ export async function salvarProdutoPP({
 }
 
 /* =========================================================
-   EXCLUIR
+   EXCLUIR PRODUTO
 
-   Mantemos a RPC atual nesta etapa.
-   A exclusão será migrada depois que Receitas e Programação
-   deixarem de depender definitivamente de usa_pp.
+   O nome da função exportada é mantido temporariamente
+   para não quebrar imports existentes.
+   A exclusão no banco já é genérica.
 ========================================================= */
 
 export async function excluirProdutoPP(
   codigoProduto,
 ) {
   const codigo =
-    texto(codigoProduto);
+    texto(
+      codigoProduto,
+    );
 
   if (!codigo) {
     throw new Error(
@@ -701,9 +764,12 @@ export async function excluirProdutoPP(
     );
   }
 
-  const { data, error } =
+  const {
+    data,
+    error,
+  } =
     await supabase.rpc(
-      "excluir_produto_pp",
+      "excluir_produto_v2",
       {
         p_codigo_produto:
           codigo,
@@ -728,7 +794,6 @@ export async function salvarConfiguracaoProdutoPP({
   codigoProduto,
   nomeProduto = null,
   produto = null,
-  usaPP = true,
   materialId = null,
   pesoKg,
   cicloSegundos,
