@@ -26,7 +26,6 @@ import {
   formatarPesoKgUn,
   formatarConsumo,
   formatarKg,
-  formatarPercentual,
   formatarMoeda,
   formatarPrecoUnitario,
 } from "./utils/formatadoresNecessidade";
@@ -475,7 +474,7 @@ function ProdutosDoMaterial({ material, produtos }) {
               </th>
 
               <th className="necessidade-coluna-numero">
-                % Compra
+                Valor total (R$)
               </th>
             </tr>
           </thead>
@@ -510,9 +509,15 @@ function ProdutosDoMaterial({ material, produtos }) {
                 </td>
 
                 <td className="necessidade-coluna-numero">
-                  {formatarPercentual(
-                    material.percentual
-                  )}
+                  <strong>
+                    {material.preco != null &&
+                    Number.isFinite(Number(material.preco)) &&
+                    Number(material.preco) > 0
+                      ? formatarMoeda(
+                          produto.consumo * Number(material.preco)
+                        )
+                      : "—"}
+                  </strong>
                 </td>
               </tr>
             ))}
