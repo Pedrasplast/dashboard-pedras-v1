@@ -35,7 +35,6 @@ function ProdutosDoMaterial({ material, produtos }) {
           </p>
         </div>
 
-        <span className="necessidade-detalhamento-contador">{produtos.length} produto(s)</span>
       </div>
 
       <div className="necessidade-tabela-container">
