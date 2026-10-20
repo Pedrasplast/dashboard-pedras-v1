@@ -1074,9 +1074,13 @@ Deno.serve(
        PERMISSAO
     ===================================================== */
 
+    /*
+     * Tela "Pedidos de Compra" OU relatório "Pedidos de compra alterados".
+     * (Antes exigia só o relatório: quem tinha apenas a tela ficava sem nomes.)
+     */
     const permissao =
       await user.rpc(
-        "pode_ver_pedidos_compra_alterados",
+        "pode_ver_pedidos_compra",
       );
 
     if (
