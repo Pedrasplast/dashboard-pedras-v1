@@ -30,6 +30,25 @@ export function loteDoHorario(agora = new Date(), totalLotes = TOTAL_LOTES) {
   return ((fatia % totalLotes) + totalLotes) % totalLotes;
 }
 
+/** Número da volta completa pelos 12 lotes (muda a cada 3 horas). */
+export function rodadaDoHorario(agora = new Date(), totalLotes = TOTAL_LOTES) {
+  return Math.floor(agora.getTime() / (FATIA_LOTE_MS * totalLotes));
+}
+
+/**
+ * Quando o lote tem mais pedidos do que cabem numa execução, escolhe `maximo`
+ * deles começando numa posição que avança a cada rodada. Assim todos os
+ * pedidos do lote acabam conferidos em poucas rodadas, em vez de o lote
+ * inteiro ser recusado (antes: erro 409 e nenhum pedido conferido).
+ * Itens devem vir em ordem estável (ex.: por código).
+ */
+export function escolherDoLote(itens, maximo, rodada) {
+  if (!Number.isSafeInteger(maximo) || maximo < 1) throw new Error('Máximo inválido.');
+  if (itens.length <= maximo) return itens;
+  const inicio = (((rodada * maximo) % itens.length) + itens.length) % itens.length;
+  return Array.from({ length: maximo }, (_, i) => itens[(inicio + i) % itens.length]);
+}
+
 // Preserva a semântica da função v3: somente a indicação literal 'S' é verdadeira.
 function sim(valor) {
   return valor === 'S';
