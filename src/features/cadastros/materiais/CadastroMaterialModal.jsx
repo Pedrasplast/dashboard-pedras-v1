@@ -12,7 +12,7 @@ import {
   Calculator,
 } from "lucide-react";
 
-import "./CadastroProdutoModal.css";
+import "../CadastroProdutoModal.css";
 
 /* =========================================================
    MODAL — CADASTRO DE MATERIAL

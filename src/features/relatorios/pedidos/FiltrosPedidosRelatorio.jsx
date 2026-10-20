@@ -4,8 +4,29 @@ import { FiFilter, FiX } from "react-icons/fi";
 import CampoFiltro from "@/components/filtros/CampoFiltro";
 import Filtros from "@/components/filtros/Filtros";
 import { compararPtBR, valoresUnicosOrdenados } from "@/lib/colecoes";
+import { normalizarTexto } from "@/lib/texto";
+
+import { obterDataPedidoRelatorio } from "./PedidosRelatorios";
 
 import "./FiltrosPedidosRelatorio.css";
+
+/* =========================================================
+   FILTROS DOS RELATÓRIOS DE PEDIDOS
+
+   As opções de produto são obtidas exclusivamente dos itens
+   dos pedidos elegíveis para o relatório atual, considerando:
+   - Filtro fixo do relatório;
+   - Pedido(s) informado(s);
+   - Status;
+   - Previsão de faturamento;
+   - Cliente;
+   - Vendedor.
+
+   O próprio filtro de produto NÃO restringe suas opções.
+   A lista de clientes segue as mesmas regras, sem filtrar
+   pelo cliente já selecionado.
+   Não há novas consultas ao Supabase.
+========================================================= */
 
 const VALORES_PADRAO_FILTROS_PEDIDOS = Object.freeze({
   dataInicio: "",
@@ -26,13 +47,155 @@ function obterCodigoProduto(item) {
   ).trim();
 }
 
-function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio }) {
+function obterNumeroPedidoVisual(item) {
+  return String(
+    item?.pedidoExibicao ??
+      item?.pedido_exibicao ??
+      item?.pedido ??
+      item?.numero_pedido ??
+      item?.codigoPedido ??
+      item?.codigo_pedido ??
+      "",
+  ).trim();
+}
+
+function obterNumeroPedidoOriginal(item) {
+  return String(
+    item?.pedidoOriginal ??
+      item?.numero_pedido ??
+      item?.pedido ??
+      item?.codigoPedido ??
+      item?.codigo_pedido ??
+      "",
+  ).trim();
+}
+
+function normalizarListaPedidosFiltro(valor) {
+  return String(valor ?? "")
+    .split(/[;,\n\r\t ]+/)
+    .map((numero) => normalizarTexto(numero.trim()))
+    .filter(Boolean);
+}
+
+function correspondeAosPedidos(item, pedidosFiltro) {
+  if (pedidosFiltro.length === 0) return true;
+
+  const visual = normalizarTexto(obterNumeroPedidoVisual(item));
+  const original = normalizarTexto(obterNumeroPedidoOriginal(item));
+
+  return pedidosFiltro.some((numero) =>
+    numero.includes("/")
+      ? visual === numero
+      : original === numero ||
+        visual === numero ||
+        visual.startsWith(`${numero}/`),
+  );
+}
+
+/* =========================================================
+   ELEGIBILIDADE PARA A LISTA DE PRODUTOS
+
+   Repete as regras do relatório sem usar cod_prod.
+   Assim a lista não mostra produtos de pedidos encerrados
+   quando o status selecionado é "Pedido".
+========================================================= */
+
+function filtrarPedidosParaProdutos(pedidos, filtros, relatorio, { ignorarCliente = false, filtrarProduto = false } = {}) {
+  const numerosSelecionados = normalizarListaPedidosFiltro(filtros?.pedidos);
+
+  return pedidos.filter((item) => {
+    if (relatorio?.filtroFixo && !relatorio.filtroFixo(item)) {
+      return false;
+    }
+
+    if (!correspondeAosPedidos(item, numerosSelecionados)) {
+      return false;
+    }
+
+    if (
+      relatorio?.filtros?.status &&
+      filtros?.status &&
+      filtros.status !== "todos" &&
+      normalizarTexto(item?.status) !== normalizarTexto(filtros.status)
+    ) {
+      return false;
+    }
+
+    if (relatorio?.filtros?.periodo) {
+      const previsao = obterDataPedidoRelatorio(item);
+
+      if ((filtros?.dataInicio || filtros?.dataFim) && !previsao) {
+        return false;
+      }
+
+      if (filtros?.dataInicio && previsao < filtros.dataInicio) {
+        return false;
+      }
+
+      if (filtros?.dataFim && previsao > filtros.dataFim) {
+        return false;
+      }
+    }
+
+    if (
+      !ignorarCliente &&
+      relatorio?.filtros?.cliente &&
+      filtros?.cliente &&
+      filtros.cliente !== "todos" &&
+      String(item?.cliente || "").trim() !== String(filtros.cliente).trim()
+    ) {
+      return false;
+    }
+
+    if (
+      relatorio?.filtros?.vendedor &&
+      filtros?.vendedor &&
+      filtros.vendedor !== "todos" &&
+      String(item?.vendedor || "").trim() !== String(filtros.vendedor).trim()
+    ) {
+      return false;
+    }
+
+    if (
+      filtrarProduto &&
+      relatorio?.filtros?.produto &&
+      filtros?.cod_prod &&
+      filtros.cod_prod !== "Todos" &&
+      obterCodigoProduto(item) !== String(filtros.cod_prod).trim()
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function FiltrosPedidosRelatorio({
+  filtros,
+  setFiltros,
+  pedidos = [],
+  relatorio,
+}) {
+  /* Clientes disponíveis: mesmos filtros do relatório, exceto
+     o próprio cliente; o produto selecionado também é considerado. */
+  const pedidosElegiveisClientes = useMemo(
+    () => filtrarPedidosParaProdutos(pedidos, filtros, relatorio, {
+      ignorarCliente: true,
+      filtrarProduto: true,
+    }),
+    [pedidos, filtros, relatorio],
+  );
+
   const clientes = useMemo(
     () =>
-      valoresUnicosOrdenados(pedidos.map((item) => item?.cliente), {
-        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
-      }),
-    [pedidos],
+      valoresUnicosOrdenados(
+        pedidosElegiveisClientes.map((item) => item?.cliente),
+        {
+          filtrar: (valor) => Boolean(valor && valor !== "-"),
+          comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+        },
+      ),
+    [pedidosElegiveisClientes],
   );
 
   const vendedores = useMemo(
@@ -44,25 +207,34 @@ function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio 
     [pedidos],
   );
 
+  const pedidosElegiveis = useMemo(
+    () => filtrarPedidosParaProdutos(pedidos, filtros, relatorio),
+    [pedidos, filtros, relatorio],
+  );
+
   const produtos = useMemo(() => {
     const mapa = new Map();
 
-    for (const item of pedidos) {
+    for (const item of pedidosElegiveis) {
       const codigo = obterCodigoProduto(item);
-      if (!codigo || mapa.has(codigo)) {
-        continue;
-      }
+      if (!codigo || codigo === "-") continue;
 
-      mapa.set(codigo, {
-        codigo,
-        descricao: item?.produto ?? item?.descricao_produto ?? "",
-      });
+      const descricao = String(
+        item?.produto ?? item?.descricao_produto ?? "",
+      ).trim();
+
+      const existente = mapa.get(codigo);
+      if (!existente) {
+        mapa.set(codigo, { codigo, descricao });
+      } else if (!existente.descricao && descricao) {
+        mapa.set(codigo, { codigo, descricao });
+      }
     }
 
     return [...mapa.values()].sort((a, b) =>
       compararPtBR(a.codigo, b.codigo, { numeric: true }),
     );
-  }, [pedidos]);
+  }, [pedidosElegiveis]);
 
   const statusDisponiveis = useMemo(
     () =>
@@ -116,19 +288,29 @@ function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio 
 
             {relatorio?.filtros?.periodo && (
               <>
-                <CampoFiltro titulo="Previsão de faturamento — de" className="rel-pedidos-campo">
+                <CampoFiltro
+                  titulo="Previsão de faturamento — de"
+                  className="rel-pedidos-campo"
+                >
                   <input
                     type="date"
                     value={filtros?.dataInicio || ""}
-                    onChange={(evento) => alterar("dataInicio", evento.target.value)}
+                    onChange={(evento) =>
+                      alterar("dataInicio", evento.target.value)
+                    }
                   />
                 </CampoFiltro>
 
-                <CampoFiltro titulo="Previsão de faturamento — até" className="rel-pedidos-campo">
+                <CampoFiltro
+                  titulo="Previsão de faturamento — até"
+                  className="rel-pedidos-campo"
+                >
                   <input
                     type="date"
                     value={filtros?.dataFim || ""}
-                    onChange={(evento) => alterar("dataFim", evento.target.value)}
+                    onChange={(evento) =>
+                      alterar("dataFim", evento.target.value)
+                    }
                   />
                 </CampoFiltro>
               </>

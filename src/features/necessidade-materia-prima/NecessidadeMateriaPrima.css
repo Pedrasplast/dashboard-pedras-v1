@@ -1,12 +1,14 @@
+
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA
-
-   - Correção de espaçamento da navbar
-   - Alerta compacto
-   - Paginação padrão nas pendências e nos produtos
-   - Abas por material
-   - Tabelas e responsividade
-   - Resumo principal destacado
+   - Estrutura e navbar
+   - Alertas de pendências
+   - Abas de materiais
+   - Resumo principal
+   - Detalhamento de produtos
+   - Paginação padrão
+   - Filtro por previsão de faturamento
+   - Responsividade
 ============================================================ */
 
 /* ============================================================
@@ -208,7 +210,7 @@
 }
 
 /* ============================================================
-   ABAS
+   ABAS DE MATÉRIAS-PRIMAS
 ============================================================ */
 
 .necessidade-abas {
@@ -265,7 +267,7 @@
 }
 
 /* ============================================================
-   TABELAS
+   TABELAS — ESTILO COMPARTILHADO
 ============================================================ */
 
 .necessidade-tabela-container {
@@ -568,6 +570,14 @@
   overflow-wrap: anywhere;
 }
 
+/* Todo o detalhamento alinhado à esquerda */
+.necessidade-tabela-produtos thead th,
+.necessidade-tabela-produtos tbody td,
+.necessidade-tabela-produtos tbody th,
+.necessidade-tabela-produtos .necessidade-coluna-numero {
+  text-align: left !important;
+}
+
 .necessidade-detalhamento-vazio {
   padding: 28px 16px !important;
   color: #64748b;
@@ -586,7 +596,129 @@
 }
 
 /* ============================================================
-   RESPONSIVIDADE
+   FILTRO POR PREVISÃO DE FATURAMENTO
+============================================================ */
+
+.necessidade-periodo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #dbe5f2;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.necessidade-periodo-titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  color: #10254b;
+}
+
+.necessidade-periodo-titulo strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.necessidade-periodo-titulo span,
+.necessidade-periodo-contagem {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.necessidade-periodo-campos {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.necessidade-periodo-campos label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.necessidade-periodo-campos input[type="date"] {
+  height: 38px;
+  min-width: 145px;
+  max-width: 100%;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 12px;
+}
+
+.necessidade-periodo-campos input[type="date"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+/* ============================================================
+   BOTÃO PADRÃO LIMPAR FILTROS
+   - Estilo base: Filtros.css compartilhado
+   - Sem filtro: visível e desabilitado
+   - Com filtro: vermelho-claro
+============================================================ */
+
+.necessidade-periodo-campos > .filtros-compartilhados-limpar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  align-self: flex-end;
+  min-height: 38px;
+  white-space: nowrap;
+}
+
+.necessidade-page
+  .filtros-compartilhados-limpar.filtros-limpar-ativo:not(:disabled) {
+  color: #dc2626;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.necessidade-page
+  .filtros-compartilhados-limpar.filtros-limpar-ativo:hover:not(:disabled) {
+  color: #b91c1c;
+  border-color: #ef4444;
+  background: #fee2e2;
+}
+
+.necessidade-page .filtros-compartilhados-limpar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.necessidade-periodo-erro {
+  width: 100%;
+  margin: 0;
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.necessidade-periodo-contagem {
+  width: 100%;
+  margin: 0;
+}
+
+/* ============================================================
+   RESPONSIVIDADE — NOTEBOOKS E TABLETS
 ============================================================ */
 
 @media (max-width: 1024px) {
@@ -613,6 +745,10 @@
     min-width: 126px;
   }
 }
+
+/* ============================================================
+   RESPONSIVIDADE — TABLETS E CELULARES
+============================================================ */
 
 @media (max-width: 768px) {
   .necessidade-page {
@@ -658,13 +794,16 @@
     min-width: 1480px;
   }
 
-  .necessidade-resumo-container .necessidade-tabela thead th {
+  .necessidade-resumo-container
+  .necessidade-tabela thead th {
     padding: 12px 10px;
     font-size: 11px;
   }
 
-  .necessidade-resumo-container .necessidade-tabela tbody td,
-  .necessidade-resumo-container .necessidade-tabela tbody th {
+  .necessidade-resumo-container
+  .necessidade-tabela tbody td,
+  .necessidade-resumo-container
+  .necessidade-tabela tbody th {
     padding: 12px 10px;
   }
 
@@ -688,7 +827,20 @@
   .necessidade-resumo-input {
     width: 100px !important;
   }
+
+  .necessidade-periodo {
+    align-items: stretch;
+  }
+
+  .necessidade-periodo-campos {
+    width: 100%;
+    align-items: flex-end;
+  }
 }
+
+/* ============================================================
+   RESPONSIVIDADE — CELULARES PEQUENOS
+============================================================ */
 
 @media (max-width: 480px) {
   .necessidade-page {
@@ -709,5 +861,34 @@
 
   .necessidade-pendencias-cabecalho {
     gap: 8px;
+  }
+
+  .necessidade-periodo {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .necessidade-periodo-titulo {
+    width: 100%;
+  }
+
+  .necessidade-periodo-campos {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .necessidade-periodo-campos label {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .necessidade-periodo-campos input[type="date"] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .necessidade-periodo-campos
+  .filtros-compartilhados-limpar {
+    align-self: flex-start;
   }
 }

@@ -68,74 +68,161 @@
 }
 
 /* =========================================================
-   FILTROS
+   FILTROS — LAYOUT HORIZONTAL
 ========================================================= */
 
 .tp-filtros {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  width: 100%;
   margin-bottom: 18px;
 }
+
+/* Cada campo tem seu próprio label */
+
+.tp-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tp-filtro label {
+  display: block;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Pesquisa ocupa o espaço disponível */
+
+.tp-filtro--busca {
+  flex: 1 1 320px;
+  min-width: 220px;
+}
+
+/* Ordenação mantém uma largura controlada */
+
+.tp-filtro--ordenacao {
+  flex: 0 0 190px;
+}
+
+/* =========================================================
+   CAMPO DE PESQUISA
+========================================================= */
 
 .tp-busca {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
-  min-width: 220px;
-  padding: 9px 12px;
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
+  box-sizing: border-box;
+}
+
+.tp-busca:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.tp-busca svg {
+  flex-shrink: 0;
+  color: #64748b;
 }
 
 .tp-busca input {
   flex: 1;
+  width: 100%;
   min-width: 0;
+  height: 100%;
+  padding: 0;
   border: 0;
   outline: none;
   background: transparent;
-  font-size: 13px;
   color: #0f172a;
+  font: inherit;
+  font-size: 13px;
+  box-shadow: none;
 }
+
+.tp-busca input::placeholder {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   ORDENAÇÃO
+========================================================= */
 
 .tp-select {
-  min-height: 38px;
-  padding: 8px 12px;
+  display: block;
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  outline: none;
   background: #ffffff;
   color: #334155;
+  font: inherit;
   font-size: 13px;
-}
-
-.tp-limpar,
-.tp-atualizar {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 8px 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #334155;
-  font-size: 13px;
-  font-weight: 500;
+  box-sizing: border-box;
   cursor: pointer;
 }
 
-.tp-limpar:hover:not(:disabled),
-.tp-atualizar:hover:not(:disabled) {
-  background: #f1f5f9;
+.tp-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
 }
 
-.tp-limpar:disabled,
-.tp-atualizar:disabled {
-  opacity: 0.45;
+/* =========================================================
+   BOTÃO GLOBAL LIMPAR FILTROS
+========================================================= */
+
+/*
+   Reutiliza o estilo global já importado pelo JSX.
+   Aqui controlamos apenas posicionamento e estado ativo.
+*/
+
+.tp-filtros > .filtros-compartilhados-limpar {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+/* Com filtro aplicado: vermelho */
+
+.tp-page
+.filtros-compartilhados-limpar.filtros-limpar-ativo:not(:disabled) {
+  color: #dc2626;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.tp-page
+.filtros-compartilhados-limpar.filtros-limpar-ativo:hover:not(:disabled) {
+  color: #b91c1c;
+  border-color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Sem filtro: mantém o padrão desabilitado */
+
+.tp-page .filtros-compartilhados-limpar:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -272,16 +359,42 @@
   .tp-filtros {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+
+  .tp-filtro,
+  .tp-filtro--busca,
+  .tp-filtro--ordenacao {
+    flex: none;
+    width: 100%;
+    min-width: 0;
   }
 
   .tp-busca,
-  .tp-select,
-  .tp-limpar {
+  .tp-select {
     width: 100%;
     box-sizing: border-box;
   }
 
+  .tp-filtros > .filtros-compartilhados-limpar {
+    align-self: flex-start;
+  }
+
   .tp-rodape {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .tp-container {
+    padding: 12px;
+  }
+
+  .tp-card {
+    padding: 14px 12px;
+  }
+
+  .tp-filtros > .filtros-compartilhados-limpar {
+    width: 100%;
   }
 }

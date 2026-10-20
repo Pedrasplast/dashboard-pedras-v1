@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 
-import "./CadastroProdutoModal.css";
+import "../CadastroProdutoModal.css";
 
 /* =========================================================
    UTILITÁRIOS

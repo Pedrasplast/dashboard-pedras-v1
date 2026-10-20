@@ -1,59 +1,115 @@
+
 import { useMemo, useState } from "react";
-import { RefreshCw, TableProperties } from "lucide-react";
+import { TableProperties } from "lucide-react";
+
 import PageHeader from "@/components/layout/PageHeader";
 import Paginacao from "@/components/paginacao/Paginacao";
+
 import { useTabelaPrecos } from "./hooks/useTabelaPrecos";
 import TabelaPrecosFiltros from "./components/TabelaPrecosFiltros";
 import TabelaPrecosGrid from "./components/TabelaPrecosGrid";
+
 import { filtrarTabelaPrecos } from "./utils/formatadoresPrecos";
+
 import "./TabelaPrecosMateriaPrima.css";
 
 /* =========================================================
    TABELA DE PREÇOS — PP E SCRAP
-   Paginação padrão após busca e ordenação.
-   A regra de preço de referência fica em formatadoresPrecos.js.
+
+   - Carregamento automático pelo useTabelaPrecos
+   - Busca por material
+   - Ordenação dos registros
+   - Botão padrão para limpar filtros
+   - Paginação de 8 registros
+   - Preço de referência conforme regra existente
+
+   O botão de atualização manual foi removido.
 ========================================================= */
 
 const ITENS_POR_PAGINA = 8;
 
 export default function TabelaPrecosMateriaPrimaPage() {
+  /* =====================================================
+     ESTADOS DOS FILTROS E PAGINAÇÃO
+  ===================================================== */
+
   const [busca, setBusca] = useState("");
   const [ordenacao, setOrdenacao] = useState("descricao");
   const [paginaAtual, setPaginaAtual] = useState(1);
 
+  /* =====================================================
+     CONSULTA DOS PREÇOS
+  ===================================================== */
+
   const {
     data = [],
     isLoading,
-    isFetching,
     isError,
     error,
-    dataUpdatedAt,
-    refetch,
   } = useTabelaPrecos();
 
+  /* =====================================================
+     BUSCA E ORDENAÇÃO
+  ===================================================== */
+
   const registros = useMemo(
-    () => filtrarTabelaPrecos(data, { busca, ordenacao }),
+    () =>
+      filtrarTabelaPrecos(data, {
+        busca,
+        ordenacao,
+      }),
     [data, busca, ordenacao],
   );
 
+  /* =====================================================
+     PAGINAÇÃO
+  ===================================================== */
+
   const totalItens = registros.length;
-  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA));
-  const paginaValida = Math.min(Math.max(1, paginaAtual), totalPaginas);
-  const indiceInicial = (paginaValida - 1) * ITENS_POR_PAGINA;
+
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(totalItens / ITENS_POR_PAGINA),
+  );
+
+  const paginaValida = Math.min(
+    Math.max(1, paginaAtual),
+    totalPaginas,
+  );
+
+  const indiceInicial =
+    (paginaValida - 1) * ITENS_POR_PAGINA;
+
   const registrosPagina = useMemo(
-    () => registros.slice(indiceInicial, indiceInicial + ITENS_POR_PAGINA),
+    () =>
+      registros.slice(
+        indiceInicial,
+        indiceInicial + ITENS_POR_PAGINA,
+      ),
     [registros, indiceInicial],
   );
+
+  /* =====================================================
+     ALTERAR BUSCA
+  ===================================================== */
 
   function alterarBusca(valor) {
     setBusca(valor);
     setPaginaAtual(1);
   }
 
+  /* =====================================================
+     ALTERAR ORDENAÇÃO
+  ===================================================== */
+
   function alterarOrdenacao(valor) {
     setOrdenacao(valor);
     setPaginaAtual(1);
   }
+
+  /* =====================================================
+     LIMPAR FILTROS
+  ===================================================== */
 
   function limparFiltros() {
     setBusca("");
@@ -61,47 +117,41 @@ export default function TabelaPrecosMateriaPrimaPage() {
     setPaginaAtual(1);
   }
 
-  function atualizarDados() {
-    void refetch();
-  }
-
-  const ultimaAtualizacao = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString("pt-BR") : "—";
+  /* =====================================================
+     RENDERIZAÇÃO
+  ===================================================== */
 
   return (
     <main className="tp-page">
       <div className="tp-container">
+        {/* CABEÇALHO PRINCIPAL */}
+
         <PageHeader
           eyebrow="Compras"
           title="Tabela de Preços"
           description="Atualizados pelo Cadastro de Material e histórico dos pedidos de compra do Omie."
           icon={TableProperties}
-          actions={
-            <button
-              className="tp-atualizar"
-              type="button"
-              onClick={atualizarDados}
-              disabled={isFetching}
-            >
-              <RefreshCw size={16} className={isFetching ? "tp-girando" : ""} />
-              {isFetching ? "Atualizando..." : "Atualizar"}
-            </button>
-          }
         />
+
+        {/* CONTEÚDO */}
 
         <section className="tp-card">
           <div className="tp-card-cabecalho">
             <div>
               <h2>Tabela de Preços</h2>
+
               <p>
-                Consulte o último preço registrado e a média ponderada dos últimos 30 dias. Quando
-                não houver média válida, o preço de referência será o da última compra.
+                Consulte o último preço registrado e a
+                média dos últimos 30 dias, calculada pela
+                soma dos valores totais das compras dividida
+                pela quantidade total comprada. Quando
+                não houver média válida, o preço de
+                referência será o da última compra.
               </p>
             </div>
-            <div className="tp-total">
-              <strong>{registros.length}</strong>
-              <span>materiais</span>
-            </div>
           </div>
+
+          {/* FILTROS */}
 
           <TabelaPrecosFiltros
             busca={busca}
@@ -111,16 +161,32 @@ export default function TabelaPrecosMateriaPrimaPage() {
             onLimpar={limparFiltros}
           />
 
+          {/* ESTADOS E TABELA */}
+
           {isLoading ? (
-            <div className="tp-estado">Carregando tabela de preços...</div>
+            <div className="tp-estado">
+              Carregando tabela de preços...
+            </div>
           ) : isError ? (
             <div className="tp-erro" role="alert">
-              <strong>Não foi possível carregar os preços.</strong>
-              <p>{error?.message ?? "Erro desconhecido."}</p>
+              <strong>
+                Não foi possível carregar os preços.
+              </strong>
+
+              <p>
+                {error?.message ?? "Erro desconhecido."}
+              </p>
             </div>
           ) : (
             <>
-              <TabelaPrecosGrid registros={registrosPagina} />
+              {/* TABELA DE PREÇOS */}
+
+              <TabelaPrecosGrid
+                registros={registrosPagina}
+              />
+
+              {/* PAGINAÇÃO PADRÃO */}
+
               {totalItens > ITENS_POR_PAGINA && (
                 <Paginacao
                   paginaAtual={paginaValida}

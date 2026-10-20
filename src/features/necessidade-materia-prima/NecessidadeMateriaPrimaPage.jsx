@@ -1,574 +1,15 @@
-
 import { useMemo, useState } from "react";
-
-import {
-  AlertTriangle,
-  Calculator,
-  ChevronDown,
-  ChevronUp,
-  Package,
-} from "lucide-react";
-
+import { AlertTriangle, Calculator } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-import Paginacao from "@/components/paginacao/Paginacao";
-
-import {
-  useNecessidadeMateriaPrima,
-} from "./hooks/useNecessidadeMateriaPrima";
-
-import {
-  consolidarNecessidade,
-  numero,
-} from "./utils/calculosNecessidade";
-
-import {
-  formatarQuantidade,
-  formatarPesoKgUn,
-  formatarConsumo,
-  formatarKg,
-  formatarMoeda,
-  formatarPrecoUnitario,
-} from "./utils/formatadoresNecessidade";
-
+import { useNecessidadeMateriaPrima } from "./hooks/useNecessidadeMateriaPrima";
+import { consolidarNecessidade, numero } from "./utils/calculosNecessidade";
+import { filtrarPedidosPorPrevisao, resumirConsumosDoPeriodo, agruparProdutosPorMaterial } from "./utils/seletoresNecessidade";
+import AlertaPendencias from "./components/AlertaPendencias";
+import AbasMateriais from "./components/AbasMateriais";
+import ProdutosDoMaterial from "./components/ProdutosDoMaterial";
+import FiltroPeriodoNecessidade from "./components/FiltroPeriodoNecessidade";
+import ResumoMaterialNecessidade from "./components/ResumoMaterialNecessidade";
 import "./NecessidadeMateriaPrima.css";
-
-/* ============================================================
-   NECESSIDADE DE MATÉRIA-PRIMA
-
-   - Cálculos e formatação separados
-   - Materiais habilitados no cadastro
-   - Abas por matéria-prima
-   - Estoque exclusivo do Omie
-   - Percentual e teto editáveis
-   - Alerta compacto com paginação
-   - Produtos agrupados por código
-   - Paginação padrão
-   - Resumo principal destacado
-============================================================ */
-
-const PRODUTOS_POR_PAGINA = 8;
-const PENDENCIAS_POR_PAGINA = 8;
-
-/* ============================================================
-   UTILITÁRIOS DE IDENTIFICAÇÃO
-============================================================ */
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
-
-/* ============================================================
-   DESCRIÇÃO DAS PENDÊNCIAS
-============================================================ */
-
-function descricaoPendencia(situacao) {
-  const descricoes = {
-    SEM_PARAMETROS: "Produto sem cadastro ativo",
-    SEM_CADASTRO: "Produto sem cadastro",
-    SEM_MATERIAL: "Matéria-prima não vinculada",
-    SEM_PESO: "Peso KG/UN não cadastrado",
-    MATERIAL_INATIVO: "Matéria-prima inativa",
-    PRODUTO_INATIVO: "Produto inativo",
-  };
-
-  return (
-    descricoes[situacao] ??
-    String(situacao || "Cadastro incompleto")
-      .replaceAll("_", " ")
-  );
-}
-
-/* ============================================================
-   AGRUPAR PENDÊNCIAS POR PRODUTO
-============================================================ */
-
-function agruparPendencias(pedidos = []) {
-  const mapa = new Map();
-
-  for (const pedido of pedidos) {
-    if (pedido.situacao_cadastro === "OK") {
-      continue;
-    }
-
-    const codigo = normalizarCodigo(
-      pedido.codigo_produto
-    );
-
-    if (!codigo) {
-      continue;
-    }
-
-    const quantidade = numero(pedido.quantidade);
-    const existente = mapa.get(codigo);
-
-    if (existente) {
-      existente.quantidade += quantidade;
-      existente.itens += 1;
-      continue;
-    }
-
-    mapa.set(codigo, {
-      codigo,
-      produto: pedido.produto || "Sem descrição",
-      quantidade,
-      itens: 1,
-      situacao: pedido.situacao_cadastro,
-    });
-  }
-
-  return Array.from(mapa.values()).sort(
-    (a, b) =>
-      b.quantidade - a.quantidade ||
-      a.codigo.localeCompare(b.codigo, "pt-BR")
-  );
-}
-
-/* ============================================================
-   AGRUPAR PRODUTOS VÁLIDOS POR MATÉRIA-PRIMA
-
-   A formatação não interfere na soma.
-============================================================ */
-
-function agruparProdutosPorMaterial(pedidos = []) {
-  const agrupamento = new Map();
-
-  for (const pedido of pedidos) {
-    if (pedido.situacao_cadastro !== "OK") {
-      continue;
-    }
-
-    if (pedido.material_id == null) {
-      continue;
-    }
-
-    const materialId = String(pedido.material_id);
-    const codigo = normalizarCodigo(
-      pedido.codigo_produto
-    );
-
-    const quantidade = Number(pedido.quantidade);
-    const consumo = Number(pedido.consumo_kg);
-    const peso = Number(pedido.kg_un);
-
-    if (
-      !codigo ||
-      !Number.isFinite(quantidade) ||
-      !Number.isFinite(consumo) ||
-      !Number.isFinite(peso) ||
-      peso <= 0
-    ) {
-      continue;
-    }
-
-    if (!agrupamento.has(materialId)) {
-      agrupamento.set(materialId, new Map());
-    }
-
-    const produtos = agrupamento.get(materialId);
-    const existente = produtos.get(codigo);
-
-    if (existente) {
-      existente.quantidade += quantidade;
-      existente.consumo += consumo;
-      continue;
-    }
-
-    produtos.set(codigo, {
-      codigo,
-      produto: pedido.produto || "Sem descrição",
-      quantidade,
-      pesoKgUn: peso,
-      consumo,
-    });
-  }
-
-  const resultado = new Map();
-
-  for (const [id, produtos] of agrupamento) {
-    resultado.set(
-      id,
-      Array.from(produtos.values()).sort(
-        (a, b) =>
-          b.consumo - a.consumo ||
-          a.codigo.localeCompare(b.codigo, "pt-BR")
-      )
-    );
-  }
-
-  return resultado;
-}
-
-/* ============================================================
-   ALERTA COMPACTO DE PRODUTOS PENDENTES
-============================================================ */
-
-function AlertaPendencias({ pedidos }) {
-  const [expandido, setExpandido] = useState(false);
-  const [paginaAtual, setPaginaAtual] = useState(1);
-
-  const pendencias = useMemo(
-    () => agruparPendencias(pedidos),
-    [pedidos]
-  );
-
-  const totalItens = pendencias.reduce(
-    (total, item) => total + item.itens,
-    0
-  );
-
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(
-      pendencias.length / PENDENCIAS_POR_PAGINA
-    )
-  );
-
-  const paginaValida = Math.min(
-    Math.max(1, paginaAtual),
-    totalPaginas
-  );
-
-  const inicio =
-    (paginaValida - 1) * PENDENCIAS_POR_PAGINA;
-
-  const pendenciasPagina = pendencias.slice(
-    inicio,
-    inicio + PENDENCIAS_POR_PAGINA
-  );
-
-  if (pendencias.length === 0) {
-    return null;
-  }
-
-  return (
-    <section
-      className="necessidade-pendencias"
-      aria-label="Produtos com pendências"
-    >
-      <div className="necessidade-pendencias-cabecalho">
-        <AlertTriangle
-          size={18}
-          aria-hidden="true"
-        />
-
-        <div className="necessidade-pendencias-texto">
-          <strong>
-            Produtos com parâmetros pendentes
-          </strong>
-
-          <p>
-            {pendencias.length} código(s) e{" "}
-            {totalItens} item(ns) dos pedidos
-            em aberto precisam de regularização.
-            O consumo calculado ainda é parcial.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="necessidade-pendencias-toggle"
-          aria-expanded={expandido}
-          onClick={() =>
-            setExpandido((anterior) => !anterior)
-          }
-        >
-          {expandido ? (
-            <>
-              <ChevronUp size={16} />
-              Ocultar pendências
-            </>
-          ) : (
-            <>
-              <ChevronDown size={16} />
-              Ver pendências
-            </>
-          )}
-        </button>
-      </div>
-
-      {expandido && (
-        <div className="necessidade-pendencias-conteudo">
-          <div className="necessidade-tabela-container">
-            <table className="necessidade-tabela necessidade-tabela-pendencias">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Produto</th>
-                  <th>Quantidade nos pedidos</th>
-                  <th>Itens afetados</th>
-                  <th>Pendência</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {pendenciasPagina.map((item) => (
-                  <tr key={item.codigo}>
-                    <td>
-                      <strong>{item.codigo}</strong>
-                    </td>
-
-                    <td>{item.produto}</td>
-
-                    <td className="necessidade-coluna-numero">
-                      {formatarQuantidade(
-                        item.quantidade
-                      )}
-                    </td>
-
-                    <td className="necessidade-coluna-numero">
-                      {item.itens}
-                    </td>
-
-                    <td>
-                      {descricaoPendencia(
-                        item.situacao
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <Paginacao
-            paginaAtual={paginaValida}
-            totalItens={pendencias.length}
-            itensPorPagina={PENDENCIAS_POR_PAGINA}
-            onChangePagina={setPaginaAtual}
-          />
-        </div>
-      )}
-    </section>
-  );
-}
-
-/* ============================================================
-   ABAS DE MATÉRIAS-PRIMAS
-============================================================ */
-
-function AbasMateriais({
-  materiais,
-  selecionado,
-  onSelecionar,
-}) {
-  return (
-    <div
-      className="necessidade-abas"
-      role="tablist"
-      aria-label="Selecionar matéria-prima"
-    >
-      {materiais.map((material) => {
-        const ativo =
-          String(material.id) === String(selecionado);
-
-        return (
-          <button
-            key={material.id}
-            type="button"
-            role="tab"
-            id={`necessidade-aba-${material.id}`}
-            aria-selected={ativo}
-            aria-controls="necessidade-painel-material"
-            className={
-              ativo
-                ? "necessidade-aba necessidade-aba-ativa"
-                : "necessidade-aba"
-            }
-            onClick={() =>
-              onSelecionar(String(material.id))
-            }
-          >
-            <Package size={16} aria-hidden="true" />
-
-            {material.material}
-
-            {!material.estoqueDisponivel && (
-              <AlertTriangle
-                size={14}
-                className="necessidade-aba-alerta"
-                aria-label="Estoque não encontrado"
-              />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ============================================================
-   PRODUTOS POR MATÉRIA-PRIMA
-============================================================ */
-
-function ProdutosDoMaterial({ material, produtos }) {
-  const [paginaAtual, setPaginaAtual] = useState(1);
-
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(
-      produtos.length / PRODUTOS_POR_PAGINA
-    )
-  );
-
-  const paginaValida = Math.min(
-    Math.max(1, paginaAtual),
-    totalPaginas
-  );
-
-  const inicio =
-    (paginaValida - 1) * PRODUTOS_POR_PAGINA;
-
-  const produtosPagina = produtos.slice(
-    inicio,
-    inicio + PRODUTOS_POR_PAGINA
-  );
-
-  const consumoDetalhado = produtos.reduce(
-    (total, produto) => total + produto.consumo,
-    0
-  );
-
-  const diferenca = Math.abs(
-    consumoDetalhado - material.consumo
-  );
-
-  return (
-    <section className="necessidade-detalhamento">
-      <div className="necessidade-detalhamento-cabecalho">
-        <div>
-          <h3>
-            Produtos que utilizam {material.material}
-          </h3>
-
-          <p>
-            Produtos dos pedidos em aberto,
-            agrupados pelo código e vinculados
-            ao Cadastro de Produto.
-          </p>
-        </div>
-
-        <span className="necessidade-detalhamento-contador">
-          {produtos.length} produto(s)
-        </span>
-      </div>
-
-      <div className="necessidade-tabela-container">
-        <table className="necessidade-tabela necessidade-tabela-produtos">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Produto</th>
-
-              <th className="necessidade-coluna-numero">
-                Quantidade total
-              </th>
-
-              <th className="necessidade-coluna-numero">
-                KG/UN
-              </th>
-
-              <th className="necessidade-coluna-numero">
-                Consumo (kg)
-              </th>
-
-              <th className="necessidade-coluna-numero">
-                Valor total (R$)
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {produtosPagina.map((produto) => (
-              <tr key={produto.codigo}>
-                <td>
-                  <strong>{produto.codigo}</strong>
-                </td>
-
-                <td>{produto.produto}</td>
-
-                <td className="necessidade-coluna-numero">
-                  {formatarQuantidade(
-                    produto.quantidade
-                  )}
-                </td>
-
-                <td className="necessidade-coluna-numero">
-                  {formatarPesoKgUn(
-                    produto.pesoKgUn
-                  )}
-                </td>
-
-                <td className="necessidade-coluna-numero">
-                  <strong>
-                    {formatarConsumo(
-                      produto.consumo
-                    )}
-                  </strong>
-                </td>
-
-                <td className="necessidade-coluna-numero">
-                  <strong>
-                    {material.preco != null &&
-                    Number.isFinite(Number(material.preco)) &&
-                    Number(material.preco) > 0
-                      ? formatarMoeda(
-                          produto.consumo * Number(material.preco)
-                        )
-                      : "—"}
-                  </strong>
-                </td>
-              </tr>
-            ))}
-
-            {produtosPagina.length === 0 && (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="necessidade-detalhamento-vazio"
-                >
-                  Nenhum produto com parâmetros
-                  completos encontrado para
-                  esta matéria-prima.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <Paginacao
-        paginaAtual={paginaValida}
-        totalItens={produtos.length}
-        itensPorPagina={PRODUTOS_POR_PAGINA}
-        onChangePagina={setPaginaAtual}
-      />
-
-      {diferenca > 0.01 && (
-        <div className="necessidade-alerta" role="alert">
-          <AlertTriangle
-            size={18}
-            aria-hidden="true"
-          />
-
-          <span>
-            Divergência no consumo de{" "}
-            {material.material}: os produtos
-            detalhados somam{" "}
-            {formatarConsumo(consumoDetalhado)} kg,
-            enquanto o resumo principal apresenta{" "}
-            {formatarConsumo(material.consumo)} kg.
-          </span>
-        </div>
-      )}
-    </section>
-  );
-}
-
-/* ============================================================
-   PÁGINA PRINCIPAL
-============================================================ */
 
 export default function NecessidadeMateriaPrimaPage() {
   const [
@@ -577,7 +18,8 @@ export default function NecessidadeMateriaPrimaPage() {
   ] = useState(null);
 
   const [ajustes, setAjustes] = useState({});
-  const [editandoEstoqueSeguranca, setEditandoEstoqueSeguranca] = useState(false);
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
 
   const {
     data,
@@ -586,21 +28,6 @@ export default function NecessidadeMateriaPrimaPage() {
     isError,
     error,
   } = useNecessidadeMateriaPrima();
-
-  // Aceita números digitados sem máscara, além de valores pt-BR colados.
-  // A máscara de milhar fica visível somente fora do foco.
-  function interpretarEstoqueSeguranca(valor) {
-    const texto = String(valor ?? "").trim().replace(/\s/g, "");
-    if (texto === "") return 0;
-    let normalizado = texto;
-    if (texto.includes(",")) {
-      normalizado = texto.replace(/\./g, "").replace(",", ".");
-    } else if (/^\d{1,3}(\.\d{3})+$/.test(texto)) {
-      normalizado = texto.replace(/\./g, "");
-    }
-    const resultado = Number(normalizado);
-    return Number.isFinite(resultado) ? resultado : null;
-  }
 
   /* ========================================================
      AJUSTES EDITÁVEIS
@@ -640,21 +67,33 @@ export default function NecessidadeMateriaPrimaPage() {
      DADOS CONSOLIDADOS
   ======================================================== */
 
+  const periodoInvalido = Boolean(dataInicio && dataFim && dataInicio > dataFim);
+  const periodoAtivo = Boolean(dataInicio || dataFim);
+
+  const pedidosAbertos = useMemo(() => {
+    const pedidos = data?.pedidosAbertos ?? [];
+    if (periodoInvalido) return [];
+    return filtrarPedidosPorPrevisao(pedidos, dataInicio, dataFim);
+  }, [data?.pedidosAbertos, dataInicio, dataFim, periodoInvalido]);
+
+  // O consumo agregado original é preservado quando nenhum período é informado.
+  // Com datas definidas, só o consumo é recalculado pelos itens do período.
+  const dadosDoPeriodo = useMemo(() => {
+    if (!data || !periodoAtivo) return data;
+    return {
+      ...data,
+      consumos: resumirConsumosDoPeriodo(pedidosAbertos),
+    };
+  }, [data, periodoAtivo, pedidosAbertos]);
+
   const materiais = useMemo(
-    () =>
-      consolidarNecessidade(
-        data,
-        ajustes
-      ),
-    [data, ajustes]
+    () => consolidarNecessidade(dadosDoPeriodo, ajustes),
+    [dadosDoPeriodo, ajustes]
   );
 
   const produtosPorMaterial = useMemo(
-    () =>
-      agruparProdutosPorMaterial(
-        data?.pedidosAbertos ?? []
-      ),
-    [data?.pedidosAbertos]
+    () => agruparProdutosPorMaterial(pedidosAbertos),
+    [pedidosAbertos]
   );
 
   const materialAtual =
@@ -672,9 +111,6 @@ export default function NecessidadeMateriaPrimaPage() {
       ) ?? []
     : [];
 
-  const pedidosAbertos =
-    data?.pedidosAbertos ?? [];
-
   const codigosSemVinculo =
     data?.pendenciasCodigos ?? [];
 
@@ -688,7 +124,7 @@ export default function NecessidadeMateriaPrimaPage() {
   const necessitaValidacao =
     Boolean(data) &&
     (
-      (data?.resumoPedidos?.itensPendentes ?? 0) > 0 ||
+      pedidosAbertos.some((pedido) => pedido.situacao_cadastro !== "OK") ||
       codigosSemVinculo.length > 0 ||
       materiaisSemEstoque.length > 0 ||
       !data.validacao?.calculoHomologado
@@ -722,6 +158,7 @@ export default function NecessidadeMateriaPrimaPage() {
           </div>
         ) : (
           <>
+            <FiltroPeriodoNecessidade dataInicio={dataInicio} dataFim={dataFim} setDataInicio={setDataInicio} setDataFim={setDataFim} periodoAtivo={periodoAtivo} periodoInvalido={periodoInvalido} pedidosAbertos={pedidosAbertos} />
             {/* PENDÊNCIAS DOS PRODUTOS */}
 
             <AlertaPendencias
@@ -827,182 +264,7 @@ export default function NecessidadeMateriaPrimaPage() {
                   >
                     {/* RESUMO PRINCIPAL */}
 
-                    <div className="necessidade-tabela-container necessidade-resumo-container">
-                      <table className="necessidade-tabela">
-                        <thead>
-                          <tr>
-                            <th>Material</th>
-                            <th>Consumo (kg)</th>
-                            <th>% Compra</th>
-                            <th>Consumo considerado (kg)</th>
-                            <th>Estoque OMIE (Kg)</th>
-                            <th>Compras futuras (kg)</th>
-                            <th>Saldo projetado (Kg)</th>
-                            <th>Estoque Segurança (Kg)</th>
-                            <th>Necessidade (Kg)</th>
-                            <th>Preço de referência (R$/kg)</th>
-                            <th>Valor estimado</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          <tr className="necessidade-linha-resumo necessidade-linha-resumo-destaque">
-                            <th>
-                              <span className="necessidade-resumo-material">
-                                {materialAtual.material}
-                              </span>
-                            </th>
-
-                            {/* CONSUMO — 2 CASAS */}
-
-                            <td className="necessidade-resumo-celula">
-                              <span className="necessidade-resumo-valor">
-                                {formatarConsumo(
-                                  materialAtual.consumo
-                                )}
-                              </span>
-                            </td>
-
-                            {/* PERCENTUAL EDITÁVEL */}
-
-                            <td className="necessidade-resumo-celula necessidade-resumo-celula-input">
-                              <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                step="10"
-                                className="necessidade-resumo-input"
-                                value={materialAtual.percentual}
-                                aria-label={`Percentual de compra ${materialAtual.material}`}
-                                onChange={(event) =>
-                                  alterarAjuste(
-                                    materialAtual.id,
-                                    "percentual",
-                                    event.target.value
-                                  )
-                                }
-                              />
-                            </td>
-
-                            {/* CONSUMO CONSIDERADO — 2 CASAS */}
-
-                            <td className="necessidade-resumo-celula">
-                              <span className="necessidade-resumo-valor">
-                                {formatarConsumo(
-                                  materialAtual.consumoConsiderado
-                                )}
-                              </span>
-                            </td>
-
-                            {/* ESTOQUE API — 2 CASAS */}
-
-                            <td className="necessidade-resumo-celula">
-                              <span className="necessidade-resumo-valor necessidade-resumo-valor-secundario">
-                                {materialAtual.estoqueDisponivel
-                                  ? formatarKg(
-                                      materialAtual.estoqueApi
-                                    )
-                                  : "Sem dados"}
-                              </span>
-                            </td>
-
-                            {/* COMPRAS FUTURAS — 2 CASAS */}
-
-                            <td className="necessidade-resumo-celula">
-                              <span className="necessidade-resumo-valor">
-                                {formatarKg(
-                                  materialAtual.comprasFuturas
-                                )}
-                              </span>
-                            </td>
-
-                            {/* SALDO PROJETADO — 2 CASAS */}
-
-                            <td
-                              className={`necessidade-resumo-celula ${
-                                materialAtual.saldoProjetado !== null &&
-                                materialAtual.saldoProjetado < 0
-                                  ? "necessidade-negativo"
-                                  : ""
-                              }`}
-                            >
-                              <span
-                                className={
-                                  materialAtual.saldoProjetado !== null &&
-                                  materialAtual.saldoProjetado < 0
-                                    ? "necessidade-resumo-valor necessidade-resumo-valor-negativo"
-                                    : "necessidade-resumo-valor necessidade-resumo-valor-secundario"
-                                }
-                              >
-                                {materialAtual.estoqueDisponivel
-                                  ? formatarKg(
-                                      materialAtual.saldoProjetado
-                                    )
-                                  : "—"}
-                              </span>
-                            </td>
-
-                            {/* TETO EDITÁVEL */}
-
-                            <td className="necessidade-resumo-celula necessidade-resumo-celula-input">
-                              <input
-                                type="text"
-                                inputMode="decimal"
-                                className="necessidade-resumo-input"
-                                value={editandoEstoqueSeguranca
-                                  ? String(materialAtual.teto)
-                                  : formatarKg(materialAtual.teto)}
-                                aria-label={`Estoque de segurança ${materialAtual.material}`}
-                                onFocus={() => setEditandoEstoqueSeguranca(true)}
-                                onBlur={() => setEditandoEstoqueSeguranca(false)}
-                                onChange={(event) => {
-                                  const valor = interpretarEstoqueSeguranca(event.target.value);
-                                  if (valor !== null && valor >= 0) {
-                                    alterarAjuste(materialAtual.id, "teto", valor);
-                                  }
-                                }}
-                              />
-                            </td>
-
-                            {/* NECESSIDADE — 2 CASAS */}
-
-                            <td className="necessidade-resumo-celula necessidade-resumo-celula-necessidade">
-                              <span className="necessidade-resumo-valor necessidade-resumo-valor-principal">
-                                {materialAtual.estoqueDisponivel
-                                  ? formatarKg(
-                                      materialAtual.necessidade
-                                    )
-                                  : "—"}
-                              </span>
-                            </td>
-
-                            {/* PREÇO DA TABELA DE PREÇOS: MÉDIA OU ÚLTIMA COMPRA */}
-
-                            <td className="necessidade-resumo-celula">
-                              <span className="necessidade-resumo-valor">
-                                {materialAtual.preco != null
-                                  ? formatarPrecoUnitario(
-                                      materialAtual.preco
-                                    )
-                                  : "Sem preço"}
-                              </span>
-                            </td>
-
-                            {/* VALOR ESTIMADO — MOEDA */}
-
-                            <td className="necessidade-resumo-celula necessidade-resumo-celula-valor">
-                              <span className="necessidade-resumo-valor necessidade-resumo-valor-destaque">
-                                {materialAtual.estoqueDisponivel
-                                  ? formatarMoeda(
-                                      materialAtual.valorEstimado
-                                    )
-                                  : "—"}
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <ResumoMaterialNecessidade materialAtual={materialAtual} alterarAjuste={alterarAjuste} />
 
                     {/* PRODUTOS PAGINADOS */}
 

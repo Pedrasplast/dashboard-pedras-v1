@@ -1,69 +1,84 @@
 
-import { Search, X } from "lucide-react";
+import { FiRefreshCcw, FiSearch } from "react-icons/fi";
 
-import {
-  ORDENACOES_PRECOS,
-} from "../constants/tabelaPrecos.constants";
-
-/* =========================================================
-   FILTROS DA TABELA DE PREÇOS
-
-   Componente controlado pela página.
-========================================================= */
+import "@/components/filtros/Filtros.css";
 
 export default function TabelaPrecosFiltros({
-  busca,
+  busca = "",
   onBuscaChange,
-  ordenacao,
+  ordenacao = "descricao",
   onOrdenacaoChange,
   onLimpar,
 }) {
-  const possuiFiltros =
-    busca.trim().length > 0 ||
+  const temFiltros =
+    String(busca).trim() !== "" ||
     ordenacao !== "descricao";
 
   return (
     <div className="tp-filtros">
-      <label className="tp-busca">
-        <Search size={17} aria-hidden="true" />
+      <div className="tp-filtro tp-filtro--busca">
+        <label htmlFor="tp-busca">
+          Buscar material
+        </label>
 
-        <input
-          type="search"
-          value={busca}
-          onChange={(event) =>
-            onBuscaChange(event.target.value)
+        <div className="tp-busca">
+          <FiSearch size={17} aria-hidden="true" />
+
+          <input
+            id="tp-busca"
+            type="search"
+            value={busca}
+            onChange={(evento) =>
+              onBuscaChange(evento.target.value)
+            }
+            placeholder="Buscar código ou material..."
+            autoComplete="off"
+          />
+        </div>
+      </div>
+
+      <div className="tp-filtro tp-filtro--ordenacao">
+        <label htmlFor="tp-ordenacao">
+          Ordenar por
+        </label>
+
+        <select
+          id="tp-ordenacao"
+          className="tp-select"
+          value={ordenacao}
+          onChange={(evento) =>
+            onOrdenacaoChange(evento.target.value)
           }
-          placeholder="Buscar código ou material..."
-          aria-label="Buscar materiais"
-        />
-      </label>
-
-      <select
-        className="tp-select"
-        value={ordenacao}
-        onChange={(event) =>
-          onOrdenacaoChange(event.target.value)
-        }
-        aria-label="Ordenar materiais"
-      >
-        {ORDENACOES_PRECOS.map((opcao) => (
-          <option
-            key={opcao.value}
-            value={opcao.value}
-          >
-            {opcao.label}
+        >
+          <option value="descricao">
+            Material (A-Z)
           </option>
-        ))}
-      </select>
+
+          <option value="ultima_compra">
+            Última compra
+          </option>
+
+          <option value="maior_preco">
+            Maior preço
+          </option>
+
+          <option value="menor_preco">
+            Menor preço
+          </option>
+        </select>
+      </div>
 
       <button
-        className="tp-limpar"
         type="button"
-        disabled={!possuiFiltros}
+        className={`filtros-compartilhados-limpar ${
+          temFiltros ? "filtros-limpar-ativo" : ""
+        }`}
         onClick={onLimpar}
+        disabled={!temFiltros}
+        aria-label="Limpar filtros da tabela de preços"
       >
-        <X size={16} />
-        Limpar
+        <FiRefreshCcw size={15} aria-hidden="true" />
+        Limpar filtros
       </button>
     </div>
   );
