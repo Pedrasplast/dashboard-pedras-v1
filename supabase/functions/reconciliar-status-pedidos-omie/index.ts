@@ -1,13 +1,14 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.111.0';
 import {
-  TOTAL_LOTES, codigoValido, loteDoCodigo, loteDoHorario,
+  TOTAL_LOTES, codigoValido, loteDoCodigo, loteDoHorario, rodadaDoHorario, escolherDoLote,
   extrairPedido, avaliarSituacao, devePersistir, pedidoNaoCadastrado,
 } from './reconciliacao-core.mjs';
 
 const URL_OMIE = 'https://app.omie.com.br/api/v1/produtos/pedido/';
 const URL_ETAPAS = 'https://app.omie.com.br/api/v1/produtos/etapafat/';
 const PRAZO_MAXIMO_MS = 75000;
-const MAX_PEDIDOS_LOTE = 15;
+// ~3 s por pedido no Omie: 20 pedidos cabem no prazo de 75 s com folga.
+const MAX_PEDIDOS_LOTE = 20;
 const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
@@ -127,13 +128,13 @@ Deno.serve(async (req: Request) => {
     if (!appKey || !appSecret) throw new Error('Integração Omie não configurada.');
     const supabase = administrador();
     const pedidos = await buscarPedidosAtivos(supabase);
-    const selecionados = [...pedidos.entries()].filter(([codigo]) =>
-      codigoEspecifico !== null ? codigo === codigoEspecifico : loteDoCodigo(codigo) === lote);
+    const doLote = [...pedidos.entries()].filter(([codigo]) =>
+      codigoEspecifico !== null ? codigo === codigoEspecifico : loteDoCodigo(codigo) === lote)
+      .sort(([a], [b]) => a - b);
+    // Lote maior que o limite: confere uma parte por rodada, em rodízio.
+    const selecionados = escolherDoLote(doLote, MAX_PEDIDOS_LOTE, rodadaDoHorario());
     if (codigoEspecifico !== null && selecionados.length === 0) {
       return responder({ sucesso: false, erro: 'Pedido não encontrado entre os registros ativos; nada foi alterado.' }, 404);
-    }
-    if (selecionados.length > MAX_PEDIDOS_LOTE) {
-      return responder({ sucesso: false, erro: `Lote com ${selecionados.length} pedidos excede limite de ${MAX_PEDIDOS_LOTE}; nenhuma gravação.` }, 409);
     }
 
     const etapas = selecionados.length ? await obterEtapas(appKey, appSecret) : new Map<string, string>();
@@ -216,7 +217,7 @@ Deno.serve(async (req: Request) => {
     }
     const sucesso = erros === 0 && !interrompido;
     return responder({ sucesso, dry_run: simulacao, lote, total_lotes: TOTAL_LOTES,
-      pedidos_no_lote: selecionados.length, pedidos_processados: processados,
+      pedidos_no_lote: doLote.length, pedidos_selecionados: selecionados.length, pedidos_processados: processados,
       pedidos_alterados: alterados, pedidos_com_erro: erros,
       interrompido, resultados }, sucesso ? 200 : 500);
   } catch (erro) {

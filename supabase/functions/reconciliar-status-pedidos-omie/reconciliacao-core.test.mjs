@@ -1,7 +1,7 @@
 // Executar com: node --test supabase/functions/reconciliar-status-pedidos-omie/reconciliacao-core.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { TOTAL_LOTES, loteDoHorario, loteDoCodigo } from './reconciliacao-core.mjs';
+import { TOTAL_LOTES, loteDoHorario, loteDoCodigo, rodadaDoHorario, escolherDoLote } from './reconciliacao-core.mjs';
 
 // Regra antiga, mantida aqui só para provar que o teste detecta o defeito.
 const loteDoHorarioAntigo = (agora) => Math.floor(agora.getUTCMinutes() / 5);
@@ -62,4 +62,37 @@ test('loteDoCodigo inalterado', () => {
   assert.equal(loteDoCodigo(24), 0);
   assert.equal(loteDoCodigo(25), 1);
   assert.throws(() => loteDoCodigo(0));
+});
+
+test('lote dentro do limite: todos os pedidos, na mesma ordem', () => {
+  const itens = Array.from({ length: 14 }, (_, i) => i);
+  assert.deepEqual(escolherDoLote(itens, 20, 123), itens);
+});
+
+test('lote acima do limite (caso real: 16 pedidos, limite antigo 15) não é mais recusado', () => {
+  const itens = Array.from({ length: 16 }, (_, i) => i);
+  const escolhidos = escolherDoLote(itens, 15, 0);
+  assert.equal(escolhidos.length, 15);
+  assert.equal(new Set(escolhidos).size, 15);
+});
+
+test('lote acima do limite: rodízio cobre todos os pedidos em poucas rodadas', () => {
+  for (const tamanho of [21, 25, 37, 40, 59]) {
+    const itens = Array.from({ length: tamanho }, (_, i) => i);
+    const vistos = new Set();
+    const rodadasNecessarias = Math.ceil(tamanho / 20);
+    for (let r = 1000; r < 1000 + rodadasNecessarias + 1; r++) {
+      const escolhidos = escolherDoLote(itens, 20, r);
+      assert.equal(escolhidos.length, 20);
+      assert.equal(new Set(escolhidos).size, 20, 'sem repetição dentro da execução');
+      escolhidos.forEach((x) => vistos.add(x));
+    }
+    assert.equal(vistos.size, tamanho, `tamanho ${tamanho}`);
+  }
+});
+
+test('rodada muda a cada 3 horas (12 lotes x 15 min)', () => {
+  const a = rodadaDoHorario(new Date('2026-10-20T15:04:00Z'));
+  const b = rodadaDoHorario(new Date('2026-10-20T18:04:00Z'));
+  assert.equal(b - a, 1);
 });
