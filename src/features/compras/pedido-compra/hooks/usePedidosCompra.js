@@ -21,8 +21,16 @@ import {
  * assim que a sincronizacao terminar, o usuario veja os
  * dados novos rapidamente sem precisar atualizar a pagina.
  */
+/*
+ * Os pedidos de compra sao sincronizados com o Omie a cada 5 minutos
+ * e as requisicoes a cada 10 minutos. Consultar a cada 30 segundos
+ * baixava a lista inteira 10 vezes entre uma sincronizacao e outra,
+ * sem nenhum dado novo, e era a maior fonte de egress do projeto.
+ *
+ * A tela continua atualizando ao voltar para a aba e ao reconectar.
+ */
 const INTERVALO_ATUALIZACAO_TELA =
-  30 * 1000;
+  5 * 60 * 1000;
 
 
 /*
@@ -31,8 +39,13 @@ const INTERVALO_ATUALIZACAO_TELA =
  *
  * Isso nao remove os dados atuais da tela.
  */
+/*
+ * Ao voltar para a aba, so recarrega se o dado tiver mais de
+ * 2 minutos. Antes eram 15 segundos: cada troca de aba baixava
+ * a lista inteira de novo.
+ */
 const TEMPO_DADOS_FRESCOS =
-  15 * 1000;
+  2 * 60 * 1000;
 
 
 /*
