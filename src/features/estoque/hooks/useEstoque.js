@@ -18,7 +18,6 @@ import {
   buscarEstoqueProdutos,
   buscarLocaisEstoqueAtivos,
   buscarPedidosAbertosProdutos,
-  buscarStatusSincronizacaoEstoque,
 } from "../services/estoqueService";
 
 
@@ -141,39 +140,6 @@ export default function useEstoque({
 
 
   /* =======================================================
-     STATUS DA SINCRONIZAÇÃO
-  ======================================================= */
-
-  const statusQuery =
-    useQuery({
-      queryKey:
-        ESTOQUE_QUERY_KEYS
-          .STATUS_SINCRONIZACAO,
-
-      queryFn:
-        buscarStatusSincronizacaoEstoque,
-
-      refetchInterval:
-        INTERVALO_ATUALIZACAO_ESTOQUE,
-
-      refetchIntervalInBackground:
-        false,
-
-      refetchOnMount:
-        true,
-
-      refetchOnWindowFocus:
-        true,
-
-      staleTime:
-        STALE_TIME_ESTOQUE,
-
-      retry:
-        1,
-    });
-
-
-  /* =======================================================
      RECARREGAR
 
      Mantemos disponível para casos futuros,
@@ -190,9 +156,6 @@ export default function useEstoque({
           pedidosQuery
             .refetch(),
 
-          statusQuery
-            .refetch(),
-
           locaisQuery
             .refetch(),
         ]);
@@ -200,7 +163,6 @@ export default function useEstoque({
       [
         estoqueQuery,
         pedidosQuery,
-        statusQuery,
         locaisQuery,
       ],
     );
@@ -259,7 +221,6 @@ export default function useEstoque({
   const atualizando =
     estoqueQuery.isFetching ||
     pedidosQuery.isFetching ||
-    statusQuery.isFetching ||
     locaisQuery.isFetching;
 
 
@@ -275,9 +236,6 @@ export default function useEstoque({
       .error
       ?.message ||
     locaisQuery
-      .error
-      ?.message ||
-    statusQuery
       .error
       ?.message ||
     "";
@@ -303,10 +261,6 @@ export default function useEstoque({
       [],
 
     resumoPedidosAbertos,
-
-    statusSincronizacao:
-      statusQuery.data ??
-      null,
 
     carregando,
 
