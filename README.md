@@ -1,25 +1,47 @@
-# Refined Dashboard
+# Dashboard Pedrasplast
 
-https://github.com/Pedrasplast/dashboard_pedrasplast.git
-veja este projeto e refatore todo o codigo, mantento toda a logica, mais preciso que organize todo o codigo e deixe mais performatico
+Sistema interno da Pedrasplast (produção, estoque, compras, matéria-prima e
+financeiro), integrado ao Omie.
 
-This project was built with [Lovable](https://lovable.dev).
+## Arquitetura
 
-## Build with Lovable
+- **Front-end:** React + TanStack Start (Vite), publicado na **Vercel** a partir
+  da branch `main` deste repositório.
+- **Banco e back-end:** Supabase (projeto `PedrasPlast`) — Postgres, Auth,
+  Realtime, Edge Functions e crons (`pg_cron`).
+- **Integração Omie:** Edge Functions em `supabase/functions/`, disparadas pelos
+  crons em horário comercial (seg–sex, 07:00–17:59).
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/466a95f7-5c5e-4654-b8ab-0bb5e1bc5a8e).
+## Desenvolvimento
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requer Node.js e npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install
+npm run dev          # ambiente local
+npm test             # testes (vitest)
+npm run validate     # validação estática + build
 ```
+
+Variáveis de ambiente do front (também configuradas na Vercel):
+`VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (ou `VITE_SUPABASE_ANON_KEY`).
+
+## Supabase
+
+- `supabase/migrations/` — alterações aplicadas no banco, em ordem.
+- `supabase/rollback/` — scripts para desfazer cada alteração.
+- `supabase/functions/` — código das Edge Functions em uso
+  (testes com `node --test supabase/functions/<nome>/*.test.mjs`).
+- `supabase/functions_arquivadas/` — funções desativadas (ver README da pasta).
+
+## Plano free do Supabase
+
+O projeto roda no plano free. Antes de criar telas ou rotinas novas:
+
+- não use atualização automática mais curta que **5 minutos** (os dados do Omie
+  mudam no máximo a cada 15 min; use Realtime quando precisar de tempo real);
+- selecione só as colunas necessárias (nada de `select *` em tabelas grandes ou
+  colunas JSON como `snapshot`);
+- em sincronizações, grave só o que mudou;
+- evite deixar abertas as páginas de Logs/Reports do Supabase (consomem a cota
+  de *Log Query*).

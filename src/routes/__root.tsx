@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuthContext } from "../lib/auth-context";
 import { normalizarCamposMaiusculos } from "../lib/uppercase-fields";
 import Navbar from "../components/layout/Navbar";
@@ -63,22 +62,9 @@ function ErrorComponent({
 }: ErrorComponentProps) {
   const router = useRouter();
 
-  const erroNormalizado =
-    error instanceof Error
-      ? error
-      : new Error(
-          typeof error === "string"
-            ? error
-            : "Erro desconhecido",
-        );
-
   useEffect(() => {
     console.error(error);
-
-    reportLovableError(erroNormalizado, {
-      boundary: "tanstack_root_error_component",
-    });
-  }, [error, erroNormalizado]);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -161,10 +147,6 @@ export const Route =
         {
           name: "twitter:card",
           content: "summary_large_image",
-        },
-        {
-          name: "twitter:site",
-          content: "@Lovable",
         },
       ],
 
