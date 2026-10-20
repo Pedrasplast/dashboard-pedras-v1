@@ -5,7 +5,7 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { useEffect, useRef, useState } from "react";
 import { Boxes, Save, X } from "lucide-react";
 
-import "./CadastroProdutoModal.css";
+import "../CadastroProdutoModal.css";
 
 /* =====================================================
    FUNÇÕES AUXILIARES — NÚMEROS
