@@ -7,6 +7,10 @@ const id=(v:any)=>{const x=Number(v);if(!Number.isSafeInteger(x)||x<=0)throw Err
 const array=(v:any,k:string,field:string)=>{if(!Array.isArray(v))throw Error('Bloco Omie ausente: '+k);return v.map(obj).sort((a:any,b:any)=>str(a[field]??JSON.stringify(a)).localeCompare(str(b[field]??JSON.stringify(b))));};
 function normalize(input:any){const r=obj(input),c=obj(r.cabecalho_consulta),code=id(c.nCodPed);if(!str(c.cNumero)||!Array.isArray(r.produtos_consulta))throw Error('Pedido '+code+' incompleto');const seen=new Set<number>();const itens=r.produtos_consulta.map((raw:any)=>{const i=obj(raw),iid=id(i.nCodItem);if(seen.has(iid))throw Error('Item duplicado '+iid);seen.add(iid);return {codigo_item:iid,codigo_produto:i.nCodProd==null?null:id(i.nCodProd),codigo_comercial:str(i.cProduto),descricao:str(i.cDescricao),unidade:str(i.cUnidade),quantidade:n(i.nQtde),quantidade_recebida:n(i.nQtdeRec),preco_unitario:n(i.nValUnit),valor_total:n(i.nValTot),desconto:n(i.nDesconto),despesas:n(i.nDespesas),frete_item:n(i.nFrete),seguro:n(i.nSeguro),categoria:str(i.cCodCateg),observacao:str(i.cObs),local_estoque:str(i.codigo_local_estoque)};}).sort((a:any,b:any)=>a.codigo_item-b.codigo_item);const f=obj(r.frete_consulta),frete:Record<string,unknown>={};for(const k of ['cTpFrete','nCodTransp','nValFrete','nValOutras','nValSeguro','nPesoBruto','nPesoLiq','nQtdVol'])frete[k]=f[k]??null;return {codigo:code,snapshot:{codigo:code,numero:str(c.cNumero),codigo_integracao:str(c.cCodIntPed),fornecedor:str(c.nCodFor),contato:str(c.cContato),comprador:str(c.nCodCompr),centro_custo:str(c.nCodCC),categoria:str(c.cCodCateg),etapa:str(c.cEtapa),data_previsao:str(c.dDtPrevisao),data_inclusao:str(c.dIncData),hora_inclusao:str(c.cIncHora),condicao_pagamento:str(c.cCodParc),parcelas_quantidade:n(c.nQtdeParc),observacoes:str(c.cObs),observacoes_internas:str(c.cObsInt),contrato:str(c.cContrato),projeto:n(c.nCodProj),frete,parcelas:array(r.parcelas_consulta,'parcelas','nParcela'),departamentos:array(r.departamentos_consulta,'departamentos','cCodDepto'),caracteristicas:array(r.caracteristicas_consulta,'caracteristicas','cNome'),itens}};}
 
+function semRegistros(mensagem:string){
+  return str(mensagem).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes('nao existem registros para a pagina');
+}
+
 function dataBr(d:Date){return new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric'}).format(d);}
 async function pesquisarOmie(page:number,key:string,secret:string,incremental:boolean,desdeIncremental?:string|null){
   const base:any={
@@ -38,6 +42,15 @@ async function pesquisarOmie(page:number,key:string,secret:string,incremental:bo
       if(response.ok&&!data.faultstring&&!data.faultcode)return data;
 
       ultimoErro=str(data.faultstring||data.message||data.faultcode||response.status);
+
+      // No modo incremental, o Omie responde "Não existem registros para a página [1]"
+      // quando nenhum pedido foi alterado no período. Isso não é erro: equivale a
+      // uma lista vazia (mesmo tratamento das sincronizações de pedidos de venda e
+      // de requisições). Na conferência completa continua sendo tratado como erro.
+      if(incremental && page===1 && semRegistros(ultimoErro)){
+        return {nPagina:1,nTotalPaginas:0,nTotalRegistros:0,pedidos_pesquisa:[]};
+      }
+
       const redundant=ultimoErro.toLowerCase().includes('redundant')||ultimoErro.toLowerCase().includes('redundante');
 
       if(!redundant)throw Error(ultimoErro);
