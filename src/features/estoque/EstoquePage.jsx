@@ -11,9 +11,6 @@ import EstoqueFiltros
 import EstoqueKpis
   from "./components/EstoqueKpis";
 
-import EstoqueStatusSincronizacao
-  from "./components/EstoqueStatusSincronizacao";
-
 import EstoqueTabela
   from "./components/EstoqueTabela";
 
@@ -74,7 +71,6 @@ export default function EstoquePage() {
     estoque,
     pedidosAbertos,
     resumoPedidosAbertos,
-    statusSincronizacao,
     carregando,
     erro,
   } =
@@ -161,13 +157,6 @@ export default function EstoquePage() {
             Warehouse
           }
           className="estoque-header"
-          actions={
-            <EstoqueStatusSincronizacao
-              status={
-                statusSincronizacao
-              }
-            />
-          }
         />
 
 

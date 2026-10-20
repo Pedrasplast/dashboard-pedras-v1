@@ -76,12 +76,20 @@ export const SITUACAO_ESTOQUE =
    INTERVALOS DO REACT QUERY
 ========================================================= */
 
+/*
+ * O estoque vem do Omie a cada 15 minutos (sincronização rápida)
+ * e os pedidos em aberto a cada 15 minutos. Consultar a cada 30 s
+ * baixava ~700 KB repetidos sem dado novo (egress no Supabase).
+ */
 export const INTERVALO_ATUALIZACAO_ESTOQUE =
-  30 * 1000;
+  5 * 60 * 1000;
 
 
+/*
+ * Ao voltar para a aba, só recarrega se o dado tiver mais de 2 min.
+ */
 export const STALE_TIME_ESTOQUE =
-  15 * 1000;
+  2 * 60 * 1000;
 
 
 export const STALE_TIME_LOCAIS_ESTOQUE =

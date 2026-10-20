@@ -6,6 +6,7 @@ import {
   INTERVALO_NOTIFICACOES,
   QUERY_KEY_NOTIFICACOES,
   QUERY_KEY_PEDIDOS,
+  TEMPO_DADOS_FRESCOS_PEDIDOS,
 } from "../constants/pedidos.constants";
 import {
   assinarNotificacoesPedidos,
@@ -32,7 +33,7 @@ export function usePedidosData() {
     refetchIntervalInBackground: false,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-    staleTime: 10 * 1000,
+    staleTime: TEMPO_DADOS_FRESCOS_PEDIDOS,
     retry: 1,
   });
 
@@ -46,7 +47,7 @@ export function usePedidosData() {
     refetchIntervalInBackground: false,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
-    staleTime: 10 * 1000,
+    staleTime: TEMPO_DADOS_FRESCOS_PEDIDOS,
     retry: 1,
   });
 
