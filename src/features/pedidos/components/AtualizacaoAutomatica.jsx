@@ -8,19 +8,18 @@ import {
   Clock3,
 } from "lucide-react";
 
+import {
+  obterProximaSincronizacaoPedidos,
+} from "../utils/proximaSincronizacao";
+
 /* =========================================================
    ATUALIZACAO AUTOMATICA
    ---------------------------------------------------------
-   Sincronizacao principal de pedidos:
-   a cada 5 minutos.
-
-   Horarios:
-   00, 05, 10, 15, 20, 25,
-   30, 35, 40, 45, 50, 55.
+   Sincronizacao principal de pedidos (cron no Supabase):
+   a cada 15 minutos, de segunda a sexta, das 07:00 as 17:45.
+   Fora desse horario a "Proxima" mostra a primeira rodada
+   do proximo dia util.
 ========================================================= */
-
-const INTERVALO_ATUALIZACAO_MINUTOS =
-  5;
 
 const INTERVALO_RELOGIO =
   1000;
@@ -33,53 +32,11 @@ const INTERVALO_RELOGIO =
 function obterProximaAtualizacao(
   dataAtual,
 ) {
-  const agora =
+  return obterProximaSincronizacaoPedidos(
     dataAtual instanceof Date
       ? dataAtual
-      : new Date();
-
-  const proxima =
-    new Date(
-      agora,
-    );
-
-  proxima.setSeconds(
-    0,
-    0,
+      : new Date(),
   );
-
-  const minutoAtual =
-    agora.getMinutes();
-
-  const proximoMinuto =
-    (
-      Math.floor(
-        minutoAtual /
-          INTERVALO_ATUALIZACAO_MINUTOS,
-      ) + 1
-    ) *
-    INTERVALO_ATUALIZACAO_MINUTOS;
-
-  if (
-    proximoMinuto >= 60
-  ) {
-    proxima.setHours(
-      proxima.getHours() + 1,
-      0,
-      0,
-      0,
-    );
-
-    return proxima;
-  }
-
-  proxima.setMinutes(
-    proximoMinuto,
-    0,
-    0,
-  );
-
-  return proxima;
 }
 
 

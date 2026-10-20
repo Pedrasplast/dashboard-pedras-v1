@@ -979,12 +979,17 @@ function Navbar({
       return undefined;
     }
 
+    /*
+     * O contador já é atualizado na hora pelo tempo real (canal em
+     * pedidos_notificacoes) e ao voltar para a aba. A verificação periódica
+     * fica só como rede de segurança: 5 min (antes 60 s).
+     */
     const intervalo =
       window.setInterval(
         () => {
           void atualizarQuantidadePedidosNovos();
         },
-        60_000,
+        5 * 60_000,
       );
 
     return () => {
