@@ -1,3 +1,4 @@
+
 export const CHAVE_TELA_USUARIOS = "usuarios";
 
 export const CHAVE_TELA_RELATORIOS = "relatorios";
@@ -5,15 +6,16 @@ export const CHAVE_TELA_RELATORIOS = "relatorios";
 /* =========================================================
    CATÁLOGO CENTRAL DE TELAS
 
-   Esta é a fonte única das telas controladas pelo sistema.
+   Fonte única das telas controladas pelo sistema.
 
    Ao criar uma nova tela:
-   1. adicione-a aqui;
-   2. informe o módulo;
-   3. use a mesma chave no Navbar e no RotaProtegida.
+   1. Cadastrar neste arquivo.
+   2. Informar o módulo correto.
+   3. Usar a mesma chave na Navbar.
+   4. Usar a mesma chave no RotaProtegida.
 
-   Quando um administrador abrir Gerenciamento de Usuários,
-   o catálogo será sincronizado automaticamente com o Supabase.
+   A sincronização com o Supabase é realizada
+   pelo módulo de Gerenciamento de Usuários.
 ========================================================= */
 
 export const TELAS_SISTEMA = Object.freeze([
@@ -197,6 +199,30 @@ export const TELAS_SISTEMA = Object.freeze([
     gerenciavel: true,
   },
 
+  /* =====================================================
+     NOVAS TELAS DO MÓDULO COMPRAS
+  ===================================================== */
+
+  {
+    chave: "necessidade_materia_prima",
+    nome: "Necessidade de Matéria-Prima",
+    rota: "/necessidade-materia-prima",
+    ordem: 18,
+    ativo: true,
+    modulo: "compras",
+    gerenciavel: true,
+  },
+
+  {
+    chave: "tabela_precos_materia_prima",
+    nome: "Tabela de Preços",
+    rota: "/tabela-precos-materia-prima",
+    ordem: 19,
+    ativo: true,
+    modulo: "compras",
+    gerenciavel: true,
+  },
+
   {
     chave: "cadastro_receita",
     nome: "Cadastro de Receita",
@@ -210,6 +236,9 @@ export const TELAS_SISTEMA = Object.freeze([
 
 /* =========================================================
    MÓDULOS
+
+   A organização do Gerenciamento de Usuários
+   utiliza os módulos definidos nesta lista.
 ========================================================= */
 
 const MODULOS = Object.freeze([
@@ -238,7 +267,7 @@ const MODULOS = Object.freeze([
     id: "compras",
     nome: "Compras",
     descricao:
-      "Pedidos de compra, compras futuras e recebimentos de matéria-prima.",
+      "Pedidos de compra, compras futuras, recebimentos, necessidade de matéria-prima e tabela de preços.",
   },
 
   {
@@ -271,7 +300,12 @@ const MODULOS = Object.freeze([
 ]);
 
 /* =========================================================
-   GERAR MÓDULOS DE PERMISSÕES AUTOMATICAMENTE
+   MÓDULOS DE PERMISSÕES
+
+   Lista gerada automaticamente a partir
+   do catálogo central.
+
+   Evita duplicidade de configurações.
 ========================================================= */
 
 export const MODULOS_PERMISSOES = Object.freeze(
@@ -281,23 +315,21 @@ export const MODULOS_PERMISSOES = Object.freeze(
     chaves: TELAS_SISTEMA.filter(
       (tela) =>
         tela.modulo === modulo.id &&
-        tela.gerenciavel !== false,
+        tela.gerenciavel !== false
     ).map((tela) => tela.chave),
   })).filter(
-    (modulo) =>
-      modulo.chaves.length > 0,
-  ),
+    (modulo) => modulo.chaves.length > 0
+  )
 );
 
 /* =========================================================
-   LOCALIZAR TELA POR CHAVE
+   CONSULTA DE TELA POR CHAVE
 ========================================================= */
 
 export function obterTelaSistema(chave) {
   return (
     TELAS_SISTEMA.find(
-      (tela) =>
-        tela.chave === chave,
+      (tela) => tela.chave === chave
     ) || null
   );
 }

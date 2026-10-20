@@ -155,9 +155,9 @@ export default function CadastrosPage({ tipo = "produtos" }) {
     }
 
     return produtos.filter((produto) =>
-      normalizarTexto(`${produto.codigoProduto} ${produto.nomeProduto} ${produto.materialNome ?? ""}`).includes(termo),
+      normalizarTexto(`${produto.codigoProduto} ${produto.nomeProduto} ${produto.materialNome ?? ""} ${materiais.find((material) => String(material.id) === String(produto.materialId))?.codigoOmie ?? ""}`).includes(termo),
     );
-  }, [produtos, pesquisa]);
+  }, [produtos, materiais, pesquisa]);
 
   /* =================================================
      FILTRO DE FORNECEDORES
@@ -185,7 +185,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
     }
 
     return materiais.filter((material) =>
-      normalizarTexto(material.nome).includes(termo),
+      normalizarTexto(`${material.nome} ${material.codigoOmie ?? ""}`).includes(termo),
     );
   }, [materiais, pesquisa]);
 
@@ -597,6 +597,8 @@ export default function CadastrosPage({ tipo = "produtos" }) {
 
                       <th>Produto</th>
 
+                      <th>COD. MP</th>
+
                       <th>Material</th>
 
                       <th className="numero">Cavidades</th>
@@ -618,13 +620,13 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                   <tbody>
                     {carregando ? (
                       <tr>
-                        <td colSpan={9} className="cadastros-vazio">
+                        <td colSpan={10} className="cadastros-vazio">
                           Carregando produtos...
                         </td>
                       </tr>
                     ) : produtosFiltrados.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="cadastros-vazio">
+                        <td colSpan={10} className="cadastros-vazio">
                           Nenhum produto encontrado.
                         </td>
                       </tr>
@@ -650,6 +652,16 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                             <strong className="cadastros-produto-nome">
                               {produto.nomeProduto}
                             </strong>
+                          </td>
+
+                          {/* CÓDIGO OMIE DA MATÉRIA-PRIMA */}
+
+                          <td>
+                            <span className="cadastros-codigo">
+                              {materiais.find(
+                                (material) => String(material.id) === String(produto.materialId)
+                              )?.codigoOmie || "-"}
+                            </span>
                           </td>
 
                           {/* MATERIAL */}
@@ -854,6 +866,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                   <thead>
                     <tr>
                       <th>Material</th>
+                      <th>Código Omie</th>
                       <th>Status</th>
                       <th>Ações</th>
                     </tr>
@@ -862,13 +875,13 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                   <tbody>
                     {carregando ? (
                       <tr>
-                        <td colSpan={3} className="cadastros-vazio">
+                        <td colSpan={4} className="cadastros-vazio">
                           Carregando materiais...
                         </td>
                       </tr>
                     ) : materiaisFiltrados.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="cadastros-vazio">
+                        <td colSpan={4} className="cadastros-vazio">
                           Nenhum material encontrado.
                         </td>
                       </tr>
@@ -878,6 +891,7 @@ export default function CadastrosPage({ tipo = "produtos" }) {
                           <td>
                             <strong>{material.nome}</strong>
                           </td>
+                          <td>{material.codigoOmie || "Não informado"}</td>
 
                           <td>
                             <span

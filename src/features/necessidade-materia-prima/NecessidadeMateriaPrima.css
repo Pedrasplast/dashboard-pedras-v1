@@ -1,0 +1,713 @@
+/* ============================================================
+   NECESSIDADE DE MATÉRIA-PRIMA
+
+   - Correção de espaçamento da navbar
+   - Alerta compacto
+   - Paginação padrão nas pendências e nos produtos
+   - Abas por material
+   - Tabelas e responsividade
+   - Resumo principal destacado
+============================================================ */
+
+/* ============================================================
+   ESTRUTURA E NAVBAR
+============================================================ */
+
+.necessidade-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 88px 24px 24px;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+.necessidade-page *,
+.necessidade-page *::before,
+.necessidade-page *::after {
+  box-sizing: border-box;
+}
+
+.necessidade-container {
+  width: 100%;
+  max-width: 1800px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   ESTADOS E OBSERVAÇÕES
+============================================================ */
+
+.necessidade-estado,
+.necessidade-erro {
+  margin: 16px 0;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 14px;
+  text-align: center;
+}
+
+.necessidade-erro {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.necessidade-observacao {
+  margin: 14px 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.necessidade-observacao-final {
+  margin-top: 18px;
+}
+
+.necessidade-atualizando {
+  display: inline-block;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* ============================================================
+   ALERTA COMPACTO DE PENDÊNCIAS
+============================================================ */
+
+.necessidade-pendencias {
+  margin: 14px 0 18px;
+  padding: 14px 16px;
+  border: 1px solid #fcd34d;
+  border-radius: 11px;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.necessidade-pendencias-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.necessidade-pendencias-cabecalho > svg {
+  flex-shrink: 0;
+  color: #b45309;
+}
+
+.necessidade-pendencias-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.necessidade-pendencias-texto strong {
+  display: block;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.necessidade-pendencias-texto p {
+  margin: 4px 0 0;
+  color: #a16207;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.necessidade-pendencias-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #92400e;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.necessidade-pendencias-toggle:hover {
+  background: #fef3c7;
+}
+
+.necessidade-pendencias-conteudo {
+  margin-top: 14px;
+}
+
+.necessidade-pendencias-conteudo .paginacao {
+  margin-top: 0;
+  border: 1px solid #e2e8f0;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.necessidade-tabela-pendencias {
+  min-width: 850px;
+}
+
+.necessidade-tabela-pendencias th,
+.necessidade-tabela-pendencias td {
+  padding: 11px 12px;
+}
+
+.necessidade-tabela-pendencias tbody td:nth-child(2) {
+  min-width: 250px;
+  max-width: 600px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   OUTROS ALERTAS
+============================================================ */
+
+.necessidade-alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 13px 16px;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.necessidade-alerta > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.necessidade-alerta strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.necessidade-alerta p {
+  margin: 5px 0;
+}
+
+.necessidade-alerta ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.necessidade-alerta li {
+  margin: 3px 0;
+}
+
+/* ============================================================
+   ABAS
+============================================================ */
+
+.necessidade-abas {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 14px;
+  padding: 4px;
+}
+
+.necessidade-aba {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.necessidade-aba:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.necessidade-aba-ativa,
+.necessidade-aba[aria-selected="true"] {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  box-shadow: inset 0 -2px 0 #2563eb;
+}
+
+.necessidade-aba:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.necessidade-aba-alerta {
+  color: #d97706;
+}
+
+#necessidade-painel-material {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ============================================================
+   TABELAS
+============================================================ */
+
+.necessidade-tabela-container {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #dbe3ef;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.necessidade-tabela {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+}
+
+.necessidade-tabela thead {
+  background: #f1f5f9;
+}
+
+.necessidade-tabela thead th {
+  padding: 14px 12px;
+  border-bottom: 1px solid #dbe3ef;
+  color: #1e293b;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.necessidade-tabela tbody td,
+.necessidade-tabela tbody th {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+  font-size: 12px;
+}
+
+.necessidade-tabela tbody th {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+}
+
+.necessidade-tabela tbody tr:last-child td,
+.necessidade-tabela tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+.necessidade-tabela tbody tr:hover {
+  background: #f8fafc;
+}
+
+.necessidade-coluna-numero {
+  text-align: right !important;
+}
+
+/* ============================================================
+   RESUMO PRINCIPAL DESTACADO
+============================================================ */
+
+.necessidade-resumo-container {
+  border-color: #bfdbfe;
+  box-shadow:
+    0 10px 25px rgba(37, 99, 235, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.necessidade-resumo-container .necessidade-tabela {
+  min-width: 1600px;
+  table-layout: auto;
+}
+
+.necessidade-resumo-container .necessidade-tabela thead th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.necessidade-resumo-container .necessidade-tabela tbody th,
+.necessidade-resumo-container .necessidade-tabela tbody td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.necessidade-linha-resumo {
+  background: #f8fbff;
+}
+
+.necessidade-linha-resumo th {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.necessidade-linha-resumo td {
+  font-weight: 600;
+}
+
+.necessidade-linha-resumo-destaque {
+  background: linear-gradient(
+    180deg,
+    #f8fbff 0%,
+    #eef6ff 100%
+  );
+}
+
+.necessidade-linha-resumo-destaque th,
+.necessidade-linha-resumo-destaque td {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.necessidade-resumo-material {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.necessidade-resumo-celula {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.necessidade-resumo-valor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-height: 38px;
+  min-width: 108px;
+  padding: 8px 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.necessidade-resumo-valor-secundario {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e3a8a;
+}
+
+.necessidade-resumo-valor-negativo {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.necessidade-resumo-valor-principal {
+  min-width: 132px;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+}
+
+.necessidade-resumo-valor-destaque {
+  min-width: 150px;
+  background: #ecfeff;
+  border-color: #a5f3fc;
+  color: #155e75;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.necessidade-resumo-celula-input {
+  vertical-align: middle;
+}
+
+.necessidade-resumo-input {
+  width: 112px !important;
+  min-height: 38px !important;
+  border: 1.5px solid #93c5fd !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.necessidade-resumo-input:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px #dbeafe !important;
+}
+
+.necessidade-resumo-celula-necessidade,
+.necessidade-resumo-celula-valor {
+  position: relative;
+}
+
+.necessidade-negativo {
+  color: #dc2626 !important;
+  font-weight: 800;
+}
+
+/* ============================================================
+   CAMPOS EDITÁVEIS DO RESUMO
+============================================================ */
+
+.necessidade-tabela input[type="number"] {
+  width: 105px;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.necessidade-tabela input[type="number"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+/* ============================================================
+   DETALHAMENTO DOS PRODUTOS
+============================================================ */
+
+.necessidade-detalhamento {
+  margin: 22px 0;
+  min-width: 0;
+}
+
+.necessidade-detalhamento-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.necessidade-detalhamento-cabecalho h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.necessidade-detalhamento-cabecalho p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.necessidade-detalhamento-contador {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.necessidade-tabela-produtos {
+  min-width: 900px;
+}
+
+.necessidade-tabela-produtos tbody td:nth-child(2) {
+  min-width: 260px;
+  max-width: 520px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.necessidade-detalhamento-vazio {
+  padding: 28px 16px !important;
+  color: #64748b;
+  text-align: center !important;
+}
+
+/* ============================================================
+   PAGINAÇÃO PADRÃO
+============================================================ */
+
+.necessidade-detalhamento > .paginacao {
+  margin-top: 0;
+  border: 1px solid #e2e8f0;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+
+@media (max-width: 1024px) {
+  .necessidade-page {
+    padding: 78px 18px 18px;
+  }
+
+  .necessidade-abas {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .necessidade-aba {
+    flex-shrink: 0;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1560px;
+  }
+
+  .necessidade-resumo-valor-principal,
+  .necessidade-resumo-valor-destaque {
+    min-width: 126px;
+  }
+}
+
+@media (max-width: 768px) {
+  .necessidade-page {
+    padding: 76px 12px 12px;
+  }
+
+  .necessidade-pendencias-cabecalho {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .necessidade-pendencias-toggle {
+    margin-left: 30px;
+  }
+
+  .necessidade-pendencias {
+    padding: 12px;
+  }
+
+  .necessidade-alerta {
+    padding: 12px;
+  }
+
+  .necessidade-aba {
+    min-height: 40px;
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .necessidade-tabela-produtos {
+    min-width: 850px;
+  }
+
+  .necessidade-detalhamento-cabecalho {
+    align-items: flex-start;
+  }
+
+  .necessidade-detalhamento-cabecalho h3 {
+    font-size: 15px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1480px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela thead th {
+    padding: 12px 10px;
+    font-size: 11px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela tbody td,
+  .necessidade-resumo-container .necessidade-tabela tbody th {
+    padding: 12px 10px;
+  }
+
+  .necessidade-resumo-material {
+    font-size: 12px;
+  }
+
+  .necessidade-resumo-valor {
+    min-width: 96px;
+    font-size: 12px;
+  }
+
+  .necessidade-resumo-valor-principal {
+    font-size: 14px;
+  }
+
+  .necessidade-resumo-valor-destaque {
+    font-size: 13px;
+  }
+
+  .necessidade-resumo-input {
+    width: 100px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .necessidade-page {
+    padding: 72px 10px 10px;
+  }
+
+  .necessidade-pendencias-toggle {
+    margin-left: 0;
+  }
+
+  .necessidade-detalhamento-contador {
+    font-size: 11px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1450px;
+  }
+
+  .necessidade-pendencias-cabecalho {
+    gap: 8px;
+  }
+}
