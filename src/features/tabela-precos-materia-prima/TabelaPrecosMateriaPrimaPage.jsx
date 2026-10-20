@@ -22,6 +22,13 @@ import "./TabelaPrecosMateriaPrima.css";
 
 /* =========================================================
    PÁGINA PRINCIPAL — TABELA DE PREÇOS
+
+   REGRAS:
+   - Exibir somente PP e SCRAP.
+   - Códigos Omie definidos no Cadastro de Material.
+   - Último preço e preço médio de 30 dias.
+   - Preservar filtros e ordenação.
+   - Não alterar registros no Supabase.
 ========================================================= */
 
 export default function TabelaPrecosMateriaPrimaPage() {
@@ -41,7 +48,10 @@ export default function TabelaPrecosMateriaPrimaPage() {
   } = useTabelaPrecos();
 
   /* =====================================================
-     FILTRAGEM LOCAL
+     FILTRAGEM E ORDENAÇÃO LOCAL
+
+     O serviço já restringe PP e SCRAP.
+     Aqui mantemos apenas busca e ordenação.
   ===================================================== */
 
   const registros = useMemo(
@@ -86,7 +96,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
         <PageHeader
           eyebrow="Compras"
           title="Tabela de Preços"
-          description="Histórico de preços de matérias-primas integrado aos pedidos de compra do Omie."
+          description="Preços de PP e SCRAP, com códigos atualizados pelo Cadastro de Material e histórico dos pedidos de compra do Omie."
           icon={TableProperties}
           actions={
             <button
@@ -114,12 +124,12 @@ export default function TabelaPrecosMateriaPrimaPage() {
         <section className="tp-card">
           <div className="tp-card-cabecalho">
             <div>
-              <h2>Consulta de preços</h2>
+              <h2>Consulta de preços — PP e SCRAP</h2>
 
               <p>
                 Consulte o último preço registrado
                 e a média ponderada dos últimos
-                30 dias.
+                30 dias de cada matéria-prima.
               </p>
             </div>
 

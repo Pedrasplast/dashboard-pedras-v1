@@ -1,3 +1,4 @@
+
 import { useMemo } from "react";
 
 import {
@@ -19,25 +20,53 @@ import {
   salvarProdutoCadastro,
 } from "./cadastrosService";
 
+import {
+  buscarTabelaPrecos,
+} from "@/features/tabela-precos-materia-prima/services/tabelaPrecos.service";
+
+import {
+  TABELA_PRECOS,
+} from "@/features/tabela-precos-materia-prima/constants/tabelaPrecos.constants";
+
+import {
+  buscarNecessidadeMateriaPrima,
+} from "@/features/necessidade-materia-prima/services/necessidadeMateriaPrima.service";
+
 /* =====================================================
    CONFIGURAÇÕES
 ===================================================== */
 
 const CHAVE_PRODUTOS = ["cadastros-produtos"];
 
-const CHAVE_FORNECEDORES = ["cadastros-fornecedores"];
+const CHAVE_FORNECEDORES = [
+  "cadastros-fornecedores",
+];
 
 const CHAVE_MATERIAIS = ["cadastros-materiais"];
 
-const CHAVE_FORNECEDOR_MATERIAIS =
-  ["cadastros-fornecedor-materiais"];
+const CHAVE_FORNECEDOR_MATERIAIS = [
+  "cadastros-fornecedor-materiais",
+];
 
-const CHAVE_DESCRICOES = "cadastros-descricoes-estoque-omie";
+const CHAVE_DESCRICOES =
+  "cadastros-descricoes-estoque-omie";
+
+const CHAVE_TABELA_PRECOS =
+  TABELA_PRECOS.QUERY_KEY;
+
+const CHAVE_NECESSIDADE_COMPRA = [
+  "compras",
+  "necessidade-materia-prima",
+];
 
 const TAMANHO_LOTE = 80;
 
+const UM_MINUTO = 60 * 1000;
+
+const TRINTA_MINUTOS = 30 * 60 * 1000;
+
 /* =====================================================
-   TRATAMENTO DOS DADOS
+   UTILITÁRIOS
 ===================================================== */
 
 function codigoValido(valor) {
@@ -53,22 +82,13 @@ function descricaoValida(valor) {
 }
 
 /* =====================================================
-   CONSULTA PONTUAL
+   CONSULTA DE DESCRIÇÃO INDIVIDUAL NO OMIE
 
-   Utilizada para preencher automaticamente
-   a descrição de um novo produto.
-
-   Relacionamento:
-
-   codigoProduto
-        ↓
-   estoque_produto_acabado_omie.codigo_produto
-        ↓
-   descricao
+   Mantém comportamento anterior.
 ===================================================== */
 
 export async function buscarDescricaoProdutoEstoque(
-  codigoProduto,
+  codigoProduto
 ) {
   const codigo = codigoValido(codigoProduto);
 
@@ -95,11 +115,10 @@ export async function buscarDescricaoProdutoEstoque(
 }
 
 /* =====================================================
-   CONSULTAR DESCRIÇÕES DOS PRODUTOS CADASTRADOS
+   DESCRIÇÕES DE PRODUTOS CADASTRADOS
 
-   Busca somente os códigos presentes no cadastro.
-
-   Evita carregar todo o estoque do Omie.
+   Consulta em lotes para evitar carregar todo
+   o estoque de produtos acabados.
 ===================================================== */
 
 async function buscarDescricoesCadastro(codigos) {
@@ -112,7 +131,7 @@ async function buscarDescricoesCadastro(codigos) {
   ) {
     const lote = codigos.slice(
       indice,
-      indice + TAMANHO_LOTE,
+      indice + TAMANHO_LOTE
     );
 
     const { data, error } = await supabase
@@ -130,11 +149,11 @@ async function buscarDescricoesCadastro(codigos) {
 
     for (const registro of data ?? []) {
       const codigo = codigoValido(
-        registro.codigo_produto,
+        registro.codigo_produto
       );
 
       const descricao = descricaoValida(
-        registro.descricao,
+        registro.descricao
       );
 
       if (
@@ -166,7 +185,7 @@ export default function useCadastros() {
 
     queryFn: buscarProdutosCadastro,
 
-    staleTime: 60 * 1000,
+    staleTime: UM_MINUTO,
 
     refetchOnMount: true,
 
@@ -184,7 +203,7 @@ export default function useCadastros() {
 
     queryFn: buscarFornecedoresCadastro,
 
-    staleTime: 60 * 1000,
+    staleTime: UM_MINUTO,
 
     refetchOnMount: true,
 
@@ -198,23 +217,17 @@ export default function useCadastros() {
   ================================================= */
 
   const materiaisQuery = useQuery({
-    queryKey:
-      CHAVE_MATERIAIS,
+    queryKey: CHAVE_MATERIAIS,
 
-    queryFn:
-      buscarMateriaisCadastro,
+    queryFn: buscarMateriaisCadastro,
 
-    staleTime:
-      60 * 1000,
+    staleTime: UM_MINUTO,
 
-    refetchOnMount:
-      true,
+    refetchOnMount: true,
 
-    refetchOnWindowFocus:
-      true,
+    refetchOnWindowFocus: true,
 
-    retry:
-      1,
+    retry: 1,
   });
 
   /* =================================================
@@ -222,29 +235,21 @@ export default function useCadastros() {
   ================================================= */
 
   const fornecedorMateriaisQuery = useQuery({
-    queryKey:
-      CHAVE_FORNECEDOR_MATERIAIS,
+    queryKey: CHAVE_FORNECEDOR_MATERIAIS,
 
-    queryFn:
-      buscarFornecedorMateriaisCadastro,
+    queryFn: buscarFornecedorMateriaisCadastro,
 
-    staleTime:
-      60 * 1000,
+    staleTime: UM_MINUTO,
 
-    refetchOnMount:
-      true,
+    refetchOnMount: true,
 
-    refetchOnWindowFocus:
-      true,
+    refetchOnWindowFocus: true,
 
-    retry:
-      1,
+    retry: 1,
   });
 
   /* =================================================
      CÓDIGOS DOS PRODUTOS
-
-     Evita códigos vazios e repetidos.
   ================================================= */
 
   const codigos = useMemo(
@@ -253,93 +258,202 @@ export default function useCadastros() {
         ...new Set(
           (produtosQuery.data ?? [])
             .map((produto) =>
-              codigoValido(produto.codigoProduto),
+              codigoValido(produto.codigoProduto)
             )
-            .filter(Boolean),
+            .filter(Boolean)
         ),
       ].sort(),
 
-    [produtosQuery.data],
+    [produtosQuery.data]
   );
 
   /* =================================================
-     BUSCAR DESCRIÇÕES NO ESTOQUE OMIE
+     DESCRIÇÕES DO ESTOQUE
   ================================================= */
 
   const descricoesQuery = useQuery({
     queryKey: [CHAVE_DESCRICOES, codigos],
 
-    queryFn: () => buscarDescricoesCadastro(codigos),
+    queryFn: () =>
+      buscarDescricoesCadastro(codigos),
 
     enabled:
       produtosQuery.isSuccess &&
       codigos.length > 0,
 
-    staleTime: 60 * 1000,
+    staleTime: UM_MINUTO,
 
     refetchOnWindowFocus: true,
 
     retry: 1,
   });
 
-  const descricoesEstoque = descricoesQuery.data ?? {};
+  const descricoesEstoque =
+    descricoesQuery.data ?? {};
 
   /* =================================================
-     ASSOCIAR DESCRIÇÕES AOS PRODUTOS
+     ASSOCIAR DESCRIÇÕES
 
-     IMPORTANTE:
-
-     Não modifica nomeProduto.
-
-     Apenas adiciona descricaoEstoque ao objeto
-     utilizado na interface.
-  ================================================= */
+     Não altera nomeProduto.
+================================================= */
 
   const produtos = useMemo(
     () =>
-      (produtosQuery.data ?? []).map((produto) => ({
-        ...produto,
+      (produtosQuery.data ?? []).map(
+        (produto) => ({
+          ...produto,
 
-        descricaoEstoque:
-          descricoesEstoque[
-            codigoValido(produto.codigoProduto)
-          ] ?? "",
-      })),
+          descricaoEstoque:
+            descricoesEstoque[
+              codigoValido(produto.codigoProduto)
+            ] ?? "",
+        })
+      ),
 
     [
       produtosQuery.data,
       descricoesEstoque,
-    ],
+    ]
   );
+
+  /* =================================================
+     ATUALIZAR NECESSIDADE DE COMPRA
+
+     Executada em segundo plano.
+
+     Não impede que o modal seja fechado.
+
+     O cache é invalidado imediatamente.
+     Em seguida, a consulta é executada
+     mesmo se a tela estiver inativa.
+================================================= */
+
+  async function atualizarNecessidadeCompra() {
+    await queryClient.invalidateQueries({
+      queryKey: CHAVE_NECESSIDADE_COMPRA,
+      exact: true,
+      refetchType: "none",
+    });
+
+    await queryClient.fetchQuery({
+      queryKey: CHAVE_NECESSIDADE_COMPRA,
+
+      queryFn: buscarNecessidadeMateriaPrima,
+
+      staleTime: 0,
+
+      gcTime: TRINTA_MINUTOS,
+
+      retry: 1,
+    });
+  }
+
+  /* =================================================
+     ATUALIZAR TABELA DE PREÇOS
+
+     Executada em segundo plano depois de
+     salvar um material.
+================================================= */
+
+  async function atualizarTabelaPrecos() {
+    await queryClient.invalidateQueries({
+      queryKey: CHAVE_TABELA_PRECOS,
+      exact: true,
+      refetchType: "none",
+    });
+
+    await queryClient.fetchQuery({
+      queryKey: CHAVE_TABELA_PRECOS,
+
+      queryFn: buscarTabelaPrecos,
+
+      staleTime: 0,
+
+      gcTime: TABELA_PRECOS.GC_TIME,
+
+      retry: 1,
+    });
+  }
+
+  /* =================================================
+     EXECUTAR ATUALIZAÇÕES EM SEGUNDO PLANO
+
+     Não faz parte da espera do mutation.
+
+     Os erros são registrados sem transformar
+     um salvamento bem-sucedido em falha.
+================================================= */
+
+  function executarEmSegundoPlano(
+    operacoes,
+    contexto
+  ) {
+    void Promise.allSettled(
+      operacoes.map((operacao) =>
+        Promise.resolve().then(operacao)
+      )
+    ).then((resultados) => {
+      resultados.forEach((resultado, indice) => {
+        if (resultado.status === "rejected") {
+          console.error(
+            `[${contexto}] Erro na atualização ${indice + 1}:`,
+            resultado.reason
+          );
+        }
+      });
+    });
+  }
 
   /* =================================================
      SALVAR PRODUTO
 
-     Mantém o serviço e a rotina de salvamento
-     já existentes.
-  ================================================= */
+     OTIMIZAÇÃO:
+
+     Antes:
+     - Salvar no Supabase.
+     - Esperar atualizar produtos.
+     - Esperar atualizar descrições.
+     - Esperar recalcular toda a necessidade.
+     - Fechar modal.
+
+     Agora:
+     - Salvar no Supabase.
+     - Iniciar atualizações em segundo plano.
+     - Liberar imediatamente o modal.
+
+     O retorno de onSuccess não é uma Promise.
+================================================= */
 
   const salvarProdutoMutation = useMutation({
     mutationFn: salvarProdutoCadastro,
 
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: CHAVE_PRODUTOS,
-      });
+    onSuccess: () => {
+      executarEmSegundoPlano(
+        [
+          () =>
+            queryClient.invalidateQueries({
+              queryKey: CHAVE_PRODUTOS,
+              refetchType: "active",
+            }),
 
-      await queryClient.invalidateQueries({
-        queryKey: [CHAVE_DESCRICOES],
-      });
+          () =>
+            queryClient.invalidateQueries({
+              queryKey: [CHAVE_DESCRICOES],
+              refetchType: "active",
+            }),
 
-      await produtosQuery.refetch();
+          atualizarNecessidadeCompra,
+        ],
+        "Cadastro de Produto"
+      );
     },
   });
 
   /* =================================================
      SALVAR FORNECEDOR
 
-     Mantido.
-  ================================================= */
+     Preserva funcionamento anterior.
+================================================= */
 
   const salvarFornecedorMutation = useMutation({
     mutationFn: salvarFornecedorCadastro,
@@ -355,46 +469,56 @@ export default function useCadastros() {
 
   /* =================================================
      SALVAR MATERIAL
-  ================================================= */
+
+     Também não bloqueia mais o formulário
+     enquanto atualiza a Tabela de Preços
+     e a Necessidade de Compra.
+================================================= */
 
   const salvarMaterialMutation = useMutation({
-    mutationFn:
-      salvarMaterialCadastro,
+    mutationFn: salvarMaterialCadastro,
 
-    onSuccess:
-      async () => {
-        await queryClient.invalidateQueries({
-          queryKey:
-            CHAVE_MATERIAIS,
-        });
+    onSuccess: () => {
+      executarEmSegundoPlano(
+        [
+          () =>
+            queryClient.invalidateQueries({
+              queryKey: CHAVE_MATERIAIS,
+              refetchType: "active",
+            }),
 
-        await materiaisQuery.refetch();
-      },
+          atualizarTabelaPrecos,
+
+          atualizarNecessidadeCompra,
+        ],
+        "Cadastro de Material"
+      );
+    },
   });
 
   /* =================================================
      SALVAR FORNECEDOR X MATERIAL
-  ================================================= */
+
+     Mantido.
+================================================= */
 
   const salvarMateriaisFornecedorMutation =
     useMutation({
       mutationFn:
         salvarMateriaisFornecedorCadastro,
 
-      onSuccess:
-        async () => {
-          await queryClient.invalidateQueries({
-            queryKey:
-              CHAVE_FORNECEDOR_MATERIAIS,
-          });
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: CHAVE_FORNECEDOR_MATERIAIS,
+        });
 
-          await fornecedorMateriaisQuery.refetch();
-        },
+        await fornecedorMateriaisQuery.refetch();
+      },
     });
 
   /* =================================================
-     RECARREGAR
-  ================================================= */
+     RECARREGAR CADASTROS
+================================================= */
 
   async function recarregar() {
     await Promise.all([
@@ -414,26 +538,26 @@ export default function useCadastros() {
 
   /* =================================================
      RETORNO
-  ================================================= */
+
+     Interface preservada para CadastrosPage.
+================================================= */
 
   return {
     produtos,
 
-    fornecedores: fornecedoresQuery.data ?? [],
+    fornecedores:
+      fornecedoresQuery.data ?? [],
 
-    materiais: materiaisQuery.data ?? [],
+    materiais:
+      materiaisQuery.data ?? [],
 
     fornecedorMateriais:
       fornecedorMateriaisQuery.data ?? [],
-
-    /* Descrições do estoque Omie */
 
     descricoesEstoque,
 
     buscarDescricaoEstoque:
       buscarDescricaoProdutoEstoque,
-
-    /* Carregamento */
 
     carregando:
       produtosQuery.isLoading ||
@@ -451,8 +575,6 @@ export default function useCadastros() {
     buscandoDescricoesEstoque:
       descricoesQuery.isFetching,
 
-    /* Salvamento */
-
     salvandoProduto:
       salvarProdutoMutation.isPending,
 
@@ -465,8 +587,6 @@ export default function useCadastros() {
     salvandoMateriaisFornecedor:
       salvarMateriaisFornecedorMutation.isPending,
 
-    /* Erros */
-
     erro:
       produtosQuery.error?.message ||
       fornecedoresQuery.error?.message ||
@@ -476,8 +596,6 @@ export default function useCadastros() {
 
     erroDescricoesEstoque:
       descricoesQuery.error?.message || "",
-
-    /* Ações */
 
     recarregar,
 
