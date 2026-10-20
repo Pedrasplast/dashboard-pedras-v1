@@ -572,6 +572,7 @@ export default function NecessidadeMateriaPrimaPage() {
   ] = useState(null);
 
   const [ajustes, setAjustes] = useState({});
+  const [editandoEstoqueSeguranca, setEditandoEstoqueSeguranca] = useState(false);
 
   const {
     data,
@@ -580,6 +581,21 @@ export default function NecessidadeMateriaPrimaPage() {
     isError,
     error,
   } = useNecessidadeMateriaPrima();
+
+  // Aceita números digitados sem máscara, além de valores pt-BR colados.
+  // A máscara de milhar fica visível somente fora do foco.
+  function interpretarEstoqueSeguranca(valor) {
+    const texto = String(valor ?? "").trim().replace(/\s/g, "");
+    if (texto === "") return 0;
+    let normalizado = texto;
+    if (texto.includes(",")) {
+      normalizado = texto.replace(/\./g, "").replace(",", ".");
+    } else if (/^\d{1,3}(\.\d{3})+$/.test(texto)) {
+      normalizado = texto.replace(/\./g, "");
+    }
+    const resultado = Number(normalizado);
+    return Number.isFinite(resultado) ? resultado : null;
+  }
 
   /* ========================================================
      AJUSTES EDITÁVEIS
@@ -819,7 +835,7 @@ export default function NecessidadeMateriaPrimaPage() {
                             <th>Saldo projetado (Kg)</th>
                             <th>Estoque Segurança (Kg)</th>
                             <th>Necessidade (Kg)</th>
-                            <th>Último preço</th>
+                            <th>Preço de referência (R$/kg)</th>
                             <th>Valor estimado</th>
                           </tr>
                         </thead>
@@ -849,7 +865,7 @@ export default function NecessidadeMateriaPrimaPage() {
                                 type="number"
                                 min="0"
                                 max="100"
-                                step="1"
+                                step="10"
                                 className="necessidade-resumo-input"
                                 value={materialAtual.percentual}
                                 aria-label={`Percentual de compra ${materialAtual.material}`}
@@ -873,7 +889,7 @@ export default function NecessidadeMateriaPrimaPage() {
                               </span>
                             </td>
 
-                            {/* ESTOQUE API — 3 CASAS */}
+                            {/* ESTOQUE API — 2 CASAS */}
 
                             <td className="necessidade-resumo-celula">
                               <span className="necessidade-resumo-valor necessidade-resumo-valor-secundario">
@@ -885,7 +901,7 @@ export default function NecessidadeMateriaPrimaPage() {
                               </span>
                             </td>
 
-                            {/* COMPRAS FUTURAS — 3 CASAS */}
+                            {/* COMPRAS FUTURAS — 2 CASAS */}
 
                             <td className="necessidade-resumo-celula">
                               <span className="necessidade-resumo-valor">
@@ -895,7 +911,7 @@ export default function NecessidadeMateriaPrimaPage() {
                               </span>
                             </td>
 
-                            {/* SALDO PROJETADO — 3 CASAS */}
+                            {/* SALDO PROJETADO — 2 CASAS */}
 
                             <td
                               className={`necessidade-resumo-celula ${
@@ -925,23 +941,25 @@ export default function NecessidadeMateriaPrimaPage() {
 
                             <td className="necessidade-resumo-celula necessidade-resumo-celula-input">
                               <input
-                                type="number"
-                                min="0"
-                                step="0.001"
+                                type="text"
+                                inputMode="decimal"
                                 className="necessidade-resumo-input"
-                                value={materialAtual.teto}
-                                aria-label={`Estoque-teto ${materialAtual.material}`}
-                                onChange={(event) =>
-                                  alterarAjuste(
-                                    materialAtual.id,
-                                    "teto",
-                                    event.target.value
-                                  )
-                                }
+                                value={editandoEstoqueSeguranca
+                                  ? String(materialAtual.teto)
+                                  : formatarKg(materialAtual.teto)}
+                                aria-label={`Estoque de segurança ${materialAtual.material}`}
+                                onFocus={() => setEditandoEstoqueSeguranca(true)}
+                                onBlur={() => setEditandoEstoqueSeguranca(false)}
+                                onChange={(event) => {
+                                  const valor = interpretarEstoqueSeguranca(event.target.value);
+                                  if (valor !== null && valor >= 0) {
+                                    alterarAjuste(materialAtual.id, "teto", valor);
+                                  }
+                                }}
                               />
                             </td>
 
-                            {/* NECESSIDADE — 3 CASAS */}
+                            {/* NECESSIDADE — 2 CASAS */}
 
                             <td className="necessidade-resumo-celula necessidade-resumo-celula-necessidade">
                               <span className="necessidade-resumo-valor necessidade-resumo-valor-principal">
@@ -953,13 +971,15 @@ export default function NecessidadeMateriaPrimaPage() {
                               </span>
                             </td>
 
-                            {/* ÚLTIMO PREÇO */}
+                            {/* PREÇO DA TABELA DE PREÇOS: MÉDIA OU ÚLTIMA COMPRA */}
 
                             <td className="necessidade-resumo-celula">
                               <span className="necessidade-resumo-valor">
-                                {formatarPrecoUnitario(
-                                  materialAtual.preco
-                                )}
+                                {materialAtual.preco != null
+                                  ? formatarPrecoUnitario(
+                                      materialAtual.preco
+                                    )
+                                  : "Sem preço"}
                               </span>
                             </td>
 

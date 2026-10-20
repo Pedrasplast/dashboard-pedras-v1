@@ -273,6 +273,8 @@
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid #dbe3ef;
   border-radius: 11px;
   background: #ffffff;
@@ -340,6 +342,23 @@
     0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
+.necessidade-resumo-container .necessidade-tabela {
+  min-width: 1600px;
+  table-layout: auto;
+}
+
+.necessidade-resumo-container .necessidade-tabela thead th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.necessidade-resumo-container .necessidade-tabela tbody th,
+.necessidade-resumo-container .necessidade-tabela tbody td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
 .necessidade-linha-resumo {
   background: #f8fbff;
 }
@@ -383,12 +402,16 @@
 
 .necessidade-resumo-celula {
   vertical-align: middle;
+  text-align: center;
 }
 
 .necessidade-resumo-valor {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
   min-height: 38px;
   min-width: 108px;
   padding: 8px 10px;
@@ -442,6 +465,8 @@
   border: 1.5px solid #93c5fd !important;
   border-radius: 10px !important;
   background: #ffffff !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
@@ -477,6 +502,8 @@
   color: #0f172a;
   font: inherit;
   font-size: 12px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .necessidade-tabela input[type="number"]:focus {
@@ -577,6 +604,10 @@
     flex-shrink: 0;
   }
 
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1560px;
+  }
+
   .necessidade-resumo-valor-principal,
   .necessidade-resumo-valor-destaque {
     min-width: 126px;
@@ -623,6 +654,20 @@
     font-size: 15px;
   }
 
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1480px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela thead th {
+    padding: 12px 10px;
+    font-size: 11px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela tbody td,
+  .necessidade-resumo-container .necessidade-tabela tbody th {
+    padding: 12px 10px;
+  }
+
   .necessidade-resumo-material {
     font-size: 12px;
   }
@@ -656,5 +701,13 @@
 
   .necessidade-detalhamento-contador {
     font-size: 11px;
+  }
+
+  .necessidade-resumo-container .necessidade-tabela {
+    min-width: 1450px;
+  }
+
+  .necessidade-pendencias-cabecalho {
+    gap: 8px;
   }
 }

@@ -1,41 +1,25 @@
-
 import { useMemo, useState } from "react";
-
-import {
-  RefreshCw,
-  TableProperties,
-} from "lucide-react";
-
+import { RefreshCw, TableProperties } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-
+import Paginacao from "@/components/paginacao/Paginacao";
 import { useTabelaPrecos } from "./hooks/useTabelaPrecos";
-
 import TabelaPrecosFiltros from "./components/TabelaPrecosFiltros";
-
 import TabelaPrecosGrid from "./components/TabelaPrecosGrid";
-
-import {
-  filtrarTabelaPrecos,
-} from "./utils/formatadoresPrecos";
-
+import { filtrarTabelaPrecos } from "./utils/formatadoresPrecos";
 import "./TabelaPrecosMateriaPrima.css";
 
 /* =========================================================
-   PÁGINA PRINCIPAL — TABELA DE PREÇOS
-
-   REGRAS:
-   - Exibir somente PP e SCRAP.
-   - Códigos Omie definidos no Cadastro de Material.
-   - Último preço e preço médio de 30 dias.
-   - Preservar filtros e ordenação.
-   - Não alterar registros no Supabase.
+   TABELA DE PREÇOS — PP E SCRAP
+   Paginação padrão após busca e ordenação.
+   A regra de preço de referência fica em formatadoresPrecos.js.
 ========================================================= */
+
+const ITENS_POR_PAGINA = 8;
 
 export default function TabelaPrecosMateriaPrimaPage() {
   const [busca, setBusca] = useState("");
-
-  const [ordenacao, setOrdenacao] =
-    useState("descricao");
+  const [ordenacao, setOrdenacao] = useState("descricao");
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   const {
     data = [],
@@ -47,48 +31,41 @@ export default function TabelaPrecosMateriaPrimaPage() {
     refetch,
   } = useTabelaPrecos();
 
-  /* =====================================================
-     FILTRAGEM E ORDENAÇÃO LOCAL
-
-     O serviço já restringe PP e SCRAP.
-     Aqui mantemos apenas busca e ordenação.
-  ===================================================== */
-
   const registros = useMemo(
-    () =>
-      filtrarTabelaPrecos(data, {
-        busca,
-        ordenacao,
-      }),
-    [data, busca, ordenacao]
+    () => filtrarTabelaPrecos(data, { busca, ordenacao }),
+    [data, busca, ordenacao],
   );
 
-  /* =====================================================
-     LIMPAR FILTROS
-  ===================================================== */
+  const totalItens = registros.length;
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA));
+  const paginaValida = Math.min(Math.max(1, paginaAtual), totalPaginas);
+  const indiceInicial = (paginaValida - 1) * ITENS_POR_PAGINA;
+  const registrosPagina = useMemo(
+    () => registros.slice(indiceInicial, indiceInicial + ITENS_POR_PAGINA),
+    [registros, indiceInicial],
+  );
+
+  function alterarBusca(valor) {
+    setBusca(valor);
+    setPaginaAtual(1);
+  }
+
+  function alterarOrdenacao(valor) {
+    setOrdenacao(valor);
+    setPaginaAtual(1);
+  }
 
   function limparFiltros() {
     setBusca("");
     setOrdenacao("descricao");
+    setPaginaAtual(1);
   }
-
-  /* =====================================================
-     ATUALIZAÇÃO
-  ===================================================== */
 
   function atualizarDados() {
     void refetch();
   }
 
-  const ultimaAtualizacao = dataUpdatedAt
-    ? new Date(dataUpdatedAt).toLocaleString(
-        "pt-BR"
-      )
-    : "—";
-
-  /* =====================================================
-     RENDERIZAÇÃO
-  ===================================================== */
+  const ultimaAtualizacao = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString("pt-BR") : "—";
 
   return (
     <main className="tp-page">
@@ -96,7 +73,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
         <PageHeader
           eyebrow="Compras"
           title="Tabela de Preços"
-          description="Preços de PP e SCRAP, com códigos atualizados pelo Cadastro de Material e histórico dos pedidos de compra do Omie."
+          description="Atualizados pelo Cadastro de Material e histórico dos pedidos de compra do Omie."
           icon={TableProperties}
           actions={
             <button
@@ -105,18 +82,8 @@ export default function TabelaPrecosMateriaPrimaPage() {
               onClick={atualizarDados}
               disabled={isFetching}
             >
-              <RefreshCw
-                size={16}
-                className={
-                  isFetching
-                    ? "tp-girando"
-                    : ""
-                }
-              />
-
-              {isFetching
-                ? "Atualizando..."
-                : "Atualizar"}
+              <RefreshCw size={16} className={isFetching ? "tp-girando" : ""} />
+              {isFetching ? "Atualizando..." : "Atualizar"}
             </button>
           }
         />
@@ -124,15 +91,12 @@ export default function TabelaPrecosMateriaPrimaPage() {
         <section className="tp-card">
           <div className="tp-card-cabecalho">
             <div>
-              <h2>Consulta de preços — PP e SCRAP</h2>
-
+              <h2>Tabela de Preços</h2>
               <p>
-                Consulte o último preço registrado
-                e a média ponderada dos últimos
-                30 dias de cada matéria-prima.
+                Consulte o último preço registrado e a média ponderada dos últimos 30 dias. Quando
+                não houver média válida, o preço de referência será o da última compra.
               </p>
             </div>
-
             <div className="tp-total">
               <strong>{registros.length}</strong>
               <span>materiais</span>
@@ -141,46 +105,32 @@ export default function TabelaPrecosMateriaPrimaPage() {
 
           <TabelaPrecosFiltros
             busca={busca}
-            onBuscaChange={setBusca}
+            onBuscaChange={alterarBusca}
             ordenacao={ordenacao}
-            onOrdenacaoChange={setOrdenacao}
+            onOrdenacaoChange={alterarOrdenacao}
             onLimpar={limparFiltros}
           />
 
           {isLoading ? (
-            <div className="tp-estado">
-              Carregando tabela de preços...
-            </div>
+            <div className="tp-estado">Carregando tabela de preços...</div>
           ) : isError ? (
-            <div
-              className="tp-erro"
-              role="alert"
-            >
-              <strong>
-                Não foi possível carregar os preços.
-              </strong>
-
-              <p>
-                {error?.message ??
-                  "Erro desconhecido."}
-              </p>
+            <div className="tp-erro" role="alert">
+              <strong>Não foi possível carregar os preços.</strong>
+              <p>{error?.message ?? "Erro desconhecido."}</p>
             </div>
           ) : (
-            <TabelaPrecosGrid
-              registros={registros}
-            />
+            <>
+              <TabelaPrecosGrid registros={registrosPagina} />
+              {totalItens > ITENS_POR_PAGINA && (
+                <Paginacao
+                  paginaAtual={paginaValida}
+                  totalItens={totalItens}
+                  itensPorPagina={ITENS_POR_PAGINA}
+                  onChangePagina={setPaginaAtual}
+                />
+              )}
+            </>
           )}
-
-          <div className="tp-rodape">
-            <span>
-              Atualização automática a cada
-              10 minutos.
-            </span>
-
-            <span>
-              Última consulta: {ultimaAtualizacao}
-            </span>
-          </div>
         </section>
       </div>
     </main>

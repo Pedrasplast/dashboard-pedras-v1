@@ -1,67 +1,28 @@
-
 /* ============================================================
-   NECESSIDADE DE MATÉRIA-PRIMA
-   CÁLCULOS E CONSOLIDAÇÃO
-
-   REGRAS:
-   - Código Omie manual identifica cada material.
-   - Estoque físico vem exclusivamente do Omie.
-   - Não existe ajuste manual do estoque.
-   - Estoque zero é válido.
-   - Ausência de estoque impede cálculo definitivo.
-   - Percentual de compra é editável.
-   - Estoque-teto é editável.
-   - PP possui teto padrão de 30.000 kg.
-   - Compras futuras são obtidas do Omie.
-   - Não utilizar códigos antigos.
-
-   FORMATAÇÃO:
-   Agora está em formatadoresNecessidade.js.
+   NECESSIDADE DE MATÉRIA-PRIMA — CÁLCULOS
+   - Sem formatação: formatadoresNecessidade.js é separado.
+   - Preço de referência lido da view de Tabela de Preços.
+   - Média 30 dias quando disponível; senão último preço válido.
+   - Sem estoque Omie, necessidade não é calculada.
 ============================================================ */
 
 const CODIGO_PP = "PRD11295";
 const TETO_PADRAO_PP = 30000;
 
-/* ============================================================
-   FUNÇÕES NUMÉRICAS
-============================================================ */
-
 export function numero(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
-    return 0;
-  }
-
+  if (valor === null || valor === undefined || valor === "") return 0;
   const convertido = Number(valor);
-
-  return Number.isFinite(convertido)
-    ? convertido
-    : 0;
+  return Number.isFinite(convertido) ? convertido : 0;
 }
 
 function numeroOpcional(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
-    return null;
-  }
-
+  if (valor === null || valor === undefined || valor === "") return null;
   const convertido = Number(valor);
-
-  return Number.isFinite(convertido)
-    ? convertido
-    : null;
+  return Number.isFinite(convertido) ? convertido : null;
 }
 
 function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
+  return String(valor ?? "").trim().toUpperCase();
 }
 
 function normalizarId(valor) {
@@ -69,39 +30,18 @@ function normalizarId(valor) {
 }
 
 function obterAjusteNumerico(ajuste, campo) {
-  if (
-    !ajuste ||
-    !Object.prototype.hasOwnProperty.call(
-      ajuste,
-      campo
-    )
-  ) {
+  if (!ajuste || !Object.prototype.hasOwnProperty.call(ajuste, campo)) {
     return null;
   }
-
   return numeroOpcional(ajuste[campo]);
 }
 
 /* ============================================================
-   CÁLCULO DA NECESSIDADE
-
-   CONSUMO CONSIDERADO:
-   Consumo × (% Compra / 100)
-
-   SALDO PROJETADO:
-   Estoque API + Compras futuras - Consumo considerado
-
-   NECESSIDADE:
-   Máximo(0, Teto - Saldo projetado)
-
-   VALOR ESTIMADO:
-   Necessidade × Último preço
-
-   IMPORTANTE:
-   Sem estoque da API, não calcular necessidade
-   definitiva nem valor estimado.
+   CONSUMO CONSIDERADO = Consumo × (% Compra / 100)
+   SALDO PROJETADO = Estoque + Compras futuras - Consumo considerado
+   NECESSIDADE = max(0, Estoque de segurança - Saldo projetado)
+   VALOR ESTIMADO = Necessidade × Preço de referência da Tabela de Preços
 ============================================================ */
-
 export function calcularNecessidade({
   consumo,
   percentual,
@@ -110,10 +50,7 @@ export function calcularNecessidade({
   teto,
   preco,
 }) {
-  const consumoConsiderado =
-    numero(consumo) *
-    (numero(percentual) / 100);
-
+  const consumoConsiderado = numero(consumo) * (numero(percentual) / 100);
   const estoqueValido = numeroOpcional(estoque);
   const precoValido = numeroOpcional(preco);
 
@@ -126,316 +63,129 @@ export function calcularNecessidade({
     };
   }
 
-  const saldoProjetado =
-    estoqueValido +
-    numero(comprasFuturas) -
-    consumoConsiderado;
-
-  const necessidade = Math.max(
-    0,
-    numero(teto) - saldoProjetado
-  );
+  const saldoProjetado = estoqueValido + numero(comprasFuturas) - consumoConsiderado;
+  const necessidade = Math.max(0, numero(teto) - saldoProjetado);
 
   return {
     consumoConsiderado,
     saldoProjetado,
     necessidade,
-    valorEstimado:
-      precoValido === null
-        ? null
-        : necessidade * precoValido,
+    valorEstimado: precoValido !== null && precoValido > 0
+      ? necessidade * precoValido
+      : null,
   };
 }
 
-/* ============================================================
-   CONSUMOS POR MATERIAL
-
-   Origem:
-   necessidade_mp_consumo_resumo
-============================================================ */
-
 function criarMapaConsumos(consumos = []) {
   const mapa = new Map();
-
   for (const item of consumos) {
     const id = normalizarId(item.material_id);
-
-    if (!id) {
-      continue;
-    }
-
-    mapa.set(
-      id,
-      (mapa.get(id) ?? 0) +
-        numero(item.consumo_total_kg)
-    );
+    if (!id) continue;
+    mapa.set(id, (mapa.get(id) ?? 0) + numero(item.consumo_total_kg));
   }
-
   return mapa;
 }
-
-/* ============================================================
-   ESTOQUE POR CÓDIGO OMIE MANUAL
-
-   A origem já é filtrada pelo serviço:
-   estoque_materia_prima_omie_resumo
-
-   Não utiliza código antigo de outro material.
-============================================================ */
 
 function criarMapaEstoques(estoques = []) {
   const mapa = new Map();
-
   for (const item of estoques) {
-    const codigo = normalizarCodigo(
-      item.codigo_produto
-    );
-
-    if (!codigo) {
-      continue;
-    }
-
+    const codigo = normalizarCodigo(item.codigo_produto);
+    if (!codigo) continue;
     const fisico = numeroOpcional(item.fisico);
-
-    if (fisico === null) {
-      continue;
-    }
-
+    if (fisico === null) continue;
     const anterior = mapa.get(codigo);
-
     if (anterior) {
-      mapa.set(codigo, {
-        ...anterior,
-        fisico: anterior.fisico + fisico,
-      });
+      mapa.set(codigo, { ...anterior, fisico: anterior.fisico + fisico });
     } else {
-      mapa.set(codigo, {
-        ...item,
-        fisico,
-      });
+      mapa.set(codigo, { ...item, fisico });
     }
   }
-
   return mapa;
 }
-
-/* ============================================================
-   COMPRAS FUTURAS POR CÓDIGO OMIE
-============================================================ */
 
 function criarMapaCompras(compras = []) {
   const mapa = new Map();
-
   for (const item of compras) {
-    const codigo = normalizarCodigo(
-      item.codigo_produto
-    );
-
-    if (!codigo) {
-      continue;
-    }
-
-    mapa.set(
-      codigo,
-      (mapa.get(codigo) ?? 0) +
-        numero(item.quantidade_futura)
-    );
+    const codigo = normalizarCodigo(item.codigo_produto);
+    if (!codigo) continue;
+    mapa.set(codigo, (mapa.get(codigo) ?? 0) + numero(item.quantidade_futura));
   }
-
   return mapa;
 }
 
 /* ============================================================
-   PREÇOS POR CÓDIGO OMIE
-
-   Prioriza a última compra mais recente.
+   View: precos_materia_prima_omie
+   Colunas: codigo_produto, preco_medio_30d, quantidade_30d, ultimo_preco
+   O valor 0 com quantidade 0 significa ausência de média,
+   não R$ 0,00 de custo médio.
 ============================================================ */
-
 function criarMapaPrecos(precos = []) {
   const mapa = new Map();
-
   for (const item of precos) {
-    const codigo = normalizarCodigo(
-      item.codigo_produto
-    );
+    const codigo = normalizarCodigo(item.codigo_produto);
+    if (!codigo) continue;
 
-    if (!codigo) {
-      continue;
-    }
+    const media = numeroOpcional(item.preco_medio_30d);
+    const quantidadePeriodo = numero(item.quantidade_30d);
+    const precoMedio = quantidadePeriodo > 0 && media !== null && media > 0
+      ? media
+      : null;
+
+    const ultimo = numeroOpcional(item.ultimo_preco);
+    const ultimoPreco = ultimo !== null && ultimo > 0 ? ultimo : null;
+    const precoReferencia = precoMedio ?? ultimoPreco;
+    const origemPreco = precoMedio !== null
+      ? "media_30d"
+      : ultimoPreco !== null
+        ? "ultima_compra"
+        : "sem_preco";
 
     const anterior = mapa.get(codigo);
-
-    if (!anterior) {
-      mapa.set(codigo, item);
-      continue;
-    }
-
-    const dataAtual = String(
-      item.ultima_compra ?? ""
-    );
-
-    const dataAnterior = String(
-      anterior.ultima_compra ?? ""
-    );
-
-    if (dataAtual > dataAnterior) {
-      mapa.set(codigo, item);
+    if (!anterior || quantidadePeriodo > anterior.quantidadePeriodo) {
+      mapa.set(codigo, {
+        ...item,
+        precoMedio,
+        ultimoPreco,
+        precoReferencia,
+        origemPreco,
+        quantidadePeriodo,
+      });
     }
   }
-
   return mapa;
 }
 
-/* ============================================================
-   CONSOLIDAR NECESSIDADE
+export function consolidarNecessidade(dados, ajustes = {}) {
+  if (!dados) return [];
 
-   Material
-     ↓
-   Código Omie manual
-     ↓
-   Consumo dos pedidos
-     ↓
-   Estoque físico API
-     ↓
-   Compras futuras
-     ↓
-   Percentual de compra
-     ↓
-   Estoque-teto
-     ↓
-   Necessidade
-============================================================ */
-
-export function consolidarNecessidade(
-  dados,
-  ajustes = {}
-) {
-  if (!dados) {
-    return [];
-  }
-
-  const consumos = criarMapaConsumos(
-    dados.consumos ?? []
-  );
-
-  const estoques = criarMapaEstoques(
-    dados.estoques ?? []
-  );
-
-  const compras = criarMapaCompras(
-    dados.comprasFuturas ?? []
-  );
-
-  const precos = criarMapaPrecos(
-    dados.precos ?? []
-  );
+  const consumos = criarMapaConsumos(dados.consumos ?? []);
+  const estoques = criarMapaEstoques(dados.estoques ?? []);
+  const compras = criarMapaCompras(dados.comprasFuturas ?? []);
+  const precos = criarMapaPrecos(dados.precos ?? []);
 
   return (dados.materiais ?? [])
     .filter((material) => material.ativo)
     .map((material) => {
-      /* ============================================
-         IDENTIFICAÇÃO
-      ============================================ */
-
       const id = normalizarId(material.id);
-
-      const codigoOmie = normalizarCodigo(
-        material.codigo_omie
-      );
-
-      /* ============================================
-         CONSUMO TOTAL
-      ============================================ */
-
+      const codigoOmie = normalizarCodigo(material.codigo_omie);
       const consumo = consumos.get(id) ?? 0;
 
-      /* ============================================
-         ESTOQUE API
+      const posicaoEstoque = codigoOmie ? estoques.get(codigoOmie) : undefined;
+      const estoqueDisponivel = posicaoEstoque !== undefined;
+      const estoqueApi = estoqueDisponivel ? posicaoEstoque.fisico : null;
 
-         Somente saldo físico real do Omie.
-         O usuário não pode modificar esse valor.
-      ============================================ */
-
-      const posicaoEstoque = codigoOmie
-        ? estoques.get(codigoOmie)
-        : undefined;
-
-      const estoqueDisponivel =
-        posicaoEstoque !== undefined;
-
-      const estoqueApi = estoqueDisponivel
-        ? posicaoEstoque.fisico
-        : null;
-
-      /* ============================================
-         COMPRAS FUTURAS
-      ============================================ */
-
-      const comprasFuturas = codigoOmie
-        ? compras.get(codigoOmie) ?? 0
-        : 0;
-
-      /* ============================================
-         ÚLTIMO PREÇO
-      ============================================ */
-
-      const historicoPreco = codigoOmie
-        ? precos.get(codigoOmie)
-        : undefined;
-
-      const preco = historicoPreco
-        ? numeroOpcional(
-            historicoPreco.ultimo_preco
-          )
-        : null;
-
-      /* ============================================
-         AJUSTES EDITÁVEIS
-
-         Apenas:
-         - Percentual de compra
-         - Estoque-teto
-
-         Estoque não aceita ajuste manual.
-      ============================================ */
+      const comprasFuturas = codigoOmie ? compras.get(codigoOmie) ?? 0 : 0;
+      const historicoPreco = codigoOmie ? precos.get(codigoOmie) : undefined;
+      const precoMedio = historicoPreco?.precoMedio ?? null;
+      // A mesma fonte da Tabela de Preços determina o preço exibido.
+      const preco = historicoPreco?.precoReferencia ?? null;
 
       const ajuste = ajustes[id] ?? {};
-
-      const percentualAjustado =
-        obterAjusteNumerico(
-          ajuste,
-          "percentual"
-        );
-
-      const percentual = Math.min(
-        100,
-        Math.max(
-          0,
-          percentualAjustado ?? 100
-        )
-      );
-
-      const tetoAjustado =
-        obterAjusteNumerico(
-          ajuste,
-          "teto"
-        );
-
-      const tetoPadrao =
-        codigoOmie === CODIGO_PP
-          ? TETO_PADRAO_PP
-          : 0;
-
-      const teto = Math.max(
-        0,
-        tetoAjustado ?? tetoPadrao
-      );
-
-      /* ============================================
-         CÁLCULO
-
-         Nunca utiliza estoque manual.
-      ============================================ */
+      const percentualAjustado = obterAjusteNumerico(ajuste, "percentual");
+      const percentual = Math.min(100, Math.max(0, percentualAjustado ?? 100));
+      const tetoAjustado = obterAjusteNumerico(ajuste, "teto");
+      const tetoPadrao = codigoOmie === CODIGO_PP ? TETO_PADRAO_PP : 0;
+      const teto = Math.max(0, tetoAjustado ?? tetoPadrao);
 
       const calculo = calcularNecessidade({
         consumo,
@@ -446,67 +196,33 @@ export function consolidarNecessidade(
         preco,
       });
 
-      /* ============================================
-         SITUAÇÃO DO ESTOQUE
-      ============================================ */
-
       let situacaoEstoque;
-
-      if (!codigoOmie) {
-        situacaoEstoque = "SEM_CODIGO";
-      } else if (estoqueDisponivel) {
-        situacaoEstoque = "SINCRONIZADO";
-      } else {
-        situacaoEstoque = "SEM_DADOS";
-      }
-
-      /* ============================================
-         RETORNO COMPATÍVEL COM A TELA
-      ============================================ */
+      if (!codigoOmie) situacaoEstoque = "SEM_CODIGO";
+      else if (estoqueDisponivel) situacaoEstoque = "SINCRONIZADO";
+      else situacaoEstoque = "SEM_DADOS";
 
       return {
         id: material.id,
-
         material: material.nome,
-
         codigoOmie: codigoOmie || null,
-
         consumo,
-
         percentual,
-
         estoqueApi,
-
-        // Alias para consumidores existentes.
-        // Utiliza exclusivamente o estoque API.
         estoque: estoqueApi,
-
         estoqueDisponivel,
-
         situacaoEstoque,
-
         comprasFuturas,
-
         teto,
-
         preco,
-
-        ultimaCompra:
-          historicoPreco?.ultima_compra ?? null,
-
-        dataEstoque:
-          posicaoEstoque?.data_posicao ?? null,
-
-        sincronizadoEm:
-          posicaoEstoque?.sincronizado_em ?? null,
-
+        precoMedio,
+        precoReferencia: preco,
+        origemPreco: historicoPreco?.origemPreco ?? "sem_preco",
+        quantidadePrecoMedio: historicoPreco?.quantidadePeriodo ?? 0,
+        ultimaCompra: historicoPreco?.ultima_compra ?? null,
+        dataEstoque: posicaoEstoque?.data_posicao ?? null,
+        sincronizadoEm: posicaoEstoque?.sincronizado_em ?? null,
         ...calculo,
       };
     })
-    .sort((a, b) =>
-      a.material.localeCompare(
-        b.material,
-        "pt-BR"
-      )
-    );
+    .sort((a, b) => a.material.localeCompare(b.material, "pt-BR"));
 }
