@@ -28,6 +28,7 @@ const FONTES = Object.freeze({
   MATERIAIS: "materia_prima_materiais",
   PEDIDOS: "necessidade_mp_pedidos_detalhe",
   CONSUMOS: "necessidade_mp_consumo_resumo",
+  ESTOQUE_PRODUTOS: "estoque_produto_acabado_omie",
   VINCULOS: "materia_prima_material_itens_omie",
   ESTOQUES: "estoque_materia_prima_omie_resumo",
   COMPRAS: "compras_futuras_materia_prima_omie",
@@ -73,7 +74,7 @@ function numeroOpcional(valor) {
 
 async function consultarTabela(
   tabela,
-  colunas = "*",
+  colunas,
   prepararConsulta
 ) {
   const registros = [];
@@ -142,15 +143,15 @@ function buscarMateriaisHabilitados() {
 ============================================================ */
 
 function buscarPedidos() {
-  return consultarTabela(FONTES.PEDIDOS);
+  return consultarTabela(FONTES.PEDIDOS, "codigo_pedido_omie,numero_pedido,item_sequencia,codigo_produto,produto,quantidade,unidade,previsao,status,kg_un,material_id,material,consumo_kg,situacao_cadastro", q => q.order("pedido_item_id", { ascending: true }));
 }
 
 function buscarConsumos() {
-  return consultarTabela(FONTES.CONSUMOS);
+  return consultarTabela(FONTES.CONSUMOS, "material_id,consumo_total_kg");
 }
 
 function buscarVinculosHistoricos() {
-  return consultarTabela(FONTES.VINCULOS);
+  return consultarTabela(FONTES.VINCULOS, "material_id,codigo_produto,codigo_produto_omie,ativo");
 }
 
 /* ============================================================
@@ -174,12 +175,25 @@ function buscarEstoques() {
    COMPRAS FUTURAS E PREÇOS
 ============================================================ */
 
+
+/* Estoque exclusivamente do depósito selecionado; físico não abate reservado
+   porque os pedidos já estão na demanda e descontar reserva pode duplicar. */
+function buscarEstoqueProdutos() {
+  return consultarTabela(
+    FONTES.ESTOQUE_PRODUTOS,
+    "codigo_produto,codigo_local_estoque,fisico,reservado,saldo,estoque_minimo,data_posicao,sincronizado_em",
+    q => q.eq("codigo_local_estoque", LOCAL_ESTOQUE.codigo)
+          .eq("ativo", true)
+          .order("id", { ascending: true })
+  );
+}
+
 function buscarComprasFuturas() {
-  return consultarTabela(FONTES.COMPRAS);
+  return consultarTabela(FONTES.COMPRAS, "codigo_produto,codigo_produto_omie,quantidade_futura");
 }
 
 function buscarPrecos() {
-  return consultarTabela(FONTES.PRECOS);
+  return consultarTabela(FONTES.PRECOS, "codigo_produto,codigo_produto_omie,preco_medio_30d,quantidade_30d,ultimo_preco,ultima_compra");
 }
 
 /* ============================================================
@@ -416,6 +430,7 @@ export async function buscarNecessidadeMateriaPrima() {
       consumos: [],
       vinculos: [],
       estoques: [],
+      estoqueProdutos: [],
       comprasFuturas: [],
       precos: [],
       codigosPorMaterial: {},
@@ -442,6 +457,7 @@ export async function buscarNecessidadeMateriaPrima() {
     todosEstoques,
     todasCompras,
     todosPrecos,
+    estoqueProdutos,
   ] = await Promise.all([
     buscarPedidos(),
     buscarConsumos(),
@@ -449,6 +465,7 @@ export async function buscarNecessidadeMateriaPrima() {
     buscarEstoques(),
     buscarComprasFuturas(),
     buscarPrecos(),
+    buscarEstoqueProdutos(),
   ]);
 
   /* ========================================================
@@ -566,6 +583,8 @@ export async function buscarNecessidadeMateriaPrima() {
     materiais,
 
     pedidosAbertos,
+
+    estoqueProdutos,
 
     resumoPedidos,
 

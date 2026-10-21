@@ -3,7 +3,7 @@ import { AlertTriangle, Calculator } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { useNecessidadeMateriaPrima } from "./hooks/useNecessidadeMateriaPrima";
 import { consolidarNecessidade, numero } from "./utils/calculosNecessidade";
-import { filtrarPedidosPorPrevisao, resumirConsumosDoPeriodo, agruparProdutosPorMaterial } from "./utils/seletoresNecessidade";
+import { filtrarPedidosPorPrevisao, agruparProducaoPorMaterial, resumirConsumoDaProducao } from "./utils/seletoresNecessidade";
 import AlertaPendencias from "./components/AlertaPendencias";
 import AbasMateriais from "./components/AbasMateriais";
 import ProdutosDoMaterial from "./components/ProdutosDoMaterial";
@@ -76,24 +76,25 @@ export default function NecessidadeMateriaPrimaPage() {
     return filtrarPedidosPorPrevisao(pedidos, dataInicio, dataFim);
   }, [data?.pedidosAbertos, dataInicio, dataFim, periodoInvalido]);
 
-  // O consumo agregado original é preservado quando nenhum período é informado.
-  // Com datas definidas, só o consumo é recalculado pelos itens do período.
-  const dadosDoPeriodo = useMemo(() => {
-    if (!data || !periodoAtivo) return data;
-    return {
-      ...data,
-      consumos: resumirConsumosDoPeriodo(pedidosAbertos),
-    };
-  }, [data, periodoAtivo, pedidosAbertos]);
+  // Sempre derivar o consumo da produção necessária, inclusive sem filtro.
+  const produtosPorMaterial = useMemo(
+    () => agruparProducaoPorMaterial(pedidosAbertos, data?.estoqueProdutos ?? []),
+    [pedidosAbertos, data?.estoqueProdutos]
+  );
+
+  const consumosProducao = useMemo(
+    () => resumirConsumoDaProducao(produtosPorMaterial),
+    [produtosPorMaterial]
+  );
+
+  const dadosDoPeriodo = useMemo(
+    () => data ? { ...data, consumos: consumosProducao } : null,
+    [data, consumosProducao]
+  );
 
   const materiais = useMemo(
     () => consolidarNecessidade(dadosDoPeriodo, ajustes),
     [dadosDoPeriodo, ajustes]
-  );
-
-  const produtosPorMaterial = useMemo(
-    () => agruparProdutosPorMaterial(pedidosAbertos),
-    [pedidosAbertos]
   );
 
   const materialAtual =
@@ -121,12 +122,15 @@ export default function NecessidadeMateriaPrimaPage() {
     Boolean(data) &&
     (data.estoques ?? []).length === 0;
 
+  const produtosSemEstoque = Array.from(produtosPorMaterial.values()).flat().filter(p => p.quantidadeProduzir === null);
+
   const necessitaValidacao =
     Boolean(data) &&
     (
       pedidosAbertos.some((pedido) => pedido.situacao_cadastro !== "OK") ||
       codigosSemVinculo.length > 0 ||
       materiaisSemEstoque.length > 0 ||
+      produtosSemEstoque.length > 0 ||
       !data.validacao?.calculoHomologado
     );
 
@@ -140,7 +144,7 @@ export default function NecessidadeMateriaPrimaPage() {
         <PageHeader
           eyebrow="Compras"
           title="Necessidade de Matéria-Prima"
-          description="Planejamento baseado nos pedidos de venda, estoque físico do Omie e compras futuras."
+          description="Planejamento da produção para atender pedidos e recompor o estoque mínimo dos produtos, com dados do Omie."
           icon={Calculator}
         />
 
@@ -164,6 +168,15 @@ export default function NecessidadeMateriaPrimaPage() {
             <AlertaPendencias
               pedidos={pedidosAbertos}
             />
+
+            {produtosSemEstoque.length > 0 && (
+              <div className="necessidade-alerta" role="alert">
+                <AlertTriangle size={18} aria-hidden="true" />
+                <span>{produtosSemEstoque.length} produto(s) sem posição de estoque no depósito
+                  MATRIZ/M.P.Prod. O consumo desses produtos não está incluído na
+                  necessidade calculada; regularize o estoque antes de comprar.</span>
+              </div>
+            )}
 
             {/* CÓDIGOS OMIE PENDENTES */}
 

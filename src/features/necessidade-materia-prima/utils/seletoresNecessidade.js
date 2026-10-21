@@ -178,3 +178,79 @@ export function agruparProdutosPorMaterial(pedidos = []) {
   return resultado;
 }
 
+
+
+/* Produção: consolida pedidos por SKU ANTES de descontar estoque.
+   Sem registro de estoque = não calcular consumo definitivo. */
+export function planejarProducaoPorProduto(pedidos = [], estoqueProdutos = []) {
+  const estoquePorCodigo = new Map();
+  for (const item of estoqueProdutos) {
+    const codigo = normalizarCodigo(item.codigo_produto);
+    if (!codigo) continue;
+    const fisico = item.fisico == null ? null : Number(item.fisico);
+    const minimo = item.estoque_minimo == null ? 0 : Number(item.estoque_minimo);
+    if (fisico === null || !Number.isFinite(fisico) || !Number.isFinite(minimo)) continue;
+    const anterior = estoquePorCodigo.get(codigo);
+    // A consulta já limita o depósito; defensivo para duplicações eventuais.
+    estoquePorCodigo.set(codigo, {
+      estoqueAtual: (anterior?.estoqueAtual ?? 0) + fisico,
+      estoqueMinimo: Math.max(anterior?.estoqueMinimo ?? 0, minimo),
+    });
+  }
+  const pedidoPorCodigo = new Map();
+  for (const item of pedidos) {
+    const codigo = normalizarCodigo(item.codigo_produto);
+    const quantidade = Number(item.quantidade);
+    if (!codigo || !Number.isFinite(quantidade)) continue;
+    pedidoPorCodigo.set(codigo, (pedidoPorCodigo.get(codigo) ?? 0) + quantidade);
+  }
+  const resultado = new Map();
+  for (const [codigo, quantidadePedidos] of pedidoPorCodigo) {
+    const estoque = estoquePorCodigo.get(codigo);
+    resultado.set(codigo, {
+      quantidadePedidos,
+      estoqueAtual: estoque?.estoqueAtual ?? null,
+      estoqueMinimo: estoque?.estoqueMinimo ?? null,
+      quantidadeProduzir: estoque
+        ? Math.max(0, quantidadePedidos + estoque.estoqueMinimo - estoque.estoqueAtual)
+        : null,
+      semEstoque: !estoque,
+    });
+  }
+  return resultado;
+}
+
+export function agruparProducaoPorMaterial(pedidos = [], estoqueProdutos = []) {
+  const planejamento = planejarProducaoPorProduto(pedidos, estoqueProdutos);
+  const produtos = agruparProdutosPorMaterial(pedidos);
+  const resultado = new Map();
+  for (const [materialId, linhas] of produtos) {
+    resultado.set(materialId, linhas.map((produto) => {
+      const plano = planejamento.get(normalizarCodigo(produto.codigo));
+      return {
+        ...produto,
+        quantidadePedidos: produto.quantidade,
+        estoqueAtual: plano?.estoqueAtual ?? null,
+        estoqueMinimo: plano?.estoqueMinimo ?? null,
+        quantidadeProduzir: plano?.quantidadeProduzir ?? null,
+        consumo: plano?.quantidadeProduzir == null
+          ? null
+          : plano.quantidadeProduzir * produto.pesoKgUn,
+      };
+    }));
+  }
+  return resultado;
+}
+
+export function resumirConsumoDaProducao(produtosPorMaterial) {
+  const consumos = [];
+  for (const [material_id, produtos] of produtosPorMaterial) {
+    const pendentes = produtos.some(p => p.consumo === null);
+    consumos.push({
+      material_id,
+      consumo_total_kg: produtos.reduce((t,p) => t + (p.consumo ?? 0), 0),
+      pendenteEstoqueProduto: pendentes,
+    });
+  }
+  return consumos;
+}
