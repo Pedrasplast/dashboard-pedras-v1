@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { comRetentativa } from "./omie-retentativa.mjs";
 
 const LOCAL = 2333946061;
 const URL_OMIE = "https://app.omie.com.br/api/v1/estoque/consulta/";
@@ -28,7 +29,15 @@ function dataBrasil() {
     timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit",
   }).format(new Date());
 }
-async function paginaOmie(pagina: number, data: string, key: string, secret: string) {
+const esperar = (ms: number) => new Promise((resolver) => setTimeout(resolver, ms));
+
+// Repete a página quando o Omie recusa por chamada simultânea ou redundante
+// (outro sistema com a mesma chave consultando estoque no mesmo minuto).
+function paginaOmie(pagina: number, data: string, key: string, secret: string) {
+  return comRetentativa(() => paginaOmieUmaVez(pagina, data, key, secret), esperar);
+}
+
+async function paginaOmieUmaVez(pagina: number, data: string, key: string, secret: string) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30000);
   try {
