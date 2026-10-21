@@ -717,6 +717,21 @@
   margin: 0;
 }
 
+
+/* Estoque negativo */
+.necessidade-page .necessidade-estoque-negativo {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+/* Destaque opcional do campo negativo */
+.necessidade-page .necessidade-estoque-negativo-destaque {
+  color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+}
+
+
 /* ============================================================
    RESPONSIVIDADE — NOTEBOOKS E TABLETS
 ============================================================ */

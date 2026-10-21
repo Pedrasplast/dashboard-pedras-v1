@@ -9,12 +9,11 @@ export const Route = createFileRoute("/estoque")({
   head: () => ({
     meta: [
       {
-        title: "Estoque | Pedrasplast",
+        title: "Estoque Produto Acabado | Pedrasplast",
       },
       {
         name: "description",
-        content:
-          "Consulta do estoque de produtos acabados integrado ao Omie.",
+        content: "Consulta do estoque de produtos acabados integrado ao Omie.",
       },
     ],
   }),

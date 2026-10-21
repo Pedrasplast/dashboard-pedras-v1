@@ -14,6 +14,7 @@ export function useNecessidadeMateriaPrima() {
     queryKey: [
       "compras",
       "necessidade-materia-prima",
+      "planejamento-produtos-v2",
     ],
 
     queryFn: buscarNecessidadeMateriaPrima,

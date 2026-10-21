@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 import { TableProperties } from "lucide-react";
 
@@ -41,12 +40,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
      CONSULTA DOS PREÇOS
   ===================================================== */
 
-  const {
-    data = [],
-    isLoading,
-    isError,
-    error,
-  } = useTabelaPrecos();
+  const { data = [], isLoading, isError, error } = useTabelaPrecos();
 
   /* =====================================================
      BUSCA E ORDENAÇÃO
@@ -67,25 +61,14 @@ export default function TabelaPrecosMateriaPrimaPage() {
 
   const totalItens = registros.length;
 
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(totalItens / ITENS_POR_PAGINA),
-  );
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA));
 
-  const paginaValida = Math.min(
-    Math.max(1, paginaAtual),
-    totalPaginas,
-  );
+  const paginaValida = Math.min(Math.max(1, paginaAtual), totalPaginas);
 
-  const indiceInicial =
-    (paginaValida - 1) * ITENS_POR_PAGINA;
+  const indiceInicial = (paginaValida - 1) * ITENS_POR_PAGINA;
 
   const registrosPagina = useMemo(
-    () =>
-      registros.slice(
-        indiceInicial,
-        indiceInicial + ITENS_POR_PAGINA,
-      ),
+    () => registros.slice(indiceInicial, indiceInicial + ITENS_POR_PAGINA),
     [registros, indiceInicial],
   );
 
@@ -141,12 +124,8 @@ export default function TabelaPrecosMateriaPrimaPage() {
               <h2>Tabela de Preços</h2>
 
               <p>
-                Consulte o último preço registrado e a
-                média dos últimos 30 dias, calculada pela
-                soma dos valores totais das compras dividida
-                pela quantidade total comprada. Quando
-                não houver média válida, o preço de
-                referência será o da última compra.
+                Preço médio ponderado = valor total comprado ÷ quantidade total comprada nos últimos
+                30 dias. Sem média válida, utiliza-se o preço da última compra.
               </p>
             </div>
           </div>
@@ -164,26 +143,18 @@ export default function TabelaPrecosMateriaPrimaPage() {
           {/* ESTADOS E TABELA */}
 
           {isLoading ? (
-            <div className="tp-estado">
-              Carregando tabela de preços...
-            </div>
+            <div className="tp-estado">Carregando tabela de preços...</div>
           ) : isError ? (
             <div className="tp-erro" role="alert">
-              <strong>
-                Não foi possível carregar os preços.
-              </strong>
+              <strong>Não foi possível carregar os preços.</strong>
 
-              <p>
-                {error?.message ?? "Erro desconhecido."}
-              </p>
+              <p>{error?.message ?? "Erro desconhecido."}</p>
             </div>
           ) : (
             <>
               {/* TABELA DE PREÇOS */}
 
-              <TabelaPrecosGrid
-                registros={registrosPagina}
-              />
+              <TabelaPrecosGrid registros={registrosPagina} />
 
               {/* PAGINAÇÃO PADRÃO */}
 
