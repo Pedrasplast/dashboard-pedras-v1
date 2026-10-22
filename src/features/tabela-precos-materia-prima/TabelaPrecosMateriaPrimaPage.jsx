@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { TableProperties } from "lucide-react";
+import { Info, TableProperties } from "lucide-react";
 
 import PageHeader from "@/components/layout/PageHeader";
 import Paginacao from "@/components/paginacao/Paginacao";
@@ -9,7 +9,7 @@ import TabelaPrecosFiltros from "./components/TabelaPrecosFiltros";
 import TabelaPrecosGrid from "./components/TabelaPrecosGrid";
 
 import { filtrarTabelaPrecos } from "./utils/formatadoresPrecos";
-import { PERIODO_PADRAO } from "./constants/tabelaPrecos.constants";
+import { ORDENACAO_PADRAO, PERIODO_PADRAO } from "./constants/tabelaPrecos.constants";
 
 import "./TabelaPrecosMateriaPrima.css";
 
@@ -35,7 +35,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
   ===================================================== */
 
   const [busca, setBusca] = useState("");
-  const [ordenacao, setOrdenacao] = useState("descricao");
+  const [ordenacao, setOrdenacao] = useState(ORDENACAO_PADRAO);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [periodo, setPeriodo] = useState(PERIODO_PADRAO);
 
@@ -109,7 +109,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
 
   function limparFiltros() {
     setBusca("");
-    setOrdenacao("descricao");
+    setOrdenacao(ORDENACAO_PADRAO);
     setPeriodo(PERIODO_PADRAO);
     setPaginaAtual(1);
   }
@@ -135,12 +135,16 @@ export default function TabelaPrecosMateriaPrimaPage() {
         <section className="tp-card">
           <div className="tp-card-cabecalho">
             <div>
-              <h2>Tabela de Preços</h2>
+              <h2>Preço médio por material</h2>
 
               <p>
-                Preço médio ponderado = valor total comprado ÷ quantidade total comprada nos últimos{" "}
-                {periodo} dias (pedidos aprovados do Suprimentos PP, pela data de inclusão). Com
-                menos de 2 compras no período, utiliza-se o preço da última compra.
+                Valor total comprado ÷ quantidade comprada nos últimos <strong>{periodo} dias</strong>.
+              </p>
+
+              <p className="tp-regra">
+                <Info size={14} aria-hidden="true" />
+                Pedidos aprovados do Suprimentos PP, pela data de inclusão. Com menos de 2 compras no
+                período, vale o preço da última compra.
               </p>
             </div>
           </div>
