@@ -9,6 +9,7 @@ import TabelaPrecosFiltros from "./components/TabelaPrecosFiltros";
 import TabelaPrecosGrid from "./components/TabelaPrecosGrid";
 
 import { filtrarTabelaPrecos } from "./utils/formatadoresPrecos";
+import { PERIODO_PADRAO } from "./constants/tabelaPrecos.constants";
 
 import "./TabelaPrecosMateriaPrima.css";
 
@@ -18,6 +19,7 @@ import "./TabelaPrecosMateriaPrima.css";
    - Carregamento automático pelo useTabelaPrecos
    - Busca por material
    - Ordenação dos registros
+   - Botões de período da média (30 / 45 / 60 dias)
    - Botão padrão para limpar filtros
    - Paginação de 8 registros
    - Preço de referência conforme regra existente
@@ -35,6 +37,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
   const [busca, setBusca] = useState("");
   const [ordenacao, setOrdenacao] = useState("descricao");
   const [paginaAtual, setPaginaAtual] = useState(1);
+  const [periodo, setPeriodo] = useState(PERIODO_PADRAO);
 
   /* =====================================================
      CONSULTA DOS PREÇOS
@@ -51,8 +54,9 @@ export default function TabelaPrecosMateriaPrimaPage() {
       filtrarTabelaPrecos(data, {
         busca,
         ordenacao,
+        periodo,
       }),
-    [data, busca, ordenacao],
+    [data, busca, ordenacao, periodo],
   );
 
   /* =====================================================
@@ -91,12 +95,22 @@ export default function TabelaPrecosMateriaPrimaPage() {
   }
 
   /* =====================================================
+     ALTERAR PERÍODO DA MÉDIA (30 / 45 / 60 DIAS)
+  ===================================================== */
+
+  function alterarPeriodo(valor) {
+    setPeriodo(valor);
+    setPaginaAtual(1);
+  }
+
+  /* =====================================================
      LIMPAR FILTROS
   ===================================================== */
 
   function limparFiltros() {
     setBusca("");
     setOrdenacao("descricao");
+    setPeriodo(PERIODO_PADRAO);
     setPaginaAtual(1);
   }
 
@@ -124,8 +138,9 @@ export default function TabelaPrecosMateriaPrimaPage() {
               <h2>Tabela de Preços</h2>
 
               <p>
-                Preço médio ponderado = valor total comprado ÷ quantidade total comprada nos últimos
-                30 dias. Sem média válida, utiliza-se o preço da última compra.
+                Preço médio ponderado = valor total comprado ÷ quantidade total comprada nos últimos{" "}
+                {periodo} dias (pedidos aprovados do Suprimentos PP, pela data de inclusão). Com
+                menos de 2 compras no período, utiliza-se o preço da última compra.
               </p>
             </div>
           </div>
@@ -137,6 +152,8 @@ export default function TabelaPrecosMateriaPrimaPage() {
             onBuscaChange={alterarBusca}
             ordenacao={ordenacao}
             onOrdenacaoChange={alterarOrdenacao}
+            periodo={periodo}
+            onPeriodoChange={alterarPeriodo}
             onLimpar={limparFiltros}
           />
 
@@ -154,7 +171,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
             <>
               {/* TABELA DE PREÇOS */}
 
-              <TabelaPrecosGrid registros={registrosPagina} />
+              <TabelaPrecosGrid registros={registrosPagina} periodo={periodo} />
 
               {/* PAGINAÇÃO PADRÃO */}
 

@@ -84,7 +84,7 @@
 
 .tp-filtros {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) 210px auto;
+  grid-template-columns: minmax(280px, 1fr) 210px auto auto;
   gap: 14px;
   align-items: end;
   margin-bottom: 20px;
@@ -159,6 +159,58 @@
 .tp-select:focus {
   border-color: #93c5fd;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Botões do período da média */
+.tp-filtro--periodo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tp-filtro--periodo > span {
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tp-periodos {
+  display: inline-flex;
+  min-height: 46px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+.tp-periodo {
+  flex: 1 1 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tp-periodo:hover {
+  background: #e2e8f0;
+}
+
+.tp-periodo--ativo,
+.tp-periodo--ativo:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.tp-periodo:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 1px;
 }
 
 /* Botão padrão compartilhado */

@@ -3,16 +3,21 @@ import { FiRefreshCcw, FiSearch } from "react-icons/fi";
 
 import "@/components/filtros/Filtros.css";
 
+import { PERIODOS_MEDIA, PERIODO_PADRAO } from "../constants/tabelaPrecos.constants";
+
 export default function TabelaPrecosFiltros({
   busca = "",
   onBuscaChange,
   ordenacao = "descricao",
   onOrdenacaoChange,
+  periodo = PERIODO_PADRAO,
+  onPeriodoChange,
   onLimpar,
 }) {
   const temFiltros =
     String(busca).trim() !== "" ||
-    ordenacao !== "descricao";
+    ordenacao !== "descricao" ||
+    periodo !== PERIODO_PADRAO;
 
   return (
     <div className="tp-filtros">
@@ -66,6 +71,24 @@ export default function TabelaPrecosFiltros({
             Menor preço
           </option>
         </select>
+      </div>
+
+      <div className="tp-filtro tp-filtro--periodo">
+        <span id="tp-periodo-rotulo">Média dos últimos</span>
+
+        <div className="tp-periodos" role="group" aria-labelledby="tp-periodo-rotulo">
+          {PERIODOS_MEDIA.map((dias) => (
+            <button
+              key={dias}
+              type="button"
+              className={`tp-periodo ${periodo === dias ? "tp-periodo--ativo" : ""}`}
+              aria-pressed={periodo === dias}
+              onClick={() => onPeriodoChange(dias)}
+            >
+              {dias} dias
+            </button>
+          ))}
+        </div>
       </div>
 
       <button
