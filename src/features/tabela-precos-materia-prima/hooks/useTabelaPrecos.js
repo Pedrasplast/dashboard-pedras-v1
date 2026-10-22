@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { buscarTabelaPrecos } from "../services/tabelaPrecos.service";
+import { useAtualizarAoAlterarMateriais } from "@/features/cadastros/materiais/hooks/useAtualizarAoAlterarMateriais";
 
 import {
   TABELA_PRECOS,
@@ -19,6 +20,9 @@ import {
 ========================================================= */
 
 export function useTabelaPrecos() {
+  /* Habilitou/desabilitou no Cadastro de Material: atualiza na hora. */
+  useAtualizarAoAlterarMateriais(TABELA_PRECOS.QUERY_KEY);
+
   return useQuery({
     queryKey: TABELA_PRECOS.QUERY_KEY,
 

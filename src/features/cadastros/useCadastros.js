@@ -32,6 +32,10 @@ import {
   buscarNecessidadeMateriaPrima,
 } from "@/features/necessidade-materia-prima/services/necessidadeMateriaPrima.service";
 
+import {
+  QUERY_KEY_NECESSIDADE_MP,
+} from "@/features/necessidade-materia-prima/hooks/useNecessidadeMateriaPrima";
+
 /* =====================================================
    CONFIGURAÇÕES
 ===================================================== */
@@ -54,10 +58,9 @@ const CHAVE_DESCRICOES =
 const CHAVE_TABELA_PRECOS =
   TABELA_PRECOS.QUERY_KEY;
 
-const CHAVE_NECESSIDADE_COMPRA = [
-  "compras",
-  "necessidade-materia-prima",
-];
+/* Mesma chave da tela de Necessidade (antes faltava o último
+   item e a atualização não chegava na tela). */
+const CHAVE_NECESSIDADE_COMPRA = QUERY_KEY_NECESSIDADE_MP;
 
 const TAMANHO_LOTE = 80;
 
