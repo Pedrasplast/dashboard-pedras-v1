@@ -310,5 +310,24 @@
 
 @media (max-width: 520px) {
   .mon-container { padding: 16px; }
-  .mon-resumo { grid-template-columns: minmax(0, 1fr); }
+  .mon-resumo { gap: 10px; }
+  .mon-resumo__item { padding: 12px 14px; }
+  .mon-resumo__item strong { font-size: 22px; }
+
+  /* Histórico vira lista: início, duração e selo numa linha; detalhe embaixo. */
+  .mon-historico thead { display: none; }
+  .mon-historico table,
+  .mon-historico tbody { display: block; }
+  .mon-historico tr {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 4px 12px;
+    align-items: center;
+    padding: 8px 2px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mon-historico td { display: block; padding: 0; border: 0; background: transparent; }
+  .mon-historico td:nth-child(3) { justify-self: end; }
+  .mon-historico td.mon-historico__detalhe { grid-column: 1 / -1; color: var(--color-text-muted); }
+  .mon-historico__linha--erro { background: #fff7f7; }
 }
