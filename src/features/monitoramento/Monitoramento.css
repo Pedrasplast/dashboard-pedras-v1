@@ -55,7 +55,7 @@
 
 .mon-resumo {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-top: 24px;
 }
@@ -85,6 +85,32 @@
 .mon-resumo__item--erro { border-color: #fecaca; background: var(--color-danger-soft); }
 .mon-resumo__item--erro strong { color: var(--color-danger); }
 .mon-resumo__item--alerta strong { color: var(--color-warning); }
+
+/* Banco de dados (plano free: 500 MB) */
+.mon-banco__barra {
+  display: block;
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  overflow: hidden;
+}
+
+.mon-banco__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-success);
+}
+
+.mon-banco--atencao .mon-banco__barra span { background: var(--color-warning); }
+.mon-banco--atencao strong { color: var(--color-warning); }
+.mon-banco--alerta,
+.mon-banco--critico { border-color: #fecaca; background: var(--color-danger-soft); }
+.mon-banco--alerta strong,
+.mon-banco--critico strong { color: var(--color-danger); }
+.mon-banco--alerta .mon-banco__barra span,
+.mon-banco--critico .mon-banco__barra span { background: var(--color-danger); }
 
 /* ---------- Card e lista ---------- */
 
@@ -287,8 +313,13 @@
 
 /* ---------- Telas menores ---------- */
 
+@media (max-width: 1180px) {
+  .mon-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 @media (max-width: 900px) {
   .mon-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mon-banco { grid-column: 1 / -1; }
 
   .mon-rotina__cabecalho {
     grid-template-columns: minmax(0, 1fr) 24px;

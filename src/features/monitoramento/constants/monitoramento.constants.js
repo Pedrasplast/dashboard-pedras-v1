@@ -7,6 +7,8 @@ export const INTERVALO_ATUALIZACAO = 5 * 60 * 1000;
 export const TEMPO_DADOS_FRESCOS = 2 * 60 * 1000;
 
 export const QUERY_KEY_ROTINAS = ["monitoramento", "rotinas"];
+export const QUERY_KEY_BANCO = ["monitoramento", "banco"];
+export const QUERY_KEY_RESUMO = ["monitoramento", "resumo"];
 export const queryKeyHistorico = (rotina) => ["monitoramento", "historico", rotina];
 
 export const LIMITE_HISTORICO = 30;
@@ -101,4 +103,14 @@ export const ORDEM_SITUACAO = Object.freeze({
   [SITUACAO.SEM_DADOS]: 2,
   [SITUACAO.OK]: 3,
   [SITUACAO.DESATIVADA]: 4,
+});
+
+/* Níveis gravados pela rotina diária de tamanho do banco (plano free: 500 MB). */
+export const NIVEIS_BANCO_ALERTA = Object.freeze(new Set(["ALERTA", "CRITICO"]));
+
+export const ROTULO_NIVEL_BANCO = Object.freeze({
+  OK: "OK",
+  ATENCAO: "Atenção",
+  ALERTA: "Alerta",
+  CRITICO: "Crítico",
 });

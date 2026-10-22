@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 import { usePermissoes } from "@/hooks/usePermissoes";
+import { useAvisosMonitoramento } from "@/features/monitoramento/hooks/useMonitoramento";
 import { useNavigate } from "@/lib/navegacao";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -434,6 +435,10 @@ function Navbar({ user, isAdmin }) {
   );
 
   const badgePedidos = useMemo(() => formatarBadgePedidos(pedidosNaoLidos), [pedidosNaoLidos]);
+
+  /* Aviso de rotinas com erro (só administradores; ver Monitoramento). */
+  const { data: avisosMonitoramento = 0 } = useAvisosMonitoramento(Boolean(user) && isAdmin);
+  const badgeMonitoramento = avisosMonitoramento > 0 ? formatarBadgePedidos(avisosMonitoramento) : null;
 
   /* =====================================================
      NOTIFICAÇÕES DE PEDIDOS
@@ -915,7 +920,17 @@ function Navbar({ user, isAdmin }) {
                       aria-haspopup="menu"
                       aria-label="Abrir menu do usuário"
                     >
-                      <span className="user-avatar">{userInitials}</span>
+                      <span className="user-avatar">
+                        {userInitials}
+                        {badgeMonitoramento && (
+                          <span
+                            className="navbar-avatar-badge"
+                            title="Rotinas automáticas com erro — veja em Monitoramento"
+                          >
+                            {badgeMonitoramento}
+                          </span>
+                        )}
+                      </span>
 
                       <span className="user-information">
                         <strong className="user-name">{userName}</strong>
@@ -997,6 +1012,9 @@ function Navbar({ user, isAdmin }) {
                             >
                               <Activity size={17} aria-hidden="true" />
                               Monitoramento
+                              {badgeMonitoramento && (
+                                <span className="navbar-mobile-count">{badgeMonitoramento}</span>
+                              )}
                             </button>
                           </>
                         )}
@@ -1215,6 +1233,10 @@ function Navbar({ user, isAdmin }) {
                       <Activity size={18} aria-hidden="true" />
 
                       <span>Monitoramento</span>
+
+                      {badgeMonitoramento && (
+                        <span className="navbar-mobile-count">{badgeMonitoramento}</span>
+                      )}
                     </button>
                   </>
                 )}
