@@ -3,6 +3,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
 import {
+  Activity,
   ArrowDownToLine,
   Bell,
   Boxes,
@@ -987,6 +988,16 @@ function Navbar({ user, isAdmin }) {
                               <Users size={17} aria-hidden="true" />
                               Gerenciar usuários
                             </button>
+
+                            <button
+                              type="button"
+                              className="user-menu-item"
+                              onClick={() => goTo("/monitoramento")}
+                              role="menuitem"
+                            >
+                              <Activity size={17} aria-hidden="true" />
+                              Monitoramento
+                            </button>
                           </>
                         )}
                       </div>
@@ -1194,6 +1205,16 @@ function Navbar({ user, isAdmin }) {
                       <Users size={18} aria-hidden="true" />
 
                       <span>Gerenciar usuários</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="navbar-mobile-admin-link"
+                      onClick={() => goTo("/monitoramento")}
+                    >
+                      <Activity size={18} aria-hidden="true" />
+
+                      <span>Monitoramento</span>
                     </button>
                   </>
                 )}

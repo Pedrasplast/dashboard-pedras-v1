@@ -29,6 +29,7 @@ import { Route as FinanceiroEvolucaoMensalRouteImport } from './routes/financeir
 import { Route as ImportarRouteImport } from './routes/importar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MateriaPrimaRouteImport } from './routes/materia-prima'
+import { Route as MonitoramentoRouteImport } from './routes/monitoramento'
 import { Route as NecessidadeMateriaPrimaRouteImport } from './routes/necessidade-materia-prima'
 import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as PedidosCompraRouteImport } from './routes/pedidos-compra'
@@ -137,6 +138,11 @@ const MateriaPrimaRoute = MateriaPrimaRouteImport.update({
   path: '/materia-prima',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MonitoramentoRoute = MonitoramentoRouteImport.update({
+  id: '/monitoramento',
+  path: '/monitoramento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NecessidadeMateriaPrimaRoute = NecessidadeMateriaPrimaRouteImport.update({
   id: '/necessidade-materia-prima',
   path: '/necessidade-materia-prima',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/monitoramento': typeof MonitoramentoRoute
   '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/monitoramento': typeof MonitoramentoRoute
   '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/importar': typeof ImportarRoute
   '/login': typeof LoginRoute
   '/materia-prima': typeof MateriaPrimaRoute
+  '/monitoramento': typeof MonitoramentoRoute
   '/necessidade-materia-prima': typeof NecessidadeMateriaPrimaRoute
   '/pedidos': typeof PedidosRoute
   '/pedidos-compra': typeof PedidosCompraRoute
@@ -277,6 +286,7 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/monitoramento'
     | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/monitoramento'
     | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/importar'
     | '/login'
     | '/materia-prima'
+    | '/monitoramento'
     | '/necessidade-materia-prima'
     | '/pedidos'
     | '/pedidos-compra'
@@ -362,6 +374,7 @@ export interface RootRouteChildren {
   ImportarRoute: typeof ImportarRoute
   LoginRoute: typeof LoginRoute
   MateriaPrimaRoute: typeof MateriaPrimaRoute
+  MonitoramentoRoute: typeof MonitoramentoRoute
   NecessidadeMateriaPrimaRoute: typeof NecessidadeMateriaPrimaRoute
   PedidosRoute: typeof PedidosRoute
   PedidosCompraRoute: typeof PedidosCompraRoute
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MateriaPrimaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoramento': {
+      id: '/monitoramento'
+      path: '/monitoramento'
+      fullPath: '/monitoramento'
+      preLoaderRoute: typeof MonitoramentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/necessidade-materia-prima': {
       id: '/necessidade-materia-prima'
       path: '/necessidade-materia-prima'
@@ -578,6 +598,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImportarRoute: ImportarRoute,
   LoginRoute: LoginRoute,
   MateriaPrimaRoute: MateriaPrimaRoute,
+  MonitoramentoRoute: MonitoramentoRoute,
   NecessidadeMateriaPrimaRoute: NecessidadeMateriaPrimaRoute,
   PedidosRoute: PedidosRoute,
   PedidosCompraRoute: PedidosCompraRoute,
