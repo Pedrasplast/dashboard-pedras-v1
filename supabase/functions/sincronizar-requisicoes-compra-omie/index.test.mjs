@@ -16,7 +16,7 @@ const fonte = readFileSync(join(aqui, 'index.ts'), 'utf8')
   .replace('return new Promise((resolve) => setTimeout(resolve, ms));', 'esperas.push(ms); return Promise.resolve();');
 const { code } = transformSync(
   'export const esperas = [];\n' + fonte +
-  '\nexport { callOmie, obterNumeroRequisicaoPelaAuditoria, AUDITORIA_MAX_PAGINAS, AUDITORIA_TENTATIVAS };',
+  '\nexport { callOmie, obterNumeroRequisicaoPelaAuditoria, AUDITORIA_MAX_PAGINAS, AUDITORIA_TENTATIVAS, AUDITORIA_TIMEOUT_MS, AUDITORIA_PRAZO_TOTAL_MS };',
   { loader: 'ts', format: 'esm' },
 );
 const arquivo = join(mkdtempSync(join(tmpdir(), 'req-')), 'mod.mjs');
@@ -42,13 +42,28 @@ function reiniciar(fn) {
   responder = fn;
 }
 
-test('acha o número na auditoria (formato real do campo)', async () => {
+test('acha o número na resposta real do Omie de 22/10 (requisição 14983)', async () => {
   reiniciar(() => ({
-    total_de_paginas: 1,
-    eventos: [{ campos: [{ campo: 'numero', rotulo: 'Número da Requisição', valor_novo: '14980' }] }],
+    pagina: 1, total_de_paginas: 1, registros: 1, total_de_registros: 1,
+    eventos: [{
+      codigo_registro: '9238177705', operacao: 'I',
+      campos: [
+        { campo: 'BLOQUEADO', rotulo: 'Bloqueado', valor_anterior: null, valor_novo: 'N' },
+        { campo: 'NUMERO', rotulo: 'Número da Requisição', valor_anterior: null, valor_novo: '000000000014983' },
+        { campo: 'OPERACAO', rotulo: 'Operação', valor_anterior: null, valor_novo: '21' },
+      ],
+    }],
   }));
-  assert.equal(await obterNumeroRequisicaoPelaAuditoria(9238177705, 'k', 's'), 14980);
+  assert.equal(await obterNumeroRequisicaoPelaAuditoria(9238177705, 'k', 's'), 14983);
   assert.equal(chamadas.length, 1);
+});
+
+test('limites cabem no prazo da Edge Function (150 s)', () => {
+  // pior caso: uma busca começa com o prazo quase esgotado e usa o timeout inteiro,
+  // mais ~15 s do resto da sincronização.
+  const piorCaso = mod.AUDITORIA_PRAZO_TOTAL_MS + mod.AUDITORIA_TIMEOUT_MS * mod.AUDITORIA_TENTATIVAS + 15000;
+  assert.ok(piorCaso < 150000, `pior caso ${piorCaso} ms`);
+  assert.ok(mod.AUDITORIA_TIMEOUT_MS >= 25000, 'a auditoria levou 20,6 s em 22/10');
 });
 
 test('caso de 22/10: auditoria ainda sem o número → uma busca só, sem repetir ciclos', async () => {
@@ -65,7 +80,7 @@ test('auditoria com muitas páginas: no máximo 5 por execução (a v7 ia até 5
   assert.deepEqual(chamadas.map((c) => c.param[0].pagina), [1, 2, 3, 4, 5]);
 });
 
-test('auditoria com Omie instável: 2 tentativas por página (a v7 fazia 4)', async () => {
+test('auditoria com Omie instável: 1 tentativa longa por página (a v7 fazia 4)', async () => {
   reiniciar(() => ({ faultstring: 'Consumo redundante detectado', status: 500 }));
   await assert.rejects(() => obterNumeroRequisicaoPelaAuditoria(1, 'k', 's'), /redundante/);
   assert.equal(chamadas.length, mod.AUDITORIA_TENTATIVAS);
