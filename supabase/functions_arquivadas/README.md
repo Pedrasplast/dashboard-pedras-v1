@@ -20,3 +20,7 @@ Para reativar uma delas, publique de novo a pasta correspondente
 | reconciliar-status-pedidos-compra-omie | false | **Sem autenticação** e arquivava pedidos; período fixo set–out/2026 |
 | sincronizar-pedidos-compra-omie | true | Substituída por `cron-pedidos-compra-omie` |
 | sincronizar-requisicoes-omie | true | Já quebrada: usa tabela/RPC que não existem mais; substituída por `sincronizar-requisicoes-compra-omie` |
+
+- `probe-numero-requisicao-temp` (22/10): diagnóstico do número da requisição
+  14983 na auditoria do Omie. Mostrou que a auditoria é lenta (20–120 s), o que
+  levou à v9 de `sincronizar-requisicoes-compra-omie`. Publicada como stub 410.

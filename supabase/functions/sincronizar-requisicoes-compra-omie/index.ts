@@ -3,17 +3,19 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 /*
  * Sincroniza as requisições de compra ativas do Omie.
  *
- * v8 (22/10): o número da requisição só existe na auditoria do Omie, que às
- * vezes demora a registrar requisições novas. A v7 procurava 3 vezes por
- * execução (até 50 páginas, 4 tentativas de 28 s cada) e chegou a levar
- * 132 s. Agora: 1 busca por execução, até 5 páginas, 2 tentativas de 15 s e
- * no máximo 45 s somados por execução. A próxima execução (10 min depois)
- * tenta de novo, e o número já gravado nunca é apagado.
+ * O número da requisição só existe na auditoria do Omie (ListarAuditoriaAlteracoes,
+ * campo NUMERO), e essa consulta é lenta: em 22/10 levou 20,6 s e, em outra
+ * chamada, 121 s. A v7 fazia 3 ciclos de até 50 páginas com 4 tentativas de
+ * 28 s (execução de 132 s); a v8 desistia aos 15 s, cedo demais.
+ * v9: 1 tentativa de até 60 s por página, até 5 páginas, e no máximo 50 s
+ * somados por execução (pior caso ~125 s, abaixo do limite de 150 s da Edge
+ * Function). O que não couber fica para a próxima execução (10 min depois);
+ * o número já gravado nunca é apagado.
  */
 const AUDITORIA_MAX_PAGINAS = 5;
-const AUDITORIA_TENTATIVAS = 2;
-const AUDITORIA_TIMEOUT_MS = 15000;
-const AUDITORIA_PRAZO_TOTAL_MS = 45000;
+const AUDITORIA_TENTATIVAS = 1;
+const AUDITORIA_TIMEOUT_MS = 60000;
+const AUDITORIA_PRAZO_TOTAL_MS = 50000;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
