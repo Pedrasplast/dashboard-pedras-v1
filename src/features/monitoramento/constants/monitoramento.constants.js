@@ -55,6 +55,10 @@ export const ROTINAS = Object.freeze({
     nome: "Compras futuras de matéria-prima",
     descricao: "Pedidos de compra pendentes dos materiais acompanhados.",
   },
+  "atualizar-precos-compras-mp-omie": {
+    nome: "Preços médios de matéria-prima",
+    descricao: "Busca no Omie as compras dos últimos 60 dias para as médias da Tabela de Preços.",
+  },
   "sincronizar-financeiro-omie-05h-12h": {
     nome: "Financeiro",
     descricao: "Atualiza os dados financeiros do Omie.",
