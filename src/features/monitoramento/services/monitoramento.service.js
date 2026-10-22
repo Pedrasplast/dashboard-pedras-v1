@@ -8,6 +8,8 @@ import { LIMITE_HISTORICO } from "../constants/monitoramento.constants";
    Leitura somente pelas funções do banco (só administradores):
    - monitor_rotinas(): uma linha por rotina automática.
    - monitor_historico_execucoes(rotina): últimas execuções da rotina.
+   - monitor_banco(): tamanho do banco (gravado 1x por dia).
+   - monitor_resumo(): contagem de rotinas com erro (aviso do menu).
    A tabela monitor_execucoes não é acessível diretamente.
 ========================================================= */
 
@@ -32,4 +34,24 @@ export async function buscarHistorico(rotina) {
   }
 
   return data ?? [];
+}
+
+export async function buscarBanco() {
+  const { data, error } = await supabase.rpc("monitor_banco");
+
+  if (error) {
+    throw new Error(`Erro ao consultar o tamanho do banco: ${error.message}`);
+  }
+
+  return data?.[0] ?? null;
+}
+
+export async function buscarResumo() {
+  const { data, error } = await supabase.rpc("monitor_resumo");
+
+  if (error) {
+    throw new Error(`Erro ao consultar o resumo do monitoramento: ${error.message}`);
+  }
+
+  return data?.[0] ?? { rotinas_com_erro: 0, banco_nivel: null };
 }

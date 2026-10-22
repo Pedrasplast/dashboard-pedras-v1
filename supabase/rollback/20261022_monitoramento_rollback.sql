@@ -21,6 +21,8 @@ select cron.alter_job(
   command := 'delete from cron.job_run_details where start_time < now() - interval ''14 days'';'
 );
 
+drop function if exists public.monitor_resumo();
+drop function if exists public.monitor_banco();
 drop function if exists public.monitor_limpar_antigos();
 drop function if exists public.monitor_historico_execucoes(text, integer);
 drop function if exists public.monitor_historico(text, integer);

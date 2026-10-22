@@ -7,6 +7,8 @@ import {
   prepararRotinas,
   tempoDecorrido,
   formatarDuracao,
+  formatarMegabytes,
+  quantidadeAvisos,
 } from "./monitoramento.utils";
 import { SITUACAO } from "../constants/monitoramento.constants";
 
@@ -102,5 +104,21 @@ describe("datas", () => {
     expect(formatarDuracao(72000)).toBe("1 min 12 s");
     expect(formatarDuracao(null)).toBe("—");
     expect(formatarDuracao(undefined)).toBe("—");
+  });
+});
+
+describe("banco de dados e aviso do menu", () => {
+  it("tamanho em MB (valor real de 22/10)", () => {
+    expect(formatarMegabytes(85912723)).toBe("82 MB");
+    expect(formatarMegabytes(524288000)).toBe("500 MB");
+    expect(formatarMegabytes(null)).toBe("—");
+  });
+
+  it("aviso soma rotinas com erro e banco perto do limite", () => {
+    expect(quantidadeAvisos({ rotinas_com_erro: 0, banco_nivel: "OK" })).toBe(0);
+    expect(quantidadeAvisos({ rotinas_com_erro: 2, banco_nivel: "ATENCAO" })).toBe(2);
+    expect(quantidadeAvisos({ rotinas_com_erro: 1, banco_nivel: "ALERTA" })).toBe(2);
+    expect(quantidadeAvisos({ rotinas_com_erro: 0, banco_nivel: "CRITICO" })).toBe(1);
+    expect(quantidadeAvisos(undefined)).toBe(0);
   });
 });

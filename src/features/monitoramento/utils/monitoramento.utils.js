@@ -3,6 +3,7 @@ import {
   ROTINAS_SO_BANCO,
   SITUACAO,
   ORDEM_SITUACAO,
+  NIVEIS_BANCO_ALERTA,
 } from "../constants/monitoramento.constants";
 
 /* =========================================================
@@ -191,4 +192,22 @@ export function formatarDuracao(ms) {
   const segundos = Math.round(valor / 1000);
   if (segundos < 60) return `${segundos} s`;
   return `${Math.floor(segundos / 60)} min ${dois(segundos % 60)} s`;
+}
+
+/* ---------------------------------------------------------
+   Banco de dados e aviso do menu
+--------------------------------------------------------- */
+
+export function formatarMegabytes(bytes) {
+  if (bytes === null || bytes === undefined || bytes === "") return "—";
+  const valor = Number(bytes);
+  if (!Number.isFinite(valor) || valor < 0) return "—";
+  return `${Math.round(valor / (1024 * 1024))} MB`;
+}
+
+/** Rotinas com erro + 1 se o banco passou de 80% do limite. */
+export function quantidadeAvisos(resumo) {
+  const erros = Math.max(0, Number(resumo?.rotinas_com_erro) || 0);
+  const banco = NIVEIS_BANCO_ALERTA.has(resumo?.banco_nivel) ? 1 : 0;
+  return erros + banco;
 }

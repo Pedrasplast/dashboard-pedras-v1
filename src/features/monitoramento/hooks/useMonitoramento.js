@@ -1,11 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { buscarRotinas, buscarHistorico } from "../services/monitoramento.service";
-import { prepararRotinas } from "../utils/monitoramento.utils";
+import {
+  buscarRotinas,
+  buscarHistorico,
+  buscarBanco,
+  buscarResumo,
+} from "../services/monitoramento.service";
+import { prepararRotinas, quantidadeAvisos } from "../utils/monitoramento.utils";
 import {
   INTERVALO_ATUALIZACAO,
   TEMPO_DADOS_FRESCOS,
   QUERY_KEY_ROTINAS,
+  QUERY_KEY_BANCO,
+  QUERY_KEY_RESUMO,
   queryKeyHistorico,
 } from "../constants/monitoramento.constants";
 
@@ -28,5 +35,32 @@ export function useHistoricoRotina(rotina, aberto) {
     queryFn: () => buscarHistorico(rotina),
     enabled: Boolean(rotina) && aberto,
     staleTime: TEMPO_DADOS_FRESCOS,
+  });
+}
+
+export function useBancoDados() {
+  return useQuery({
+    queryKey: QUERY_KEY_BANCO,
+    queryFn: buscarBanco,
+    staleTime: TEMPO_DADOS_FRESCOS,
+    refetchInterval: INTERVALO_ATUALIZACAO,
+    refetchIntervalInBackground: false,
+  });
+}
+
+/*
+ * Aviso no menu do administrador. Uma consulta pequena (~40 ms) a cada
+ * 5 min, só para administradores e só com a aba visível.
+ */
+export function useAvisosMonitoramento(habilitado) {
+  return useQuery({
+    queryKey: QUERY_KEY_RESUMO,
+    queryFn: buscarResumo,
+    select: quantidadeAvisos,
+    enabled: Boolean(habilitado),
+    staleTime: TEMPO_DADOS_FRESCOS,
+    refetchInterval: INTERVALO_ATUALIZACAO,
+    refetchIntervalInBackground: false,
+    retry: false,
   });
 }

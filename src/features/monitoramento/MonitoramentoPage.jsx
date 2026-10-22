@@ -4,13 +4,18 @@ import { Activity, ChevronDown, RefreshCw } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 
 import HistoricoRotina from "./components/HistoricoRotina";
-import { useRotinas } from "./hooks/useMonitoramento";
+import { useBancoDados, useRotinas } from "./hooks/useMonitoramento";
 import {
   descreverAgenda,
   formatarDataHora,
+  formatarMegabytes,
   tempoDecorrido,
 } from "./utils/monitoramento.utils";
-import { ROTULO_SITUACAO, SITUACAO } from "./constants/monitoramento.constants";
+import {
+  ROTULO_NIVEL_BANCO,
+  ROTULO_SITUACAO,
+  SITUACAO,
+} from "./constants/monitoramento.constants";
 
 import "./Monitoramento.css";
 
@@ -20,6 +25,7 @@ import "./Monitoramento.css";
 
 export default function MonitoramentoPage() {
   const { data: rotinas = [], isLoading, isError, error, refetch, isFetching, dataUpdatedAt } = useRotinas();
+  const { data: banco } = useBancoDados();
   const [soProblemas, setSoProblemas] = useState(false);
   const [aberta, setAberta] = useState(null);
 
@@ -72,6 +78,21 @@ export default function MonitoramentoPage() {
             <strong>{resumo.total}</strong>
             <span>rotinas automáticas</span>
           </div>
+          {banco && (
+            <div
+              className={`mon-resumo__item mon-banco mon-banco--${String(banco.nivel).toLowerCase()}`}
+              title={`Medido ${formatarDataHora(banco.atualizado_em)}. Limite do plano free: ${formatarMegabytes(banco.limite_bytes)}.`}
+            >
+              <strong>{Number(banco.percentual).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%</strong>
+              <span>
+                do banco usado · {formatarMegabytes(banco.tamanho_bytes)} de {formatarMegabytes(banco.limite_bytes)}
+                {banco.nivel !== "OK" && ` · ${ROTULO_NIVEL_BANCO[banco.nivel] ?? banco.nivel}`}
+              </span>
+              <span className="mon-banco__barra" aria-hidden="true">
+                <span style={{ width: `${Math.min(100, Math.max(0, Number(banco.percentual) || 0))}%` }} />
+              </span>
+            </div>
+          )}
         </section>
 
         <section className="mon-card">

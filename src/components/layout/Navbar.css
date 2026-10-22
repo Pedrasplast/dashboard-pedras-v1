@@ -600,7 +600,8 @@ body {
 
 .navbar-pedidos-badge,
 .navbar-mobile-count,
-.navbar-hamburger-badge {
+.navbar-hamburger-badge,
+.navbar-avatar-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1229,4 +1230,23 @@ body {
     transition: none !important;
     animation: none !important;
   }
+}
+/* =========================================================
+   AVISO DE MONITORAMENTO NO AVATAR (só administradores)
+========================================================= */
+
+.user-avatar {
+  position: relative;
+}
+
+.navbar-avatar-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+
+  font-size: 9px;
 }
