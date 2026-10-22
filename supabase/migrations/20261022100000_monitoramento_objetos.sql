@@ -15,9 +15,9 @@
 --      limpeza diária já existente (limpar-historico-cron-14d).
 --   4. monitor_rotinas() / monitor_historico_execucoes(): leitura só admin.
 --
--- Aplicada em partes em 22/10 (o MCP cancelava o script inteiro). Uma
--- primeira versão public.monitor_historico (sem duração) ficou no banco sem
--- acesso de ninguém e pode ser removida.
+-- Aplicada em partes em 22/10 (o MCP cancelava o script inteiro). A primeira
+-- versão public.monitor_historico (sem duração) foi removida em
+-- 20261022110000_remover_monitor_historico_antigo.sql.
 
 create table if not exists public.monitor_execucoes (
   id            bigint generated always as identity primary key,
