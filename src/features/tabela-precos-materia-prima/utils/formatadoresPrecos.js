@@ -1,8 +1,8 @@
 /* =========================================================
    TABELA DE PREÇOS — FORMATAÇÃO E ORDENAÇÃO
 
-   Preço de referência:
-   - Média ponderada de 30 dias, quando disponível.
+   Preço de referência (período = 30, 45 ou 60 dias):
+   - Média ponderada do período, quando disponível.
    - Caso contrário, último preço válido de compra.
    - Se ambos não existirem, preço indisponível.
 
@@ -25,13 +25,13 @@ export function precoValido(valor) {
   return Number.isFinite(convertido) && convertido > 0 ? convertido : null;
 }
 
-export function obterPrecoReferencia(item) {
-  const media = precoValido(item?.preco_medio_30d ?? item?.precoMedio30d);
-  const quantidade30d = numeroPreco(item?.quantidade_30d ?? item?.quantidade30d);
+export function obterPrecoReferencia(item, dias = 30) {
+  const media = precoValido(item?.[`preco_medio_${dias}d`] ?? item?.[`precoMedio${dias}d`]);
+  const quantidade = numeroPreco(item?.[`quantidade_${dias}d`] ?? item?.[`quantidade${dias}d`]);
   const ultimo = precoValido(item?.ultimo_preco ?? item?.ultimoPreco);
 
-  if (media !== null && quantidade30d > 0) {
-    return { valor: media, origem: "media_30d" };
+  if (media !== null && quantidade > 0) {
+    return { valor: media, origem: `media_${dias}d` };
   }
   if (ultimo !== null) {
     return { valor: ultimo, origem: "ultima_compra" };
@@ -81,6 +81,7 @@ export function formatarDataPreco(valor) {
 }
 
 export function filtrarTabelaPrecos(dados, filtros = {}) {
+  const dias = filtros.periodo ?? 30;
   const termo = String(filtros.busca ?? "").trim().toLocaleLowerCase("pt-BR");
   const registros = (Array.isArray(dados) ? dados : []).filter((item) => {
     if (!termo) return true;
@@ -96,9 +97,9 @@ export function filtrarTabelaPrecos(dados, filtros = {}) {
       case "ultima_compra":
         return String(b.ultima_compra ?? "").localeCompare(String(a.ultima_compra ?? ""));
       case "maior_preco":
-        return numeroPreco(obterPrecoReferencia(b).valor) - numeroPreco(obterPrecoReferencia(a).valor);
+        return numeroPreco(obterPrecoReferencia(b, dias).valor) - numeroPreco(obterPrecoReferencia(a, dias).valor);
       case "menor_preco":
-        return numeroPreco(obterPrecoReferencia(a).valor) - numeroPreco(obterPrecoReferencia(b).valor);
+        return numeroPreco(obterPrecoReferencia(a, dias).valor) - numeroPreco(obterPrecoReferencia(b, dias).valor);
       default:
         return String(a.descricao ?? "").localeCompare(String(b.descricao ?? ""), "pt-BR");
     }

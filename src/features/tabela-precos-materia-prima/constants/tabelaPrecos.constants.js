@@ -29,7 +29,19 @@ export const CAMPOS_TABELA_PRECOS = [
   "quantidade_ultima_compra",
   "quantidade_30d",
   "preco_medio_30d",
+  "compras_30d",
+  "quantidade_45d",
+  "preco_medio_45d",
+  "compras_45d",
+  "quantidade_60d",
+  "preco_medio_60d",
+  "compras_60d",
 ].join(",");
+
+/* Períodos da média (botões da tela). A média só vem com 2+ compras no
+   período; senão a tela mostra o último preço. */
+export const PERIODOS_MEDIA = Object.freeze([30, 45, 60]);
+export const PERIODO_PADRAO = 30;
 
 export const ORDENACOES_PRECOS = Object.freeze([
   {
