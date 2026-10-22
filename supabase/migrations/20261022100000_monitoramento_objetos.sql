@@ -9,10 +9,15 @@
 --      (rotina + request_id do pg_net), completada com o resultado.
 --   2. monitor_disparar(): igual a net.http_post, mas anota a rotina.
 --      Os crons passam a chamar public.monitor_disparar('<rotina>', ...).
---   3. monitor_coletar(): copia as respostas do pg_net antes que expirem e
---      apaga registros com mais de 14 dias. Roda a cada disparo e a cada
---      consulta da tela (sem cron novo).
---   4. monitor_rotinas() / monitor_historico(): leitura só para admin.
+--   3. monitor_coletar(): copia as respostas do pg_net antes que expirem.
+--      Roda a cada disparo e a cada consulta da tela (sem cron novo).
+--      monitor_limpar_antigos() apaga o que tem mais de 14 dias e roda na
+--      limpeza diária já existente (limpar-historico-cron-14d).
+--   4. monitor_rotinas() / monitor_historico_execucoes(): leitura só admin.
+--
+-- Aplicada em partes em 22/10 (o MCP cancelava o script inteiro). Uma
+-- primeira versão public.monitor_historico (sem duração) ficou no banco sem
+-- acesso de ninguém e pode ser removida.
 
 create table if not exists public.monitor_execucoes (
   id            bigint generated always as identity primary key,
@@ -23,7 +28,8 @@ create table if not exists public.monitor_execucoes (
   status_http   integer,
   sucesso       boolean,
   erro          text,
-  resumo        text
+  resumo        text,
+  duracao_ms    integer
 );
 
 create index if not exists monitor_execucoes_rotina_idx
@@ -48,6 +54,9 @@ begin
      set concluido_em = x.created,
          status_http  = x.status_code,
          sucesso      = x.ok,
+         -- created do pg_net é a hora do pedido; a duração vem da própria função.
+         duracao_ms   = case when jsonb_typeof(x.j -> 'duracao_ms') = 'number'
+                             then (x.j ->> 'duracao_ms')::numeric::integer end,
          erro = case
                   when x.ok then null
                   when x.timed_out then 'Tempo limite excedido'
@@ -80,9 +89,6 @@ begin
          erro = 'Sem resposta da função (expirou no pg_net)'
    where concluido_em is null
      and disparado_em < now() - interval '6 hours';
-
-  delete from public.monitor_execucoes
-   where disparado_em < now() - interval '14 days';
 
   return v_coletadas;
 exception when others then
@@ -203,10 +209,10 @@ begin
 end;
 $$;
 
-create or replace function public.monitor_historico(p_rotina text, p_limite integer default 30)
+create or replace function public.monitor_historico_execucoes(p_rotina text, p_limite integer default 30)
 returns table (
   disparado_em  timestamptz,
-  concluido_em  timestamptz,
+  duracao_ms    integer,
   sucesso       boolean,
   status_http   integer,
   erro          text,
@@ -224,7 +230,7 @@ begin
   perform public.monitor_coletar();
 
   return query
-  select me.disparado_em, me.concluido_em, me.sucesso, me.status_http, me.erro, me.resumo
+  select me.disparado_em, me.duracao_ms, me.sucesso, me.status_http, me.erro, me.resumo
     from public.monitor_execucoes me
    where me.rotina = p_rotina
    order by me.disparado_em desc
@@ -235,28 +241,15 @@ $$;
 revoke all on function public.monitor_coletar() from public, anon, authenticated;
 revoke all on function public.monitor_disparar(text, text, jsonb, jsonb, jsonb, integer) from public, anon, authenticated;
 revoke all on function public.monitor_rotinas() from public, anon;
-revoke all on function public.monitor_historico(text, integer) from public, anon;
+revoke all on function public.monitor_historico_execucoes(text, integer) from public, anon;
 grant execute on function public.monitor_rotinas() to authenticated;
-grant execute on function public.monitor_historico(text, integer) to authenticated;
+grant execute on function public.monitor_historico_execucoes(text, integer) to authenticated;
 
--- ---------------------------------------------------------------------------
--- Crons que chamam Edge Functions passam a anotar a rotina.
--- Troca apenas "net.http_post(" por "public.monitor_disparar('<rotina>', ";
--- horários e demais argumentos ficam iguais.
-do $$
-declare
-  j record;
-begin
-  for j in
-    select jobid, jobname, command
-      from cron.job
-     where command like '%net.http_post(%'
-  loop
-    perform cron.alter_job(
-      job_id  := j.jobid,
-      command := replace(j.command, 'net.http_post(',
-                         'public.monitor_disparar(' || quote_literal(j.jobname) || ', ')
-    );
-  end loop;
-end;
+
+create or replace function public.monitor_limpar_antigos()
+returns integer language sql security definer set search_path = '' as $$
+  with apagados as (
+    delete from public.monitor_execucoes where disparado_em < now() - interval '14 days' returning 1
+  ) select count(*)::integer from apagados;
 $$;
+revoke all on function public.monitor_limpar_antigos() from public, anon, authenticated;

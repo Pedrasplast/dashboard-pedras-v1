@@ -1,0 +1,314 @@
+/* =========================================================
+   MONITORAMENTO DAS ROTINAS
+   Segue o padrão visual das telas novas (cards brancos,
+   bordas suaves) e os tokens de styles/tokens.css.
+========================================================= */
+
+.mon-page {
+  min-height: 100%;
+  background: var(--color-page-background);
+}
+
+.mon-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 70px auto 0;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* ---------- Botão ---------- */
+
+.mon-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.mon-botao:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.mon-botao:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.mon-girando {
+  animation: mon-girar 1s linear infinite;
+}
+
+@keyframes mon-girar {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Resumo ---------- */
+
+.mon-resumo {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.mon-resumo__item {
+  padding: 16px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mon-resumo__item strong {
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.mon-resumo__item span {
+  font-size: var(--font-size-body);
+  color: var(--color-text-muted);
+}
+
+.mon-resumo__item--ok strong { color: var(--color-success); }
+.mon-resumo__item--erro { border-color: #fecaca; background: var(--color-danger-soft); }
+.mon-resumo__item--erro strong { color: var(--color-danger); }
+.mon-resumo__item--alerta strong { color: var(--color-warning); }
+
+/* ---------- Card e lista ---------- */
+
+.mon-card {
+  margin-top: 18px;
+  padding: 18px;
+  background: var(--color-surface);
+  border: 1px solid #dbe7f3;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.mon-card__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.mon-card__atualizado {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.mon-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-md);
+  color: var(--color-text-strong);
+  cursor: pointer;
+}
+
+.mon-vazio {
+  margin: 16px 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+}
+
+.mon-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mon-rotina {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.mon-rotina--ok { border-left-color: var(--color-success); }
+.mon-rotina--erro { border-left-color: var(--color-danger); }
+.mon-rotina--rodando { border-left-color: var(--color-info); }
+.mon-rotina--desativada { opacity: 0.65; }
+
+.mon-rotina__cabecalho {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 170px 110px 24px;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.mon-rotina__cabecalho:hover {
+  background: var(--color-surface-subtle);
+}
+
+.mon-rotina__nome,
+.mon-rotina__ultima,
+.mon-rotina__falhas {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mon-rotina__nome strong {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+}
+
+.mon-rotina__cabecalho small {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.mon-rotina__ultima strong,
+.mon-rotina__falhas strong {
+  font-size: var(--font-size-body);
+  color: var(--color-text-strong);
+}
+
+.mon-rotina__seta {
+  color: var(--color-text-light);
+  transition: transform 0.15s ease;
+}
+
+.mon-rotina__cabecalho[aria-expanded="true"] .mon-rotina__seta {
+  transform: rotate(180deg);
+}
+
+.mon-rotina__erro {
+  margin: 0;
+  padding: 8px 14px 12px 140px;
+  font-size: var(--font-size-body);
+  color: var(--color-danger-hover);
+  word-break: break-word;
+}
+
+.mon-rotina__erro span {
+  color: var(--color-text-muted);
+}
+
+.mon-rotina__detalhe {
+  padding: 4px 14px 14px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+}
+
+.mon-rotina__descricao {
+  margin: 10px 0;
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Selos ---------- */
+
+.mon-selo {
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.mon-selo--ok { background: var(--color-success-soft); color: var(--color-success-hover); }
+.mon-selo--erro { background: var(--color-danger-soft); color: var(--color-danger-hover); }
+.mon-selo--rodando { background: var(--color-info-soft); color: var(--color-primary-hover); }
+
+.mon-texto-erro { color: var(--color-danger-hover); }
+
+/* ---------- Histórico ---------- */
+
+.mon-historico {
+  overflow-x: auto;
+}
+
+.mon-historico table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-body);
+}
+
+.mon-historico th {
+  text-align: left;
+  padding: 8px 10px;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.mon-historico td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-strong);
+  vertical-align: top;
+}
+
+.mon-historico__linha--erro td { background: #fff7f7; }
+
+.mon-historico__detalhe {
+  word-break: break-word;
+}
+
+.mon-historico__vazio {
+  margin: 10px 0 4px;
+  font-size: var(--font-size-body);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Telas menores ---------- */
+
+@media (max-width: 900px) {
+  .mon-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .mon-rotina__cabecalho {
+    grid-template-columns: minmax(0, 1fr) 24px;
+    grid-template-areas:
+      "selo seta"
+      "nome nome"
+      "ultima ultima"
+      "falhas falhas";
+    gap: 8px;
+  }
+
+  .mon-rotina__cabecalho .mon-selo { grid-area: selo; justify-self: start; }
+  .mon-rotina__nome { grid-area: nome; }
+  .mon-rotina__ultima { grid-area: ultima; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+  .mon-rotina__falhas { grid-area: falhas; flex-direction: row; gap: 6px; align-items: baseline; }
+  .mon-rotina__seta { grid-area: seta; justify-self: end; }
+  .mon-rotina__erro { padding-left: 14px; }
+}
+
+@media (max-width: 520px) {
+  .mon-container { padding: 16px; }
+  .mon-resumo { grid-template-columns: minmax(0, 1fr); }
+}
