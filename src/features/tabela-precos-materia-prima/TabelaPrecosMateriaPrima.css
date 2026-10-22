@@ -78,168 +78,165 @@
   font-weight: 600;
 }
 
+/* Regra do cálculo, abaixo da descrição do card */
+.tp-card-cabecalho p strong {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tp-card-cabecalho p.tp-regra {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.tp-regra svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
 /* =========================================================
    FILTROS
+   Painel no padrão do Design System: campos com o mesmo
+   rótulo (CampoFiltro) e a mesma altura de controle.
 ========================================================= */
 
 .tp-filtros {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) 210px auto auto;
-  gap: 14px;
+  grid-template-columns: minmax(260px, 1fr) 200px auto auto;
+  gap: var(--space-4);
   align-items: end;
-  margin-bottom: 20px;
-}
-
-.tp-filtro-grupo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.tp-filtro-grupo label {
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 700;
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
 .tp-busca {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: #ffffff;
+  gap: var(--space-2);
+  height: var(--control-height-lg);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-sizing: border-box;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
-.tp-busca:focus-within {
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+.tp-busca:focus-within,
+.tp-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
 
 .tp-busca svg {
-  color: #64748b;
   flex: 0 0 auto;
+  color: var(--color-text-light);
 }
 
 .tp-busca input {
   flex: 1;
   min-width: 0;
+  height: 100%;
   border: 0;
   outline: none;
   background: transparent;
-  color: #0f172a;
-  font-size: 14px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-body);
 }
 
 .tp-busca input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
-.tp-select {
+.tp-filtros .tp-select {
   width: 100%;
-  min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #334155;
-  font-size: 14px;
+  height: var(--control-height-lg);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-body);
   outline: none;
+  cursor: pointer;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
-.tp-select:focus {
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-/* Botões do período da média */
-.tp-filtro--periodo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.tp-filtro--periodo > span {
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 700;
-}
-
+/* Botões do período da média (controle segmentado) */
 .tp-periodos {
-  display: inline-flex;
-  min-height: 46px;
-  padding: 4px;
-  gap: 4px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: #f8fafc;
+  display: flex;
+  height: var(--control-height-lg);
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   box-sizing: border-box;
 }
 
 .tp-periodo {
   flex: 1 1 0;
-  padding: 0 14px;
+  padding: 0 var(--space-3);
   border: 0;
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: #475569;
-  font-size: 14px;
-  font-weight: 700;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   white-space: nowrap;
   cursor: pointer;
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .tp-periodo:hover {
-  background: #e2e8f0;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .tp-periodo--ativo,
 .tp-periodo--ativo:hover {
-  background: #2563eb;
-  color: #ffffff;
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
 }
 
 .tp-periodo:focus-visible {
-  outline: 3px solid rgba(59, 130, 246, 0.35);
-  outline-offset: 1px;
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
 
 /* Botão padrão compartilhado */
 .tp-acoes-filtros {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .tp-page .filtros-compartilhados-limpar {
-  min-height: 46px;
-  padding: 0 16px;
-  border-radius: 12px;
+  height: var(--control-height-lg);
+  min-height: var(--control-height-lg);
 }
 
 /* Estado ativo do botão limpar */
 .tp-page .filtros-compartilhados-limpar.filtros-limpar-ativo {
-  color: #dc2626;
-  border-color: #fca5a5;
-  background: #fef2f2;
-}
-
-.tp-page .filtros-compartilhados-limpar.filtros-limpar-ativo:hover {
-  background: #fee2e2;
-  border-color: #ef4444;
-}
-
-.tp-page .filtros-compartilhados-limpar:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  color: var(--color-danger-hover);
+  border-color: #fecaca;
+  background: var(--color-danger-soft);
 }
 
 /* =========================================================
@@ -396,6 +393,16 @@
 ========================================================= */
 
 @media (max-width: 1100px) {
+  .tp-filtros {
+    grid-template-columns: 1fr 1fr auto;
+  }
+
+  .tp-filtro--busca {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
   .tp-filtros {
     grid-template-columns: 1fr;
   }

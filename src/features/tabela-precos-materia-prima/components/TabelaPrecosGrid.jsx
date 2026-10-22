@@ -26,9 +26,8 @@ export default function TabelaPrecosGrid({ registros = [], periodo = 30 }) {
             <th>Material</th>
             <th>Última compra</th>
             <th>Último preço</th>
-            <th>Qtd. última compra (kg)</th>
             <th>Qtd. últimos {periodo} dias (kg)</th>
-            <th>Compras {periodo} dias</th>
+            <th>Valor total últimos {periodo} dias</th>
             <th>Preço Médio {periodo} dias</th>
           </tr>
         </thead>
@@ -41,9 +40,8 @@ export default function TabelaPrecosGrid({ registros = [], periodo = 30 }) {
                 <td className="tp-material">{item.descricao || "—"}</td>
                 <td>{formatarDataPreco(item.ultima_compra)}</td>
                 <td className="tp-preco">{formatarPreco(item.ultimo_preco)}</td>
-                <td className="tp-numero">{formatarQuantidadePreco(item.quantidade_ultima_compra)}</td>
                 <td className="tp-numero">{formatarQuantidadePreco(item[`quantidade_${periodo}d`])}</td>
-                <td className="tp-numero">{formatarQuantidadePreco(item[`compras_${periodo}d`])}</td>
+                <td className="tp-numero">{formatarPreco(item[`valor_total_${periodo}d`])}</td>
                 <td className="tp-preco">
                   <div>{formatarPreco(referencia.valor)}</div>
                   {referencia.origem === "ultima_compra" && (

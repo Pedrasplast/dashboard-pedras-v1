@@ -26,7 +26,6 @@ export const CAMPOS_TABELA_PRECOS = [
   "unidade",
   "ultima_compra",
   "ultimo_preco",
-  "quantidade_ultima_compra",
   "quantidade_30d",
   "preco_medio_30d",
   "compras_30d",
@@ -36,6 +35,9 @@ export const CAMPOS_TABELA_PRECOS = [
   "quantidade_60d",
   "preco_medio_60d",
   "compras_60d",
+  "valor_total_30d",
+  "valor_total_45d",
+  "valor_total_60d",
 ].join(",");
 
 /* Períodos da média (botões da tela). A média só vem com 2+ compras no
@@ -43,15 +45,10 @@ export const CAMPOS_TABELA_PRECOS = [
 export const PERIODOS_MEDIA = Object.freeze([30, 45, 60]);
 export const PERIODO_PADRAO = 30;
 
+/* Padrão da tela: maior preço. */
+export const ORDENACAO_PADRAO = "maior_preco";
+
 export const ORDENACOES_PRECOS = Object.freeze([
-  {
-    value: "descricao",
-    label: "Material (A-Z)",
-  },
-  {
-    value: "ultima_compra",
-    label: "Compra mais recente",
-  },
   {
     value: "maior_preco",
     label: "Maior preço",
@@ -59,5 +56,13 @@ export const ORDENACOES_PRECOS = Object.freeze([
   {
     value: "menor_preco",
     label: "Menor preço",
+  },
+  {
+    value: "descricao",
+    label: "Material (A-Z)",
+  },
+  {
+    value: "ultima_compra",
+    label: "Compra mais recente",
   },
 ]);
