@@ -24,3 +24,5 @@ Para reativar uma delas, publique de novo a pasta correspondente
 - `probe-numero-requisicao-temp` (22/10): diagnóstico do número da requisição
   14983 na auditoria do Omie. Mostrou que a auditoria é lenta (20–120 s), o que
   levou à v9 de `sincronizar-requisicoes-compra-omie`. Publicada como stub 410.
+- `probe-situacao-pedidos-compra-temp` (22/10): situação real dos pedidos de
+  compra no Omie para a regra da média de preços. Ver README da pasta.
