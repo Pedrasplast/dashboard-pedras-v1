@@ -67,6 +67,10 @@ export const ROTINAS = Object.freeze({
     nome: "Dashboard MP (Omie): notas de entrada",
     descricao: "Data de recebimento e nº da NF dos pedidos do Suprimentos PP.",
   },
+  "atualizar-estrutura-produtos-omie": {
+    nome: "Nec. Compra MP: estrutura dos produtos",
+    descricao: "Lê no Omie a matéria-prima da estrutura dos produtos em pedido.",
+  },
   "sincronizar-financeiro-omie-05h-12h": {
     nome: "Financeiro",
     descricao: "Atualiza os dados financeiros do Omie.",
