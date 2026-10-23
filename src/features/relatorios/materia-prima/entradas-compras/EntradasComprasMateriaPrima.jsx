@@ -322,7 +322,16 @@ function TabelaRelatorio({
                       A receber
                     </span>
                   )
-                  : formatarData(registro.recebido)}
+                  : registro.situacao === "ENCERRADA"
+                    ? (
+                      <span
+                        className="entradas-compras-encerrado"
+                        title="Pedido encerrado no Omie sem recebimento vinculado"
+                      >
+                        Encerrado
+                      </span>
+                    )
+                    : formatarData(registro.recebido)}
               </td>
 
               <td>
@@ -436,6 +445,13 @@ export default function EntradasComprasMateriaPrima({
       if (
         filtros.situacao === "FUTURAS" &&
         registro.situacao !== "FUTURA"
+      ) {
+        return false;
+      }
+
+      if (
+        filtros.situacao === "ENCERRADAS" &&
+        registro.situacao !== "ENCERRADA"
       ) {
         return false;
       }

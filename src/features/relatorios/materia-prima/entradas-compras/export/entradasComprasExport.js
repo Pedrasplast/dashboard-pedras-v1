@@ -9,7 +9,9 @@ export function criarDadosExportacaoEntradasCompras(
     recebido:
       registro.situacao === "FUTURA"
         ? "A receber"
-        : registro.recebido || "",
+        : registro.situacao === "ENCERRADA"
+          ? "Encerrado"
+          : registro.recebido || "",
 
     emissao:
       registro.emissao || "",

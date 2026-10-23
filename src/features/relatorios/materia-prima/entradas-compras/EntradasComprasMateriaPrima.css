@@ -208,6 +208,18 @@
   white-space: nowrap;
 }
 
+.entradas-compras-encerrado {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .entradas-compras-footer {
   gap: 14px;
   flex-wrap: wrap;
