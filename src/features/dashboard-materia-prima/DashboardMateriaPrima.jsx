@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -37,6 +38,7 @@ import {
 import {
   adicionarDias,
   formatarDataISO,
+  periodoMesAtual,
 } from "./dashboardMateriaPrimaUtils.js";
 
 import "./DashboardMateriaPrima.css";
@@ -80,6 +82,7 @@ function carregarFiltros() {
   ) {
     return {
       ...FILTROS_PADRAO,
+      ...periodoMesAtual(),
     };
   }
 
@@ -92,6 +95,7 @@ function carregarFiltros() {
     if (!salvo) {
       return {
         ...FILTROS_PADRAO,
+        ...periodoMesAtual(),
       };
     }
 
@@ -100,10 +104,13 @@ function carregarFiltros() {
       ...JSON.parse(
         salvo,
       ),
+      /* O período sempre abre no mês atual (os demais filtros ficam salvos). */
+      ...periodoMesAtual(),
     };
   } catch {
     return {
       ...FILTROS_PADRAO,
+      ...periodoMesAtual(),
     };
   }
 }
@@ -121,6 +128,89 @@ export default function DashboardMateriaPrima() {
     useState(
       carregarFiltros,
     );
+
+  /* =======================================================
+     MÊS ATUAL AUTOMÁTICO
+
+     Se o período ainda é o mês atual automático e o mês
+     virar com a tela aberta, passa para o novo mês ao
+     voltar para a tela. Período escolhido à mão não muda.
+  ======================================================= */
+
+  const periodoAutomaticoRef =
+    useRef(
+      periodoMesAtual(),
+    );
+
+  useEffect(
+    () => {
+      function atualizarMes() {
+        const novo =
+          periodoMesAtual();
+
+        const anterior =
+          periodoAutomaticoRef.current;
+
+        if (
+          novo.dataInicial ===
+          anterior.dataInicial
+        ) {
+          return;
+        }
+
+        periodoAutomaticoRef.current =
+          novo;
+
+        setFiltros(
+          (
+            atual,
+          ) =>
+            atual.dataInicial ===
+              anterior.dataInicial &&
+            atual.dataFinal ===
+              anterior.dataFinal
+              ? {
+                  ...atual,
+                  ...novo,
+                }
+              : atual,
+        );
+      }
+
+      window.addEventListener(
+        "focus",
+        atualizarMes,
+      );
+
+      document.addEventListener(
+        "visibilitychange",
+        atualizarMes,
+      );
+
+      const intervalo =
+        window.setInterval(
+          atualizarMes,
+          60 * 60 * 1000,
+        );
+
+      return () => {
+        window.removeEventListener(
+          "focus",
+          atualizarMes,
+        );
+
+        document.removeEventListener(
+          "visibilitychange",
+          atualizarMes,
+        );
+
+        window.clearInterval(
+          intervalo,
+        );
+      };
+    },
+    [],
+  );
 
   const {
     dataInicial,
@@ -475,8 +565,15 @@ export default function DashboardMateriaPrima() {
   ======================================================= */
 
   function limparFiltros() {
+    const periodo =
+      periodoMesAtual();
+
+    periodoAutomaticoRef.current =
+      periodo;
+
     setFiltros({
       ...FILTROS_PADRAO,
+      ...periodo,
     });
   }
 
@@ -549,6 +646,10 @@ export default function DashboardMateriaPrima() {
 
         materialPadrao={
           MATERIAL_PADRAO
+        }
+
+        periodoPadrao={
+          periodoAutomaticoRef.current
         }
 
         onDataInicialChange={
