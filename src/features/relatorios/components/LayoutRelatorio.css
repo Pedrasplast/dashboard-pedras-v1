@@ -941,3 +941,328 @@
     flex-shrink: 0;
   }
 }
+
+/* =========================================================
+   FILTRO DE PRODUÇÃO/PARADAS (FiltrosDashboard) NO PADRÃO
+   O componente nasceu para a barra escura do dashboard; aqui
+   recebe o visual claro do layout dos relatórios.
+========================================================= */
+
+.rl .rl-filtros-corpo .filter-section {
+  display: flex !important;
+  flex-direction: column;
+  gap: 4px !important;
+}
+
+/* Rótulos (PERÍODO, INJETORA, TIPO...) iguais aos demais */
+.rl .rl-filtros-corpo .filter-section > label,
+.rl .rl-filtros-corpo .periodo-relatorio-label {
+  margin: 6px 0 0 !important;
+  color: var(--rl-texto-2) !important;
+  font-size: 0.66rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+}
+
+.rl .rl-filtros-corpo .filter-section > label:first-child,
+.rl .rl-filtros-corpo .periodo-relatorio-area .periodo-relatorio-label {
+  margin-top: 0 !important;
+}
+
+/* Período: rótulo + "Limpar filtros" na mesma linha, datas abaixo */
+.rl .rl-filtros-corpo .periodo-relatorio-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+}
+
+.rl .rl-filtros-corpo .periodo-relatorio-linha {
+  display: block;
+  width: 100%;
+}
+
+.rl .rl-filtros-corpo .clear-date-btn-relatorio {
+  position: absolute;
+  top: -4px;
+  right: 0;
+
+  height: 22px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 9px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  background: #ffffff;
+  border: 1px solid var(--rl-borda);
+  border-radius: 999px;
+  box-shadow: none;
+
+  color: var(--rl-texto-2);
+  font-size: 0;
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.rl .rl-filtros-corpo .clear-date-btn-relatorio::before {
+  content: "↺";
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.rl .rl-filtros-corpo .clear-date-btn-relatorio::after {
+  content: "Limpar filtros";
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.rl .rl-filtros-corpo .clear-date-btn-relatorio:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.rl .rl-filtros-corpo .clear-date-btn-relatorio:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Campos de data (botão que abre o calendário) */
+.rl .rl-filtros-corpo .calendar-field {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: none;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger:hover:not(:disabled) {
+  border-color: #94a3b8;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--rl-texto);
+  font-size: 0.76rem !important;
+  font-weight: 600;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger .calendar-trigger-placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger:disabled {
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+
+.rl .rl-filtros-corpo .calendar-empty {
+  margin-top: 4px;
+  color: #b45309;
+  font-size: 0.68rem;
+}
+
+/* Tipo: opções legíveis, uma por linha */
+.rl .rl-filtros-corpo .tipo-checkbox-group {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 5px !important;
+  width: 100%;
+  margin: 0 !important;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  margin: 0;
+  padding: 5px 9px !important;
+
+  background: #ffffff !important;
+  border: 1px solid var(--rl-borda) !important;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  cursor: pointer;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.rl .rl-filtros-corpo .tipo-label-conteudo {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.rl .rl-filtros-corpo .tipo-label-numero {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+
+  width: 20px !important;
+  height: 20px !important;
+
+  background: #eef4ff !important;
+  border-radius: 5px;
+
+  color: #2563eb !important;
+  font-size: 0.66rem !important;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.rl .rl-filtros-corpo .tipo-label-descricao {
+  color: #334155 !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25;
+  opacity: 1 !important;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) {
+  background: #f4f8ff !important;
+  border-color: #93b4f0 !important;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) .tipo-label-numero {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) .tipo-label-descricao {
+  color: #1d4ed8 !important;
+}
+
+/* Select desabilitado com aparência de desabilitado, sem bloco cinza escuro */
+.rl .rl-filtros-corpo select:disabled {
+  background: #f8fafc !important;
+  color: #94a3b8 !important;
+  border-color: var(--rl-borda) !important;
+}
+
+/* Calendário: abre como lista suspensa na largura da coluna de filtros
+   (antes ficava espremido dentro do campo "Data inicial"). */
+.rl .rl-filtros-corpo .periodo-relatorio-area .calendar-field {
+  position: static !important;
+}
+
+.rl .rl-filtros-corpo .periodo-relatorio-area .calendar-popover {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 40;
+
+  bottom: auto !important;
+  transform: none !important;
+
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 8px !important;
+
+  background: #ffffff;
+  border: 1px solid var(--rl-borda);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16), 0 3px 8px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-root {
+  --rdp-day-height: 30px;
+  --rdp-day-width: 30px;
+  --rdp-day_button-height: 28px;
+  --rdp-day_button-width: 28px;
+  margin: 0 auto;
+  font-size: 0.72rem;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-months,
+.rl .rl-filtros-corpo .calendar-popover .rdp-month {
+  max-width: none;
+  width: 100%;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-month_grid {
+  width: 100%;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-month_caption {
+  min-height: 32px;
+  padding: 0 34px;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-caption_label {
+  font-size: 0.78rem;
+}
+
+.rl .rl-filtros-corpo .calendar-popover .rdp-weekday {
+  font-size: 0.6rem;
+}
+
+/* Texto do campo de data à esquerda e centralizado na altura */
+.rl .rl-filtros-corpo .calendar-trigger {
+  padding: 0 10px !important;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger strong {
+  display: block;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left;
+  line-height: 1 !important;
+}
+
+/* Na gaveta (tablet/celular) a coluna de filtros rola e o calendário
+   continua dentro dela. */
+@media (max-width: 1024px) {
+  .rl .rl-filtros-corpo .periodo-relatorio-area .calendar-popover {
+    top: calc(100% + 4px) !important;
+  }
+}
