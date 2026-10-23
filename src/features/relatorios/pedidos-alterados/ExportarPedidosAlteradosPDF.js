@@ -1,3 +1,5 @@
+import { COR_PDF, desenharCabecalhoPdf, desenharRodapePdf } from "../exportacao/padraoPdf";
+
 /* =========================================================
    EXPORTAÇÃO PDF - PEDIDOS ALTERADOS
 
@@ -136,93 +138,19 @@ export async function exportarPdfPedidosAlterados({
 
 
   /* =======================================================
-     CABEÇALHO
+     CABEÇALHO (padrão dos relatórios)
   ======================================================= */
 
-  doc.setFont(
-    "helvetica",
-    "bold",
-  );
-
-  doc.setFontSize(16);
-
-  doc.setTextColor(
-    15,
-    23,
-    42,
-  );
-
-
-  doc.text(
-    "RELATÓRIO DE PEDIDOS ALTERADOS",
+  y = desenharCabecalhoPdf(doc, {
+    titulo: "Pedidos Alterados",
+    categoria: "Pedidos",
+    informacoes: [
+      `Período: ${formatarFiltroData(dataInicial)} até ${formatarFiltroData(dataFinal)}`,
+      pesquisa ? `Pesquisa: ${pesquisa}` : null,
+    ],
     margem,
     y,
-  );
-
-
-  y += 7;
-
-
-  doc.setFont(
-    "helvetica",
-    "normal",
-  );
-
-  doc.setFontSize(8.5);
-
-  doc.setTextColor(
-    100,
-    116,
-    139,
-  );
-
-
-  doc.text(
-    `Período: ${formatarFiltroData(
-      dataInicial,
-    )} até ${formatarFiltroData(
-      dataFinal,
-    )}`,
-    margem,
-    y,
-  );
-
-
-  y += 5;
-
-
-  if (pesquisa) {
-    const linhasPesquisa =
-      textoQuebrado(
-        `Pesquisa: ${pesquisa}`,
-        larguraUtil,
-      );
-
-
-    doc.text(
-      linhasPesquisa,
-      margem,
-      y,
-    );
-
-
-    y +=
-      linhasPesquisa.length *
-      4;
-  }
-
-
-  doc.text(
-    `Emitido em ${new Date().toLocaleString(
-      "pt-BR",
-    )}`,
-    margem,
-    y,
-  );
-
-
-  y += 9;
-
+  });
 
   /* =======================================================
      PEDIDOS
@@ -242,17 +170,9 @@ export async function exportarPdfPedidosAlterados({
        CABEÇALHO DO PEDIDO
     ===================================================== */
 
-    doc.setFillColor(
-      239,
-      246,
-      255,
-    );
+    doc.setFillColor(...COR_PDF.azulClaro);
 
-    doc.setDrawColor(
-      191,
-      219,
-      254,
-    );
+    doc.setDrawColor(...COR_PDF.bordaAzul);
 
 
     doc.roundedRect(
@@ -273,11 +193,7 @@ export async function exportarPdfPedidosAlterados({
 
     doc.setFontSize(10);
 
-    doc.setTextColor(
-      29,
-      78,
-      216,
-    );
+    doc.setTextColor(...COR_PDF.azul);
 
 
     doc.text(
@@ -651,11 +567,7 @@ export async function exportarPdfPedidosAlterados({
           "bold",
         );
 
-        doc.setTextColor(
-          29,
-          78,
-          216,
-        );
+        doc.setTextColor(...COR_PDF.azul);
 
 
         doc.text(
@@ -686,49 +598,10 @@ export async function exportarPdfPedidosAlterados({
 
 
   /* =======================================================
-     PAGINAÇÃO
+     RODAPÉ (padrão dos relatórios)
   ======================================================= */
 
-  const totalPaginas =
-    doc.getNumberOfPages();
-
-
-  for (
-    let pagina = 1;
-    pagina <= totalPaginas;
-    pagina += 1
-  ) {
-    doc.setPage(pagina);
-
-
-    doc.setFont(
-      "helvetica",
-      "normal",
-    );
-
-    doc.setFontSize(7);
-
-    doc.setTextColor(
-      148,
-      163,
-      184,
-    );
-
-
-    doc.text(
-      `Página ${pagina} de ${totalPaginas}`,
-      larguraPagina - margem,
-      alturaPagina - 6,
-      {
-        align: "right",
-      },
-    );
-  }
-
-
-  /* =======================================================
-     DOWNLOAD
-  ======================================================= */
+  desenharRodapePdf(doc, { titulo: "Pedidos Alterados", margem });
 
   doc.save(
     obterNomeArquivo(),

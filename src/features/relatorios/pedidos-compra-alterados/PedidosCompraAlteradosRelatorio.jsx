@@ -5,15 +5,14 @@ import {
   FiAlertTriangle,
   FiChevronDown,
   FiChevronUp,
-  FiDownload,
   FiEdit3,
-  FiFileText,
   FiSearch,
   FiCheckCircle,
   FiClock,
 } from "react-icons/fi";
 
 import Paginacao from "@/components/paginacao/Paginacao";
+import LayoutRelatorio from "../components/LayoutRelatorio";
 import { supabase } from "@/lib/supabaseClient";
 
 import {
@@ -973,121 +972,21 @@ export default function PedidosCompraAlteradosRelatorio({
 
   return (
     <>
-      {/* CABEÇALHO */}
-
-      <div
-        className="relatorio-selecionado-header"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          flexWrap: "wrap",
-        }}
-      >
-        <div className="relatorio-selecionado-icone">
-          <FiEdit3 />
-        </div>
-
-        <div
-          style={{
-            flex: "1 1 270px",
-            minWidth: 0,
-          }}
-        >
-          <span className="relatorio-selecionado-categoria">
-            Compras
-          </span>
-
-          <h2>
-            {relatorio?.titulo ||
-              "Pedidos de Compra Alterados"}
-          </h2>
-
-          <p>
-            Histórico das alterações relevantes
-            detectadas entre sincronizações do Omie.
-          </p>
-        </div>
-
-        <IndicadorSincronizacao
-          dados={sincronizacao.data}
-          carregando={sincronizacao.isLoading}
-          erro={sincronizacao.error}
-        />
-      </div>
-
-      {/* EXPORTAÇÕES */}
-
-      <div className="relatorio-acoes">
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-pdf"
-          disabled={
-            !filtrados.length ||
-            Boolean(exportando)
-          }
-          onClick={() =>
-            exportar("pdf")
-          }
-        >
-          <FiFileText />
-
-          <div>
-            <strong>
-              {exportando === "pdf"
-                ? "Gerando PDF..."
-                : "Baixar PDF"}
-            </strong>
-
-            <span>
-              Histórico completo filtrado
-            </span>
-          </div>
-        </button>
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-csv"
-          disabled={
-            !filtrados.length ||
-            Boolean(exportando)
-          }
-          onClick={() =>
-            exportar("excel")
-          }
-        >
-          <FiDownload />
-
-          <div>
-            <strong>
-              {exportando === "excel"
-                ? "Gerando Excel..."
-                : "Exportar Excel"}
-            </strong>
-
-            <span>
-              Resumo + histórico expandido
-            </span>
-          </div>
-        </button>
-      </div>
-
-      {/* FILTROS */}
-
-      <div className="relatorio-filtros-card">
-        <div className="relatorio-filtros-header">
-          <div>
-            <h3>
-              Parâmetros do relatório
-            </h3>
-
-            <p>
-              Período em que as alterações foram
-              detectadas pelo dashboard.
-            </p>
-          </div>
-        </div>
-
+      <LayoutRelatorio
+        relatorio={relatorio}
+        categoria="Compras"
+        titulo={relatorio?.titulo || "Pedidos de Compra Alterados"}
+        descricao="Histórico das alterações relevantes detectadas entre sincronizações do Omie."
+        fixo
+        extrasCabecalho={
+          <IndicadorSincronizacao
+            dados={sincronizacao.data}
+            carregando={sincronizacao.isLoading}
+            erro={sincronizacao.error}
+          />
+        }
+        filtrosAtivos={(pesquisa.trim() ? 1 : 0)}
+        filtros={
         <div className="pedidos-alterados-filtros">
           <label className="pedidos-alterados-campo">
             <span>De</span>
@@ -1135,8 +1034,26 @@ export default function PedidosCompraAlteradosRelatorio({
             </div>
           </label>
         </div>
-      </div>
-
+        }
+        acoes={{
+          onPdf: () => exportar("pdf"),
+          onExcel: () => exportar("excel"),
+          onLimpar: () => {
+            setDataInicial(`${dataHoje().slice(0, 8)}01`);
+            setDataFinal(dataHoje());
+            setPesquisa("");
+            setPagina(1);
+          },
+          desabilitado: !filtrados.length || Boolean(exportando),
+          gerandoPdf: exportando === "pdf",
+          gerandoExcel: exportando === "excel",
+        }}
+        indicadores={[
+          { rotulo: "Pedidos alterados", valor: filtrados.length.toLocaleString("pt-BR"), destaque: true },
+          { rotulo: "Alterações", valor: Number(totalEventos || 0).toLocaleString("pt-BR") },
+          { rotulo: "Período", valor: periodo, texto: true },
+        ]}
+      >
       {/* AVISO DE FORNECEDORES */}
 
       {fornecedoresQuery.error && (
@@ -1475,18 +1392,15 @@ export default function PedidosCompraAlteradosRelatorio({
                   alteração(ões) no período
                 </span>
               </div>
+              {paginas > 1 && (
+                <Paginacao
+                  paginaAtual={paginaAtual}
+                  totalItens={filtrados.length}
+                  itensPorPagina={POR_PAGINA}
+                  onChangePagina={setPagina}
+                />
+              )}
             </section>
-
-            {/* PAGINAÇÃO */}
-
-            {paginas > 1 && (
-              <Paginacao
-                paginaAtual={paginaAtual}
-                totalItens={filtrados.length}
-                itensPorPagina={POR_PAGINA}
-                onChangePagina={setPagina}
-              />
-            )}
           </>
         )}
 
@@ -1496,7 +1410,7 @@ export default function PedidosCompraAlteradosRelatorio({
         !historico.error &&
         periodoValido &&
         filtrados.length === 0 && (
-          <div className="relatorio-visualizacao-vazia pedidos-alterados-vazio">
+          <div className="rl-vazio pedidos-alterados-vazio">
             <FiEdit3 />
 
             <strong>
@@ -1509,6 +1423,7 @@ export default function PedidosCompraAlteradosRelatorio({
             </span>
           </div>
         )}
+      </LayoutRelatorio>
     </>
   );
 }

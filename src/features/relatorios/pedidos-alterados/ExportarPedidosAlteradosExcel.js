@@ -11,11 +11,15 @@
    CORES
 ========================================================= */
 
+/* Padrão visual dos relatórios — versão 4 (23/10). */
 const CORES = {
-  azulEscuro: "FF1E293B",
-  azul: "FF2563EB",
-  azulClaro: "FFEFF6FF",
-  azulBorda: "FFBFDBFE",
+  azulEscuro: "FF0B1F5C",
+  azulCabecalho: "FFE8EEFC",
+  azul: "FF0B1F5C",
+  verdeTexto: "FF15803D",
+  verdeMarca: "FF16A34A",
+  azulClaro: "FFE8EEFC",
+  azulBorda: "FFD6DEF0",
 
   verde: "FF059669",
   verdeClaro: "FFECFDF5",
@@ -208,7 +212,7 @@ function estilizarCabecalho(
 
       fgColor: {
         argb:
-          CORES.azulEscuro,
+          CORES.azulCabecalho,
       },
     };
 
@@ -218,7 +222,7 @@ function estilizarCabecalho(
 
       color: {
         argb:
-          CORES.branco,
+          CORES.azul,
       },
 
       size: 10,
@@ -244,7 +248,7 @@ function estilizarCabecalho(
 
         color: {
           argb:
-            "FF334155",
+            "FFD6DEF0",
         },
       },
     };
@@ -328,7 +332,7 @@ function criarCabecalhoRelatorio({
 
     color: {
       argb:
-        CORES.texto,
+        CORES.azul,
     },
   };
 
@@ -364,18 +368,11 @@ function criarCabecalhoRelatorio({
 
 
   faixa.value =
-    "AUDITORIA DE ALTERAÇÕES EM PEDIDOS";
+    "PEDIDOS";
 
 
-  faixa.fill = {
-    type: "pattern",
-
-    pattern: "solid",
-
-    fgColor: {
-      argb:
-        CORES.azul,
-    },
+  faixa.border = {
+    bottom: { style: "medium", color: { argb: CORES.verdeMarca } },
   };
 
 
@@ -384,7 +381,7 @@ function criarCabecalhoRelatorio({
 
     color: {
       argb:
-        CORES.branco,
+        CORES.verdeTexto,
     },
 
     size: 9,
@@ -590,7 +587,7 @@ function criarAbaResumo({
     worksheet,
 
     titulo:
-      "RELATÓRIO DE PEDIDOS ALTERADOS",
+      "Pedidos Alterados",
 
     ultimaColuna:
       "G",
@@ -969,7 +966,7 @@ function criarAbaHistorico({
     worksheet,
 
     titulo:
-      "HISTÓRICO DE ALTERAÇÕES POR PEDIDO",
+      "Pedidos Alterados — histórico expandido",
 
     ultimaColuna:
       "E",
