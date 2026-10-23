@@ -522,3 +522,112 @@
     display: none;
   }
 }
+
+/* =========================================================
+   TELAS GRANDES (23/10): ocupa a largura toda, letras um pouco
+   maiores e a lista em duas colunas para não sobrar vazio.
+========================================================= */
+
+@media (min-width: 1025px) {
+  .pr {
+    min-height: 100%;
+  }
+
+  .pr-corpo {
+    flex: 1 1 auto;
+    align-items: stretch;
+  }
+
+  .pr-categorias {
+    align-self: start;
+    position: sticky;
+    top: 0;
+  }
+}
+
+@media (min-width: 1500px) {
+  .pr {
+    gap: 14px;
+  }
+
+  .pr-cabecalho {
+    padding: 14px 22px;
+  }
+
+  .pr-logo {
+    height: 26px;
+  }
+
+  .pr-cabecalho h1 {
+    font-size: 1.35rem;
+  }
+
+  .pr-cabecalho p {
+    font-size: 0.82rem;
+  }
+
+  .pr-busca input {
+    min-height: 46px;
+    font-size: 0.9rem;
+  }
+
+  .pr-corpo {
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .pr-categoria {
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
+  .pr-lista-topo h2 {
+    font-size: 1.05rem;
+  }
+
+  /* Lista em duas colunas */
+  .pr-lista ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pr-lista li + li {
+    border-top: 0;
+  }
+
+  .pr-lista li {
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .pr-lista li:nth-child(odd) {
+    border-right: 1px solid #f1f5f9;
+  }
+
+  .pr-item {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    height: 100%;
+    padding: 14px 18px;
+  }
+
+  /* Na grade em 2 colunas a etiqueta da categoria fica abaixo do texto. */
+  .pr-item-categoria {
+    display: none;
+  }
+
+  .pr-icone {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pr-item-texto strong {
+    font-size: 0.92rem;
+  }
+
+  .pr-item-texto small {
+    font-size: 0.78rem;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
