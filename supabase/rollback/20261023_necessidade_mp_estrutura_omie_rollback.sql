@@ -2,3 +2,4 @@
 select cron.unschedule('atualizar-estrutura-produtos-omie');
 drop table if exists public.necessidade_mp_estrutura_itens_omie;
 drop table if exists public.necessidade_mp_estrutura_produtos_omie;
+drop table if exists public.necessidade_mp_peso_decisoes;

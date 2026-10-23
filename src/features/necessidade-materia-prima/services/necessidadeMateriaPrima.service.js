@@ -33,6 +33,9 @@ const FONTES = Object.freeze({
   ESTOQUES: "estoque_materia_prima_omie_resumo",
   COMPRAS: "compras_futuras_materia_prima_omie",
   PRECOS: "precos_materia_prima_omie",
+  ESTRUTURA_PRODUTOS: "necessidade_mp_estrutura_produtos_omie",
+  ESTRUTURA_ITENS: "necessidade_mp_estrutura_itens_omie",
+  DECISOES_PESO: "necessidade_mp_peso_decisoes",
 });
 
 /* ============================================================
@@ -144,6 +147,44 @@ function buscarMateriaisHabilitados() {
 
 function buscarPedidos() {
   return consultarTabela(FONTES.PEDIDOS, "codigo_pedido_omie,numero_pedido,item_sequencia,codigo_produto,produto,quantidade,unidade,previsao,status,kg_un,material_id,material,consumo_kg,situacao_cadastro", q => q.order("pedido_item_id", { ascending: true }));
+}
+
+/* Estrutura (malha) do Omie: KG/UN e matéria-prima de cada produto (23/10). */
+function buscarEstruturaProdutos() {
+  return consultarTabela(FONTES.ESTRUTURA_PRODUTOS, "codigo_produto,descricao,total_itens,erro,sincronizado_em",
+    q => q.order("codigo_produto", { ascending: true }));
+}
+
+function buscarEstruturaItens() {
+  return consultarTabela(FONTES.ESTRUTURA_ITENS, "codigo_produto,id_malha,codigo_mp,descricao_mp,unidade,quantidade,percentual_perda",
+    q => q.order("codigo_produto", { ascending: true }).order("id_malha", { ascending: true }));
+}
+
+function buscarDecisoesPeso() {
+  return consultarTabela(FONTES.DECISOES_PESO, "codigo_produto,codigo_mp,quantidade,decisao,decidido_por_email,decidido_em",
+    q => q.order("codigo_produto", { ascending: true }));
+}
+
+/* Aceitar/recusar peso suspeito (vale só para essa quantidade). */
+export async function decidirPesoSuspeito({ codigoProduto, codigoMp, quantidade, decisao, usuario }) {
+  if (!["ACEITO", "RECUSADO"].includes(decisao)) throw new Error("Decisão inválida.");
+  const { error } = await supabase.from(FONTES.DECISOES_PESO).upsert({
+    codigo_produto: codigoProduto,
+    codigo_mp: codigoMp,
+    quantidade,
+    decisao,
+    decidido_por: usuario?.id,
+    decidido_por_email: usuario?.email ?? null,
+    decidido_em: new Date().toISOString(),
+  });
+  if (error) throw new Error(`Não foi possível gravar a decisão: ${error.message}`);
+}
+
+/* Desfazer a decisão: o peso volta a ficar pendente. */
+export async function desfazerDecisaoPeso({ codigoProduto, codigoMp }) {
+  const { error } = await supabase.from(FONTES.DECISOES_PESO).delete()
+    .eq("codigo_produto", codigoProduto).eq("codigo_mp", codigoMp);
+  if (error) throw new Error(`Não foi possível desfazer a decisão: ${error.message}`);
 }
 
 function buscarConsumos() {
@@ -431,6 +472,9 @@ export async function buscarNecessidadeMateriaPrima() {
       vinculos: [],
       estoques: [],
       estoqueProdutos: [],
+      estrutura: { produtos: [], itens: [] },
+      decisoesPeso: [],
+      vinculosHistoricos: [],
       comprasFuturas: [],
       precos: [],
       codigosPorMaterial: {},
@@ -458,6 +502,9 @@ export async function buscarNecessidadeMateriaPrima() {
     todasCompras,
     todosPrecos,
     estoqueProdutos,
+    estruturaProdutos,
+    estruturaItens,
+    decisoesPeso,
   ] = await Promise.all([
     buscarPedidos(),
     buscarConsumos(),
@@ -466,6 +513,9 @@ export async function buscarNecessidadeMateriaPrima() {
     buscarComprasFuturas(),
     buscarPrecos(),
     buscarEstoqueProdutos(),
+    buscarEstruturaProdutos(),
+    buscarEstruturaItens(),
+    buscarDecisoesPeso(),
   ]);
 
   /* ========================================================
@@ -585,6 +635,15 @@ export async function buscarNecessidadeMateriaPrima() {
     pedidosAbertos,
 
     estoqueProdutos,
+
+    estrutura: {
+      produtos: estruturaProdutos,
+      itens: estruturaItens,
+    },
+
+    decisoesPeso,
+
+    vinculosHistoricos,
 
     resumoPedidos,
 
