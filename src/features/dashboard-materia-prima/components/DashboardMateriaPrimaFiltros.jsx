@@ -30,33 +30,6 @@ export default function DashboardMateriaPrimaFiltros({
   onPeriodoRapido,
   onLimparFiltros,
 }) {
-  const semPeriodo =
-    !dataInicial &&
-    !dataFinal;
-
-  const periodoAberto =
-    !semPeriodo &&
-    (
-      !dataInicial ||
-      !dataFinal
-    );
-
-  const descricaoPeriodo =
-    semPeriodo
-      ? tipoData ===
-          "recebimento"
-        ? "Sem período definido: considerando todo o histórico pela data de recebimento."
-        : "Sem período definido: considerando todo o histórico pela data da compra."
-      : periodoAberto
-        ? tipoData ===
-            "recebimento"
-          ? "Período aberto: considerando a data de recebimento conforme a data inicial ou final informada."
-          : "Período aberto: considerando a data da compra conforme a data inicial ou final informada."
-        : tipoData ===
-            "recebimento"
-          ? "O período considera a data de recebimento efetivo do material."
-          : "O período considera a data em que a compra foi realizada.";
-
   const estadoPadrao =
     (dataInicial || "") ===
       periodoPadrao.dataInicial &&
@@ -193,20 +166,6 @@ export default function DashboardMateriaPrimaFiltros({
 
 
       <div className="dmp-filtros-info">
-
-        <div className="dmp-periodo-descricao">
-          {descricaoPeriodo}
-
-          {origem ===
-            ORIGEM_OMIE && (
-            <span className="dmp-origem-omie">
-              Dados do Omie: pedidos do departamento 11 – Suprimentos PP
-              (aprovados, sem cancelados). Recebimento pela NF de entrada; sem
-              NF, previsão de entrega.
-            </span>
-          )}
-        </div>
-
 
         <button
           type="button"
