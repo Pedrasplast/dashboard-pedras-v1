@@ -152,3 +152,14 @@ test('só encerrados, pela inclusão/alteração', () => {
   }
   assert.equal(p.nPagina, 2);
 });
+
+test('nota: IPI do item (itensIPI); sem IPI fica 0', () => {
+  const pedidos = new Map([['7685164797', '640']]);
+  const n = nota();
+  n.itensRecebimento[0].itensIPI = { nAliqIPI: 3.25, nValIPI: 2617.39 };
+  const [i] = extrairItensNota(n, pedidos);
+  assert.equal(i.aliquota_ipi, 3.25);
+  assert.equal(i.valor_ipi, 2617.39);
+  const [s] = extrairItensNota(nota(), pedidos);
+  assert.equal(s.aliquota_ipi, 0);
+});

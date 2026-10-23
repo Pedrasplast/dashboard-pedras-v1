@@ -199,6 +199,7 @@ export function extrairItensNota(nota, pedidos) {
     const codPed = String(numero(c.nIdPedido, 'nIdPedido'));
     if (!pedidos.has(codPed)) continue;
     const ajustes = it?.itensAjustes ?? {};
+    const ipi = it?.itensIPI ?? {};
     itens.push({
       id_recebimento: idReceb,
       // nIdItem pode repetir o código do item do pedido; a sequência é única dentro da nota.
@@ -211,6 +212,8 @@ export function extrairItensNota(nota, pedidos) {
       data_recebimento: recebimento,
       quantidade: numero(ajustes.nQtdeRecebida ?? c.nQtdeNFe, 'nQtdeRecebida'),
       valor_total: numero(c.vTotalItem, 'vTotalItem'),
+      aliquota_ipi: numero(ipi.nAliqIPI, 'nAliqIPI'),
+      valor_ipi: numero(ipi.nValIPI, 'nValIPI'),
     });
   }
   return itens;
