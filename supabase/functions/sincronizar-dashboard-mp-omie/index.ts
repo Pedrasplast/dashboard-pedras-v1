@@ -286,6 +286,14 @@ Deno.serve(async (req) => {
       const { data, error } = await db.rpc("substituir_dashboard_mp_notas", { p_de: j.de, p_ate: j.ate, p_itens: itens });
       if (error) throw error;
       gravacao = data;
+      // IPI da nota (usado quando o pedido não tem IPI).
+      for (const i of itens) {
+        if (!(i.aliquota_ipi > 0) && !(i.valor_ipi > 0)) continue;
+        const u = await db.from("dashboard_mp_notas_omie")
+          .update({ aliquota_ipi: i.aliquota_ipi, valor_ipi: i.valor_ipi })
+          .eq("id_recebimento", i.id_recebimento).eq("id_item_nota", i.id_item_nota);
+        if (u.error) throw u.error;
+      }
     }
 
     return responder({
