@@ -772,3 +772,11 @@
 .rl-filtros-corpo [class*="-filtros"] > * {
   grid-column: auto !important;
 }
+
+/* A rolagem da tabela/filtros não "vaza" para a página atrás. */
+.rl--fixo .rl-filtros,
+.rl--fixo .relatorio-visualizacao-tabela-wrapper,
+.rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
+.rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area {
+  overscroll-behavior: contain;
+}

@@ -3301,11 +3301,22 @@
    a página (o topo nunca fica por baixo da navbar). Só a tabela rola. */
 @media (min-width: 1025px) {
   .relatorios-container.relatorios-container--aberto {
-    height: calc(100dvh - var(--navbar-height, 76px));
-    min-height: 560px;
+    /* Preso logo abaixo da navbar: não depende da rolagem da página. */
+    position: fixed;
+    top: var(--navbar-height, 76px);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+
+    width: auto;
+    height: auto;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
+
+    padding-top: 14px;
 
     overflow: hidden;
   }
