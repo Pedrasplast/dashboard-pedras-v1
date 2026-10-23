@@ -39,6 +39,7 @@ import {
 
 import { obterDataPedidoRelatorio } from "./pedidos/PedidosRelatorios";
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
+import LayoutRelatorio from "./components/LayoutRelatorio";
 
 import "./TelaRelatorios.css";
 
@@ -1669,32 +1670,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               CABEÇALHO DO RELATÓRIO
           =========================================== */}
 
-          {!relatorioEhCustom && (
-            <div className="relatorio-selecionado-header">
-
-              <div className="relatorio-selecionado-icone">
-                {React.createElement(
-                  relatorioSelecionado.icone,
-                )}
-              </div>
-
-              <div>
-                <span className="relatorio-selecionado-categoria">
-                  {relatorioSelecionado.categoria}
-                </span>
-
-                <h2>
-                  {relatorioSelecionado.titulo}
-                </h2>
-
-                <p>
-                  {relatorioSelecionado.descricao}
-                </p>
-              </div>
-
-            </div>
-          )}
-
           {/* ===========================================
               RELATÓRIO CUSTOMIZADO
           =========================================== */}
@@ -1740,101 +1715,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           {!relatorioEhCustom && (
             <>
 
-              <div className="relatorio-acoes">
-
-                {/* VISUALIZAR */}
-
-                <button
-                  type="button"
-                  className="btn-relatorio"
-                  onClick={() => {
-                    setPaginaAtual(1);
-                    setVisualizacaoAberta(true);
-                  }}
-                  disabled={
-                    dadosRelatorioFinal.length === 0
-                  }
-                >
-                  <FiEye />
-
-                  <div>
-                    <strong>
-                      Visualizar
-                    </strong>
-
-                    <span>
-                      Conferir antes de exportar
-                    </span>
-                  </div>
-                </button>
-
-                {/* PDF */}
-
-                <button
-                  type="button"
-                  className="btn-relatorio btn-relatorio-pdf"
-                  onClick={handleGerarPDF}
-                  disabled={
-                    dadosRelatorioFinal.length === 0
-                  }
-                >
-                  <FiFileText />
-
-                  <div>
-                    <strong>
-                      Baixar PDF
-                    </strong>
-
-                    <span>
-                      Relatório formatado
-                    </span>
-                  </div>
-                </button>
-
-                {/* EXCEL */}
-
-                <button
-                  type="button"
-                  className="btn-relatorio btn-relatorio-csv"
-                  onClick={handleGerarExcel}
-                  disabled={
-                    dadosRelatorioFinal.length === 0
-                  }
-                >
-                  <FiDownload />
-
-                  <div>
-                    <strong>
-                      Exportar Excel
-                    </strong>
-
-                    <span>
-                      Tabela XLSX
-                    </span>
-                  </div>
-                </button>
-
-              </div>
-
-              {/* =====================================
-                  FILTROS
-              ===================================== */}
-
-              <div className="relatorio-filtros-card">
-
-                <div className="relatorio-filtros-header">
-                  <div>
-                    <h3>
-                      Parâmetros do relatório
-                    </h3>
-
-                    <p>
-                      Refine os dados antes de visualizar
-                      ou exportar.
-                    </p>
-                  </div>
-                </div>
-
+              <LayoutRelatorio
+                relatorio={relatorioSelecionado}
+                filtros={
+                  <>
                 {fonteEhPedidos ? (
                   <FiltrosPedidosRelatorio
                     filtros={filtros}
@@ -1870,52 +1754,31 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                   />
                 )}
 
-              </div>
-
-              {/* =====================================
-                  RESUMO
-              ===================================== */}
-
-              <div className="relatorio-resumo-grid">
-
-                {/* Outros relatórios preservam o contador original. */}
-                {!relatorioProdutosPorData && (
-                  <div className="relatorio-resumo-card">
-                    <span>Registros no relatório</span>
-                    <strong>{totalRegistrosRelatorio}</strong>
-                  </div>
-                )}
-
-                {/* RELATÓRIO */}
-
-                <div className="relatorio-resumo-card">
-
-                  <span>
-                    Relatório selecionado
-                  </span>
-
-                  <strong className="relatorio-resumo-texto">
-                    {relatorioSelecionado.titulo}
-                  </strong>
-
-                </div>
-
-                {/* FILTROS */}
-
-                <div className="relatorio-resumo-card">
-
-                  <span>
-                    Filtros aplicados
-                  </span>
-
-                  <strong className="relatorio-resumo-texto">
-                    {montarTextoFiltros()}
-                  </strong>
-
-                </div>
-
-              </div>
-
+                  </>
+                }
+                acoes={{
+                  onVisualizar: () => {
+                    setPaginaAtual(1);
+                    setVisualizacaoAberta(true);
+                  },
+                  onPdf: handleGerarPDF,
+                  onExcel: handleGerarExcel,
+                  desabilitado: dadosRelatorioFinal.length === 0,
+                }}
+                indicadores={[
+                  /* Produtos por data não mostra contagem (mantido). */
+                  !relatorioProdutosPorData && {
+                    rotulo: "Registros no relatório",
+                    valor: totalRegistrosRelatorio,
+                    destaque: true,
+                  },
+                  {
+                    rotulo: "Filtros aplicados",
+                    valor: montarTextoFiltros(),
+                    texto: true,
+                  },
+                ]}
+              >
               {/* =====================================
                   PRÉ-VISUALIZAÇÃO
               ===================================== */}
@@ -2022,6 +1885,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                             (item, indice) => (
 
                               <tr
+                                className={
+                                  Object.values(item || {}).some(
+                                    (valor) =>
+                                      String(valor ?? "").trim().toUpperCase() === "TOTAL GERAL",
+                                  )
+                                    ? "linha-total"
+                                    : undefined
+                                }
                                 key={`${relatorioSelecionado.id}-${
                                   (paginaVisualizacao - 1) *
                                   LINHAS_POR_PAGINA +
@@ -2125,6 +1996,23 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
                 </section>
               )}
+
+              {!visualizacaoAberta && (
+                <div className="rl-vazio">
+                  <strong>
+                    {dadosRelatorioFinal.length > 0
+                      ? "Clique em Visualizar para conferir os dados"
+                      : "Nenhum registro com os filtros atuais"}
+                  </strong>
+                  <span>
+                    {dadosRelatorioFinal.length > 0
+                      ? "Ou baixe direto em PDF ou Excel."
+                      : "Ajuste os filtros para ver os dados."}
+                  </span>
+                </div>
+              )}
+
+              </LayoutRelatorio>
 
             </>
           )}

@@ -1,0 +1,616 @@
+/* =========================================================
+   LAYOUT PADRÃO DOS RELATÓRIOS — versão 4 (23/10)
+   Filtros na lateral · cabeçalho com logo e linha verde ·
+   indicadores em faixa · tabela azul-claro com total verde.
+   Tudo escopado em .rl para não afetar outras telas.
+========================================================= */
+
+.rl {
+  --rl-azul: #0b1f5c;
+  --rl-azul-claro: #e8eefc;
+  --rl-verde: #16a34a;
+  --rl-verde-texto: #15803d;
+  --rl-verde-fundo: #f0fdf4;
+  --rl-borda: #e2e8f0;
+  --rl-texto: #0f172a;
+  --rl-texto-2: #64748b;
+
+  width: 100%;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+
+  color: var(--rl-texto);
+}
+
+/* =========================================================
+   COLUNA DE FILTROS
+========================================================= */
+
+.rl-filtros {
+  position: sticky;
+  top: 84px;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 14px;
+
+  background: #ffffff;
+  border: 1px solid var(--rl-borda);
+  border-radius: 12px;
+
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.rl-filtros-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rl-filtros-topo h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 0;
+
+  color: var(--rl-texto);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.rl-filtros-topo h3 svg {
+  color: var(--rl-verde);
+}
+
+.rl-filtros-ativos {
+  margin-left: auto;
+
+  color: var(--rl-verde-texto);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.rl-filtros-fechar,
+.rl-filtros-aplicar,
+.rl-abrir-filtros {
+  display: none;
+}
+
+.rl-filtros-corpo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Campos dos filtros sempre empilhados e com largura total. */
+.rl-filtros-corpo label > span,
+.rl-filtros-corpo .periodo-relatorio-label,
+.rl-filtros-corpo .filter-section > label {
+  color: var(--rl-texto-2);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.rl-filtros-corpo select,
+.rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 38px;
+
+  border-radius: 8px;
+  font-size: 0.76rem;
+}
+
+.rl-filtros-corpo .filter-section > select,
+.rl-filtros-corpo .filter-section > select:disabled {
+  width: 100%;
+}
+
+.rl-filtros-corpo .periodo-relatorio-linha {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.rl-filtros-corpo .periodo-relatorio-linha .date-inputs-container,
+.rl-filtros-corpo .date-inputs-container {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.rl-filtros-corpo .calendar-field {
+  width: 100%;
+  max-width: 100%;
+}
+
+.rl-filtros-corpo .calendar-popover {
+  z-index: 40;
+}
+
+/* Grades internas dos filtros customizados: uma coluna. */
+.rl-filtros-corpo [class*="filtros-grid"],
+.rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
+  grid-template-columns: 1fr !important;
+}
+
+.rl-filtros-corpo [class*="busca"],
+.rl-filtros-corpo [class*="periodo-grupo"],
+.rl-filtros-corpo [class*="-campo"] {
+  grid-column: auto !important;
+}
+
+/* Botões do próprio filtro (ex.: Limpar) no padrão. */
+.rl-filtros-corpo button {
+  font-family: inherit;
+}
+
+/* =========================================================
+   BOTÕES DE AÇÃO
+========================================================= */
+
+.rl-acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+
+  padding-top: 12px;
+  border-top: 1px solid #eef2f7;
+}
+
+.rl-btn {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 0 10px;
+
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  color: #334155;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Número ímpar de botões: o último ocupa a linha toda. */
+.rl-acoes > .rl-btn:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.rl-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.rl-btn:hover:not(:disabled) {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.rl-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rl-btn-pdf {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.rl-btn-pdf:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.rl-btn-excel {
+  color: var(--rl-verde-texto);
+  background: var(--rl-verde-fundo);
+  border-color: #bbf7d0;
+}
+
+.rl-btn-excel:hover:not(:disabled) {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.rl-btn-limpar {
+  color: var(--rl-texto-2);
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.rl-conteudo {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rl-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 14px 18px;
+
+  background: #ffffff;
+  border: 1px solid var(--rl-borda);
+  border-bottom: 3px solid var(--rl-verde);
+  border-radius: 12px;
+}
+
+.rl-logo {
+  height: 24px;
+  width: auto;
+  flex-shrink: 0;
+
+  padding-right: 16px;
+  border-right: 1px solid var(--rl-borda);
+}
+
+.rl-cabecalho-texto {
+  min-width: 0;
+  flex: 1;
+}
+
+.rl-cabecalho-texto small {
+  display: block;
+
+  color: var(--rl-verde);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rl-cabecalho-texto h2 {
+  margin: 1px 0 0;
+
+  color: var(--rl-texto);
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.rl-cabecalho-texto p {
+  margin: 3px 0 0;
+
+  color: var(--rl-texto-2);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   INDICADORES (faixa única)
+========================================================= */
+
+.rl-indicadores {
+  display: flex;
+
+  background: #ffffff;
+  border: 1px solid var(--rl-borda);
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+.rl-indicador {
+  min-width: 0;
+  flex: 1 1 0;
+
+  padding: 10px 16px;
+
+  border-right: 1px solid #eef2f7;
+}
+
+.rl-indicador:last-child {
+  border-right: 0;
+}
+
+.rl-indicador span {
+  display: block;
+
+  color: #94a3b8;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.rl-indicador strong {
+  display: block;
+
+  color: var(--rl-texto);
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.35;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-indicador-destaque strong {
+  color: var(--rl-verde-texto);
+}
+
+.rl-indicador-texto {
+  flex: 2 1 0;
+}
+
+.rl-indicador-texto strong {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  white-space: normal;
+}
+
+/* =========================================================
+   TABELA / PRÉ-VISUALIZAÇÃO NO PADRÃO
+   (classes compartilhadas pelos relatórios)
+========================================================= */
+
+.rl .relatorio-visualizacao {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.rl .relatorio-visualizacao-tabela thead th {
+  color: var(--rl-azul) !important;
+  background: var(--rl-azul-claro) !important;
+
+  border-right: 0 !important;
+  border-bottom: 1px solid #d6def0 !important;
+}
+
+.rl .relatorio-visualizacao-tabela tbody td {
+  border-bottom: 1px solid #eef2f7;
+}
+
+.rl .relatorio-visualizacao-tabela th.coluna-numerica,
+.rl .relatorio-visualizacao-tabela td.coluna-numerica {
+  text-align: right !important;
+}
+
+.rl .relatorio-visualizacao-tabela tfoot td,
+.rl .relatorio-visualizacao-tabela tr.linha-total td,
+.rl .relatorio-visualizacao-tabela tr.total-geral td {
+  color: var(--rl-verde-texto) !important;
+  background: var(--rl-verde-fundo) !important;
+  border-top: 2px solid var(--rl-verde) !important;
+  font-weight: 800;
+}
+
+.rl .relatorio-visualizacao-info {
+  background: #fafbfc;
+}
+
+/* Aviso quando a pré-visualização está fechada. */
+.rl-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  padding: 34px 18px;
+
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+
+  color: var(--rl-texto-2);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.rl-vazio strong {
+  color: var(--rl-texto);
+  font-size: 0.88rem;
+}
+
+/* =========================================================
+   TABLET E CELULAR: filtros viram gaveta
+========================================================= */
+
+@media (max-width: 1024px) {
+  .rl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rl-filtros {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1200;
+
+    width: min(340px, 88vw);
+
+    border-radius: 0 16px 16px 0;
+    overflow-y: auto;
+
+    transform: translateX(-105%);
+    visibility: hidden;
+    transition: transform 0.22s ease, visibility 0.22s;
+
+    box-shadow: 10px 0 30px rgba(15, 23, 42, 0.25);
+  }
+
+  .rl-filtros-aberto {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .rl-filtros-fechar {
+    display: inline-grid;
+    place-items: center;
+
+    width: 32px;
+    height: 32px;
+
+    margin-left: 6px;
+
+    background: #ffffff;
+    border: 1px solid var(--rl-borda);
+    border-radius: 8px;
+
+    color: #475569;
+    cursor: pointer;
+  }
+
+  .rl-filtros-ativos + .rl-filtros-fechar {
+    margin-left: 6px;
+  }
+
+  .rl-filtros-topo h3 {
+    margin-right: auto;
+  }
+
+  .rl-filtros-aplicar {
+    display: block;
+
+    min-height: 40px;
+
+    background: var(--rl-verde);
+    border: 0;
+    border-radius: 9px;
+
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 800;
+
+    cursor: pointer;
+  }
+
+  .rl-sombra {
+    position: fixed;
+    inset: 0;
+    z-index: 1150;
+
+    background: rgba(15, 23, 42, 0.38);
+  }
+
+  .rl-abrir-filtros {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    flex-shrink: 0;
+
+    min-height: 36px;
+    padding: 0 12px;
+
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    color: #334155;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+
+    cursor: pointer;
+  }
+
+  .rl-abrir-filtros span {
+    min-width: 18px;
+    height: 18px;
+
+    display: inline-grid;
+    place-items: center;
+
+    padding: 0 5px;
+
+    background: var(--rl-verde);
+    border-radius: 999px;
+
+    color: #ffffff;
+    font-size: 0.66rem;
+  }
+
+  .rl-indicadores {
+    flex-wrap: wrap;
+  }
+
+  .rl-indicador {
+    flex: 1 1 45%;
+    border-bottom: 1px solid #eef2f7;
+  }
+}
+
+@media (max-width: 560px) {
+  .rl-cabecalho {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .rl-logo {
+    height: 18px;
+    padding-right: 10px;
+  }
+
+  .rl-cabecalho-texto {
+    flex-basis: calc(100% - 140px);
+  }
+
+  .rl-cabecalho-texto h2 {
+    font-size: 0.98rem;
+  }
+
+  .rl-cabecalho-texto p {
+    display: none;
+  }
+
+  .rl-abrir-filtros {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .rl-indicador {
+    flex: 1 1 100%;
+    padding: 9px 13px;
+    border-right: 0;
+  }
+
+  .rl-indicador strong {
+    font-size: 1rem;
+  }
+
+  .rl-indicador-texto strong {
+    font-size: 0.76rem;
+  }
+}
+
+/* O título próprio do filtro de pedidos repete "Filtros" da coluna. */
+.rl-filtros-corpo .rel-pedidos-filtros-titulo {
+  display: none;
+}
