@@ -347,16 +347,67 @@ export default function DashboardMateriaPrima() {
     );
 
 
+  /* Só fornecedores com compra do material selecionado no período. */
   const fornecedoresFiltro =
     useMemo(
-      () =>
-        criarFornecedoresFiltro(
-          financeiro,
-        ),
+      () => {
+        const doMaterial =
+          criarFinanceiroFiltrado({
+            financeiro,
+            fornecedorSelecionado:
+              "todos",
+            materialSelecionado,
+          });
+
+        return criarFornecedoresFiltro({
+          compras:
+            doMaterial.compras.filter(
+              (item) =>
+                item.status !==
+                  "CANCELADA" &&
+                Number(item.quantidadeKg) > 0,
+            ),
+          recebimentos:
+            doMaterial.recebimentos,
+        });
+      },
       [
         financeiro,
+        materialSelecionado,
       ],
     );
+
+
+  /* Fornecedor escolhido sem compra do material: volta para "todos". */
+  useEffect(
+    () => {
+      if (
+        carregando ||
+        fornecedorSelecionado ===
+          "todos" ||
+        fornecedoresFiltro.some(
+          (item) =>
+            String(item.fornecedorId) ===
+            String(fornecedorSelecionado),
+        )
+      ) {
+        return;
+      }
+
+      setFiltros(
+        (atual) => ({
+          ...atual,
+          fornecedorSelecionado:
+            "todos",
+        }),
+      );
+    },
+    [
+      carregando,
+      fornecedorSelecionado,
+      fornecedoresFiltro,
+    ],
+  );
 
 
   /* =======================================================
