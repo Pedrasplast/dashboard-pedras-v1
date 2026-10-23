@@ -780,3 +780,26 @@
 .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area {
   overscroll-behavior: contain;
 }
+
+/* Tabela dentro de uma área própria (Financeiro): só a área de fora rola,
+   assim o cabeçalho da tabela fica fixo no topo enquanto as linhas rolam. */
+@media (min-width: 1025px) {
+  .rl--fixo .despesas-acima-previsto-tabela-area .relatorio-visualizacao-tabela-wrapper,
+  .rl--fixo .financeiro-relatorio-grupos .relatorio-visualizacao-tabela-wrapper {
+    flex: none;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+.rl .relatorio-visualizacao-tabela thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+@media (min-width: 1025px) {
+  .rl--fixo .despesas-acima-previsto-tabela-area {
+    padding: 0 14px 12px;
+  }
+}
