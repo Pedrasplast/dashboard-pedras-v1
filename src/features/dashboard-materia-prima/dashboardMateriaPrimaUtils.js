@@ -179,6 +179,23 @@ export function formatarDataCurta(
 }
 
 
+/* Período padrão do dashboard: do 1º ao último dia do mês atual. */
+export function periodoMesAtual(
+  hoje = new Date(),
+) {
+  return {
+    dataInicial:
+      formatarDataISO(
+        new Date(hoje.getFullYear(), hoje.getMonth(), 1),
+      ),
+    dataFinal:
+      formatarDataISO(
+        new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0),
+      ),
+  };
+}
+
+
 export function formatarDataISO(
   data,
 ) {

@@ -20,6 +20,7 @@ export default function DashboardMateriaPrimaFiltros({
   fornecedores,
   materiais,
   materialPadrao = "1",
+  periodoPadrao = { dataInicial: "", dataFinal: "" },
   onDataInicialChange,
   onDataFinalChange,
   onTipoDataChange,
@@ -57,8 +58,10 @@ export default function DashboardMateriaPrimaFiltros({
           : "O período considera a data em que a compra foi realizada.";
 
   const estadoPadrao =
-    !dataInicial &&
-    !dataFinal &&
+    (dataInicial || "") ===
+      periodoPadrao.dataInicial &&
+    (dataFinal || "") ===
+      periodoPadrao.dataFinal &&
     tipoData ===
       "compra" &&
     origem ===
