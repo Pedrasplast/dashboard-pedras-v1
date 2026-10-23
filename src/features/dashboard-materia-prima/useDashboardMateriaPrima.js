@@ -50,7 +50,7 @@ export default function useDashboardMateriaPrima({
   dataInicial,
   dataFinal,
   tipoData = "compra",
-  origem = "manual",
+  origem = ORIGEM_OMIE,
   habilitado = true,
 }) {
   /* Origem dos dados: "manual" (tela de compras) ou "omie". */

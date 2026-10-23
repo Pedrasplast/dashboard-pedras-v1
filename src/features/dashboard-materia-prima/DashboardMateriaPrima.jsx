@@ -16,7 +16,7 @@ import DashboardMateriaPrimaFiltros
   from "./components/DashboardMateriaPrimaFiltros.jsx";
 
 import {
-  ORIGEM_MANUAL,
+  ORIGEM_OMIE,
 } from "./origemOmie.js";
 
 import PainelFinanceiroMateriaPrima
@@ -56,14 +56,14 @@ const MATERIAL_PADRAO =
   "1";
 
 const STORAGE_FILTROS =
-  "pedrasplast:dashboard-materia-prima:filtros";
+  "pedrasplast:dashboard-materia-prima:filtros:v2";
 
 
 const FILTROS_PADRAO = {
   dataInicial: "",
   dataFinal: "",
   tipoData: "compra",
-  origem: ORIGEM_MANUAL,
+  origem: ORIGEM_OMIE,
   fornecedorSelecionado: "todos",
   materialSelecionado: MATERIAL_PADRAO,
 };
