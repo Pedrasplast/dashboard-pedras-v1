@@ -165,36 +165,6 @@ export default function DashboardMateriaPrimaFiltros({
       </div>
 
 
-      <div className="dmp-filtros-info">
-
-        <button
-          type="button"
-          className="dmp-btn-limpar"
-          onClick={
-            onLimparFiltros
-          }
-          disabled={
-            estadoPadrao
-          }
-          title={
-            estadoPadrao
-              ? "Não há filtros para limpar"
-              : "Voltar todos os filtros ao padrão"
-          }
-        >
-
-          <RotateCcw
-            size={14}
-            aria-hidden="true"
-          />
-
-          Limpar filtros
-
-        </button>
-
-      </div>
-
-
       <div className="dmp-filtros">
 
         <label className="dmp-filtro dmp-filtro-data">
@@ -339,6 +309,32 @@ export default function DashboardMateriaPrimaFiltros({
           </select>
 
         </label>
+
+
+        <button
+          type="button"
+          className="dmp-btn-limpar"
+          onClick={
+            onLimparFiltros
+          }
+          disabled={
+            estadoPadrao
+          }
+          title={
+            estadoPadrao
+              ? "Não há filtros para limpar"
+              : "Voltar todos os filtros ao padrão"
+          }
+        >
+
+          <RotateCcw
+            size={14}
+            aria-hidden="true"
+          />
+
+          Limpar filtros
+
+        </button>
 
       </div>
 
