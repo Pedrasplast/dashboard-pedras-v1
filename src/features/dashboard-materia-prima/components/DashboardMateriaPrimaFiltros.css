@@ -897,3 +897,21 @@
   }
 
 }
+
+/* =========================================================
+   ORIGEM OMIE — aviso abaixo da descrição do período
+========================================================= */
+
+.dmp-filtros-card .dmp-origem-omie {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--color-primary, #2563eb);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  line-height: 1.4;
+}

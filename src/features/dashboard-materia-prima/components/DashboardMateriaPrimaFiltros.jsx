@@ -4,11 +4,18 @@ import {
 
 import "./DashboardMateriaPrimaFiltros.css";
 
+import {
+  ORIGEM_MANUAL,
+  ORIGEM_OMIE,
+  ORIGENS_DADOS,
+} from "../origemOmie.js";
+
 
 export default function DashboardMateriaPrimaFiltros({
   dataInicial,
   dataFinal,
   tipoData,
+  origem = ORIGEM_MANUAL,
   fornecedorSelecionado,
   materialSelecionado,
   fornecedores,
@@ -17,6 +24,7 @@ export default function DashboardMateriaPrimaFiltros({
   onDataInicialChange,
   onDataFinalChange,
   onTipoDataChange,
+  onOrigemChange,
   onFornecedorChange,
   onMaterialChange,
   onPeriodoRapido,
@@ -54,6 +62,8 @@ export default function DashboardMateriaPrimaFiltros({
     !dataFinal &&
     tipoData ===
       "compra" &&
+    origem ===
+      ORIGEM_MANUAL &&
     fornecedorSelecionado ===
       "todos" &&
     String(
@@ -67,6 +77,46 @@ export default function DashboardMateriaPrimaFiltros({
     <section className="dmp-filtros-card">
 
       <div className="dmp-filtros-topo">
+
+        <label className="dmp-filtro-tipo-data">
+
+          <span className="dmp-filtro-titulo">
+            Origem dos dados
+          </span>
+
+          <select
+            className="dmp-select-tipo-data"
+            value={
+              origem
+            }
+            onChange={
+              (
+                event,
+              ) =>
+                onOrigemChange?.(
+                  event.target.value,
+                )
+            }
+          >
+            {ORIGENS_DADOS.map(
+              (
+                opcao,
+              ) => (
+                <option
+                  key={
+                    opcao.value
+                  }
+                  value={
+                    opcao.value
+                  }
+                >
+                  {opcao.label}
+                </option>
+              ),
+            )}
+          </select>
+
+        </label>
 
         <label className="dmp-filtro-tipo-data">
 
@@ -144,6 +194,15 @@ export default function DashboardMateriaPrimaFiltros({
 
         <div className="dmp-periodo-descricao">
           {descricaoPeriodo}
+
+          {origem ===
+            ORIGEM_OMIE && (
+            <span className="dmp-origem-omie">
+              Dados do Omie: pedidos do departamento 11 – Suprimentos PP
+              (aprovados, sem cancelados). Recebimento pela NF de entrada; sem
+              NF, previsão de entrega.
+            </span>
+          )}
         </div>
 
 

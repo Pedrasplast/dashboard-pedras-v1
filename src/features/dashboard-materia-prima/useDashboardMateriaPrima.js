@@ -6,6 +6,14 @@ import {
   buscarFinanceiroMateriaPrima,
 } from "./financeiroMateriaPrimaService.js";
 
+import {
+  buscarFinanceiroMateriaPrimaOmie,
+} from "./financeiroMateriaPrimaOmieService.js";
+
+import {
+  ORIGEM_OMIE,
+} from "./origemOmie.js";
+
 
 function criarResultadoVazio({
   dataInicial,
@@ -42,8 +50,15 @@ export default function useDashboardMateriaPrima({
   dataInicial,
   dataFinal,
   tipoData = "compra",
+  origem = "manual",
   habilitado = true,
 }) {
+  /* Origem dos dados: "manual" (tela de compras) ou "omie". */
+  const buscar =
+    origem === ORIGEM_OMIE
+      ? buscarFinanceiroMateriaPrimaOmie
+      : buscarFinanceiroMateriaPrima;
+
   const consulta =
     useQuery({
       queryKey: [
@@ -51,12 +66,13 @@ export default function useDashboardMateriaPrima({
         dataInicial,
         dataFinal,
         tipoData,
+        origem,
       ],
 
       queryFn:
         async () => {
           const financeiro =
-            await buscarFinanceiroMateriaPrima({
+            await buscar({
               dataInicial,
               dataFinal,
               tipoData,

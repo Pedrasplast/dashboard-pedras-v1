@@ -59,6 +59,18 @@ export const ROTINAS = Object.freeze({
     nome: "Preços médios de matéria-prima",
     descricao: "Busca no Omie as compras dos últimos 60 dias para as médias da Tabela de Preços.",
   },
+  "atualizar-dashboard-mp-omie-pedidos-recentes": {
+    nome: "Dashboard MP (Omie): pedidos recentes",
+    descricao: "Pedidos do Suprimentos PP incluídos nos últimos 30 dias.",
+  },
+  "atualizar-dashboard-mp-omie-pedidos-anteriores": {
+    nome: "Dashboard MP (Omie): pedidos de 31 a 60 dias",
+    descricao: "Atualiza recebimento e valores dos pedidos de 31 a 60 dias atrás.",
+  },
+  "atualizar-dashboard-mp-omie-notas": {
+    nome: "Dashboard MP (Omie): notas de entrada",
+    descricao: "Data de recebimento e nº da NF dos pedidos do Suprimentos PP.",
+  },
   "sincronizar-financeiro-omie-05h-12h": {
     nome: "Financeiro",
     descricao: "Atualiza os dados financeiros do Omie.",
