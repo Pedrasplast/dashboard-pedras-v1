@@ -4,6 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { useNecessidadeMateriaPrima } from "./hooks/useNecessidadeMateriaPrima";
 import { consolidarNecessidade, numero } from "./utils/calculosNecessidade";
 import { filtrarPedidosPorPrevisao, agruparProducaoPorMaterial, resumirConsumoDaProducao } from "./utils/seletoresNecessidade";
+import { aplicarEstruturaOmie } from "./utils/estruturaOmie";
 import AlertaPendencias from "./components/AlertaPendencias";
 import AbasMateriais from "./components/AbasMateriais";
 import ProdutosDoMaterial from "./components/ProdutosDoMaterial";
@@ -76,10 +77,23 @@ export default function NecessidadeMateriaPrimaPage() {
     return filtrarPedidosPorPrevisao(pedidos, dataInicio, dataFim);
   }, [data?.pedidosAbertos, dataInicio, dataFim, periodoInvalido]);
 
+  /* KG/UN e matéria-prima da estrutura do Omie; o que faltar vira pendência
+     e o produto fica fora do consumo (23/10). */
+  const estruturaAplicada = useMemo(
+    () => aplicarEstruturaOmie(pedidosAbertos, {
+      estrutura: data?.estrutura,
+      vinculos: data?.vinculosHistoricos ?? [],
+      materiais: data?.materiais ?? [],
+      estoqueProdutos: data?.estoqueProdutos ?? [],
+      decisoes: data?.decisoesPeso ?? [],
+    }),
+    [pedidosAbertos, data?.estrutura, data?.vinculosHistoricos, data?.materiais, data?.estoqueProdutos, data?.decisoesPeso]
+  );
+
   // Sempre derivar o consumo da produção necessária, inclusive sem filtro.
   const produtosPorMaterial = useMemo(
-    () => agruparProducaoPorMaterial(pedidosAbertos, data?.estoqueProdutos ?? []),
-    [pedidosAbertos, data?.estoqueProdutos]
+    () => agruparProducaoPorMaterial(estruturaAplicada.pedidos, data?.estoqueProdutos ?? []),
+    [estruturaAplicada.pedidos, data?.estoqueProdutos]
   );
 
   const consumosProducao = useMemo(
@@ -122,15 +136,12 @@ export default function NecessidadeMateriaPrimaPage() {
     Boolean(data) &&
     (data.estoques ?? []).length === 0;
 
-  const produtosSemEstoque = Array.from(produtosPorMaterial.values()).flat().filter(p => p.quantidadeProduzir === null);
-
   const necessitaValidacao =
     Boolean(data) &&
     (
-      pedidosAbertos.some((pedido) => pedido.situacao_cadastro !== "OK") ||
+      estruturaAplicada.pendencias.length > 0 ||
       codigosSemVinculo.length > 0 ||
       materiaisSemEstoque.length > 0 ||
-      produtosSemEstoque.length > 0 ||
       !data.validacao?.calculoHomologado
     );
 
@@ -166,17 +177,9 @@ export default function NecessidadeMateriaPrimaPage() {
             {/* PENDÊNCIAS DOS PRODUTOS */}
 
             <AlertaPendencias
-              pedidos={pedidosAbertos}
+              pendencias={estruturaAplicada.pendencias}
+              pesosAceitos={estruturaAplicada.pesosAceitos}
             />
-
-            {produtosSemEstoque.length > 0 && (
-              <div className="necessidade-alerta" role="alert">
-                <AlertTriangle size={18} aria-hidden="true" />
-                <span>{produtosSemEstoque.length} produto(s) sem posição de estoque no depósito
-                  MATRIZ/M.P.Prod. O consumo desses produtos não está incluído na
-                  necessidade calculada; regularize o estoque antes de comprar.</span>
-              </div>
-            )}
 
             {/* CÓDIGOS OMIE PENDENTES */}
 

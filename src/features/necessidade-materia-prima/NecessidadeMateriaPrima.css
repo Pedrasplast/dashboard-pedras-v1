@@ -153,7 +153,7 @@
 }
 
 .necessidade-tabela-pendencias {
-  min-width: 850px;
+  min-width: 720px;
 }
 
 .necessidade-tabela-pendencias th,
@@ -166,6 +166,119 @@
   max-width: 600px;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+/* Motivos das pendências (estrutura Omie) */
+.necessidade-motivos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.necessidade-motivo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.necessidade-motivo::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  flex-shrink: 0;
+}
+
+.necessidade-motivo-peso_suspeito::before,
+.necessidade-motivo-peso_recusado::before {
+  background: #dc2626;
+}
+
+.necessidade-motivo-acoes {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.necessidade-btn-aceitar,
+.necessidade-btn-recusar,
+.necessidade-btn-desfazer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 26px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.necessidade-btn-aceitar {
+  border: 1px solid #86efac;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.necessidade-btn-recusar {
+  border: 1px solid #fca5a5;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.necessidade-btn-desfazer {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+}
+
+.necessidade-btn-aceitar:disabled,
+.necessidade-btn-recusar:disabled,
+.necessidade-btn-desfazer:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.necessidade-pendencias-erro {
+  margin: 0 0 10px;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.necessidade-pesos-aceitos {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+}
+
+.necessidade-pesos-aceitos ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.necessidade-pesos-aceitos li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 /* ============================================================
