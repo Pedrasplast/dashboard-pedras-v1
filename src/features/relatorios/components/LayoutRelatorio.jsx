@@ -41,6 +41,7 @@ export default function LayoutRelatorio({
   acoes = {},
   indicadores = [],
   extrasCabecalho = null,
+  fixo = false,
   children,
 }) {
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
@@ -72,7 +73,7 @@ export default function LayoutRelatorio({
   const indicadoresValidos = indicadores.filter(Boolean);
 
   return (
-    <div className="rl">
+    <div className={`rl ${fixo ? "rl--fixo" : ""}`}>
       <aside
         className={`rl-filtros ${filtrosAbertos ? "rl-filtros-aberto" : ""}`}
         aria-label="Filtros do relatório"
