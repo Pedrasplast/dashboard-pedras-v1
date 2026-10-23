@@ -167,6 +167,31 @@ function criarFiltrosIniciais() {
 }
 
 
+const SITUACAO_POR_FILTRO = {
+  RECEBIDAS: "RECEBIDA",
+  FUTURAS: "FUTURA",
+  ENCERRADAS: "ENCERRADA",
+};
+
+function combinaSituacao(registro, situacao) {
+  const esperada = SITUACAO_POR_FILTRO[situacao];
+  return !esperada || registro.situacao === esperada;
+}
+
+function opcoesUnicas(registros, campoId, campoNome) {
+  const mapa = new Map();
+  for (const registro of registros) {
+    const id = registro?.[campoId];
+    const nome = String(registro?.[campoNome] ?? "").trim();
+    if (id === null || id === undefined || id === "" || !nome) continue;
+    mapa.set(String(id), { id, nome });
+  }
+  return [...mapa.values()].sort((a, b) =>
+    a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" }),
+  );
+}
+
+
 function obterDataReferencia(
   registro,
   referencia,
@@ -419,6 +444,57 @@ export default function EntradasComprasMateriaPrima({
     filtros.dataFim &&
     filtros.dataFim < filtros.dataInicio,
   );
+
+
+  /* =======================================================
+     OPÇÕES EM CASCATA
+     Situação → Material → Fornecedor: cada filtro mostra só o
+     que existe com as escolhas anteriores.
+  ======================================================= */
+
+  const opcoesMateriais = useMemo(
+    () =>
+      opcoesUnicas(
+        dados.registros.filter((registro) =>
+          combinaSituacao(registro, filtros.situacao),
+        ),
+        "materialId",
+        "material",
+      ),
+    [dados.registros, filtros.situacao],
+  );
+
+  const opcoesFornecedores = useMemo(
+    () =>
+      opcoesUnicas(
+        dados.registros.filter(
+          (registro) =>
+            combinaSituacao(registro, filtros.situacao) &&
+            (filtros.materialId === "TODOS" ||
+              String(registro.materialId) === String(filtros.materialId)),
+        ),
+        "fornecedorId",
+        "fornecedor",
+      ),
+    [dados.registros, filtros.situacao, filtros.materialId],
+  );
+
+  /* Escolha que deixou de existir volta para "Todos". */
+  useEffect(() => {
+    if (carregando) return;
+    const temMaterial =
+      filtros.materialId === "TODOS" ||
+      opcoesMateriais.some((item) => String(item.id) === String(filtros.materialId));
+    const temFornecedor =
+      filtros.fornecedorId === "TODOS" ||
+      opcoesFornecedores.some((item) => String(item.id) === String(filtros.fornecedorId));
+    if (temMaterial && temFornecedor) return;
+    setFiltros((atuais) => ({
+      ...atuais,
+      ...(temMaterial ? {} : { materialId: "TODOS" }),
+      ...(temFornecedor ? {} : { fornecedorId: "TODOS" }),
+    }));
+  }, [carregando, filtros.materialId, filtros.fornecedorId, opcoesMateriais, opcoesFornecedores]);
 
 
   /* =======================================================
@@ -1000,6 +1076,36 @@ export default function EntradasComprasMateriaPrima({
 
 
           <label>
+            <span>Material</span>
+
+            <select
+              value={filtros.materialId}
+              onChange={(event) =>
+                alterarFiltro(
+                  "materialId",
+                  event.target.value,
+                )
+              }
+            >
+              <option value="TODOS">
+                Todos
+              </option>
+
+              {opcoesMateriais.map(
+                (material) => (
+                  <option
+                    key={material.id}
+                    value={material.id}
+                  >
+                    {material.nome}
+                  </option>
+                ),
+              )}
+            </select>
+          </label>
+
+
+          <label>
             <span>
               Fornecedor
             </span>
@@ -1017,43 +1123,13 @@ export default function EntradasComprasMateriaPrima({
                 Todos
               </option>
 
-              {dados.fornecedores.map(
+              {opcoesFornecedores.map(
                 (fornecedor) => (
                   <option
                     key={fornecedor.id}
                     value={fornecedor.id}
                   >
                     {fornecedor.nome}
-                  </option>
-                ),
-              )}
-            </select>
-          </label>
-
-
-          <label>
-            <span>Material</span>
-
-            <select
-              value={filtros.materialId}
-              onChange={(event) =>
-                alterarFiltro(
-                  "materialId",
-                  event.target.value,
-                )
-              }
-            >
-              <option value="TODOS">
-                Todos
-              </option>
-
-              {dados.materiais.map(
-                (material) => (
-                  <option
-                    key={material.id}
-                    value={material.id}
-                  >
-                    {material.nome}
                   </option>
                 ),
               )}

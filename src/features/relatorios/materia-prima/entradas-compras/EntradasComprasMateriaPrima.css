@@ -156,9 +156,29 @@
 ========================================================= */
 
 .entradas-compras-visualizacao-info {
+  display: grid;
   grid-template-columns:
-    minmax(300px, 2fr)
-    repeat(3, minmax(140px, 1fr));
+    minmax(240px, 2fr)
+    repeat(3, minmax(130px, 1fr));
+}
+
+/* Valor total sem corte (o padrão limita a 130px). */
+.entradas-compras-visualizacao-info .relatorio-visualizacao-total {
+  max-width: none;
+}
+
+.entradas-compras-visualizacao-info .relatorio-visualizacao-total strong {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .entradas-compras-visualizacao-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .entradas-compras-visualizacao-info .entradas-compras-info-filtros {
+    grid-column: 1 / -1;
+  }
 }
 
 .entradas-compras-info-filtros strong {
@@ -171,7 +191,15 @@
 }
 
 .entradas-compras-tabela {
-  min-width: 1320px;
+  min-width: 1080px;
+}
+
+/* Fornecedor e material quebram linha em vez de empurrar a tabela. */
+.entradas-compras-tabela td:nth-child(5),
+.entradas-compras-tabela td:nth-child(6) {
+  min-width: 150px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .entradas-compras-tabela th,
