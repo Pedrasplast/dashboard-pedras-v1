@@ -639,7 +639,7 @@ export const RELATORIOS = [
     categoria: "Matéria-Prima",
     titulo: "Entradas e Compras de Matéria-Prima",
     descricao:
-      "Consolida materiais recebidos e compras futuras, com filtros por período, situação, fornecedor, material e tipo, além de totalização dinâmica.",
+      "Pedidos de compra do Omie (Suprimentos PP): materiais recebidos (NF de entrada) e saldo a receber, com filtros por período, situação, fornecedor e material, além de totalização dinâmica.",
     icone: FiShoppingCart,
     fonteDados: "custom",
     tipoRelatorio: "custom",
@@ -668,7 +668,6 @@ export const RELATORIOS = [
       "previsao_recebimento",
       "fornecedor_mp",
       "material_mp",
-      "tipo",
       "quantidade_kg",
       "preco",
       "ipi",

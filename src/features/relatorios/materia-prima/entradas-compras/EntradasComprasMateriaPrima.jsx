@@ -162,7 +162,6 @@ function criarFiltrosIniciais() {
     situacao: "TODAS",
     fornecedorId: "TODOS",
     materialId: "TODOS",
-    tipo: "TODOS",
     busca: "",
   };
 }
@@ -264,12 +263,6 @@ function montarTextoFiltros(
     );
   }
 
-  if (filtros.tipo !== "TODOS") {
-    partes.push(
-      `Tipo: ${filtros.tipo}`,
-    );
-  }
-
   if (String(filtros.busca).trim()) {
     partes.push(
       `Busca: ${String(filtros.busca).trim()}`,
@@ -298,7 +291,6 @@ function TabelaRelatorio({
             <th>Previsão de recebimento</th>
             <th>Fornecedor</th>
             <th>Material</th>
-            <th>Tipo</th>
             <th className="coluna-numerica">
               Quantidade
             </th>
@@ -349,10 +341,6 @@ function TabelaRelatorio({
 
               <td>
                 {registro.material || "-"}
-              </td>
-
-              <td>
-                {registro.tipo || "-"}
               </td>
 
               <td className="coluna-numerica entradas-compras-numero">
@@ -468,14 +456,6 @@ export default function EntradasComprasMateriaPrima({
         return false;
       }
 
-      if (
-        filtros.tipo !== "TODOS" &&
-        String(registro.tipo) !==
-          String(filtros.tipo)
-      ) {
-        return false;
-      }
-
       if (termo) {
         const conteudoBusca = normalizarTexto(
           [
@@ -483,7 +463,6 @@ export default function EntradasComprasMateriaPrima({
             registro.numeroNf,
             registro.fornecedor,
             registro.material,
-            registro.tipo,
           ].join(" "),
         );
 
@@ -614,7 +593,6 @@ export default function EntradasComprasMateriaPrima({
         "previsao_recebimento",
         "fornecedor_mp",
         "material_mp",
-        "tipo",
         "quantidade_kg",
         "preco",
         "ipi",
@@ -1063,34 +1041,6 @@ export default function EntradasComprasMateriaPrima({
                   </option>
                 ),
               )}
-            </select>
-          </label>
-
-
-          <label>
-            <span>Tipo</span>
-
-            <select
-              value={filtros.tipo}
-              onChange={(event) =>
-                alterarFiltro(
-                  "tipo",
-                  event.target.value,
-                )
-              }
-            >
-              <option value="TODOS">
-                Todos
-              </option>
-
-              {dados.tipos.map((tipo) => (
-                <option
-                  key={tipo}
-                  value={tipo}
-                >
-                  {tipo}
-                </option>
-              ))}
             </select>
           </label>
 
