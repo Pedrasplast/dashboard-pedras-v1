@@ -3295,3 +3295,28 @@
     display: none;
   }
 }
+
+
+/* Computador: o relatório ocupa a altura que sobra abaixo da navbar, sem rolar
+   a página (o topo nunca fica por baixo da navbar). Só a tabela rola. */
+@media (min-width: 1025px) {
+  .relatorios-container.relatorios-container--aberto {
+    height: calc(100dvh - var(--navbar-height, 76px));
+    min-height: 560px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+  }
+
+  .relatorios-container.relatorios-container--aberto > .relatorios-navegacao-topo {
+    flex-shrink: 0;
+  }
+
+  .relatorios-container.relatorios-container--aberto > .relatorio-selecionado {
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 10px;
+  }
+}

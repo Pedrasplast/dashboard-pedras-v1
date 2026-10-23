@@ -51,6 +51,7 @@ import {
   prepararDespesasAcimaPrevisto,
 } from "./utils/despesasAcimaPrevisto.utils";
 
+import LayoutRelatorio from "../../components/LayoutRelatorio";
 import "./DespesasAcimaPrevisto.css";
 
 
@@ -383,129 +384,17 @@ export default function DespesasAcimaPrevisto({
 
 
   return (
-    <>
-      <div className="relatorio-selecionado-header">
-        <div className="relatorio-selecionado-icone despesas-acima-previsto-icone">
-          <FiAlertTriangle />
-        </div>
-
-        <div>
-          <span className="relatorio-selecionado-categoria">
-            Financeiro
-          </span>
-
-          <h2>
-            {relatorio?.titulo ||
-              "Despesas Acima do Previsto"}
-          </h2>
-
-          <p>
-            {relatorio?.descricao ||
-              "Lista as categorias de despesa em que o valor realizado ultrapassou o valor previsto."}
-          </p>
-        </div>
-      </div>
-
-
-      <div className="relatorio-acoes">
-        <button
-          type="button"
-          className="btn-relatorio"
-          onClick={() => {
-            setPaginaAtual(1);
-            setVisualizacaoAberta(true);
-          }}
-          disabled={
-            dadosFiltrados.length === 0
-          }
-        >
-          <FiEye />
-
-          <div>
-            <strong>
-              Visualizar
-            </strong>
-
-            <span>
-              Conferir antes de exportar
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-pdf"
-          onClick={handleGerarPDF}
-          disabled={
-            dadosFiltrados.length === 0 ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "pdf" ? (
-            <FiRefreshCw className="despesas-acima-previsto-girando" />
-          ) : (
-            <FiFileText />
-          )}
-
-          <div>
-            <strong>
-              Baixar PDF
-            </strong>
-
-            <span>
-              Relatório formatado
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-csv"
-          onClick={handleGerarExcel}
-          disabled={
-            dadosFiltrados.length === 0 ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "excel" ? (
-            <FiRefreshCw className="despesas-acima-previsto-girando" />
-          ) : (
-            <FiDownload />
-          )}
-
-          <div>
-            <strong>
-              Exportar Excel
-            </strong>
-
-            <span>
-              Tabela XLSX
-            </span>
-          </div>
-        </button>
-      </div>
-
-
-      <div className="relatorio-filtros-card despesas-acima-previsto-filtros-card">
-        <div className="relatorio-filtros-header despesas-acima-previsto-filtros-header">
-          <div>
-            <h3>
-              Parâmetros do relatório
-            </h3>
-          </div>
-
-          {atualizando && (
-            <span className="despesas-acima-previsto-atualizando">
-              <FiRefreshCw className="despesas-acima-previsto-girando" />
-
-              Atualizando dados...
-            </span>
-          )}
-        </div>
-
-
+    <LayoutRelatorio
+      relatorio={relatorio}
+      categoria="Financeiro"
+      titulo={relatorio?.titulo || "Despesas Acima do Previsto"}
+      descricao={
+        relatorio?.descricao ||
+        "Lista as categorias de despesa em que o valor realizado ultrapassou o valor previsto."
+      }
+      fixo
+      filtros={
+        <>
         <Filtros
           filtros={filtros}
           setFiltros={setFiltros}
@@ -671,9 +560,46 @@ export default function DespesasAcimaPrevisto({
             </div>
           )}
         </Filtros>
-      </div>
+          {atualizando && (
+            <span className="despesas-acima-previsto-atualizando">
+              <FiRefreshCw className="despesas-acima-previsto-girando" />
 
-
+              Atualizando dados...
+            </span>
+          )}
+        </>
+      }
+      acoes={{
+        onVisualizar: () => {
+          setPaginaAtual(1);
+          setVisualizacaoAberta(true);
+        },
+        onPdf: handleGerarPDF,
+        onExcel: handleGerarExcel,
+        desabilitado: dadosFiltrados.length === 0 || Boolean(exportando),
+        gerandoPdf: exportando === "pdf",
+        gerandoExcel: exportando === "excel",
+      }}
+      indicadores={[
+        {
+          rotulo: "Categorias acima do previsto",
+          valor: carregando ? "..." : totalItens,
+          destaque: true,
+        },
+        {
+          rotulo: "Maior excesso",
+          valor: maiorExcesso
+            ? `${maiorExcesso.codigo_categoria} · ${formatarMoeda(maiorExcesso.excesso_previsto)}`
+            : "-",
+          alerta: Boolean(maiorExcesso),
+        },
+        {
+          rotulo: "Filtros aplicados",
+          valor: textoFiltros,
+          texto: true,
+        },
+      ]}
+    >
       {erro && (
         <div className="relatorios-erro">
           {erro.message ||
@@ -690,45 +616,6 @@ export default function DespesasAcimaPrevisto({
             <p>
               Carregando despesas...
             </p>
-          </div>
-        </div>
-      )}
-
-
-      {!carregando && !erro && (
-        <div className="relatorio-resumo-grid">
-          <div className="relatorio-resumo-card">
-            <span>
-              Categorias acima do previsto
-            </span>
-
-            <strong>
-              {totalItens}
-            </strong>
-          </div>
-
-
-          <div className="relatorio-resumo-card">
-            <span>
-              Maior excesso
-            </span>
-
-            <strong className="relatorio-resumo-texto despesas-acima-previsto-resumo-excesso">
-              {maiorExcesso
-                ? `${maiorExcesso.codigo_categoria} · ${formatarMoeda(maiorExcesso.excesso_previsto)}`
-                : "-"}
-            </strong>
-          </div>
-
-
-          <div className="relatorio-resumo-card">
-            <span>
-              Filtros aplicados
-            </span>
-
-            <strong className="relatorio-resumo-texto">
-              {textoFiltros}
-            </strong>
           </div>
         </div>
       )}
@@ -827,6 +714,21 @@ export default function DespesasAcimaPrevisto({
           )}
         </section>
       )}
-    </>
+
+      {!visualizacaoAberta && !carregando && !erro && (
+        <div className="rl-vazio">
+          <strong>
+            {dadosFiltrados.length > 0
+              ? "Clique em Visualizar para conferir os dados"
+              : "Nenhuma despesa acima do previsto com os filtros atuais"}
+          </strong>
+          <span>
+            {dadosFiltrados.length > 0
+              ? "Ou baixe direto em PDF ou Excel."
+              : "Ajuste os filtros para ver os dados."}
+          </span>
+        </div>
+      )}
+    </LayoutRelatorio>
   );
 }
