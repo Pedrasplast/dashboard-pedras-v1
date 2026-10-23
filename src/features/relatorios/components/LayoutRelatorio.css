@@ -803,3 +803,141 @@
     padding: 0 14px 12px;
   }
 }
+
+/* =========================================================
+   FILTROS COMPACTOS (23/10)
+   Campos mais baixos e espaços menores para a coluna de filtros
+   caber inteira na tela; datas "de/até" lado a lado; botões
+   presos no rodapé da coluna (sempre visíveis).
+========================================================= */
+
+.rl .rl-filtros {
+  gap: 10px;
+  padding: 12px;
+}
+
+.rl .rl-filtros-corpo,
+.rl .rl-filtros-corpo [class*="filtros-grid"],
+.rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
+  gap: 8px !important;
+}
+
+.rl .rl-filtros-corpo label,
+.rl .rl-filtros-corpo .filter-section {
+  gap: 4px !important;
+  margin: 0 !important;
+}
+
+.rl .rl-filtros-corpo .filter-section > label {
+  margin: 0 !important;
+}
+
+.rl .rl-filtros-corpo label > span,
+.rl .rl-filtros-corpo .campo-filtro__label,
+.rl .rl-filtros-corpo .periodo-relatorio-label,
+.rl .rl-filtros-corpo .filter-section > label {
+  font-size: 0.66rem !important;
+  line-height: 1.25;
+}
+
+.rl .rl-filtros-corpo select,
+.rl .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]),
+.rl .rl-filtros-corpo .calendar-trigger {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0.76rem !important;
+  box-sizing: border-box;
+}
+
+/* Datas "de" e "até" lado a lado */
+.rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) > * {
+  grid-column: 1 / -1 !important;
+}
+
+.rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) > :is(:has(> input[type="date"]), :has(> .calendar-field)) {
+  grid-column: auto !important;
+  min-width: 0;
+}
+
+.rl .rl-filtros-corpo .date-inputs-container {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.rl .rl-filtros-corpo .calendar-trigger {
+  padding-left: 9px !important;
+  padding-right: 8px !important;
+  gap: 4px;
+}
+
+.rl .rl-filtros-corpo input[type="date"] {
+  padding-left: 8px !important;
+  padding-right: 6px !important;
+}
+
+/* Botões */
+.rl .rl-acoes {
+  gap: 6px;
+  padding-top: 10px;
+}
+
+.rl .rl-btn {
+  min-height: 32px;
+}
+
+/* Telas baixas: ainda mais compacto */
+@media (max-height: 820px) and (min-width: 1025px) {
+  .rl .rl-filtros {
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .rl .rl-filtros-corpo,
+  .rl .rl-filtros-corpo [class*="filtros-grid"],
+  .rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
+    gap: 6px !important;
+  }
+
+  .rl .rl-filtros-corpo label,
+  .rl .rl-filtros-corpo .filter-section {
+    gap: 3px !important;
+  }
+
+  .rl .rl-filtros-corpo select,
+  .rl .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]),
+  .rl .rl-filtros-corpo .calendar-trigger {
+    height: 31px !important;
+    min-height: 31px !important;
+  }
+
+  .rl .rl-btn {
+    min-height: 30px;
+  }
+}
+
+/* Computador: se mesmo assim não couber, só os campos rolam e os
+   botões ficam fixos no rodapé da coluna. */
+@media (min-width: 1025px) {
+  .rl--fixo .rl-filtros {
+    overflow: hidden;
+    align-self: start;
+  }
+
+  .rl--fixo .rl-filtros-corpo {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .rl--fixo .rl-filtros-topo,
+  .rl--fixo .rl-acoes {
+    flex-shrink: 0;
+  }
+}
