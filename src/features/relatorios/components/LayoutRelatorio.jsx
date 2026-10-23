@@ -165,7 +165,7 @@ export default function LayoutRelatorio({
             {indicadoresValidos.map((item) => (
               <div
                 key={item.rotulo}
-                className={`rl-indicador ${item.destaque ? "rl-indicador-destaque" : ""} ${item.texto ? "rl-indicador-texto" : ""}`}
+                className={`rl-indicador ${item.destaque ? "rl-indicador-destaque" : ""} ${item.alerta ? "rl-indicador-alerta" : ""} ${item.texto ? "rl-indicador-texto" : ""}`}
               >
                 <span>{item.rotulo}</span>
                 <strong title={typeof item.valor === "string" ? item.valor : undefined}>

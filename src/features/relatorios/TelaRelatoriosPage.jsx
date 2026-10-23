@@ -1230,6 +1230,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     setVisualizacaoAberta(false);
 
     setPaginaAtual(1);
+
+    // Abre sempre do topo (não fica por baixo da navbar).
+    window.scrollTo({ top: 0 });
   };
 
   /* =====================================================

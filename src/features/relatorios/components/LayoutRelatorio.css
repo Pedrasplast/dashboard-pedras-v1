@@ -360,6 +360,10 @@
   color: var(--rl-verde-texto);
 }
 
+.rl-indicador-alerta strong {
+  color: #b91c1c;
+}
+
 .rl-indicador-texto {
   flex: 2 1 0;
 }
@@ -719,8 +723,8 @@
 
 @media (min-width: 1025px) {
   .rl--fixo {
-    height: calc(100dvh - var(--navbar-height, 76px) - 72px);
-    min-height: 480px;
+    flex: 1 1 auto;
+    min-height: 0;
     align-items: stretch;
   }
 
@@ -753,10 +757,18 @@
     flex-shrink: 0;
   }
 
-  .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
+  .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper,
+  .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
+  .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
+  .rl--fixo .relatorio-visualizacao > .rl-rolagem {
     flex: 1 1 auto;
     min-height: 0;
     max-height: none;
     overflow: auto;
   }
+}
+
+/* Na coluna, nenhum campo ocupa mais de uma coluna. */
+.rl-filtros-corpo [class*="-filtros"] > * {
+  grid-column: auto !important;
 }

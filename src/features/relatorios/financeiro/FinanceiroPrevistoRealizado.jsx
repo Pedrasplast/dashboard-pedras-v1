@@ -48,6 +48,7 @@ import {
   paginarGruposFinanceiros,
 } from "./utils/financeiroPrevistoRealizado.utils";
 
+import LayoutRelatorio from "../components/LayoutRelatorio";
 import "./FinanceiroPrevistoRealizado.css";
 
 
@@ -375,129 +376,17 @@ export default function FinanceiroPrevistoRealizado({
 
 
   return (
-    <>
-      <div className="relatorio-selecionado-header">
-        <div className="relatorio-selecionado-icone">
-          <FiDollarSign />
-        </div>
-
-        <div>
-          <span className="relatorio-selecionado-categoria">
-            Financeiro
-          </span>
-
-          <h2>
-            {relatorio?.titulo ||
-              "Previsto x Realizado por Categoria"}
-          </h2>
-
-          <p>
-            {relatorio?.descricao ||
-              "Compara os valores previstos e realizados por categoria financeira no período selecionado."}
-          </p>
-        </div>
-      </div>
-
-
-      <div className="relatorio-acoes">
-        <button
-          type="button"
-          className="btn-relatorio"
-          onClick={() => {
-            setPaginaAtual(1);
-            setVisualizacaoAberta(true);
-          }}
-          disabled={
-            dadosExportacao.length === 0
-          }
-        >
-          <FiEye />
-
-          <div>
-            <strong>
-              Visualizar
-            </strong>
-
-            <span>
-              Conferir antes de exportar
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-pdf"
-          onClick={handleGerarPDF}
-          disabled={
-            dadosExportacao.length === 0 ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "pdf" ? (
-            <FiRefreshCw className="financeiro-relatorio-girando" />
-          ) : (
-            <FiFileText />
-          )}
-
-          <div>
-            <strong>
-              Baixar PDF
-            </strong>
-
-            <span>
-              Relatório formatado
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-csv"
-          onClick={handleGerarExcel}
-          disabled={
-            dadosExportacao.length === 0 ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "excel" ? (
-            <FiRefreshCw className="financeiro-relatorio-girando" />
-          ) : (
-            <FiDownload />
-          )}
-
-          <div>
-            <strong>
-              Exportar Excel
-            </strong>
-
-            <span>
-              Tabela XLSX
-            </span>
-          </div>
-        </button>
-      </div>
-
-
-      <div className="relatorio-filtros-card financeiro-relatorio-filtros-card">
-        <div className="relatorio-filtros-header financeiro-relatorio-filtros-header">
-          <div>
-            <h3>
-              Parâmetros do relatório
-            </h3>
-          </div>
-
-          {atualizando && (
-            <span className="financeiro-relatorio-atualizando">
-              <FiRefreshCw className="financeiro-relatorio-girando" />
-
-              Atualizando dados...
-            </span>
-          )}
-        </div>
-
-
+    <LayoutRelatorio
+      relatorio={relatorio}
+      categoria="Financeiro"
+      titulo={relatorio?.titulo || "Previsto x Realizado por Categoria"}
+      descricao={
+        relatorio?.descricao ||
+        "Compara os valores previstos e realizados por categoria financeira no período selecionado."
+      }
+      fixo
+      filtros={
+        <>
         <Filtros
           filtros={filtros}
           setFiltros={setFiltros}
@@ -727,9 +616,38 @@ export default function FinanceiroPrevistoRealizado({
             </div>
           )}
         </Filtros>
-      </div>
-
-
+          {atualizando && (
+            <span className="financeiro-relatorio-atualizando">
+              <FiRefreshCw className="financeiro-relatorio-girando" />
+              Atualizando dados...
+            </span>
+          )}
+        </>
+      }
+      acoes={{
+        onVisualizar: () => {
+          setPaginaAtual(1);
+          setVisualizacaoAberta(true);
+        },
+        onPdf: handleGerarPDF,
+        onExcel: handleGerarExcel,
+        desabilitado: dadosExportacao.length === 0 || Boolean(exportando),
+        gerandoPdf: exportando === "pdf",
+        gerandoExcel: exportando === "excel",
+      }}
+      indicadores={[
+        {
+          rotulo: "Registros no relatório",
+          valor: carregando ? "..." : totalItens,
+          destaque: true,
+        },
+        {
+          rotulo: "Filtros aplicados",
+          valor: textoFiltros,
+          texto: true,
+        },
+      ]}
+    >
       {erro && (
         <div className="relatorios-erro">
           {erro.message ||
@@ -746,43 +664,6 @@ export default function FinanceiroPrevistoRealizado({
             <p>
               Carregando dados financeiros...
             </p>
-          </div>
-        </div>
-      )}
-
-
-      {!carregando && !erro && (
-        <div className="relatorio-resumo-grid">
-          <div className="relatorio-resumo-card">
-            <span>
-              Registros no relatório
-            </span>
-
-            <strong>
-              {totalItens}
-            </strong>
-          </div>
-
-
-          <div className="relatorio-resumo-card">
-            <span>
-              Relatório selecionado
-            </span>
-
-            <strong className="relatorio-resumo-texto">
-              {relatorio?.titulo}
-            </strong>
-          </div>
-
-
-          <div className="relatorio-resumo-card">
-            <span>
-              Filtros aplicados
-            </span>
-
-            <strong className="relatorio-resumo-texto">
-              {textoFiltros}
-            </strong>
           </div>
         </div>
       )}
@@ -905,6 +786,21 @@ export default function FinanceiroPrevistoRealizado({
           )}
         </section>
       )}
-    </>
+
+      {!visualizacaoAberta && !carregando && !erro && (
+        <div className="rl-vazio">
+          <strong>
+            {dadosExportacao.length > 0
+              ? "Clique em Visualizar para conferir os dados"
+              : "Nenhum registro com os filtros atuais"}
+          </strong>
+          <span>
+            {dadosExportacao.length > 0
+              ? "Ou baixe direto em PDF ou Excel."
+              : "Ajuste os filtros para ver os dados."}
+          </span>
+        </div>
+      )}
+    </LayoutRelatorio>
   );
 }

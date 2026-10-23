@@ -32,6 +32,7 @@ import {
   exportarEntradasComprasPDF,
 } from "./export/entradasComprasExport";
 
+import LayoutRelatorio from "../../components/LayoutRelatorio";
 import "./EntradasComprasMateriaPrima.css";
 
 
@@ -847,139 +848,16 @@ export default function EntradasComprasMateriaPrima({
   ======================================================= */
 
   return (
-    <>
-      <div className="relatorio-selecionado-header">
-        <div className="relatorio-selecionado-icone">
-          <FiShoppingCart />
-        </div>
-
-        <div>
-          <span className="relatorio-selecionado-categoria">
-            {relatorio?.categoria ||
-              "Matéria-Prima"}
-          </span>
-
-          <h2>
-            {relatorio?.titulo ||
-              "Entradas e Compras de Matéria-Prima"}
-          </h2>
-
-          <p>
-            {relatorio?.descricao ||
-              "Consolida materiais recebidos e compras futuras com filtros e totalização dinâmica."}
-          </p>
-        </div>
-      </div>
-
-
-      {/* =================================================
-          AÇÕES
-      ================================================= */}
-
-      <div className="relatorio-acoes">
-        <button
-          type="button"
-          className="btn-relatorio"
-          onClick={() => {
-            setPaginaAtual(1);
-            setVisualizacaoAberta(true);
-          }}
-          disabled={
-            filtrados.length === 0 ||
-            periodoInvalido
-          }
-        >
-          <FiEye />
-
-          <div>
-            <strong>Visualizar</strong>
-            <span>
-              Conferir antes de exportar
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-pdf"
-          onClick={exportarPDF}
-          disabled={
-            filtrados.length === 0 ||
-            periodoInvalido ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "pdf" ? (
-            <FiRefreshCw className="entradas-compras-girando" />
-          ) : (
-            <FiFileText />
-          )}
-
-          <div>
-            <strong>Baixar PDF</strong>
-            <span>
-              Relatório formatado
-            </span>
-          </div>
-        </button>
-
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-csv"
-          onClick={exportarExcel}
-          disabled={
-            filtrados.length === 0 ||
-            periodoInvalido ||
-            Boolean(exportando)
-          }
-        >
-          {exportando === "excel" ? (
-            <FiRefreshCw className="entradas-compras-girando" />
-          ) : (
-            <FiDownload />
-          )}
-
-          <div>
-            <strong>
-              Exportar Excel
-            </strong>
-
-            <span>
-              Tabela XLSX
-            </span>
-          </div>
-        </button>
-      </div>
-
-
-      {/* =================================================
-          FILTROS
-      ================================================= */}
-
-      <div className="relatorio-filtros-card">
-        <div className="relatorio-filtros-header entradas-compras-filtros-header">
-          <div>
-            <h3>
-              Parâmetros do relatório
-            </h3>
-
-            <p>
-              Quantidade e valor total são recalculados conforme os filtros.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="entradas-compras-limpar"
-            onClick={limparFiltros}
-          >
-            Limpar filtros
-          </button>
-        </div>
-
-
+    <LayoutRelatorio
+      relatorio={relatorio}
+      categoria={relatorio?.categoria || "Matéria-Prima"}
+      titulo={relatorio?.titulo || "Entradas e Compras de Matéria-Prima"}
+      descricao={
+        relatorio?.descricao ||
+        "Consolida materiais recebidos e compras futuras com filtros e totalização dinâmica."
+      }
+      fixo
+      filtros={
         <div className="entradas-compras-filtros">
           <label>
             <span>De</span>
@@ -1166,9 +1044,35 @@ export default function EntradasComprasMateriaPrima({
             </span>
           )}
         </div>
-      </div>
-
-
+      }
+      acoes={{
+        onVisualizar: () => {
+          setPaginaAtual(1);
+          setVisualizacaoAberta(true);
+        },
+        onPdf: exportarPDF,
+        onExcel: exportarExcel,
+        onLimpar: limparFiltros,
+        desabilitado: filtrados.length === 0 || periodoInvalido || Boolean(exportando),
+        gerandoPdf: exportando === "pdf",
+        gerandoExcel: exportando === "excel",
+      }}
+      indicadores={[
+        {
+          rotulo: "Registros",
+          valor: carregando ? "..." : formatarNumero(resumo.registros),
+        },
+        {
+          rotulo: "Quantidade total",
+          valor: carregando ? "..." : formatarKg(resumo.quantidadeKg),
+        },
+        {
+          rotulo: "Valor total",
+          valor: carregando ? "..." : formatarMoeda(resumo.valorTotal),
+          destaque: true,
+        },
+      ]}
+    >
       {/* =================================================
           ESTADOS
       ================================================= */}
@@ -1193,57 +1097,6 @@ export default function EntradasComprasMateriaPrima({
           </span>
         </div>
       )}
-
-
-      {/* =================================================
-          RESUMO DINÂMICO
-      ================================================= */}
-
-      <div className="relatorio-resumo-grid entradas-compras-resumo">
-        <div className="relatorio-resumo-card">
-          <span>
-            Registros
-          </span>
-
-          <strong>
-            {carregando
-              ? "..."
-              : formatarNumero(
-                  resumo.registros,
-                )}
-          </strong>
-        </div>
-
-
-        <div className="relatorio-resumo-card">
-          <span>
-            Quantidade total
-          </span>
-
-          <strong>
-            {carregando
-              ? "..."
-              : formatarKg(
-                  resumo.quantidadeKg,
-                )}
-          </strong>
-        </div>
-
-
-        <div className="relatorio-resumo-card">
-          <span>
-            Valor total
-          </span>
-
-          <strong className="entradas-compras-resumo-total">
-            {carregando
-              ? "..."
-              : formatarMoeda(
-                  resumo.valorTotal,
-                )}
-          </strong>
-        </div>
-      </div>
 
 
       {/* =================================================
@@ -1385,6 +1238,23 @@ export default function EntradasComprasMateriaPrima({
             )}
         </section>
       )}
-    </>
+
+      {!visualizacaoAberta && (
+        <div className="rl-vazio">
+          <strong>
+            {filtrados.length > 0
+              ? "Clique em Visualizar para conferir os dados"
+              : carregando
+                ? "Carregando dados..."
+                : "Nenhum registro com os filtros atuais"}
+          </strong>
+          <span>
+            {filtrados.length > 0
+              ? "Ou baixe direto em PDF ou Excel."
+              : "Ajuste os filtros para ver os dados."}
+          </span>
+        </div>
+      )}
+    </LayoutRelatorio>
   );
 }
