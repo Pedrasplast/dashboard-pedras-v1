@@ -85,6 +85,15 @@ export function parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina = 5
   };
 }
 
+/** PesquisarPedCompra só com os Encerrados, incluídos/alterados no período. */
+export function parametrosEncerrados(pagina, dataInicial, dataFinal, porPagina = 100) {
+  return {
+    ...parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina, true, true),
+    lExibirPedidosEncerrados: 'T',
+    lExibirPedidosCancelados: 'F',
+  };
+}
+
 /** Códigos (nCodPed) de todos os pedidos lidos, válidos ou não. */
 export function codigosPedidos(pedidos) {
   const codigos = new Set();
