@@ -14,6 +14,10 @@ export const SITUACOES_ENTRADAS_COMPRAS = [
     valor: "FUTURAS",
     nome: "Futuras",
   },
+  {
+    valor: "ENCERRADAS",
+    nome: "Encerradas",
+  },
 ];
 
 
@@ -98,7 +102,9 @@ function numeroOpcional(valor) {
 /**
  * Converte um item de pedido do Omie em linhas do relatório:
  * - parte recebida → RECEBIDA (data = "Recebido em" da NF; sem NF, previsão);
- * - saldo a receber → FUTURA (pedido encerrado no Omie não tem saldo futuro).
+ * - saldo a receber → FUTURA;
+ * - saldo de pedido encerrado no Omie → ENCERRADA (não vai mais chegar
+ *   pelo pedido; muitos foram recebidos com NF sem vínculo ao pedido).
  * Valores proporcionais à quantidade de cada parte.
  */
 export function normalizarItemOmie(registro) {
@@ -139,16 +145,17 @@ export function normalizarItemOmie(registro) {
       situacao: "RECEBIDA",
     });
   }
-  if (saldo > 0 && registro.encerrado !== true) {
+  if (saldo > 0) {
+    const encerrado = registro.encerrado === true;
     linhas.push({
       ...base,
-      id: `${chave}-F`,
+      id: `${chave}-${encerrado ? "E" : "F"}`,
       recebido: "",
       quantidadeKg: saldo,
       total: total * (saldo / quantidade),
       numeroNf: "",
-      statusOriginal: recebida > 0 ? "PARCIAL" : "PENDENTE",
-      situacao: "FUTURA",
+      statusOriginal: encerrado ? "ENCERRADO" : recebida > 0 ? "PARCIAL" : "PENDENTE",
+      situacao: encerrado ? "ENCERRADA" : "FUTURA",
     });
   }
   return linhas;

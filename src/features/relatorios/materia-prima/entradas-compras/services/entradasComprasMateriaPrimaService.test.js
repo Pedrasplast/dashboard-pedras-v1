@@ -31,10 +31,11 @@ describe("normalizarItemOmie", () => {
     expect(f).toMatchObject({ situacao: "FUTURA", quantidadeKg: 9000, total: 48600 });
   });
 
-  it("encerrado no Omie não tem saldo futuro", () => {
-    expect(normalizarItemOmie({ ...base, encerrado: true })).toEqual([]);
+  it("saldo de pedido encerrado vira ENCERRADA, não futura", () => {
+    const [e] = normalizarItemOmie({ ...base, encerrado: true });
+    expect(e).toMatchObject({ situacao: "ENCERRADA", quantidadeKg: 12000, total: 64800, recebido: "" });
     const linhas = normalizarItemOmie({ ...base, encerrado: true, quantidade_recebida: 3000 });
-    expect(linhas.map((l) => l.situacao)).toEqual(["RECEBIDA"]);
+    expect(linhas.map((l) => l.situacao)).toEqual(["RECEBIDA", "ENCERRADA"]);
   });
 
   it("recebido sem NF usa a previsão; sem material usa a descrição", () => {
