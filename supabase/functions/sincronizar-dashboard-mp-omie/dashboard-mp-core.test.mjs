@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  parametrosPesquisa, janela, somarDias, dataBR, extrairItensPedidos, notasCandidatas, extrairItensNota, codigosPedidos,
+  parametrosPesquisa, janela, somarDias, dataBR, extrairItensPedidos, notasCandidatas, extrairItensNota, codigosPedidos, parametrosEncerrados,
 } from './dashboard-mp-core.mjs';
 
 function pedido({ numero, cod, etapa = '15', inclusao, previsao = inclusao, deptos = [['9069810185', 100]], itens, fornecedor = 2429376908 }) {
@@ -141,4 +141,14 @@ test('nota: pedido de outro departamento, cancelada ou ainda não recebida', () 
   assert.equal(extrairItensNota(nota({ pedidoId: 999 }), pedidos).length, 0, 'pedido fora do departamento 11');
   assert.equal(extrairItensNota(nota({ cancelada: 'S' }), pedidos).length, 0, 'NF cancelada');
   assert.equal(extrairItensNota(nota({ recebido: 'N' }), pedidos)[0].data_recebimento, null, 'sem data até receber');
+});
+
+test('só encerrados, pela inclusão/alteração', () => {
+  const p = parametrosEncerrados(2, '01/10/2026', '23/10/2026');
+  assert.equal(p.lApenasAlterados, 'T');
+  assert.equal(p.lExibirPedidosEncerrados, 'T');
+  for (const s of ['Pendentes', 'Recebidos', 'RecParciais', 'Faturados', 'FatParciais', 'Cancelados']) {
+    assert.equal(p['lExibirPedidos' + s], 'F', s);
+  }
+  assert.equal(p.nPagina, 2);
 });

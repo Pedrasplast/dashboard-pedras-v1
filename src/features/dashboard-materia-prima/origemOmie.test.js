@@ -143,3 +143,22 @@ describe("montarFinanceiroOmie", () => {
     expect(fora.recebimentos).toHaveLength(0);
   });
 });
+
+describe("pedido encerrado no Omie", () => {
+  it("vira ENCERRADA: conta nos totais, mas não como em aberto", async () => {
+    const { statusCompraAberta } = await import("./dashboardMateriaPrimaUtils.js");
+    const c = normalizarCompraOmie({ ...PARCIAL, encerrado: true });
+    expect(c.status).toBe("ENCERRADA");
+    expect(statusCompraAberta(c.status)).toBe(false);
+    expect(c.valorTotal).toBe(normalizarCompraOmie(PARCIAL).valorTotal);
+  });
+
+  it("recebido por completo continua RECEBIDA mesmo encerrado", () => {
+    const c = normalizarCompraOmie({ ...PARCIAL, situacao_recebimento: "RECEBIDO", encerrado: true });
+    expect(c.status).toBe("RECEBIDA");
+  });
+
+  it("não encerrado e não recebido segue em aberto", () => {
+    expect(normalizarCompraOmie({ ...PARCIAL, encerrado: false }).status).toBe("CONFIRMADA");
+  });
+});

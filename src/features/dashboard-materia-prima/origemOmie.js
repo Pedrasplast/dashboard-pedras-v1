@@ -53,6 +53,7 @@ export const CAMPOS_OMIE = [
   "valor_total",
   "data_recebimento",
   "numeros_nf",
+  "encerrado",
 ].join(",");
 
 function numeroOuNull(valor) {
@@ -120,15 +121,23 @@ function valores(registro, fator) {
   };
 }
 
-/** Compra (pedido inteiro). Recebido por completo = RECEBIDA; senão em aberto. */
+/**
+ * Compra (pedido inteiro). Recebido por completo = RECEBIDA; encerrado no
+ * Omie = ENCERRADA (conta nos totais, mas não como em aberto); senão em aberto.
+ */
+export function statusCompraOmie(registro) {
+  if (texto(registro?.situacao_recebimento).toUpperCase() === "RECEBIDO") return "RECEBIDA";
+  if (registro?.encerrado === true) return "ENCERRADA";
+  return "CONFIRMADA";
+}
+
 export function normalizarCompraOmie(registro) {
   if (!registro) return null;
-  const recebido = texto(registro.situacao_recebimento).toUpperCase() === "RECEBIDO";
   return {
     id: `omie-${registro.cod_ped_compra}-${registro.codigo_item}`,
     ...base(registro),
     ...valores(registro, 1),
-    status: recebido ? "RECEBIDA" : "CONFIRMADA",
+    status: statusCompraOmie(registro),
   };
 }
 

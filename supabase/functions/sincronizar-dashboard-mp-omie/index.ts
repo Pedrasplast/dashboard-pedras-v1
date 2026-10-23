@@ -6,6 +6,7 @@ import {
   extrairItensPedidos,
   janela,
   notasCandidatas,
+  parametrosEncerrados,
   parametrosPesquisa,
 } from "./dashboard-mp-core.mjs";
 
@@ -19,6 +20,8 @@ import {
  *            Incremental: incluídos ou alterados no período (padrão: últimos
  *            7 dias). Grava por página; "proxima_pagina" diz onde continuar.
  *            Cancelados e pedidos que saíram do departamento 11 são removidos.
+ *   encerrados: { "tipo": "encerrados", "desde": "aaaa-mm-dd", "pagina_inicial": 1 }
+ *            Só marca os pedidos Encerrados no Omie (também roda no fim de "pedidos").
  *   notas:   { "tipo": "notas", "de": "aaaa-mm-dd", "ate": "aaaa-mm-dd" }
  *            NF-e de entrada emitidas no período (padrão: últimos 60 dias),
  *            só as ligadas aos pedidos já gravados; troca a janela inteira.
@@ -100,13 +103,46 @@ Deno.serve(async (req) => {
   if (auth.error || auth.data !== true) return responder({ sucesso: false, erro: "Não autorizado" }, 401);
 
   const corpo = await req.json().catch(() => ({}));
-  const tipo = corpo?.tipo === "notas" ? "notas" : corpo?.tipo === "pedidos" ? "pedidos" : null;
+  const tipo = ["notas", "pedidos", "encerrados"].includes(corpo?.tipo) ? corpo.tipo : null;
   const simulacao = corpo?.dry_run === true;
 
   try {
-    if (!tipo) throw new Error('Informe "tipo": "pedidos" ou "notas"');
+    if (!tipo) throw new Error('Informe "tipo": "pedidos", "encerrados" ou "notas"');
     const j = janela({ de: corpo?.de, ate: corpo?.ate });
     const jp = janela({ de: corpo?.desde ?? corpo?.de, ate: corpo?.ate }, new Date(), DIAS_INCREMENTAL);
+
+    /* ---------------------------- ENCERRADOS ---------------------------- */
+    // Marca os pedidos Encerrados no Omie (não contam como compra em aberto).
+    // Roda no fim da leitura de pedidos e também sozinho ({"tipo":"encerrados"}).
+    const marcarEncerrados = async (desde: string, ate: string, paginaInicial = 1, maxPaginas = LIMITE_PAGINAS) => {
+      const r = { paginas: 0, encerrados_lidos: 0, marcados: 0, proxima_pagina: null as number | null };
+      let pagina = paginaInicial;
+      let paginas = paginaInicial;
+      do {
+        if (Date.now() - inicio > PRAZO_NOVA_PAGINA_MS) { r.proxima_pagina = pagina; break; }
+        const d = await omie(URL_PEDIDOS, "PesquisarPedCompra", parametrosEncerrados(pagina, dataBR(desde), dataBR(ate)), key, secret);
+        if (!d) break;
+        paginas = Number(d?.nTotalPaginas) || 1;
+        const cods = codigosPedidos(d?.pedidos_pesquisa ?? []);
+        r.paginas += 1;
+        r.encerrados_lidos += cods.length;
+        if (!simulacao && cods.length) {
+          const { data, error } = await db.rpc("marcar_dashboard_mp_encerrados", { p_codigos: cods });
+          if (error) throw error;
+          r.marcados += Number(data?.marcados ?? 0);
+        }
+        pagina += 1;
+        if (pagina <= paginas && pagina < paginaInicial + maxPaginas) await esperar(PAUSA_PAGINAS_MS);
+      } while (pagina <= paginas && pagina < paginaInicial + maxPaginas);
+      if (r.proxima_pagina === null && pagina <= paginas) r.proxima_pagina = pagina;
+      return r;
+    };
+
+    if (tipo === "encerrados") {
+      const paginaInicial = Number.isInteger(corpo?.pagina_inicial) && corpo.pagina_inicial > 0 ? corpo.pagina_inicial : 1;
+      const r = await marcarEncerrados(jp.de, jp.ate, paginaInicial);
+      return responder({ sucesso: true, tipo, dry_run: simulacao, incluidos_ou_alterados: [jp.de, jp.ate], ...r, duracao_ms: Date.now() - inicio });
+    }
 
     /* ------------------------------ PEDIDOS ------------------------------ */
     // Incremental: pedidos incluídos ou alterados entre "desde" e "ate"
@@ -187,6 +223,9 @@ Deno.serve(async (req) => {
       } while (pagina <= paginas && pagina < paginaInicial + maxPaginas);
       if (proximaPagina === null && pagina <= paginas) proximaPagina = pagina;
 
+      // Leitura completa: marca os Encerrados do mesmo período (a gravação acima os voltou para não encerrados).
+      const encerrados = proximaPagina === null ? await marcarEncerrados(desde, ate) : null;
+
       return responder({
         sucesso: true,
         tipo,
@@ -196,6 +235,7 @@ Deno.serve(async (req) => {
         total_paginas: paginas,
         proxima_pagina: proximaPagina,
         ...resumo,
+        encerrados,
         ...(simulacao ? { detalhe } : {}),
         duracao_ms: Date.now() - inicio,
       });
