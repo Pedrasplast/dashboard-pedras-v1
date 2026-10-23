@@ -15,6 +15,10 @@ import useDashboardMateriaPrima
 import DashboardMateriaPrimaFiltros
   from "./components/DashboardMateriaPrimaFiltros.jsx";
 
+import {
+  ORIGEM_MANUAL,
+} from "./origemOmie.js";
+
 import PainelFinanceiroMateriaPrima
   from "./components/PainelFinanceiroMateriaPrima.jsx";
 
@@ -59,6 +63,7 @@ const FILTROS_PADRAO = {
   dataInicial: "",
   dataFinal: "",
   tipoData: "compra",
+  origem: ORIGEM_MANUAL,
   fornecedorSelecionado: "todos",
   materialSelecionado: MATERIAL_PADRAO,
 };
@@ -121,6 +126,7 @@ export default function DashboardMateriaPrima() {
     dataInicial,
     dataFinal,
     tipoData,
+    origem,
     fornecedorSelecionado,
     materialSelecionado,
   } =
@@ -217,6 +223,8 @@ export default function DashboardMateriaPrima() {
         dataFinalConsulta,
 
       tipoData,
+
+      origem,
 
       habilitado:
         !periodoInvalido,
@@ -519,6 +527,10 @@ export default function DashboardMateriaPrima() {
           tipoData
         }
 
+        origem={
+          origem
+        }
+
         fornecedorSelecionado={
           fornecedorSelecionado
         }
@@ -566,6 +578,24 @@ export default function DashboardMateriaPrima() {
             alterarFiltro(
               "tipoData",
               valor,
+            )
+        }
+
+        onOrigemChange={
+          (
+            valor,
+          ) =>
+            /* Fornecedores mudam de cadastro entre Manual e Omie. */
+            setFiltros(
+              (
+                atual,
+              ) => ({
+                ...atual,
+                origem:
+                  valor,
+                fornecedorSelecionado:
+                  "todos",
+              }),
             )
         }
 
