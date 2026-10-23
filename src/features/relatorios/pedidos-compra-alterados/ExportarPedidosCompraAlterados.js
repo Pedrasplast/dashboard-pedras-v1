@@ -1,3 +1,5 @@
+import { COR_PDF, desenharCabecalhoPdf, desenharRodapePdf } from "../exportacao/padraoPdf";
+import { escreverTituloExcel, estilizarCabecalhoExcel, estilizarLinhasExcel } from "../exportacao/padraoExcel";
 
 import {
   extrairMudancasCompra,
@@ -167,7 +169,7 @@ export async function exportarPdfPedidosCompraAlterados(
   function espaco(mm) {
     if (
       y + mm >
-      altura - margem - 7
+      altura - 15
     ) {
       doc.addPage();
 
@@ -226,48 +228,39 @@ export async function exportarPdfPedidosCompraAlterados(
     }
   }
 
-  /* CABEÇALHO */
-
-  escrever(
-    "PEDIDOS DE COMPRA ALTERADOS",
-    {
-      negrito: true,
-      tamanho: 15,
-    }
-  );
-
-  y += 2;
-
-  escrever(
-    `Período: ${periodo} | Pedidos: ${pedidos.length}`
-  );
-
-  escrever(
-    "Data e hora indicam a detecção da alteração pelo dashboard.",
-    {
-      tamanho: 8,
-    }
-  );
-
-  y += 5;
-
+  /* CABEÇALHO (padrão dos relatórios) */
+  y = desenharCabecalhoPdf(doc, {
+    titulo: "Pedidos de Compra Alterados",
+    categoria: "Compras",
+    informacoes: [
+      `Período: ${periodo} | Pedidos: ${pedidos.length}`,
+      "Data e hora indicam a detecção da alteração pelo dashboard.",
+    ],
+    margem,
+    y,
+  });
   /* PEDIDOS */
 
   for (const pedido of pedidos) {
     espaco(18);
-
+    /* Faixa do pedido no padrão (azul-claro, texto azul-marinho). */
+    doc.setFillColor(...COR_PDF.azulClaro);
+    doc.setDrawColor(...COR_PDF.bordaAzul);
+    doc.roundedRect(margem, y - 4.5, largura - 2 * margem, 7.5, 1.5, 1.5, "FD");
+    doc.setTextColor(...COR_PDF.azul);
     escrever(
       `PEDIDO DE COMPRA ${
         pedido.numero_pedido ||
         pedido.cod_ped_compra
       }`,
-
       {
         negrito: true,
-        tamanho: 11,
+        tamanho: 10.5,
+        recuo: 3,
       }
     );
-
+    doc.setTextColor(...COR_PDF.texto);
+    y += 1.5;
     for (
       const evento of
       pedido.detalhes_alteracoes || []
@@ -315,6 +308,7 @@ export async function exportarPdfPedidosCompraAlterados(
           }
         );
 
+        doc.setTextColor(...COR_PDF.texto2);
         escrever(
           `Antes: ${mudanca.anterior}`,
 
@@ -352,42 +346,8 @@ export async function exportarPdfPedidosCompraAlterados(
     y += 5;
   }
 
-  /* NUMERAÇÃO DE PÁGINAS */
-
-  const paginas =
-    doc.getNumberOfPages();
-
-  for (
-    let pagina = 1;
-    pagina <= paginas;
-    pagina++
-  ) {
-    doc.setPage(
-      pagina
-    );
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(
-      8
-    );
-
-    doc.text(
-      `Página ${pagina} de ${paginas}`,
-
-      largura - margem,
-
-      altura - 5,
-
-      {
-        align: "right",
-      }
-    );
-  }
-
+  /* RODAPÉ (padrão dos relatórios) */
+  desenharRodapePdf(doc, { titulo: "Pedidos de Compra Alterados", margem });
   doc.save(
     nomeArquivo("pdf")
   );
@@ -424,98 +384,36 @@ export async function exportarExcelPedidosCompraAlterados(
     "Pedrasplast";
 
   /* =====================================================
-     ABA RESUMO
+     ABA RESUMO (padrão dos relatórios)
   ===================================================== */
-
-  const resumo =
-    workbook.addWorksheet(
-      "Resumo"
-    );
-
-  resumo.addRow([
-    "PEDIDOS DE COMPRA ALTERADOS",
-  ]);
-
-  resumo.addRow([
-    celulaTexto(
-      `Período: ${periodo}`
-    ),
-  ]);
-
-  resumo.addRow([
-    "Pedido de compra",
-    "Primeira detecção",
-    "Última alteração",
-    "Nº alterações",
-    "O que foi alterado",
-  ]);
-
-  resumo.getRow(3).font = {
-    bold: true,
-  };
-
-  resumo.views = [
-    {
-      state: "frozen",
-      ySplit: 3,
-    },
-  ];
-
-  resumo.columns = [
-    22,
-    23,
-    23,
-    18,
-    65,
-  ].map((width) => ({
-    width,
-  }));
+  const COLUNAS_RESUMO = ["Pedido de compra", "Primeira detecção", "Última alteração", "Nº alterações", "O que foi alterado"];
+  const resumo = workbook.addWorksheet("Resumo");
+  resumo.columns = [22, 23, 23, 18, 65].map((width) => ({ width }));
+  const linhaCabecalhoResumo = escreverTituloExcel(resumo, {
+    titulo: "Pedidos de Compra Alterados",
+    categoria: "Compras",
+    informacoes: [`Período: ${periodo} · Gerado em ${dataHora(new Date())}`],
+    totalColunas: COLUNAS_RESUMO.length,
+  });
+  resumo.getRow(linhaCabecalhoResumo).values = COLUNAS_RESUMO;
+  estilizarCabecalhoExcel(resumo, linhaCabecalhoResumo, COLUNAS_RESUMO.length);
+  resumo.views = [{ state: "frozen", ySplit: linhaCabecalhoResumo }];
 
   /* =====================================================
      ABA HISTÓRICO
   ===================================================== */
-
-  const historico =
-    workbook.addWorksheet(
-      "Histórico Expandido"
-    );
-
-  historico.addRow([
-    "Pedido de compra",
-    "Alteração",
-    "Detectado em",
-    "Produto",
-    "Código do produto",
-    "O que mudou",
-    "Antes",
-    "Depois",
-    "Diferença",
-  ]);
-
-  historico.getRow(1).font = {
-    bold: true,
-  };
-
-  historico.views = [
-    {
-      state: "frozen",
-      ySplit: 1,
-    },
-  ];
-
-  historico.columns = [
-    20,
-    14,
-    23,
-    52,
-    20,
-    38,
-    35,
-    35,
-    42,
-  ].map((width) => ({
-    width,
-  }));
+  const COLUNAS_HISTORICO = ["Pedido de compra", "Alteração", "Detectado em", "Produto", "Código do produto", "O que mudou", "Antes", "Depois", "Diferença"];
+  const historico = workbook.addWorksheet("Histórico Expandido");
+  historico.columns = [20, 12, 20, 42, 20, 28, 36, 36, 18].map((width) => ({ width }));
+  const linhaCabecalhoHistorico = escreverTituloExcel(historico, {
+    titulo: "Pedidos de Compra Alterados — histórico expandido",
+    categoria: "Compras",
+    informacoes: [`Período: ${periodo}`],
+    totalColunas: COLUNAS_HISTORICO.length,
+  });
+  historico.getRow(linhaCabecalhoHistorico).values = COLUNAS_HISTORICO;
+  estilizarCabecalhoExcel(historico, linhaCabecalhoHistorico, COLUNAS_HISTORICO.length);
+  historico.views = [{ state: "frozen", ySplit: linhaCabecalhoHistorico }];
 
   /* =====================================================
      PREENCHER AS DUAS ABAS
@@ -611,24 +509,16 @@ export async function exportarExcelPedidosCompraAlterados(
   /* =====================================================
      AJUSTES VISUAIS DO EXCEL
   ===================================================== */
-
   resumo.autoFilter = {
-    from: "A3",
-    to: "E3",
+    from: { row: linhaCabecalhoResumo, column: 1 },
+    to: { row: linhaCabecalhoResumo, column: COLUNAS_RESUMO.length },
   };
-
   historico.autoFilter = {
-    from: "A1",
-    to: "I1",
+    from: { row: linhaCabecalhoHistorico, column: 1 },
+    to: { row: linhaCabecalhoHistorico, column: COLUNAS_HISTORICO.length },
   };
-
-  historico.eachRow((linha) => {
-    linha.alignment = {
-      vertical: "top",
-
-      wrapText: true,
-    };
-  });
+  estilizarLinhasExcel(resumo, linhaCabecalhoResumo + 1, resumo.rowCount, COLUNAS_RESUMO.length);
+  estilizarLinhasExcel(historico, linhaCabecalhoHistorico + 1, historico.rowCount, COLUNAS_HISTORICO.length);
 
   /* =====================================================
      GERAR ARQUIVO

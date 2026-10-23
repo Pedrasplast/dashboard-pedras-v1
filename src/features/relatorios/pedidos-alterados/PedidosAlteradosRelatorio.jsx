@@ -4,11 +4,8 @@ import {
   FiAlertTriangle,
   FiChevronDown,
   FiChevronUp,
-  FiDownload,
   FiEdit3,
-  FiFileText,
   FiGitBranch,
-  FiRefreshCw,
   FiSearch,
 } from "react-icons/fi";
 
@@ -18,6 +15,8 @@ import { supabase } from "@/lib/supabaseClient";
 
 // Paginação padrão já utilizada no sistema.
 import Paginacao from "@/components/paginacao/Paginacao";
+
+import LayoutRelatorio from "../components/LayoutRelatorio";
 
 import "./PedidosAlteradosRelatorio.css";
 
@@ -476,7 +475,7 @@ function extrairMudancas(ocorrencia) {
    COMPONENTE PRINCIPAL
 ===================================================== */
 
-export default function PedidosAlteradosRelatorio() {
+export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig } = {}) {
   /* =================================================
      PERÍODO INICIAL
   ================================================= */
@@ -782,6 +781,13 @@ export default function PedidosAlteradosRelatorio() {
      ALTERAR PESQUISA
   ================================================= */
 
+  function limparFiltros() {
+    setDataInicial(periodoPadrao.inicio);
+    setDataFinal(periodoPadrao.fim);
+    setPesquisa("");
+    setPaginaAtual(1);
+  }
+
   function alterarPesquisa(valor) {
     setPesquisa(valor);
 
@@ -874,88 +880,18 @@ export default function PedidosAlteradosRelatorio() {
     <>
       <style>{ESTILOS_DESDOBRAMENTO}</style>
 
-      {/* ===============================================
-          CABEÇALHO DO RELATÓRIO
-      =============================================== */}
-
-      <div className="relatorio-selecionado-header">
-        <div className="relatorio-selecionado-icone">
-          <FiEdit3 />
-        </div>
-
-        <div>
-          <span className="relatorio-selecionado-categoria">Pedidos</span>
-
-          <h2>Pedidos Alterados</h2>
-
-          <p>
-            Acompanhe alterações realizadas no conteúdo dos pedidos, sem considerar o avanço normal
-            de status ou etapa.
-          </p>
-        </div>
-      </div>
-
-      {/* ===============================================
-          AÇÕES
-      =============================================== */}
-
-      <div className="relatorio-acoes">
-        {/* PDF */}
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-pdf"
-          onClick={exportarPDF}
-          disabled={totalItens === 0 || Boolean(exportando)}
-        >
-          {exportando === "pdf" ? (
-            <FiRefreshCw className="pedidos-alterados-girando" />
-          ) : (
-            <FiFileText />
-          )}
-
-          <div>
-            <strong>Baixar PDF</strong>
-
-            <span>Histórico expandido por pedido</span>
-          </div>
-        </button>
-
-        {/* EXCEL */}
-
-        <button
-          type="button"
-          className="btn-relatorio btn-relatorio-csv"
-          onClick={exportarExcel}
-          disabled={totalItens === 0 || Boolean(exportando)}
-        >
-          {exportando === "excel" ? (
-            <FiRefreshCw className="pedidos-alterados-girando" />
-          ) : (
-            <FiDownload />
-          )}
-
-          <div>
-            <strong>Exportar Excel</strong>
-
-            <span>Resumo + histórico expandido</span>
-          </div>
-        </button>
-      </div>
-
-      {/* ===============================================
-          FILTROS
-      =============================================== */}
-
-      <div className="relatorio-filtros-card">
-        <div className="relatorio-filtros-header">
-          <div>
-            <h3>Parâmetros do relatório</h3>
-
-            <p>O período é atualizado automaticamente ao alterar as datas.</p>
-          </div>
-        </div>
-
+      <LayoutRelatorio
+        relatorio={relatorioConfig}
+        categoria="Pedidos"
+        titulo="Pedidos Alterados"
+        descricao="Acompanhe alterações realizadas no conteúdo dos pedidos, sem considerar o avanço normal de status ou etapa."
+        fixo
+        filtrosAtivos={
+          (dataInicial !== periodoPadrao.inicio ? 1 : 0) +
+          (dataFinal !== periodoPadrao.fim ? 1 : 0) +
+          (pesquisa.trim() ? 1 : 0)
+        }
+        filtros={
         <div className="pedidos-alterados-filtros">
           {/* DATA INICIAL */}
 
@@ -1000,8 +936,27 @@ export default function PedidosAlteradosRelatorio() {
             </div>
           </label>
         </div>
-      </div>
-
+        }
+        acoes={{
+          onPdf: exportarPDF,
+          onExcel: exportarExcel,
+          onLimpar: limparFiltros,
+          desabilitado: totalItens === 0 || Boolean(exportando),
+          gerandoPdf: exportando === "pdf",
+          gerandoExcel: exportando === "excel",
+        }}
+        indicadores={[
+          { rotulo: "Pedidos alterados", valor: totalItens.toLocaleString("pt-BR"), destaque: true },
+          { rotulo: "Alterações", valor: totalAlteracoes.toLocaleString("pt-BR") },
+          {
+            rotulo: "Período",
+            texto: true,
+            valor: `${dataInicial ? dataInicial.split("-").reverse().join("/") : "início"} até ${
+              dataFinal ? dataFinal.split("-").reverse().join("/") : "hoje"
+            }`,
+          },
+        ]}
+      >
       {/* ===============================================
           ERRO DA CONSULTA
       =============================================== */}
@@ -1374,22 +1329,15 @@ export default function PedidosAlteradosRelatorio() {
 
               <span>{totalAlteracoes} alteração(ões) no período</span>
             </div>
+            {totalPaginas > 1 && (
+              <Paginacao
+                paginaAtual={paginaValida}
+                totalItens={totalItens}
+                itensPorPagina={ITENS_POR_PAGINA}
+                onChangePagina={setPaginaAtual}
+              />
+            )}
           </section>
-
-          {/* =====================================
-              PAGINAÇÃO PADRÃO DO SISTEMA
-
-              Substitui os botões antigos.
-          ===================================== */}
-
-          {totalPaginas > 1 && (
-            <Paginacao
-              paginaAtual={paginaValida}
-              totalItens={totalItens}
-              itensPorPagina={ITENS_POR_PAGINA}
-              onChangePagina={setPaginaAtual}
-            />
-          )}
         </>
       )}
 
@@ -1398,7 +1346,7 @@ export default function PedidosAlteradosRelatorio() {
       =============================================== */}
 
       {!error && !isLoading && totalItens === 0 && (
-        <div className="relatorio-visualizacao-vazia pedidos-alterados-vazio">
+        <div className="rl-vazio pedidos-alterados-vazio">
           <FiEdit3 />
 
           <strong>Nenhuma alteração encontrada</strong>
@@ -1406,6 +1354,7 @@ export default function PedidosAlteradosRelatorio() {
           <span>Não existem pedidos com alterações reais no período selecionado.</span>
         </div>
       )}
+      </LayoutRelatorio>
     </>
   );
 }
