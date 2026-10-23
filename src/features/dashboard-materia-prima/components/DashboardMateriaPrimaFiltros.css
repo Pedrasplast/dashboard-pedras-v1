@@ -915,3 +915,36 @@
 
   line-height: 1.4;
 }
+
+
+/* =========================================================
+   LIMPAR FILTROS NA MESMA LINHA, DEPOIS DE FORNECEDOR
+========================================================= */
+
+@media (min-width: 1200px) {
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      145px
+      145px
+      minmax(250px, 300px)
+      minmax(300px, 360px)
+      max-content;
+  }
+}
+
+@media (min-width: 1400px) {
+  .dmp-filtros-card .dmp-filtros {
+    grid-template-columns:
+      145px
+      145px
+      300px
+      360px
+      max-content;
+  }
+}
+
+.dmp-filtros-card .dmp-filtros .dmp-btn-limpar {
+  height: 40px;
+  align-self: end;
+  justify-self: start;
+}
