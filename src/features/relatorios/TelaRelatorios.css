@@ -3331,3 +3331,10 @@
     gap: 10px;
   }
 }
+
+
+/* Tela inicial (painel): sem o espaço grande acima do cabeçalho. */
+.relatorios-container:not(.relatorios-container--aberto):has(> .pr) {
+  margin-top: 0;
+  padding-top: 18px;
+}

@@ -22,7 +22,6 @@ import { normalizarTexto } from "@/lib/texto";
 import { supabase } from "@/lib/supabaseClient";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
-import PageHeader from "@/components/layout/PageHeader";
 
 // Componente padrão já utilizado na tela de Pedidos.
 import Paginacao from "@/components/paginacao/Paginacao";
@@ -40,6 +39,7 @@ import {
 import { obterDataPedidoRelatorio } from "./pedidos/PedidosRelatorios";
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
 import LayoutRelatorio from "./components/LayoutRelatorio";
+import PainelRelatorios from "./components/PainelRelatorios";
 
 import "./TelaRelatorios.css";
 
@@ -1496,15 +1496,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           CABEÇALHO PRINCIPAL
       =============================================== */}
 
-      {!relatorioSelecionado && (
-        <PageHeader
-          eyebrow="Central de Relatórios"
-          title="Relatórios"
-          description="Consulte e exporte informações operacionais e gerenciais utilizando os dados já disponíveis no sistema."
-          icon={FiFileText}
-          className="relatorios-header"
-        />
-      )}
+
 
       {/* ===============================================
           ERRO DE PERMISSÕES
@@ -1537,145 +1529,16 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       {!relatorioSelecionado &&
         relatoriosDisponiveis.length > 0 && (
-          <section className="relatorios-catalogo">
-
-            {/* BUSCA */}
-
-            <div className="relatorios-busca">
-              <FiSearch />
-
-              <input
-                type="search"
-                value={buscaRelatorios}
-                onChange={(event) =>
-                  setBuscaRelatorios(event.target.value)
-                }
-                placeholder="Buscar relatório por nome, categoria ou descrição..."
-                aria-label="Buscar relatório"
-              />
-
-              <span>
-                {relatoriosCatalogo.length} de{" "}
-                {relatoriosDisponiveis.length}
-              </span>
-            </div>
-
-            <div className="relatorios-catalogo-layout">
-
-              {/* CATEGORIAS */}
-
-              <aside className="relatorios-categorias-sidebar">
-                <div className="relatorios-categorias-sidebar-header">
-                  <span>
-                    Categorias
-                  </span>
-
-                  <strong>
-                    {categorias.length}
-                  </strong>
-                </div>
-
-                <nav
-                  className="relatorios-categorias-menu"
-                  aria-label="Categorias de relatórios"
-                >
-                  {categoriasCatalogo.map((categoria) => {
-                    const ativa =
-                      categoriaSelecionada === categoria.nome;
-
-                    return (
-                      <button
-                        key={categoria.nome}
-                        type="button"
-                        className={
-                          ativa
-                            ? "relatorios-categoria-btn ativa"
-                            : "relatorios-categoria-btn"
-                        }
-                        aria-pressed={ativa}
-                        onClick={() =>
-                          setCategoriaSelecionada(categoria.nome)
-                        }
-                      >
-                        <span className="relatorios-categoria-btn-nome">
-                          {categoria.nome}
-                        </span>
-
-                        <span className="relatorios-categoria-btn-contagem">
-                          {categoria.quantidade}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </nav>
-              </aside>
-
-              {/* CONTEÚDO */}
-
-              <div className="relatorios-catalogo-conteudo">
-                <div className="relatorios-catalogo-header">
-                  <div>
-                    <span className="relatorios-catalogo-eyebrow">
-                      Catálogo
-                    </span>
-
-                    <h2>
-                      {tituloCatalogo}
-                    </h2>
-
-                    <p>
-                      {buscaRelatorios.trim()
-                        ? `${relatoriosCatalogo.length} resultado(s) para "${buscaRelatorios.trim()}".`
-                        : `${relatoriosCatalogo.length} relatório(s) disponível(is) nesta seleção.`}
-                    </p>
-                  </div>
-                </div>
-
-                {relatoriosCatalogo.length > 0 ? (
-                  <div className="relatorios-grid relatorios-grid--catalogo">
-                    {relatoriosCatalogo.map((relatorio) => {
-                      const Icone = relatorio.icone;
-
-                      return (
-                        <button
-                          key={relatorio.id}
-                          type="button"
-                          className="relatorio-card"
-                          onClick={() =>
-                            selecionarRelatorio(relatorio.id)
-                          }
-                        >
-                          <div className="relatorio-card-icone">
-                            <Icone />
-                          </div>
-
-                          <div className="relatorio-card-conteudo">
-                            <h3>
-                              {relatorio.titulo}
-                            </h3>
-                          </div>
-
-                          <FiChevronRight className="relatorio-card-seta" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="relatorios-sem-resultados">
-                    <FiSearch />
-
-                    <strong>
-                      Nenhum relatório encontrado
-                    </strong>
-
-                    <span>
-                      Ajuste a busca ou escolha outra categoria.
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
+          <PainelRelatorios
+            relatoriosDisponiveis={relatoriosDisponiveis}
+            relatoriosCatalogo={relatoriosCatalogo}
+            categoriasCatalogo={categoriasCatalogo}
+            categoriaSelecionada={categoriaSelecionada}
+            onCategoria={setCategoriaSelecionada}
+            busca={buscaRelatorios}
+            onBusca={setBuscaRelatorios}
+            onAbrir={selecionarRelatorio}
+          />
         )}
 
       {/* ===============================================
