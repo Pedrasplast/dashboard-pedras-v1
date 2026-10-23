@@ -23,9 +23,6 @@ export function criarDadosExportacaoEntradasCompras(
     material_mp:
       registro.material || "-",
 
-    tipo:
-      registro.tipo || "-",
-
     quantidade_kg:
       Number(registro.quantidadeKg ?? 0),
 
@@ -56,9 +53,6 @@ export function criarDadosExportacaoEntradasCompras(
       "",
 
     material_mp:
-      "",
-
-    tipo:
       "",
 
     quantidade_kg:

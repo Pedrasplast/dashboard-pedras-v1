@@ -33,25 +33,36 @@ export const DATAS_REFERENCIA_ENTRADAS_COMPRAS = [
 ];
 
 
-const CAMPOS_COMPRA = `
-  id,
-  numero_pedido,
-  data_compra,
-  data_prevista,
-  data_recebimento,
-  fornecedor_id,
-  material_id,
-  tipo_material,
-  tipo_classificacao,
-  quantidade_kg,
-  preco_unitario,
-  ipi_percentual,
-  valor_total,
-  numero_nf,
-  status,
-  ativo
-`;
+/* =========================================================
+   ORIGEM: OMIE (23/10)
+   Mesma base do Dashboard de Matéria-Prima: pedidos de compra do
+   departamento 11 — Suprimentos PP, etapa 15, sem cancelados,
+   com as NF-e de entrada. Coluna Tipo removida (era só manual).
+========================================================= */
+const VIEW_OMIE = "dashboard_mp_compras_omie";
+const TAMANHO_PAGINA = 1000;
 
+const CAMPOS_OMIE = [
+  "cod_ped_compra",
+  "codigo_item",
+  "numero_pedido",
+  "data_inclusao",
+  "data_previsao",
+  "codigo_fornecedor",
+  "fornecedor_nome",
+  "codigo_produto",
+  "descricao",
+  "material_id",
+  "material_nome",
+  "quantidade",
+  "quantidade_recebida",
+  "preco_unitario",
+  "ipi_percentual",
+  "valor_total",
+  "data_recebimento",
+  "numeros_nf",
+  "encerrado",
+].join(",");
 
 function texto(valor) {
   return String(valor ?? "").trim();
@@ -84,82 +95,64 @@ function numeroOpcional(valor) {
 }
 
 
-function normalizarRegistro({
-  registro,
-  fornecedoresPorId,
-  materiaisPorId,
-}) {
-  const status = texto(
-    registro?.status,
-  ).toUpperCase();
+/**
+ * Converte um item de pedido do Omie em linhas do relatório:
+ * - parte recebida → RECEBIDA (data = "Recebido em" da NF; sem NF, previsão);
+ * - saldo a receber → FUTURA (pedido encerrado no Omie não tem saldo futuro).
+ * Valores proporcionais à quantidade de cada parte.
+ */
+export function normalizarItemOmie(registro) {
+  if (!registro) return [];
+  const quantidade = numero(registro.quantidade);
+  if (!(quantidade > 0)) return [];
+  const recebida = Math.min(Math.max(numero(registro.quantidade_recebida), 0), quantidade);
+  const saldo = quantidade - recebida;
+  const total = numero(registro.valor_total);
+  const chave = `${registro.cod_ped_compra}-${registro.codigo_item}`;
+  const fornecedorId = texto(registro.codigo_fornecedor) || "sem-fornecedor";
+  const materialId = registro.material_id != null
+    ? String(registro.material_id)
+    : `omie-${texto(registro.codigo_produto) || "sem-codigo"}`;
 
-  const fornecedor = fornecedoresPorId.get(
-    String(registro?.fornecedor_id ?? ""),
-  );
-
-  const material = materiaisPorId.get(
-    String(registro?.material_id ?? ""),
-  );
-
-  return {
-    id: registro.id,
-
-    pedido:
-      texto(registro.numero_pedido),
-
-    recebido:
-      texto(registro.data_recebimento),
-
-    emissao:
-      texto(registro.data_compra),
-
-    previsaoRecebimento:
-      texto(registro.data_prevista),
-
-    fornecedorId:
-      registro.fornecedor_id,
-
-    fornecedor:
-      texto(fornecedor?.nome) ||
-      "Fornecedor não encontrado",
-
-    materialId:
-      registro.material_id,
-
-    material:
-      texto(material?.nome) ||
-      texto(registro.tipo_material) ||
-      "Material não encontrado",
-
-    tipo:
-      texto(registro.tipo_classificacao) ||
-      "-",
-
-    quantidadeKg:
-      numero(registro.quantidade_kg),
-
-    preco:
-      numeroOpcional(registro.preco_unitario),
-
-    ipiPercentual:
-      numeroOpcional(registro.ipi_percentual),
-
-    total:
-      numero(registro.valor_total),
-
-    numeroNf:
-      texto(registro.numero_nf),
-
-    statusOriginal:
-      status,
-
-    situacao:
-      status === "RECEBIDA"
-        ? "RECEBIDA"
-        : "FUTURA",
+  const base = {
+    pedido: texto(registro.numero_pedido),
+    emissao: texto(registro.data_inclusao),
+    previsaoRecebimento: texto(registro.data_previsao),
+    fornecedorId,
+    fornecedor: texto(registro.fornecedor_nome) || "Fornecedor não encontrado",
+    materialId,
+    material: texto(registro.material_nome) || texto(registro.descricao) || "Material não encontrado",
+    preco: numeroOpcional(registro.preco_unitario),
+    ipiPercentual: numeroOpcional(registro.ipi_percentual),
   };
-}
 
+  const linhas = [];
+  if (recebida > 0) {
+    linhas.push({
+      ...base,
+      id: `${chave}-R`,
+      recebido: texto(registro.data_recebimento) || texto(registro.data_previsao),
+      quantidadeKg: recebida,
+      total: total * (recebida / quantidade),
+      numeroNf: texto(registro.numeros_nf),
+      statusOriginal: saldo > 0 ? "PARCIAL" : "RECEBIDA",
+      situacao: "RECEBIDA",
+    });
+  }
+  if (saldo > 0 && registro.encerrado !== true) {
+    linhas.push({
+      ...base,
+      id: `${chave}-F`,
+      recebido: "",
+      quantidadeKg: saldo,
+      total: total * (saldo / quantidade),
+      numeroNf: "",
+      statusOriginal: recebida > 0 ? "PARCIAL" : "PENDENTE",
+      situacao: "FUTURA",
+    });
+  }
+  return linhas;
+}
 
 function criarOpcoesUnicas(
   registros,
@@ -208,7 +201,6 @@ export function criarResultadoEntradasComprasVazio() {
     registros: [],
     fornecedores: [],
     materiais: [],
-    tipos: [],
   };
 }
 
@@ -221,127 +213,27 @@ export function criarResultadoEntradasComprasVazio() {
 ========================================================= */
 
 export async function buscarRelatorioEntradasComprasMateriaPrima() {
-  const [
-    resultadoCompras,
-    resultadoFornecedores,
-    resultadoMateriais,
-  ] = await Promise.all([
-    supabase
-      .from("materia_prima_compras_futuras")
-      .select(CAMPOS_COMPRA)
-      .eq("ativo", true)
-      .in(
-        "status",
-        [
-          "RECEBIDA",
-          "PREVISTA",
-          "CONFIRMADA",
-        ],
-      )
-      .order(
-        "data_prevista",
-        {
-          ascending: false,
-        },
-      )
-      .order(
-        "id",
-        {
-          ascending: false,
-        },
-      ),
-
-    supabase
-      .from("materia_prima_fornecedores")
-      .select("id, nome")
-      .order(
-        "nome",
-        {
-          ascending: true,
-        },
-      ),
-
-    supabase
-      .from("materia_prima_materiais")
-      .select("id, nome")
-      .order(
-        "nome",
-        {
-          ascending: true,
-        },
-      ),
-  ]);
-
-  if (resultadoCompras.error) {
-    throw resultadoCompras.error;
+  const itens = [];
+  for (let inicio = 0; ; inicio += TAMANHO_PAGINA) {
+    const { data, error } = await supabase
+      .from(VIEW_OMIE)
+      .select(CAMPOS_OMIE)
+      .order("data_inclusao", { ascending: false })
+      .order("cod_ped_compra", { ascending: false })
+      .order("codigo_item", { ascending: true })
+      .range(inicio, inicio + TAMANHO_PAGINA - 1);
+    if (error) throw error;
+    const pagina = Array.isArray(data) ? data : [];
+    itens.push(...pagina);
+    if (pagina.length < TAMANHO_PAGINA) break;
   }
 
-  if (resultadoFornecedores.error) {
-    throw resultadoFornecedores.error;
-  }
-
-  if (resultadoMateriais.error) {
-    throw resultadoMateriais.error;
-  }
-
-  const fornecedores = Array.isArray(
-    resultadoFornecedores.data,
-  )
-    ? resultadoFornecedores.data
-    : [];
-
-  const materiais = Array.isArray(
-    resultadoMateriais.data,
-  )
-    ? resultadoMateriais.data
-    : [];
-
-  const fornecedoresPorId = new Map(
-    fornecedores.map((fornecedor) => [
-      String(fornecedor.id),
-      fornecedor,
-    ]),
-  );
-
-  const materiaisPorId = new Map(
-    materiais.map((material) => [
-      String(material.id),
-      material,
-    ]),
-  );
-
-  const registros = (
-    Array.isArray(resultadoCompras.data)
-      ? resultadoCompras.data
-      : []
-  )
-    .map((registro) =>
-      normalizarRegistro({
-        registro,
-        fornecedoresPorId,
-        materiaisPorId,
-      }),
-    )
+  const registros = itens
+    .flatMap(normalizarItemOmie)
     .sort((a, b) => {
-      const dataA =
-        a.recebido ||
-        a.previsaoRecebimento ||
-        a.emissao ||
-        "";
-
-      const dataB =
-        b.recebido ||
-        b.previsaoRecebimento ||
-        b.emissao ||
-        "";
-
-      const comparacao = dataB.localeCompare(dataA);
-
-      if (comparacao !== 0) {
-        return comparacao;
-      }
-
-      return Number(b.id) - Number(a.id);
+      const dataA = a.recebido || a.previsaoRecebimento || a.emissao || "";
+      const dataB = b.recebido || b.previsaoRecebimento || b.emissao || "";
+      return dataB.localeCompare(dataA) || String(b.id).localeCompare(String(a.id));
     });
 
   const fornecedoresFiltro = criarOpcoesUnicas(
@@ -356,30 +248,9 @@ export async function buscarRelatorioEntradasComprasMateriaPrima() {
     "material",
   );
 
-  const tipos = [
-    ...new Set(
-      registros
-        .map((registro) => texto(registro.tipo))
-        .filter(
-          (tipo) =>
-            tipo &&
-            tipo !== "-",
-        ),
-    ),
-  ].sort((a, b) =>
-    a.localeCompare(
-      b,
-      "pt-BR",
-      {
-        sensitivity: "base",
-      },
-    ),
-  );
-
   return {
     registros,
     fornecedores: fornecedoresFiltro,
     materiais: materiaisFiltro,
-    tipos,
   };
 }
