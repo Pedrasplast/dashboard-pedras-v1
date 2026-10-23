@@ -614,3 +614,149 @@
 .rl-filtros-corpo .rel-pedidos-filtros-titulo {
   display: none;
 }
+
+
+/* =========================================================
+   MAIS COMPACTO (23/10): menos espaço, mais área para os dados
+========================================================= */
+
+.rl {
+  gap: 10px;
+}
+
+.rl-filtros {
+  gap: 10px;
+  padding: 12px;
+}
+
+.rl-filtros-corpo {
+  gap: 8px;
+}
+
+.rl-cabecalho {
+  gap: 14px;
+  padding: 9px 16px;
+}
+
+.rl-logo {
+  height: 20px;
+  padding-right: 14px;
+}
+
+.rl-cabecalho-texto h2 {
+  font-size: 1.02rem;
+}
+
+.rl-cabecalho-texto p {
+  margin-top: 1px;
+  font-size: 0.72rem;
+}
+
+.rl-indicador {
+  padding: 7px 14px;
+}
+
+.rl-indicador strong {
+  font-size: 1rem;
+}
+
+.rl-conteudo {
+  gap: 10px;
+}
+
+/* Pré-visualização: o título e os filtros já estão no cabeçalho e nos
+   indicadores; fica só uma barra fina com o botão de fechar. */
+.rl .relatorio-visualizacao-header {
+  align-items: center;
+  padding: 7px 14px;
+}
+
+.rl .relatorio-visualizacao-eyebrow {
+  margin: 0;
+}
+
+.rl .relatorio-visualizacao-header h3 {
+  display: none;
+}
+
+.rl .relatorio-visualizacao-info {
+  display: none;
+}
+
+.rl .relatorio-visualizacao-tabela thead th {
+  padding: 9px 12px;
+}
+
+.rl .relatorio-visualizacao-tabela tbody td {
+  padding: 8px 12px;
+}
+
+.rl .relatorio-visualizacao-footer {
+  padding: 8px 14px;
+}
+
+/* Calendário dos filtros abre dentro da coluna (não fica cortado). */
+.rl-filtros-corpo .calendar-popover {
+  position: static;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  box-shadow: none;
+  border: 1px solid var(--rl-borda);
+}
+
+.rl-filtros-corpo .calendar-popover .rdp-root {
+  --rdp-day-height: 30px;
+  --rdp-day-width: 30px;
+  --rdp-day_button-height: 28px;
+  --rdp-day_button-width: 28px;
+}
+
+/* =========================================================
+   CABEÇALHO E FILTROS FIXOS: só a tabela rola (computador)
+========================================================= */
+
+@media (min-width: 1025px) {
+  .rl--fixo {
+    height: calc(100dvh - var(--navbar-height, 76px) - 72px);
+    min-height: 480px;
+    align-items: stretch;
+  }
+
+  .rl--fixo .rl-filtros {
+    position: static;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+
+  .rl--fixo .rl-conteudo {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .rl--fixo .rl-cabecalho,
+  .rl--fixo .rl-indicadores {
+    flex-shrink: 0;
+  }
+
+  .rl--fixo .relatorio-visualizacao {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rl--fixo .relatorio-visualizacao > * {
+    flex-shrink: 0;
+  }
+
+  .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+  }
+}

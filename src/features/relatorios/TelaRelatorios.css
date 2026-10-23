@@ -3202,3 +3202,96 @@
     height: 38px;
   }
 }
+
+
+/* =========================================================
+   RELATÓRIO ABERTO — mais área útil e botão de voltar (23/10)
+========================================================= */
+
+.relatorios-container.relatorios-container--aberto {
+  max-width: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 12px 20px 14px;
+  min-height: 0;
+}
+
+.relatorios-container.relatorios-container--aberto .relatorios-navegacao-topo {
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+}
+
+.relatorios-container.relatorios-container--aberto .btn-voltar-topo {
+  min-height: 34px;
+  padding: 0 14px 0 10px;
+
+  color: #0b1f5c;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.relatorios-container.relatorios-container--aberto .btn-voltar-topo svg {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  color: #16a34a;
+}
+
+.relatorios-container.relatorios-container--aberto .btn-voltar-topo:hover {
+  color: #0b1f5c;
+  background: #f0fdf4;
+  border-color: #86efac;
+  border-radius: 999px;
+}
+
+.relatorios-container.relatorios-container--aberto .btn-voltar-topo:hover svg {
+  transform: translateX(-2px);
+}
+
+.relatorios-trilha {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.relatorios-trilha svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.relatorios-trilha strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #334155;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .relatorios-container.relatorios-container--aberto {
+    padding: 10px 10px 14px;
+  }
+
+  .relatorios-trilha {
+    display: none;
+  }
+}

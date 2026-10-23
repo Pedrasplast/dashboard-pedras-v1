@@ -1451,7 +1451,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   return (
-    <div className="relatorios-container">
+    <div
+      className={`relatorios-container ${
+        relatorioSelecionado ? "relatorios-container--aberto" : ""
+      }`}
+    >
 
       {/* ===============================================
           VOLTAR
@@ -1467,9 +1471,21 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
             <FiArrowLeft />
 
             <span>
-              Painel de Relatórios
+              Voltar aos relatórios
             </span>
           </button>
+
+          <nav className="relatorios-trilha" aria-label="Você está em">
+            <span>Relatórios</span>
+            {relatorioSelecionado.categoria && (
+              <>
+                <FiChevronRight aria-hidden="true" />
+                <span>{relatorioSelecionado.categoria}</span>
+              </>
+            )}
+            <FiChevronRight aria-hidden="true" />
+            <strong>{relatorioSelecionado.titulo}</strong>
+          </nav>
         </div>
       )}
 
@@ -1717,6 +1733,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
               <LayoutRelatorio
                 relatorio={relatorioSelecionado}
+                fixo
                 filtros={
                   <>
                 {fonteEhPedidos ? (
