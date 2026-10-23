@@ -9,18 +9,27 @@ import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
    CORES
 ========================================================= */
 
+/* Padrão visual — versão 4 (23/10). Só apresentação. */
 const CORES = {
-  azulEscuro: "FF1E293B",
-  azul: "FF2563EB",
+  azulEscuro: "FF0B1F5C",
+  azul: "FF0B1F5C",
+  azulCabecalho: "FFE8EEFC",
   azulClaro: "FFEFF6FF",
-
+  verde: "FF16A34A",
+  verdeTexto: "FF15803D",
+  verdeFundo: "FFF0FDF4",
   cinzaMuitoClaro: "FFF8FAFC",
   cinzaBorda: "FFE2E8F0",
   cinzaTexto: "FF64748B",
-
   branco: "FFFFFFFF",
   texto: "FF0F172A",
 };
+
+function linhaEhTotalGeral(item) {
+  return Object.values(item || {}).some(
+    (valor) => String(valor ?? "").trim().toUpperCase() === "TOTAL GERAL",
+  );
+}
 
 
 /* =========================================================
@@ -212,11 +221,7 @@ function criarCabecalhoRelatorio({
   tituloCell.font = {
     bold: true,
     size: 16,
-
-    color: {
-      argb:
-        CORES.texto,
-    },
+    color: { argb: CORES.azul },
   };
 
   tituloCell.alignment = {
@@ -251,24 +256,14 @@ function criarCabecalhoRelatorio({
       "Relatório",
     ).toUpperCase();
 
-  faixa.fill = {
-    type: "pattern",
-    pattern: "solid",
-
-    fgColor: {
-      argb:
-        CORES.azul,
-    },
-  };
-
   faixa.font = {
     bold: true,
     size: 9,
+    color: { argb: CORES.verdeTexto },
+  };
 
-    color: {
-      argb:
-        CORES.branco,
-    },
+  faixa.border = {
+    bottom: { style: "medium", color: { argb: CORES.verde } },
   };
 
   faixa.alignment = {
@@ -370,23 +365,13 @@ function escreverCabecalhoTabela({
         pattern:
           "solid",
 
-        fgColor: {
-          argb:
-            CORES.azulEscuro,
-        },
+        fgColor: { argb: CORES.azulCabecalho },
       };
 
       cell.font = {
-        bold:
-          true,
-
-        size:
-          10,
-
-        color: {
-          argb:
-            CORES.branco,
-        },
+        bold: true,
+        size: 10,
+        color: { argb: CORES.azul },
       };
 
       cell.alignment = {
@@ -410,8 +395,7 @@ function escreverCabecalhoTabela({
             "thin",
 
           color: {
-            argb:
-              "FF334155",
+            argb: "FFD6DEF0",
           },
         },
       };
@@ -530,10 +514,16 @@ function escreverLinhasDados({
       );
 
 
-      worksheet.getRow(
-        linhaAtual,
-      ).height = 20;
+      if (linhaEhTotalGeral(item)) {
+        colunas.forEach((_, indiceColuna) => {
+          const cell = worksheet.getCell(linhaAtual, indiceColuna + 1);
+          cell.font = { ...cell.font, bold: true, color: { argb: CORES.verdeTexto } };
+          cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.verdeFundo } };
+          cell.border = { top: { style: "medium", color: { argb: CORES.verde } } };
+        });
+      }
 
+      worksheet.getRow(linhaAtual).height = 20;
 
       linhaAtual += 1;
     },
