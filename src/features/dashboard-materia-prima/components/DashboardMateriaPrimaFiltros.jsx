@@ -5,7 +5,6 @@ import {
 import "./DashboardMateriaPrimaFiltros.css";
 
 import {
-  ORIGEM_MANUAL,
   ORIGEM_OMIE,
   ORIGENS_DADOS,
 } from "../origemOmie.js";
@@ -15,7 +14,7 @@ export default function DashboardMateriaPrimaFiltros({
   dataInicial,
   dataFinal,
   tipoData,
-  origem = ORIGEM_MANUAL,
+  origem = ORIGEM_OMIE,
   fornecedorSelecionado,
   materialSelecionado,
   fornecedores,
@@ -63,7 +62,7 @@ export default function DashboardMateriaPrimaFiltros({
     tipoData ===
       "compra" &&
     origem ===
-      ORIGEM_MANUAL &&
+      ORIGEM_OMIE &&
     fornecedorSelecionado ===
       "todos" &&
     String(

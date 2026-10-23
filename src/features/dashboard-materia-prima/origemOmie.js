@@ -19,9 +19,10 @@
 export const ORIGEM_MANUAL = "manual";
 export const ORIGEM_OMIE = "omie";
 
+/* Padrão da tela: Omie (22/10). Manual fica para comparação. */
 export const ORIGENS_DADOS = Object.freeze([
-  { value: ORIGEM_MANUAL, label: "Manual (tela de compras)" },
   { value: ORIGEM_OMIE, label: "Omie" },
+  { value: ORIGEM_MANUAL, label: "Manual (tela de compras)" },
 ]);
 
 export const VIEW_OMIE = "dashboard_mp_compras_omie";
