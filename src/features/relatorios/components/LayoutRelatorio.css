@@ -1297,3 +1297,39 @@
     padding-top: 14px;
   }
 }
+
+/* =========================================================
+   CORES DOS BOTÕES (26/10)
+   PDF em azul; Limpar fica vermelho só quando há filtro
+   alterado (habilitado). Sem filtro: cinza e não clicável.
+========================================================= */
+
+.rl .rl-btn-pdf {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.rl .rl-btn-pdf:hover:not(:disabled) {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.rl .rl-btn-limpar:not(:disabled) {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.rl .rl-btn-limpar:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.rl .rl-btn-limpar:disabled {
+  color: var(--rl-texto-2);
+  background: #ffffff;
+  border-color: #e2e8f0;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
