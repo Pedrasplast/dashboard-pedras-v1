@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FiDownload, FiEye, FiFileText, FiFilter, FiRotateCcw, FiX } from "react-icons/fi";
+
+import { ContextoLimparFiltros } from "@/components/filtros/ContextoLimparFiltros";
 
 import "./LayoutRelatorio.css";
 
@@ -46,6 +48,10 @@ export default function LayoutRelatorio({
 }) {
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
+  // Ação de limpar entregue pelo componente de filtros (botão padrão).
+  const [limparRegistrado, setLimparRegistrado] = useState(null);
+  const registrarLimpar = useCallback((valor) => setLimparRegistrado(valor), []);
+
   // Fecha a gaveta com Esc.
   useEffect(() => {
     if (!filtrosAbertos) return undefined;
@@ -64,8 +70,15 @@ export default function LayoutRelatorio({
     desabilitado = false,
     gerandoPdf = false,
     gerandoExcel = false,
-    limparDesabilitado = false,
+    limparDesabilitado: limparDesabilitadoInformado,
   } = acoes;
+
+  // Todo relatório usa o mesmo botão "Limpar": o da tela (onLimpar) ou o
+  // registrado pelo componente de filtros.
+  const acaoLimpar = onLimpar || limparRegistrado?.limpar;
+  const limparDesabilitado =
+    limparDesabilitadoInformado ??
+    (onLimpar ? false : !limparRegistrado?.possuiFiltroAtivo);
 
   const nomeCategoria = categoria ?? relatorio?.categoria;
   const nomeTitulo = titulo ?? relatorio?.titulo;
@@ -100,7 +113,11 @@ export default function LayoutRelatorio({
           </button>
         </div>
 
-        <div className="rl-filtros-corpo">{filtros}</div>
+        <div className="rl-filtros-corpo">
+          <ContextoLimparFiltros.Provider value={registrarLimpar}>
+            {filtros}
+          </ContextoLimparFiltros.Provider>
+        </div>
 
         <div className="rl-acoes">
           <Botao onClick={onVisualizar} desabilitado={desabilitado} icone={FiEye} classe="rl-btn-ver">
@@ -113,7 +130,7 @@ export default function LayoutRelatorio({
             Excel
           </Botao>
           <Botao
-            onClick={onLimpar}
+            onClick={acaoLimpar}
             desabilitado={limparDesabilitado}
             icone={FiRotateCcw}
             classe="rl-btn-limpar"

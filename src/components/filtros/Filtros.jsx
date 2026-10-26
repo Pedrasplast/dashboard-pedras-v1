@@ -5,6 +5,8 @@ import {
 
 import "./Filtros.css";
 
+import { useLimparNoLayout, useRegistrarLimpar } from "./ContextoLimparFiltros";
+
 
 /* =========================================================
    COMPARAÇÃO DE VALORES
@@ -203,6 +205,12 @@ export default function Filtros({
     );
 
 
+  /* Nos relatórios, o botão Limpar é o padrão do layout. */
+  const limparNoLayout = useLimparNoLayout();
+
+  useRegistrarLimpar(limpar, possuiFiltroAtivo);
+
+
   const conteudo =
     typeof children ===
     "function"
@@ -219,6 +227,7 @@ export default function Filtros({
 
 
       {mostrarBotaoLimpar &&
+        !limparNoLayout &&
         possuiFiltroAtivo &&
         (
           typeof renderBotaoLimpar ===
