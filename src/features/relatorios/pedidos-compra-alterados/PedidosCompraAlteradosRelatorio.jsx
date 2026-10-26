@@ -985,7 +985,11 @@ export default function PedidosCompraAlteradosRelatorio({
             erro={sincronizacao.error}
           />
         }
-        filtrosAtivos={(pesquisa.trim() ? 1 : 0)}
+        filtrosAtivos={
+          (dataInicial !== `${dataHoje().slice(0, 8)}01` ? 1 : 0) +
+          (dataFinal !== dataHoje() ? 1 : 0) +
+          (pesquisa.trim() ? 1 : 0)
+        }
         filtros={
         <div className="pedidos-alterados-filtros">
           <label className="pedidos-alterados-campo">
@@ -1044,6 +1048,10 @@ export default function PedidosCompraAlteradosRelatorio({
             setPesquisa("");
             setPagina(1);
           },
+          limparDesabilitado:
+            dataInicial === `${dataHoje().slice(0, 8)}01` &&
+            dataFinal === dataHoje() &&
+            !pesquisa.trim(),
           desabilitado: !filtrados.length || Boolean(exportando),
           gerandoPdf: exportando === "pdf",
           gerandoExcel: exportando === "excel",

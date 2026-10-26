@@ -941,6 +941,10 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
           onPdf: exportarPDF,
           onExcel: exportarExcel,
           onLimpar: limparFiltros,
+          limparDesabilitado:
+            dataInicial === periodoPadrao.inicio &&
+            dataFinal === periodoPadrao.fim &&
+            !pesquisa.trim(),
           desabilitado: totalItens === 0 || Boolean(exportando),
           gerandoPdf: exportando === "pdf",
           gerandoExcel: exportando === "excel",

@@ -2,6 +2,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 
 import CampoDataCalendario from "@/components/filtros/CampoDataCalendario";
 import Filtros from "@/components/filtros/Filtros";
+import { useLimparNoLayout } from "@/components/filtros/ContextoLimparFiltros";
 import { valoresUnicosOrdenados } from "@/lib/colecoes";
 
 import {
@@ -69,6 +70,8 @@ function FiltrosDashboard({
    */
   valoresPadrao = VALORES_PADRAO_FILTROS_PRODUCAO,
 }) {
+  const limparNoLayout = useLimparNoLayout();
+
   const [calendarioAberto, setCalendarioAberto] = useState(null);
 
   /* =======================================================
@@ -351,6 +354,7 @@ function FiltrosDashboard({
                   />
                 </div>
 
+                {!limparNoLayout && (
                 <button
                   type="button"
                   className="clear-date-btn clear-date-btn-relatorio"
@@ -360,6 +364,7 @@ function FiltrosDashboard({
                 >
                   ✕ LIMPAR
                 </button>
+                )}
               </div>
 
               {semDatas && (

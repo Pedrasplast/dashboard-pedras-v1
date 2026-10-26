@@ -1053,6 +1053,8 @@ export default function EntradasComprasMateriaPrima({
         onPdf: exportarPDF,
         onExcel: exportarExcel,
         onLimpar: limparFiltros,
+        limparDesabilitado:
+          JSON.stringify(filtros) === JSON.stringify(criarFiltrosIniciais()),
         desabilitado: filtrados.length === 0 || periodoInvalido || Boolean(exportando),
         gerandoPdf: exportando === "pdf",
         gerandoExcel: exportando === "excel",
