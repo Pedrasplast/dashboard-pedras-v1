@@ -1276,3 +1276,24 @@
   line-height: 1 !important;
 }
 
+
+/* =========================================================
+   CABEÇALHO DA TABELA SEM "VÃO" EM CIMA (26/10)
+   O cabeçalho fixo gruda abaixo do padding da área que rola;
+   com padding no topo as linhas apareciam por trás, acima dele.
+   Tira o padding de cima da área e põe o espaço no conteúdo.
+========================================================= */
+
+@media (min-width: 1025px) {
+  .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
+  .rl--fixo .relatorio-visualizacao > .rl-rolagem,
+  .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
+  .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
+    padding-top: 0 !important;
+    scroll-padding-top: 0;
+  }
+
+  .rl--fixo .financeiro-relatorio-grupos > .financeiro-relatorio-grupo:first-child {
+    padding-top: 14px;
+  }
+}
