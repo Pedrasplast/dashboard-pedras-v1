@@ -1,4 +1,5 @@
 import { converterNumeroFlexivel as converterNumeroVisualizacao } from "@/shared/lib/numeros";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    COLUNAS DA PRÉ-VISUALIZAÇÃO
@@ -76,9 +77,7 @@ const formatarTempoComMilhar = (valor) => {
   if (partes.length < 2) return texto;
   const horas = Number(partes[0]);
   if (!Number.isFinite(horas)) return texto;
-  return [horas.toLocaleString("pt-BR", { maximumFractionDigits: 0 }), ...partes.slice(1)].join(
-    ":",
-  );
+  return [formatarNumeroPtBR(horas, { maximumFractionDigits: 0 }), ...partes.slice(1)].join(":");
 };
 
 export const criarTituloAutomatico = (chave) =>

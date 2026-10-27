@@ -1,3 +1,4 @@
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 /* =========================================================
    TABELA DE PREÇOS — FORMATAÇÃO E ORDENAÇÃO
 
@@ -50,7 +51,7 @@ export function formatarPreco(valor) {
     return "—";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
@@ -62,7 +63,7 @@ export function formatarQuantidadePreco(valor) {
   if (valor === null || valor === undefined || valor === "") return "—";
   const valorNumerico = Number(valor);
   if (!Number.isFinite(valorNumerico)) return "—";
-  return valorNumerico.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(valorNumerico, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });

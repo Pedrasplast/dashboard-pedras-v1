@@ -11,9 +11,10 @@ import {
   YAxis,
 } from "recharts";
 
-import { formatarMoeda, formatarNumero } from "../dashboardMateriaPrimaUtils.js";
+import { formatarMoeda } from "../dashboardMateriaPrimaUtils.js";
 
 import { formatarKgCompleto, formatarMoedaCompleta } from "./materiaPrimaFormatters.js";
+import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 /* =========================================================
    RÓTULO DAS BARRAS
@@ -67,7 +68,7 @@ function TooltipMensal({ active, payload, label, tipo }) {
         <span>Quantidade: {formatarKgCompleto(item?.quantidadeKg)}</span>
       )}
 
-      <span>Compras: {formatarNumero(item?.compras, 0)}</span>
+      <span>Compras: {formatarNumeroCasasFixas(item?.compras, 0)}</span>
     </div>
   );
 }

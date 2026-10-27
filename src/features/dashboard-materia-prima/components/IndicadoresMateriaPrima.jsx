@@ -13,14 +13,10 @@ import {
 
 import KpiCard from "./KpiCard.jsx";
 
-import {
-  formatarKg,
-  formatarMoeda,
-  formatarMoedaKg,
-  formatarNumero,
-} from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg, formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrimaUtils.js";
 
 import { formatarDias, formatarPercentual } from "./materiaPrimaFormatters.js";
+import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 /* =========================================================
    AVISOS
@@ -203,7 +199,9 @@ export function EficienciaEntregaMateriaPrima({ resumo, carregando }) {
           <div>
             <span>Entregas avaliadas</span>
 
-            <strong>{carregando ? "..." : formatarNumero(resumo.entregasAvaliadas, 0)}</strong>
+            <strong>
+              {carregando ? "..." : formatarNumeroCasasFixas(resumo.entregasAvaliadas, 0)}
+            </strong>
 
             <small>Com datas suficientes para cálculo</small>
           </div>
@@ -215,7 +213,7 @@ export function EficienciaEntregaMateriaPrima({ resumo, carregando }) {
           <div>
             <span>Atrasos</span>
 
-            <strong>{carregando ? "..." : formatarNumero(resumo.atrasos, 0)}</strong>
+            <strong>{carregando ? "..." : formatarNumeroCasasFixas(resumo.atrasos, 0)}</strong>
 
             <small>Média de {formatarDias(resumo.atrasoMedioDias)}</small>
           </div>

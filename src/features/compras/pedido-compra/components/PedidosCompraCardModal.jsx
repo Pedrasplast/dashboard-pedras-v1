@@ -24,7 +24,6 @@ import {
   calcularDiasAtraso,
   formatarData,
   formatarMoeda,
-  formatarNumero,
   obterRotuloSituacaoRecebimento,
 } from "../utils/pedidosCompra.utils";
 
@@ -33,6 +32,7 @@ import {
   obterValorItem,
   formatarNomeUsuario,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
+import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 const CONFIGURACOES = Object.freeze({
   abertos: {
@@ -379,15 +379,15 @@ function TabelaPedidos({ pedidos, documentosExpandidos, onAlternarItens }) {
                               </td>
 
                               <td className="compras-card-modal-numero">
-                                {formatarNumero(quantidade, 2)}
+                                {formatarNumeroCasasFixas(quantidade, 2)}
                               </td>
 
                               <td className="compras-card-modal-numero">
-                                {formatarNumero(recebida, 2)}
+                                {formatarNumeroCasasFixas(recebida, 2)}
                               </td>
 
                               <td className="compras-card-modal-numero">
-                                {formatarNumero(saldo, 2)}
+                                {formatarNumeroCasasFixas(saldo, 2)}
                               </td>
 
                               <td>{item?.unidade || "-"}</td>
@@ -528,7 +528,9 @@ function TabelaRequisicoes({ requisicoes, documentosExpandidos, onAlternarItens 
                     )}
                   </td>
 
-                  <td className="compras-card-modal-numero">{formatarNumero(quantidade, 2)}</td>
+                  <td className="compras-card-modal-numero">
+                    {formatarNumeroCasasFixas(quantidade, 2)}
+                  </td>
 
                   <td>{item?.unidade || "-"}</td>
 
@@ -630,7 +632,7 @@ function TabelaRecebimentosFisicos({ recebimentos, documentosExpandidos, onAlter
         </td>
 
         <td className="compras-card-modal-numero">
-          {formatarNumero(Number(recebimento.quantidade_movimentada ?? 0), 2)}
+          {formatarNumeroCasasFixas(Number(recebimento.quantidade_movimentada ?? 0), 2)}
         </td>
 
         <td>{recebimento.unidade || "-"}</td>
@@ -898,7 +900,7 @@ export default function PedidosCompraCardModal({
 
                 <strong>
                   {requisicao
-                    ? formatarNumero(resumo.itens, 0)
+                    ? formatarNumeroCasasFixas(resumo.itens, 0)
                     : formatarMoeda(resumo.valorEmAberto)}
                 </strong>
               </div>

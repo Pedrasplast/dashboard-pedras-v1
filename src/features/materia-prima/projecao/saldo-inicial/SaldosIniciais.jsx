@@ -7,28 +7,12 @@ import SaldoInicialModal from "./SaldoInicialModal";
 import useSaldosIniciais from "./useSaldosIniciais";
 
 import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 
 import "./SaldosIniciais.css";
-
-/* =========================================================
-
-   UTILITÁRIOS
-
-\========================================================= */
-
-function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString(
-    "pt-BR",
-
-    {
-      minimumFractionDigits: 3,
-
-      maximumFractionDigits: 3,
-    },
-  )} kg`;
-}
+import { formatarKgTresCasas } from "@/features/materia-prima/utils/formatadores";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataBROuOriginal } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
 
@@ -191,7 +175,7 @@ export default function SaldosIniciais() {
             <div>
               <span>Saldo-base atual</span>
 
-              <strong>{formatarKg(saldoAtualTotal)}</strong>
+              <strong>{formatarKgTresCasas(saldoAtualTotal)}</strong>
             </div>
 
             <div>
@@ -344,7 +328,7 @@ export default function SaldosIniciais() {
                         </td>
 
                         <td className="saldos-iniciais-quantidade">
-                          {formatarKg(saldo.quantidadeKg)}
+                          {formatarKgTresCasas(saldo.quantidadeKg)}
                         </td>
 
                         <td className="saldos-iniciais-observacao">{saldo.observacao || "-"}</td>

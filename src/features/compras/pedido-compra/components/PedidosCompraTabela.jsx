@@ -17,7 +17,6 @@ import {
   calcularDiasAtraso,
   formatarData,
   formatarMoeda,
-  formatarNumero,
   obterRotuloSituacaoRecebimento,
 } from "../utils/pedidosCompra.utils";
 
@@ -34,6 +33,7 @@ import {
   obterValorItem,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
+import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 function obterNomeCategoria(pedido) {
   return (
@@ -174,7 +174,7 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
 
     if (Number(resumo?.omie_quantidade_pedida ?? 0) > 0) {
       linhasTitulo.push(
-        `Omie: ${formatarNumero(resumo.omie_quantidade_recebida, 2)} de ${formatarNumero(
+        `Omie: ${formatarNumeroCasasFixas(resumo.omie_quantidade_recebida, 2)} de ${formatarNumeroCasasFixas(
           resumo.omie_quantidade_pedida,
           2,
         )}`,
@@ -426,7 +426,7 @@ function TabelaRequisicoes({
 
                   <td className="compras-observacao-item">{item?.observacao || "-"}</td>
 
-                  <td className="compras-numero">{formatarNumero(quantidade, 2)}</td>
+                  <td className="compras-numero">{formatarNumeroCasasFixas(quantidade, 2)}</td>
 
                   <td className="compras-unidade">{item?.unidade || "-"}</td>
 
@@ -622,11 +622,13 @@ function TabelaPedidos({
                     />
                   </td>
 
-                  <td className="compras-numero">{formatarNumero(quantidade, 2)}</td>
+                  <td className="compras-numero">{formatarNumeroCasasFixas(quantidade, 2)}</td>
 
-                  <td className="compras-numero">{formatarNumero(recebida, 2)}</td>
+                  <td className="compras-numero">{formatarNumeroCasasFixas(recebida, 2)}</td>
 
-                  <td className="compras-numero compras-saldo">{formatarNumero(saldo, 2)}</td>
+                  <td className="compras-numero compras-saldo">
+                    {formatarNumeroCasasFixas(saldo, 2)}
+                  </td>
 
                   {primeiro && (
                     <td
@@ -861,7 +863,7 @@ export default function PedidosCompraTabela({ pedidos, tipoDocumento }) {
                         </div>
 
                         <small>
-                          {formatarNumero(quantidade, 2)} {item.unidade || ""}
+                          {formatarNumeroCasasFixas(quantidade, 2)} {item.unidade || ""}
                         </small>
                       </div>
                     );
@@ -998,7 +1000,7 @@ export default function PedidosCompraTabela({ pedidos, tipoDocumento }) {
                     </div>
 
                     <small>
-                      {formatarNumero(item.quantidade, 2)} {item.unidade || ""}
+                      {formatarNumeroCasasFixas(item.quantidade, 2)} {item.unidade || ""}
                       <br />
                       <strong>{formatarMoeda(obterValorItem(item))}</strong>
                     </small>

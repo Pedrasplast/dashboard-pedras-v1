@@ -18,6 +18,7 @@ import { listarCalendarioIndustrial } from "@/features/calendario-industrial/cal
 
 import { listarPeriodosProgramacao } from "./programacaoCalendarioService";
 import { formatarDataISOLocal, obterHojeISO } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./ProgramacaoModal.css";
 import "./ProgramacaoCalendario.css";
@@ -109,7 +110,7 @@ function formatarNumero(valor, casas = 0) {
     return "0";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     minimumFractionDigits: casas,
 
     maximumFractionDigits: casas,

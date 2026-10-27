@@ -1,5 +1,6 @@
 import { paraNumero } from "@/shared/lib/numeros";
 import { paraTexto, normalizarTexto } from "@/shared/lib/texto";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    ESTOQUE - UTILITÁRIOS
@@ -17,7 +18,7 @@ import { paraTexto, normalizarTexto } from "@/shared/lib/texto";
 ========================================================= */
 
 export function formatarNumero(valor, casasMaximas = 3) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(paraNumero(valor), {
     minimumFractionDigits: 0,
 
     maximumFractionDigits: casasMaximas,

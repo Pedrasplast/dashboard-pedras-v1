@@ -38,6 +38,7 @@ import { obterChavePedido } from "@/features/pedidos/utils/pedidos.utils";
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { obterHoje, converterData, formatarHora } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -78,7 +79,7 @@ function obterNomeUsuario(email) {
 ========================================================= */
 
 function formatarNumero(valor) {
-  return converterNumeroFlexivel(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(converterNumeroFlexivel(valor), {
     maximumFractionDigits: 0,
   });
 }
@@ -90,7 +91,7 @@ function formatarPercentual(valor) {
     return "0,0%";
   }
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })}%`;

@@ -25,6 +25,7 @@ import { normalizarTextoOcorrencia, obterMotivoRegistro } from "../ocorrenciasPa
 
 import "./CriticidadeParadas.css";
 import { formatarNumero } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -77,7 +78,7 @@ const QUADRANTES = Object.freeze({
 ========================================================= */
 
 function formatarHoras(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(Number(valor || 0), {
     maximumFractionDigits: 1,
   });
 }

@@ -1,3 +1,4 @@
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 export { normalizarTexto } from "@/shared/lib/texto";
 
 export function formatarNumero(valor) {
@@ -7,7 +8,7 @@ export function formatarNumero(valor) {
     return "0";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     maximumFractionDigits: 3,
   });
 }

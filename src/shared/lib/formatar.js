@@ -7,7 +7,7 @@
    resultado (é exatamente o que toLocaleString usa por dentro).
 ========================================================= */
 
-import { converterNumeroFlexivel } from "./numeros";
+import { converterNumeroFlexivel, paraNumero } from "./numeros";
 
 const LOCALE = "pt-BR";
 const formatadores = new Map();
@@ -49,6 +49,14 @@ export function formatarReaisPtBR(numero, opcoes) {
 /** Converte com `converterNumeroFlexivel` e mostra até `casas` decimais. */
 export function formatarNumeroFlexivel(valor, casas = 2) {
   return formatarNumeroPtBR(converterNumeroFlexivel(valor), {
+    maximumFractionDigits: casas,
+  });
+}
+
+/** Converte com `paraNumero` (inválido vira 0) e mostra exatamente `casas` decimais. */
+export function formatarNumeroCasasFixas(valor, casas = 0) {
+  return formatarNumeroPtBR(paraNumero(valor), {
+    minimumFractionDigits: casas,
     maximumFractionDigits: casas,
   });
 }

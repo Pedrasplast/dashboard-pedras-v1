@@ -18,6 +18,7 @@ import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
 import { paraNumero } from "@/shared/lib/numeros";
 import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./FinanceiroEvolucaoMensalPage.css";
 
@@ -45,7 +46,7 @@ const MESES = Object.freeze([
 ========================================================= */
 
 function formatarMoeda(valor) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(paraNumero(valor), {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
@@ -54,7 +55,7 @@ function formatarMoeda(valor) {
 }
 
 function formatarMoedaCompacta(valor) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(paraNumero(valor), {
     style: "currency",
     currency: "BRL",
     notation: "compact",
@@ -67,7 +68,7 @@ function formatarPercentual(valor) {
     return "-";
   }
 
-  return `${Number(valor).toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(Number(valor), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}%`;

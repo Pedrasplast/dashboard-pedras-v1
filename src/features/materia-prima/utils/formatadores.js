@@ -1,11 +1,12 @@
 import { ehNumeroInvalido } from "@/shared/lib/numeros";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    FORMATADORES
 ========================================================= */
 
 function formatarNumero(valor, casas) {
-  return Number(valor ?? 0).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(Number(valor ?? 0), {
     minimumFractionDigits: casas,
     maximumFractionDigits: casas,
   });
@@ -16,7 +17,7 @@ function formatarReais(valor, casas) {
     return "-";
   }
 
-  return Number(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(Number(valor), {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: casas,
@@ -65,4 +66,12 @@ export function formatarPercentual(valor) {
   }
 
   return `${formatarNumero(valor, 2)}%`;
+}
+
+/** Peso com 3 casas fixas ("1.234,500 kg"); vazio vira "0,000 kg". */
+export function formatarKgTresCasas(valor) {
+  return `${formatarNumeroPtBR(Number(valor ?? 0), {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })} kg`;
 }

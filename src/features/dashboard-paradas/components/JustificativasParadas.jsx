@@ -11,6 +11,7 @@ import {
   formatarNumero,
   formatarPercentual,
 } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    FORMATAÇÕES
@@ -23,7 +24,7 @@ function formatarDuracaoComMilhar(segundos) {
 
   const minutos = Math.floor((total % 3600) / 60);
 
-  const horasFormatadas = horas.toLocaleString("pt-BR", {
+  const horasFormatadas = formatarNumeroPtBR(horas, {
     maximumFractionDigits: 0,
   });
 

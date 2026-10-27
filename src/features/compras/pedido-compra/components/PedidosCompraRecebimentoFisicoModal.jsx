@@ -8,12 +8,13 @@ import {
   receberSaldoFisicoCompleto,
   registrarRecebimentoFisicoItem,
 } from "../services/recebimentoFisico.service";
-import { formatarNumero } from "../utils/pedidosCompra.utils";
+
 import {
   obterCodigoPedidoCompra,
   formatarNomeUsuario,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
+import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 function rotuloMovimento(tipo) {
   return tipo === "ESTORNO" ? "Estorno" : "Recebimento";
@@ -194,7 +195,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
     if (quantidade > Number(item.quantidade_pendente_fisica ?? 0)) {
       setErro(
-        `A quantidade máxima para este item é ${formatarNumero(
+        `A quantidade máxima para este item é ${formatarNumeroCasasFixas(
           item.quantidade_pendente_fisica,
           2,
         )}.`,
@@ -457,7 +458,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
 
                         <span>
                           {movimento.tipo_movimento === "ESTORNO" ? "-" : "+"}
-                          {formatarNumero(movimento.quantidade_movimentada, 2)}{" "}
+                          {formatarNumeroCasasFixas(movimento.quantidade_movimentada, 2)}{" "}
                           {movimento.unidade || ""}
                         </span>
                       </div>
@@ -526,7 +527,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                         <small>Pedido</small>
 
                         <strong>
-                          {formatarNumero(item.quantidade_pedida, 2)} {item.unidade || ""}
+                          {formatarNumeroCasasFixas(item.quantidade_pedida, 2)} {item.unidade || ""}
                         </strong>
                       </span>
 
@@ -534,7 +535,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                         <small>Recebido físico</small>
 
                         <strong>
-                          {formatarNumero(recebido, 2)} {item.unidade || ""}
+                          {formatarNumeroCasasFixas(recebido, 2)} {item.unidade || ""}
                         </strong>
 
                         {item.origem_recebimento_visual === "OMIE" && <small>Origem: Omie</small>}
@@ -552,7 +553,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                         <small>Pendente físico</small>
 
                         <strong>
-                          {formatarNumero(pendente, 2)} {item.unidade || ""}
+                          {formatarNumeroCasasFixas(pendente, 2)} {item.unidade || ""}
                         </strong>
                       </span>
                     </div>
@@ -573,7 +574,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                                 [item.codigo_item]: event.target.value,
                               }))
                             }
-                            placeholder={`Máx. ${formatarNumero(pendente, 2)}`}
+                            placeholder={`Máx. ${formatarNumeroCasasFixas(pendente, 2)}`}
                           />
                         </label>
 

@@ -1,20 +1,13 @@
 import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
 import { formatarDataISOLocal, formatarDataBR } from "@/shared/lib/datas";
-
-export function formatarNumero(valor, casas = 0) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
-}
+import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 export function formatarKg(valor, casas = 0) {
   if (valor === null || valor === undefined) {
     return "-";
   }
 
-  return `${formatarNumero(valor, casas)} kg`;
+  return `${formatarNumeroCasasFixas(valor, casas)} kg`;
 }
 
 export function formatarMoeda(valor, casas = 2) {
@@ -22,7 +15,7 @@ export function formatarMoeda(valor, casas = 2) {
     return "-";
   }
 
-  return Number(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(Number(valor), {
     style: "currency",
 
     currency: "BRL",

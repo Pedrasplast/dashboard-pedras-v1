@@ -24,6 +24,7 @@ import {
   obterProdutosDisponiveisOee,
   obterTiposDisponiveisOee,
 } from "./oee.utils";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./dashboardProdutividade.css";
 
@@ -51,7 +52,7 @@ const criarFiltrosIniciais = () => ({
 function formatarPercentual(valor) {
   const numero = Number(valor) || 0;
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })}%`;
@@ -60,7 +61,7 @@ function formatarPercentual(valor) {
 function formatarNumero(valor) {
   const numero = Number(valor) || 0;
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     maximumFractionDigits: 0,
   });
 }

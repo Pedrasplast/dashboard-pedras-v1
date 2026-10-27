@@ -42,6 +42,7 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 import "./DespesasAcimaPrevisto.css";
 
 const ITENS_POR_PAGINA = 10;
@@ -65,7 +66,7 @@ function formatarMoeda(valor) {
     return "-";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,

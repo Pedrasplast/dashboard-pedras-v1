@@ -15,10 +15,12 @@ import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExc
 
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 
 import "./Programacao.css";
+import { formatarKgTresCasas } from "@/features/materia-prima/utils/formatadores";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataBROuOriginal } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    UTILITÁRIOS
@@ -35,7 +37,7 @@ function formatarHora(valor) {
 function formatarNumero(valor, casas = 0) {
   const numero = Number(valor ?? 0);
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     minimumFractionDigits: casas,
     maximumFractionDigits: casas,
   });
@@ -52,18 +54,10 @@ function formatarHoras(valor) {
     return "-";
   }
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })} h`;
-}
-
-function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 3,
-
-    maximumFractionDigits: 3,
-  })} kg`;
 }
 
 /* =========================================================
@@ -267,7 +261,7 @@ export default function Programacao() {
             <div>
               <span>Consumo período</span>
 
-              <strong>{formatarKg(indicadores.consumoPeriodoKg)}</strong>
+              <strong>{formatarKgTresCasas(indicadores.consumoPeriodoKg)}</strong>
             </div>
           </div>
 
@@ -407,7 +401,7 @@ export default function Programacao() {
                               {item.consumosFornecedores
                                 .map(
                                   (fornecedor) =>
-                                    `${fornecedor.fornecedorNome}: ${formatarKg(
+                                    `${fornecedor.fornecedorNome}: ${formatarKgTresCasas(
                                       fornecedor.consumoPeriodoKg,
                                     )}`,
                                 )
@@ -426,10 +420,10 @@ export default function Programacao() {
 
                         <td>{formatarNumero(item.pecasPrevistas)}</td>
 
-                        <td>{formatarKg(item.pesoKg)}</td>
+                        <td>{formatarKgTresCasas(item.pesoKg)}</td>
 
                         <td className="programacao-pp-consumo">
-                          {formatarKg(item.consumoPeriodoKg)}
+                          {formatarKgTresCasas(item.consumoPeriodoKg)}
                         </td>
 
                         <td>

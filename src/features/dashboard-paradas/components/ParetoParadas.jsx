@@ -28,6 +28,7 @@ import {
   formatarNumero,
   formatarPercentual,
 } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÃO
@@ -40,7 +41,7 @@ const QUANTIDADE_PRINCIPAIS = 9;
 ========================================================= */
 
 function formatarHorasEixo(valor) {
-  return `${Number(valor || 0).toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(Number(valor || 0), {
     maximumFractionDigits: 0,
   })}h`;
 }

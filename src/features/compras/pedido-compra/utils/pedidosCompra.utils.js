@@ -2,6 +2,7 @@ import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
 import { paraNumero } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { obterHoje, converterDataLocal, formatarHora, formatarDataHora } from "@/shared/lib/datas";
+import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 export function formatarData(valor) {
   const data = converterDataLocal(valor);
@@ -9,16 +10,8 @@ export function formatarData(valor) {
   return data ? data.toLocaleDateString("pt-BR") : "-";
 }
 
-export function formatarNumero(valor, casas = 0) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
-}
-
 export function formatarMoeda(valor) {
-  return paraNumero(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(paraNumero(valor), {
     style: "currency",
     currency: "BRL",
   });

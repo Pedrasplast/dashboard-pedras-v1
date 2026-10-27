@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 import { CheckCircle2, X } from "lucide-react";
 import { obterHojeISO, formatarDataBR } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./CompraFuturaModal.css";
 
 function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(Number(valor ?? 0), {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })} kg`;

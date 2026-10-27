@@ -5,7 +5,7 @@ export function formatarNumero(valor, casas = 3) {
   if (valor === null || valor === undefined || valor === "") return "-";
   const numero = Number(valor);
   return Number.isFinite(numero)
-    ? numero.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: casas })
+    ? formatarNumeroPtBR(numero, { minimumFractionDigits: 0, maximumFractionDigits: casas })
     : "-";
 }
 

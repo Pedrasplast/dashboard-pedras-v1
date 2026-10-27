@@ -11,6 +11,7 @@ import {
 } from "./comprasFuturasService";
 import { converterNumeroBrOuNull, numeroParaCampo } from "@/shared/lib/numeros";
 import { obterHojeISO } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./CompraFuturaModal.css";
 
@@ -19,7 +20,7 @@ function formatarMoeda(valor) {
     return "-";
   }
 
-  return Number(valor).toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(Number(valor), {
     style: "currency",
 
     currency: "BRL",
@@ -35,7 +36,7 @@ function formatarPrecoKg(valor) {
     return "-";
   }
 
-  return `${Number(valor).toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(Number(valor), {
     style: "currency",
 
     currency: "BRL",

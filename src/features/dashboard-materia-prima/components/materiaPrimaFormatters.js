@@ -1,4 +1,5 @@
-import { formatarKg, formatarMoeda, formatarNumero } from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg, formatarMoeda } from "../dashboardMateriaPrimaUtils.js";
+import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 /* =========================================================
    PERCENTUAL
@@ -9,7 +10,7 @@ export function formatarPercentual(valor, casas = 1) {
     return "-";
   }
 
-  return `${Number(valor).toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(Number(valor), {
     minimumFractionDigits: casas,
 
     maximumFractionDigits: casas,
@@ -25,7 +26,7 @@ export function formatarDias(valor) {
     return "-";
   }
 
-  return `${formatarNumero(valor, 1)} dias`;
+  return `${formatarNumeroCasasFixas(valor, 1)} dias`;
 }
 
 /* =========================================================
@@ -42,7 +43,7 @@ export function formatarMoedaCompacta(valor) {
   }
 
   if (Math.abs(numero) >= 1000000) {
-    return `R$ ${(numero / 1000000).toLocaleString("pt-BR", {
+    return `R$ ${formatarNumeroPtBR(numero / 1000000, {
       minimumFractionDigits: 1,
 
       maximumFractionDigits: 1,
@@ -50,7 +51,7 @@ export function formatarMoedaCompacta(valor) {
   }
 
   if (Math.abs(numero) >= 1000) {
-    return `R$ ${(numero / 1000).toLocaleString("pt-BR", {
+    return `R$ ${formatarNumeroPtBR(numero / 1000, {
       minimumFractionDigits: 0,
 
       maximumFractionDigits: 1,
@@ -81,7 +82,7 @@ export function formatarMoedaCompleta(valor, casas = 0) {
     return "R$ 0";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     style: "currency",
 
     currency: "BRL",
@@ -106,7 +107,7 @@ export function formatarKgCompacto(valor) {
   }
 
   if (Math.abs(numero) >= 1000000) {
-    return `${(numero / 1000000).toLocaleString("pt-BR", {
+    return `${formatarNumeroPtBR(numero / 1000000, {
       minimumFractionDigits: 1,
 
       maximumFractionDigits: 1,
@@ -114,7 +115,7 @@ export function formatarKgCompacto(valor) {
   }
 
   if (Math.abs(numero) >= 1000) {
-    return `${(numero / 1000).toLocaleString("pt-BR", {
+    return `${formatarNumeroPtBR(numero / 1000, {
       minimumFractionDigits: 0,
 
       maximumFractionDigits: 1,
@@ -141,7 +142,7 @@ export function formatarKgCompleto(valor) {
     return "0 kg";
   }
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 0,
 
     maximumFractionDigits: 0,

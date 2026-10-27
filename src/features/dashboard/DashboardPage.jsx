@@ -18,6 +18,7 @@ import { useCargaMaquina } from "@/lib/cargaMaquina";
 import FiltrosDashboard from "./FiltrosDashboard";
 import { filtrarRegistrosDashboard } from "./dashboard.utils";
 import { KpiHoras, KpiSimples, MotivosParada } from "./components/DashboardIndicadores";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./Dashboard.css";
 import "./SidebarProducao.css";
@@ -33,7 +34,7 @@ const FILTROS_INICIAIS = Object.freeze({
 
 function formatarPercentualInteiro(valor) {
   const numero = Number(valor);
-  return Math.round(Number.isFinite(numero) ? numero : 0).toLocaleString("pt-BR");
+  return formatarNumeroPtBR(Math.round(Number.isFinite(numero) ? numero : 0));
 }
 
 export default function Dashboard() {

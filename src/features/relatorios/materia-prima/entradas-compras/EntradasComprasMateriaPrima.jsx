@@ -28,6 +28,7 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 import "./EntradasComprasMateriaPrima.css";
 
 const ITENS_POR_PAGINA = 10;
@@ -57,7 +58,7 @@ function formatarNumero(valor, casas = 0) {
     return "0";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     minimumFractionDigits: casas,
     maximumFractionDigits: casas,
   });
@@ -74,7 +75,7 @@ function formatarMoeda(valor, casas = 2) {
     return "-";
   }
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: casas,
@@ -101,7 +102,7 @@ function formatarPercentual(valor) {
     return "-";
   }
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })}%`;

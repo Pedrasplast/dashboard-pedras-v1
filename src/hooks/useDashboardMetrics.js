@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { converterNumeroDecimal } from "@/shared/lib/numeros";
 import { normalizarTextoCompacto } from "@/shared/lib/texto";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    TEMPO -> HORAS DECIMAIS
@@ -76,7 +77,7 @@ const formatarHorasParaHHMMSS = (totalHoras) => {
 
   const segundos = segundosTotais % 60;
 
-  const horasFormatadas = horas.toLocaleString("pt-BR");
+  const horasFormatadas = formatarNumeroPtBR(horas);
 
   return `${horasFormatadas}:${String(minutos).padStart(2, "0")}:${String(segundos).padStart(
     2,
@@ -99,7 +100,7 @@ const formatarHorasParaHHMM = (totalHoras) => {
 
   const minutos = minutosTotais % 60;
 
-  const horasFormatadas = horas.toLocaleString("pt-BR");
+  const horasFormatadas = formatarNumeroPtBR(horas);
 
   return `${horasFormatadas}:${String(minutos).padStart(2, "0")}`;
 };
@@ -121,7 +122,7 @@ const formatarDiasEHoras = (totalHoras) => {
 
   const horasRestantes = Math.floor(minutosRestantes / 60);
 
-  const diasFormatados = dias.toLocaleString("pt-BR");
+  const diasFormatados = formatarNumeroPtBR(dias);
 
   return `${diasFormatados}d ${String(horasRestantes).padStart(2, "0")}h`;
 };

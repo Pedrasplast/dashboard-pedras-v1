@@ -1,4 +1,5 @@
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 const converterNumero = converterNumeroFlexivel;
 
@@ -13,7 +14,7 @@ function formatarMoeda(valor) {
 
   const numero = converterNumero(valor);
 
-  return numero.toLocaleString("pt-BR", {
+  return formatarNumeroPtBR(numero, {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
@@ -28,7 +29,7 @@ function formatarPercentual(valor) {
 
   const numero = converterNumero(valor);
 
-  return `${numero.toLocaleString("pt-BR", {
+  return `${formatarNumeroPtBR(numero, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}%`;
