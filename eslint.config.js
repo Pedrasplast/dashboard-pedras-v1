@@ -36,5 +36,28 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // A maior parte do código é JS/JSX; antes ficava fora do lint.
+    extends: [js.configs.recommended],
+    files: ["**/*.{js,jsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: globals.browser,
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      // Mesmo critério do bloco TS; sem eslint-plugin-react, o uso em JSX não é reconhecido.
+      "no-unused-vars": "off",
+    },
+  },
   eslintPluginPrettier,
 );

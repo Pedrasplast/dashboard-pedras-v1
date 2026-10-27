@@ -104,7 +104,6 @@ function documentoAtendeCard(documento, cardId, hoje, limite) {
   if (ehPedido(documento)) {
     switch (cardId) {
       case CARDS_RESUMO.ABERTOS:
-
       case CARDS_RESUMO.VALOR_ABERTO:
         return Number(documento?.saldo ?? 0) > 0;
 
@@ -128,7 +127,6 @@ function documentoAtendeCard(documento, cardId, hoje, limite) {
 
   switch (cardId) {
     case CARDS_RESUMO.REQUISICOES_TOTAL:
-
     case CARDS_RESUMO.REQUISICOES_VALOR:
       return true;
 

@@ -64,6 +64,8 @@ function nomeArquivo(extensao) {
 
 function textoSeguro(valor) {
   return protegerDadosPagamento(String(valor ?? "-")).replace(
+    // Remove caracteres de controle de propósito (não são aceitos em células do Excel).
+    // eslint-disable-next-line no-control-regex
     /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,
     " ",
   );
@@ -72,6 +74,8 @@ function textoSeguro(valor) {
 function celulaTexto(valor) {
   const conteudo = textoSeguro(valor);
 
+  // Prefixa com apóstrofo textos que o Excel interpretaria como fórmula.
+  // eslint-disable-next-line no-useless-escape
   return conteudo !== "-" && /^[\s]*[=+@\-]/.test(conteudo) ? `'${conteudo}` : conteudo;
 }
 
