@@ -35,8 +35,10 @@ abertas lado a lado (antes/depois).
      as 3 regras que valiam foram para `PedidosAlteradosRelatorio.css`, cujas
      classes os dois relatórios usam. Os dois CSS sempre carregam juntos
      (`Relatorio.config.js` importa os dois relatórios), então nada mudou na tela.
-   - Pendente: `.girando` em `CadastrosPage.css`, `EstoquePage.css` e
-     `SaldosIniciais.css` (0,8 s × 0,75 s).
+   - Resolvido: `.girando` global (0,8 s × 0,75 s, conforme a última tela
+     aberta). Agora é `.cadastros-girando` (0,8 s) e `.saldos-iniciais-girando`
+     (0,75 s); o `.girando` do Estoque não era usado e saiu. A Programação segue
+     com `.programacao-pp-atualizar .girando`.
    - Para conferir: `node colisoes-css.mjs <repo>` (ferramentas da refatoração).
 2. **Cores quase iguais (761 hex restantes).** Ex.: `#f8fbff`, `#fbfdff` (quase
    `--color-surface-subtle`), `#edf1f5`, `#dbe3ee` (quase `--color-border`).

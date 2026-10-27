@@ -428,7 +428,7 @@
   cursor: pointer;
 }
 
-.girando {
+.saldos-iniciais-girando {
   animation: sistema-girar 0.75s linear infinite;
 }
 

@@ -241,7 +241,7 @@ export default function SaldosIniciais() {
             onClick={recarregar}
             disabled={carregando || salvando}
           >
-            <RefreshCw size={16} className={carregando ? "girando" : ""} />
+            <RefreshCw size={16} className={carregando ? "saldos-iniciais-girando" : ""} />
             Atualizar
           </button>
         </div>

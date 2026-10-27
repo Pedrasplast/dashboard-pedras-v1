@@ -39,7 +39,7 @@ export default function CadastroEstrutura({
                 onClick={() => void recarregar()}
                 disabled={atualizando}
               >
-                <RefreshCw size={17} className={atualizando ? "girando" : ""} />
+                <RefreshCw size={17} className={atualizando ? "cadastros-girando" : ""} />
                 {atualizando ? "Atualizando..." : "Atualizar"}
               </button>
             </div>
