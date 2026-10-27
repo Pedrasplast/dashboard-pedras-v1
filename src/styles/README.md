@@ -50,10 +50,10 @@ abertas lado a lado (antes/depois).
    em `relatorios/components/LayoutRelatorio.css` (100). Remover exige resolver
    antes as regras que eles estão vencendo (`avaliar-important.mjs` testa cada um
    no navegador).
-
-CSS sem uso: removido (482 regras, ~71 KB). Para conferir de novo:
-`remover-css-morto.mjs <repo> --listar` (simulação).
 4. **Breakpoints.** Mais de 20 larguras diferentes em `@media`; padronizar em
    480 / 768 / 1024 / 1280 px muda o ponto em que o layout quebra.
 5. **CSS Modules.** Migrar o CSS de cada tela para `*.module.css` elimina as
    colisões de vez.
+
+CSS sem uso: removido (482 regras, ~71 KB). Para conferir de novo:
+`remover-css-morto.mjs <repo> --listar` (simulação).
