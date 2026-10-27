@@ -144,7 +144,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
 
   border-radius: 8px;
 
@@ -165,7 +165,7 @@
 .rel-pedidos-limpar:hover {
   color: var(--color-danger-hover);
 
-  background: #fff7f7;
+  background: var(--color-danger-soft);
 
   border-color: var(--red-200);
 }

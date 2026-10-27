@@ -183,7 +183,7 @@
   background: linear-gradient(
     135deg,
     var(--color-surface) 0%,
-    #fffafa 55%,
+    var(--color-surface-subtle) 55%,
     var(--color-danger-soft) 100%
   );
 
@@ -261,7 +261,12 @@
 .pedidos-card--hoje {
   border-color: #bae6fd;
 
-  background: linear-gradient(135deg, var(--color-surface) 0%, #f8fdff 55%, #f0f9ff 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface) 0%,
+    var(--color-surface-subtle) 55%,
+    var(--color-primary-soft) 100%
+  );
 }
 
 /* =========================================================

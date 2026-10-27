@@ -82,7 +82,7 @@
 }
 
 .dp-ranking__table tbody tr:hover {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 }
 
 .dp-ranking__table tbody tr:last-child td {

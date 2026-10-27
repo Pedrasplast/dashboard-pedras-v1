@@ -155,7 +155,7 @@
 }
 
 .despesas-acima-previsto-resumo-excesso {
-  color: #b42318;
+  color: var(--color-danger-hover);
 }
 
 .despesas-acima-previsto-tabela-area {
@@ -179,7 +179,7 @@
 }
 
 .despesas-acima-previsto-tabela .despesas-acima-previsto-destaque {
-  color: #b42318;
+  color: var(--color-danger-hover);
   font-weight: 800;
 }
 

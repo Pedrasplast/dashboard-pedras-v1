@@ -269,7 +269,7 @@
   border: 1px solid var(--blue-100);
   border-radius: 9px;
 
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 }
 
 .saldo-inicial-modal-aviso strong {

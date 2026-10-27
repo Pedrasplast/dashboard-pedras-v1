@@ -23,7 +23,7 @@
   margin-top: 24px;
   padding: 22px;
   background: var(--color-surface);
-  border: 1px solid #dbe7f3;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
@@ -246,7 +246,7 @@
 .tp-tabela-container {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #dbe7f3;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
 }
@@ -275,7 +275,7 @@
 .tp-tabela td {
   padding: 15px 14px;
   color: var(--color-text-secondary);
-  border-bottom: 1px solid #e5edf6;
+  border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -285,7 +285,7 @@
 }
 
 .tp-tabela tbody tr:hover {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 }
 
 .tp-codigo {

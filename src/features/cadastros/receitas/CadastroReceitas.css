@@ -220,7 +220,7 @@
 }
 
 .cadastro-receitas-tabela tbody tr:hover {
-  background: #fbfdff;
+  background: var(--color-surface);
 }
 
 .cadastro-receitas-tabela .numero {

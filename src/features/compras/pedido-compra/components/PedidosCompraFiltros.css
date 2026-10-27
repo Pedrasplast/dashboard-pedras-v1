@@ -391,7 +391,7 @@
 .compras-btn-limpar--ativo {
   border-color: #fb7185;
 
-  background: #fff7f8;
+  background: var(--color-danger-soft);
 
   color: #e11d48;
 
@@ -405,7 +405,7 @@
 .compras-btn-limpar--ativo:hover {
   border-color: #f43f5e;
 
-  background: #fff1f2;
+  background: var(--color-danger-soft);
 
   color: #be123c;
 

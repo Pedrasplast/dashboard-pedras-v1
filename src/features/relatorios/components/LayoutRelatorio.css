@@ -413,7 +413,7 @@
 }
 
 .rl .relatorio-visualizacao-info {
-  background: #fafbfc;
+  background: var(--color-surface-subtle);
 }
 
 /* Aviso quando a pré-visualização está fechada. */
@@ -1153,7 +1153,7 @@
   width: 20px !important;
   height: 20px !important;
 
-  background: #eef4ff !important;
+  background: var(--color-primary-soft) !important;
   border-radius: 5px;
 
   color: var(--color-primary) !important;
@@ -1171,7 +1171,7 @@
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) {
-  background: #f4f8ff !important;
+  background: var(--color-primary-soft) !important;
   border-color: #93b4f0 !important;
 }
 

@@ -8,7 +8,7 @@
   min-height: 100%;
   padding: 16px 22px 20px;
   margin-top: 70px;
-  background: var(--color-page, #f6f8fb);
+  background: var(--color-page, var(--color-surface-subtle));
   color: var(--color-text, var(--color-text));
   box-sizing: border-box;
   min-width: 0;
@@ -1042,11 +1042,11 @@
 }
 
 .financeiro-detalhes-tabela tbody tr:nth-child(even) td {
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 
 .financeiro-detalhes-tabela tbody tr:hover td {
-  background: #f5f9ff;
+  background: var(--color-primary-soft);
 }
 
 .financeiro-detalhes-data {

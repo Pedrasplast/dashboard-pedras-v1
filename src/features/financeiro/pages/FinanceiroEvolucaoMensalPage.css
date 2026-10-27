@@ -10,7 +10,7 @@
 
   margin-top: 70px;
 
-  background: var(--color-page, #f6f8fb);
+  background: var(--color-page, var(--color-surface-subtle));
 
   color: var(--color-text, var(--color-text));
 }
@@ -283,7 +283,7 @@
 .financeiro-evolucao-status-erro {
   border-color: var(--red-200);
 
-  background: #fff7f7;
+  background: var(--color-danger-soft);
 
   color: var(--color-danger-hover);
 }
@@ -604,8 +604,8 @@
     to top,
     transparent 0,
     transparent calc(25% - 1px),
-    #edf2f7 calc(25% - 1px),
-    #edf2f7 25%
+    var(--color-surface-muted) calc(25% - 1px),
+    var(--color-surface-muted) 25%
   );
 }
 
@@ -838,7 +838,7 @@
 }
 
 .financeiro-evolucao-tabela tbody tr:hover td {
-  background: #fafcff;
+  background: var(--color-surface-subtle);
 }
 
 .financeiro-evolucao-tabela-negativa td {

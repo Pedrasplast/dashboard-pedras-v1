@@ -10,7 +10,7 @@
   margin: 70px auto;
   padding: 24px 28px 42px;
 
-  background: #f6f8fb;
+  background: var(--color-surface-subtle);
 
   box-sizing: border-box;
 }
@@ -84,7 +84,7 @@
 
   box-sizing: border-box;
 
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
 
   background: var(--color-surface);
@@ -266,7 +266,7 @@
 }
 
 .relatorio-card:hover {
-  background: #fbfdff;
+  background: var(--color-surface);
 
   border-color: var(--blue-200);
 
@@ -400,7 +400,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--color-border);
   border-left: 4px solid var(--color-primary);
   border-radius: 10px;
 
@@ -474,10 +474,10 @@
 .relatorios-erro {
   padding: 11px 14px;
 
-  color: #b42318;
-  background: #fef3f2;
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
 
-  border: 1px solid #fecdca;
+  border: 1px solid var(--red-200);
   border-radius: 9px;
 
   font-size: 0.73rem;
@@ -833,7 +833,7 @@
   color: var(--color-text-strong);
   background: var(--color-surface);
 
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   font-family: inherit;
@@ -924,7 +924,7 @@
 .relatorio-acoes .btn-relatorio:not(.btn-relatorio-pdf):not(.btn-relatorio-csv) {
   background: var(--color-surface);
 
-  border-color: #d8e3f0;
+  border-color: var(--color-border);
 }
 
 .relatorio-acoes .btn-relatorio:not(.btn-relatorio-pdf):not(.btn-relatorio-csv) > svg {
@@ -936,7 +936,7 @@
 .relatorio-acoes
   .btn-relatorio:not(.btn-relatorio-pdf):not(.btn-relatorio-csv)
   :hover:not(:disabled) {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 
   border-color: var(--blue-300);
 }
@@ -971,7 +971,7 @@
 }
 
 .btn-relatorio-pdf:hover:not(:disabled) {
-  background: #fffafa;
+  background: var(--color-surface-subtle);
 
   border-color: #fca5a5;
 }
@@ -1003,7 +1003,7 @@
 }
 
 .btn-relatorio-csv:hover:not(:disabled) {
-  background: #f8fffb;
+  background: var(--green-50);
 
   border-color: #6ee7b7;
 }
@@ -1084,7 +1084,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
   box-sizing: border-box;
@@ -1105,7 +1105,7 @@
 
   padding: 18px 20px;
 
-  border-bottom: 1px solid #e8edf3;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .relatorio-visualizacao-eyebrow {
@@ -1151,7 +1151,7 @@
   color: var(--color-text-muted);
   background: var(--color-surface);
 
-  border: 1px solid #dce5f0;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   cursor: pointer;
@@ -1219,7 +1219,7 @@
 
   background: var(--color-surface-subtle);
 
-  border-bottom: 1px solid #e8edf3;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .relatorio-visualizacao-info-item {
@@ -1367,9 +1367,9 @@
   padding: 11px 20px;
 
   color: var(--color-text-light);
-  background: #fbfcfe;
+  background: var(--color-surface-subtle);
 
-  border-top: 1px solid #e8edf3;
+  border-top: 1px solid var(--color-border);
 
   font-size: 0.68rem;
   font-weight: 700;
@@ -1741,7 +1741,7 @@
   gap: 10px;
   padding: 11px 15px;
   background: var(--color-surface);
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 }
 .relatorios-busca svg {
@@ -1797,7 +1797,7 @@
 /* Corrige um seletor antigo que aplicava hover a descendentes, não ao botão. */
 .relatorio-acoes
   .btn-relatorio:not(.btn-relatorio-pdf):not(.btn-relatorio-csv):hover:not(:disabled) {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
   border-color: var(--blue-300);
 }
 
@@ -1833,7 +1833,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dce5f0;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 
   box-sizing: border-box;
@@ -1889,7 +1889,7 @@
 }
 
 .relatorios-catalogo .relatorios-busca input::placeholder {
-  color: #9aa7b8;
+  color: var(--color-text-light);
   font-weight: 500;
 }
 
@@ -1941,7 +1941,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 
   box-sizing: border-box;
@@ -2040,7 +2040,7 @@
 
 .relatorios-categoria-btn:hover {
   color: #1e3a8a;
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
   border-color: var(--blue-100);
 
   transform: translateX(2px);
@@ -2125,7 +2125,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 
   box-sizing: border-box;
@@ -2216,7 +2216,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #e1e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
@@ -2251,9 +2251,9 @@
 }
 
 .relatorios-grid--catalogo .relatorio-card:hover {
-  background: #fbfdff;
+  background: var(--color-surface);
 
-  border-color: #bfd8fb;
+  border-color: var(--blue-200);
 
   box-shadow:
     0 10px 24px rgba(15, 23, 42, 0.075),
@@ -2282,9 +2282,9 @@
   height: 44px;
 
   color: var(--color-primary);
-  background: linear-gradient(180deg, #f2f7ff 0%, #eaf3ff 100%);
+  background: linear-gradient(180deg, var(--color-primary-soft) 0%, var(--color-primary-soft) 100%);
 
-  border: 1px solid #d8e8ff;
+  border: 1px solid var(--blue-100);
   border-radius: 11px;
 
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -2364,9 +2364,9 @@
 
   text-align: center;
 
-  background: #fafcff;
+  background: var(--color-surface-subtle);
 
-  border: 1px dashed #cdd8e5;
+  border: 1px dashed var(--color-border-strong);
   border-radius: 12px;
 
   box-sizing: border-box;
@@ -2575,7 +2575,7 @@
   margin-bottom: 18px;
   padding: 17px 19px;
 
-  border-color: #e5eaf0;
+  border-color: var(--color-border);
   border-radius: 14px;
 
   box-shadow:
@@ -2601,7 +2601,7 @@
   padding: 12px;
   background: var(--color-surface);
 
-  border: 1px solid #e1e7ee;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
 
   box-sizing: border-box;
@@ -2620,7 +2620,7 @@
   padding: 7px 9px;
 
   background: var(--color-surface-subtle);
-  border: 1px solid #e5eaf0;
+  border: 1px solid var(--color-border);
   border-radius: 11px;
 
   box-shadow: none;
@@ -2628,7 +2628,7 @@
 
 .relatorios-catalogo .relatorios-busca:focus-within {
   background: var(--color-surface);
-  border-color: #9fc4f8;
+  border-color: var(--blue-300);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.075);
 }
@@ -2641,7 +2641,7 @@
   color: #3b6fc4;
   background: var(--color-surface);
 
-  border-color: #dce7f5;
+  border-color: var(--color-border);
   border-radius: 9px;
 }
 
@@ -2657,7 +2657,7 @@
 
   color: #506176;
   background: var(--color-surface);
-  border-color: #e1e7ee;
+  border-color: var(--color-border);
 
   font-size: 0.62rem;
 }
@@ -2669,7 +2669,7 @@
 
   margin-top: 12px;
 
-  border: 1px solid #e7ebf0;
+  border: 1px solid var(--color-border);
   border-radius: 13px;
   overflow: hidden;
 
@@ -2683,7 +2683,7 @@
 
   background: var(--color-surface-subtle);
   border: 0;
-  border-right: 1px solid #e7ebf0;
+  border-right: 1px solid var(--color-border);
   border-radius: 0;
 
   box-shadow: none;
@@ -2692,7 +2692,7 @@
 .relatorios-categorias-sidebar-header {
   padding: 2px 4px 12px;
   margin-bottom: 8px;
-  border-bottom-color: #e5eaf0;
+  border-bottom-color: var(--color-border);
 }
 
 .relatorios-categorias-sidebar-header span {
@@ -2706,8 +2706,8 @@
   height: 21px;
 
   color: #315f9f;
-  background: #eef4fb;
-  border-color: #d7e4f3;
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
 
   font-size: 0.6rem;
 }
@@ -2739,7 +2739,7 @@
 
 .relatorios-categoria-btn:hover {
   color: #1f4f91;
-  background: #f1f6fc;
+  background: var(--color-surface-muted);
   border-color: transparent;
   transform: none;
 }
@@ -2747,7 +2747,7 @@
 .relatorios-categoria-btn.ativa,
 .relatorios-categoria-btn[aria-pressed="true"] {
   color: #194f9b;
-  background: #edf4fd;
+  background: var(--color-primary-soft);
   border-color: transparent;
 
   box-shadow: none;
@@ -2775,7 +2775,7 @@
 
   color: #708096;
   background: var(--color-surface);
-  border-color: #e1e7ee;
+  border-color: var(--color-border);
 
   font-size: 0.59rem;
 }
@@ -2784,7 +2784,7 @@
 .relatorios-categoria-btn[aria-pressed="true"] .relatorios-categoria-btn-contagem {
   color: var(--color-primary-hover);
   background: var(--color-surface);
-  border-color: #cadcf5;
+  border-color: var(--blue-200);
 }
 
 /* Conteúdo principal sem aparência de um segundo card */
@@ -2848,7 +2848,7 @@
 
   padding: 12px 12px;
 
-  border-color: #e5eaf0;
+  border-color: var(--color-border);
   border-radius: 10px;
 
   box-shadow: none;
@@ -2870,7 +2870,7 @@
 }
 
 .relatorios-grid--catalogo .relatorio-card:hover {
-  background: #fbfdff;
+  background: var(--color-surface);
   border-color: #cbdcf2;
 
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.045);
@@ -2893,9 +2893,9 @@
   height: 40px;
 
   color: #2d63aa;
-  background: #f2f6fb;
+  background: var(--color-surface-muted);
 
-  border-color: #dce6f1;
+  border-color: var(--color-border);
   border-radius: 9px;
 
   box-shadow: none;
@@ -2916,7 +2916,7 @@
 }
 
 .relatorios-grid--catalogo .relatorio-card-conteudo h3 {
-  color: #1c2736;
+  color: var(--slate-800);
 
   font-size: 0.79rem;
   font-weight: 800;
@@ -2947,7 +2947,7 @@
 .relatorios-catalogo .relatorios-sem-resultados {
   min-height: 300px;
 
-  background: #fbfcfe;
+  background: var(--color-surface-subtle);
   border-color: #d9e1eb;
   border-radius: 10px;
 }
@@ -2990,7 +2990,7 @@
 
     background: var(--color-surface);
     border-right: 0;
-    border-bottom: 1px solid #e7ebf0;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .relatorios-categorias-sidebar-header {
@@ -3007,7 +3007,7 @@
     padding: 7px 10px;
 
     background: var(--color-surface-subtle);
-    border: 1px solid #e7ebf0;
+    border: 1px solid var(--color-border);
   }
 
   .relatorios-categoria-btn::before {
@@ -3016,7 +3016,7 @@
 
   .relatorios-categoria-btn.ativa,
   .relatorios-categoria-btn[aria-pressed="true"] {
-    background: #edf4fd;
+    background: var(--color-primary-soft);
     border-color: #cbdcf2;
   }
 
@@ -3107,7 +3107,7 @@
 .relatorios-grid--catalogo .relatorio-card-conteudo h3 {
   margin: 0;
 
-  color: #1c2736;
+  color: var(--slate-800);
 
   font-size: 0.8rem;
   font-weight: 800;

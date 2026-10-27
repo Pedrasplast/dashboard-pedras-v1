@@ -123,7 +123,7 @@
   padding: 10px 12px;
 
   background: var(--color-surface);
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   color: var(--color-text);
@@ -205,7 +205,7 @@
   padding: 10px;
 
   background: var(--color-surface);
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 
   box-shadow:
@@ -462,7 +462,7 @@
 ===================================================== */
 
 .calendar-popover .rdp-today:not(.rdp-selected) .rdp-day_button {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
   border: 1px solid var(--blue-300);
 
   color: var(--color-primary-hover);
@@ -570,7 +570,7 @@
   padding: 10px 38px 10px 12px;
 
   background-color: var(--color-surface);
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   color: var(--slate-800);
@@ -1210,7 +1210,7 @@
 
   border-radius: 6px;
 
-  background: #eef4ff;
+  background: var(--color-primary-soft);
 
   color: var(--color-primary);
 
@@ -1252,7 +1252,7 @@
 .relatorio-filtros-card .tipo-checkbox-label:has(input[type="checkbox"]:checked) {
   border-color: #82a9ed;
 
-  background: #f4f8ff;
+  background: var(--color-primary-soft);
 
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.05);
 }

@@ -15,8 +15,8 @@
   align-items: end;
   gap: 12px;
   padding: 16px 18px;
-  border-bottom: 1px solid #dfe7f1;
-  background: linear-gradient(180deg, #fbfdff 0%, var(--color-surface-subtle) 100%);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-subtle) 100%);
 }
 
 .projecao-diaria-periodo {
@@ -217,7 +217,7 @@
 
 .projecao-diaria-fornecedor-navegador {
   overflow: hidden;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
@@ -230,7 +230,7 @@
   gap: 16px;
   padding: 14px 16px;
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface));
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div {
@@ -322,7 +322,7 @@
   align-items: flex-start;
   gap: 4px;
   padding: 11px 12px;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 11px;
   background: var(--color-surface);
   color: var(--color-text);
@@ -385,7 +385,7 @@
 .projecao-diaria-fornecedor-bloco {
   margin-top: 14px;
   overflow: hidden;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
@@ -399,7 +399,7 @@
   display: grid;
   grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.75fr);
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface));
 }
 
 .projecao-diaria-fornecedor-identificacao {
@@ -525,7 +525,7 @@
   top: 0;
   z-index: 2;
   padding: 10px 12px;
-  border-bottom: 1px solid #dbe3ec;
+  border-bottom: 1px solid var(--color-border);
   background: var(--color-surface-subtle);
   color: var(--color-text-muted);
   font-size: 8px;
@@ -555,11 +555,11 @@
 }
 
 .projecao-diaria-tabela tbody tr:nth-child(even) td {
-  background: #fcfdff;
+  background: var(--color-surface);
 }
 
 .projecao-diaria-tabela tbody tr:hover td {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 }
 
 .projecao-diaria-data strong,
@@ -641,7 +641,7 @@
 .projecao-diaria-loading {
   width: 28px;
   height: 28px;
-  border: 2px solid #dbe3ec;
+  border: 2px solid var(--color-border);
   border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: sistema-girar 0.75s linear infinite;

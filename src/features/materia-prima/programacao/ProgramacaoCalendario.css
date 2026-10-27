@@ -34,7 +34,7 @@
 
 .programacao-calendario-configuracao {
   overflow: hidden;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 2px 7px rgba(15, 23, 42, 0.04);
@@ -47,7 +47,7 @@
   gap: 16px;
   padding: 14px 16px 11px;
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface));
 }
 
 .programacao-calendario-configuracao-cabecalho > div:first-child > strong {
@@ -107,7 +107,7 @@
 .programacao-calendario-config-tecnico > div {
   min-width: 0;
   padding: 10px 13px;
-  border-right: 1px solid #e5eaf0;
+  border-right: 1px solid var(--color-border);
 }
 
 .programacao-calendario-config-tecnico > div:last-child {
@@ -193,7 +193,7 @@
   justify-content: space-between;
   gap: 18px;
   padding: 13px 15px;
-  border-bottom: 1px solid #e5eaf0;
+  border-bottom: 1px solid var(--color-border);
   background: linear-gradient(180deg, var(--color-surface), var(--color-surface-subtle));
 }
 
@@ -261,7 +261,7 @@
   gap: 12px;
   padding: 8px 15px;
   border-bottom: 1px solid #edf1f5;
-  background: #fbfdff;
+  background: var(--color-surface);
 }
 
 .programacao-calendario-legenda span {
@@ -331,7 +331,7 @@
   flex-direction: column;
   padding: 7px;
   overflow: hidden;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 9px;
   background: var(--color-surface);
   color: var(--color-text);
@@ -350,7 +350,7 @@
   z-index: 2;
   transform: translateY(-1px);
   border-color: var(--blue-400);
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
   box-shadow: 0 5px 14px rgba(37, 99, 235, 0.1);
 }
 
@@ -524,8 +524,8 @@
   border-color: var(--red-200);
   background: repeating-linear-gradient(
     -45deg,
-    #fff7f7,
-    #fff7f7 7px,
+    var(--color-danger-soft),
+    var(--color-danger-soft) 7px,
     var(--color-danger-soft) 7px,
     var(--color-danger-soft) 14px
   );
@@ -557,7 +557,7 @@
   padding: 14px 16px;
   border: 1px solid var(--blue-300);
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-primary-soft), #f8fbff);
+  background: linear-gradient(135deg, var(--color-primary-soft), var(--color-surface-subtle));
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.09);
 }
 
@@ -676,7 +676,7 @@
 
 .programacao-calendario-lote-remover {
   border: 1px solid var(--red-200);
-  background: #fff7f7;
+  background: var(--color-danger-soft);
   color: var(--color-danger-hover);
 }
 
@@ -692,7 +692,7 @@
 
 .programacao-calendario-resumo-bloco {
   overflow: hidden;
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
@@ -705,7 +705,7 @@
   gap: 14px;
   padding: 11px 14px;
   border-bottom: 1px solid #edf1f5;
-  background: #fbfdff;
+  background: var(--color-surface);
 }
 
 .programacao-calendario-resumo-cabecalho > div > strong {
@@ -824,7 +824,7 @@
   }
 
   .programacao-calendario-config-tecnico > div:nth-child(n + 4) {
-    border-top: 1px solid #e5eaf0;
+    border-top: 1px solid var(--color-border);
   }
 }
 
@@ -846,11 +846,11 @@
   }
 
   .programacao-calendario-config-tecnico > div {
-    border-top: 1px solid #e5eaf0;
+    border-top: 1px solid var(--color-border);
   }
 
   .programacao-calendario-config-tecnico > div:nth-child(odd) {
-    border-right: 1px solid #e5eaf0;
+    border-right: 1px solid var(--color-border);
   }
 
   .programacao-calendario-config-tecnico > div:nth-child(even) {

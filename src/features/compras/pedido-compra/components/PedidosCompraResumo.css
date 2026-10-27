@@ -103,7 +103,7 @@
 .compras-resumo-card--danger {
   border-left: 3px solid var(--red-500);
 
-  background: #fffafa;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
@@ -183,7 +183,7 @@
 ========================================================= */
 
 .compras-resumo-card-icone--requisicao {
-  background: #eef2ff;
+  background: var(--color-primary-soft);
 
   color: #4f46e5;
 }

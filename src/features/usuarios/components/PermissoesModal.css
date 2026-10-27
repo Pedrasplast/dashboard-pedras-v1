@@ -35,7 +35,7 @@
 
   overflow: hidden;
 
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
 
   border-radius: 18px;
 
@@ -67,7 +67,12 @@
 
   border-bottom: 1px solid var(--color-border);
 
-  background: linear-gradient(135deg, #f8fbff 0%, var(--color-surface) 58%, #f7fcfa 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface-subtle) 0%,
+    var(--color-surface) 58%,
+    var(--color-surface-subtle) 100%
+  );
 }
 
 .pu-header-main {
@@ -417,7 +422,7 @@
 
   padding: 0 11px;
 
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
 
   border-radius: 8px;
 
@@ -635,7 +640,7 @@
 }
 
 .pu-item.is-active {
-  background: #f0fdf9;
+  background: var(--green-50);
 }
 
 .pu-item-info {
@@ -793,7 +798,7 @@
 .pu-report-central.is-active {
   border-color: #a7f3d0;
 
-  background: #f7fefb;
+  background: var(--green-50);
 }
 
 .pu-report-central-icon {
@@ -1019,7 +1024,7 @@
 }
 
 .pu-report-item.is-active {
-  background: #f0fdf9;
+  background: var(--green-50);
 }
 
 .pu-report-item.is-disabled {

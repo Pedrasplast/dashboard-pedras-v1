@@ -229,12 +229,12 @@
 }
 
 .pr-categoria-ativa {
-  background: #eef2ff;
+  background: var(--color-primary-soft);
   color: var(--pr-azul);
 }
 
 .pr-categoria-ativa:hover {
-  background: #eef2ff;
+  background: var(--color-primary-soft);
 }
 
 .pr-categoria-ativa b {

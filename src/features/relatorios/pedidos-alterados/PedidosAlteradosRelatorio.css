@@ -142,7 +142,7 @@
   color: var(--color-text-secondary);
   background: var(--color-surface-subtle);
 
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
 
   font-size: 0.68rem;
@@ -191,7 +191,7 @@
   color: var(--color-primary);
   background: var(--color-surface);
 
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 7px;
 
   font-family: inherit;
@@ -216,13 +216,13 @@
 
   background: var(--color-surface-subtle) !important;
 
-  border-top: 1px solid #e8edf3;
+  border-top: 1px solid var(--color-border);
 }
 
 .pedidos-alterados-historico {
   padding: 16px 18px 18px;
 
-  border-top: 1px solid #e8edf3;
+  border-top: 1px solid var(--color-border);
 }
 
 .pedidos-alterados-historico-titulo {
@@ -398,7 +398,7 @@
   color: var(--color-text-secondary);
   background: var(--color-surface);
 
-  border: 1px solid #dbe3ec;
+  border: 1px solid var(--color-border);
   border-radius: 7px;
 
   font-family: inherit;
@@ -440,7 +440,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 }
 

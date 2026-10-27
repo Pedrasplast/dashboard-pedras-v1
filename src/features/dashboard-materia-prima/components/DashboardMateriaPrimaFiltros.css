@@ -245,7 +245,7 @@
 
   border-radius: 8px;
 
-  background: #fff1f2;
+  background: var(--color-danger-soft);
 
   color: #be123c;
 
@@ -278,7 +278,7 @@
 .dmp-filtros-card .dmp-btn-limpar:hover:not(:disabled) {
   border-color: #e11d48;
 
-  background: #ffe4e6;
+  background: var(--red-100);
 
   color: #9f1239;
 

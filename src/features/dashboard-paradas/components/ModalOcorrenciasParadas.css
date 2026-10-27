@@ -32,7 +32,7 @@
 
   color: var(--color-text);
 
-  background: #f5f8fc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid rgba(255, 255, 255, 0.38);
 
@@ -264,9 +264,9 @@
 
   padding: 16px 22px;
 
-  background: #eef3f9;
+  background: var(--color-surface-muted);
 
-  border-bottom: 1px solid #dce5ef;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .dp-ocorrencias-kpi {
@@ -286,7 +286,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dce5ef;
+  border: 1px solid var(--color-border);
 
   border-radius: 12px;
 
@@ -411,7 +411,7 @@
 
   background: var(--color-surface);
 
-  border-bottom: 1px solid #dce5ef;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .dp-ocorrencias-busca {
@@ -576,7 +576,7 @@
 
   background: var(--color-surface);
 
-  border: 1px solid #dce5ef;
+  border: 1px solid var(--color-border);
 
   border-radius: 12px;
 
@@ -633,7 +633,7 @@
 
   color: var(--color-text-secondary);
 
-  background: #f3f6fa;
+  background: var(--color-surface-muted);
 
   border-bottom: 1px solid #d6e0eb;
 
@@ -667,11 +667,11 @@
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:nth-child(even) td {
-  background: #fbfcfe;
+  background: var(--color-surface-subtle);
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:hover td {
-  background: #eef5ff;
+  background: var(--color-primary-soft);
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:last-child td {
@@ -932,7 +932,7 @@
   }
 
   .dp-ocorrencias-kpi--maquinas .dp-ocorrencias-kpi__icon {
-    background: #f0fdfa;
+    background: var(--color-success-soft);
 
     border-color: #ccfbf1;
   }

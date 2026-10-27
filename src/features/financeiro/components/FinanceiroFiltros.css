@@ -350,7 +350,7 @@
 .financeiro-page .financeiro-filtro-limpar.is-active:hover {
   border-color: #e11d48;
 
-  background: #fff1f2;
+  background: var(--color-danger-soft);
 
   color: #e11d48;
 }

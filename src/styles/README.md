@@ -40,9 +40,11 @@ abertas lado a lado (antes/depois).
      (0,75 s); o `.girando` do Estoque não era usado e saiu. A Programação segue
      com `.programacao-pp-atualizar .girando`.
    - Para conferir: `node colisoes-css.mjs <repo>` (ferramentas da refatoração).
-2. **Cores quase iguais (761 hex restantes).** Ex.: `#f8fbff`, `#fbfdff` (quase
-   `--color-surface-subtle`), `#edf1f5`, `#dbe3ee` (quase `--color-border`).
-   Unificar muda levemente o tom.
+2. **Cores quase iguais.** Lote 1 feito: 304 usos com ΔE < 2 (imperceptível)
+   viraram tokens do mesmo papel (borda, fundo, texto) e matiz. Restam 362 usos
+   de hex fixo: ~129 com ΔE entre 2 e 4 (sutil; ex. as bordas claras `#edf1f5`,
+   `#edf2f7`, `#eef2f7`) e ~233 com ΔE ≥ 4 (cores próprias de cada tela).
+   Ferramentas: `cores-proximas.mjs` (inventário) e `aplicar-cores.mjs`.
 3. **`!important` (299).** Concentrados em `relatorios/components/LayoutRelatorio.css`
    (100) e `financeiro/FinanceiroPage.css` (48). Remover exige resolver antes as
    regras que eles estão vencendo.

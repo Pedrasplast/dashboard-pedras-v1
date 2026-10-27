@@ -539,7 +539,7 @@
 
   border-radius: 11px;
 
-  background: linear-gradient(145deg, var(--color-surface), #f8fbff);
+  background: linear-gradient(145deg, var(--color-surface), var(--color-surface-subtle));
 }
 
 .dmp-insights span {
@@ -792,7 +792,7 @@
 }
 
 .dmp-tabela tbody tr:hover td {
-  background: #fafcff;
+  background: var(--color-surface-subtle);
 }
 
 .dmp-tabela td strong {
@@ -1057,7 +1057,7 @@
 }
 
 .dmp-card-mensal-quantidade .dmp-chart-header-resumo-principal {
-  background: #f0fdfa;
+  background: var(--color-success-soft);
 }
 
 .dmp-chart-header-resumo small {

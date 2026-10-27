@@ -26,7 +26,7 @@
   box-sizing: border-box;
   overflow: hidden;
 
-  background: linear-gradient(180deg, var(--color-surface) 0%, #fbfdff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface) 100%);
 
   border: 1px solid var(--dp-border);
   border-top: 3px solid var(--color-text-light);

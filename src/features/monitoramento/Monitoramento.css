@@ -134,7 +134,7 @@
   margin-top: 18px;
   padding: 18px;
   background: var(--color-surface);
-  border: 1px solid #dbe7f3;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
@@ -335,7 +335,7 @@
 }
 
 .mon-historico__linha--erro td {
-  background: #fff7f7;
+  background: var(--color-danger-soft);
 }
 
 .mon-historico__detalhe {
@@ -447,6 +447,6 @@
     color: var(--color-text-muted);
   }
   .mon-historico__linha--erro {
-    background: #fff7f7;
+    background: var(--color-danger-soft);
   }
 }

@@ -41,7 +41,11 @@
 
   padding: 92px var(--space-6) 30px;
 
-  background: linear-gradient(180deg, var(--color-page-background) 0, #f4f7fb 190px);
+  background: linear-gradient(
+    180deg,
+    var(--color-page-background) 0,
+    var(--color-surface-muted) 190px
+  );
 }
 
 /* =========================================================

@@ -151,7 +151,7 @@
 .compras-fonte--erro {
   border-color: #fca5a5;
 
-  background: #fff1f2;
+  background: var(--color-danger-soft);
 
   color: var(--color-danger);
 }
@@ -174,7 +174,7 @@
 
   border-radius: var(--radius-md);
 
-  background: #fff7f7;
+  background: var(--color-danger-soft);
 
   color: var(--color-danger-hover);
 }

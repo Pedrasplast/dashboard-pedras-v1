@@ -26,7 +26,7 @@
   border-radius: 999px;
 
   background: var(--color-surface);
-  color: #4b5563;
+  color: var(--color-text-secondary);
 
   font: inherit;
   font-size: 12px;
@@ -53,13 +53,13 @@
 
 .compras-recebimento-fisico--completo {
   border-color: #a7d8b6;
-  background: #edf9f0;
+  background: var(--color-success-soft);
   color: #1f7a3d;
 }
 
 .compras-recebimento-fisico--parcial {
   border-color: #f0cf87;
-  background: #fff8e8;
+  background: var(--color-warning-soft);
   color: #986b00;
 }
 
@@ -166,7 +166,7 @@
 
   padding: 22px 24px 18px;
 
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 
   background: var(--color-surface);
 }
@@ -250,7 +250,7 @@
 
   padding: 14px 24px;
 
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 
   background: var(--color-surface-subtle);
 }
@@ -288,7 +288,7 @@
 
   padding: 10px 24px 0;
 
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
 
   background: var(--color-surface);
 }
@@ -377,7 +377,7 @@
 
 .compras-rf-item--completo {
   border-color: #b7dfc2;
-  background: #fbfffc;
+  background: var(--color-surface-subtle);
 }
 
 .compras-rf-item-cabecalho,
@@ -426,7 +426,7 @@
 }
 
 .compras-rf-status--completo {
-  background: #e9f8ed;
+  background: var(--color-success-soft);
   color: #1f7a3d !important;
 }
 
@@ -595,7 +595,7 @@
 }
 
 .compras-rf-btn--perigo {
-  background: #b42318;
+  background: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -621,7 +621,7 @@
 
   background: transparent;
 
-  color: #b42318;
+  color: var(--color-danger-hover);
 
   font: inherit;
   font-size: 12px;
@@ -655,13 +655,13 @@
 
   border-radius: 50%;
 
-  background: #eaf7ee;
+  background: var(--color-success-soft);
   color: #198754;
 }
 
 .compras-rf-historico-item--estorno .compras-rf-historico-icone {
-  background: #fff0ee;
-  color: #b42318;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .compras-rf-historico-corpo {
@@ -718,12 +718,12 @@
 }
 
 .compras-rf-mensagem--erro {
-  background: #fff0ee;
-  color: #b42318;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .compras-rf-mensagem--sucesso {
-  background: #eaf7ee;
+  background: var(--color-success-soft);
   color: #166534;
 }
 
@@ -785,7 +785,7 @@
 
   border-radius: 14px;
 
-  background: #eaf7ee;
+  background: var(--color-success-soft);
   color: #17833a;
 }
 

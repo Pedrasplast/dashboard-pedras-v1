@@ -29,7 +29,7 @@
   flex-direction: column;
   overflow: hidden;
 
-  border: 1px solid #dbe3ee;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
 
   background: var(--color-surface);
@@ -50,7 +50,7 @@
   padding: 20px 22px;
   border-bottom: 1px solid var(--color-border);
 
-  background: linear-gradient(135deg, var(--color-surface), #f8fbff);
+  background: linear-gradient(135deg, var(--color-surface), var(--color-surface-subtle));
 }
 
 .pedidos-resumo-modal-titulo {
@@ -308,7 +308,7 @@
   border: 1px solid var(--blue-200);
   border-radius: 999px;
 
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
   color: var(--color-primary-hover);
 
   font: inherit;
@@ -340,7 +340,7 @@
 }
 
 .pedidos-resumo-modal-linha-expandida {
-  background: #f8fbff;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
