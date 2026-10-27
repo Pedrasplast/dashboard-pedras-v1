@@ -21,7 +21,6 @@
 }
 
 .cadastros-atualizar,
-.cadastros-botao-secundario,
 .cadastros-botao-primario,
 .cadastros-editar {
   font-family: inherit;
@@ -103,132 +102,6 @@
    FORMULÁRIO
 ========================================================= */
 
-.cadastros-formulario {
-  margin-bottom: 18px;
-  padding: 20px;
-  border: 1px solid var(--blue-200);
-  border-radius: 14px;
-  background: var(--color-surface);
-  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
-}
-
-.cadastros-formulario__cabecalho {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.cadastros-formulario__cabecalho span {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--color-primary);
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.cadastros-formulario__cabecalho h2 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 20px;
-}
-
-.cadastros-formulario__fechar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--color-border);
-  border-radius: 9px;
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-
-.cadastros-formulario__fechar:hover:not(:disabled) {
-  background: var(--color-surface-subtle);
-  color: var(--color-text);
-}
-
-.cadastros-formulario__grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.cadastros-campo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cadastros-campo--grande {
-  grid-column: span 2;
-}
-
-.cadastros-campo span {
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cadastros-campo input {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 11px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 9px;
-  outline: none;
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 14px;
-}
-
-.cadastros-campo input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-}
-
-.cadastros-campo input:disabled {
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-
-.cadastros-formulario__opcoes {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 18px;
-}
-
-.cadastros-checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-strong);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.cadastros-checkbox input {
-  width: 16px;
-  height: 16px;
-}
-
-.cadastros-formulario__acoes {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border);
-}
-
 /* =========================================================
    BOTÕES
 ========================================================= */
@@ -254,27 +127,7 @@
   border-color: var(--color-primary-hover);
 }
 
-.cadastros-botao-secundario {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0 15px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 9px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.cadastros-botao-secundario:hover:not(:disabled) {
-  background: var(--color-surface-subtle);
-}
-
-.cadastros-botao-primario:disabled,
-.cadastros-botao-secundario:disabled {
+.cadastros-botao-primario:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
@@ -305,10 +158,6 @@
   font-weight: 600;
 }
 
-.cadastros-erro--formulario {
-  margin: 0 0 16px;
-}
-
 /* =========================================================
    CONTEÚDO
 ========================================================= */
@@ -319,56 +168,6 @@
   border-radius: 14px;
   background: var(--color-surface);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-}
-
-.cadastros-abas {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 14px 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.cadastros-aba {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--color-text-muted);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.cadastros-aba:hover {
-  color: var(--color-text);
-}
-
-.cadastros-aba--ativa {
-  border-bottom-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.cadastros-aba span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--color-surface-muted);
-  font-size: 11px;
-}
-
-.cadastros-aba--ativa span {
-  background: var(--blue-100);
-  color: var(--color-primary-hover);
 }
 
 /* =========================================================
@@ -508,14 +307,6 @@
   font-weight: 700;
 }
 
-.cadastros-aviso {
-  display: block;
-  margin-top: 4px;
-  color: var(--color-warning);
-  font-size: 11px;
-  font-weight: 600;
-}
-
 .cadastros-status {
   display: inline-flex;
   align-items: center;
@@ -594,10 +385,6 @@
   .cadastros-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .cadastros-formulario__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 700px) {
@@ -625,35 +412,6 @@
 
   .cadastros-resumo {
     grid-template-columns: 1fr;
-  }
-
-  .cadastros-formulario__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cadastros-campo--grande {
-    grid-column: span 1;
-  }
-
-  .cadastros-formulario__opcoes {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .cadastros-formulario__acoes {
-    flex-direction: column-reverse;
-  }
-
-  .cadastros-formulario__acoes button {
-    width: 100%;
-  }
-
-  .cadastros-abas {
-    overflow-x: auto;
-  }
-
-  .cadastros-aba {
-    flex: 0 0 auto;
   }
 
   .cadastros-toolbar {

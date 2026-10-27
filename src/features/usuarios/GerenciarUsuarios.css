@@ -446,26 +446,6 @@
    Permissões NÃO usa este CSS.
 ========================================================= */
 
-.modal-overlay {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 9999;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 18px;
-
-  overflow: auto;
-
-  background: rgba(15, 23, 42, 0.58);
-
-  animation: sistema-aparecer 0.16s ease-out;
-}
-
 .modal-content {
   position: relative;
 
@@ -1032,10 +1012,6 @@
   .btn-delete-user {
     width: min(100%, 240px);
   }
-
-  .modal-overlay {
-    padding: 10px;
-  }
 }
 
 /* =========================================================
@@ -1079,10 +1055,6 @@
   .btn-change-role,
   .btn-delete-user {
     min-height: 38px;
-  }
-
-  .modal-overlay {
-    padding: 6px;
   }
 
   .modal-content,
@@ -1135,7 +1107,6 @@
 ========================================================= */
 
 @media (max-width: 420px) {
-  .btn-voltar-home,
   .btn-novo-usuario {
     font-size: 10px;
   }

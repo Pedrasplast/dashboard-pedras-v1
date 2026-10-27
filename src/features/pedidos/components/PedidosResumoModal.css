@@ -2,21 +2,6 @@
    MODAL — RESUMO DE PEDIDOS
 ========================================================= */
 
-.pedidos-resumo-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1500;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 24px;
-
-  background: rgba(15, 23, 42, 0.42);
-  backdrop-filter: blur(3px);
-}
-
 /* =========================================================
    MODAL
 ========================================================= */
@@ -441,10 +426,6 @@
 ========================================================= */
 
 @media (max-width: 700px) {
-  .pedidos-resumo-modal-backdrop {
-    padding: 12px;
-  }
-
   .pedidos-resumo-modal {
     max-height: calc(100vh - 24px);
     border-radius: 12px;

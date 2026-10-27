@@ -46,9 +46,13 @@ abertas lado a lado (antes/depois).
    `--color-border-subtle`. Restam ~307 usos de hex fixo: ~74 com ΔE entre 2 e 4
    (sutil) e ~233 com ΔE ≥ 4 (cores próprias de cada tela).
    Ferramentas: `cores-proximas.mjs` (inventário) e `aplicar-cores.mjs`.
-3. **`!important` (299).** Concentrados em `relatorios/components/LayoutRelatorio.css`
-   (100) e `financeiro/FinanceiroPage.css` (48). Remover exige resolver antes as
-   regras que eles estão vencendo.
+3. **`!important` (246, eram 299 antes da remoção do CSS morto).** Concentrados
+   em `relatorios/components/LayoutRelatorio.css` (100). Remover exige resolver
+   antes as regras que eles estão vencendo (`avaliar-important.mjs` testa cada um
+   no navegador).
+
+CSS sem uso: removido (482 regras, ~71 KB). Para conferir de novo:
+`remover-css-morto.mjs <repo> --listar` (simulação).
 4. **Breakpoints.** Mais de 20 larguras diferentes em `@media`; padronizar em
    480 / 768 / 1024 / 1280 px muda o ponto em que o layout quebra.
 5. **CSS Modules.** Migrar o CSS de cada tela para `*.module.css` elimina as

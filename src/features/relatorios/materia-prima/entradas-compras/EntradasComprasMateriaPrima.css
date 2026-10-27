@@ -2,10 +2,6 @@
    ENTRADAS E COMPRAS DE MATÉRIA-PRIMA
 ========================================================= */
 
-.entradas-compras-filtros-header {
-  gap: 16px;
-}
-
 .entradas-compras-filtros {
   display: grid;
   grid-template-columns:
@@ -69,24 +65,6 @@
   padding-left: 33px;
 }
 
-.entradas-compras-limpar {
-  min-height: 34px;
-  padding: 0 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font: inherit;
-  font-size: 0.7rem;
-  font-weight: 750;
-  cursor: pointer;
-}
-
-.entradas-compras-limpar:hover {
-  border-color: var(--color-text-light);
-  background: var(--color-surface-subtle);
-}
-
 .entradas-compras-atualizando {
   min-height: 39px;
   display: inline-flex;
@@ -133,14 +111,6 @@
 /* =========================================================
    RESUMO
 ========================================================= */
-
-.entradas-compras-resumo {
-  margin-top: 14px;
-}
-
-.entradas-compras-resumo-total {
-  color: #15803d !important;
-}
 
 /* =========================================================
    VISUALIZAÇÃO

@@ -186,44 +186,6 @@
    INFORMAÇÃO DO PERÍODO
 ========================================================= */
 
-.dmp-filtros-card .dmp-filtros-info {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: flex-start;
-
-  gap: 10px;
-
-  flex-wrap: wrap;
-
-  margin-bottom: 13px;
-}
-
-.dmp-filtros-card .dmp-periodo-descricao {
-  width: 515px;
-
-  max-width: 100%;
-
-  box-sizing: border-box;
-
-  padding: 9px 11px;
-
-  border: 1px solid var(--color-border);
-
-  border-radius: 8px;
-
-  background: var(--color-surface-subtle);
-
-  color: var(--color-text-muted);
-
-  font-size: 11.5px;
-
-  font-weight: 600;
-
-  line-height: 1.4;
-}
-
 /* =========================================================
    BOTÃO LIMPAR FILTROS
 ========================================================= */
@@ -480,16 +442,6 @@
     width: 250px;
   }
 
-  .dmp-filtros-card .dmp-filtros-info {
-    align-items: stretch;
-  }
-
-  .dmp-filtros-card .dmp-periodo-descricao {
-    width: auto;
-
-    flex: 1 1 100%;
-  }
-
   .dmp-filtros-card .dmp-filtros {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -518,16 +470,6 @@
     width: 100%;
 
     max-width: none;
-  }
-
-  .dmp-filtros-card .dmp-filtros-info {
-    flex-direction: column;
-  }
-
-  .dmp-filtros-card .dmp-periodo-descricao {
-    width: 100%;
-
-    min-width: 0;
   }
 
   .dmp-filtros-card .dmp-btn-limpar {
@@ -585,20 +527,6 @@
 /* =========================================================
    ORIGEM OMIE — aviso abaixo da descrição do período
 ========================================================= */
-
-.dmp-filtros-card .dmp-origem-omie {
-  display: block;
-
-  margin-top: 4px;
-
-  color: var(--color-primary, var(--color-primary));
-
-  font-size: 12px;
-
-  font-weight: 600;
-
-  line-height: 1.4;
-}
 
 /* =========================================================
    LIMPAR FILTROS NA MESMA LINHA, DEPOIS DE FORNECEDOR

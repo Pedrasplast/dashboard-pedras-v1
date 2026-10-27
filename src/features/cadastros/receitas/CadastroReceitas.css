@@ -10,7 +10,6 @@
   padding: 24px;
 }
 
-.cadastro-receitas-atualizar,
 .cadastro-receitas-botao-primario,
 .cadastro-receitas-editar,
 .cadastro-receitas-status-botao,
@@ -19,36 +18,6 @@
 .cadastro-receita-adicionar,
 .cadastro-receita-remover {
   font-family: inherit;
-}
-
-.cadastro-receitas-atualizar {
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 14px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 9px;
-  background: var(--color-surface);
-  color: var(--color-text-strong);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.cadastro-receitas-atualizar:hover:not(:disabled) {
-  border-color: var(--color-text-light);
-  background: var(--color-surface-subtle);
-}
-
-.cadastro-receitas-atualizar:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.cadastro-receitas-atualizar .girando {
-  animation: sistema-girar 0.8s linear infinite;
 }
 
 .cadastro-receitas-resumo {
@@ -368,18 +337,6 @@
   padding: 36px 18px !important;
   color: var(--color-text-muted) !important;
   text-align: center;
-}
-
-.cadastro-receita-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(3px);
 }
 
 .cadastro-receita-modal {
@@ -758,11 +715,6 @@
 @media (max-width: 560px) {
   .cadastro-receitas-resumo {
     grid-template-columns: 1fr;
-  }
-
-  .cadastro-receita-modal-overlay {
-    align-items: flex-end;
-    padding: 0;
   }
 
   .cadastro-receita-modal {

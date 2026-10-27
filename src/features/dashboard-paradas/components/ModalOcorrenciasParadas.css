@@ -2,24 +2,6 @@
    MODAL DE OCORRÊNCIAS — VISUAL EXECUTIVO
 ========================================================= */
 
-.dp-ocorrencias-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 22px;
-
-  background: rgba(7, 18, 38, 0.68);
-
-  backdrop-filter: blur(7px);
-
-  -webkit-backdrop-filter: blur(7px);
-}
-
 .dp-ocorrencias-modal {
   width: min(1480px, 97vw);
 
@@ -823,10 +805,6 @@
 }
 
 @media (max-width: 760px) {
-  .dp-ocorrencias-overlay {
-    padding: 7px;
-  }
-
   .dp-ocorrencias-modal {
     width: 100%;
 

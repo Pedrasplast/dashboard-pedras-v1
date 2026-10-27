@@ -2,23 +2,6 @@
    OVERLAY
 ========================================================= */
 
-.produto-pp-modal-overlay {
-  position: fixed;
-  z-index: 9999;
-
-  inset: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 12px;
-
-  background: rgba(15, 23, 42, 0.52);
-
-  backdrop-filter: blur(2px);
-}
-
 /* =========================================================
    MODAL
 ========================================================= */
@@ -559,10 +542,6 @@
 
 /* Compactação extra para notebooks de menor altura. */
 @media (min-width: 701px) and (max-height: 760px) {
-  .produto-pp-modal-overlay {
-    padding: 8px;
-  }
-
   .produto-pp-modal {
     max-height: calc(100dvh - 16px);
   }
@@ -615,11 +594,6 @@
 ========================================================= */
 
 @media (max-width: 700px) {
-  .produto-pp-modal-overlay {
-    align-items: flex-start;
-    padding: 8px;
-  }
-
   .produto-pp-modal {
     max-height: calc(100dvh - 16px);
 

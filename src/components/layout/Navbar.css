@@ -92,12 +92,6 @@ body {
    NAVEGAÇÃO CENTRAL
 ========================================================= */
 
-.navbar-navigation-wrapper {
-  display: flex;
-  justify-content: center;
-  min-width: 0;
-}
-
 .navbar-navigation {
   display: flex;
   align-items: center;
@@ -193,10 +187,6 @@ body {
 
 .navbar-label-desktop {
   display: inline;
-}
-
-.navbar-label-mobile {
-  display: none;
 }
 
 .navbar-navigation-icon {

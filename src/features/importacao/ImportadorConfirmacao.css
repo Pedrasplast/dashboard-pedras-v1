@@ -2,36 +2,9 @@
    CONFIRMAÇÃO DA IMPORTAÇÃO
 ========================================================= */
 
-.importacao-confirmacao-overlay,
-.importacao-confirmacao-overlay * {
-  box-sizing: border-box;
-}
-
 /* =========================================================
    FUNDO
 ========================================================= */
-
-.importacao-confirmacao-overlay {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 20000;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 24px;
-
-  background: rgba(15, 23, 42, 0.58);
-
-  backdrop-filter: blur(4px);
-
-  -webkit-backdrop-filter: blur(4px);
-
-  animation: sistema-aparecer 0.16s ease-out;
-}
 
 /* =========================================================
    MODAL
@@ -524,10 +497,6 @@
 ========================================================= */
 
 @media (max-width: 600px) {
-  .importacao-confirmacao-overlay {
-    padding: 14px;
-  }
-
   .importacao-confirmacao-header {
     padding: 18px 17px 15px;
 

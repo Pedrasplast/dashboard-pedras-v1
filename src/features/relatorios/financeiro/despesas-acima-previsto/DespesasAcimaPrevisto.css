@@ -2,22 +2,6 @@
    DESPESAS ACIMA DO PREVISTO
 ========================================================= */
 
-.despesas-acima-previsto-icone {
-  color: var(--color-danger);
-}
-
-.despesas-acima-previsto-filtros-card {
-  min-width: 0;
-}
-
-.despesas-acima-previsto-filtros-header {
-  align-items: center;
-}
-
-.despesas-acima-previsto-filtros-header h3 {
-  margin-bottom: 0;
-}
-
 .despesas-acima-previsto-filtros-wrapper {
   width: 100%;
   min-width: 0;
@@ -152,10 +136,6 @@
 
 .despesas-acima-previsto-loading {
   min-height: 220px;
-}
-
-.despesas-acima-previsto-resumo-excesso {
-  color: var(--color-danger-hover);
 }
 
 .despesas-acima-previsto-tabela-area {

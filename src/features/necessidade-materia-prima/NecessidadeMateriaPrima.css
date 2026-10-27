@@ -834,11 +834,6 @@
 }
 
 /* Destaque opcional do campo negativo */
-.necessidade-page .necessidade-estoque-negativo-destaque {
-  color: var(--color-danger) !important;
-  background-color: var(--color-danger-soft) !important;
-  border-color: var(--red-200) !important;
-}
 
 /* ============================================================
    RESPONSIVIDADE — NOTEBOOKS E TABLETS

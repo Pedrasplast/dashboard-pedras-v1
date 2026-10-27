@@ -326,10 +326,6 @@ body:has(.producao-page) .dashboard-container.producao-page {
   border-left-color: var(--red-500);
 }
 
-.producao-page .kpi-card.highlight {
-  border-left-color: var(--logo-azul-medio);
-}
-
 .producao-page .kpi-card span {
   color: var(--color-text-muted);
 

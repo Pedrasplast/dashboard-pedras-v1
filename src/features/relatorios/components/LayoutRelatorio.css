@@ -404,8 +404,7 @@
 }
 
 .rl .relatorio-visualizacao-tabela tfoot td,
-.rl .relatorio-visualizacao-tabela tr.linha-total td,
-.rl .relatorio-visualizacao-tabela tr.total-geral td {
+.rl .relatorio-visualizacao-tabela tr.linha-total td {
   color: var(--rl-verde-texto) !important;
   background: var(--rl-verde-fundo) !important;
   border-top: 2px solid var(--rl-verde) !important;
@@ -760,8 +759,7 @@
 
   .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper,
   .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
-  .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
-  .rl--fixo .relatorio-visualizacao > .rl-rolagem {
+  .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area {
     flex: 1 1 auto;
     min-height: 0;
     max-height: none;
@@ -1292,7 +1290,6 @@
 
 @media (min-width: 1025px) {
   .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
-  .rl--fixo .relatorio-visualizacao > .rl-rolagem,
   .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
   .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
     padding-top: 0 !important;

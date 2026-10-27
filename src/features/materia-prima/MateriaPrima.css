@@ -129,56 +129,6 @@
    CONTEÚDO VAZIO
 ========================================================= */
 
-.materia-prima-conteudo-vazio {
-  min-height: 300px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  padding: 32px;
-
-  text-align: center;
-}
-
-.materia-prima-conteudo-vazio-icone {
-  width: 58px;
-  height: 58px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 14px;
-
-  border-radius: 14px;
-
-  background: var(--color-surface-muted);
-
-  color: var(--color-text-muted);
-}
-
-.materia-prima-conteudo-vazio strong {
-  margin-bottom: 6px;
-
-  color: var(--color-text);
-
-  font-size: 16px;
-}
-
-.materia-prima-conteudo-vazio p {
-  max-width: 420px;
-
-  margin: 0;
-
-  color: var(--color-text-muted);
-
-  font-size: 12px;
-
-  line-height: 1.5;
-}
-
 /* =========================================================
    TABLET
 ========================================================= */
