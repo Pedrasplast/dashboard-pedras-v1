@@ -379,13 +379,7 @@
 ========================================================= */
 
 .tp-girando {
-  animation: tp-spin 1s linear infinite;
-}
-
-@keyframes tp-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 1s linear infinite;
 }
 
 /* =========================================================

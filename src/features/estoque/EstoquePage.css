@@ -314,13 +314,7 @@
 }
 
 .girando {
-  animation: estoque-girar 0.8s linear infinite;
-}
-
-@keyframes estoque-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

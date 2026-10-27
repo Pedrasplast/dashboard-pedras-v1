@@ -537,13 +537,7 @@
 
   border-radius: 50%;
 
-  animation: entradas-girando 0.75s linear infinite;
-}
-
-@keyframes entradas-girando {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 /* =========================================================

@@ -927,13 +927,7 @@
 ========================================================= */
 
 .dmp-girando {
-  animation: dmp-girar 0.85s linear infinite;
-}
-
-@keyframes dmp-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.85s linear infinite;
 }
 
 /* =========================================================

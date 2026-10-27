@@ -174,13 +174,7 @@
 }
 
 .programacao-pp-atualizar .girando {
-  animation: programacao-girando 0.8s linear infinite;
-}
-
-@keyframes programacao-girando {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================
@@ -436,13 +430,7 @@
 
   border-radius: 50%;
 
-  animation: programacao-loading 0.75s linear infinite;
-}
-
-@keyframes programacao-loading {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 .programacao-pp-erro {

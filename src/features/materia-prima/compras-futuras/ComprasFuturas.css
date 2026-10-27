@@ -456,13 +456,7 @@
 
   border-radius: 50%;
 
-  animation: compras-futuras-loading 0.75s linear infinite;
-}
-
-@keyframes compras-futuras-loading {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 /* =========================================================

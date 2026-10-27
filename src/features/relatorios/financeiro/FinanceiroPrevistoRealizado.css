@@ -209,13 +209,7 @@
 }
 
 .financeiro-relatorio-girando {
-  animation: financeiro-relatorio-girar 0.8s linear infinite;
-}
-
-@keyframes financeiro-relatorio-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

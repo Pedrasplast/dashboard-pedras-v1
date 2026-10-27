@@ -1473,13 +1473,7 @@
 
   border-radius: 50%;
 
-  animation: relatorios-spin 0.75s linear infinite;
-}
-
-@keyframes relatorios-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 /* =========================================================

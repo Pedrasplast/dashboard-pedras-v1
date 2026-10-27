@@ -147,13 +147,7 @@
 }
 
 .despesas-acima-previsto-girando {
-  animation: despesas-acima-previsto-girar 0.8s linear infinite;
-}
-
-@keyframes despesas-acima-previsto-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 .despesas-acima-previsto-loading {

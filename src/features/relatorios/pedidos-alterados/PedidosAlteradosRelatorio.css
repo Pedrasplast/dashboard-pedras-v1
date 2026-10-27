@@ -447,14 +447,8 @@
    ANIMAÇÃO
 ========================================================= */
 
-@keyframes pedidos-alterados-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .pedidos-alterados-girando {
-  animation: pedidos-alterados-spin 0.8s linear infinite;
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

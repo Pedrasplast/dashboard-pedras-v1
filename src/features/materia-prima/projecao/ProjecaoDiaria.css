@@ -644,13 +644,7 @@
   border: 2px solid #dbe3ec;
   border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: projecao-diaria-loading 0.75s linear infinite;
-}
-
-@keyframes projecao-diaria-loading {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 /* =========================================================

@@ -957,13 +957,7 @@
 ========================================================= */
 
 .dp-refresh-button__icon.is-spinning {
-  animation: dpRefreshSpin 0.8s linear infinite;
-}
-
-@keyframes dpRefreshSpin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

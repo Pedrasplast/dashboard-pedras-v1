@@ -395,13 +395,7 @@
 
   border-radius: 50%;
 
-  animation: saldos-loading 0.75s linear infinite;
-}
-
-@keyframes saldos-loading {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 .saldos-iniciais-erro {
@@ -435,7 +429,7 @@
 }
 
 .girando {
-  animation: saldos-loading 0.75s linear infinite;
+  animation: sistema-girar 0.75s linear infinite;
 }
 
 @media (max-width: 850px) {

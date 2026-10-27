@@ -44,13 +44,7 @@
 }
 
 .mon-girando {
-  animation: mon-girar 1s linear infinite;
-}
-
-@keyframes mon-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 1s linear infinite;
 }
 
 /* ---------- Resumo ---------- */

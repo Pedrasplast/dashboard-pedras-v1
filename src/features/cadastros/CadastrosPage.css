@@ -575,13 +575,7 @@
 ========================================================= */
 
 .girando {
-  animation: cadastros-girar 0.8s linear infinite;
-}
-
-@keyframes cadastros-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

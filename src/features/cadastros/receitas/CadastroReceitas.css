@@ -48,13 +48,7 @@
 }
 
 .cadastro-receitas-atualizar .girando {
-  animation: cadastro-receitas-girando 0.8s linear infinite;
-}
-
-@keyframes cadastro-receitas-girando {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 .cadastro-receitas-resumo {

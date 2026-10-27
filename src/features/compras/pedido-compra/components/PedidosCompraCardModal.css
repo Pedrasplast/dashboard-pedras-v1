@@ -38,7 +38,7 @@
 
   backdrop-filter: blur(5px);
 
-  animation: compras-modal-backdrop-in var(--transition-base) ease-out;
+  animation: sistema-aparecer var(--transition-base) ease-out;
 }
 
 /* =========================================================
@@ -996,16 +996,6 @@
     opacity: 1;
 
     transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes compras-modal-backdrop-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
   }
 }
 

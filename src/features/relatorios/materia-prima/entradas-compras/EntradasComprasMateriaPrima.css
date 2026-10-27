@@ -98,13 +98,7 @@
 }
 
 .entradas-compras-girando {
-  animation: entradas-compras-girar 0.8s linear infinite;
-}
-
-@keyframes entradas-compras-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

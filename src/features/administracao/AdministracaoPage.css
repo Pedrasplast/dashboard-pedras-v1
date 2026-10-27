@@ -100,13 +100,7 @@
    ========================================================= */
 
 .administracao-spin {
-  animation: administracao-spin 0.8s linear infinite;
-}
-
-@keyframes administracao-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

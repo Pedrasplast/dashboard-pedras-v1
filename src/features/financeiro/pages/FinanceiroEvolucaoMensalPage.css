@@ -137,13 +137,7 @@
 }
 
 .financeiro-evolucao-atualizar .girando {
-  animation: financeiro-evolucao-girar 0.8s linear infinite;
-}
-
-@keyframes financeiro-evolucao-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: sistema-girar 0.8s linear infinite;
 }
 
 /* =========================================================

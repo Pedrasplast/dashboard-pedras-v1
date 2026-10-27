@@ -17,6 +17,7 @@ import { normalizarCamposMaiusculos } from "../lib/uppercase-fields";
 import Navbar from "../components/layout/Navbar";
 
 import "../styles/tokens.css";
+import "../styles/animacoes.css";
 import "../legacy-base.css";
 import "../app-layout.css";
 import "../styles/paginas-sistema.css";
