@@ -38,7 +38,7 @@ export function formatarData(valor) {
 
 /** 1234 -> "1.234" */
 export function formatarQuantidade(valor) {
-  return formatarNumero(valor, 0);
+  return formatarNumero(valor, 2);
 }
 
 /** 1234 -> "1.234 kg" */
@@ -66,12 +66,4 @@ export function formatarPercentual(valor) {
   }
 
   return `${formatarNumero(valor, 2)}%`;
-}
-
-/** Peso com 3 casas fixas ("1.234,500 kg"); vazio vira "0,000 kg". */
-export function formatarKgTresCasas(valor) {
-  return `${formatarNumeroPtBR(Number(valor ?? 0), {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  })} kg`;
 }

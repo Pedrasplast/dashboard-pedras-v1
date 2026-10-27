@@ -1,15 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  FiAlertTriangle,
-  FiDownload,
-  FiEye,
-  FiFileText,
-  FiRefreshCw,
-  FiSearch,
-  FiShoppingCart,
-  FiX,
-} from "react-icons/fi";
+import { FiAlertTriangle, FiFileText, FiRefreshCw, FiSearch, FiX } from "react-icons/fi";
 
 import Paginacao from "@/components/paginacao/Paginacao";
 
@@ -28,7 +19,7 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 import "./EntradasComprasMateriaPrima.css";
 
 const ITENS_POR_PAGINA = 10;
@@ -65,7 +56,7 @@ function formatarNumero(valor, casas = 0) {
 }
 
 function formatarKg(valor) {
-  return `${formatarNumero(valor, 3)} kg`;
+  return `${formatarNumero(valor, 2)} kg`;
 }
 
 function formatarMoeda(valor, casas = 2) {
@@ -102,10 +93,7 @@ function formatarPercentual(valor) {
     return "-";
   }
 
-  return `${formatarNumeroPtBR(numero, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })}%`;
+  return `${formatarDuasCasas(numero)}%`;
 }
 
 /* =========================================================

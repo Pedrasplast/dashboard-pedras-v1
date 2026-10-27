@@ -79,7 +79,7 @@ export default function FornecedoresTabela({
                 <td className="numero">
                   {fornecedor.estoqueMinimoKg === null
                     ? "-"
-                    : `${formatarNumero(fornecedor.estoqueMinimoKg, 3)} kg`}
+                    : `${formatarNumero(fornecedor.estoqueMinimoKg, 2)} kg`}
                 </td>
 
                 {/* ESTOQUE ALVO */}
@@ -87,7 +87,7 @@ export default function FornecedoresTabela({
                 <td className="numero">
                   {fornecedor.estoqueAlvoKg === null
                     ? "-"
-                    : `${formatarNumero(fornecedor.estoqueAlvoKg, 3)} kg`}
+                    : `${formatarNumero(fornecedor.estoqueAlvoKg, 2)} kg`}
                 </td>
 
                 {/* LEAD TIME */}

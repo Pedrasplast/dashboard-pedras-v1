@@ -38,7 +38,7 @@ import { obterChavePedido } from "@/features/pedidos/utils/pedidos.utils";
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { obterHoje, converterData, formatarHora } from "@/shared/lib/datas";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -88,13 +88,10 @@ function formatarPercentual(valor) {
   const numero = Number(valor);
 
   if (!Number.isFinite(numero)) {
-    return "0,0%";
+    return "0,00%";
   }
 
-  return `${formatarNumeroPtBR(numero, {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  })}%`;
+  return `${formatarDuasCasas(numero)}%`;
 }
 
 /* =========================================================

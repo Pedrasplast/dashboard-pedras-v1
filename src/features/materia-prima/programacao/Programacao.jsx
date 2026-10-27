@@ -17,7 +17,7 @@ import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
 
 import "./Programacao.css";
-import { formatarKgTresCasas } from "@/features/materia-prima/utils/formatadores";
+import { formatarKg } from "@/features/materia-prima/utils/formatadores";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 import { formatarNumeroPtBR } from "@/shared/lib/formatar";
@@ -261,7 +261,7 @@ export default function Programacao() {
             <div>
               <span>Consumo período</span>
 
-              <strong>{formatarKgTresCasas(indicadores.consumoPeriodoKg)}</strong>
+              <strong>{formatarKg(indicadores.consumoPeriodoKg)}</strong>
             </div>
           </div>
 
@@ -401,7 +401,7 @@ export default function Programacao() {
                               {item.consumosFornecedores
                                 .map(
                                   (fornecedor) =>
-                                    `${fornecedor.fornecedorNome}: ${formatarKgTresCasas(
+                                    `${fornecedor.fornecedorNome}: ${formatarKg(
                                       fornecedor.consumoPeriodoKg,
                                     )}`,
                                 )
@@ -420,10 +420,10 @@ export default function Programacao() {
 
                         <td>{formatarNumero(item.pecasPrevistas)}</td>
 
-                        <td>{formatarKgTresCasas(item.pesoKg)}</td>
+                        <td>{formatarKg(item.pesoKg)}</td>
 
                         <td className="programacao-pp-consumo">
-                          {formatarKgTresCasas(item.consumoPeriodoKg)}
+                          {formatarKg(item.consumoPeriodoKg)}
                         </td>
 
                         <td>

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import useProjecao from "./useProjecao";
 import { paraNumero } from "@/shared/lib/numeros";
 import { formatarDataBROuOriginal } from "@/shared/lib/datas";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarDuasCasas } from "@/shared/lib/formatar";
 
 import "./ProjecaoDiaria.css";
 
@@ -30,10 +30,7 @@ function formatarKg(valor) {
     return "-";
   }
 
-  return `${formatarNumeroPtBR(Number(valor), {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  })} kg`;
+  return `${formatarDuasCasas(Number(valor))} kg`;
 }
 
 /* =========================================================

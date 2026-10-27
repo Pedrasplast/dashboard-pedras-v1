@@ -1,13 +1,12 @@
-import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
 import { formatarDataISOLocal, formatarDataBR } from "@/shared/lib/datas";
 import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
-export function formatarKg(valor, casas = 0) {
+export function formatarKg(valor) {
   if (valor === null || valor === undefined) {
     return "-";
   }
 
-  return `${formatarNumeroCasasFixas(valor, casas)} kg`;
+  return `${formatarNumeroCasasFixas(valor, 2)} kg`;
 }
 
 export function formatarMoeda(valor, casas = 2) {

@@ -26,6 +26,7 @@ import { normalizarTextoOcorrencia, obterMotivoRegistro } from "../ocorrenciasPa
 import "./CriticidadeParadas.css";
 import { formatarNumero } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -78,7 +79,7 @@ const QUADRANTES = Object.freeze({
 ========================================================= */
 
 function formatarHoras(valor) {
-  return formatarNumeroPtBR(Number(valor || 0), {
+  return formatarNumeroPtBR(converterNumeroFlexivel(valor), {
     maximumFractionDigits: 1,
   });
 }

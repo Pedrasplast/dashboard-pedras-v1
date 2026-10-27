@@ -1,5 +1,4 @@
-import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 
 export function formatarNumero(valor, casas = 3) {
   if (valor === null || valor === undefined || valor === "") return "-";
@@ -9,7 +8,7 @@ export function formatarNumero(valor, casas = 3) {
     : "-";
 }
 
-/** Percentual da receita com até 4 casas ("12,3456%"). Inválido vira "0%". */
+/** Percentual da receita com 2 casas ("12,35%"). Inválido vira "0%". */
 export function formatarPercentual(valor) {
   const numero = Number(valor);
 
@@ -17,8 +16,5 @@ export function formatarPercentual(valor) {
     return "0%";
   }
 
-  return `${formatarNumeroPtBR(numero, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 4,
-  })}%`;
+  return `${formatarDuasCasas(numero)}%`;
 }

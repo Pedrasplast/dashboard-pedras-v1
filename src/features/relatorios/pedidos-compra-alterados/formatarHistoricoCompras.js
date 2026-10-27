@@ -1,3 +1,4 @@
+import { formatarDuasCasas } from "@/shared/lib/formatar";
 /* =========================================================
    HISTÓRICO DE PEDIDOS DE COMPRA
 
@@ -192,7 +193,7 @@ export function formatarValorCompra(valor, campo = "", referencias = {}) {
   }
 
   if (campo === "nPercent" || campo === "nPerc") {
-    return `${quant(valor)}%`;
+    return n(valor) === null ? "Não informado" : `${formatarDuasCasas(n(valor))}%`;
   }
 
   if (campo === "data_previsao" || campo === "data_inclusao" || campo === "dVencto") {

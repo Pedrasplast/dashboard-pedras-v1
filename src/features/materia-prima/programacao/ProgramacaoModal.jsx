@@ -118,7 +118,7 @@ function formatarNumero(valor, casas = 0) {
 }
 
 function formatarKg(valor) {
-  return `${formatarNumero(valor, 3)} kg`;
+  return `${formatarNumero(valor, 2)} kg`;
 }
 
 function formatarMinutos(minutos) {

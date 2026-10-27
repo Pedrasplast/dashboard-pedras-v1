@@ -1,20 +1,20 @@
 import { formatarKg, formatarMoeda } from "../dashboardMateriaPrimaUtils.js";
-import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
+import {
+  formatarNumeroPtBR,
+  formatarNumeroCasasFixas,
+  formatarDuasCasas,
+} from "@/shared/lib/formatar";
 
 /* =========================================================
    PERCENTUAL
 ========================================================= */
 
-export function formatarPercentual(valor, casas = 1) {
+export function formatarPercentual(valor) {
   if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
     return "-";
   }
 
-  return `${formatarNumeroPtBR(Number(valor), {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  })}%`;
+  return `${formatarDuasCasas(Number(valor))}%`;
 }
 
 /* =========================================================
@@ -107,22 +107,14 @@ export function formatarKgCompacto(valor) {
   }
 
   if (Math.abs(numero) >= 1000000) {
-    return `${formatarNumeroPtBR(numero / 1000000, {
-      minimumFractionDigits: 1,
-
-      maximumFractionDigits: 1,
-    })} mi kg`;
+    return `${formatarDuasCasas(numero / 1000000)} mi kg`;
   }
 
   if (Math.abs(numero) >= 1000) {
-    return `${formatarNumeroPtBR(numero / 1000, {
-      minimumFractionDigits: 0,
-
-      maximumFractionDigits: 1,
-    })} mil kg`;
+    return `${formatarDuasCasas(numero / 1000)} mil kg`;
   }
 
-  return formatarKg(numero, 0);
+  return formatarKg(numero);
 }
 
 /* =========================================================
@@ -142,9 +134,5 @@ export function formatarKgCompleto(valor) {
     return "0 kg";
   }
 
-  return `${formatarNumeroPtBR(numero, {
-    minimumFractionDigits: 0,
-
-    maximumFractionDigits: 0,
-  })} kg`;
+  return `${formatarDuasCasas(numero)} kg`;
 }

@@ -18,7 +18,7 @@ import { useCargaMaquina } from "@/lib/cargaMaquina";
 import FiltrosDashboard from "./FiltrosDashboard";
 import { filtrarRegistrosDashboard } from "./dashboard.utils";
 import { KpiHoras, KpiSimples, MotivosParada } from "./components/DashboardIndicadores";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarDuasCasas } from "@/shared/lib/formatar";
 
 import "./Dashboard.css";
 import "./SidebarProducao.css";
@@ -32,9 +32,9 @@ const FILTROS_INICIAIS = Object.freeze({
   dataFim: "",
 });
 
-function formatarPercentualInteiro(valor) {
+function formatarPercentual(valor) {
   const numero = Number(valor);
-  return formatarNumeroPtBR(Math.round(Number.isFinite(numero) ? numero : 0));
+  return formatarDuasCasas(Number.isFinite(numero) ? numero : 0);
 }
 
 export default function Dashboard() {
@@ -136,7 +136,7 @@ export default function Dashboard() {
             Icone={Target}
             classeIcone="kpi-icon-qualidade"
             titulo="QUALIDADE"
-            valor={`${Number(metrics?.qualidade || 0).toFixed(2)} %`}
+            valor={`${formatarDuasCasas(Number(metrics?.qualidade || 0))}%`}
           />
 
           <KpiHoras
@@ -145,7 +145,7 @@ export default function Dashboard() {
             classeIcone="kpi-icon-horas"
             titulo="HORA TRABALHADA"
             dias={metrics?.diasTrabalhados || "0.00"}
-            percentual={formatarPercentualInteiro(percentualHoraTrabalhada)}
+            percentual={formatarPercentual(percentualHoraTrabalhada)}
             classePercentual="percentual-horas-indicador-trabalhadas"
             valor={metrics?.horasTrabalhadas || "00:00"}
           />
@@ -156,7 +156,7 @@ export default function Dashboard() {
             classeIcone="kpi-icon-paradas"
             titulo="HORA PARADA"
             dias={metrics?.diasParados || "0d 00h"}
-            percentual={formatarPercentualInteiro(percentualHoraParada)}
+            percentual={formatarPercentual(percentualHoraParada)}
             classePercentual="percentual-horas-indicador-paradas"
             valor={metrics?.horasParadas || "00:00"}
           />

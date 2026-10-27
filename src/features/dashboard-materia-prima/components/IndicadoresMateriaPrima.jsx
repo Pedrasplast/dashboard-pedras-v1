@@ -86,8 +86,8 @@ export function IndicadoresPrincipaisMateriaPrima({ resumo, misturaMateriais, ca
 
         <KpiCard
           titulo="Quantidade comprada"
-          valor={carregando ? "..." : formatarKg(resumo.quantidadeCompradaKg, 0)}
-          subtitulo={`Média de ${formatarKg(resumo.quantidadeMediaCompraKg, 0)} por compra`}
+          valor={carregando ? "..." : formatarKg(resumo.quantidadeCompradaKg)}
+          subtitulo={`Média de ${formatarKg(resumo.quantidadeMediaCompraKg)} por compra`}
           icone={Scale}
         />
 
@@ -186,7 +186,7 @@ export function EficienciaEntregaMateriaPrima({ resumo, carregando }) {
             <span>Pontualidade</span>
 
             <strong>
-              {carregando ? "..." : formatarPercentual(resumo.pontualidadePercentual, 1)}
+              {carregando ? "..." : formatarPercentual(resumo.pontualidadePercentual)}
             </strong>
 
             <small>Recebimentos dentro da previsão</small>

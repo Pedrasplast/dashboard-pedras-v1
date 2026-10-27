@@ -1,8 +1,9 @@
 /* =========================================================
    DATAS
    ---------------------------------------------------------
-   "Local" = fuso do navegador. "Brasília" = America/Sao_Paulo,
-   independente do fuso do navegador.
+   Exibição: sempre no fuso do computador de quem acessa.
+   Regras de negócio (turnos, agenda das rotinas, dia de
+   consulta no banco) usam FUSO_BRASILIA explicitamente.
 ========================================================= */
 
 export const FUSO_BRASILIA = "America/Sao_Paulo";
@@ -152,42 +153,13 @@ export function formatarDataHora(valor) {
     : "-";
 }
 
-/** Data e hora completas (com segundos) no horário de Brasília. Vazio ou inválido vira "-". */
-export function formatarDataHoraBrasilia(valor) {
+/** "DD/MM/AAAA, HH:MM:SS" no fuso local. Vazio ou inválido vira "-". */
+export function formatarDataHoraCompleta(valor) {
   if (!valor) {
     return "-";
   }
 
   const data = new Date(valor);
 
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: FUSO_BRASILIA,
-  });
-}
-
-/** "DD/MM/AAAA, HH:MM" (24h) no horário de Brasília. Vazio ou inválido vira "-". */
-export function formatarDataHoraBrasiliaCurta(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: FUSO_BRASILIA,
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  return Number.isNaN(data.getTime()) ? "-" : data.toLocaleString("pt-BR");
 }

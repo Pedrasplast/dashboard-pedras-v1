@@ -2,9 +2,9 @@ import { CheckCircle2, Clock3, TriangleAlert } from "lucide-react";
 
 import { memo, useEffect, useMemo, useState } from "react";
 
-import "./FinanceiroStatusSincronizacao.css";
+import { FUSO_BRASILIA } from "@/shared/lib/datas";
 
-const FUSO_HORARIO = "America/Sao_Paulo";
+import "./FinanceiroStatusSincronizacao.css";
 
 /* =========================================================
    DATA / HORA
@@ -22,7 +22,7 @@ function obterPartesData(data) {
   }
 
   const partes = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: FUSO_HORARIO,
+    timeZone: FUSO_BRASILIA,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -76,7 +76,6 @@ function formatarDataHora(valor) {
   }
 
   const partes = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: FUSO_HORARIO,
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

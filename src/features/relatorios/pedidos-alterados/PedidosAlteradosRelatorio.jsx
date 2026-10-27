@@ -21,7 +21,7 @@ import LayoutRelatorio from "../components/LayoutRelatorio";
 import "./PedidosAlteradosRelatorio.css";
 import { obterTimestampCriacao } from "@/features/pedidos/numeroPedidoExibicao";
 import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarDataISOLocal, formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
+import { formatarDataISOLocal, formatarDataHora } from "@/shared/lib/datas";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -739,7 +739,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
         extrairMudancas,
 
-        formatarDataHora: formatarDataHoraBrasiliaCurta,
+        formatarDataHora: formatarDataHora,
       });
     } catch (erro) {
       console.error("Erro ao exportar PDF:", erro);
@@ -778,7 +778,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
         extrairMudancas,
 
-        formatarDataHora: formatarDataHoraBrasiliaCurta,
+        formatarDataHora: formatarDataHora,
       });
     } catch (erro) {
       console.error("Erro ao exportar Excel:", erro);
@@ -1039,7 +1039,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
                             {/* ÚLTIMA ALTERAÇÃO */}
 
-                            <td>{formatarDataHoraBrasiliaCurta(pedido.ultima_alteracao)}</td>
+                            <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
 
                             {/* QUANTIDADE DE ALTERAÇÕES */}
 
@@ -1184,11 +1184,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
                                               Alteração #{ocorrencias.length - indice}
                                             </strong>
 
-                                            <span>
-                                              {formatarDataHoraBrasiliaCurta(
-                                                ocorrencia.alterado_em,
-                                              )}
-                                            </span>
+                                            <span>{formatarDataHora(ocorrencia.alterado_em)}</span>
                                           </div>
 
                                           {/* MUDANÇAS */}

@@ -5,13 +5,13 @@ ou componente dentro de `features/`, procure aqui.
 
 ## lib/ — funções puras (sem React, sem Supabase)
 
-| Arquivo       | O que tem                                                                                                                                                                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `numeros.js`  | `paraNumero`, `paraNumeroOu`, `paraNumeroOuNull`, `converterNumeroFlexivel(OuNull)`, `converterNumeroBrOuNull`, `converterNumeroDecimal`, `ehNumeroInvalido`, `numeroParaCampo`                                       |
-| `texto.js`    | `paraTexto`, `normalizarTexto`, `normalizarTextoCompacto`, `normalizarTextoSemAparar`, `normalizarCodigo`, `ordenarTexto`                                                                                             |
-| `datas.js`    | `obterHoje`, `obterHojeISO`, `formatarDataISOLocal`, `obterAnoAtual`, `obterMesAtual`, `converterData`, `converterDataLocal`, `formatarDataBR`, `formatarHora`, `formatarDataHora`, `formatarDataHoraBrasilia(Curta)` |
-| `formatar.js` | `formatarNumeroPtBR` / `formatarReaisPtBR` (Intl em cache), `formatarNumeroCasasFixas`, `formatarNumeroFlexivel`                                                                                                      |
-| `colecoes.js` | `valoresUnicos`, `valoresUnicosOrdenados`, `compararPtBR`                                                                                                                                                             |
+| Arquivo       | O que tem                                                                                                                                                                                                                                                   |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `numeros.js`  | `paraNumero`, `paraNumeroOu`, `paraNumeroOuNull`, `converterNumeroFlexivel(OuNull)`, `converterNumeroBrOuNull`, `converterNumeroDecimal`, `ehNumeroInvalido`, `numeroParaCampo`                                                                             |
+| `texto.js`    | `paraTexto`, `normalizarTexto`, `normalizarTextoCompacto`, `normalizarTextoSemAparar`, `normalizarCodigo`, `ordenarTexto`                                                                                                                                   |
+| `datas.js`    | `obterHoje`, `obterHojeISO`, `formatarDataISOLocal`, `obterAnoAtual`, `obterMesAtual`, `converterData`, `converterDataLocal`, `formatarDataBR`, `formatarHora`, `formatarDataHora`, `formatarDataHoraCompleta`, `FUSO_BRASILIA` (só para regras de negócio) |
+| `formatar.js` | `formatarNumeroPtBR` / `formatarReaisPtBR` (Intl em cache), `formatarNumeroCasasFixas`, `formatarNumeroFlexivel`                                                                                                                                            |
+| `colecoes.js` | `valoresUnicos`, `valoresUnicosOrdenados`, `compararPtBR`                                                                                                                                                                                                   |
 
 ## Regras
 

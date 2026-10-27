@@ -14,6 +14,7 @@ import {
 import { ROTULO_NIVEL_BANCO, ROTULO_SITUACAO, SITUACAO } from "./constants/monitoramento.constants";
 
 import "./Monitoramento.css";
+import { formatarDuasCasas } from "@/shared/lib/formatar";
 
 /* =========================================================
    MONITORAMENTO DAS ROTINAS (somente administradores)
@@ -92,9 +93,7 @@ export default function MonitoramentoPage() {
               className={`mon-resumo__item mon-banco mon-banco--${String(banco.nivel).toLowerCase()}`}
               title={`Medido ${formatarDataHora(banco.atualizado_em)}. Limite do plano free: ${formatarMegabytes(banco.limite_bytes)}.`}
             >
-              <strong>
-                {Number(banco.percentual).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%
-              </strong>
+              <strong>{formatarDuasCasas(Number(banco.percentual))}%</strong>
               <span>
                 do banco usado · {formatarMegabytes(banco.tamanho_bytes)} de{" "}
                 {formatarMegabytes(banco.limite_bytes)}

@@ -60,3 +60,11 @@ export function formatarNumeroCasasFixas(valor, casas = 0) {
     maximumFractionDigits: casas,
   });
 }
+
+/** Padrão do sistema para kg e percentual: sempre 2 casas decimais. */
+export const DUAS_CASAS = Object.freeze({ minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** Número com 2 casas fixas ("1.234,50"). */
+export function formatarDuasCasas(numero) {
+  return formatarNumeroPtBR(numero, DUAS_CASAS);
+}

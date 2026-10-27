@@ -250,7 +250,7 @@ export const COLUNAS_RELATORIO = {
     titulo: "Quantidade",
     larguraPdf: 25,
     larguraExcel: 17,
-    valor: (item) => `${formatarNumero(item.quantidade_kg, 3)} kg`,
+    valor: (item) => `${formatarNumero(item.quantidade_kg, 2)} kg`,
     valorExcel: (item) => converterNumero(item.quantidade_kg),
     formatoExcel: "#,##0",
   },

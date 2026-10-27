@@ -89,7 +89,7 @@ function TooltipQuantidade({ active, payload, label }) {
     <div className="dmp-tooltip">
       {label && <strong>{label}</strong>}
 
-      <span>Quantidade: {formatarKg(payload[0]?.value, 0)}</span>
+      <span>Quantidade: {formatarKg(payload[0]?.value)}</span>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { formatarDataCurta, statusCompraAberta } from "./dashboardMateriaPrimaUtils.js";
 import { paraNumero } from "@/shared/lib/numeros";
+import { formatarDuasCasas } from "@/shared/lib/formatar";
 
 /* =========================================================
    COMPRAS VÁLIDAS
@@ -794,7 +795,7 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
 
       detalhe:
         maiorMaterial.participacaoValorPercentual !== null
-          ? `${maiorMaterial.participacaoValorPercentual.toFixed(1)}% do valor comprado no filtro`
+          ? `${formatarDuasCasas(maiorMaterial.participacaoValorPercentual)}% do valor comprado no filtro`
           : "Material com maior valor comprado",
     });
   }
@@ -812,9 +813,7 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
 
       valor: maiorAmplitude.material,
 
-      detalhe: `${maiorAmplitude.amplitudePrecoPercentual.toFixed(
-        1,
-      )}% entre menor e maior preço do período`,
+      detalhe: `${formatarDuasCasas(maiorAmplitude.amplitudePrecoPercentual)}% entre menor e maior preço do período`,
     });
   }
 
@@ -833,9 +832,7 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
 
       valor: maiorConcentracao.fornecedor,
 
-      detalhe: `${maiorConcentracao.participacaoMaterialPercentual.toFixed(
-        1,
-      )}% das compras de ${maiorConcentracao.material}`,
+      detalhe: `${formatarDuasCasas(maiorConcentracao.participacaoMaterialPercentual)}% das compras de ${maiorConcentracao.material}`,
     });
   }
 
@@ -866,9 +863,7 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
 
       valor: maiorImpactoCustos.material,
 
-      detalhe: `${maiorImpactoCustos.impactoCustoPercentual.toFixed(
-        1,
-      )}% sobre o preço base • +${acrescimoKg}/kg`,
+      detalhe: `${formatarDuasCasas(maiorImpactoCustos.impactoCustoPercentual)}% sobre o preço base • +${acrescimoKg}/kg`,
     });
   }
 

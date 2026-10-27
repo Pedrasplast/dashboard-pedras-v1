@@ -313,9 +313,9 @@ export function formatarMoeda(valor) {
 ========================================================= */
 
 const formatadorPercentual = new Intl.NumberFormat("pt-BR", {
-  minimumFractionDigits: 1,
+  minimumFractionDigits: 2,
 
-  maximumFractionDigits: 1,
+  maximumFractionDigits: 2,
 });
 
 export function formatarPercentual(valor) {
@@ -357,8 +357,6 @@ export function formatarData(valor) {
 ========================================================= */
 
 const formatadorDataHora = new Intl.DateTimeFormat("pt-BR", {
-  timeZone: "America/Sao_Paulo",
-
   day: "2-digit",
 
   month: "2-digit",

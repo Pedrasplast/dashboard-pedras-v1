@@ -75,7 +75,7 @@ function TabelaMaterial({ dados }) {
 
                 <td className="numero">{item.compras}</td>
 
-                <td className="numero">{formatarKg(item.quantidadeKg, 0)}</td>
+                <td className="numero">{formatarKg(item.quantidadeKg)}</td>
 
                 <td className="numero">{formatarMoedaKg(item.precoMedioKg, 3)}</td>
 
@@ -83,13 +83,13 @@ function TabelaMaterial({ dados }) {
 
                 <td className="numero">{formatarMoedaKg(item.custoAdicionalKg, 3)}</td>
 
-                <td className="numero">{formatarPercentual(item.impactoCustoPercentual, 1)}</td>
+                <td className="numero">{formatarPercentual(item.impactoCustoPercentual)}</td>
 
                 <td className="numero">{formatarMoedaKg(item.precoMinimoKg, 2)}</td>
 
                 <td className="numero">{formatarMoedaKg(item.precoMaximoKg, 2)}</td>
 
-                <td className="numero">{formatarPercentual(item.amplitudePrecoPercentual, 1)}</td>
+                <td className="numero">{formatarPercentual(item.amplitudePrecoPercentual)}</td>
 
                 <td className="numero">{formatarMoedaKg(item.ultimoPrecoKg, 2)}</td>
 
@@ -104,12 +104,10 @@ function TabelaMaterial({ dados }) {
                         : "",
                   ].join(" ")}
                 >
-                  {formatarPercentual(item.variacaoUltimaCompraPercentual, 1)}
+                  {formatarPercentual(item.variacaoUltimaCompraPercentual)}
                 </td>
 
-                <td className="numero">
-                  {formatarPercentual(item.participacaoValorPercentual, 1)}
-                </td>
+                <td className="numero">{formatarPercentual(item.participacaoValorPercentual)}</td>
 
                 <td className="numero dmp-subtotal">{formatarMoeda(item.subtotal, 2)}</td>
 
@@ -190,7 +188,7 @@ function TabelaFornecedor({ dados }) {
 
                 <td className="numero">{item.compras}</td>
 
-                <td className="numero">{formatarKg(item.quantidadeKg, 0)}</td>
+                <td className="numero">{formatarKg(item.quantidadeKg)}</td>
 
                 <td className="numero">{formatarMoedaKg(item.precoMedioKg, 3)}</td>
 
@@ -203,7 +201,7 @@ function TabelaFornecedor({ dados }) {
                 <td className="numero">{formatarMoedaKg(item.precoMaximoKg, 2)}</td>
 
                 <td className="numero">
-                  {formatarPercentual(item.participacaoMaterialPercentual, 1)}
+                  {formatarPercentual(item.participacaoMaterialPercentual)}
                 </td>
 
                 <td className="numero">{formatarDias(item.prazoMedioEntregaDias)}</td>

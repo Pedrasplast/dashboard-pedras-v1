@@ -362,7 +362,7 @@ export const useDashboardMetrics = (dados, tiposSelecionados = []) => {
 
       totalDanificadas,
 
-      qualidade: qualidade.toFixed(1),
+      qualidade: qualidade.toFixed(2),
 
       /* HORAS TRABALHADAS */
 

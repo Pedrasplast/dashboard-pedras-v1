@@ -32,7 +32,7 @@ import {
   obterCodigoPedidoCompra,
   obterValorItem,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
-import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
+import { formatarDataHoraCompleta } from "@/shared/lib/datas";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 function obterNomeCategoria(pedido) {
@@ -184,7 +184,7 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
 
   if (resumo?.ultima_movimentacao_em) {
     linhasTitulo.push(
-      `Última movimentação física: ${formatarDataHoraBrasilia(resumo.ultima_movimentacao_em)}`,
+      `Última movimentação física: ${formatarDataHoraCompleta(resumo.ultima_movimentacao_em)}`,
       `Por: ${resumo.ultima_movimentacao_usuario || "-"}`,
     );
 

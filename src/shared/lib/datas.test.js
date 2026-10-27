@@ -6,15 +6,14 @@ import {
   formatarDataBR,
   formatarDataBROuOriginal,
   formatarDataHora,
-  formatarDataHoraBrasilia,
-  formatarDataHoraBrasiliaCurta,
+  formatarDataHoraCompleta,
   formatarDataISOLocal,
   formatarHora,
   obterHoje,
 } from "./datas";
 
-// Os testes valem em qualquer fuso: datas locais são criadas com new Date(ano, mês, dia)
-// e as de Brasília partem de instantes UTC fixos.
+// Os testes valem em qualquer fuso: as datas são criadas com new Date(ano, mês, dia, ...),
+// que já estão no fuso local.
 
 describe("datas locais", () => {
   it("formatarDataISOLocal usa o calendário local", () => {
@@ -55,9 +54,9 @@ describe("formatação", () => {
     expect(formatarDataHora(new Date(2026, 9, 27, 8, 5))).toBe("27/10/2026, 08:05");
   });
 
-  it("horário de Brasília independe do fuso do navegador", () => {
-    expect(formatarDataHoraBrasilia("2026-10-27T13:45:00Z")).toBe("27/10/2026, 10:45:00");
-    expect(formatarDataHoraBrasiliaCurta("2026-10-27T13:45:00Z")).toBe("27/10/2026, 10:45");
-    expect(formatarDataHoraBrasilia(null)).toBe("-");
+  it("data e hora completas no fuso local", () => {
+    expect(formatarDataHoraCompleta(new Date(2026, 9, 27, 8, 5, 9))).toBe("27/10/2026, 08:05:09");
+    expect(formatarDataHoraCompleta(null)).toBe("-");
+    expect(formatarDataHoraCompleta("abc")).toBe("-");
   });
 });

@@ -29,6 +29,7 @@ import {
   formatarPercentual,
 } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 
 /* =========================================================
    CONFIGURAÇÃO
@@ -41,7 +42,7 @@ const QUANTIDADE_PRINCIPAIS = 9;
 ========================================================= */
 
 function formatarHorasEixo(valor) {
-  return `${formatarNumeroPtBR(Number(valor || 0), {
+  return `${formatarNumeroPtBR(converterNumeroFlexivel(valor), {
     maximumFractionDigits: 0,
   })}h`;
 }

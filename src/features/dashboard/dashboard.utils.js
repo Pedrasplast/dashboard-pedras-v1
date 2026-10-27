@@ -1,4 +1,5 @@
 import { normalizarTextoCompacto } from "@/shared/lib/texto";
+import { FUSO_BRASILIA } from "@/shared/lib/datas";
 
 export const DESCRICOES_TIPO = Object.freeze({
   1: "Paradas Planejadas",
@@ -31,7 +32,6 @@ export const VALORES_PADRAO_FILTROS_PRODUCAO = Object.freeze({
    TURNO I + TURNO II + TURNO III fecha exatamente com "Todos".
 ========================================================= */
 
-const FUSO_HORARIO_PRODUCAO = "America/Sao_Paulo";
 const MILISSEGUNDOS_MINUTO = 60_000;
 const MILISSEGUNDOS_DIA = 86_400_000;
 
@@ -50,7 +50,7 @@ const PERIODOS_TURNOS_MINUTOS = Object.freeze({
 });
 
 const FORMATADOR_DATA_HORA_PRODUCAO = new Intl.DateTimeFormat("en-CA", {
-  timeZone: FUSO_HORARIO_PRODUCAO,
+  timeZone: FUSO_BRASILIA,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",

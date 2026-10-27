@@ -17,7 +17,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
-import { formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
+import { FUSO_BRASILIA, formatarDataHora } from "@/shared/lib/datas";
 
 import "../pedidos-alterados/PedidosAlteradosRelatorio.css";
 import "./PedidosCompraAlteradosRelatorio.css";
@@ -27,7 +27,6 @@ import "./PedidosCompraAlteradosRelatorio.css";
 ========================================================= */
 
 const POR_PAGINA = 8;
-const FUSO = "America/Sao_Paulo";
 const FORNECEDORES_VAZIOS = Object.freeze({});
 
 /* =========================================================
@@ -36,7 +35,7 @@ const FORNECEDORES_VAZIOS = Object.freeze({});
 
 function dataHoje() {
   const partes = new Intl.DateTimeFormat("en-US", {
-    timeZone: FUSO,
+    timeZone: FUSO_BRASILIA,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -336,7 +335,7 @@ function IndicadorSincronizacao({ dados, carregando, erro }) {
             fontWeight: 650,
           }}
         >
-          {carregando && !dados ? "Consultando..." : formatarDataHoraBrasiliaCurta(instante)}
+          {carregando && !dados ? "Consultando..." : formatarDataHora(instante)}
         </span>
 
         {falha && (
@@ -430,7 +429,7 @@ function HistoricoPedido({ pedido }) {
             <div className="pedidos-alterados-ocorrencia-topo">
               <strong>Alteração #{evento.numeroAlteracao}</strong>
 
-              <span>{formatarDataHoraBrasiliaCurta(evento.detectado_em)}</span>
+              <span>{formatarDataHora(evento.detectado_em)}</span>
             </div>
 
             <div className="pedidos-alterados-mudancas">
@@ -967,7 +966,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
 
                             {/* ÚLTIMA ALTERAÇÃO */}
 
-                            <td>{formatarDataHoraBrasiliaCurta(pedido.ultima_alteracao)}</td>
+                            <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
 
                             {/* NÚMERO DE ALTERAÇÕES */}
 

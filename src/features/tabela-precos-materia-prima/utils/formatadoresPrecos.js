@@ -1,4 +1,4 @@
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 /* =========================================================
    TABELA DE PREÇOS — FORMATAÇÃO E ORDENAÇÃO
 
@@ -63,10 +63,7 @@ export function formatarQuantidadePreco(valor) {
   if (valor === null || valor === undefined || valor === "") return "—";
   const valorNumerico = Number(valor);
   if (!Number.isFinite(valorNumerico)) return "—";
-  return formatarNumeroPtBR(valorNumerico, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
+  return formatarDuasCasas(valorNumerico);
 }
 
 export function formatarDataPreco(valor) {

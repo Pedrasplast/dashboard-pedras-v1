@@ -9,10 +9,9 @@ import useSaldosIniciais from "./useSaldosIniciais";
 import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
 
 import "./SaldosIniciais.css";
-import { formatarKgTresCasas } from "@/features/materia-prima/utils/formatadores";
+import { formatarKg } from "@/features/materia-prima/utils/formatadores";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { formatarDataBROuOriginal } from "@/shared/lib/datas";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 /* =========================================================
 
@@ -175,7 +174,7 @@ export default function SaldosIniciais() {
             <div>
               <span>Saldo-base atual</span>
 
-              <strong>{formatarKgTresCasas(saldoAtualTotal)}</strong>
+              <strong>{formatarKg(saldoAtualTotal)}</strong>
             </div>
 
             <div>
@@ -328,7 +327,7 @@ export default function SaldosIniciais() {
                         </td>
 
                         <td className="saldos-iniciais-quantidade">
-                          {formatarKgTresCasas(saldo.quantidadeKg)}
+                          {formatarKg(saldo.quantidadeKg)}
                         </td>
 
                         <td className="saldos-iniciais-observacao">{saldo.observacao || "-"}</td>
