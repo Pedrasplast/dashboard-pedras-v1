@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarPedidosOmie } from "./omie.functions";
-import { PEDIDOS_VAZIOS } from "./pedidos.utils";
+import { PEDIDOS_VAZIOS } from "./constants/pedidos.constants";
 import { carregarMapaNumeroPedidoExibicao } from "./numeroPedidoExibicao";
 
 export const CHAVE_PEDIDOS_SUPABASE = Object.freeze([
