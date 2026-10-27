@@ -1,18 +1,6 @@
 import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
-
-export function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-export function numeroSeguro(valor) {
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : 0;
-}
+import { paraNumero } from "@/shared/lib/numeros";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 export function converterDataLocal(valor) {
   if (!valor) {
@@ -92,7 +80,7 @@ export function formatarHorario(valor) {
 }
 
 export function formatarNumero(valor, casas = 0) {
-  return numeroSeguro(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     minimumFractionDigits: casas,
 
     maximumFractionDigits: casas,
@@ -100,7 +88,7 @@ export function formatarNumero(valor, casas = 0) {
 }
 
 export function formatarMoeda(valor) {
-  return numeroSeguro(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
@@ -109,10 +97,10 @@ export function formatarMoeda(valor) {
 export function calcularResumoItens(itens = []) {
   return itens.reduce(
     (acumulado, item) => {
-      const quantidade = numeroSeguro(item?.quantidade);
+      const quantidade = paraNumero(item?.quantidade);
 
       const recebida = Math.min(
-        numeroSeguro(item?.quantidade_recebida),
+        paraNumero(item?.quantidade_recebida),
 
         quantidade,
       );
@@ -123,9 +111,9 @@ export function calcularResumoItens(itens = []) {
         0,
       );
 
-      const precoUnitario = numeroSeguro(item?.preco_unitario);
+      const precoUnitario = paraNumero(item?.preco_unitario);
 
-      const valorTotalInformado = numeroSeguro(item?.valor_total);
+      const valorTotalInformado = paraNumero(item?.valor_total);
 
       const valorTotal = valorTotalInformado || quantidade * precoUnitario;
 

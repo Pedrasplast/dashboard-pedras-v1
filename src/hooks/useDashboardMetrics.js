@@ -1,22 +1,6 @@
 import { useMemo } from "react";
-
-/* =========================================================
-   NÚMEROS
-========================================================= */
-
-const converterNumero = (valor) => {
-  if (valor === null || valor === undefined || valor === "") {
-    return 0;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
-  const numero = Number.parseFloat(String(valor).trim().replace(",", "."));
-
-  return Number.isFinite(numero) ? numero : 0;
-};
+import { converterNumeroDecimal } from "@/shared/lib/numeros";
+import { normalizarTextoCompacto } from "@/shared/lib/texto";
 
 /* =========================================================
    TEMPO -> HORAS DECIMAIS
@@ -143,24 +127,11 @@ const formatarDiasEHoras = (totalHoras) => {
 };
 
 /* =========================================================
-   NORMALIZA TEXTO
-========================================================= */
-
-const normalizarTexto = (valor) => {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ");
-};
-
-/* =========================================================
    NORMALIZA TIPO
 ========================================================= */
 
 const normalizarTipo = (tipo) => {
-  return normalizarTexto(tipo).replace(/\s+/g, "");
+  return normalizarTextoCompacto(tipo).replace(/\s+/g, "");
 };
 
 /* =========================================================
@@ -257,15 +228,15 @@ export const useDashboardMetrics = (dados, tiposSelecionados = []) => {
            PRODUÇÃO
         --------------------------------------------------- */
 
-      totalConforme += converterNumero(registro.conforme);
+      totalConforme += converterNumeroDecimal(registro.conforme);
 
-      totalDanificadas += converterNumero(registro.danificada);
+      totalDanificadas += converterNumeroDecimal(registro.danificada);
 
       /* ---------------------------------------------------
            STATUS / DURAÇÃO
         --------------------------------------------------- */
 
-      const status = normalizarTexto(registro.status);
+      const status = normalizarTextoCompacto(registro.status);
 
       const duracao = converterTempoParaHoras(registro.duracao);
 
@@ -300,7 +271,7 @@ export const useDashboardMetrics = (dados, tiposSelecionados = []) => {
            IDENTIFICAR PARADAS ESPECIAIS / TIPO 3
         --------------------------------------------------- */
 
-      const motivoNormalizado = normalizarTexto(registro.motivo);
+      const motivoNormalizado = normalizarTextoCompacto(registro.motivo);
 
       const ehParadaTipo3 =
         motivoNormalizado.includes("final de semana") ||

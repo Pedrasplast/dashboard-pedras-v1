@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "../fornecedores/fornecedoresService";
+import { paraNumeroOuNull, converterNumeroBrOuNull } from "@/shared/lib/numeros";
 
 export const STATUS_COMPRA_FUTURA = [
   {
@@ -138,49 +139,6 @@ const CAMPOS_COMPRA_FUTURA = `
 
 `;
 
-function normalizarNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : null;
-  }
-
-  const texto = String(valor)
-    .trim()
-
-    .replace(
-      /\s/g,
-
-      "",
-    );
-
-  if (!texto) {
-    return null;
-  }
-
-  const normalizado = texto.includes(",")
-    ? texto
-
-        .replace(
-          /\./g,
-
-          "",
-        )
-
-        .replace(
-          ",",
-
-          ".",
-        )
-    : texto;
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
-}
-
 function arredondar(
   valor,
 
@@ -193,16 +151,6 @@ function arredondar(
   const fator = 10 ** casas;
 
   return Math.round((valor + Number.EPSILON) * fator) / fator;
-}
-
-function numeroRegistroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : null;
 }
 
 function textoOpcional(valor) {
@@ -226,17 +174,17 @@ export function calcularResumoFinanceiroCompra({
 
   outrasDespesas,
 } = {}) {
-  const quantidade = normalizarNumero(quantidadeKg);
+  const quantidade = converterNumeroBrOuNull(quantidadeKg);
 
-  const preco = normalizarNumero(precoUnitario);
+  const preco = converterNumeroBrOuNull(precoUnitario);
 
-  const ipi = normalizarNumero(ipiPercentual);
+  const ipi = converterNumeroBrOuNull(ipiPercentual);
 
-  const freteInformado = normalizarNumero(valorFrete);
+  const freteInformado = converterNumeroBrOuNull(valorFrete);
 
-  const desconto = normalizarNumero(valorDesconto);
+  const desconto = converterNumeroBrOuNull(valorDesconto);
 
-  const despesas = normalizarNumero(outrasDespesas);
+  const despesas = converterNumeroBrOuNull(outrasDespesas);
 
   const tipoFreteFinal = String(tipoFrete ?? "")
     .trim()
@@ -412,25 +360,25 @@ function normalizarCompra(registro) {
 
     atualizadoEm: registro.atualizado_em ?? null,
 
-    precoUnitario: numeroRegistroOuNull(registro.preco_unitario),
+    precoUnitario: paraNumeroOuNull(registro.preco_unitario),
 
-    subtotalProdutos: numeroRegistroOuNull(registro.subtotal_produtos),
+    subtotalProdutos: paraNumeroOuNull(registro.subtotal_produtos),
 
-    ipiPercentual: numeroRegistroOuNull(registro.ipi_percentual),
+    ipiPercentual: paraNumeroOuNull(registro.ipi_percentual),
 
-    valorIpi: numeroRegistroOuNull(registro.valor_ipi),
+    valorIpi: paraNumeroOuNull(registro.valor_ipi),
 
-    valorFrete: numeroRegistroOuNull(registro.valor_frete),
+    valorFrete: paraNumeroOuNull(registro.valor_frete),
 
     tipoFrete: registro.tipo_frete ?? "",
 
-    valorDesconto: numeroRegistroOuNull(registro.valor_desconto),
+    valorDesconto: paraNumeroOuNull(registro.valor_desconto),
 
-    outrasDespesas: numeroRegistroOuNull(registro.outras_despesas),
+    outrasDespesas: paraNumeroOuNull(registro.outras_despesas),
 
-    valorTotal: numeroRegistroOuNull(registro.valor_total),
+    valorTotal: paraNumeroOuNull(registro.valor_total),
 
-    custoEfetivoKg: numeroRegistroOuNull(registro.custo_efetivo_kg),
+    custoEfetivoKg: paraNumeroOuNull(registro.custo_efetivo_kg),
 
     numeroNf: registro.numero_nf ?? "",
 
@@ -674,7 +622,7 @@ export async function salvarCompraFutura({
 
   const materialIdFinal = Number(materialId);
 
-  const quantidadeFinal = normalizarNumero(quantidadeKg);
+  const quantidadeFinal = converterNumeroBrOuNull(quantidadeKg);
 
   const tipoClassificacaoFinal = String(tipoClassificacao ?? "")
     .trim()
@@ -792,15 +740,15 @@ export async function salvarCompraFutura({
     dataRecebimentoFinal = null;
   }
 
-  const precoFinal = normalizarNumero(precoUnitario);
+  const precoFinal = converterNumeroBrOuNull(precoUnitario);
 
-  const ipiFinal = normalizarNumero(ipiPercentual);
+  const ipiFinal = converterNumeroBrOuNull(ipiPercentual);
 
-  const freteFinal = normalizarNumero(valorFrete);
+  const freteFinal = converterNumeroBrOuNull(valorFrete);
 
-  const descontoFinal = normalizarNumero(valorDesconto);
+  const descontoFinal = converterNumeroBrOuNull(valorDesconto);
 
-  const despesasFinal = normalizarNumero(outrasDespesas);
+  const despesasFinal = converterNumeroBrOuNull(outrasDespesas);
 
   if (precoFinal !== null && precoFinal < 0) {
     throw new Error("O preço unitário não pode ser negativo.");

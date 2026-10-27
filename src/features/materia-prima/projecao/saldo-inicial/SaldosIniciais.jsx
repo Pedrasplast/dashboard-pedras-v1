@@ -7,6 +7,7 @@ import SaldoInicialModal from "./SaldoInicialModal";
 import useSaldosIniciais from "./useSaldosIniciais";
 
 import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./SaldosIniciais.css";
 
@@ -40,21 +41,6 @@ function formatarKg(valor) {
       maximumFractionDigits: 3,
     },
   )} kg`;
-}
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-
-    .toLowerCase()
-
-    .normalize("NFD")
-
-    .replace(
-      /[\u0300-\u036f]/g,
-
-      "",
-    );
 }
 
 /* =========================================================

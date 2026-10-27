@@ -3,37 +3,9 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 
 import { useEffect, useRef, useState } from "react";
 import { Boxes, Save, X } from "lucide-react";
+import { converterNumeroFlexivelOuNull, numeroParaCampo } from "@/shared/lib/numeros";
 
 import "../CadastroProdutoModal.css";
-
-/* =====================================================
-   FUNÇÕES AUXILIARES — NÚMEROS
-===================================================== */
-
-function valorParaCampo(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "";
-  }
-
-  return String(valor).replace(".", ",");
-}
-
-function normalizarNumero(valor) {
-  const texto = String(valor ?? "")
-    .trim()
-    .replace(/\s/g, "");
-
-  if (!texto) return null;
-
-  const normalizado =
-    texto.includes(",") && texto.includes(".")
-      ? texto.replace(/\./g, "").replace(",", ".")
-      : texto.replace(",", ".");
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
-}
 
 /* =====================================================
    COMPONENTE — CADASTRO DE PRODUTO
@@ -99,13 +71,13 @@ export default function CadastroProdutoModal({
     setCodigoProduto(codigo);
     setNomeProduto(item?.nomeProduto ?? "");
 
-    setCavidadeMolde(valorParaCampo(item?.cavidadeMolde ?? 1));
+    setCavidadeMolde(numeroParaCampo(item?.cavidadeMolde ?? 1));
 
-    setCicloSegundos(valorParaCampo(item?.cicloSegundos));
+    setCicloSegundos(numeroParaCampo(item?.cicloSegundos));
 
-    setKgUn(valorParaCampo(item?.kgUn));
+    setKgUn(numeroParaCampo(item?.kgUn));
 
-    setKgHaste(valorParaCampo(item?.kgHaste));
+    setKgHaste(numeroParaCampo(item?.kgHaste));
 
     setMaterialId(
       item?.materialId !== null && item?.materialId !== undefined ? String(item.materialId) : "",
@@ -113,9 +85,9 @@ export default function CadastroProdutoModal({
 
     setAtivo(item?.ativo !== false);
 
-    setTempoInjecaoSegundos(valorParaCampo(item?.tempoInjecaoSegundos));
+    setTempoInjecaoSegundos(numeroParaCampo(item?.tempoInjecaoSegundos));
 
-    setTempoResfriamentoSegundos(valorParaCampo(item?.tempoResfriamentoSegundos));
+    setTempoResfriamentoSegundos(numeroParaCampo(item?.tempoResfriamentoSegundos));
 
     setDescricaoEstoque(item?.descricaoEstoque ?? "");
 
@@ -232,14 +204,14 @@ export default function CadastroProdutoModal({
       return;
     }
 
-    const cavidadeFinal = normalizarNumero(cavidadeMolde);
-    const cicloFinal = normalizarNumero(cicloSegundos);
-    const kgUnFinal = normalizarNumero(kgUn);
-    const kgHasteFinal = normalizarNumero(kgHaste);
+    const cavidadeFinal = converterNumeroFlexivelOuNull(cavidadeMolde);
+    const cicloFinal = converterNumeroFlexivelOuNull(cicloSegundos);
+    const kgUnFinal = converterNumeroFlexivelOuNull(kgUn);
+    const kgHasteFinal = converterNumeroFlexivelOuNull(kgHaste);
 
-    const injecaoFinal = normalizarNumero(tempoInjecaoSegundos);
+    const injecaoFinal = converterNumeroFlexivelOuNull(tempoInjecaoSegundos);
 
-    const resfriamentoFinal = normalizarNumero(tempoResfriamentoSegundos);
+    const resfriamentoFinal = converterNumeroFlexivelOuNull(tempoResfriamentoSegundos);
 
     if (cavidadeFinal === null || !Number.isInteger(cavidadeFinal) || cavidadeFinal <= 0) {
       setErro("Informe uma quantidade de cavidades maior que zero.");

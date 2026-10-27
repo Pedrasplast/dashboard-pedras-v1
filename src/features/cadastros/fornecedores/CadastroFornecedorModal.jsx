@@ -3,40 +3,9 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { useEffect, useState } from "react";
 
 import { Save, Truck, X } from "lucide-react";
+import { converterNumeroFlexivelOuNull, numeroParaCampo } from "@/shared/lib/numeros";
 
 import "../CadastroProdutoModal.css";
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function valorParaCampo(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "";
-  }
-
-  return String(valor).replace(".", ",");
-}
-
-function normalizarNumero(valor) {
-  const texto = String(valor ?? "").trim();
-
-  if (!texto) {
-    return null;
-  }
-
-  let normalizado = texto.replace(/\s/g, "");
-
-  if (normalizado.includes(",") && normalizado.includes(".")) {
-    normalizado = normalizado.replace(/\./g, "").replace(",", ".");
-  } else {
-    normalizado = normalizado.replace(",", ".");
-  }
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
-}
 
 /* =========================================================
    MODAL
@@ -79,11 +48,11 @@ export default function CadastroFornecedorModal({
     if (item) {
       setNome(item.nome || "");
 
-      setEstoqueMinimoKg(valorParaCampo(item.estoqueMinimoKg));
+      setEstoqueMinimoKg(numeroParaCampo(item.estoqueMinimoKg));
 
-      setEstoqueAlvoKg(valorParaCampo(item.estoqueAlvoKg));
+      setEstoqueAlvoKg(numeroParaCampo(item.estoqueAlvoKg));
 
-      setLeadTimeDias(valorParaCampo(item.leadTimeDias));
+      setLeadTimeDias(numeroParaCampo(item.leadTimeDias));
 
       setAtivo(item.ativo !== false);
     } else {
@@ -114,14 +83,6 @@ export default function CadastroFornecedorModal({
   }, [aberto, item, vinculosMateriais]);
 
   /* =======================================================
-     ESC
-  ======================================================= */
-
-  /* =======================================================
-     SCROLL
-  ======================================================= */
-
-  /* =======================================================
      SALVAR
   ======================================================= */
 
@@ -138,11 +99,11 @@ export default function CadastroFornecedorModal({
       return;
     }
 
-    const minimoFinal = normalizarNumero(estoqueMinimoKg);
+    const minimoFinal = converterNumeroFlexivelOuNull(estoqueMinimoKg);
 
-    const alvoFinal = normalizarNumero(estoqueAlvoKg);
+    const alvoFinal = converterNumeroFlexivelOuNull(estoqueAlvoKg);
 
-    const leadFinal = normalizarNumero(leadTimeDias);
+    const leadFinal = converterNumeroFlexivelOuNull(leadTimeDias);
 
     if (estoqueMinimoKg.trim() && minimoFinal === null) {
       setErro("Informe um estoque mínimo válido.");

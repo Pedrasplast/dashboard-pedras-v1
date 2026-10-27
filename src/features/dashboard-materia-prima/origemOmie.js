@@ -1,3 +1,6 @@
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto } from "@/shared/lib/texto";
+
 /* =========================================================
    DASHBOARD MATÉRIA-PRIMA — ORIGEM OMIE
 
@@ -56,19 +59,9 @@ export const CAMPOS_OMIE = [
   "encerrado",
 ].join(",");
 
-function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const n = Number(valor);
-  return Number.isFinite(n) ? n : null;
-}
-
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
-
 /** Data de recebimento: NF de entrada; sem NF, previsão de entrega. */
 export function dataRecebimentoOmie(registro) {
-  if (!(numeroOuNull(registro?.quantidade_recebida) > 0)) return null;
+  if (!(paraNumeroOuNull(registro?.quantidade_recebida) > 0)) return null;
   return registro?.data_recebimento || registro?.data_previsao || null;
 }
 
@@ -76,36 +69,38 @@ function base(registro) {
   const materialId =
     registro.material_id !== null && registro.material_id !== undefined
       ? registro.material_id
-      : `omie-${texto(registro.codigo_produto) || "sem-codigo"}`;
+      : `omie-${paraTexto(registro.codigo_produto) || "sem-codigo"}`;
 
   return {
     dataCompra: registro.data_inclusao ?? null,
     dataPrevista: registro.data_previsao ?? null,
     dataRecebimento: dataRecebimentoOmie(registro),
-    fornecedorId: texto(registro.codigo_fornecedor) || "sem-fornecedor",
-    fornecedorNome: texto(registro.fornecedor_nome) || "Fornecedor não encontrado",
+    fornecedorId: paraTexto(registro.codigo_fornecedor) || "sem-fornecedor",
+    fornecedorNome: paraTexto(registro.fornecedor_nome) || "Fornecedor não encontrado",
     materialId,
     tipoMaterial:
-      texto(registro.material_nome) || texto(registro.descricao) || "Material não informado",
-    numeroPedido: texto(registro.numero_pedido),
+      paraTexto(registro.material_nome) ||
+      paraTexto(registro.descricao) ||
+      "Material não informado",
+    numeroPedido: paraTexto(registro.numero_pedido),
     observacao: "",
     tipoFrete: "",
-    numeroNf: texto(registro.numeros_nf),
-    condicaoPagamento: texto(registro.condicao_pagamento),
+    numeroNf: paraTexto(registro.numeros_nf),
+    condicaoPagamento: paraTexto(registro.condicao_pagamento),
     observacaoFinanceira: "",
-    ipiPercentual: numeroOuNull(registro.ipi_percentual),
-    precoUnitario: numeroOuNull(registro.preco_unitario),
+    ipiPercentual: paraNumeroOuNull(registro.ipi_percentual),
+    precoUnitario: paraNumeroOuNull(registro.preco_unitario),
   };
 }
 
 function valores(registro, fator) {
-  const quantidade = (numeroOuNull(registro.quantidade) ?? 0) * fator;
-  const subtotal = numeroOuNull(registro.valor_mercadoria);
-  const ipi = numeroOuNull(registro.valor_ipi);
-  const frete = numeroOuNull(registro.valor_frete);
-  const desconto = numeroOuNull(registro.valor_desconto);
-  const outras = numeroOuNull(registro.valor_outras_despesas);
-  const total = numeroOuNull(registro.valor_total);
+  const quantidade = (paraNumeroOuNull(registro.quantidade) ?? 0) * fator;
+  const subtotal = paraNumeroOuNull(registro.valor_mercadoria);
+  const ipi = paraNumeroOuNull(registro.valor_ipi);
+  const frete = paraNumeroOuNull(registro.valor_frete);
+  const desconto = paraNumeroOuNull(registro.valor_desconto);
+  const outras = paraNumeroOuNull(registro.valor_outras_despesas);
+  const total = paraNumeroOuNull(registro.valor_total);
   const vezes = (v) => (v === null ? null : v * fator);
   const valorTotal = vezes(total);
 
@@ -126,7 +121,7 @@ function valores(registro, fator) {
  * Omie = ENCERRADA (conta nos totais, mas não como em aberto); senão em aberto.
  */
 export function statusCompraOmie(registro) {
-  if (texto(registro?.situacao_recebimento).toUpperCase() === "RECEBIDO") return "RECEBIDA";
+  if (paraTexto(registro?.situacao_recebimento).toUpperCase() === "RECEBIDO") return "RECEBIDA";
   if (registro?.encerrado === true) return "ENCERRADA";
   return "CONFIRMADA";
 }
@@ -144,8 +139,8 @@ export function normalizarCompraOmie(registro) {
 /** Recebimento: só a quantidade recebida (parcial proporcional). */
 export function normalizarRecebimentoOmie(registro) {
   if (!registro) return null;
-  const quantidade = numeroOuNull(registro.quantidade) ?? 0;
-  const recebida = numeroOuNull(registro.quantidade_recebida) ?? 0;
+  const quantidade = paraNumeroOuNull(registro.quantidade) ?? 0;
+  const recebida = paraNumeroOuNull(registro.quantidade_recebida) ?? 0;
   if (!(quantidade > 0) || !(recebida > 0)) return null;
   const fator = Math.min(recebida / quantidade, 1);
   const item = {

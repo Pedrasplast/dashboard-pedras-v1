@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import useCadastros from "../useCadastros";
 import CadastroEstrutura from "../components/CadastroEstrutura";
 import CardResumo from "../components/CardResumo";
-import { normalizarTexto } from "../utils/cadastrosFormatadores";
+
 import { Boxes } from "lucide-react";
 import MateriaisTabela from "./MateriaisTabela";
 import CadastroMaterialModal from "./CadastroMaterialModal";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 export default function MateriaisPage() {
   const { materiais, carregando, atualizando, erro, recarregar, salvandoMaterial, salvarMaterial } =

@@ -14,20 +14,9 @@ import PedidosResumoModal from "./components/PedidosResumoModal";
 import { usePedidosData } from "./hooks/usePedidosData";
 
 import { usePedidosViewModel } from "./hooks/usePedidosViewModel";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./PedidosPage.css";
-
-/* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
 
 /* =========================================================
    DATA LOCAL

@@ -1,3 +1,5 @@
+import { normalizarTextoCompacto } from "@/shared/lib/texto";
+
 export const DESCRICOES_TIPO = Object.freeze({
   1: "Paradas Planejadas",
   2: "Paradas não Planejadas",
@@ -147,15 +149,6 @@ export function extrairDataISORegistro(registro) {
 export function formatarDataVisual(valorISO) {
   const data = converterISOParaData(valorISO);
   return data ? data.toLocaleDateString("pt-BR") : "";
-}
-
-function normalizarTextoLocal(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ");
 }
 
 function possuiFusoExplicito(texto) {
@@ -530,7 +523,7 @@ export function filtrarRegistrosDashboard(
       }
     }
 
-    const ehParada = normalizarTextoLocal(registro?.status) === "indisponivel";
+    const ehParada = normalizarTextoCompacto(registro?.status) === "indisponivel";
 
     if (ajustarParadasPorTurno && ehParada) {
       const registroAjustado = ajustarParadaAoTurno(registro, filtros.turno || "Todos");

@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import useCadastros from "../useCadastros";
 import CadastroEstrutura from "../components/CadastroEstrutura";
 import CardResumo from "../components/CardResumo";
-import { normalizarTexto } from "../utils/cadastrosFormatadores";
+
 import { Boxes, Factory, CheckCircle2 } from "lucide-react";
 import ProdutosTabela from "./ProdutosTabela";
 import CadastroProdutoModal from "./CadastroProdutoModal";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 export default function ProdutosPage() {
   const {

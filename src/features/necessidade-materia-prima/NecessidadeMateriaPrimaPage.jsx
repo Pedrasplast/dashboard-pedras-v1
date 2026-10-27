@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, Calculator } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { useNecessidadeMateriaPrima } from "./hooks/useNecessidadeMateriaPrima";
-import { consolidarNecessidade, numero } from "./utils/calculosNecessidade";
+import { consolidarNecessidade } from "./utils/calculosNecessidade";
 import {
   filtrarPedidosPorPrevisao,
   agruparProducaoPorMaterial,
@@ -14,6 +14,7 @@ import AbasMateriais from "./components/AbasMateriais";
 import ProdutosDoMaterial from "./components/ProdutosDoMaterial";
 import FiltroPeriodoNecessidade from "./components/FiltroPeriodoNecessidade";
 import ResumoMaterialNecessidade from "./components/ResumoMaterialNecessidade";
+import { paraNumero } from "@/shared/lib/numeros";
 import "./NecessidadeMateriaPrima.css";
 
 export default function NecessidadeMateriaPrimaPage() {
@@ -36,7 +37,7 @@ export default function NecessidadeMateriaPrimaPage() {
       return;
     }
 
-    const convertido = Math.max(0, numero(valor));
+    const convertido = Math.max(0, paraNumero(valor));
 
     const valorFinal = campo === "percentual" ? Math.min(100, convertido) : convertido;
 

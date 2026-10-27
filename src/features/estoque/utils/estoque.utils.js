@@ -1,3 +1,6 @@
+import { paraNumero } from "@/shared/lib/numeros";
+import { paraTexto, normalizarTexto } from "@/shared/lib/texto";
+
 /* =========================================================
    ESTOQUE - UTILITÁRIOS
 
@@ -10,48 +13,11 @@
 ========================================================= */
 
 /* =========================================================
-   NÚMERO
-========================================================= */
-
-export function numero(valor) {
-  const convertido = Number(valor ?? 0);
-
-  return Number.isFinite(convertido) ? convertido : 0;
-}
-
-/* =========================================================
-   TEXTO
-========================================================= */
-
-export function texto(valor) {
-  return String(valor ?? "").trim();
-}
-
-/* =========================================================
-   NORMALIZAR TEXTO PARA PESQUISA
-========================================================= */
-
-export function normalizarTexto(valor) {
-  return texto(valor)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-/* =========================================================
-   NORMALIZAR CÓDIGO
-========================================================= */
-
-export function normalizarCodigo(valor) {
-  return texto(valor);
-}
-
-/* =========================================================
    FORMATAR NÚMERO
 ========================================================= */
 
 export function formatarNumero(valor, casasMaximas = 3) {
-  return numero(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     minimumFractionDigits: 0,
 
     maximumFractionDigits: casasMaximas,
@@ -114,31 +80,31 @@ export function normalizarEstoque(registro) {
   return {
     id: registro?.id ?? null,
 
-    codigoProdutoOmie: numero(registro?.codigo_produto_omie),
+    codigoProdutoOmie: paraNumero(registro?.codigo_produto_omie),
 
-    codigoIntegracao: texto(registro?.codigo_integracao),
+    codigoIntegracao: paraTexto(registro?.codigo_integracao),
 
-    codigoProduto: texto(registro?.codigo_produto),
+    codigoProduto: paraTexto(registro?.codigo_produto),
 
-    descricao: texto(registro?.descricao),
+    descricao: paraTexto(registro?.descricao),
 
-    tipoItem: texto(registro?.tipo_item),
+    tipoItem: paraTexto(registro?.tipo_item),
 
-    codigoLocalEstoque: numero(registro?.codigo_local_estoque),
+    codigoLocalEstoque: paraNumero(registro?.codigo_local_estoque),
 
-    precoUnitario: numero(registro?.preco_unitario),
+    precoUnitario: paraNumero(registro?.preco_unitario),
 
-    saldo: numero(registro?.saldo),
+    saldo: paraNumero(registro?.saldo),
 
-    cmc: numero(registro?.cmc),
+    cmc: paraNumero(registro?.cmc),
 
-    pendente: numero(registro?.pendente),
+    pendente: paraNumero(registro?.pendente),
 
-    estoqueMinimo: numero(registro?.estoque_minimo),
+    estoqueMinimo: paraNumero(registro?.estoque_minimo),
 
-    reservado: numero(registro?.reservado),
+    reservado: paraNumero(registro?.reservado),
 
-    fisico: numero(registro?.fisico),
+    fisico: paraNumero(registro?.fisico),
 
     dataPosicao: registro?.data_posicao ?? null,
 
@@ -156,11 +122,11 @@ export function normalizarEstoque(registro) {
 
 export function normalizarLocalEstoque(registro) {
   return {
-    codigoLocalEstoque: numero(registro?.codigo_local_estoque),
+    codigoLocalEstoque: paraNumero(registro?.codigo_local_estoque),
 
-    codigo: texto(registro?.codigo),
+    codigo: paraTexto(registro?.codigo),
 
-    descricao: texto(registro?.descricao),
+    descricao: paraTexto(registro?.descricao),
 
     padrao: registro?.padrao === true,
   };
@@ -184,29 +150,29 @@ export function consolidarEstoque(registros = []) {
 
         codigoLocalEstoque: null,
 
-        saldo: numero(item.saldo),
+        saldo: paraNumero(item.saldo),
 
-        fisico: numero(item.fisico),
+        fisico: paraNumero(item.fisico),
 
-        reservado: numero(item.reservado),
+        reservado: paraNumero(item.reservado),
 
-        pendente: numero(item.pendente),
+        pendente: paraNumero(item.pendente),
 
-        estoqueMinimo: numero(item.estoqueMinimo),
+        estoqueMinimo: paraNumero(item.estoqueMinimo),
       });
 
       continue;
     }
 
-    atual.saldo += numero(item.saldo);
+    atual.saldo += paraNumero(item.saldo);
 
-    atual.fisico += numero(item.fisico);
+    atual.fisico += paraNumero(item.fisico);
 
-    atual.reservado += numero(item.reservado);
+    atual.reservado += paraNumero(item.reservado);
 
-    atual.pendente += numero(item.pendente);
+    atual.pendente += paraNumero(item.pendente);
 
-    atual.estoqueMinimo += numero(item.estoqueMinimo);
+    atual.estoqueMinimo += paraNumero(item.estoqueMinimo);
 
     if (
       item.sincronizadoEm &&
@@ -232,9 +198,9 @@ export function agruparPedidosPorProduto(registros = []) {
   let quantidadeTotal = 0;
 
   for (const registro of registros) {
-    const codigoProduto = normalizarCodigo(registro?.codigo_produto);
+    const codigoProduto = paraTexto(registro?.codigo_produto);
 
-    const quantidade = numero(registro?.quantidade);
+    const quantidade = paraNumero(registro?.quantidade);
 
     const codigoPedido = registro?.codigo_pedido_omie;
 

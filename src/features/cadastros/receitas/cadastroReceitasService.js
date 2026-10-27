@@ -1,10 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraTexto } from "@/shared/lib/texto";
 
 const TOLERANCIA_PERCENTUAL = 0.0001;
-
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
 
 function numero(valor) {
   if (valor === null || valor === undefined || valor === "") {
@@ -66,8 +63,8 @@ function montarReceitas(receitas, componentes, fornecedores) {
 
     return {
       id: receita.id,
-      nome: texto(receita.nome),
-      descricao: texto(receita.descricao),
+      nome: paraTexto(receita.nome),
+      descricao: paraTexto(receita.descricao),
       ativo: receita.ativo === true,
       criadoEm: receita.criado_em ?? null,
       atualizadoEm: receita.atualizado_em ?? null,
@@ -145,7 +142,7 @@ export async function buscarCadastroReceitas() {
     Array.isArray(fornecedoresResultado.data) ? fornecedoresResultado.data : []
   ).map((fornecedor) => ({
     id: fornecedor.id,
-    nome: texto(fornecedor.nome),
+    nome: paraTexto(fornecedor.nome),
     ativo: fornecedor.ativo === true,
     criadoEm: fornecedor.criado_em ?? null,
     atualizadoEm: fornecedor.atualizado_em ?? null,
@@ -158,8 +155,8 @@ export async function buscarCadastroReceitas() {
 }
 
 export async function salvarCadastroReceita({ id = null, nome, descricao, itens }) {
-  const nomeFinal = texto(nome);
-  const descricaoFinal = texto(descricao);
+  const nomeFinal = paraTexto(nome);
+  const descricaoFinal = paraTexto(descricao);
 
   if (!nomeFinal) {
     throw new Error("Informe o nome da receita.");

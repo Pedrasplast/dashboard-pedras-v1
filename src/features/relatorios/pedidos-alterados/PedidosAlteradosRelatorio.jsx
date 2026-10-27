@@ -17,6 +17,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Paginacao from "@/components/paginacao/Paginacao";
 
 import LayoutRelatorio from "../components/LayoutRelatorio";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./PedidosAlteradosRelatorio.css";
 
@@ -338,18 +339,6 @@ function obterPeriodoPadrao() {
     inicio: formatarDataInput(inicio),
     fim: formatarDataInput(hoje),
   };
-}
-
-/* =====================================================
-   NORMALIZAR TEXTO
-===================================================== */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =====================================================

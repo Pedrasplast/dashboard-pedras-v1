@@ -1,34 +1,16 @@
 import { supabase } from "@/lib/supabaseClient";
-
-function numero(valor) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : 0;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
+import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto } from "@/shared/lib/texto";
 
 function normalizarRegistroFinanceiro(registro) {
-  const categoria = texto(registro?.categoria_financeira) || texto(registro?.categoria);
+  const categoria = paraTexto(registro?.categoria_financeira) || paraTexto(registro?.categoria);
 
-  const tipo = texto(registro?.tipo_financeiro) || texto(registro?.tipo);
+  const tipo = paraTexto(registro?.tipo_financeiro) || paraTexto(registro?.tipo);
 
   return {
     ...registro,
 
-    codigo_categoria: texto(registro?.codigo_categoria),
+    codigo_categoria: paraTexto(registro?.codigo_categoria),
 
     categoria_financeira: categoria || "-",
 
@@ -40,15 +22,15 @@ function normalizarRegistroFinanceiro(registro) {
      */
     tipo: tipo || "-",
 
-    valor_previsto: numero(registro?.valor_previsto),
+    valor_previsto: paraNumero(registro?.valor_previsto),
 
-    valor_realizado: numero(registro?.valor_realizado),
+    valor_realizado: paraNumero(registro?.valor_realizado),
 
-    variacao: numero(registro?.variacao),
+    variacao: paraNumero(registro?.variacao),
 
-    variacao_percentual: numeroOpcional(registro?.variacao_percentual),
+    variacao_percentual: paraNumeroOuNull(registro?.variacao_percentual),
 
-    meses_com_dados: numero(registro?.meses_com_dados),
+    meses_com_dados: paraNumero(registro?.meses_com_dados),
   };
 }
 

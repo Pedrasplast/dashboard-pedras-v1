@@ -1,4 +1,5 @@
 import { formatarData, formatarKg, formatarMoeda } from "./formatadores";
+import { ordenarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    CONSTANTES
@@ -51,10 +52,6 @@ export function filtrarAbertas(compras) {
 /* =========================================================
    OPÇÕES DOS SELECTS
 ========================================================= */
-
-function ordenarTexto(a, b) {
-  return a.localeCompare(b, "pt-BR");
-}
 
 /** Lista única de { id, nome } a partir de um campo de id e um de nome. */
 export function extrairOpcoes(lista, campoId, campoNome, nomePadrao) {

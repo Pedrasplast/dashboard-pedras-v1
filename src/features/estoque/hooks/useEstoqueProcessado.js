@@ -2,12 +2,9 @@ import { useMemo } from "react";
 
 import { LOCAL_TODOS, SITUACAO_ESTOQUE } from "../constants/estoque.constants";
 
-import {
-  consolidarEstoque,
-  normalizarCodigo,
-  normalizarTexto,
-  numero,
-} from "../utils/estoque.utils";
+import { consolidarEstoque } from "../utils/estoque.utils";
+import { paraNumero } from "@/shared/lib/numeros";
+import { normalizarTexto, paraTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    MAPA DE PEDIDOS POR PRODUTO
@@ -21,13 +18,13 @@ function criarMapaPedidos(pedidosAbertos) {
   const mapa = new Map();
 
   for (const item of pedidosAbertos) {
-    const codigo = normalizarCodigo(item?.codigoProduto);
+    const codigo = paraTexto(item?.codigoProduto);
 
     if (!codigo) {
       continue;
     }
 
-    mapa.set(codigo, numero(item?.quantidade));
+    mapa.set(codigo, paraNumero(item?.quantidade));
   }
 
   return mapa;
@@ -105,9 +102,9 @@ export default function useEstoqueProcessado({
   const indicadores = useMemo(() => {
     const produtos = new Set(estoqueExibicao.map((item) => String(item.codigoProdutoOmie)));
 
-    const comSaldo = estoqueExibicao.filter((item) => numero(item.saldo) !== 0).length;
+    const comSaldo = estoqueExibicao.filter((item) => paraNumero(item.saldo) !== 0).length;
 
-    const saldoTotal = estoqueExibicao.reduce((total, item) => total + numero(item.saldo), 0);
+    const saldoTotal = estoqueExibicao.reduce((total, item) => total + paraNumero(item.saldo), 0);
 
     return {
       produtos: produtos.size,
@@ -116,9 +113,9 @@ export default function useEstoqueProcessado({
 
       saldoTotal,
 
-      quantidadePedidosAbertos: numero(resumoPedidosAbertos?.quantidadeTotal),
+      quantidadePedidosAbertos: paraNumero(resumoPedidosAbertos?.quantidadeTotal),
 
-      pedidosAbertos: numero(resumoPedidosAbertos?.pedidosDistintos),
+      pedidosAbertos: paraNumero(resumoPedidosAbertos?.pedidosDistintos),
     };
   }, [estoqueExibicao, resumoPedidosAbertos]);
 
@@ -142,7 +139,7 @@ export default function useEstoqueProcessado({
 
     const linhas = estoqueExibicao
       .filter((item) => {
-        const estoqueAtual = numero(item.saldo);
+        const estoqueAtual = paraNumero(item.saldo);
 
         if (situacao === SITUACAO_ESTOQUE.COM_SALDO && estoqueAtual === 0) {
           return false;
@@ -163,11 +160,11 @@ export default function useEstoqueProcessado({
         return conteudo.includes(termo);
       })
       .map((item) => {
-        const codigo = normalizarCodigo(item.codigoProduto);
+        const codigo = paraTexto(item.codigoProduto);
 
-        const estoqueAtual = numero(item.saldo);
+        const estoqueAtual = paraNumero(item.saldo);
 
-        const quantidadePedidos = numero(pedidosPorProduto.get(codigo));
+        const quantidadePedidos = paraNumero(pedidosPorProduto.get(codigo));
 
         const saldoDisponivel = estoqueAtual - quantidadePedidos;
 
@@ -195,13 +192,13 @@ export default function useEstoqueProcessado({
         ================================================= */
 
     return [...linhas].sort((itemA, itemB) => {
-      const estoqueA = numero(itemA.saldo);
+      const estoqueA = paraNumero(itemA.saldo);
 
-      const estoqueB = numero(itemB.saldo);
+      const estoqueB = paraNumero(itemB.saldo);
 
-      const pedidosA = numero(itemA.quantidadePedidos);
+      const pedidosA = paraNumero(itemA.quantidadePedidos);
 
-      const pedidosB = numero(itemB.quantidadePedidos);
+      const pedidosB = paraNumero(itemB.quantidadePedidos);
 
       const grupoA = obterGrupoPrioridade({
         estoque: estoqueA,

@@ -22,6 +22,7 @@ import { TABELA_PRECOS } from "@/features/tabela-precos-materia-prima/constants/
 import { buscarNecessidadeMateriaPrima } from "@/features/necessidade-materia-prima/services/necessidadeMateriaPrima.service";
 
 import { QUERY_KEY_NECESSIDADE_MP } from "@/features/necessidade-materia-prima/hooks/useNecessidadeMateriaPrima";
+import { paraTexto } from "@/shared/lib/texto";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -53,10 +54,6 @@ const TRINTA_MINUTOS = 30 * 60 * 1000;
    UTILITÁRIOS
 ===================================================== */
 
-function codigoValido(valor) {
-  return String(valor ?? "").trim();
-}
-
 function descricaoValida(valor) {
   const descricao = String(valor ?? "").trim();
 
@@ -70,7 +67,7 @@ function descricaoValida(valor) {
 ===================================================== */
 
 export async function buscarDescricaoProdutoEstoque(codigoProduto) {
-  const codigo = codigoValido(codigoProduto);
+  const codigo = paraTexto(codigoProduto);
 
   if (!codigo) {
     return "";
@@ -121,7 +118,7 @@ async function buscarDescricoesCadastro(codigos) {
     }
 
     for (const registro of data ?? []) {
-      const codigo = codigoValido(registro.codigo_produto);
+      const codigo = paraTexto(registro.codigo_produto);
 
       const descricao = descricaoValida(registro.descricao);
 
@@ -222,7 +219,7 @@ export default function useCadastros() {
       [
         ...new Set(
           (produtosQuery.data ?? [])
-            .map((produto) => codigoValido(produto.codigoProduto))
+            .map((produto) => paraTexto(produto.codigoProduto))
             .filter(Boolean),
         ),
       ].sort(),
@@ -261,7 +258,7 @@ export default function useCadastros() {
       (produtosQuery.data ?? []).map((produto) => ({
         ...produto,
 
-        descricaoEstoque: descricoesEstoque[codigoValido(produto.codigoProduto)] ?? "",
+        descricaoEstoque: descricoesEstoque[paraTexto(produto.codigoProduto)] ?? "",
       })),
 
     [produtosQuery.data, descricoesEstoque],

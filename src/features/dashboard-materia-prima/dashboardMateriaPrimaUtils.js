@@ -1,21 +1,7 @@
-export function numero(valor) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : 0;
-}
-
-export function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
+import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
 
 export function formatarNumero(valor, casas = 0) {
-  return numero(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     minimumFractionDigits: casas,
 
     maximumFractionDigits: casas,

@@ -1,8 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "@/features/materia-prima/fornecedores/fornecedoresService";
-
-import { numeroOuNull } from "./dashboardMateriaPrimaUtils.js";
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
 
 const CAMPOS_FINANCEIROS = `
   id,
@@ -39,13 +38,13 @@ function normalizarRegistro(registro, fornecedoresPorId) {
 
   const fornecedor = fornecedoresPorId.get(String(registro.fornecedor_id));
 
-  const quantidadeKg = numeroOuNull(registro.quantidade_kg) ?? 0;
+  const quantidadeKg = paraNumeroOuNull(registro.quantidade_kg) ?? 0;
 
-  const precoUnitario = numeroOuNull(registro.preco_unitario);
+  const precoUnitario = paraNumeroOuNull(registro.preco_unitario);
 
-  const ipiPercentual = numeroOuNull(registro.ipi_percentual);
+  const ipiPercentual = paraNumeroOuNull(registro.ipi_percentual);
 
-  const subtotalBanco = numeroOuNull(registro.subtotal_produtos);
+  const subtotalBanco = paraNumeroOuNull(registro.subtotal_produtos);
 
   const subtotalProdutos =
     subtotalBanco !== null
@@ -54,7 +53,7 @@ function normalizarRegistro(registro, fornecedoresPorId) {
         ? quantidadeKg * precoUnitario
         : null;
 
-  const valorIpiBanco = numeroOuNull(registro.valor_ipi);
+  const valorIpiBanco = paraNumeroOuNull(registro.valor_ipi);
 
   const valorIpi =
     valorIpiBanco !== null
@@ -63,13 +62,13 @@ function normalizarRegistro(registro, fornecedoresPorId) {
         ? (subtotalProdutos * ipiPercentual) / 100
         : 0;
 
-  const valorFrete = numeroOuNull(registro.valor_frete);
+  const valorFrete = paraNumeroOuNull(registro.valor_frete);
 
-  const valorDesconto = numeroOuNull(registro.valor_desconto);
+  const valorDesconto = paraNumeroOuNull(registro.valor_desconto);
 
-  const outrasDespesas = numeroOuNull(registro.outras_despesas);
+  const outrasDespesas = paraNumeroOuNull(registro.outras_despesas);
 
-  const valorTotalBanco = numeroOuNull(registro.valor_total);
+  const valorTotalBanco = paraNumeroOuNull(registro.valor_total);
 
   const valorTotal =
     valorTotalBanco !== null
@@ -82,7 +81,7 @@ function normalizarRegistro(registro, fornecedoresPorId) {
           (valorDesconto ?? 0)
         : null;
 
-  const custoEfetivoBanco = numeroOuNull(registro.custo_efetivo_kg);
+  const custoEfetivoBanco = paraNumeroOuNull(registro.custo_efetivo_kg);
 
   const custoEfetivoKg =
     custoEfetivoBanco !== null

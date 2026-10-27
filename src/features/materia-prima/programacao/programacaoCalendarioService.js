@@ -5,16 +5,11 @@ import { buscarCadastroReceitas } from "@/features/cadastros/receitas/cadastroRe
 import { buscarProdutosPP } from "../produtos/produtosPPService";
 
 import { buscarProgramacaoAgrupada } from "./programacaoDiariaService";
+import { paraNumeroOu } from "@/shared/lib/numeros";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function numero(valor, fallback = 0) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : fallback;
-}
 
 function montarProdutos(produtos = []) {
   return (Array.isArray(produtos) ? produtos : [])
@@ -27,9 +22,9 @@ function montarProdutos(produtos = []) {
         descricao: produto?.nomeProduto ?? produto?.descricao ?? "Sem descrição",
         materialId: produto?.materialId ?? produto?.material_id ?? null,
         materialNome: String(produto?.materialNome ?? produto?.material_nome ?? "").trim(),
-        pesoKg: numero(produto?.pesoKg, null),
-        cicloSegundos: numero(produto?.cicloSegundos, null),
-        cavidadeMolde: numero(produto?.cavidadeMolde, null),
+        pesoKg: paraNumeroOu(produto?.pesoKg, null),
+        cicloSegundos: paraNumeroOu(produto?.cicloSegundos, null),
+        cavidadeMolde: paraNumeroOu(produto?.cavidadeMolde, null),
       };
     })
     .filter((produto) => produto.codigo)
@@ -48,13 +43,13 @@ function montarReceitas(receitas = []) {
       id: receita.id,
       nome: String(receita?.nome ?? "").trim(),
       descricao: String(receita?.descricao ?? "").trim(),
-      percentualTotal: numero(receita?.percentualTotal),
+      percentualTotal: paraNumeroOu(receita?.percentualTotal),
       configurada: receita?.configurada === true,
       ativo: receita?.ativo === true,
       itens: (Array.isArray(receita?.itens) ? receita.itens : []).map((item) => ({
         fornecedorId: item?.fornecedorId ?? null,
         fornecedorNome: String(item?.fornecedorNome ?? "Fornecedor").trim(),
-        percentual: numero(item?.percentual),
+        percentual: paraNumeroOu(item?.percentual),
       })),
     }))
     .filter((receita) => receita.id && receita.nome)
@@ -116,12 +111,12 @@ export async function listarPeriodosProgramacao() {
     perfilNome: String(registro?.perfil_nome ?? "").trim(),
     turnoCodigo: String(registro?.turno_codigo ?? "").trim(),
     turnoNome: String(registro?.turno_nome ?? "").trim(),
-    turnoOrdem: numero(registro?.turno_ordem),
-    periodoOrdem: numero(registro?.periodo_ordem),
+    turnoOrdem: paraNumeroOu(registro?.turno_ordem),
+    periodoOrdem: paraNumeroOu(registro?.periodo_ordem),
     horaInicio: String(registro?.hora_inicio ?? "").slice(0, 5),
     horaFim: String(registro?.hora_fim ?? "").slice(0, 5),
-    descontoIntervaloMinutos: numero(registro?.desconto_intervalo_minutos),
-    duracaoMinutos: numero(registro?.duracao_minutos),
+    descontoIntervaloMinutos: paraNumeroOu(registro?.desconto_intervalo_minutos),
+    duracaoMinutos: paraNumeroOu(registro?.duracao_minutos),
   }));
 }
 
@@ -140,8 +135,8 @@ export async function salvarProgramacaoCalendario({
   const diasNormalizados = (Array.isArray(dias) ? dias : []).map((dia) => ({
     data: String(dia?.data ?? "").trim(),
     perfil_horas: String(dia?.perfilHoras ?? "").trim(),
-    minutos_solicitados: Math.trunc(numero(dia?.minutosSolicitados)),
-    minutos_descontados: Math.trunc(numero(dia?.minutosDescontados)),
+    minutos_solicitados: Math.trunc(paraNumeroOu(dia?.minutosSolicitados)),
+    minutos_descontados: Math.trunc(paraNumeroOu(dia?.minutosDescontados)),
     receita_id:
       dia?.receitaId === null || dia?.receitaId === undefined || dia?.receitaId === ""
         ? null
@@ -153,7 +148,7 @@ export async function salvarProgramacaoCalendario({
     p_codigo_produto: String(codigoProduto ?? "").trim(),
     p_injetora: String(injetora ?? "").trim(),
     p_ativo: Boolean(ativo),
-    p_quantidade: Math.max(1, Math.trunc(numero(quantidade, 1))),
+    p_quantidade: Math.max(1, Math.trunc(paraNumeroOu(quantidade, 1))),
     p_dias: diasNormalizados,
   });
 

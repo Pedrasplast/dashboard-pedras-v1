@@ -23,6 +23,7 @@ import {
 } from "./hooks/useFinanceiro";
 
 import { mesesFinanceiro, processarFinanceiro } from "./utils/financeiro.utils";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    PERÍODO INICIAL
@@ -49,14 +50,6 @@ function obterPeriodoAtual() {
    Exemplo:
    "Manutenção" -> "manutencao"
 ========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim()
-    .toLowerCase();
-}
 
 /* =========================================================
    PÁGINA

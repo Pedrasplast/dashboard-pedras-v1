@@ -1,4 +1,5 @@
-import { formatarDataCurta, numero, statusCompraAberta } from "./dashboardMateriaPrimaUtils.js";
+import { formatarDataCurta, statusCompraAberta } from "./dashboardMateriaPrimaUtils.js";
+import { paraNumero } from "@/shared/lib/numeros";
 
 /* =========================================================
    COMPRAS VÁLIDAS
@@ -55,13 +56,13 @@ function diferencaDias(dataInicial, dataFinal) {
 ========================================================= */
 
 function percentual(numerador, denominador) {
-  const base = numero(denominador);
+  const base = paraNumero(denominador);
 
   if (base === 0) {
     return null;
   }
 
-  return (numero(numerador) / base) * 100;
+  return (paraNumero(numerador) / base) * 100;
 }
 
 /* =========================================================
@@ -234,48 +235,48 @@ function agruparBase(compras, obterChave, criarInicial) {
 
     atual.compras += 1;
 
-    atual.quantidadeKg += numero(item.quantidadeKg);
+    atual.quantidadeKg += paraNumero(item.quantidadeKg);
 
     atual.fornecedoresSet?.add(String(item.fornecedorId));
 
     if (item.precoUnitario !== null && item.precoUnitario !== undefined) {
-      atual.precos.push(numero(item.precoUnitario));
+      atual.precos.push(paraNumero(item.precoUnitario));
 
       atual.historicoPrecos.push({
         data: item.dataCompra || "",
 
-        id: numero(item.id),
+        id: paraNumero(item.id),
 
-        preco: numero(item.precoUnitario),
+        preco: paraNumero(item.precoUnitario),
 
         fornecedor: item.fornecedorNome,
       });
     }
 
     if (item.precoUnitario !== null && item.subtotalProdutos !== null) {
-      atual.quantidadeComPrecoKg += numero(item.quantidadeKg);
+      atual.quantidadeComPrecoKg += paraNumero(item.quantidadeKg);
 
-      atual.subtotal += numero(item.subtotalProdutos);
+      atual.subtotal += paraNumero(item.subtotalProdutos);
     }
 
     if (item.valorTotal !== null) {
-      atual.quantidadeComTotalKg += numero(item.quantidadeKg);
+      atual.quantidadeComTotalKg += paraNumero(item.quantidadeKg);
 
-      atual.total += numero(item.valorTotal);
+      atual.total += paraNumero(item.valorTotal);
     }
 
-    atual.ipi += numero(item.valorIpi);
+    atual.ipi += paraNumero(item.valorIpi);
 
-    atual.frete += numero(item.valorFrete);
+    atual.frete += paraNumero(item.valorFrete);
 
-    atual.desconto += numero(item.valorDesconto);
+    atual.desconto += paraNumero(item.valorDesconto);
 
-    atual.outrasDespesas += numero(item.outrasDespesas);
+    atual.outrasDespesas += paraNumero(item.outrasDespesas);
 
     if (statusCompraAberta(item.status)) {
-      atual.valorAberto += numero(item.valorTotal);
+      atual.valorAberto += paraNumero(item.valorTotal);
 
-      atual.quantidadeAbertaKg += numero(item.quantidadeKg);
+      atual.quantidadeAbertaKg += paraNumero(item.quantidadeKg);
     }
 
     if (item.dataRecebimento) {
@@ -427,23 +428,35 @@ export function criarResumoFinanceiro(financeiro) {
 
   const comTotal = compras.filter((item) => item.valorTotal !== null);
 
-  const quantidadeComPrecoKg = comPreco.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
+  const quantidadeComPrecoKg = comPreco.reduce(
+    (soma, item) => soma + paraNumero(item.quantidadeKg),
+    0,
+  );
 
-  const quantidadeComTotalKg = comTotal.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
+  const quantidadeComTotalKg = comTotal.reduce(
+    (soma, item) => soma + paraNumero(item.quantidadeKg),
+    0,
+  );
 
-  const quantidadeCompradaKg = compras.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
+  const quantidadeCompradaKg = compras.reduce(
+    (soma, item) => soma + paraNumero(item.quantidadeKg),
+    0,
+  );
 
-  const subtotalProdutos = compras.reduce((soma, item) => soma + numero(item.subtotalProdutos), 0);
+  const subtotalProdutos = compras.reduce(
+    (soma, item) => soma + paraNumero(item.subtotalProdutos),
+    0,
+  );
 
-  const valorIpi = compras.reduce((soma, item) => soma + numero(item.valorIpi), 0);
+  const valorIpi = compras.reduce((soma, item) => soma + paraNumero(item.valorIpi), 0);
 
-  const valorFrete = compras.reduce((soma, item) => soma + numero(item.valorFrete), 0);
+  const valorFrete = compras.reduce((soma, item) => soma + paraNumero(item.valorFrete), 0);
 
-  const valorDesconto = compras.reduce((soma, item) => soma + numero(item.valorDesconto), 0);
+  const valorDesconto = compras.reduce((soma, item) => soma + paraNumero(item.valorDesconto), 0);
 
-  const outrasDespesas = compras.reduce((soma, item) => soma + numero(item.outrasDespesas), 0);
+  const outrasDespesas = compras.reduce((soma, item) => soma + paraNumero(item.outrasDespesas), 0);
 
-  const valorTotal = compras.reduce((soma, item) => soma + numero(item.valorTotal), 0);
+  const valorTotal = compras.reduce((soma, item) => soma + paraNumero(item.valorTotal), 0);
 
   const acrescimosLiquidos = valorIpi + valorFrete + outrasDespesas - valorDesconto;
 
@@ -496,18 +509,27 @@ export function criarResumoFinanceiro(financeiro) {
         ? valorTotal / quantidadeComTotalKg
         : null,
 
-    valorComprasAbertas: comprasAbertas.reduce((soma, item) => soma + numero(item.valorTotal), 0),
+    valorComprasAbertas: comprasAbertas.reduce(
+      (soma, item) => soma + paraNumero(item.valorTotal),
+      0,
+    ),
 
     quantidadeComprasAbertasKg: comprasAbertas.reduce(
-      (soma, item) => soma + numero(item.quantidadeKg),
+      (soma, item) => soma + paraNumero(item.quantidadeKg),
       0,
     ),
 
     comprasAbertas: comprasAbertas.length,
 
-    valorRecebidoPeriodo: recebimentos.reduce((soma, item) => soma + numero(item.valorTotal), 0),
+    valorRecebidoPeriodo: recebimentos.reduce(
+      (soma, item) => soma + paraNumero(item.valorTotal),
+      0,
+    ),
 
-    quantidadeRecebidaKg: recebimentos.reduce((soma, item) => soma + numero(item.quantidadeKg), 0),
+    quantidadeRecebidaKg: recebimentos.reduce(
+      (soma, item) => soma + paraNumero(item.quantidadeKg),
+      0,
+    ),
 
     recebimentosPeriodo: recebimentos.length,
 
@@ -522,7 +544,7 @@ export function criarResumoFinanceiro(financeiro) {
 export function criarFinanceiroPorMaterial(financeiro) {
   const lista = agruparBase(comprasValidas(financeiro), chaveMaterial, criarInicialBase);
 
-  const totalGeral = lista.reduce((soma, item) => soma + numero(item.total), 0);
+  const totalGeral = lista.reduce((soma, item) => soma + paraNumero(item.total), 0);
 
   return lista
     .map((item) => ({
@@ -557,7 +579,7 @@ export function criarFinanceiroPorFornecedor(financeiro) {
   for (const item of lista) {
     const chave = String(item.materialId);
 
-    totaisPorMaterial.set(chave, (totaisPorMaterial.get(chave) || 0) + numero(item.total));
+    totaisPorMaterial.set(chave, (totaisPorMaterial.get(chave) || 0) + paraNumero(item.total));
   }
 
   return lista
@@ -608,15 +630,15 @@ export function criarEvolucaoFinanceira(financeiro) {
     };
 
     if (item.precoUnitario !== null && item.subtotalProdutos !== null) {
-      atual.quantidadeComPrecoKg += numero(item.quantidadeKg);
+      atual.quantidadeComPrecoKg += paraNumero(item.quantidadeKg);
 
-      atual.subtotal += numero(item.subtotalProdutos);
+      atual.subtotal += paraNumero(item.subtotalProdutos);
     }
 
     if (item.valorTotal !== null) {
-      atual.quantidadeComTotalKg += numero(item.quantidadeKg);
+      atual.quantidadeComTotalKg += paraNumero(item.quantidadeKg);
 
-      atual.total += numero(item.valorTotal);
+      atual.total += paraNumero(item.valorTotal);
     }
 
     mapa.set(item.dataCompra, atual);
@@ -745,9 +767,9 @@ export function criarComprasMensais(financeiro) {
       continue;
     }
 
-    atual.valorComprado += numero(registro.item.valorTotal);
+    atual.valorComprado += paraNumero(registro.item.valorTotal);
 
-    atual.quantidadeKg += numero(registro.item.quantidadeKg);
+    atual.quantidadeKg += paraNumero(registro.item.quantidadeKg);
 
     atual.compras += 1;
   }
@@ -780,8 +802,9 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
   const maiorAmplitude =
     [...(porMaterial || [])]
       .filter((item) => item.amplitudePrecoPercentual !== null)
-      .sort((a, b) => numero(b.amplitudePrecoPercentual) - numero(a.amplitudePrecoPercentual))[0] ||
-    null;
+      .sort(
+        (a, b) => paraNumero(b.amplitudePrecoPercentual) - paraNumero(a.amplitudePrecoPercentual),
+      )[0] || null;
 
   if (maiorAmplitude) {
     insights.push({
@@ -800,7 +823,8 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
       .filter((item) => item.participacaoMaterialPercentual !== null)
       .sort(
         (a, b) =>
-          numero(b.participacaoMaterialPercentual) - numero(a.participacaoMaterialPercentual),
+          paraNumero(b.participacaoMaterialPercentual) -
+          paraNumero(a.participacaoMaterialPercentual),
       )[0] || null;
 
   if (maiorConcentracao) {
@@ -822,11 +846,12 @@ export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) 
           item.impactoCustoPercentual !== null &&
           Number.isFinite(Number(item.impactoCustoPercentual)),
       )
-      .sort((a, b) => numero(b.impactoCustoPercentual) - numero(a.impactoCustoPercentual))[0] ||
-    null;
+      .sort(
+        (a, b) => paraNumero(b.impactoCustoPercentual) - paraNumero(a.impactoCustoPercentual),
+      )[0] || null;
 
   if (maiorImpactoCustos) {
-    const acrescimoKg = numero(maiorImpactoCustos.custoAdicionalKg).toLocaleString("pt-BR", {
+    const acrescimoKg = paraNumero(maiorImpactoCustos.custoAdicionalKg).toLocaleString("pt-BR", {
       style: "currency",
 
       currency: "BRL",
@@ -859,7 +884,7 @@ export function criarUltimasCompras(financeiro) {
     .sort(
       (a, b) =>
         String(b.dataCompra || "").localeCompare(String(a.dataCompra || "")) ||
-        numero(b.id) - numero(a.id),
+        paraNumero(b.id) - paraNumero(a.id),
     )
     .slice(0, 20);
 }

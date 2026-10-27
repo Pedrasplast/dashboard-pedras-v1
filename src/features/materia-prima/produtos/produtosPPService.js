@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    UTILITÁRIOS
@@ -30,10 +31,6 @@ function normalizarInteiro(valor) {
   return Number.isFinite(inteiro) ? inteiro : null;
 }
 
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
-
 /* =========================================================
    NORMALIZAR PRODUTO
 ========================================================= */
@@ -43,11 +40,11 @@ function normalizarProduto(registro) {
     return null;
   }
 
-  const codigoProduto = texto(
+  const codigoProduto = paraTexto(
     registro?.codigo_produto ?? registro?.codigoProduto ?? registro?.codigo ?? registro?.cod_prod,
   );
 
-  const nomeProduto = texto(
+  const nomeProduto = paraTexto(
     registro?.nome_produto ?? registro?.nomeProduto ?? registro?.produto ?? registro?.descricao,
   );
 
@@ -57,7 +54,7 @@ function normalizarProduto(registro) {
 
   const materialId = normalizarInteiro(registro?.material_id ?? registro?.materialId);
 
-  const materialNome = texto(registro?.material_nome ?? registro?.materialNome);
+  const materialNome = paraTexto(registro?.material_nome ?? registro?.materialNome);
 
   const materialAtivo = registro?.material_ativo === true || registro?.materialAtivo === true;
 
@@ -160,7 +157,7 @@ export async function buscarMateriaisProdutos() {
   return (Array.isArray(data) ? data : [])
     .map((material) => ({
       id: material.id,
-      nome: texto(material.nome),
+      nome: paraTexto(material.nome),
       ativo: material.ativo === true,
       criadoEm: material.criado_em ?? null,
       atualizadoEm: material.atualizado_em ?? null,
@@ -221,14 +218,14 @@ export async function buscarProdutosPP() {
 
   const mapaParametros = new Map(
     (Array.isArray(parametrosResultado.data) ? parametrosResultado.data : []).map((parametro) => [
-      texto(parametro?.cod_prod),
+      paraTexto(parametro?.cod_prod),
       parametro,
     ]),
   );
 
   return (Array.isArray(produtosResultado.data) ? produtosResultado.data : [])
     .map((produto) => {
-      const codigo = texto(produto?.codigo_produto);
+      const codigo = paraTexto(produto?.codigo_produto);
 
       const parametros = mapaParametros.get(codigo) ?? {};
 
@@ -399,9 +396,9 @@ export async function salvarProdutoPP({
   cavidadeMolde,
   ativo = true,
 }) {
-  const codigoFinal = texto(codigoProduto);
+  const codigoFinal = paraTexto(codigoProduto);
 
-  const nomeFinal = texto(nomeProduto);
+  const nomeFinal = paraTexto(nomeProduto);
 
   const materialFinal = normalizarInteiro(materialId);
 
@@ -438,9 +435,9 @@ export async function salvarProdutoPP({
   const codigoOriginalFinal =
     codigoProdutoOriginal === null ||
     codigoProdutoOriginal === undefined ||
-    !texto(codigoProdutoOriginal)
+    !paraTexto(codigoProdutoOriginal)
       ? null
-      : texto(codigoProdutoOriginal);
+      : paraTexto(codigoProdutoOriginal);
 
   const dadosAtuais = await buscarDadosAtuaisProduto(codigoOriginalFinal);
 
@@ -501,7 +498,7 @@ export async function salvarProdutoPP({
 ========================================================= */
 
 export async function excluirProdutoPP(codigoProduto) {
-  const codigo = texto(codigoProduto);
+  const codigo = paraTexto(codigoProduto);
 
   if (!codigo) {
     throw new Error("Produto não informado.");

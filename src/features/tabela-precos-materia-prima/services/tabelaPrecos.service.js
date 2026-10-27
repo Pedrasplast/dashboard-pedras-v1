@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { TABELA_PRECOS, CAMPOS_TABELA_PRECOS } from "../constants/tabelaPrecos.constants";
+import { normalizarCodigo } from "@/shared/lib/texto";
 
 /* =========================================================
    TABELA DE PREÇOS — SERVIÇO
@@ -16,12 +17,6 @@ import { TABELA_PRECOS, CAMPOS_TABELA_PRECOS } from "../constants/tabelaPrecos.c
 ========================================================= */
 
 const TABELA_MATERIAIS = "materia_prima_materiais";
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
 
 /* =========================================================
    CONSULTAR MATERIAIS HABILITADOS

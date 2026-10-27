@@ -3,6 +3,7 @@ import { AlertTriangle, CalendarDays, TrendingDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import useProjecao from "./useProjecao";
+import { paraNumero } from "@/shared/lib/numeros";
 
 import "./ProjecaoDiaria.css";
 
@@ -41,12 +42,6 @@ function formatarKg(valor) {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
   })} kg`;
-}
-
-function numero(valor) {
-  const resultado = Number(valor);
-
-  return Number.isFinite(resultado) ? resultado : 0;
 }
 
 /* =========================================================
@@ -89,16 +84,19 @@ function agruparPorFornecedor(linhas = []) {
 
         possuiSaldoBase: linhasOrdenadas.some((linha) => linha.possuiSaldoBase === true),
 
-        recebidoKg: linhasOrdenadas.reduce((total, linha) => total + numero(linha.recebidoKg), 0),
-
-        compraFuturaKg: linhasOrdenadas.reduce(
-          (total, linha) => total + numero(linha.compraFuturaKg),
+        recebidoKg: linhasOrdenadas.reduce(
+          (total, linha) => total + paraNumero(linha.recebidoKg),
           0,
         ),
 
-        consumoKg: linhasOrdenadas.reduce((total, linha) => total + numero(linha.consumoKg), 0),
+        compraFuturaKg: linhasOrdenadas.reduce(
+          (total, linha) => total + paraNumero(linha.compraFuturaKg),
+          0,
+        ),
 
-        saldoFinalKg: ultima?.saldoFinalKg == null ? null : numero(ultima.saldoFinalKg),
+        consumoKg: linhasOrdenadas.reduce((total, linha) => total + paraNumero(linha.consumoKg), 0),
+
+        saldoFinalKg: ultima?.saldoFinalKg == null ? null : paraNumero(ultima.saldoFinalKg),
       };
     })
     .sort((a, b) =>
@@ -318,7 +316,7 @@ export default function ProjecaoDiaria() {
 
   const indicadores = useMemo(
     () => ({
-      saldoFinalKg: grupos.reduce((total, grupo) => total + numero(grupo.saldoFinalKg), 0),
+      saldoFinalKg: grupos.reduce((total, grupo) => total + paraNumero(grupo.saldoFinalKg), 0),
 
       recebidoKg: grupos.reduce((total, grupo) => total + grupo.recebidoKg, 0),
 

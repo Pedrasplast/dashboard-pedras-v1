@@ -15,20 +15,13 @@ import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExc
 
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./Programacao.css";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
 
 function formatarData(valor) {
   if (!valor) {

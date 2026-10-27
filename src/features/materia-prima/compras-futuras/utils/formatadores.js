@@ -1,10 +1,8 @@
+import { ehNumeroInvalido } from "@/shared/lib/numeros";
+
 /* =========================================================
    FORMATADORES
 ========================================================= */
-
-function valorInvalido(valor) {
-  return valor === null || valor === undefined || !Number.isFinite(Number(valor));
-}
 
 function formatarNumero(valor, casas) {
   return Number(valor ?? 0).toLocaleString("pt-BR", {
@@ -14,7 +12,7 @@ function formatarNumero(valor, casas) {
 }
 
 function formatarReais(valor, casas) {
-  if (valorInvalido(valor)) {
+  if (ehNumeroInvalido(valor)) {
     return "-";
   }
 
@@ -62,7 +60,7 @@ export function formatarCustoKg(valor) {
 
 /** 6.5 -> "6,50%" */
 export function formatarPercentual(valor) {
-  if (valorInvalido(valor)) {
+  if (ehNumeroInvalido(valor)) {
     return "-";
   }
 

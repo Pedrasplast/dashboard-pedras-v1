@@ -1,4 +1,5 @@
 import { formatarData } from "./formatadores";
+import { ordenarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    CONSTANTES
@@ -22,10 +23,6 @@ export const FILTROS_INICIAIS = {
 /* =========================================================
    OPÇÕES DOS SELECTS
 ========================================================= */
-
-function ordenarTexto(a, b) {
-  return a.localeCompare(b, "pt-BR");
-}
 
 /** Lista única de { id, nome } a partir de um campo de id e um de nome. */
 export function extrairOpcoes(entradas, campoId, campoNome, nomePadrao) {

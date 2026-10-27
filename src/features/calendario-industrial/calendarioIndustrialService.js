@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraNumero } from "@/shared/lib/numeros";
 
 /* =========================================================
    UTILITÁRIOS
@@ -8,12 +9,6 @@ function normalizarData(valor) {
   const data = String(valor ?? "").trim();
 
   return /^\d{4}-\d{2}-\d{2}$/.test(data) ? data : "";
-}
-
-function normalizarNumero(valor) {
-  const numero = Number(valor ?? 0);
-
-  return Number.isFinite(numero) ? numero : 0;
 }
 
 function normalizarDiaCalendario(registro) {
@@ -28,9 +23,9 @@ function normalizarDiaCalendario(registro) {
 
     perfilTipo: String(registro?.perfil_tipo ?? "").trim(),
 
-    minutosProgramados: normalizarNumero(registro?.minutos_programados),
+    minutosProgramados: paraNumero(registro?.minutos_programados),
 
-    horasProgramadas: normalizarNumero(registro?.horas_programadas),
+    horasProgramadas: paraNumero(registro?.horas_programadas),
 
     observacao: String(registro?.observacao ?? "").trim(),
   };

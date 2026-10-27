@@ -9,6 +9,7 @@ import {
   TIPOS_CLASSIFICACAO,
   TIPOS_FRETE,
 } from "./comprasFuturasService";
+import { converterNumeroBrOuNull, numeroParaCampo } from "@/shared/lib/numeros";
 
 import "./CompraFuturaModal.css";
 
@@ -22,34 +23,6 @@ function dataHojeLocal() {
   const dia = String(agora.getDate()).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
-}
-
-function normalizarNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : null;
-  }
-
-  const texto = String(valor).trim().replace(/\s/g, "");
-
-  if (!texto) return null;
-
-  const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
-}
-
-function numeroParaInput(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "";
-  }
-
-  return String(valor).replace(".", ",");
 }
 
 function formatarMoeda(valor) {
@@ -197,7 +170,7 @@ export default function CompraFuturaModal({
 
       setMaterialId(String(item.materialId ?? ""));
 
-      setQuantidadeKg(numeroParaInput(item.quantidadeKg));
+      setQuantidadeKg(numeroParaCampo(item.quantidadeKg));
 
       setNumeroPedido(item.numeroPedido || "");
 
@@ -207,17 +180,17 @@ export default function CompraFuturaModal({
 
       setAtivo(item.ativo !== false);
 
-      setPrecoUnitario(numeroParaInput(item.precoUnitario));
+      setPrecoUnitario(numeroParaCampo(item.precoUnitario));
 
-      setIpiPercentual(numeroParaInput(item.ipiPercentual));
+      setIpiPercentual(numeroParaCampo(item.ipiPercentual));
 
-      setValorFrete(numeroParaInput(item.valorFrete));
+      setValorFrete(numeroParaCampo(item.valorFrete));
 
       setTipoFrete(item.tipoFrete || "");
 
-      setValorDesconto(numeroParaInput(item.valorDesconto));
+      setValorDesconto(numeroParaCampo(item.valorDesconto));
 
-      setOutrasDespesas(numeroParaInput(item.outrasDespesas));
+      setOutrasDespesas(numeroParaCampo(item.outrasDespesas));
 
       setNumeroNf(item.numeroNf || "");
 
@@ -386,7 +359,7 @@ export default function CompraFuturaModal({
     for (const [nome, valor, regra] of campos) {
       if (String(valor ?? "").trim() === "") continue;
 
-      const numero = normalizarNumero(valor);
+      const numero = converterNumeroBrOuNull(valor);
 
       if (numero === null) {
         return `${nome}: informe um valor numérico válido.`;
@@ -413,7 +386,7 @@ export default function CompraFuturaModal({
 
     setErro("");
 
-    const quantidade = normalizarNumero(quantidadeKg);
+    const quantidade = converterNumeroBrOuNull(quantidadeKg);
 
     if (!dataCompra) {
       setErro("Informe a data da compra.");
@@ -492,17 +465,17 @@ export default function CompraFuturaModal({
 
         ativo,
 
-        precoUnitario: normalizarNumero(precoUnitario),
+        precoUnitario: converterNumeroBrOuNull(precoUnitario),
 
-        ipiPercentual: normalizarNumero(ipiPercentual),
+        ipiPercentual: converterNumeroBrOuNull(ipiPercentual),
 
-        valorFrete: normalizarNumero(valorFrete),
+        valorFrete: converterNumeroBrOuNull(valorFrete),
 
         tipoFrete,
 
-        valorDesconto: normalizarNumero(valorDesconto),
+        valorDesconto: converterNumeroBrOuNull(valorDesconto),
 
-        outrasDespesas: normalizarNumero(outrasDespesas),
+        outrasDespesas: converterNumeroBrOuNull(outrasDespesas),
 
         numeroNf,
 

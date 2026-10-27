@@ -1,8 +1,4 @@
-function numero(valor) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : 0;
-}
+import { paraNumero } from "@/shared/lib/numeros";
 
 export function prepararDespesasAcimaPrevisto(dados) {
   const lista = Array.isArray(dados) ? dados : [];
@@ -13,16 +9,16 @@ export function prepararDespesasAcimaPrevisto(dados) {
         .trim()
         .toLowerCase();
 
-      const previsto = numero(item?.valor_previsto);
+      const previsto = paraNumero(item?.valor_previsto);
 
-      const realizado = numero(item?.valor_realizado);
+      const realizado = paraNumero(item?.valor_realizado);
 
       return tipo === "despesa" && realizado > previsto;
     })
     .map((item) => {
-      const previsto = numero(item?.valor_previsto);
+      const previsto = paraNumero(item?.valor_previsto);
 
-      const realizado = numero(item?.valor_realizado);
+      const realizado = paraNumero(item?.valor_realizado);
 
       const excesso = realizado - previsto;
 
@@ -36,7 +32,7 @@ export function prepararDespesasAcimaPrevisto(dados) {
         excesso_percentual: excessoPercentual,
       };
     })
-    .sort((a, b) => numero(b?.excesso_previsto) - numero(a?.excesso_previsto));
+    .sort((a, b) => paraNumero(b?.excesso_previsto) - paraNumero(a?.excesso_previsto));
 }
 
 export function obterMaiorExcesso(dados) {
@@ -51,6 +47,6 @@ export function obterMaiorExcesso(dados) {
       return item;
     }
 
-    return numero(item?.excesso_previsto) > numero(maior?.excesso_previsto) ? item : maior;
+    return paraNumero(item?.excesso_previsto) > paraNumero(maior?.excesso_previsto) ? item : maior;
   }, null);
 }

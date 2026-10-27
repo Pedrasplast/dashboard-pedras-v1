@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import useCadastros from "../useCadastros";
 import CadastroEstrutura from "../components/CadastroEstrutura";
 import CardResumo from "../components/CardResumo";
-import { normalizarTexto } from "../utils/cadastrosFormatadores";
+
 import { Truck } from "lucide-react";
 import FornecedoresTabela from "./FornecedoresTabela";
 import CadastroFornecedorModal from "./CadastroFornecedorModal";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 export default function FornecedoresPage() {
   const {

@@ -1,4 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto, normalizarCodigo } from "@/shared/lib/texto";
 
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — SERVIÇO
@@ -36,30 +38,6 @@ const FONTES = Object.freeze({
   ESTRUTURA_ITENS: "necessidade_mp_estrutura_itens_omie",
   DECISOES_PESO: "necessidade_mp_peso_decisoes",
 });
-
-/* ============================================================
-   FUNÇÕES AUXILIARES
-============================================================ */
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
-
-function normalizarId(valor) {
-  return String(valor ?? "").trim();
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
 
 /* ============================================================
    CONSULTA PAGINADA
@@ -271,7 +249,7 @@ function resolverVinculos({ materiais, vinculosHistoricos, estoques, comprasFutu
   for (const registro of fontes) {
     const codigo = normalizarCodigo(registro.codigo_produto);
 
-    const codigoInterno = normalizarId(registro.codigo_produto_omie);
+    const codigoInterno = paraTexto(registro.codigo_produto_omie);
 
     if (!codigo || !codigoInterno) {
       continue;
@@ -342,7 +320,7 @@ function resumirPedidos(pedidos) {
   let itensPendentes = 0;
 
   for (const pedido of pedidos) {
-    const codigoPedido = normalizarId(pedido.codigo_pedido_omie);
+    const codigoPedido = paraTexto(pedido.codigo_pedido_omie);
 
     if (codigoPedido) {
       pedidosDistintos.add(codigoPedido);
@@ -379,7 +357,7 @@ function resumirPedidos(pedidos) {
 function verificarSituacaoEstoques(materiais, estoques) {
   const codigosComEstoque = new Set(
     estoques
-      .filter((item) => numeroOpcional(item.fisico) !== null)
+      .filter((item) => paraNumeroOuNull(item.fisico) !== null)
       .map((item) => normalizarCodigo(item.codigo_produto)),
   );
 
@@ -470,7 +448,7 @@ export async function buscarNecessidadeMateriaPrima() {
      IDENTIFICADORES E CÓDIGOS DOS MATERIAIS HABILITADOS
   ======================================================== */
 
-  const idsPermitidos = new Set(materiais.map((material) => normalizarId(material.id)));
+  const idsPermitidos = new Set(materiais.map((material) => paraTexto(material.id)));
 
   const codigosPermitidos = criarConjuntoCodigos(materiais);
 
@@ -480,16 +458,14 @@ export async function buscarNecessidadeMateriaPrima() {
      Somente materiais habilitados.
   ======================================================== */
 
-  const consumos = todosConsumos.filter((item) =>
-    idsPermitidos.has(normalizarId(item.material_id)),
-  );
+  const consumos = todosConsumos.filter((item) => idsPermitidos.has(paraTexto(item.material_id)));
 
   /* ========================================================
      ESTOQUES
   ======================================================== */
 
   const estoques = filtrarPorCodigosAtuais(todosEstoques, codigosPermitidos).filter(
-    (item) => numeroOpcional(item.fisico) !== null,
+    (item) => paraNumeroOuNull(item.fisico) !== null,
   );
 
   /* ========================================================
@@ -533,10 +509,7 @@ export async function buscarNecessidadeMateriaPrima() {
   const resumoPedidos = resumirPedidos(pedidosAbertos);
 
   const codigosPorMaterial = Object.fromEntries(
-    materiais.map((material) => [
-      normalizarId(material.id),
-      normalizarCodigo(material.codigo_omie),
-    ]),
+    materiais.map((material) => [paraTexto(material.id), normalizarCodigo(material.codigo_omie)]),
   );
 
   /* ========================================================

@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
+import { paraNumero } from "@/shared/lib/numeros";
 
 import "./FinanceiroEvolucaoMensalPage.css";
 
@@ -50,14 +51,8 @@ function obterMesAtual() {
   return new Date().getMonth() + 1;
 }
 
-function converterNumero(valor) {
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : 0;
-}
-
 function formatarMoeda(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: 2,
@@ -66,7 +61,7 @@ function formatarMoeda(valor) {
 }
 
 function formatarMoedaCompacta(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
+  return paraNumero(valor).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
     notation: "compact",
@@ -86,13 +81,13 @@ function formatarPercentual(valor) {
 }
 
 function calcularPercentual(numerador, denominador) {
-  const base = converterNumero(denominador);
+  const base = paraNumero(denominador);
 
   if (base === 0) {
     return null;
   }
 
-  return (converterNumero(numerador) / Math.abs(base)) * 100;
+  return (paraNumero(numerador) / Math.abs(base)) * 100;
 }
 
 /* =========================================================
@@ -227,17 +222,17 @@ export default function FinanceiroEvolucaoMensalPage() {
   const indicadores = useMemo(() => {
     const acumulado = dados.reduce(
       (total, item) => {
-        total.receitaPrevista += converterNumero(item.receita_prevista);
+        total.receitaPrevista += paraNumero(item.receita_prevista);
 
-        total.receitaRealizada += converterNumero(item.receita_realizada);
+        total.receitaRealizada += paraNumero(item.receita_realizada);
 
-        total.despesaPrevista += converterNumero(item.despesa_prevista);
+        total.despesaPrevista += paraNumero(item.despesa_prevista);
 
-        total.despesaRealizada += converterNumero(item.despesa_realizada);
+        total.despesaRealizada += paraNumero(item.despesa_realizada);
 
-        total.resultadoPrevisto += converterNumero(item.resultado_previsto);
+        total.resultadoPrevisto += paraNumero(item.resultado_previsto);
 
-        total.resultadoRealizado += converterNumero(item.resultado_realizado);
+        total.resultadoRealizado += paraNumero(item.resultado_realizado);
 
         return total;
       },
@@ -265,20 +260,19 @@ export default function FinanceiroEvolucaoMensalPage() {
 
     const mesesComResultado = dados.filter(
       (item) =>
-        converterNumero(item.receita_realizada) !== 0 ||
-        converterNumero(item.despesa_realizada) !== 0,
+        paraNumero(item.receita_realizada) !== 0 || paraNumero(item.despesa_realizada) !== 0,
     );
 
     const mesesPositivos = mesesComResultado.filter(
-      (item) => converterNumero(item.resultado_realizado) >= 0,
+      (item) => paraNumero(item.resultado_realizado) >= 0,
     ).length;
 
     const mesesNegativos = mesesComResultado.filter(
-      (item) => converterNumero(item.resultado_realizado) < 0,
+      (item) => paraNumero(item.resultado_realizado) < 0,
     ).length;
 
     const ordenadosResultado = [...mesesComResultado].sort(
-      (a, b) => converterNumero(b.resultado_realizado) - converterNumero(a.resultado_realizado),
+      (a, b) => paraNumero(b.resultado_realizado) - paraNumero(a.resultado_realizado),
     );
 
     const melhorMes = ordenadosResultado[0] || null;
@@ -320,9 +314,9 @@ export default function FinanceiroEvolucaoMensalPage() {
       Math.max(
         1,
         ...dados.flatMap((item) => [
-          Math.abs(converterNumero(item.receita_realizada)),
+          Math.abs(paraNumero(item.receita_realizada)),
 
-          Math.abs(converterNumero(item.despesa_realizada)),
+          Math.abs(paraNumero(item.despesa_realizada)),
         ]),
       ),
     [dados],
@@ -539,7 +533,7 @@ export default function FinanceiroEvolucaoMensalPage() {
 
                 <small
                   className={
-                    converterNumero(indicadores.piorMes?.resultado_realizado) >= 0
+                    paraNumero(indicadores.piorMes?.resultado_realizado) >= 0
                       ? "financeiro-insight-positivo"
                       : "financeiro-insight-negativo"
                   }
@@ -620,11 +614,11 @@ export default function FinanceiroEvolucaoMensalPage() {
             <div className="financeiro-evolucao-grafico-wrapper">
               <div className="financeiro-evolucao-grafico">
                 {dados.map((item) => {
-                  const receita = converterNumero(item.receita_realizada);
+                  const receita = paraNumero(item.receita_realizada);
 
-                  const despesa = converterNumero(item.despesa_realizada);
+                  const despesa = paraNumero(item.despesa_realizada);
 
-                  const resultado = converterNumero(item.resultado_realizado);
+                  const resultado = paraNumero(item.resultado_realizado);
 
                   const alturaReceita =
                     receita === 0
@@ -719,7 +713,7 @@ export default function FinanceiroEvolucaoMensalPage() {
 
                 <tbody>
                   {dados.map((item) => {
-                    const resultado = converterNumero(item.resultado_realizado);
+                    const resultado = paraNumero(item.resultado_realizado);
 
                     return (
                       <tr

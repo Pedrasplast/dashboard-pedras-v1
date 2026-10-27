@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "../fornecedores/fornecedoresService";
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
 
 /* =========================================================
    CAMPOS
@@ -35,20 +36,6 @@ const CAMPOS_ENTRADA = `
   condicao_pagamento,
   observacao_financeira
 `;
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : null;
-}
 
 /* =========================================================
    BUSCAR ENTRADAS
@@ -138,25 +125,25 @@ export async function buscarEntradas() {
 
       atualizadoEm: registro.atualizado_em ?? null,
 
-      precoUnitario: numeroOuNull(registro.preco_unitario),
+      precoUnitario: paraNumeroOuNull(registro.preco_unitario),
 
-      subtotalProdutos: numeroOuNull(registro.subtotal_produtos),
+      subtotalProdutos: paraNumeroOuNull(registro.subtotal_produtos),
 
-      ipiPercentual: numeroOuNull(registro.ipi_percentual),
+      ipiPercentual: paraNumeroOuNull(registro.ipi_percentual),
 
-      valorIpi: numeroOuNull(registro.valor_ipi),
+      valorIpi: paraNumeroOuNull(registro.valor_ipi),
 
-      valorFrete: numeroOuNull(registro.valor_frete),
+      valorFrete: paraNumeroOuNull(registro.valor_frete),
 
       tipoFrete: registro.tipo_frete ?? "",
 
-      valorDesconto: numeroOuNull(registro.valor_desconto),
+      valorDesconto: paraNumeroOuNull(registro.valor_desconto),
 
-      outrasDespesas: numeroOuNull(registro.outras_despesas),
+      outrasDespesas: paraNumeroOuNull(registro.outras_despesas),
 
-      valorTotal: numeroOuNull(registro.valor_total),
+      valorTotal: paraNumeroOuNull(registro.valor_total),
 
-      custoEfetivoKg: numeroOuNull(registro.custo_efetivo_kg),
+      custoEfetivoKg: paraNumeroOuNull(registro.custo_efetivo_kg),
 
       numeroNf: registro.numero_nf ?? "",
 

@@ -1,3 +1,5 @@
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
+
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — FORMATAÇÃO
    Padrão visual: 2 casas decimais em todos os valores.
@@ -18,14 +20,8 @@ const moeda = new Intl.NumberFormat(idioma, {
   maximumFractionDigits: 2,
 });
 
-function numeroParaExibicao(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const convertido = Number(valor);
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
 function formatarDecimal(valor) {
-  const numero = numeroParaExibicao(valor);
+  const numero = paraNumeroOuNull(valor);
   return numero === null ? "—" : decimal.format(numero);
 }
 
@@ -46,12 +42,12 @@ export function formatarKg(valor) {
 }
 
 export function formatarPercentual(valor) {
-  const numero = numeroParaExibicao(valor);
+  const numero = paraNumeroOuNull(valor);
   return numero === null ? "—" : `${decimal.format(numero)}%`;
 }
 
 export function formatarMoeda(valor) {
-  const numero = numeroParaExibicao(valor);
+  const numero = paraNumeroOuNull(valor);
   return numero === null ? "—" : moeda.format(numero);
 }
 

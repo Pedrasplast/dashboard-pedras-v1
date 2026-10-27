@@ -1,6 +1,4 @@
-export function normalizarValorOee(valor) {
-  return String(valor ?? "").trim();
-}
+import { paraTexto } from "@/shared/lib/texto";
 
 export function obterDataRegistroOee(item) {
   const valor = item?.lista_de_data || item?.inicio || item?.inicio_dia || item?.data || null;
@@ -17,7 +15,7 @@ export function obterDataRegistroOee(item) {
 }
 
 export function registroEhParadaOee(item) {
-  const tipo = normalizarValorOee(item?.tipo);
+  const tipo = paraTexto(item?.tipo);
   return tipo === "1" || tipo === "2" || tipo === "3";
 }
 
@@ -29,7 +27,7 @@ export function obterTiposDisponiveisOee(dados) {
   const tipos = new Set();
 
   for (const item of dados) {
-    const tipo = normalizarValorOee(item?.tipo);
+    const tipo = paraTexto(item?.tipo);
     if (tipo === "1" || tipo === "2" || tipo === "3") {
       tipos.add(tipo);
     }
@@ -47,12 +45,12 @@ export function obterProdutosDisponiveisOee(dados, filtros = {}) {
     return [];
   }
 
-  const injetoraSelecionada = normalizarValorOee(filtros.injetora).toLocaleUpperCase("pt-BR");
+  const injetoraSelecionada = paraTexto(filtros.injetora).toLocaleUpperCase("pt-BR");
 
   const produtos = new Set();
 
   for (const item of dados) {
-    const injetoraRegistro = normalizarValorOee(item?.injetora).toLocaleUpperCase("pt-BR");
+    const injetoraRegistro = paraTexto(item?.injetora).toLocaleUpperCase("pt-BR");
 
     if (injetoraRegistro !== injetoraSelecionada) {
       continue;
@@ -68,7 +66,7 @@ export function obterProdutosDisponiveisOee(dados, filtros = {}) {
       continue;
     }
 
-    const produto = normalizarValorOee(item?.cod_prod);
+    const produto = paraTexto(item?.cod_prod);
     if (produto) {
       produtos.add(produto);
     }
@@ -90,7 +88,7 @@ export function obterMateriasPrimasDisponiveisOee(dados) {
   const materiasPrimas = new Set();
 
   for (const item of dados) {
-    const mp = normalizarValorOee(item?.mp);
+    const mp = paraTexto(item?.mp);
     if (mp) {
       materiasPrimas.add(mp);
     }
@@ -108,7 +106,7 @@ export function filtrarDadosBaseOee(dados, filtros = {}) {
     return [];
   }
 
-  const injetoraSelecionada = normalizarValorOee(filtros.injetora);
+  const injetoraSelecionada = paraTexto(filtros.injetora);
 
   return dados.filter((item) => {
     const data = obterDataRegistroOee(item);
@@ -124,7 +122,7 @@ export function filtrarDadosBaseOee(dados, filtros = {}) {
     if (
       filtros.injetora &&
       filtros.injetora !== "Todos" &&
-      normalizarValorOee(item?.injetora) !== injetoraSelecionada
+      paraTexto(item?.injetora) !== injetoraSelecionada
     ) {
       return false;
     }
@@ -142,11 +140,10 @@ export function filtrarDadosCalculoOee(dadosBaseOee, codigoProduto) {
     return dadosBaseOee;
   }
 
-  const produtoSelecionado = normalizarValorOee(codigoProduto);
+  const produtoSelecionado = paraTexto(codigoProduto);
 
   return dadosBaseOee.filter(
-    (item) =>
-      registroEhParadaOee(item) || normalizarValorOee(item?.cod_prod) === produtoSelecionado,
+    (item) => registroEhParadaOee(item) || paraTexto(item?.cod_prod) === produtoSelecionado,
   );
 }
 
@@ -159,7 +156,7 @@ export function filtrarHistoricoPerformanceOee(dados, injetora) {
     return dados;
   }
 
-  const injetoraSelecionada = normalizarValorOee(injetora);
+  const injetoraSelecionada = paraTexto(injetora);
 
-  return dados.filter((item) => normalizarValorOee(item?.injetora) === injetoraSelecionada);
+  return dados.filter((item) => paraTexto(item?.injetora) === injetoraSelecionada);
 }

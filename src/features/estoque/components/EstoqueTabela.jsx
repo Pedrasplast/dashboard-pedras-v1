@@ -1,6 +1,7 @@
 import Paginacao from "@/components/paginacao/Paginacao";
 
-import { formatarNumero, numero } from "../utils/estoque.utils";
+import { formatarNumero } from "../utils/estoque.utils";
+import { paraNumero } from "@/shared/lib/numeros";
 
 import "./EstoqueTabela.css";
 
@@ -74,11 +75,11 @@ export default function EstoqueTabela({
               </tr>
             ) : (
               itens.map((item) => {
-                const estoqueAtual = numero(item.saldo);
+                const estoqueAtual = paraNumero(item.saldo);
 
-                const pedidosEmAberto = numero(item.quantidadePedidos);
+                const pedidosEmAberto = paraNumero(item.quantidadePedidos);
 
-                const saldoDisponivel = numero(item.saldoDisponivel);
+                const saldoDisponivel = paraNumero(item.saldoDisponivel);
 
                 return (
                   <tr key={item.codigoProdutoOmie}>

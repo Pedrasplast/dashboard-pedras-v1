@@ -1,4 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraNumeroOu, paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto } from "@/shared/lib/texto";
 
 export const SITUACOES_ENTRADAS_COMPRAS = [
   {
@@ -65,26 +67,6 @@ const CAMPOS_OMIE = [
   "encerrado",
 ].join(",");
 
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
-
-function numero(valor, padrao = 0) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : padrao;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
 /**
  * Converte um item de pedido do Omie em linhas do relatório:
  * - parte recebida → RECEBIDA (data = "Recebido em" da NF; sem NF, previsão);
@@ -95,29 +77,31 @@ function numeroOpcional(valor) {
  */
 export function normalizarItemOmie(registro) {
   if (!registro) return [];
-  const quantidade = numero(registro.quantidade);
+  const quantidade = paraNumeroOu(registro.quantidade);
   if (!(quantidade > 0)) return [];
-  const recebida = Math.min(Math.max(numero(registro.quantidade_recebida), 0), quantidade);
+  const recebida = Math.min(Math.max(paraNumeroOu(registro.quantidade_recebida), 0), quantidade);
   const saldo = quantidade - recebida;
-  const total = numero(registro.valor_total);
+  const total = paraNumeroOu(registro.valor_total);
   const chave = `${registro.cod_ped_compra}-${registro.codigo_item}`;
-  const fornecedorId = texto(registro.codigo_fornecedor) || "sem-fornecedor";
+  const fornecedorId = paraTexto(registro.codigo_fornecedor) || "sem-fornecedor";
   const materialId =
     registro.material_id != null
       ? String(registro.material_id)
-      : `omie-${texto(registro.codigo_produto) || "sem-codigo"}`;
+      : `omie-${paraTexto(registro.codigo_produto) || "sem-codigo"}`;
 
   const base = {
-    pedido: texto(registro.numero_pedido),
-    emissao: texto(registro.data_inclusao),
-    previsaoRecebimento: texto(registro.data_previsao),
+    pedido: paraTexto(registro.numero_pedido),
+    emissao: paraTexto(registro.data_inclusao),
+    previsaoRecebimento: paraTexto(registro.data_previsao),
     fornecedorId,
-    fornecedor: texto(registro.fornecedor_nome) || "Fornecedor não encontrado",
+    fornecedor: paraTexto(registro.fornecedor_nome) || "Fornecedor não encontrado",
     materialId,
     material:
-      texto(registro.material_nome) || texto(registro.descricao) || "Material não encontrado",
-    preco: numeroOpcional(registro.preco_unitario),
-    ipiPercentual: numeroOpcional(registro.ipi_percentual),
+      paraTexto(registro.material_nome) ||
+      paraTexto(registro.descricao) ||
+      "Material não encontrado",
+    preco: paraNumeroOuNull(registro.preco_unitario),
+    ipiPercentual: paraNumeroOuNull(registro.ipi_percentual),
   };
 
   const linhas = [];
@@ -125,10 +109,10 @@ export function normalizarItemOmie(registro) {
     linhas.push({
       ...base,
       id: `${chave}-R`,
-      recebido: texto(registro.data_recebimento) || texto(registro.data_previsao),
+      recebido: paraTexto(registro.data_recebimento) || paraTexto(registro.data_previsao),
       quantidadeKg: recebida,
       total: total * (recebida / quantidade),
-      numeroNf: texto(registro.numeros_nf),
+      numeroNf: paraTexto(registro.numeros_nf),
       statusOriginal: saldo > 0 ? "PARCIAL" : "RECEBIDA",
       situacao: "RECEBIDA",
     });
@@ -154,7 +138,7 @@ function criarOpcoesUnicas(registros, campoId, campoNome) {
 
   registros.forEach((registro) => {
     const id = registro?.[campoId];
-    const nome = texto(registro?.[campoNome]);
+    const nome = paraTexto(registro?.[campoNome]);
 
     if (id === null || id === undefined || id === "" || !nome) {
       return;

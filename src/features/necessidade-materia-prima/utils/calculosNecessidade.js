@@ -1,3 +1,6 @@
+import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto, normalizarCodigo } from "@/shared/lib/texto";
+
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — CÁLCULOS
    - Sem formatação: formatadoresNecessidade.js é separado.
@@ -9,33 +12,11 @@
 const CODIGO_PP = "PRD11295";
 const TETO_PADRAO_PP = 30000;
 
-export function numero(valor) {
-  if (valor === null || valor === undefined || valor === "") return 0;
-  const convertido = Number(valor);
-  return Number.isFinite(convertido) ? convertido : 0;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const convertido = Number(valor);
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
-
-function normalizarId(valor) {
-  return String(valor ?? "").trim();
-}
-
 function obterAjusteNumerico(ajuste, campo) {
   if (!ajuste || !Object.prototype.hasOwnProperty.call(ajuste, campo)) {
     return null;
   }
-  return numeroOpcional(ajuste[campo]);
+  return paraNumeroOuNull(ajuste[campo]);
 }
 
 /* ============================================================
@@ -45,9 +26,9 @@ function obterAjusteNumerico(ajuste, campo) {
    VALOR ESTIMADO = Necessidade × Preço de referência da Tabela de Preços
 ============================================================ */
 export function calcularNecessidade({ consumo, percentual, estoque, comprasFuturas, teto, preco }) {
-  const consumoConsiderado = numero(consumo) * (numero(percentual) / 100);
-  const estoqueValido = numeroOpcional(estoque);
-  const precoValido = numeroOpcional(preco);
+  const consumoConsiderado = paraNumero(consumo) * (paraNumero(percentual) / 100);
+  const estoqueValido = paraNumeroOuNull(estoque);
+  const precoValido = paraNumeroOuNull(preco);
 
   if (estoqueValido === null) {
     return {
@@ -58,8 +39,8 @@ export function calcularNecessidade({ consumo, percentual, estoque, comprasFutur
     };
   }
 
-  const saldoProjetado = estoqueValido + numero(comprasFuturas) - consumoConsiderado;
-  const necessidade = Math.max(0, numero(teto) - saldoProjetado);
+  const saldoProjetado = estoqueValido + paraNumero(comprasFuturas) - consumoConsiderado;
+  const necessidade = Math.max(0, paraNumero(teto) - saldoProjetado);
 
   return {
     consumoConsiderado,
@@ -72,9 +53,9 @@ export function calcularNecessidade({ consumo, percentual, estoque, comprasFutur
 function criarMapaConsumos(consumos = []) {
   const mapa = new Map();
   for (const item of consumos) {
-    const id = normalizarId(item.material_id);
+    const id = paraTexto(item.material_id);
     if (!id) continue;
-    mapa.set(id, (mapa.get(id) ?? 0) + numero(item.consumo_total_kg));
+    mapa.set(id, (mapa.get(id) ?? 0) + paraNumero(item.consumo_total_kg));
   }
   return mapa;
 }
@@ -84,7 +65,7 @@ function criarMapaEstoques(estoques = []) {
   for (const item of estoques) {
     const codigo = normalizarCodigo(item.codigo_produto);
     if (!codigo) continue;
-    const fisico = numeroOpcional(item.fisico);
+    const fisico = paraNumeroOuNull(item.fisico);
     if (fisico === null) continue;
     const anterior = mapa.get(codigo);
     if (anterior) {
@@ -101,7 +82,7 @@ function criarMapaCompras(compras = []) {
   for (const item of compras) {
     const codigo = normalizarCodigo(item.codigo_produto);
     if (!codigo) continue;
-    mapa.set(codigo, (mapa.get(codigo) ?? 0) + numero(item.quantidade_futura));
+    mapa.set(codigo, (mapa.get(codigo) ?? 0) + paraNumero(item.quantidade_futura));
   }
   return mapa;
 }
@@ -118,11 +99,11 @@ function criarMapaPrecos(precos = []) {
     const codigo = normalizarCodigo(item.codigo_produto);
     if (!codigo) continue;
 
-    const media = numeroOpcional(item.preco_medio_30d);
-    const quantidadePeriodo = numero(item.quantidade_30d);
+    const media = paraNumeroOuNull(item.preco_medio_30d);
+    const quantidadePeriodo = paraNumero(item.quantidade_30d);
     const precoMedio = quantidadePeriodo > 0 && media !== null && media > 0 ? media : null;
 
-    const ultimo = numeroOpcional(item.ultimo_preco);
+    const ultimo = paraNumeroOuNull(item.ultimo_preco);
     const ultimoPreco = ultimo !== null && ultimo > 0 ? ultimo : null;
     const precoReferencia = precoMedio ?? ultimoPreco;
     const origemPreco =
@@ -154,7 +135,7 @@ export function consolidarNecessidade(dados, ajustes = {}) {
   return (dados.materiais ?? [])
     .filter((material) => material.ativo)
     .map((material) => {
-      const id = normalizarId(material.id);
+      const id = paraTexto(material.id);
       const codigoOmie = normalizarCodigo(material.codigo_omie);
       const consumo = consumos.get(id) ?? 0;
 

@@ -1,4 +1,5 @@
-import { numero } from "./calculosNecessidade";
+import { normalizarCodigo } from "@/shared/lib/texto";
+import { paraNumero } from "@/shared/lib/numeros";
 
 export function normalizarDataPrevisao(valor) {
   if (!valor) return null;
@@ -29,12 +30,6 @@ export function resumirConsumosDoPeriodo(pedidos) {
     material_id,
     consumo_total_kg,
   }));
-}
-
-export function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
 }
 
 /* ============================================================
@@ -72,7 +67,7 @@ export function agruparPendencias(pedidos = []) {
       continue;
     }
 
-    const quantidade = numero(pedido.quantidade);
+    const quantidade = paraNumero(pedido.quantidade);
     const existente = mapa.get(codigo);
 
     if (existente) {

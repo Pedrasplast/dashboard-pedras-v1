@@ -1,19 +1,14 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraNumeroOu } from "@/shared/lib/numeros";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function numero(valor, fallback = 0) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : fallback;
-}
-
 function arredondar(valor, casas = 6) {
   const fator = 10 ** casas;
 
-  return Math.round((numero(valor) + Number.EPSILON) * fator) / fator;
+  return Math.round((paraNumeroOu(valor) + Number.EPSILON) * fator) / fator;
 }
 
 function normalizarReceitaItens(valor) {
@@ -23,7 +18,7 @@ function normalizarReceitaItens(valor) {
 
       fornecedorNome: String(item?.fornecedorNome ?? "Fornecedor").trim(),
 
-      percentual: numero(item?.percentual),
+      percentual: paraNumeroOu(item?.percentual),
     }))
     .filter((item) => item.fornecedorId !== null && item.percentual > 0);
 }
@@ -61,7 +56,7 @@ function normalizarDia(registro) {
 
   const receitaConfigurada = registro?.receita_configurada === true;
 
-  const consumoTotalKg = numero(registro?.consumo_total_kg);
+  const consumoTotalKg = paraNumeroOu(registro?.consumo_total_kg);
 
   return {
     programacaoId: registro?.programacao_id ?? null,
@@ -87,23 +82,23 @@ function normalizarDia(registro) {
 
     perfilHoras: String(registro?.perfil_horas ?? "").trim(),
 
-    minutosSolicitados: numero(registro?.minutos_solicitados),
+    minutosSolicitados: paraNumeroOu(registro?.minutos_solicitados),
 
-    minutosDescontados: numero(registro?.minutos_descontados),
+    minutosDescontados: paraNumeroOu(registro?.minutos_descontados),
 
-    minutosEfetivos: numero(registro?.minutos_efetivos),
+    minutosEfetivos: paraNumeroOu(registro?.minutos_efetivos),
 
-    horasEfetivas: numero(registro?.horas_efetivas),
+    horasEfetivas: paraNumeroOu(registro?.horas_efetivas),
 
-    cicloSegundos: numero(registro?.ciclo_segundos, null),
+    cicloSegundos: paraNumeroOu(registro?.ciclo_segundos, null),
 
-    cavidadeMolde: numero(registro?.cavidade_molde, null),
+    cavidadeMolde: paraNumeroOu(registro?.cavidade_molde, null),
 
-    pesoKg: numero(registro?.peso_kg, null),
+    pesoKg: paraNumeroOu(registro?.peso_kg, null),
 
-    ciclosCompletos: Math.trunc(numero(registro?.ciclos_completos)),
+    ciclosCompletos: Math.trunc(paraNumeroOu(registro?.ciclos_completos)),
 
-    pecasPrevistas: Math.trunc(numero(registro?.pecas_previstas)),
+    pecasPrevistas: Math.trunc(paraNumeroOu(registro?.pecas_previstas)),
 
     consumoTotalKg,
 
@@ -111,7 +106,7 @@ function normalizarDia(registro) {
 
     receitaNome: String(registro?.receita_nome ?? "").trim(),
 
-    receitaPercentualTotal: numero(registro?.receita_percentual_total),
+    receitaPercentualTotal: paraNumeroOu(registro?.receita_percentual_total),
 
     receitaConfigurada,
 
@@ -124,10 +119,10 @@ function normalizarDia(registro) {
     ),
 
     parametrosValidos:
-      numero(registro?.ciclo_segundos) > 0 &&
-      Number.isInteger(numero(registro?.cavidade_molde)) &&
-      numero(registro?.cavidade_molde) > 0 &&
-      numero(registro?.peso_kg) > 0,
+      paraNumeroOu(registro?.ciclo_segundos) > 0 &&
+      Number.isInteger(paraNumeroOu(registro?.cavidade_molde)) &&
+      paraNumeroOu(registro?.cavidade_molde) > 0 &&
+      paraNumeroOu(registro?.peso_kg) > 0,
   };
 }
 
@@ -157,7 +152,7 @@ function agregarConsumosFornecedores(dias = []) {
       const atual = mapa.get(chave);
 
       atual.consumoPeriodoKg = arredondar(
-        atual.consumoPeriodoKg + numero(consumo?.consumoPeriodoKg),
+        atual.consumoPeriodoKg + paraNumeroOu(consumo?.consumoPeriodoKg),
       );
 
       atual.consumoKg = atual.consumoPeriodoKg;
@@ -313,22 +308,22 @@ export function agruparProgramacaoDiaria(dias = []) {
       const diasOrdenados = [...item.diasProgramacao].sort((a, b) => a.data.localeCompare(b.data));
 
       const minutosEfetivos = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.minutosEfetivos),
+        (total, dia) => total + paraNumeroOu(dia.minutosEfetivos),
         0,
       );
 
       const ciclosCompletos = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.ciclosCompletos),
+        (total, dia) => total + paraNumeroOu(dia.ciclosCompletos),
         0,
       );
 
       const pecasPrevistas = diasOrdenados.reduce(
-        (total, dia) => total + numero(dia.pecasPrevistas),
+        (total, dia) => total + paraNumeroOu(dia.pecasPrevistas),
         0,
       );
 
       const consumoPeriodoKg = arredondar(
-        diasOrdenados.reduce((total, dia) => total + numero(dia.consumoTotalKg), 0),
+        diasOrdenados.reduce((total, dia) => total + paraNumeroOu(dia.consumoTotalKg), 0),
       );
 
       const receitasUtilizadas = listarReceitasUtilizadas(diasOrdenados);
@@ -362,14 +357,14 @@ export function agruparProgramacaoDiaria(dias = []) {
         quantidade: Math.trunc(pecasPrevistas),
 
         pecasPorHora:
-          numero(item.cicloSegundos) > 0 && numero(item.cavidadeMolde) > 0
+          paraNumeroOu(item.cicloSegundos) > 0 && paraNumeroOu(item.cavidadeMolde) > 0
             ? arredondar((3600 / item.cicloSegundos) * item.cavidadeMolde, 2)
             : 0,
 
         consumoPorHoraKg:
-          numero(item.cicloSegundos) > 0 &&
-          numero(item.cavidadeMolde) > 0 &&
-          numero(item.pesoKg) > 0
+          paraNumeroOu(item.cicloSegundos) > 0 &&
+          paraNumeroOu(item.cavidadeMolde) > 0 &&
+          paraNumeroOu(item.pesoKg) > 0
             ? arredondar((3600 / item.cicloSegundos) * item.cavidadeMolde * item.pesoKg)
             : 0,
 

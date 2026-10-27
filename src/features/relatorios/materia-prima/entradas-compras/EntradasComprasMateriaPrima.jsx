@@ -27,6 +27,7 @@ import {
 } from "./export/entradasComprasExport";
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
+import { normalizarTextoSemAparar } from "@/shared/lib/texto";
 import "./EntradasComprasMateriaPrima.css";
 
 const ITENS_POR_PAGINA = 10;
@@ -104,13 +105,6 @@ function formatarPercentual(valor) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })}%`;
-}
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =========================================================
@@ -359,7 +353,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
       return [];
     }
 
-    const termo = normalizarTexto(filtros.busca);
+    const termo = normalizarTextoSemAparar(filtros.busca);
 
     return dados.registros.filter((registro) => {
       if (filtros.situacao === "RECEBIDAS" && registro.situacao !== "RECEBIDA") {
@@ -389,7 +383,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
       }
 
       if (termo) {
-        const conteudoBusca = normalizarTexto(
+        const conteudoBusca = normalizarTextoSemAparar(
           [registro.pedido, registro.numeroNf, registro.fornecedor, registro.material].join(" "),
         );
 

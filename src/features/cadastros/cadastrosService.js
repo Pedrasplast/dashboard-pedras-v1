@@ -1,22 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function numero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
-function texto(valor) {
-  return String(valor ?? "").trim();
-}
+import { paraNumeroOuNull } from "@/shared/lib/numeros";
+import { paraTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    PRODUTOS
@@ -83,26 +67,26 @@ export async function buscarProdutosCadastro() {
   const parametrosPorProduto = new Map();
 
   for (const parametro of parametros) {
-    parametrosPorProduto.set(texto(parametro.cod_prod), parametro);
+    parametrosPorProduto.set(paraTexto(parametro.cod_prod), parametro);
   }
 
   return produtos.map((produto) => {
-    const codigoProduto = texto(produto.codigo_produto);
+    const codigoProduto = paraTexto(produto.codigo_produto);
 
     const parametro = parametrosPorProduto.get(codigoProduto) ?? null;
 
     return {
       codigoProduto,
 
-      nomeProduto: texto(produto.nome_produto),
+      nomeProduto: paraTexto(produto.nome_produto),
 
-      materialId: numero(produto.material_id),
+      materialId: paraNumeroOuNull(produto.material_id),
 
-      materialNome: texto(produto.material_nome),
+      materialNome: paraTexto(produto.material_nome),
 
       materialAtivo: produto.material_ativo === true,
 
-      pesoKg: numero(produto.peso_kg),
+      pesoKg: paraNumeroOuNull(produto.peso_kg),
 
       ativo: produto.ativo === true,
 
@@ -114,19 +98,19 @@ export async function buscarProdutosCadastro() {
 
       parametroAtivo: parametro?.ativo === true,
 
-      descricaoParametro: texto(parametro?.descricao),
+      descricaoParametro: paraTexto(parametro?.descricao),
 
-      cavidadeMolde: numero(parametro?.cavidade_molde),
+      cavidadeMolde: paraNumeroOuNull(parametro?.cavidade_molde),
 
-      tempoResfriamentoSegundos: numero(parametro?.tempo_resfriamento_segundos),
+      tempoResfriamentoSegundos: paraNumeroOuNull(parametro?.tempo_resfriamento_segundos),
 
-      cicloSegundos: numero(parametro?.ciclo_segundos),
+      cicloSegundos: paraNumeroOuNull(parametro?.ciclo_segundos),
 
-      tempoInjecaoSegundos: numero(parametro?.tempo_injecao_segundos),
+      tempoInjecaoSegundos: paraNumeroOuNull(parametro?.tempo_injecao_segundos),
 
-      kgUn: numero(parametro?.kg_un),
+      kgUn: paraNumeroOuNull(parametro?.kg_un),
 
-      kgHaste: numero(parametro?.kg_haste),
+      kgHaste: paraNumeroOuNull(parametro?.kg_haste),
     };
   });
 }
@@ -205,15 +189,15 @@ export async function buscarFornecedoresCadastro() {
   return fornecedores.map((fornecedor) => ({
     id: fornecedor.id,
 
-    nome: texto(fornecedor.nome),
+    nome: paraTexto(fornecedor.nome),
 
     ativo: fornecedor.ativo === true,
 
-    estoqueMinimoKg: numero(fornecedor.estoque_minimo_kg),
+    estoqueMinimoKg: paraNumeroOuNull(fornecedor.estoque_minimo_kg),
 
-    estoqueAlvoKg: numero(fornecedor.estoque_alvo_kg),
+    estoqueAlvoKg: paraNumeroOuNull(fornecedor.estoque_alvo_kg),
 
-    leadTimeDias: numero(fornecedor.lead_time_dias),
+    leadTimeDias: paraNumeroOuNull(fornecedor.lead_time_dias),
 
     criadoEm: fornecedor.criado_em ?? null,
 
@@ -234,7 +218,7 @@ export async function salvarFornecedorCadastro({
   leadTimeDias,
 }) {
   const payload = {
-    nome: texto(nome),
+    nome: paraTexto(nome),
 
     ativo: ativo === true,
 
@@ -338,9 +322,9 @@ export async function buscarMateriaisCadastro() {
   return materiais.map((material) => ({
     id: material.id,
 
-    nome: texto(material.nome),
+    nome: paraTexto(material.nome),
 
-    codigoOmie: texto(material.codigo_omie),
+    codigoOmie: paraTexto(material.codigo_omie),
 
     ativo: material.ativo === true,
 
@@ -375,13 +359,13 @@ export async function salvarMaterialCadastro({
   exibirTabelaPrecos = false,
   exibirNecessidadeCompra = false,
 }) {
-  const nomeFinal = texto(nome);
+  const nomeFinal = paraTexto(nome);
 
   if (!nomeFinal) {
     throw new Error("Informe o nome do material.");
   }
 
-  const codigoFinal = texto(codigoOmie).toUpperCase();
+  const codigoFinal = paraTexto(codigoOmie).toUpperCase();
 
   /* =====================================================
      VALIDAR CÓDIGO OMIE

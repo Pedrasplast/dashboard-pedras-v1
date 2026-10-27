@@ -3,6 +3,7 @@ import { buscarComprasFuturas } from "../compras-futuras/comprasFuturasService";
 import { buscarProgramacaoParaProjecao } from "../programacao/programacaoDiariaService";
 
 import { buscarSaldosIniciais } from "./saldo-inicial/saldoInicialService";
+import { paraNumero } from "@/shared/lib/numeros";
 
 const MATERIAL_PADRAO_ID = 1;
 
@@ -10,14 +11,8 @@ const MATERIAL_PADRAO_ID = 1;
    NÚMEROS
 ========================================================= */
 
-function numero(valor) {
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : 0;
-}
-
 function arredondarKg(valor) {
-  return Math.round((numero(valor) + Number.EPSILON) * 1000000) / 1000000;
+  return Math.round((paraNumero(valor) + Number.EPSILON) * 1000000) / 1000000;
 }
 
 /* =========================================================
@@ -188,7 +183,7 @@ function adicionarMovimento(mapa, data, fornecedorId, campo, quantidade) {
     return;
   }
 
-  const quantidadeFinal = numero(quantidade);
+  const quantidadeFinal = paraNumero(quantidade);
 
   if (quantidadeFinal === 0) {
     return;
@@ -198,7 +193,7 @@ function adicionarMovimento(mapa, data, fornecedorId, campo, quantidade) {
 
   const movimento = mapa.get(chave) || criarMovimento();
 
-  movimento[campo] = arredondarKg(numero(movimento[campo]) + quantidadeFinal);
+  movimento[campo] = arredondarKg(paraNumero(movimento[campo]) + quantidadeFinal);
 
   mapa.set(chave, movimento);
 }
@@ -217,7 +212,7 @@ function obterItensReceita(programacao) {
 
       fornecedorNome: item?.fornecedorNome ?? item?.fornecedor_nome ?? "",
 
-      percentual: numero(item?.percentual),
+      percentual: paraNumero(item?.percentual),
     }))
     .filter(
       (item) =>
@@ -257,20 +252,22 @@ function distribuirConsumoReceita(consumoTotalKg, itensReceita) {
 ========================================================= */
 
 function obterConsumoTotalProgramacao(programacao) {
-  const consumoPeriodo = numero(programacao?.consumoPeriodoKg ?? programacao?.consumo_periodo_kg);
+  const consumoPeriodo = paraNumero(
+    programacao?.consumoPeriodoKg ?? programacao?.consumo_periodo_kg,
+  );
 
   if (consumoPeriodo > 0) {
     return consumoPeriodo;
   }
 
-  const pesoKg = numero(programacao?.pesoKg ?? programacao?.peso_kg);
+  const pesoKg = paraNumero(programacao?.pesoKg ?? programacao?.peso_kg);
 
   const possuiHorario =
     Boolean(programacao?.horaInicio ?? programacao?.hora_inicio) &&
     Boolean(programacao?.horaFim ?? programacao?.hora_fim);
 
   if (!possuiHorario) {
-    const quantidadeDiaria = numero(programacao?.quantidade);
+    const quantidadeDiaria = paraNumero(programacao?.quantidade);
 
     const inicio = programacao?.dataInicio ?? programacao?.data_inicio;
 
@@ -281,7 +278,7 @@ function obterConsumoTotalProgramacao(programacao) {
     return arredondarKg(quantidadeDiaria * pesoKg * dias);
   }
 
-  return arredondarKg(numero(programacao?.quantidade) * pesoKg);
+  return arredondarKg(paraNumero(programacao?.quantidade) * pesoKg);
 }
 
 /* =========================================================
@@ -301,7 +298,7 @@ function calcularConsumoProgramacaoNaData(programacao, data) {
 
   const horaFim = programacao?.horaFim ?? programacao?.hora_fim;
 
-  const pesoKg = numero(programacao?.pesoKg ?? programacao?.peso_kg);
+  const pesoKg = paraNumero(programacao?.pesoKg ?? programacao?.peso_kg);
 
   /* =======================================================
      REGISTRO SEM HORÁRIO
@@ -316,7 +313,7 @@ function calcularConsumoProgramacaoNaData(programacao, data) {
       };
     }
 
-    const quantidadeDiaria = numero(programacao?.quantidade);
+    const quantidadeDiaria = paraNumero(programacao?.quantidade);
 
     return {
       ciclos: null,
@@ -331,9 +328,9 @@ function calcularConsumoProgramacaoNaData(programacao, data) {
      REGISTRO COM HORÁRIO
   ======================================================= */
 
-  const cicloSegundos = numero(programacao?.cicloSegundos ?? programacao?.ciclo_segundos);
+  const cicloSegundos = paraNumero(programacao?.cicloSegundos ?? programacao?.ciclo_segundos);
 
-  const cavidadeMolde = numero(programacao?.cavidadeMolde ?? programacao?.cavidade_molde);
+  const cavidadeMolde = paraNumero(programacao?.cavidadeMolde ?? programacao?.cavidade_molde);
 
   if (!dataInicio || !dataFim || pesoKg <= 0 || cicloSegundos <= 0 || cavidadeMolde <= 0) {
     return {
@@ -798,14 +795,14 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
 
       let possuiSaldoBase = estadoAnterior?.possuiSaldoBase === true;
 
-      let saldoInicioKg = possuiSaldoBase ? numero(estadoAnterior?.saldoFinalKg) : null;
+      let saldoInicioKg = possuiSaldoBase ? paraNumero(estadoAnterior?.saldoFinalKg) : null;
 
       let saldoBaseAplicado = null;
 
       if (base) {
         possuiSaldoBase = true;
 
-        saldoInicioKg = numero(base.quantidadeKg);
+        saldoInicioKg = paraNumero(base.quantidadeKg);
 
         saldoBaseAplicado = base;
       }
@@ -816,10 +813,10 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
 
       if (possuiSaldoBase) {
         saldoFinalKg = arredondarKg(
-          numero(saldoInicioKg) +
-            numero(movimento.recebidoKg) +
-            numero(movimento.compraFuturaKg) -
-            numero(movimento.consumoKg),
+          paraNumero(saldoInicioKg) +
+            paraNumero(movimento.recebidoKg) +
+            paraNumero(movimento.compraFuturaKg) -
+            paraNumero(movimento.consumoKg),
         );
       }
 
@@ -843,7 +840,9 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
 
         saldoBaseAplicado: Boolean(saldoBaseAplicado),
 
-        quantidadeSaldoBaseKg: saldoBaseAplicado ? numero(saldoBaseAplicado.quantidadeKg) : null,
+        quantidadeSaldoBaseKg: saldoBaseAplicado
+          ? paraNumero(saldoBaseAplicado.quantidadeKg)
+          : null,
 
         saldoInicioKg,
 

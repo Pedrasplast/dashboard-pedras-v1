@@ -32,6 +32,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
+import { converterNumeroFlexivel } from "@/shared/lib/numeros";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./Home.css";
 
@@ -70,45 +72,11 @@ function obterNomeUsuario(email) {
 }
 
 /* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-/* =========================================================
    NÚMEROS
 ========================================================= */
 
-function converterNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return 0;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
-  let texto = String(valor).trim().replace(/\s/g, "");
-
-  if (texto.includes(",") && texto.includes(".")) {
-    texto = texto.replace(/\./g, "").replace(",", ".");
-  } else {
-    texto = texto.replace(",", ".");
-  }
-
-  const numero = Number(texto);
-
-  return Number.isFinite(numero) ? numero : 0;
-}
-
 function formatarNumero(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
+  return converterNumeroFlexivel(valor).toLocaleString("pt-BR", {
     maximumFractionDigits: 0,
   });
 }
@@ -397,11 +365,11 @@ function Home({ user, isAdmin }) {
 
   const financeiroHome = useMemo(() => processarFinanceiro(dadosFinanceiro), [dadosFinanceiro]);
 
-  const receitaFinanceira = converterNumero(financeiroHome?.resumo?.receitas?.realizado);
+  const receitaFinanceira = converterNumeroFlexivel(financeiroHome?.resumo?.receitas?.realizado);
 
-  const despesaFinanceira = converterNumero(financeiroHome?.resumo?.despesas?.realizado);
+  const despesaFinanceira = converterNumeroFlexivel(financeiroHome?.resumo?.despesas?.realizado);
 
-  const saldoFinanceiro = converterNumero(financeiroHome?.resumo?.saldo?.realizado);
+  const saldoFinanceiro = converterNumeroFlexivel(financeiroHome?.resumo?.saldo?.realizado);
 
   const margemFinanceira =
     receitaFinanceira !== 0 ? (saldoFinanceiro / receitaFinanceira) * 100 : 0;

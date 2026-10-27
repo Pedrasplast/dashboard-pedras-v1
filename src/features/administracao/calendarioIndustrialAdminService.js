@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { paraTexto } from "@/shared/lib/texto";
 
 export const PREFIXO_FERIADO_NACIONAL = "FERIADO NACIONAL — ";
 
@@ -12,12 +13,8 @@ function validarAno(ano) {
   return numero;
 }
 
-function normalizarTexto(valor) {
-  return String(valor ?? "").trim();
-}
-
 export function ehFeriadoNacionalAutomatico(item) {
-  return normalizarTexto(item?.observacao).toUpperCase().startsWith(PREFIXO_FERIADO_NACIONAL);
+  return paraTexto(item?.observacao).toUpperCase().startsWith(PREFIXO_FERIADO_NACIONAL);
 }
 
 export async function listarCalendarioIndustrialAno(ano) {
@@ -39,7 +36,7 @@ export async function salvarExcecaoCalendarioIndustrial({ data, perfilCodigo, ob
   const { data: resultado, error } = await supabase.rpc("salvar_excecao_calendario_industrial", {
     p_data: data,
     p_perfil_codigo: perfilCodigo,
-    p_observacao: normalizarTexto(observacao) || null,
+    p_observacao: paraTexto(observacao) || null,
   });
 
   if (error) {
@@ -83,9 +80,9 @@ export async function buscarFeriadosNacionais(ano) {
 
   return dados
     .map((item) => ({
-      data: normalizarTexto(item?.date),
-      nome: normalizarTexto(item?.name).toLocaleUpperCase("pt-BR"),
-      tipo: normalizarTexto(item?.type),
+      data: paraTexto(item?.date),
+      nome: paraTexto(item?.name).toLocaleUpperCase("pt-BR"),
+      tipo: paraTexto(item?.type),
     }))
     .filter((item) => /^\d{4}-\d{2}-\d{2}$/.test(item.data) && item.nome);
 }

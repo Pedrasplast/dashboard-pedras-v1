@@ -17,6 +17,7 @@ import {
 import { useFinanceiroDetalhes } from "../hooks/useFinanceiro";
 
 import { formatarData, formatarMoeda } from "../utils/financeiro.utils";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    COMPONENTE / STATUS
@@ -32,18 +33,6 @@ function nomeComponente(componente) {
   }
 
   return "-";
-}
-
-/* =========================================================
-   TEXTO PARA BUSCA
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =========================================================

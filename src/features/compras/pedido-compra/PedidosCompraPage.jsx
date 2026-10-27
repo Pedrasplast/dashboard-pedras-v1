@@ -28,7 +28,8 @@ import { useResumosRecebimentoFisico } from "./hooks/useResumosRecebimentoFisico
 
 import { useRecebimentosFisicosUltimos7Dias } from "./hooks/useRecebimentosFisicosUltimos7Dias";
 
-import { converterDataLocal, normalizarTexto, obterHojeLocal } from "./utils/pedidosCompra.utils";
+import { converterDataLocal, obterHojeLocal } from "./utils/pedidosCompra.utils";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import "./PedidosCompraPage.css";
 

@@ -16,6 +16,7 @@ import LayoutRelatorio from "../components/LayoutRelatorio";
 import { supabase } from "@/lib/supabaseClient";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
+import { normalizarTextoSemAparar } from "@/shared/lib/texto";
 
 import "../pedidos-alterados/PedidosAlteradosRelatorio.css";
 import "./PedidosCompraAlteradosRelatorio.css";
@@ -69,13 +70,6 @@ function dataHora(valor) {
     minute: "2-digit",
     hour12: false,
   });
-}
-
-function normalizar(valor) {
-  return String(valor ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =========================================================
@@ -615,7 +609,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   ===================================================== */
 
   const filtrados = useMemo(() => {
-    const termo = normalizar(pesquisa.trim());
+    const termo = normalizarTextoSemAparar(pesquisa.trim());
 
     if (!termo) {
       return pedidos;
@@ -626,7 +620,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
 
       const nomeFornecedor = nomesFornecedores[codigoFornecedor] || "";
 
-      return normalizar(
+      return normalizarTextoSemAparar(
         [
           pedido.numero_pedido,
 

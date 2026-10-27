@@ -1,12 +1,4 @@
-/* =========================================================
-   NÚMERO SEGURO
-========================================================= */
-
-function numeroSeguro(valor) {
-  const numero = Number(valor ?? 0);
-
-  return Number.isFinite(numero) ? numero : 0;
-}
+import { paraNumero } from "@/shared/lib/numeros";
 
 /* =========================================================
    IDENTIFICAR TIPO
@@ -47,9 +39,9 @@ function identificarTipo(registro) {
 ========================================================= */
 
 export function calcularVariacao(previsto, realizado) {
-  const valorPrevisto = numeroSeguro(previsto);
+  const valorPrevisto = paraNumero(previsto);
 
-  const valorRealizado = numeroSeguro(realizado);
+  const valorRealizado = paraNumero(realizado);
 
   const variacao = valorRealizado - valorPrevisto;
 
@@ -81,9 +73,9 @@ export function calcularVariacao(previsto, realizado) {
 ========================================================= */
 
 export function calcularVariacaoDespesa(previsto, realizado) {
-  const valorPrevisto = numeroSeguro(previsto);
+  const valorPrevisto = paraNumero(previsto);
 
-  const valorRealizado = numeroSeguro(realizado);
+  const valorRealizado = paraNumero(realizado);
 
   const variacao = valorPrevisto - valorRealizado;
 
@@ -313,7 +305,7 @@ const formatadorMoeda = new Intl.NumberFormat("pt-BR", {
 });
 
 export function formatarMoeda(valor) {
-  return formatadorMoeda.format(numeroSeguro(valor));
+  return formatadorMoeda.format(paraNumero(valor));
 }
 
 /* =========================================================
