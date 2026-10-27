@@ -1,3 +1,6 @@
+import { obterDataHoraEmissao } from "@/features/relatorios/exportacao/Comum";
+import { formatarFiltroData } from "@/features/relatorios/pedidos-alterados/formatadoresPedidosAlterados";
+
 /* =========================================================
    EXPORTAÇÃO EXCEL - PEDIDOS ALTERADOS
 
@@ -34,28 +37,6 @@ const CORES = {
   branco: "FFFFFFFF",
   texto: "FF0F172A",
 };
-
-/* =========================================================
-   DATA
-========================================================= */
-
-function formatarFiltroData(valor) {
-  if (!valor) {
-    return "Sem limite";
-  }
-
-  return String(valor).split("-").reverse().join("/");
-}
-
-function obterDataHoraEmissao() {
-  return new Date().toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 /* =========================================================
    NOME DO ARQUIVO

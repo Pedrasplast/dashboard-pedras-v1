@@ -5,7 +5,7 @@ import {
   formatarPercentual,
   formatarPrecoKg,
   formatarQuantidade,
-} from "../utils/formatadores";
+} from "@/features/materia-prima/utils/formatadores";
 
 export default function EntradaLinha({ entrada }) {
   return (

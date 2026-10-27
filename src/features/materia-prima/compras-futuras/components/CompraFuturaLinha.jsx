@@ -9,7 +9,7 @@ import {
   formatarPercentual,
   formatarPrecoKg,
   formatarQuantidade,
-} from "../utils/formatadores";
+} from "@/features/materia-prima/utils/formatadores";
 
 /**
  * Uma linha da tabela.

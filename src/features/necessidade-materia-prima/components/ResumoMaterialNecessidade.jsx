@@ -6,6 +6,7 @@ import {
   formatarMoeda,
   formatarPrecoUnitario,
 } from "../utils/formatadoresNecessidade";
+import { estoqueNegativo } from "@/features/necessidade-materia-prima/utils/calculosNecessidade";
 
 /* ============================================================
    FUNÇÕES AUXILIARES
@@ -31,16 +32,6 @@ function interpretarEstoqueSeguranca(valor) {
   const resultado = Number(normalizado);
 
   return Number.isFinite(resultado) ? resultado : null;
-}
-
-function estoqueNegativo(valor) {
-  return (
-    valor !== null &&
-    valor !== undefined &&
-    valor !== "" &&
-    Number.isFinite(Number(valor)) &&
-    Number(valor) < 0
-  );
 }
 
 /* ============================================================

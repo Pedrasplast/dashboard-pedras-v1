@@ -199,3 +199,47 @@ export function ordenarPedidos(pedidos = []) {
     });
   });
 }
+
+/* =========================================================
+   PEDIDO / ITEM
+========================================================= */
+
+/** Código do pedido de compra no Omie (número > 0) ou null. */
+export function obterCodigoPedidoCompra(pedido) {
+  const codigo = Number(
+    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
+  );
+
+  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
+}
+
+/** Valor do item: valor_total quando informado; senão quantidade × preço unitário. */
+export function obterValorItem(item) {
+  const valorTotal = Number(item?.valor_total);
+
+  if (Number.isFinite(valorTotal)) {
+    return valorTotal;
+  }
+
+  const quantidade = Number(item?.quantidade ?? 0);
+  const precoUnitario = Number(item?.preco_unitario ?? 0);
+
+  return quantidade * precoUnitario;
+}
+
+/** "joao.silva@empresa" → "Joao Silva". Vazio vira "-". */
+export function formatarNomeUsuario(usuario) {
+  const texto = String(usuario ?? "").trim();
+
+  if (!texto) {
+    return "-";
+  }
+
+  const usuarioSemDominio = texto.includes("@") ? texto.split("@")[0] : texto;
+
+  return usuarioSemDominio
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase())
+    .join(" ");
+}

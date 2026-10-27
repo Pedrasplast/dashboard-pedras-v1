@@ -17,8 +17,6 @@ import {
 } from "@/lib/cargaMaquina";
 
 import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
-import { valoresUnicos } from "@/shared/lib/colecoes";
-import { normalizarTexto } from "@/shared/lib/texto";
 import { supabase } from "@/lib/supabaseClient";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
@@ -42,6 +40,12 @@ import LayoutRelatorio from "./components/LayoutRelatorio";
 import PainelRelatorios from "./components/PainelRelatorios";
 
 import "./TelaRelatorios.css";
+import {
+  obterNumeroPedidoVisual,
+  obterNumeroPedidoOriginal,
+} from "@/features/relatorios/utils/Pedidos";
+import { valoresUnicos } from "@/shared/lib/colecoes";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =====================================================
    CONFIGURAÇÃO DA PAGINAÇÃO
@@ -76,29 +80,6 @@ function normalizarListaPedidosFiltro(valor) {
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => normalizarTexto(item));
-}
-
-function obterNumeroPedidoVisual(item) {
-  return String(
-    item?.pedidoExibicao ??
-      item?.pedido_exibicao ??
-      item?.pedido ??
-      item?.numero_pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
-  ).trim();
-}
-
-function obterNumeroPedidoOriginal(item) {
-  return String(
-    item?.pedidoOriginal ??
-      item?.numero_pedido ??
-      item?.pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
-  ).trim();
 }
 
 function pedidoCorrespondeAoFiltro(item, filtroPedidos) {

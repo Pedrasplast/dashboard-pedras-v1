@@ -1,4 +1,8 @@
-import { formatarData, formatarKg, formatarMoeda } from "./formatadores";
+import {
+  formatarData,
+  formatarKg,
+  formatarMoeda,
+} from "@/features/materia-prima/utils/formatadores";
 import { ordenarTexto } from "@/shared/lib/texto";
 
 /* =========================================================

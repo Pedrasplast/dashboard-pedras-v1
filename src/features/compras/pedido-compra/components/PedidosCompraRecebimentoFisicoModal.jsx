@@ -9,34 +9,14 @@ import {
   registrarRecebimentoFisicoItem,
 } from "../services/recebimentoFisico.service";
 import { formatarNumero } from "../utils/pedidosCompra.utils";
+import {
+  obterCodigoPedidoCompra,
+  formatarNomeUsuario,
+} from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
-
-function obterCodigoPedidoCompra(pedido) {
-  const codigo = Number(
-    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
-  );
-
-  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
-}
 
 function rotuloMovimento(tipo) {
   return tipo === "ESTORNO" ? "Estorno" : "Recebimento";
-}
-
-function formatarNomeUsuario(usuario) {
-  const texto = String(usuario ?? "").trim();
-
-  if (!texto) {
-    return "-";
-  }
-
-  const usuarioSemDominio = texto.includes("@") ? texto.split("@")[0] : texto;
-
-  return usuarioSemDominio
-    .split(/[._-]+/)
-    .filter(Boolean)
-    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase())
-    .join(" ");
 }
 
 export default function PedidosCompraRecebimentoFisicoModal({

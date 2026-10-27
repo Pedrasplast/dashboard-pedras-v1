@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import { obterColunasRelatorio } from "../config/Colunas.config";
 import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
 import { LOGO_PROPORCAO, LOGO_RELATORIO } from "./logoRelatorio";
+import { linhaEhTotalGeral } from "@/features/relatorios/exportacao/Comum";
 
 /* Padrão visual dos PDFs — versão 4 (23/10). Só apresentação. */
 const COR = {
@@ -57,15 +58,6 @@ function obterColunasPdf(relatorio) {
   }
 
   return colunas;
-}
-
-function linhaEhTotalGeral(item) {
-  return Object.values(item || {}).some(
-    (valor) =>
-      String(valor ?? "")
-        .trim()
-        .toUpperCase() === "TOTAL GERAL",
-  );
 }
 
 export function gerarPdfRelatorio({ relatorio, dados, textoFiltros }) {

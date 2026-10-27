@@ -16,16 +16,11 @@ import {
 } from "../ocorrenciasParadas.utils";
 
 import "./ModalOcorrenciasParadas.css";
+import { formatarNumero } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
 
 function formatarDuracaoHHMMSS(segundos) {
   const total = Math.max(0, Math.floor(Number(segundos) || 0));
@@ -81,13 +76,6 @@ function ModalOcorrenciasParadas({
       setBusca("");
     }
   }, [aberto, titulo]);
-
-  /* =======================================================
-     MODAL ABERTO
-
-     - ESC fecha
-     - bloqueia scroll da página
-  ======================================================= */
 
   /* =======================================================
      BASE

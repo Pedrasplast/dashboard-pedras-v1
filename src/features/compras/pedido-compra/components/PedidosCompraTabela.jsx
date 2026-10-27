@@ -26,10 +26,14 @@ import {
   QUERY_KEY_RECEBIMENTO_FISICO,
   useResumosRecebimentoFisico,
 } from "../hooks/useResumosRecebimentoFisico";
-import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
 
 import "./PedidosCompraTabela.css";
 import "./PedidosCompraRecebimentoFisico.css";
+import {
+  obterCodigoPedidoCompra,
+  obterValorItem,
+} from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
+import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
 
 function obterNomeCategoria(pedido) {
   return (
@@ -63,28 +67,6 @@ function obterDescricaoItem(item) {
   }
 
   return "Produto não identificado";
-}
-
-function obterValorItem(item) {
-  const valorTotal = Number(item?.valor_total);
-
-  if (Number.isFinite(valorTotal)) {
-    return valorTotal;
-  }
-
-  const quantidade = Number(item?.quantidade ?? 0);
-
-  const precoUnitario = Number(item?.preco_unitario ?? 0);
-
-  return quantidade * precoUnitario;
-}
-
-function obterCodigoPedidoCompra(pedido) {
-  const codigo = Number(
-    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
-  );
-
-  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
 }
 
 function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {

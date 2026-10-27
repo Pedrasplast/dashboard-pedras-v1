@@ -3,6 +3,7 @@ import { saveAs } from "file-saver";
 
 import { obterColunasExportacao } from "./ColunasExportacao";
 import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
+import { linhaEhTotalGeral, obterDataHoraEmissao } from "@/features/relatorios/exportacao/Comum";
 
 /* =========================================================
    CORES
@@ -23,15 +24,6 @@ const CORES = {
   branco: "FFFFFFFF",
   texto: "FF0F172A",
 };
-
-function linhaEhTotalGeral(item) {
-  return Object.values(item || {}).some(
-    (valor) =>
-      String(valor ?? "")
-        .trim()
-        .toUpperCase() === "TOTAL GERAL",
-  );
-}
 
 /* =========================================================
    ALINHAMENTOS
@@ -65,17 +57,6 @@ const COLUNAS_LARGAS = new Set([
 /* =========================================================
    AUXILIARES
 ========================================================= */
-
-function obterDataHoraEmissao() {
-  return new Date().toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function calcularLarguraColuna(coluna) {
   if (coluna.larguraExcel) {

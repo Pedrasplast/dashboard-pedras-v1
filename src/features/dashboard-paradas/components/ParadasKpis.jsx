@@ -9,16 +9,7 @@ import {
 } from "lucide-react";
 
 import "./ParadasKpis.css";
-
-/* =========================================================
-   FORMATAÇÕES
-========================================================= */
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
+import { formatarNumero } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    DECOMPOR DURAÇÃO

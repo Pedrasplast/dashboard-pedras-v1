@@ -8,18 +8,9 @@ import {
   formatarConsumo,
   formatarMoeda,
 } from "../utils/formatadoresNecessidade";
+import { estoqueNegativo } from "@/features/necessidade-materia-prima/utils/calculosNecessidade";
 
 const PRODUTOS_POR_PAGINA = 8;
-
-function estoqueNegativo(valor) {
-  return (
-    valor !== null &&
-    valor !== undefined &&
-    valor !== "" &&
-    Number.isFinite(Number(valor)) &&
-    Number(valor) < 0
-  );
-}
 
 function ProdutosDoMaterial({ material, produtos }) {
   const [paginaAtual, setPaginaAtual] = useState(1);

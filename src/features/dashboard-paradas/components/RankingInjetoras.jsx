@@ -7,23 +7,10 @@ import DashboardParadasCard from "./DashboardParadasCard";
 import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 
 import "./RankingInjetoras.css";
-
-/* =========================================================
-   FORMATAÇÕES
-========================================================= */
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
-
-function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-}
+import {
+  formatarNumero,
+  formatarPercentual,
+} from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    RANKING

@@ -24,6 +24,10 @@ import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 import { normalizarTextoOcorrencia } from "../ocorrenciasParadas.utils";
 
 import "./ParetoParadas.css";
+import {
+  formatarNumero,
+  formatarPercentual,
+} from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    CONFIGURAÇÃO
@@ -34,19 +38,6 @@ const QUANTIDADE_PRINCIPAIS = 9;
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
-
-function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-}
 
 function formatarHorasEixo(valor) {
   return `${Number(valor || 0).toLocaleString("pt-BR", {

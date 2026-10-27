@@ -1,4 +1,5 @@
 import { COR_PDF, desenharCabecalhoPdf, desenharRodapePdf } from "../exportacao/padraoPdf";
+import { formatarFiltroData } from "@/features/relatorios/pedidos-alterados/formatadoresPedidosAlterados";
 
 /* =========================================================
    EXPORTAÇÃO PDF - PEDIDOS ALTERADOS
@@ -11,14 +12,6 @@ import { COR_PDF, desenharCabecalhoPdf, desenharRodapePdf } from "../exportacao/
         -> ANTES
         -> DEPOIS
 ========================================================= */
-
-function formatarFiltroData(valor) {
-  if (!valor) {
-    return "Sem limite";
-  }
-
-  return String(valor).split("-").reverse().join("/");
-}
 
 function obterNomeArquivo() {
   const data = new Date().toISOString().slice(0, 10);

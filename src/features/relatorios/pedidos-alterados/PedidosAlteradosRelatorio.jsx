@@ -17,10 +17,11 @@ import { supabase } from "@/lib/supabaseClient";
 import Paginacao from "@/components/paginacao/Paginacao";
 
 import LayoutRelatorio from "../components/LayoutRelatorio";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarDataISOLocal, formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
 
 import "./PedidosAlteradosRelatorio.css";
+import { obterTimestampCriacao } from "@/features/pedidos/numeroPedidoExibicao";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataISOLocal, formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -37,16 +38,6 @@ const ITENS_POR_PAGINA = 8;
 
 const TAMANHO_PAGINA_NUMERACAO = 1000;
 
-function obterTimestampCriacaoPedido(valor) {
-  if (!valor) {
-    return Number.POSITIVE_INFINITY;
-  }
-
-  const timestamp = new Date(valor).getTime();
-
-  return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
-}
-
 function criarMapaMetadadosPedidoExibicao(registros) {
   const pedidosPorCodigo = new Map();
 
@@ -59,7 +50,7 @@ function criarMapaMetadadosPedidoExibicao(registros) {
     }
 
     const criadoEmOriginal = registro?.criado_em ?? null;
-    const criadoEm = obterTimestampCriacaoPedido(criadoEmOriginal);
+    const criadoEm = obterTimestampCriacao(criadoEmOriginal);
     const existente = pedidosPorCodigo.get(codigo);
 
     if (!existente || criadoEm < existente.criadoEm) {

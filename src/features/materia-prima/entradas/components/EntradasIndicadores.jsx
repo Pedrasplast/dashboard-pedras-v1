@@ -1,4 +1,4 @@
-import { formatarKg, formatarMoeda } from "../utils/formatadores";
+import { formatarKg, formatarMoeda } from "@/features/materia-prima/utils/formatadores";
 
 export default function EntradasIndicadores({ indicadores }) {
   return (

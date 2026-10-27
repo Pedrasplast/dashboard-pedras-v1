@@ -32,11 +32,12 @@ import { supabase } from "@/lib/supabaseClient";
 import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
+
+import "./Home.css";
+import { obterChavePedido } from "@/features/pedidos/utils/pedidos.utils";
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { obterHoje, converterData, formatarHora } from "@/shared/lib/datas";
-
-import "./Home.css";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -121,21 +122,6 @@ function formatarDataHora(dataTexto) {
 
     minute: "2-digit",
   });
-}
-
-/* =========================================================
-   PEDIDOS
-========================================================= */
-
-function obterChavePedido(pedido) {
-  return String(
-    pedido?.codigoPedido ||
-      pedido?.codigo_pedido ||
-      pedido?.pedido ||
-      pedido?.numero_pedido ||
-      pedido?.id ||
-      "",
-  );
 }
 
 /* =========================================================

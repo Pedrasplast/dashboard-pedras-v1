@@ -29,6 +29,10 @@ import {
 } from "../utils/pedidosCompra.utils";
 
 import "./PedidosCompraCardModal.css";
+import {
+  obterValorItem,
+  formatarNomeUsuario,
+} from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 
 const CONFIGURACOES = Object.freeze({
   abertos: {
@@ -167,19 +171,6 @@ function obterCodigoProduto(item) {
 
 function obterDescricaoProduto(item) {
   return String(item?.descricao ?? "").trim() || "Produto não identificado";
-}
-
-function obterValorItem(item) {
-  const valorTotal = Number(item?.valor_total);
-
-  if (Number.isFinite(valorTotal)) {
-    return valorTotal;
-  }
-
-  const quantidade = Number(item?.quantidade ?? 0);
-  const precoUnitario = Number(item?.preco_unitario ?? 0);
-
-  return quantidade * precoUnitario;
 }
 
 function obterDocumentoId(documento) {
@@ -574,22 +565,6 @@ function formatarDataHoraRecebimento(valor) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(data);
-}
-
-function formatarNomeUsuario(usuario) {
-  const texto = String(usuario ?? "").trim();
-
-  if (!texto) {
-    return "-";
-  }
-
-  const usuarioSemDominio = texto.includes("@") ? texto.split("@")[0] : texto;
-
-  return usuarioSemDominio
-    .split(/[._-]+/)
-    .filter(Boolean)
-    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase())
-    .join(" ");
 }
 
 function TabelaRecebimentosFisicos({ recebimentos, documentosExpandidos, onAlternarItens }) {

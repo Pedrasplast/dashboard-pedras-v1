@@ -195,3 +195,14 @@ export function consolidarNecessidade(dados, ajustes = {}) {
     })
     .sort((a, b) => a.material.localeCompare(b.material, "pt-BR"));
 }
+
+/** Verdadeiro só para número finito menor que zero (vazio não conta). */
+export function estoqueNegativo(valor) {
+  return (
+    valor !== null &&
+    valor !== undefined &&
+    valor !== "" &&
+    Number.isFinite(Number(valor)) &&
+    Number(valor) < 0
+  );
+}

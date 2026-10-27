@@ -3,12 +3,16 @@ import { FiFilter, FiX } from "react-icons/fi";
 
 import CampoFiltro from "@/components/filtros/CampoFiltro";
 import Filtros from "@/components/filtros/Filtros";
-import { compararPtBR, valoresUnicosOrdenados } from "@/shared/lib/colecoes";
-import { normalizarTexto } from "@/shared/lib/texto";
 
 import { obterDataPedidoRelatorio } from "./PedidosRelatorios";
 
 import "./FiltrosPedidosRelatorio.css";
+import {
+  obterNumeroPedidoVisual,
+  obterNumeroPedidoOriginal,
+} from "@/features/relatorios/utils/Pedidos";
+import { compararPtBR, valoresUnicosOrdenados } from "@/shared/lib/colecoes";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    FILTROS DOS RELATÓRIOS DE PEDIDOS
@@ -43,29 +47,6 @@ const VALORES_PADRAO_FILTROS_PEDIDOS = Object.freeze({
 
 function obterCodigoProduto(item) {
   return String(item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "").trim();
-}
-
-function obterNumeroPedidoVisual(item) {
-  return String(
-    item?.pedidoExibicao ??
-      item?.pedido_exibicao ??
-      item?.pedido ??
-      item?.numero_pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
-  ).trim();
-}
-
-function obterNumeroPedidoOriginal(item) {
-  return String(
-    item?.pedidoOriginal ??
-      item?.numero_pedido ??
-      item?.pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
-  ).trim();
 }
 
 function normalizarListaPedidosFiltro(valor) {

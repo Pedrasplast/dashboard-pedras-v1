@@ -1,4 +1,4 @@
-import { formatarData } from "./formatadores";
+import { formatarData } from "@/features/materia-prima/utils/formatadores";
 import { ordenarTexto } from "@/shared/lib/texto";
 
 /* =========================================================

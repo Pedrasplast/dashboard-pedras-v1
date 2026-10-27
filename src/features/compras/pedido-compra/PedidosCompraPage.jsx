@@ -27,10 +27,11 @@ import { usePedidosCompra } from "./hooks/usePedidosCompra";
 import { useResumosRecebimentoFisico } from "./hooks/useResumosRecebimentoFisico";
 
 import { useRecebimentosFisicosUltimos7Dias } from "./hooks/useRecebimentosFisicosUltimos7Dias";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { converterDataLocal, obterHoje } from "@/shared/lib/datas";
 
 import "./PedidosCompraPage.css";
+import { obterCodigoPedidoCompra } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { converterDataLocal, obterHoje } from "@/shared/lib/datas";
 
 const FILTROS_INICIAIS = Object.freeze({
   pesquisa: "",
@@ -168,14 +169,6 @@ function documentoEstaNoPeriodo(documento, dataInicio, dataFim) {
   }
 
   return true;
-}
-
-function obterCodigoPedidoCompra(pedido) {
-  const codigo = Number(
-    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
-  );
-
-  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
 }
 
 function obterSituacaoRecebimentoFisicoVisual(pedido, resumoManual) {

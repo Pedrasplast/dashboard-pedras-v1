@@ -24,6 +24,7 @@ import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 import { normalizarTextoOcorrencia, obterMotivoRegistro } from "../ocorrenciasParadas.utils";
 
 import "./CriticidadeParadas.css";
+import { formatarNumero } from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -74,12 +75,6 @@ const QUADRANTES = Object.freeze({
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
 
 function formatarHoras(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", {

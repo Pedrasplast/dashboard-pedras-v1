@@ -1,6 +1,6 @@
 const TAMANHO_PAGINA_NUMERACAO = 1000;
 
-function obterTimestampCriacao(valor) {
+export function obterTimestampCriacao(valor) {
   if (!valor) {
     return Number.POSITIVE_INFINITY;
   }

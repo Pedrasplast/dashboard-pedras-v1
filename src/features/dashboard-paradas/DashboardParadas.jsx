@@ -20,23 +20,10 @@ import TopParadas from "./components/TopParadas";
 import useDashboardParadas, { FILTROS_INICIAIS_PARADAS } from "./useDashboardParadas";
 
 import "./DashboardParadas.css";
-
-/* =========================================================
-   FORMATAÇÕES
-========================================================= */
-
-function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-}
-
-function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
-}
+import {
+  formatarNumero,
+  formatarPercentual,
+} from "@/features/dashboard-paradas/dashboardParadas.formatadores";
 
 /* =========================================================
    DASHBOARD DE PARADAS

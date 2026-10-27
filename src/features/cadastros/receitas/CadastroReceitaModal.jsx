@@ -3,6 +3,7 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { AlertTriangle, FlaskConical, Plus, Save, Trash2, X } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
+import { formatarPercentual } from "@/features/cadastros/utils/cadastrosFormatadores";
 
 function criarChaveItem() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -16,19 +17,6 @@ function converterNumero(valor) {
   );
 
   return Number.isFinite(numero) ? numero : 0;
-}
-
-function formatarPercentual(valor) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0%";
-  }
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 4,
-  })}%`;
 }
 
 function montarItensIniciais(receita) {
