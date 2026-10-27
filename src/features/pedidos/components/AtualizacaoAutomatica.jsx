@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Clock3 } from "lucide-react";
 
 import { obterProximaSincronizacaoPedidos } from "../utils/proximaSincronizacao";
-import { formatarHora, formatarDataHora } from "@/shared/lib/datas";
+import { formatarHora, formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* =========================================================
    ATUALIZACAO AUTOMATICA
@@ -64,10 +64,10 @@ export default function AtualizacaoAutomatica({ atualizadoEm }) {
   ======================================================= */
 
   const tooltip = atualizadoEm
-    ? `Última sincronização: ${formatarDataHora(
+    ? `Última sincronização: ${formatarDataHoraFrase(
         atualizadoEm,
-      )} | Próxima execução automática: ${formatarDataHora(proximaAtualizacao)}`
-    : `Aguardando primeira sincronização. Próxima execução automática: ${formatarDataHora(
+      )} | Próxima execução automática: ${formatarDataHoraFrase(proximaAtualizacao)}`
+    : `Aguardando primeira sincronização. Próxima execução automática: ${formatarDataHoraFrase(
         proximaAtualizacao,
       )}`;
 

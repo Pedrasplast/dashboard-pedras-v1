@@ -6,7 +6,7 @@ import {
 } from "../exportacao/padraoExcel";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
-import { formatarDataHora, obterHojeISO } from "@/shared/lib/datas";
+import { formatarDataHora, obterHojeISO, formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* =========================================================
    DATAS
@@ -256,7 +256,7 @@ export async function exportarExcelPedidosCompraAlterados(pedidos, periodo, refe
   const linhaCabecalhoResumo = escreverTituloExcel(resumo, {
     titulo: "Pedidos de Compra Alterados",
     categoria: "Compras",
-    informacoes: [`Período: ${periodo} · Gerado em ${formatarDataHora(new Date())}`],
+    informacoes: [`Período: ${periodo} · Gerado em ${formatarDataHoraFrase(new Date())}`],
     totalColunas: COLUNAS_RESUMO.length,
   });
   resumo.getRow(linhaCabecalhoResumo).values = COLUNAS_RESUMO;

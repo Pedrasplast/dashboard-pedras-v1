@@ -1,11 +1,11 @@
 import { Clock3 } from "lucide-react";
-import { formatarDataHora, formatarHora } from "@/shared/lib/datas";
+import { formatarHora, formatarDataHoraFrase } from "@/shared/lib/datas";
 
 import "./PedidosCompraAtualizacao.css";
 
 export default function PedidosCompraAtualizacao({ atualizadoEm, isFetching }) {
   const titulo = atualizadoEm
-    ? `Última sincronização dos pedidos de compra: ${formatarDataHora(atualizadoEm)}.`
+    ? `Última sincronização dos pedidos de compra: ${formatarDataHoraFrase(atualizadoEm)}.`
     : "Aguardando a primeira leitura dos pedidos de compra.";
 
   return (

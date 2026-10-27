@@ -134,32 +134,61 @@ export function formatarHora(valor) {
   return data ? data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "-";
 }
 
-/** "DD/MM/AAAA, HH:MM" no fuso local. Vazio ou inválido vira "-". */
-export function formatarDataHora(valor) {
+/* ---------------------------------------------------------
+   Data e hora — padrão do sistema (fuso local, 24h):
+   tabelas, cards e exportações: "27/10/2026 08:05"
+   frases ("Atualizado em ..."):  "27/10/2026 às 08:05"
+   registros de movimentação:     "27/10/2026 08:05:09"
+--------------------------------------------------------- */
+
+const OPCOES_DATA_HORA = {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+};
+
+const formatadorDataHora = new Intl.DateTimeFormat("pt-BR", OPCOES_DATA_HORA);
+const formatadorDataHoraSegundos = new Intl.DateTimeFormat("pt-BR", {
+  ...OPCOES_DATA_HORA,
+  second: "2-digit",
+});
+
+function partesDataHora(valor, formatador) {
   if (!valor) {
-    return "-";
+    return null;
   }
 
   const data = paraDataValida(valor);
 
-  return data
-    ? data.toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "-";
-}
-
-/** "DD/MM/AAAA, HH:MM:SS" no fuso local. Vazio ou inválido vira "-". */
-export function formatarDataHoraCompleta(valor) {
-  if (!valor) {
-    return "-";
+  if (!data) {
+    return null;
   }
 
-  const data = new Date(valor);
+  return Object.fromEntries(
+    formatador.formatToParts(data).map((parte) => [parte.type, parte.value]),
+  );
+}
 
-  return Number.isNaN(data.getTime()) ? "-" : data.toLocaleString("pt-BR");
+/** "27/10/2026 08:05". Vazio ou inválido vira "-". */
+export function formatarDataHora(valor) {
+  const p = partesDataHora(valor, formatadorDataHora);
+
+  return p ? `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}` : "-";
+}
+
+/** "27/10/2026 às 08:05", para usar dentro de frases. Vazio ou inválido vira "-". */
+export function formatarDataHoraFrase(valor) {
+  const p = partesDataHora(valor, formatadorDataHora);
+
+  return p ? `${p.day}/${p.month}/${p.year} às ${p.hour}:${p.minute}` : "-";
+}
+
+/** "27/10/2026 08:05:09", para registros em que os segundos importam. */
+export function formatarDataHoraComSegundos(valor) {
+  const p = partesDataHora(valor, formatadorDataHoraSegundos);
+
+  return p ? `${p.day}/${p.month}/${p.year} ${p.hour}:${p.minute}:${p.second}` : "-";
 }

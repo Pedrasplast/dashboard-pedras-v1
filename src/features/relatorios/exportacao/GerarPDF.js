@@ -3,6 +3,7 @@ import { obterColunasRelatorio } from "../config/Colunas.config";
 import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
 import { LOGO_PROPORCAO, LOGO_RELATORIO } from "./logoRelatorio";
 import { linhaEhTotalGeral } from "@/features/relatorios/exportacao/Comum";
+import { formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* Padrão visual dos PDFs — versão 4 (23/10). Só apresentação. */
 const COR = {
@@ -99,14 +100,7 @@ export function gerarPdfRelatorio({ relatorio, dados, textoFiltros }) {
 
   // CABEÇALHO: logo | título + filtros | data de geração; linha verde
 
-  const agora = new Date();
-  const textoEmissao = `Gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString(
-    "pt-BR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  )}`;
+  const textoEmissao = `Gerado em ${formatarDataHoraFrase(new Date())}`;
 
   const alturaLogo = 7;
   const larguraLogo = alturaLogo * LOGO_PROPORCAO;

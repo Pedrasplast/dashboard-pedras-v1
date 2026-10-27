@@ -1,6 +1,7 @@
 import { paraNumero } from "@/shared/lib/numeros";
 import { paraTexto, normalizarTexto } from "@/shared/lib/texto";
 import { formatarNumeroPtBR } from "@/shared/lib/formatar";
+import { formatarDataHora as formatarDataHoraPadrao } from "@/shared/lib/datas";
 
 /* =========================================================
    ESTOQUE - UTILITÁRIOS
@@ -30,25 +31,8 @@ export function formatarNumero(valor, casasMaximas = 3) {
 ========================================================= */
 
 export function formatarDataHora(valor) {
-  if (!valor) {
-    return "Aguardando sincronização";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "Aguardando sincronização";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-
-    month: "2-digit",
-
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
+  const texto = formatarDataHoraPadrao(valor);
+  return texto === "-" ? "Aguardando sincronização" : texto;
 }
 
 /* =========================================================

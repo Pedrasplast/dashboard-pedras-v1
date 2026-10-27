@@ -33,6 +33,7 @@ import {
   formatarNomeUsuario,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
+import { formatarDataHora } from "@/shared/lib/datas";
 
 const CONFIGURACOES = Object.freeze({
   abertos: {
@@ -549,26 +550,6 @@ function TabelaRequisicoes({ requisicoes, documentosExpandidos, onAlternarItens 
   );
 }
 
-function formatarDataHoraRecebimento(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(data);
-}
-
 function TabelaRecebimentosFisicos({ recebimentos, documentosExpandidos, onAlternarItens }) {
   const gruposPorPedido = new Map();
 
@@ -596,7 +577,7 @@ function TabelaRecebimentosFisicos({ recebimentos, documentosExpandidos, onAlter
           recebimento.id ?? `${chavePedido}-${recebimento.codigo_item}-${recebimento.registrado_em}`
         }
       >
-        <td>{formatarDataHoraRecebimento(recebimento.registrado_em)}</td>
+        <td>{formatarDataHora(recebimento.registrado_em)}</td>
 
         <td>
           {mostrarPedido ? (

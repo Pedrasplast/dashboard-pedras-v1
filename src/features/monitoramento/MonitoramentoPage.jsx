@@ -15,6 +15,7 @@ import { ROTULO_NIVEL_BANCO, ROTULO_SITUACAO, SITUACAO } from "./constants/monit
 
 import "./Monitoramento.css";
 import { formatarDuasCasas } from "@/shared/lib/formatar";
+import { formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* =========================================================
    MONITORAMENTO DAS ROTINAS (somente administradores)
@@ -91,7 +92,7 @@ export default function MonitoramentoPage() {
           {banco && (
             <div
               className={`mon-resumo__item mon-banco mon-banco--${String(banco.nivel).toLowerCase()}`}
-              title={`Medido ${formatarDataHora(banco.atualizado_em)}. Limite do plano free: ${formatarMegabytes(banco.limite_bytes)}.`}
+              title={`Medido em ${formatarDataHoraFrase(banco.atualizado_em)}. Limite do plano free: ${formatarMegabytes(banco.limite_bytes)}.`}
             >
               <strong>{formatarDuasCasas(Number(banco.percentual))}%</strong>
               <span>
@@ -174,7 +175,7 @@ export default function MonitoramentoPage() {
                       {rotina.ultimo_sucesso_em && (
                         <span>
                           {" "}
-                          · último sucesso {formatarDataHora(rotina.ultimo_sucesso_em)} (
+                          · último sucesso em {formatarDataHoraFrase(rotina.ultimo_sucesso_em)} (
                           {tempoDecorrido(rotina.ultimo_sucesso_em)})
                         </span>
                       )}

@@ -37,7 +37,12 @@ import "./Home.css";
 import { obterChavePedido } from "@/features/pedidos/utils/pedidos.utils";
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
-import { obterHoje, converterData, formatarHora } from "@/shared/lib/datas";
+import {
+  obterHoje,
+  converterData,
+  formatarHora,
+  formatarDataHora as formatarDataHoraPadrao,
+} from "@/shared/lib/datas";
 import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 
 /* =========================================================
@@ -99,27 +104,8 @@ function formatarPercentual(valor) {
 ========================================================= */
 
 function formatarDataHora(dataTexto) {
-  if (!dataTexto) {
-    return "Ainda não atualizado";
-  }
-
-  const data = new Date(dataTexto);
-
-  if (Number.isNaN(data.getTime())) {
-    return "Ainda não atualizado";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-
-    month: "2-digit",
-
-    year: "numeric",
-
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
+  const texto = formatarDataHoraPadrao(dataTexto);
+  return texto === "-" ? "Ainda não atualizado" : texto;
 }
 
 /* =========================================================

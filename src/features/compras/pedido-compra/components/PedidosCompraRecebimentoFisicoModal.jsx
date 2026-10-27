@@ -13,7 +13,7 @@ import {
   obterCodigoPedidoCompra,
   formatarNomeUsuario,
 } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
-import { formatarDataHoraCompleta } from "@/shared/lib/datas";
+import { formatarDataHoraComSegundos } from "@/shared/lib/datas";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
 
 function rotuloMovimento(tipo) {
@@ -471,7 +471,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                       <small>
                         <Clock3 size={13} />
 
-                        {formatarDataHoraCompleta(movimento.registrado_em)}
+                        {formatarDataHoraComSegundos(movimento.registrado_em)}
 
                         {" · "}
 

@@ -9,13 +9,14 @@ import {
   decidirPesoSuspeito,
   desfazerDecisaoPeso,
 } from "../services/necessidadeMateriaPrima.service";
+import { formatarDataHora } from "@/shared/lib/datas";
 
 const PENDENCIAS_POR_PAGINA = 8;
 
 /* Quem decidiu e quando (dica ao passar o mouse). */
 function autoria(decisao) {
   if (!decisao) return undefined;
-  const quando = decisao.decidido_em ? new Date(decisao.decidido_em).toLocaleString("pt-BR") : "";
+  const quando = decisao.decidido_em ? formatarDataHora(decisao.decidido_em) : "";
   return [decisao.decidido_por_email, quando].filter(Boolean).join(" · ") || undefined;
 }
 

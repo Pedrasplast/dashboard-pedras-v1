@@ -6,7 +6,8 @@ import {
   formatarDataBR,
   formatarDataBROuOriginal,
   formatarDataHora,
-  formatarDataHoraCompleta,
+  formatarDataHoraComSegundos,
+  formatarDataHoraFrase,
   formatarDataISOLocal,
   formatarHora,
   obterHoje,
@@ -51,12 +52,18 @@ describe("formatação", () => {
   it("formatarHora e formatarDataHora tratam vazio e inválido", () => {
     expect(formatarHora(null)).toBe("-");
     expect(formatarDataHora("abc")).toBe("-");
-    expect(formatarDataHora(new Date(2026, 9, 27, 8, 5))).toBe("27/10/2026, 08:05");
+    expect(formatarDataHora(new Date(2026, 9, 27, 8, 5))).toBe("27/10/2026 08:05");
   });
 
-  it("data e hora completas no fuso local", () => {
-    expect(formatarDataHoraCompleta(new Date(2026, 9, 27, 8, 5, 9))).toBe("27/10/2026, 08:05:09");
-    expect(formatarDataHoraCompleta(null)).toBe("-");
-    expect(formatarDataHoraCompleta("abc")).toBe("-");
+  it("variações do padrão: frase e com segundos", () => {
+    const data = new Date(2026, 9, 27, 8, 5, 9);
+    expect(formatarDataHoraFrase(data)).toBe("27/10/2026 às 08:05");
+    expect(formatarDataHoraComSegundos(data)).toBe("27/10/2026 08:05:09");
+    expect(formatarDataHoraComSegundos(null)).toBe("-");
+    expect(formatarDataHoraFrase("abc")).toBe("-");
+  });
+
+  it("meia-noite aparece como 00:00, não 24:00", () => {
+    expect(formatarDataHora(new Date(2026, 9, 27, 0, 0))).toBe("27/10/2026 00:00");
   });
 });

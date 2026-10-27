@@ -2,7 +2,7 @@ import { CheckCircle2, Clock3, TriangleAlert } from "lucide-react";
 
 import { memo, useEffect, useMemo, useState } from "react";
 
-import { FUSO_BRASILIA } from "@/shared/lib/datas";
+import { FUSO_BRASILIA, formatarDataHoraFrase } from "@/shared/lib/datas";
 
 import "./FinanceiroStatusSincronizacao.css";
 
@@ -65,28 +65,7 @@ function minutosDoDia(partes) {
 }
 
 function formatarDataHora(valor) {
-  if (!valor) {
-    return "Nunca sincronizado";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  const partes = new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(data);
-
-  const mapa = Object.fromEntries(partes.map((parte) => [parte.type, parte.value]));
-
-  return `${mapa.day}/${mapa.month}/${mapa.year} às ${mapa.hour}:${mapa.minute}`;
+  return valor ? formatarDataHoraFrase(valor) : "Nunca sincronizado";
 }
 
 /* =========================================================

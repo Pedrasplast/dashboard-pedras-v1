@@ -5,6 +5,7 @@ import {
   ORDEM_SITUACAO,
   NIVEIS_BANCO_ALERTA,
 } from "../constants/monitoramento.constants";
+import { formatarDataHora as formatarDataHoraPadrao } from "@/shared/lib/datas";
 
 /* =========================================================
    MONITORAMENTO — REGRAS DE EXIBIÇÃO (puras, testadas)
@@ -161,17 +162,10 @@ export function prepararRotinas(lista) {
    Datas
 --------------------------------------------------------- */
 
-const formatoDataHora = new Intl.DateTimeFormat("pt-BR", {
-  day: "2-digit",
-  month: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
+/** Padrão do sistema; vazio ou inválido aparece como "—" nesta tela. */
 export function formatarDataHora(valor) {
-  if (!valor) return "—";
-  const data = new Date(valor);
-  return Number.isNaN(data.getTime()) ? "—" : formatoDataHora.format(data);
+  const texto = formatarDataHoraPadrao(valor);
+  return texto === "-" ? "—" : texto;
 }
 
 export function tempoDecorrido(valor, agora = new Date()) {

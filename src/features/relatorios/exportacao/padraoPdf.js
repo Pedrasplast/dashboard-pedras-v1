@@ -1,4 +1,5 @@
 import { LOGO_PROPORCAO, LOGO_RELATORIO } from "./logoRelatorio";
+import { formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* =========================================================
    PADRÃO VISUAL DOS PDFs DE RELATÓRIO — versão 4 (23/10)
@@ -22,11 +23,7 @@ export const COR_PDF = Object.freeze({
 });
 
 function textoEmissao() {
-  const agora = new Date();
-  return `Gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  })}`;
+  return `Gerado em ${formatarDataHoraFrase(new Date())}`;
 }
 
 /**
