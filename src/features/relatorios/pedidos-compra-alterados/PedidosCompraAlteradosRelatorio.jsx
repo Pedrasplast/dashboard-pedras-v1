@@ -19,8 +19,8 @@ import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistori
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
 import { FUSO_BRASILIA, formatarDataHora } from "@/shared/lib/datas";
 
+// Usa as mesmas classes e o mesmo CSS do relatório de Pedidos Alterados.
 import "../pedidos-alterados/PedidosAlteradosRelatorio.css";
-import "./PedidosCompraAlteradosRelatorio.css";
 
 /* =========================================================
    CONFIGURAÇÕES

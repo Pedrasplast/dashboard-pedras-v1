@@ -179,13 +179,6 @@
    LISTA DE CATEGORIAS
 ========================================================= */
 
-.relatorios-lista {
-  display: flex;
-  flex-direction: column;
-
-  gap: 28px;
-}
-
 .relatorios-categoria {
   width: 100%;
 }
@@ -1771,29 +1764,6 @@
   font-size: 0.72rem;
   color: var(--color-text-muted);
 }
-.relatorios-categorias-filtro {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.relatorios-categorias-filtro button {
-  cursor: pointer;
-  border: 1px solid #dbe3ee;
-  border-radius: 8px;
-  padding: 8px 12px;
-  background: white;
-  font: inherit;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-text-strong);
-}
-.relatorios-categorias-filtro button.ativa,
-.relatorios-categorias-filtro button[aria-pressed="true"] {
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  border-color: var(--color-primary);
-}
-.relatorios-categorias-filtro button:focus-visible,
 .relatorios-busca input:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
