@@ -227,8 +227,7 @@ export default function DefinirSenhaPage() {
         );
       }
     } else if (convite.tipo === "invite" && convite.accessToken && convite.refreshToken) {
-
-    /* =================================================
+      /* =================================================
        CENÁRIO 2: LINK COM TOKENS DE SESSÃO
     ================================================= */
       limparCredenciaisUrl();
@@ -249,8 +248,7 @@ export default function DefinirSenhaPage() {
         throw new Error("Não foi possível estabelecer a sessão do convite.");
       }
     } else if (!convite.possuiCredenciais) {
-
-    /* =================================================
+      /* =================================================
        CENÁRIO 3: PÁGINA RECARREGADA
 
        O convite já foi validado anteriormente,
@@ -271,8 +269,7 @@ export default function DefinirSenhaPage() {
         throw new Error("Abra o convite de primeiro acesso fornecido pelo administrador.");
       }
     } else {
-
-    /* =================================================
+      /* =================================================
        LINK INCOMPLETO OU INVÁLIDO
     ================================================= */
       limparCredenciaisUrl();
