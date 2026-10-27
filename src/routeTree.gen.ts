@@ -20,7 +20,6 @@ import { Route as ComprasFuturasRouteImport } from './routes/compras-futuras'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardMateriaPrimaRouteImport } from './routes/dashboard-materia-prima'
 import { Route as DashboardParadasRouteImport } from './routes/dashboard-paradas'
-import { Route as DashboardProdutividadeRouteImport } from './routes/dashboard-produtividade'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as EntradasMateriaPrimaRouteImport } from './routes/entradas-materia-prima'
 import { Route as EstoqueRouteImport } from './routes/estoque'
@@ -90,11 +89,6 @@ const DashboardMateriaPrimaRoute = DashboardMateriaPrimaRouteImport.update({
 const DashboardParadasRoute = DashboardParadasRouteImport.update({
   id: '/dashboard-paradas',
   path: '/dashboard-paradas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardProdutividadeRoute = DashboardProdutividadeRouteImport.update({
-  id: '/dashboard-produtividade',
-  path: '/dashboard-produtividade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DefinirSenhaRoute = DefinirSenhaRouteImport.update({
@@ -187,7 +181,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
-  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entradas-materia-prima': typeof EntradasMateriaPrimaRoute
   '/estoque': typeof EstoqueRoute
@@ -216,7 +209,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
-  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entradas-materia-prima': typeof EntradasMateriaPrimaRoute
   '/estoque': typeof EstoqueRoute
@@ -246,7 +238,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/dashboard-materia-prima': typeof DashboardMateriaPrimaRoute
   '/dashboard-paradas': typeof DashboardParadasRoute
-  '/dashboard-produtividade': typeof DashboardProdutividadeRoute
   '/definir-senha': typeof DefinirSenhaRoute
   '/entradas-materia-prima': typeof EntradasMateriaPrimaRoute
   '/estoque': typeof EstoqueRoute
@@ -277,7 +268,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
-    | '/dashboard-produtividade'
     | '/definir-senha'
     | '/entradas-materia-prima'
     | '/estoque'
@@ -306,7 +296,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
-    | '/dashboard-produtividade'
     | '/definir-senha'
     | '/entradas-materia-prima'
     | '/estoque'
@@ -335,7 +324,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard-materia-prima'
     | '/dashboard-paradas'
-    | '/dashboard-produtividade'
     | '/definir-senha'
     | '/entradas-materia-prima'
     | '/estoque'
@@ -365,7 +353,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DashboardMateriaPrimaRoute: typeof DashboardMateriaPrimaRoute
   DashboardParadasRoute: typeof DashboardParadasRoute
-  DashboardProdutividadeRoute: typeof DashboardProdutividadeRoute
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   EntradasMateriaPrimaRoute: typeof EntradasMateriaPrimaRoute
   EstoqueRoute: typeof EstoqueRoute
@@ -460,13 +447,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard-paradas'
       fullPath: '/dashboard-paradas'
       preLoaderRoute: typeof DashboardParadasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard-produtividade': {
-      id: '/dashboard-produtividade'
-      path: '/dashboard-produtividade'
-      fullPath: '/dashboard-produtividade'
-      preLoaderRoute: typeof DashboardProdutividadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/definir-senha': {
@@ -589,7 +569,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DashboardMateriaPrimaRoute: DashboardMateriaPrimaRoute,
   DashboardParadasRoute: DashboardParadasRoute,
-  DashboardProdutividadeRoute: DashboardProdutividadeRoute,
   DefinirSenhaRoute: DefinirSenhaRoute,
   EntradasMateriaPrimaRoute: EntradasMateriaPrimaRoute,
   EstoqueRoute: EstoqueRoute,

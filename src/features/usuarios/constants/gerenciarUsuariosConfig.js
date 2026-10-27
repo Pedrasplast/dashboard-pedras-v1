@@ -59,16 +59,6 @@ export const TELAS_SISTEMA = Object.freeze([
   },
 
   {
-    chave: "dashboard_produtividade",
-    nome: "Produtividade",
-    rota: "/dashboard-produtividade",
-    ordem: 4,
-    ativo: true,
-    modulo: "dashboards",
-    gerenciavel: true,
-  },
-
-  {
     chave: "dashboard_materia_prima",
     nome: "Matéria-prima",
     rota: "/dashboard-materia-prima",
