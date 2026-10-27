@@ -167,7 +167,7 @@
   gap: 7px;
 
   padding-top: 12px;
-  border-top: 1px solid #eef2f7;
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .rl-btn {
@@ -326,7 +326,7 @@
 
   padding: 10px 16px;
 
-  border-right: 1px solid #eef2f7;
+  border-right: 1px solid var(--color-border-subtle);
 }
 
 .rl-indicador:last-child {
@@ -395,7 +395,7 @@
 }
 
 .rl .relatorio-visualizacao-tabela tbody td {
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .rl .relatorio-visualizacao-tabela th.coluna-numerica,
@@ -568,7 +568,7 @@
 
   .rl-indicador {
     flex: 1 1 45%;
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid var(--color-border-subtle);
   }
 }
 

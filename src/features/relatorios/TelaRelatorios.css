@@ -515,7 +515,7 @@
   margin-bottom: 15px;
   padding-bottom: 11px;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .relatorio-filtros-header h3 {
@@ -1961,7 +1961,7 @@
   padding: 5px 5px 12px;
   margin-bottom: 7px;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .relatorios-categorias-sidebar-header span {
@@ -2145,7 +2145,7 @@
   margin-bottom: 16px;
   padding: 1px 2px 14px;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .relatorios-catalogo-eyebrow {
@@ -2806,7 +2806,7 @@
   margin-bottom: 14px;
   padding: 0 1px 13px;
 
-  border-bottom-color: #edf0f3;
+  border-bottom-color: var(--color-border-subtle);
 }
 
 .relatorios-catalogo-eyebrow {

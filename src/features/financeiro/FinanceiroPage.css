@@ -1034,7 +1034,7 @@
 
 .financeiro-detalhes-tabela td {
   padding: 11px 12px;
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
   background: var(--color-surface);
   color: var(--color-text, var(--color-text));
   font-size: 13px;

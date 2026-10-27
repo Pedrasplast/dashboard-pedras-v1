@@ -80,6 +80,9 @@
   --color-border: #e2e8f0;
   --color-border-strong: #cbd5e1;
 
+  /* Divisórias internas mais claras (entre linhas, dentro de cartões). */
+  --color-border-subtle: #edf2f7;
+
   /* =======================================================
      ESTADO SUCCESS
   ======================================================= */

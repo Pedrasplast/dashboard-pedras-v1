@@ -41,9 +41,10 @@ abertas lado a lado (antes/depois).
      com `.programacao-pp-atualizar .girando`.
    - Para conferir: `node colisoes-css.mjs <repo>` (ferramentas da refatoração).
 2. **Cores quase iguais.** Lote 1 feito: 304 usos com ΔE < 2 (imperceptível)
-   viraram tokens do mesmo papel (borda, fundo, texto) e matiz. Restam 362 usos
-   de hex fixo: ~129 com ΔE entre 2 e 4 (sutil; ex. as bordas claras `#edf1f5`,
-   `#edf2f7`, `#eef2f7`) e ~233 com ΔE ≥ 4 (cores próprias de cada tela).
+   viraram tokens do mesmo papel (borda, fundo, texto) e matiz. Lote 2 feito:
+   55 bordas claras (`#edf1f5`, `#edf2f7`, `#eef2f7`…) viraram
+   `--color-border-subtle`. Restam ~307 usos de hex fixo: ~74 com ΔE entre 2 e 4
+   (sutil) e ~233 com ΔE ≥ 4 (cores próprias de cada tela).
    Ferramentas: `cores-proximas.mjs` (inventário) e `aplicar-cores.mjs`.
 3. **`!important` (299).** Concentrados em `relatorios/components/LayoutRelatorio.css`
    (100) e `financeiro/FinanceiroPage.css` (48). Remover exige resolver antes as

@@ -229,7 +229,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 14px 16px;
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
   background: linear-gradient(180deg, var(--color-surface), var(--color-surface));
 }
 
@@ -398,14 +398,14 @@
 .projecao-diaria-fornecedor-header {
   display: grid;
   grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.75fr);
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
   background: linear-gradient(180deg, var(--color-surface), var(--color-surface));
 }
 
 .projecao-diaria-fornecedor-identificacao {
   min-width: 0;
   padding: 14px 16px;
-  border-right: 1px solid #edf1f5;
+  border-right: 1px solid var(--color-border-subtle);
 }
 
 .projecao-diaria-fornecedor-identificacao > span,
@@ -443,7 +443,7 @@
 .projecao-diaria-fornecedor-resumo > div {
   min-width: 0;
   padding: 14px 15px;
-  border-right: 1px solid #edf1f5;
+  border-right: 1px solid var(--color-border-subtle);
 }
 
 .projecao-diaria-fornecedor-resumo > div:last-child {
@@ -542,7 +542,7 @@
 
 .projecao-diaria-tabela td {
   padding: 11px 12px;
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
   color: var(--color-text);
   font-size: 10px;
   font-weight: 700;
@@ -693,7 +693,7 @@
   }
 
   .projecao-diaria-fornecedor-resumo > div:nth-child(n + 3) {
-    border-top: 1px solid #edf1f5;
+    border-top: 1px solid var(--color-border-subtle);
   }
 }
 
@@ -720,7 +720,7 @@
 
   .projecao-diaria-fornecedor-resumo > div {
     border-right: 0;
-    border-top: 1px solid #edf1f5;
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .projecao-diaria-fornecedor-resumo > div:first-child {

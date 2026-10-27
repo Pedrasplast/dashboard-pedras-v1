@@ -658,7 +658,7 @@
 .estoque-tabela td {
   padding: 11px 12px;
 
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--color-border-subtle);
 
   color: var(--color-text-secondary);
 

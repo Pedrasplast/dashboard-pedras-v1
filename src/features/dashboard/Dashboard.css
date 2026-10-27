@@ -678,7 +678,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     var(--logo-verde-escuro)
   );
 
-  border: 2px solid #eef3f8;
+  border: 2px solid var(--color-border-subtle);
   border-radius: 999px;
 }
 

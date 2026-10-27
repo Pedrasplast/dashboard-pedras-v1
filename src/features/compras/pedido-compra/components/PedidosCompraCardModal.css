@@ -555,7 +555,7 @@
 .compras-card-modal-tabela td {
   padding: 12px 10px;
 
-  border-bottom: 1px solid #edf1f5;
+  border-bottom: 1px solid var(--color-border-subtle);
 
   background: var(--color-surface);
 
