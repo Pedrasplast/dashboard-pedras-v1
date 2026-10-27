@@ -6,7 +6,8 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi"] },
+  // .vercel é a saída do build; functions_arquivadas são Edge Functions desativadas (sem deploy).
+  { ignores: ["dist", ".output", ".vinxi", ".vercel", "supabase/functions_arquivadas"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -57,6 +58,13 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       // Mesmo critério do bloco TS; sem eslint-plugin-react, o uso em JSX não é reconhecido.
       "no-unused-vars": "off",
+    },
+  },
+  {
+    // Server functions do TanStack Start rodam no Node (usam process.env).
+    files: ["**/*.functions.{js,ts}"],
+    languageOptions: {
+      globals: globals.node,
     },
   },
   eslintPluginPrettier,
