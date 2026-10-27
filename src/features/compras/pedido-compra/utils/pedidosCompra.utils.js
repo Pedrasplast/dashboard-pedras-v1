@@ -1,82 +1,12 @@
 import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
 import { paraNumero } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
-
-export function converterDataLocal(valor) {
-  if (!valor) {
-    return null;
-  }
-
-  const texto = String(valor).trim();
-
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
-    const [dia, mes, ano] = texto.split("/").map(Number);
-
-    return new Date(ano, mes - 1, dia, 0, 0, 0, 0);
-  }
-
-  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-
-  if (iso) {
-    return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]), 0, 0, 0, 0);
-  }
-
-  const data = new Date(texto);
-
-  if (Number.isNaN(data.getTime())) {
-    return null;
-  }
-
-  return new Date(data.getFullYear(), data.getMonth(), data.getDate(), 0, 0, 0, 0);
-}
-
-export function obterHojeLocal() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
+import { obterHoje, converterDataLocal, formatarHora, formatarDataHora } from "@/shared/lib/datas";
 
 export function formatarData(valor) {
   const data = converterDataLocal(valor);
 
   return data ? data.toLocaleDateString("pt-BR") : "-";
-}
-
-export function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export function formatarHorario(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 export function formatarNumero(valor, casas = 0) {
@@ -157,7 +87,7 @@ export function obterSituacaoRecebimento(pedido) {
 
   const previsao = converterDataLocal(pedido?.data_previsao);
 
-  const hoje = obterHojeLocal();
+  const hoje = obterHoje();
 
   if (resumo.saldo > 0 && previsao && previsao < hoje) {
     return SITUACOES_RECEBIMENTO.EM_ATRASO;
@@ -193,7 +123,7 @@ export function calcularDiasAtraso(valor) {
     return 0;
   }
 
-  const diferenca = obterHojeLocal().getTime() - previsao.getTime();
+  const diferenca = obterHoje().getTime() - previsao.getTime();
 
   return diferenca > 0 ? Math.floor(diferenca / 86400000) : 0;
 }

@@ -8,6 +8,7 @@ import useSaldosIniciais from "./useSaldosIniciais";
 
 import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 
 import "./SaldosIniciais.css";
 
@@ -16,20 +17,6 @@ import "./SaldosIniciais.css";
    UTILITÁRIOS
 
 \========================================================= */
-
-function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return valor;
-  }
-
-  return `${dia}/${mes}/${ano}`;
-}
 
 function formatarKg(valor) {
   return `${Number(valor ?? 0).toLocaleString(
@@ -342,7 +329,9 @@ export default function SaldosIniciais() {
 
                     return (
                       <tr key={saldo.id}>
-                        <td className="saldos-iniciais-data">{formatarData(saldo.dataBase)}</td>
+                        <td className="saldos-iniciais-data">
+                          {formatarDataBROuOriginal(saldo.dataBase)}
+                        </td>
 
                         <td>
                           <strong>{saldo.materialNome || "-"}</strong>

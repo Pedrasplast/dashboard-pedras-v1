@@ -34,6 +34,7 @@ import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje, converterData, formatarHora } from "@/shared/lib/datas";
 
 import "./Home.css";
 
@@ -97,50 +98,6 @@ function formatarPercentual(valor) {
 /* =========================================================
    DATAS DOS PEDIDOS
 ========================================================= */
-
-function converterData(dataTexto) {
-  if (!dataTexto) {
-    return null;
-  }
-
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
-    const [dia, mes, ano] = dataTexto.split("/").map(Number);
-
-    return new Date(ano, mes - 1, dia, 0, 0, 0, 0);
-  }
-
-  const data = new Date(dataTexto);
-
-  if (Number.isNaN(data.getTime())) {
-    return null;
-  }
-
-  return data;
-}
-
-function obterHoje() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
-
-function formatarHorario(dataTexto) {
-  if (!dataTexto) {
-    return "-";
-  }
-
-  const data = new Date(dataTexto);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
-}
 
 function formatarDataHora(dataTexto) {
   if (!dataTexto) {
@@ -1008,7 +965,7 @@ function Home({ user, isAdmin }) {
                       <span>ÚLTIMA ATUALIZAÇÃO</span>
 
                       <strong className="home-summary-time">
-                        {carregandoPedidos ? "-" : formatarHorario(respostaPedidos?.atualizadoEm)}
+                        {carregandoPedidos ? "-" : formatarHora(respostaPedidos?.atualizadoEm)}
                       </strong>
 
                       <p>{formatarDataHora(respostaPedidos?.atualizadoEm)}</p>

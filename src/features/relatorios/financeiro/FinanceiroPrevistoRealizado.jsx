@@ -32,7 +32,6 @@ import {
   filtrarCategoriasFinanceiras,
   filtrarDadosPorCategoria,
   MESES,
-  obterAnoAtual,
   obterCategoriasFinanceiras,
   obterNomeCategoriaSelecionada,
   obterNomeMes,
@@ -40,6 +39,7 @@ import {
 } from "./utils/financeiroPrevistoRealizado.utils";
 
 import LayoutRelatorio from "../components/LayoutRelatorio";
+import { obterAnoAtual } from "@/shared/lib/datas";
 import "./FinanceiroPrevistoRealizado.css";
 
 const ITENS_POR_PAGINA = 10;

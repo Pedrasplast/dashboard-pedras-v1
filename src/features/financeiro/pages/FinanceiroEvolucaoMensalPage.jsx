@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
 import { paraNumero } from "@/shared/lib/numeros";
+import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
 
 import "./FinanceiroEvolucaoMensalPage.css";
 
@@ -42,14 +43,6 @@ const MESES = Object.freeze([
 /* =========================================================
    AUXILIARES
 ========================================================= */
-
-function obterAnoAtual() {
-  return new Date().getFullYear();
-}
-
-function obterMesAtual() {
-  return new Date().getMonth() + 1;
-}
 
 function formatarMoeda(valor) {
   return paraNumero(valor).toLocaleString("pt-BR", {

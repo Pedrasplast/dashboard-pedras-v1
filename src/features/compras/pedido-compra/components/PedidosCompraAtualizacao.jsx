@@ -1,5 +1,6 @@
 import { Clock3 } from "lucide-react";
-import { formatarDataHora, formatarHorario } from "../utils/pedidosCompra.utils";
+import { formatarDataHora, formatarHora } from "@/shared/lib/datas";
+
 import "./PedidosCompraAtualizacao.css";
 
 export default function PedidosCompraAtualizacao({ atualizadoEm, isFetching }) {
@@ -20,7 +21,7 @@ export default function PedidosCompraAtualizacao({ atualizadoEm, isFetching }) {
         </span>
 
         <span className="compras-atualizacao-horario">
-          Última <strong>{formatarHorario(atualizadoEm)}</strong>
+          Última <strong>{formatarHora(atualizadoEm)}</strong>
         </span>
       </div>
     </div>

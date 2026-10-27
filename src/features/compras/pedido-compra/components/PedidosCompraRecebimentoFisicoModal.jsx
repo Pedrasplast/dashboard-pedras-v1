@@ -9,6 +9,7 @@ import {
   registrarRecebimentoFisicoItem,
 } from "../services/recebimentoFisico.service";
 import { formatarNumero } from "../utils/pedidosCompra.utils";
+import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
 
 function obterCodigoPedidoCompra(pedido) {
   const codigo = Number(
@@ -16,20 +17,6 @@ function obterCodigoPedidoCompra(pedido) {
   );
 
   return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
-}
-
-function formatarDataHora(valor) {
-  if (!valor) return "-";
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-  });
 }
 
 function rotuloMovimento(tipo) {
@@ -503,7 +490,7 @@ export default function PedidosCompraRecebimentoFisicoModal({
                       <small>
                         <Clock3 size={13} />
 
-                        {formatarDataHora(movimento.registrado_em)}
+                        {formatarDataHoraBrasilia(movimento.registrado_em)}
 
                         {" · "}
 

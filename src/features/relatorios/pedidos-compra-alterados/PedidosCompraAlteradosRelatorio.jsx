@@ -17,6 +17,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
+import { formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
 
 import "../pedidos-alterados/PedidosAlteradosRelatorio.css";
 import "./PedidosCompraAlteradosRelatorio.css";
@@ -48,28 +49,6 @@ function dataHoje() {
 
 function dataBR(valor) {
   return valor ? valor.split("-").reverse().join("/") : "Sem limite";
-}
-
-function dataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: FUSO,
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
 }
 
 /* =========================================================
@@ -357,7 +336,7 @@ function IndicadorSincronizacao({ dados, carregando, erro }) {
             fontWeight: 650,
           }}
         >
-          {carregando && !dados ? "Consultando..." : dataHora(instante)}
+          {carregando && !dados ? "Consultando..." : formatarDataHoraBrasiliaCurta(instante)}
         </span>
 
         {falha && (
@@ -451,7 +430,7 @@ function HistoricoPedido({ pedido }) {
             <div className="pedidos-alterados-ocorrencia-topo">
               <strong>Alteração #{evento.numeroAlteracao}</strong>
 
-              <span>{dataHora(evento.detectado_em)}</span>
+              <span>{formatarDataHoraBrasiliaCurta(evento.detectado_em)}</span>
             </div>
 
             <div className="pedidos-alterados-mudancas">
@@ -988,7 +967,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
 
                             {/* ÚLTIMA ALTERAÇÃO */}
 
-                            <td>{dataHora(pedido.ultima_alteracao)}</td>
+                            <td>{formatarDataHoraBrasiliaCurta(pedido.ultima_alteracao)}</td>
 
                             {/* NÚMERO DE ALTERAÇÕES */}
 

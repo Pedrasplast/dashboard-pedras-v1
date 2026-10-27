@@ -18,6 +18,7 @@ import Paginacao from "@/components/paginacao/Paginacao";
 
 import LayoutRelatorio from "../components/LayoutRelatorio";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataISOLocal, formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
 
 import "./PedidosAlteradosRelatorio.css";
 
@@ -266,26 +267,6 @@ const ESTILOS_DESDOBRAMENTO = `
    FORMATAR DATA E HORA
 ===================================================== */
 
-function formatarDataHora(valor) {
-  if (!valor) return "-";
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-}
-
 function formatarDataSemFuso(valor) {
   if (valor === null || valor === undefined || valor === "") {
     return "-";
@@ -311,20 +292,6 @@ function formatarDataSemFuso(valor) {
 }
 
 /* =====================================================
-   FORMATAR DATA PARA INPUT
-===================================================== */
-
-function formatarDataInput(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-/* =====================================================
    PERÍODO PADRÃO
 
    Primeiro dia do mês até hoje.
@@ -336,8 +303,8 @@ function obterPeriodoPadrao() {
   const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
   return {
-    inicio: formatarDataInput(inicio),
-    fim: formatarDataInput(hoje),
+    inicio: formatarDataISOLocal(inicio),
+    fim: formatarDataISOLocal(hoje),
   };
 }
 
@@ -781,7 +748,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
         extrairMudancas,
 
-        formatarDataHora,
+        formatarDataHora: formatarDataHoraBrasiliaCurta,
       });
     } catch (erro) {
       console.error("Erro ao exportar PDF:", erro);
@@ -820,7 +787,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
         extrairMudancas,
 
-        formatarDataHora,
+        formatarDataHora: formatarDataHoraBrasiliaCurta,
       });
     } catch (erro) {
       console.error("Erro ao exportar Excel:", erro);
@@ -1081,7 +1048,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
                             {/* ÚLTIMA ALTERAÇÃO */}
 
-                            <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
+                            <td>{formatarDataHoraBrasiliaCurta(pedido.ultima_alteracao)}</td>
 
                             {/* QUANTIDADE DE ALTERAÇÕES */}
 
@@ -1226,7 +1193,11 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
                                               Alteração #{ocorrencias.length - indice}
                                             </strong>
 
-                                            <span>{formatarDataHora(ocorrencia.alterado_em)}</span>
+                                            <span>
+                                              {formatarDataHoraBrasiliaCurta(
+                                                ocorrencia.alterado_em,
+                                              )}
+                                            </span>
                                           </div>
 
                                           {/* MUDANÇAS */}

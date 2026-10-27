@@ -29,6 +29,7 @@ import {
   salvarExcecaoCalendarioIndustrial,
   sincronizarFeriadosNacionais,
 } from "./calendarioIndustrialAdminService";
+import { obterHojeISO, obterAnoAtual } from "@/shared/lib/datas";
 
 import "./AdministracaoPage.css";
 
@@ -84,16 +85,6 @@ const PERFIS = Object.freeze([
 
 function dataIsoLocal(ano, mes, dia) {
   return `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
-}
-
-function obterHojeIso() {
-  const hoje = new Date();
-
-  return dataIsoLocal(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-}
-
-function obterAnoAtual() {
-  return new Date().getFullYear();
 }
 
 function formatarDataPtBr(dataIso) {
@@ -180,7 +171,7 @@ export default function AdministracaoPage() {
 
   const sincronizacaoAutomaticaRef = useRef(new Set());
 
-  const hojeIso = useMemo(() => obterHojeIso(), []);
+  const hojeIso = useMemo(() => obterHojeISO(), []);
 
   const mapaCalendario = useMemo(
     () => new Map(calendario.map((item) => [String(item.data), item])),

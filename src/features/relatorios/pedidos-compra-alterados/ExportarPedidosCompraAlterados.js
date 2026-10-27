@@ -6,37 +6,13 @@ import {
 } from "../exportacao/padraoExcel";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
+import { formatarDataHoraBrasiliaCurta } from "@/shared/lib/datas";
 
 const FUSO = "America/Sao_Paulo";
 
 /* =========================================================
    DATAS
 ========================================================= */
-
-function dataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: FUSO,
-
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-
-    hour: "2-digit",
-    minute: "2-digit",
-
-    hour12: false,
-  });
-}
 
 function nomeArquivo(extensao) {
   const partes = new Intl.DateTimeFormat("en-US", {
@@ -201,7 +177,7 @@ export async function exportarPdfPedidosCompraAlterados(pedidos, periodo, refere
       y += 2;
 
       escrever(
-        `Alteração #${evento.numeroAlteracao || "-"} — ${dataHora(evento.detectado_em)}`,
+        `Alteração #${evento.numeroAlteracao || "-"} — ${formatarDataHoraBrasiliaCurta(evento.detectado_em)}`,
 
         {
           negrito: true,
@@ -298,7 +274,7 @@ export async function exportarExcelPedidosCompraAlterados(pedidos, periodo, refe
   const linhaCabecalhoResumo = escreverTituloExcel(resumo, {
     titulo: "Pedidos de Compra Alterados",
     categoria: "Compras",
-    informacoes: [`Período: ${periodo} · Gerado em ${dataHora(new Date())}`],
+    informacoes: [`Período: ${periodo} · Gerado em ${formatarDataHoraBrasiliaCurta(new Date())}`],
     totalColunas: COLUNAS_RESUMO.length,
   });
   resumo.getRow(linhaCabecalhoResumo).values = COLUNAS_RESUMO;
@@ -339,9 +315,9 @@ export async function exportarExcelPedidosCompraAlterados(pedidos, periodo, refe
     resumo.addRow([
       celulaTexto(pedido.numero_pedido || pedido.cod_ped_compra),
 
-      dataHora(pedido.primeira_alteracao),
+      formatarDataHoraBrasiliaCurta(pedido.primeira_alteracao),
 
-      dataHora(pedido.ultima_alteracao),
+      formatarDataHoraBrasiliaCurta(pedido.ultima_alteracao),
 
       Number(pedido.quantidade_alteracoes || 0),
 
@@ -355,7 +331,7 @@ export async function exportarExcelPedidosCompraAlterados(pedidos, periodo, refe
 
           celulaTexto(evento.numeroAlteracao || "-"),
 
-          dataHora(evento.detectado_em),
+          formatarDataHoraBrasiliaCurta(evento.detectado_em),
 
           celulaTexto(mudanca.produto?.descricao || "Informação geral do pedido"),
 

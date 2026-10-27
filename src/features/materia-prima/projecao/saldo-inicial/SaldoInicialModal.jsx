@@ -3,24 +3,13 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { useEffect, useState } from "react";
 
 import { Save, Scale, X } from "lucide-react";
+import { obterHojeISO } from "@/shared/lib/datas";
 
 import "./SaldoInicialModal.css";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function dataHojeLocal() {
-  const agora = new Date();
-
-  const ano = agora.getFullYear();
-
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
 
 function normalizarQuantidade(valor) {
   const texto = String(valor ?? "").trim();
@@ -77,7 +66,7 @@ export default function SaldoInicialModal({
 
       setFornecedorId(String(item.fornecedorId ?? ""));
 
-      setDataBase(item.dataBase || dataHojeLocal());
+      setDataBase(item.dataBase || obterHojeISO());
 
       setQuantidadeKg(String(item.quantidadeKg ?? "").replace(".", ","));
 
@@ -91,7 +80,7 @@ export default function SaldoInicialModal({
 
       setFornecedorId("");
 
-      setDataBase(dataHojeLocal());
+      setDataBase(obterHojeISO());
 
       setQuantidadeKg("");
 
@@ -102,10 +91,6 @@ export default function SaldoInicialModal({
 
     setErro("");
   }, [aberto, item, materiais]);
-
-  /* =======================================================
-     ESC
-  ======================================================= */
 
   /* =======================================================
      SALVAR

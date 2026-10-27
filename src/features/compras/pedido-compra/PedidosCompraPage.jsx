@@ -27,9 +27,8 @@ import { usePedidosCompra } from "./hooks/usePedidosCompra";
 import { useResumosRecebimentoFisico } from "./hooks/useResumosRecebimentoFisico";
 
 import { useRecebimentosFisicosUltimos7Dias } from "./hooks/useRecebimentosFisicosUltimos7Dias";
-
-import { converterDataLocal, obterHojeLocal } from "./utils/pedidosCompra.utils";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { converterDataLocal, obterHoje } from "@/shared/lib/datas";
 
 import "./PedidosCompraPage.css";
 
@@ -380,7 +379,7 @@ export default function PedidosCompraPage() {
   }, [documentosFiltrados, filtros.recebimentoFisico, resumosRecebimentoFisico]);
 
   const indicadores = useMemo(() => {
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     const limite = new Date(hoje);
 
@@ -425,7 +424,7 @@ export default function PedidosCompraPage() {
   }, [documentosFiltrados]);
 
   const indicadoresRequisicoes = useMemo(() => {
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     const limite = new Date(hoje);
 
@@ -468,7 +467,7 @@ export default function PedidosCompraPage() {
       return [];
     }
 
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     const limite = new Date(hoje);
 

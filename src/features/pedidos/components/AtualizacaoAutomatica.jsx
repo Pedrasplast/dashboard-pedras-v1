@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Clock3 } from "lucide-react";
 
 import { obterProximaSincronizacaoPedidos } from "../utils/proximaSincronizacao";
+import { formatarHora, formatarDataHora } from "@/shared/lib/datas";
 
 /* =========================================================
    ATUALIZACAO AUTOMATICA
@@ -21,56 +22,6 @@ const INTERVALO_RELOGIO = 1000;
 
 function obterProximaAtualizacao(dataAtual) {
   return obterProximaSincronizacaoPedidos(dataAtual instanceof Date ? dataAtual : new Date());
-}
-
-/* =========================================================
-   FORMATAR HORARIO
-========================================================= */
-
-function formatarHorario(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
-}
-
-/* =========================================================
-   FORMATAR DATA E HORA
-========================================================= */
-
-function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-
-    month: "2-digit",
-
-    year: "numeric",
-
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
 }
 
 /* =========================================================
@@ -150,7 +101,7 @@ export default function AtualizacaoAutomatica({ atualizadoEm }) {
           <span>
             <span className="pedidos-atualizacao-minimal-label">Última</span>
 
-            <strong>{formatarHorario(atualizadoEm)}</strong>
+            <strong>{formatarHora(atualizadoEm)}</strong>
           </span>
 
           <span className="pedidos-atualizacao-minimal-divisor">•</span>
@@ -159,7 +110,7 @@ export default function AtualizacaoAutomatica({ atualizadoEm }) {
             <span className="pedidos-atualizacao-minimal-label">Próxima</span>
 
             <strong className="pedidos-atualizacao-minimal-proxima">
-              {formatarHorario(proximaAtualizacao)}
+              {formatarHora(proximaAtualizacao)}
             </strong>
           </span>
         </div>

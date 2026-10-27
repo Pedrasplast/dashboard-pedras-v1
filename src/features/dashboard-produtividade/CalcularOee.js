@@ -2,6 +2,7 @@ import {
   obterDataRegistroOee as obterDataRegistro,
   registroEhParadaOee as registroEhParada,
 } from "./oee.utils.js";
+import { formatarDataISOLocal } from "@/shared/lib/datas";
 
 /* =====================================================
    OEE - CARGA MAQUINA
@@ -226,20 +227,6 @@ function converterDataISO(valor) {
 }
 
 /* =====================================================
-   DATE PARA ISO
-===================================================== */
-
-function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-/* =====================================================
    DIA PROGRAMADO?
 ===================================================== */
 
@@ -270,7 +257,7 @@ function diaEhProgramado(data) {
    * Fim de semana especial.
    */
 
-  const dataISO = formatarDataISO(data);
+  const dataISO = formatarDataISOLocal(data);
 
   return FINAIS_DE_SEMANA_PROGRAMADOS.has(dataISO);
 }

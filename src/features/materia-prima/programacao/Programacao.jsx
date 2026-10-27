@@ -16,26 +16,13 @@ import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExc
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 
 import "./Programacao.css";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return valor;
-  }
-
-  return `${dia}/${mes}/${ano}`;
-}
 
 function formatarHora(valor) {
   if (!valor) {
@@ -395,13 +382,13 @@ export default function Programacao() {
                     return (
                       <tr key={item.id}>
                         <td className="programacao-pp-data-coluna">
-                          {formatarData(item.dataInicio)}
+                          {formatarDataBROuOriginal(item.dataInicio)}
 
                           {item.horaInicio ? ` ${formatarHora(item.horaInicio)}` : ""}
 
                           {" até "}
 
-                          {formatarData(item.dataFim)}
+                          {formatarDataBROuOriginal(item.dataFim)}
 
                           {item.horaFim ? ` ${formatarHora(item.horaFim)}` : ""}
                         </td>
@@ -578,7 +565,7 @@ export default function Programacao() {
             label: "Início",
 
             valor: itemParaExcluir
-              ? `${formatarData(itemParaExcluir.dataInicio)}${
+              ? `${formatarDataBROuOriginal(itemParaExcluir.dataInicio)}${
                   itemParaExcluir.horaInicio ? ` ${formatarHora(itemParaExcluir.horaInicio)}` : ""
                 }`
               : "-",
@@ -588,7 +575,7 @@ export default function Programacao() {
             label: "Fim",
 
             valor: itemParaExcluir
-              ? `${formatarData(itemParaExcluir.dataFim)}${
+              ? `${formatarDataBROuOriginal(itemParaExcluir.dataFim)}${
                   itemParaExcluir.horaFim ? ` ${formatarHora(itemParaExcluir.horaFim)}` : ""
                 }`
               : "-",

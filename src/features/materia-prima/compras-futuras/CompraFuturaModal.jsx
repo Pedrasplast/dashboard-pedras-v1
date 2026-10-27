@@ -10,20 +10,9 @@ import {
   TIPOS_FRETE,
 } from "./comprasFuturasService";
 import { converterNumeroBrOuNull, numeroParaCampo } from "@/shared/lib/numeros";
+import { obterHojeISO } from "@/shared/lib/datas";
 
 import "./CompraFuturaModal.css";
-
-function dataHojeLocal() {
-  const agora = new Date();
-
-  const ano = agora.getFullYear();
-
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
 
 function formatarMoeda(valor) {
   if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
@@ -159,7 +148,7 @@ export default function CompraFuturaModal({
   useEffect(() => {
     if (!aberto) return;
 
-    const hoje = dataHojeLocal();
+    const hoje = obterHojeISO();
 
     if (item) {
       setDataCompra(item.dataCompra || hoje);

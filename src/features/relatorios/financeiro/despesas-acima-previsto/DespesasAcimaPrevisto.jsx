@@ -28,9 +28,7 @@ import {
   filtrarCategoriasFinanceiras,
   filtrarDadosPorCategoria,
   MESES,
-  obterAnoAtual,
   obterCategoriasFinanceiras,
-  obterMesAtual,
   obterNomeCategoriaSelecionada,
   obterNomeMes,
 } from "../utils/financeiroPrevistoRealizado.utils";
@@ -43,6 +41,7 @@ import {
 } from "./utils/despesasAcimaPrevisto.utils";
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
+import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
 import "./DespesasAcimaPrevisto.css";
 
 const ITENS_POR_PAGINA = 10;

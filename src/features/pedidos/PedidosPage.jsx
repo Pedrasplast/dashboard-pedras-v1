@@ -15,55 +15,9 @@ import { usePedidosData } from "./hooks/usePedidosData";
 
 import { usePedidosViewModel } from "./hooks/usePedidosViewModel";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje, converterDataLocal } from "@/shared/lib/datas";
 
 import "./PedidosPage.css";
-
-/* =========================================================
-   DATA LOCAL
-========================================================= */
-
-function converterDataLocal(valor) {
-  if (!valor) {
-    return null;
-  }
-
-  const texto = String(valor).trim();
-
-  /*
-   * DD/MM/AAAA
-   */
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
-    const [dia, mes, ano] = texto.split("/").map(Number);
-
-    return new Date(ano, mes - 1, dia, 0, 0, 0, 0);
-  }
-
-  /*
-   * AAAA-MM-DD
-   *
-   * Ignora horário para evitar problema
-   * de fuso ao analisar previsão.
-   */
-  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-
-  if (iso) {
-    return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]), 0, 0, 0, 0);
-  }
-
-  const data = new Date(texto);
-
-  if (Number.isNaN(data.getTime())) {
-    return null;
-  }
-
-  return new Date(data.getFullYear(), data.getMonth(), data.getDate(), 0, 0, 0, 0);
-}
-
-function obterHojeLocal() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
 
 /* =========================================================
    PÁGINA
@@ -104,7 +58,7 @@ export default function PedidosPage() {
   ======================================================= */
 
   const listaPedidosAtrasados = useMemo(() => {
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     return pedidosOperacionaisUnicos.filter((pedido) => {
       if (normalizarTexto(pedido?.status) !== "pedido") {
@@ -126,7 +80,7 @@ export default function PedidosPage() {
   ======================================================= */
 
   const listaProximos7Dias = useMemo(() => {
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     const limite = new Date(hoje);
 
@@ -152,7 +106,7 @@ export default function PedidosPage() {
   ======================================================= */
 
   const listaFaturamentoHoje = useMemo(() => {
-    const hoje = obterHojeLocal();
+    const hoje = obterHoje();
 
     const timestampHoje = hoje.getTime();
 

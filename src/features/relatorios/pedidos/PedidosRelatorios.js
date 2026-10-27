@@ -1,5 +1,6 @@
 import { converterNumeroFlexivel as converterNumero } from "@/shared/lib/numeros";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHojeISO } from "@/shared/lib/datas";
 
 const DATA_FIM_ORDENACAO = "9999-12-31";
 const SEM_DATA = "Sem data";
@@ -26,19 +27,11 @@ export function obterDataPedidoRelatorio(item) {
   return normalizarDataPedido(item?.previsao ?? item?.data_previsao ?? item?.previsao_faturamento);
 }
 
-function obterHojeIso() {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoje.getDate()).padStart(2, "0");
-  return `${ano}-${mes}-${dia}`;
-}
-
 export function calcularDiasAtrasoPedido(previsao) {
   const dataIso = normalizarDataPedido(previsao);
   if (!dataIso) return 0;
 
-  const hojeIso = obterHojeIso();
+  const hojeIso = obterHojeISO();
   if (dataIso >= hojeIso) return 0;
 
   const [anoPrevisao, mesPrevisao, diaPrevisao] = dataIso.split("-").map(Number);

@@ -22,7 +22,8 @@ import {
   criarResumoFinanceiro,
 } from "./dashboardMateriaPrimaSelectors.js";
 
-import { adicionarDias, formatarDataISO, periodoMesAtual } from "./dashboardMateriaPrimaUtils.js";
+import { adicionarDias, periodoMesAtual } from "./dashboardMateriaPrimaUtils.js";
+import { formatarDataISOLocal } from "@/shared/lib/datas";
 
 import "./DashboardMateriaPrima.css";
 
@@ -341,7 +342,7 @@ export default function DashboardMateriaPrima() {
   ======================================================= */
 
   function aplicarPeriodoRapido(dias) {
-    const fim = formatarDataISO(new Date());
+    const fim = formatarDataISOLocal(new Date());
 
     const inicio = adicionarDias(fim, -(dias - 1));
 

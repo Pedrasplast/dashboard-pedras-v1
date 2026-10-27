@@ -1,3 +1,5 @@
+import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
+
 export const MESES = Object.freeze([
   { valor: 1, nome: "Janeiro" },
   { valor: 2, nome: "Fevereiro" },
@@ -12,14 +14,6 @@ export const MESES = Object.freeze([
   { valor: 11, nome: "Novembro" },
   { valor: 12, nome: "Dezembro" },
 ]);
-
-export function obterAnoAtual() {
-  return new Date().getFullYear();
-}
-
-export function obterMesAtual() {
-  return new Date().getMonth() + 1;
-}
 
 export function criarFiltrosFinanceirosIniciais() {
   return {

@@ -3,27 +3,9 @@ import ModalTitulo from "@/components/Modal/ModalTitulo";
 import { useEffect, useState } from "react";
 
 import { CheckCircle2, X } from "lucide-react";
+import { obterHojeISO, formatarDataBR } from "@/shared/lib/datas";
 
 import "./CompraFuturaModal.css";
-
-function dataHojeLocal() {
-  const agora = new Date();
-  const ano = agora.getFullYear();
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-function formatarData(valor) {
-  if (!valor) return "-";
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) return String(valor);
-
-  return `${dia}/${mes}/${ano}`;
-}
 
 function formatarKg(valor) {
   return `${Number(valor ?? 0).toLocaleString("pt-BR", {
@@ -45,7 +27,7 @@ export default function ConfirmarChegadaModal({
   useEffect(() => {
     if (!aberto) return;
 
-    setDataRecebimento(dataHojeLocal());
+    setDataRecebimento(obterHojeISO());
     setErro("");
   }, [aberto, item?.id]);
 
@@ -68,7 +50,7 @@ export default function ConfirmarChegadaModal({
       return;
     }
 
-    if (dataRecebimento > dataHojeLocal()) {
+    if (dataRecebimento > obterHojeISO()) {
       setErro("A data da chegada não pode ser futura.");
       return;
     }
@@ -152,7 +134,7 @@ export default function ConfirmarChegadaModal({
 
               <div>
                 <span>Previsão</span>
-                <strong>{formatarData(item.dataPrevista)}</strong>
+                <strong>{formatarDataBR(item.dataPrevista)}</strong>
               </div>
             </div>
 
@@ -162,7 +144,7 @@ export default function ConfirmarChegadaModal({
               <input
                 type="date"
                 min={item.dataCompra || undefined}
-                max={dataHojeLocal()}
+                max={obterHojeISO()}
                 value={dataRecebimento}
                 onChange={(event) => {
                   setDataRecebimento(event.target.value);

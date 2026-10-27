@@ -1,5 +1,6 @@
-import { calcularDiasAtraso, converterDataCalendario, obterHoje } from "./date.utils";
+import { calcularDiasAtraso, converterDataCalendario } from "./date.utils";
 import { normalizarTexto } from "./format.utils";
+import { obterHoje } from "@/shared/lib/datas";
 
 export function pedidoEhCancelado(pedido) {
   return normalizarTexto(pedido?.status) === "cancelado";

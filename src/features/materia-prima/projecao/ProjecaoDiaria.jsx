@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import useProjecao from "./useProjecao";
 import { paraNumero } from "@/shared/lib/numeros";
+import { formatarDataBROuOriginal } from "@/shared/lib/datas";
 
 import "./ProjecaoDiaria.css";
 
@@ -21,16 +22,6 @@ function dataLocal(offsetDias = 0) {
   const dia = String(data.getDate()).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
-}
-
-function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : valor;
 }
 
 function formatarKg(valor) {
@@ -212,7 +203,7 @@ function FornecedorDetalhe({ grupo }) {
             {grupo.linhas.map((linha) => (
               <tr key={`${linha.data}-${linha.fornecedorId}`}>
                 <td className="projecao-diaria-data">
-                  <strong>{formatarData(linha.data)}</strong>
+                  <strong>{formatarDataBROuOriginal(linha.data)}</strong>
 
                   {linha.saldoBaseAplicado && <small>Nova base</small>}
                 </td>

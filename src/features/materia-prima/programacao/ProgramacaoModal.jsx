@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { listarCalendarioIndustrial } from "@/features/calendario-industrial/calendarioIndustrialService";
 
 import { listarPeriodosProgramacao } from "./programacaoCalendarioService";
+import { formatarDataISOLocal, obterHojeISO } from "@/shared/lib/datas";
 
 import "./ProgramacaoModal.css";
 import "./ProgramacaoCalendario.css";
@@ -78,20 +79,6 @@ const PERFIS = [
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-function dataHojeLocal() {
-  return formatarDataISO(new Date());
-}
 
 function criarDataLocal(valor) {
   const [ano, mes, dia] = String(valor ?? "")
@@ -203,7 +190,7 @@ function dataEhPassada(dataISO) {
     return false;
   }
 
-  return dataISO < dataHojeLocal();
+  return dataISO < obterHojeISO();
 }
 
 function perfilBasePorLimite(limite) {
@@ -340,7 +327,7 @@ function calcularMinutosDescontadosHoje({
   limiteMinutos,
   periodos,
 }) {
-  if (data !== dataHojeLocal()) {
+  if (data !== obterHojeISO()) {
     return 0;
   }
 
@@ -443,7 +430,7 @@ export default function ProgramacaoModal({
 
   const [erro, setErro] = useState("");
 
-  const hojeISO = dataHojeLocal();
+  const hojeISO = obterHojeISO();
 
   const itemLegado = Boolean(item) && item?.tipoProgramacao !== "CALENDARIO";
 
@@ -508,9 +495,9 @@ export default function ProgramacaoModal({
 
   const periodoGrade = useMemo(
     () => ({
-      inicio: diasGrade.length > 0 ? formatarDataISO(diasGrade[0]) : "",
+      inicio: diasGrade.length > 0 ? formatarDataISOLocal(diasGrade[0]) : "",
 
-      fim: diasGrade.length > 0 ? formatarDataISO(diasGrade[diasGrade.length - 1]) : "",
+      fim: diasGrade.length > 0 ? formatarDataISOLocal(diasGrade[diasGrade.length - 1]) : "",
     }),
     [diasGrade],
   );
@@ -1247,7 +1234,7 @@ export default function ProgramacaoModal({
                     ))}
 
                     {diasGrade.map((data) => {
-                      const dataISO = formatarDataISO(data);
+                      const dataISO = formatarDataISOLocal(data);
 
                       const configuracao = calendarioPorData.get(dataISO);
 

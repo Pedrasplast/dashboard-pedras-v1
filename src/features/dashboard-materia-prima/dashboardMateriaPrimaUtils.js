@@ -1,4 +1,5 @@
 import { paraNumero, paraNumeroOuNull } from "@/shared/lib/numeros";
+import { formatarDataISOLocal, formatarDataBR } from "@/shared/lib/datas";
 
 export function formatarNumero(valor, casas = 0) {
   return paraNumero(valor).toLocaleString("pt-BR", {
@@ -38,22 +39,8 @@ export function formatarMoedaKg(valor, casas = 3) {
   return moeda === "-" ? "-" : `${moeda}/kg`;
 }
 
-export function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return String(valor);
-  }
-
-  return `${dia}/${mes}/${ano}`;
-}
-
 export function formatarDataCurta(valor) {
-  const data = formatarData(valor);
+  const data = formatarDataBR(valor);
 
   return data === "-" ? "-" : data.slice(0, 5);
 }
@@ -61,19 +48,9 @@ export function formatarDataCurta(valor) {
 /* Período padrão do dashboard: do 1º ao último dia do mês atual. */
 export function periodoMesAtual(hoje = new Date()) {
   return {
-    dataInicial: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
-    dataFinal: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)),
+    dataInicial: formatarDataISOLocal(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
+    dataFinal: formatarDataISOLocal(new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)),
   };
-}
-
-export function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
 }
 
 export function adicionarDias(dataISO, quantidade) {
@@ -83,16 +60,16 @@ export function adicionarDias(dataISO, quantidade) {
 
   data.setDate(data.getDate() + Number(quantidade || 0));
 
-  return formatarDataISO(data);
+  return formatarDataISOLocal(data);
 }
 
 export function obterPeriodoInicial() {
   const hoje = new Date();
 
   return {
-    inicio: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
+    inicio: formatarDataISOLocal(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
 
-    fim: formatarDataISO(hoje),
+    fim: formatarDataISOLocal(hoje),
   };
 }
 

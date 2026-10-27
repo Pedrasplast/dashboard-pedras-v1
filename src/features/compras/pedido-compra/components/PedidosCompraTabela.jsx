@@ -26,6 +26,7 @@ import {
   QUERY_KEY_RECEBIMENTO_FISICO,
   useResumosRecebimentoFisico,
 } from "../hooks/useResumosRecebimentoFisico";
+import { formatarDataHoraBrasilia } from "@/shared/lib/datas";
 
 import "./PedidosCompraTabela.css";
 import "./PedidosCompraRecebimentoFisico.css";
@@ -154,20 +155,6 @@ function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
   };
 }
 
-function formatarDataHoraRecebimentoFisico(valor) {
-  if (!valor) return "-";
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-  });
-}
-
 function RecebimentoFisicoResumo({ resumo, onClick }) {
   const situacao = resumo?.situacao_recebimento_fisico || "NAO_RECEBIDO";
 
@@ -215,9 +202,7 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
 
   if (resumo?.ultima_movimentacao_em) {
     linhasTitulo.push(
-      `Última movimentação física: ${formatarDataHoraRecebimentoFisico(
-        resumo.ultima_movimentacao_em,
-      )}`,
+      `Última movimentação física: ${formatarDataHoraBrasilia(resumo.ultima_movimentacao_em)}`,
       `Por: ${resumo.ultima_movimentacao_usuario || "-"}`,
     );
 
