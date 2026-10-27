@@ -1,23 +1,12 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useNavigate } from "@/lib/navegacao";
 import * as XLSX from "xlsx";
 import { formatISO, isValid, parse } from "date-fns";
 
-import {
-  FiAlertTriangle,
-  FiArrowLeft,
-  FiFileText,
-  FiUploadCloud,
-  FiX,
-} from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiFileText, FiUploadCloud, FiX } from "react-icons/fi";
 
 import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
@@ -49,11 +38,7 @@ function normalizarCabecalho(valor) {
 }
 
 function parseNumero(valor) {
-  if (
-    valor === undefined ||
-    valor === null ||
-    valor === ""
-  ) {
+  if (valor === undefined || valor === null || valor === "") {
     return 0;
   }
 
@@ -61,23 +46,17 @@ function parseNumero(valor) {
     return Number.isFinite(valor) ? valor : 0;
   }
 
-  let texto = String(valor)
-    .trim()
-    .replace(/\s/g, "");
+  let texto = String(valor).trim().replace(/\s/g, "");
 
   if (texto.includes(",") && texto.includes(".")) {
-    texto = texto
-      .replace(/\./g, "")
-      .replace(",", ".");
+    texto = texto.replace(/\./g, "").replace(",", ".");
   } else {
     texto = texto.replace(",", ".");
   }
 
   const resultado = Number.parseFloat(texto);
 
-  return Number.isFinite(resultado)
-    ? resultado
-    : 0;
+  return Number.isFinite(resultado) ? resultado : 0;
 }
 
 /* =========================================================
@@ -85,11 +64,7 @@ function parseNumero(valor) {
 ========================================================= */
 
 function formatarData(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
   }
 
@@ -137,11 +112,7 @@ function formatarData(valor) {
     ];
 
     for (const formato of formatosPossiveis) {
-      const dataConvertida = parse(
-        texto,
-        formato,
-        new Date()
-      );
+      const dataConvertida = parse(texto, formato, new Date());
 
       if (isValid(dataConvertida)) {
         return formatISO(dataConvertida, {
@@ -159,31 +130,18 @@ function formatarData(valor) {
 ========================================================= */
 
 function formatarDataHora(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
   }
 
-  const montarTimestamp = (
-    ano,
-    mes,
-    dia,
-    hora = 0,
-    minuto = 0,
-    segundo = 0
-  ) => {
+  const montarTimestamp = (ano, mes, dia, hora = 0, minuto = 0, segundo = 0) => {
     const anoFormatado = String(ano).padStart(4, "0");
     const mesFormatado = String(mes).padStart(2, "0");
     const diaFormatado = String(dia).padStart(2, "0");
 
     const horaFormatada = String(hora).padStart(2, "0");
     const minutoFormatado = String(minuto).padStart(2, "0");
-    const segundoFormatado = String(
-      Math.floor(segundo)
-    ).padStart(2, "0");
+    const segundoFormatado = String(Math.floor(segundo)).padStart(2, "0");
 
     return (
       `${anoFormatado}-${mesFormatado}-${diaFormatado}` +
@@ -205,7 +163,7 @@ function formatarDataHora(valor) {
       dataExcel.d,
       dataExcel.H || 0,
       dataExcel.M || 0,
-      dataExcel.S || 0
+      dataExcel.S || 0,
     );
   }
 
@@ -221,7 +179,7 @@ function formatarDataHora(valor) {
       valor.getDate(),
       valor.getHours(),
       valor.getMinutes(),
-      valor.getSeconds()
+      valor.getSeconds(),
     );
   }
 
@@ -242,11 +200,7 @@ function formatarDataHora(valor) {
   ];
 
   for (const formato of formatosPossiveis) {
-    const dataConvertida = parse(
-      texto,
-      formato,
-      new Date()
-    );
+    const dataConvertida = parse(texto, formato, new Date());
 
     if (isValid(dataConvertida)) {
       return montarTimestamp(
@@ -255,7 +209,7 @@ function formatarDataHora(valor) {
         dataConvertida.getDate(),
         dataConvertida.getHours(),
         dataConvertida.getMinutes(),
-        dataConvertida.getSeconds()
+        dataConvertida.getSeconds(),
       );
     }
   }
@@ -268,11 +222,7 @@ function formatarDataHora(valor) {
 ========================================================= */
 
 function formatarDuracao(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return "";
   }
 
@@ -284,9 +234,7 @@ function formatarDuracao(valor) {
       return "";
     }
 
-    totalSegundos = Math.round(
-      valor * 24 * 60 * 60
-    );
+    totalSegundos = Math.round(valor * 24 * 60 * 60);
   }
 
   // Objeto Date.
@@ -295,14 +243,7 @@ function formatarDuracao(valor) {
       return "";
     }
 
-    const baseExcelUTC = Date.UTC(
-      1899,
-      11,
-      30,
-      0,
-      0,
-      0
-    );
+    const baseExcelUTC = Date.UTC(1899, 11, 30, 0, 0, 0);
 
     const valorUTC = Date.UTC(
       valor.getUTCFullYear(),
@@ -310,47 +251,32 @@ function formatarDuracao(valor) {
       valor.getUTCDate(),
       valor.getUTCHours(),
       valor.getUTCMinutes(),
-      valor.getUTCSeconds()
+      valor.getUTCSeconds(),
     );
 
-    totalSegundos = Math.round(
-      (valorUTC - baseExcelUTC) / 1000
-    );
+    totalSegundos = Math.round((valorUTC - baseExcelUTC) / 1000);
 
-    if (
-      !Number.isFinite(totalSegundos) ||
-      totalSegundos < 0
-    ) {
+    if (!Number.isFinite(totalSegundos) || totalSegundos < 0) {
       totalSegundos =
-        valor.getUTCHours() * 3600 +
-        valor.getUTCMinutes() * 60 +
-        valor.getUTCSeconds();
+        valor.getUTCHours() * 3600 + valor.getUTCMinutes() * 60 + valor.getUTCSeconds();
     }
   }
 
   // Texto.
   else {
-    const texto = String(valor)
-      .trim()
-      .replace(/\s+/g, "");
+    const texto = String(valor).trim().replace(/\s+/g, "");
 
     if (!texto) {
       return "";
     }
 
-    const resultado = texto.match(
-      /^(\d+):(\d{1,2})(?::(\d{1,2}))?$/
-    );
+    const resultado = texto.match(/^(\d+):(\d{1,2})(?::(\d{1,2}))?$/);
 
     if (!resultado) {
-      const numeroConvertido = Number(
-        texto.replace(",", ".")
-      );
+      const numeroConvertido = Number(texto.replace(",", "."));
 
       if (Number.isFinite(numeroConvertido)) {
-        totalSegundos = Math.round(
-          numeroConvertido * 24 * 60 * 60
-        );
+        totalSegundos = Math.round(numeroConvertido * 24 * 60 * 60);
       } else {
         return texto;
       }
@@ -359,30 +285,19 @@ function formatarDuracao(valor) {
       const minutos = Number(resultado[2]);
       const segundos = Number(resultado[3] || 0);
 
-      totalSegundos =
-        horas * 3600 +
-        minutos * 60 +
-        segundos;
+      totalSegundos = horas * 3600 + minutos * 60 + segundos;
     }
   }
 
-  if (
-    totalSegundos === null ||
-    !Number.isFinite(totalSegundos)
-  ) {
+  if (totalSegundos === null || !Number.isFinite(totalSegundos)) {
     return "";
   }
 
-  totalSegundos = Math.max(
-    0,
-    Math.round(totalSegundos)
-  );
+  totalSegundos = Math.max(0, Math.round(totalSegundos));
 
   const horas = Math.floor(totalSegundos / 3600);
 
-  const minutos = Math.floor(
-    (totalSegundos % 3600) / 60
-  );
+  const minutos = Math.floor((totalSegundos % 3600) / 60);
 
   const segundos = totalSegundos % 60;
 
@@ -408,29 +323,21 @@ function lerAbaBanco(conteudo) {
   });
 
   const nomeAbaEncontrada = workbook.SheetNames.find(
-    (nomeAba) =>
-      nomeAba.trim().toLowerCase() ===
-      NOME_ABA_IMPORTACAO
+    (nomeAba) => nomeAba.trim().toLowerCase() === NOME_ABA_IMPORTACAO,
   );
 
   if (!nomeAbaEncontrada) {
-    const abasEncontradas = workbook.SheetNames
-      .map((nome) => `"${nome}"`)
-      .join(", ");
+    const abasEncontradas = workbook.SheetNames.map((nome) => `"${nome}"`).join(", ");
 
     throw new Error(
-      `A aba "Banco" não foi encontrada. Abas existentes: ${
-        abasEncontradas || "nenhuma"
-      }.`
+      `A aba "Banco" não foi encontrada. Abas existentes: ${abasEncontradas || "nenhuma"}.`,
     );
   }
 
   const sheet = workbook.Sheets[nomeAbaEncontrada];
 
   if (!sheet) {
-    throw new Error(
-      "Não foi possível acessar a aba Banco."
-    );
+    throw new Error("Não foi possível acessar a aba Banco.");
   }
 
   const rows = XLSX.utils.sheet_to_json(sheet, {
@@ -453,25 +360,17 @@ function lerAbaBanco(conteudo) {
 ========================================================= */
 
 function criarLeitorDeLinha(linha) {
-  const chavesDaLinha = Object.keys(linha).map(
-    (chave) => ({
-      chave,
-      normalizada: normalizarCabecalho(chave),
-    })
-  );
+  const chavesDaLinha = Object.keys(linha).map((chave) => ({
+    chave,
+    normalizada: normalizarCabecalho(chave),
+  }));
 
   return function getVal(chavesPossiveis) {
-    const aliases = new Set(
-      chavesPossiveis.map(normalizarCabecalho)
-    );
+    const aliases = new Set(chavesPossiveis.map(normalizarCabecalho));
 
-    const itemEncontrado = chavesDaLinha.find(
-      (item) => aliases.has(item.normalizada)
-    );
+    const itemEncontrado = chavesDaLinha.find((item) => aliases.has(item.normalizada));
 
-    return itemEncontrado
-      ? linha[itemEncontrado.chave]
-      : "";
+    return itemEncontrado ? linha[itemEncontrado.chave] : "";
   };
 }
 
@@ -491,90 +390,35 @@ function formatarRegistro(linha, indice, tabelaDestino) {
 
   if (tabelaDestino === "ciclo_injetora") {
     const registroCiclo = {
-      injetora: limparTexto(
-        getVal(["Injetora"])
-      ),
+      injetora: limparTexto(getVal(["Injetora"])),
 
-      data: formatarData(
-        getVal(["Data"])
-      ),
+      data: formatarData(getVal(["Data"])),
 
       cod_produto: limparTexto(
-        getVal([
-          "Cód. Produto",
-          "Cod. Produto",
-          "Cod Produto",
-          "Codigo Produto",
-        ])
+        getVal(["Cód. Produto", "Cod. Produto", "Cod Produto", "Codigo Produto"]),
       ),
 
-      descricao: limparTexto(
-        getVal([
-          "Descrição",
-          "Descricao",
-        ])
-      ),
+      descricao: limparTexto(getVal(["Descrição", "Descricao"])),
 
-      cavidade_molde: Math.trunc(
-        parseNumero(
-          getVal([
-            "Cavidade Molde",
-            "Cavidade",
-          ])
-        )
-      ),
+      cavidade_molde: Math.trunc(parseNumero(getVal(["Cavidade Molde", "Cavidade"]))),
 
-      tempo_resfriamento: formatarDuracao(
-        getVal([
-          "Tempo de Resfriamento",
-          "Resfriamento",
-        ])
-      ),
+      tempo_resfriamento: formatarDuracao(getVal(["Tempo de Resfriamento", "Resfriamento"])),
 
-      ciclo: formatarDuracao(
-        getVal(["Ciclo"])
-      ),
+      ciclo: formatarDuracao(getVal(["Ciclo"])),
 
-      tempo_injecao: formatarDuracao(
-        getVal([
-          "Tempo de Injeção",
-          "Tempo Injecao",
-        ])
-      ),
+      tempo_injecao: formatarDuracao(getVal(["Tempo de Injeção", "Tempo Injecao"])),
 
-      kg_un: parseNumero(
-        getVal([
-          "Kg UN",
-          "KG UN",
-          "Kg/Un",
-        ])
-      ),
+      kg_un: parseNumero(getVal(["Kg UN", "KG UN", "Kg/Un"])),
 
-      kg_haste: parseNumero(
-        getVal([
-          "Kg HASTE",
-          "KG HASTE",
-          "Kg/Haste",
-        ])
-      ),
+      kg_haste: parseNumero(getVal(["Kg HASTE", "KG HASTE", "Kg/Haste"])),
 
-      observacao: limparTexto(
-        getVal([
-          "Observação",
-          "Observacao",
-          "Obs",
-        ])
-      ),
+      observacao: limparTexto(getVal(["Observação", "Observacao", "Obs"])),
     };
 
-    Object.defineProperty(
-      registroCiclo,
-      "__linhaExcel",
-      {
-        value: linhaExcel,
-        enumerable: false,
-      }
-    );
+    Object.defineProperty(registroCiclo, "__linhaExcel", {
+      value: linhaExcel,
+      enumerable: false,
+    });
 
     return registroCiclo;
   }
@@ -585,171 +429,66 @@ function formatarRegistro(linha, indice, tabelaDestino) {
 
   const registro = {
     cod_prod: limparTexto(
-      getVal([
-        "Cód.Prod",
-        "Cod. Prod",
-        "Cod Prod",
-        "Cód. Produto",
-        "Cod_Prod",
-      ])
+      getVal(["Cód.Prod", "Cod. Prod", "Cod Prod", "Cód. Produto", "Cod_Prod"]),
     ),
 
-    injetora: limparTexto(
-      getVal(["Injetora"])
-    ),
+    injetora: limparTexto(getVal(["Injetora"])),
 
-    inicio: formatarDataHora(
-      getVal([
-        "Início",
-        "Inicio",
-      ])
-    ),
+    inicio: formatarDataHora(getVal(["Início", "Inicio"])),
 
-    fim: formatarDataHora(
-      getVal([
-        "Fim",
-        "Término",
-        "Termino",
-      ])
-    ),
+    fim: formatarDataHora(getVal(["Fim", "Término", "Termino"])),
 
-    duracao: formatarDuracao(
-      getVal([
-        "Duração",
-        "Duracao",
-      ])
-    ),
+    duracao: formatarDuracao(getVal(["Duração", "Duracao"])),
 
-    op: limparTexto(
-      getVal([
-        "OP",
-        "Ordem",
-        "Ordem Producao",
-      ])
-    ),
+    op: limparTexto(getVal(["OP", "Ordem", "Ordem Producao"])),
 
-    tipo: limparTexto(
-      getVal(["Tipo"])
-    ),
+    tipo: limparTexto(getVal(["Tipo"])),
 
-    motivo: limparTexto(
-      getVal(["Motivo"])
-    ),
+    motivo: limparTexto(getVal(["Motivo"])),
 
-    justificativa: limparTexto(
-      getVal(["Justificativa"])
-    ),
+    justificativa: limparTexto(getVal(["Justificativa"])),
 
-    celula: limparTexto(
-      getVal([
-        "Célula",
-        "Celula",
-      ])
-    ),
+    celula: limparTexto(getVal(["Célula", "Celula"])),
 
-    operador: limparTexto(
-      getVal(["Operador"])
-    ),
+    operador: limparTexto(getVal(["Operador"])),
 
-    material: limparTexto(
-      getVal(["Material"])
-    ),
+    material: limparTexto(getVal(["Material"])),
 
     qtde_perdida_devido_pausa: parseNumero(
-      getVal([
-        "Qtde perdida devido pausa",
-        "Qtde Perdida Devido Pausa",
-      ])
+      getVal(["Qtde perdida devido pausa", "Qtde Perdida Devido Pausa"]),
     ),
 
-    cliente: limparTexto(
-      getVal(["Cliente"])
-    ),
+    cliente: limparTexto(getVal(["Cliente"])),
 
-    status: limparTexto(
-      getVal(["Status"])
-    ),
+    status: limparTexto(getVal(["Status"])),
 
-    lista_de_data: formatarData(
-      getVal([
-        "ListaDeData",
-        "Lista De Data",
-        "Lista de Data",
-      ])
-    ),
+    lista_de_data: formatarData(getVal(["ListaDeData", "Lista De Data", "Lista de Data"])),
 
-    inicio_dia: formatarDataHora(
-      getVal([
-        "InicioDia",
-        "Início Dia",
-        "InícioDia",
-      ])
-    ),
+    inicio_dia: formatarDataHora(getVal(["InicioDia", "Início Dia", "InícioDia"])),
 
-    fim_dia: formatarDataHora(
-      getVal([
-        "FimDia",
-        "Fim Dia",
-      ])
-    ),
+    fim_dia: formatarDataHora(getVal(["FimDia", "Fim Dia"])),
 
-    tempo: formatarDuracao(
-      getVal(["Tempo"])
-    ),
+    tempo: formatarDuracao(getVal(["Tempo"])),
 
-    conforme: Math.trunc(
-      parseNumero(
-        getVal(["Conforme"])
-      )
-    ),
+    conforme: Math.trunc(parseNumero(getVal(["Conforme"]))),
 
-    danificada: Math.trunc(
-      parseNumero(
-        getVal(["Danificada"])
-      )
-    ),
+    danificada: Math.trunc(parseNumero(getVal(["Danificada"]))),
 
-    mp: limparTexto(
-      getVal([
-        "M.P",
-        "MP",
-      ])
-    ),
+    mp: limparTexto(getVal(["M.P", "MP"])),
 
-    pecas: Math.trunc(
-      parseNumero(
-        getVal([
-          "Peças",
-          "Pecas",
-        ])
-      )
-    ),
+    pecas: Math.trunc(parseNumero(getVal(["Peças", "Pecas"]))),
 
-    no_injetora: limparTexto(
-      getVal([
-        "№ Injetora",
-        "No Injetor",
-        "Nº Injetora",
-      ])
-    ),
+    no_injetora: limparTexto(getVal(["№ Injetora", "No Injetor", "Nº Injetora"])),
 
-    peso: parseNumero(
-      getVal(["Peso"])
-    ),
+    peso: parseNumero(getVal(["Peso"])),
 
-    consumido: parseNumero(
-      getVal(["Consumido"])
-    ),
+    consumido: parseNumero(getVal(["Consumido"])),
   };
 
-  Object.defineProperty(
-    registro,
-    "__linhaExcel",
-    {
-      value: linhaExcel,
-      enumerable: false,
-    }
-  );
+  Object.defineProperty(registro, "__linhaExcel", {
+    value: linhaExcel,
+    enumerable: false,
+  });
 
   return registro;
 }
@@ -762,19 +501,10 @@ function formatarRegistro(linha, indice, tabelaDestino) {
 
 function registroElegivel(registro, tabelaDestino) {
   if (tabelaDestino === "ciclo_injetora") {
-    return Boolean(
-      registro.injetora ||
-      registro.data ||
-      registro.cod_produto
-    );
+    return Boolean(registro.injetora || registro.data || registro.cod_produto);
   }
 
-  return Boolean(
-    registro.injetora ||
-    registro.cod_prod ||
-    registro.status ||
-    registro.motivo
-  );
+  return Boolean(registro.injetora || registro.cod_prod || registro.status || registro.motivo);
 }
 
 /* =========================================================
@@ -785,30 +515,18 @@ function registroElegivel(registro, tabelaDestino) {
 ========================================================= */
 
 function prepararRegistros(conteudo, tabelaDestino) {
-  const { nomeAbaEncontrada, rows } =
-    lerAbaBanco(conteudo);
+  const { nomeAbaEncontrada, rows } = lerAbaBanco(conteudo);
 
-  const dadosFormatados = rows.map(
-    (linha, indice) =>
-      formatarRegistro(
-        linha,
-        indice,
-        tabelaDestino
-      )
+  const dadosFormatados = rows.map((linha, indice) =>
+    formatarRegistro(linha, indice, tabelaDestino),
   );
 
-  const registrosValidos = dadosFormatados.filter(
-    (registro) =>
-      registroElegivel(
-        registro,
-        tabelaDestino
-      )
+  const registrosValidos = dadosFormatados.filter((registro) =>
+    registroElegivel(registro, tabelaDestino),
   );
 
   if (registrosValidos.length === 0) {
-    throw new Error(
-      "A aba Banco não contém registros válidos para importação."
-    );
+    throw new Error("A aba Banco não contém registros válidos para importação.");
   }
 
   return {
@@ -829,19 +547,15 @@ export default function ImportadorCarga() {
   const [porcentagem, setPorcentagem] = useState(0);
   const [isDragActive, setIsDragActive] = useState(false);
 
-  const [tabelaDestino, setTabelaDestino] = useState(
-    "carga_maquina"
-  );
+  const [tabelaDestino, setTabelaDestino] = useState("carga_maquina");
 
   /* =====================================================
      CONFIRMAÇÃO E PRÉVIA
   ===================================================== */
 
-  const [arquivoPendente, setArquivoPendente] =
-    useState(null);
+  const [arquivoPendente, setArquivoPendente] = useState(null);
 
-  const [confirmacaoAberta, setConfirmacaoAberta] =
-    useState(false);
+  const [confirmacaoAberta, setConfirmacaoAberta] = useState(false);
 
   const [previa, setPrevia] = useState({
     carregando: false,
@@ -868,16 +582,10 @@ export default function ImportadorCarga() {
       evento.returnValue = "";
     };
 
-    window.addEventListener(
-      "beforeunload",
-      handleBeforeUnload
-    );
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener(
-        "beforeunload",
-        handleBeforeUnload
-      );
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [carregando]);
 
@@ -893,17 +601,10 @@ export default function ImportadorCarga() {
         return;
       }
 
-      const extensao = file.name
-        .split(".")
-        .pop()
-        ?.toLowerCase();
+      const extensao = file.name.split(".").pop()?.toLowerCase();
 
-      if (
-        !["xlsx", "xls", "xlsm"].includes(extensao)
-      ) {
-        setStatus(
-          "❌ Erro: selecione um arquivo Excel .xlsx, .xls ou .xlsm."
-        );
+      if (!["xlsx", "xls", "xlsm"].includes(extensao)) {
+        setStatus("❌ Erro: selecione um arquivo Excel .xlsx, .xls ou .xlsm.");
         return;
       }
 
@@ -914,9 +615,7 @@ export default function ImportadorCarga() {
       const reader = new FileReader();
 
       reader.onerror = () => {
-        setStatus(
-          "❌ Erro ao ler o arquivo."
-        );
+        setStatus("❌ Erro ao ler o arquivo.");
 
         setCarregando(false);
 
@@ -931,87 +630,49 @@ export default function ImportadorCarga() {
             const conteudo = evento.target?.result;
 
             if (!conteudo) {
-              throw new Error(
-                "Não foi possível ler o conteúdo do arquivo."
-              );
+              throw new Error("Não foi possível ler o conteúdo do arquivo.");
             }
 
-            setStatus(
-              'Lendo a aba "Banco" e formatando os dados...'
-            );
+            setStatus('Lendo a aba "Banco" e formatando os dados...');
 
-            const {
-              nomeAbaEncontrada,
-              registrosValidos,
-            } = prepararRegistros(
+            const { nomeAbaEncontrada, registrosValidos } = prepararRegistros(
               conteudo,
-              tabelaDestino
+              tabelaDestino,
             );
 
-            setStatus(
-              `Enviando ${registrosValidos.length} registros da aba Banco...`
-            );
+            setStatus(`Enviando ${registrosValidos.length} registros da aba Banco...`);
 
             /* ===========================================
                ENVIO EM LOTES
             =========================================== */
 
-            for (
-              let indice = 0;
-              indice < registrosValidos.length;
-              indice += TAMANHO_LOTE
-            ) {
-              const lote = registrosValidos.slice(
-                indice,
-                indice + TAMANHO_LOTE
-              );
+            for (let indice = 0; indice < registrosValidos.length; indice += TAMANHO_LOTE) {
+              const lote = registrosValidos.slice(indice, indice + TAMANHO_LOTE);
 
-              const {
-                error: insertError,
-              } = await supabase
-                .from(tabelaDestino)
-                .insert(lote);
+              const { error: insertError } = await supabase.from(tabelaDestino).insert(lote);
 
               if (insertError) {
-                const primeiraLinha =
-                  lote[0]?.__linhaExcel;
+                const primeiraLinha = lote[0]?.__linhaExcel;
 
                 throw new Error(
                   primeiraLinha
                     ? `Falha no lote iniciado na linha ${primeiraLinha} da aba Banco: ${insertError.message}`
-                    : insertError.message
+                    : insertError.message,
                 );
               }
 
-              const processados = Math.min(
-                indice + lote.length,
-                registrosValidos.length
-              );
+              const processados = Math.min(indice + lote.length, registrosValidos.length);
 
-              setPorcentagem(
-                Math.round(
-                  (processados /
-                    registrosValidos.length) *
-                    100
-                )
-              );
+              setPorcentagem(Math.round((processados / registrosValidos.length) * 100));
             }
 
             setStatus(
-              `✅ Sucesso: ${registrosValidos.length} registros importados somente da aba "${nomeAbaEncontrada}".`
+              `✅ Sucesso: ${registrosValidos.length} registros importados somente da aba "${nomeAbaEncontrada}".`,
             );
           } catch (erro) {
-            console.error(
-              "Erro durante a importação:",
-              erro
-            );
+            console.error("Erro durante a importação:", erro);
 
-            setStatus(
-              `❌ Erro: ${
-                erro?.message ||
-                "Falha desconhecida durante a importação."
-              }`
-            );
+            setStatus(`❌ Erro: ${erro?.message || "Falha desconhecida durante a importação."}`);
           } finally {
             setCarregando(false);
 
@@ -1024,7 +685,7 @@ export default function ImportadorCarga() {
 
       reader.readAsArrayBuffer(file);
     },
-    [tabelaDestino]
+    [tabelaDestino],
   );
 
   /* =====================================================
@@ -1034,19 +695,13 @@ export default function ImportadorCarga() {
      Não grava nada no Supabase.
   ===================================================== */
 
-  const contarRegistrosArquivo = useCallback(
-    async (arquivo, destino) => {
-      const conteudo = await arquivo.arrayBuffer();
+  const contarRegistrosArquivo = useCallback(async (arquivo, destino) => {
+    const conteudo = await arquivo.arrayBuffer();
 
-      const { registrosValidos } = prepararRegistros(
-        conteudo,
-        destino
-      );
+    const { registrosValidos } = prepararRegistros(conteudo, destino);
 
-      return registrosValidos.length;
-    },
-    []
-  );
+    return registrosValidos.length;
+  }, []);
 
   /* =====================================================
      ABRIR CONFIRMAÇÃO
@@ -1057,25 +712,14 @@ export default function ImportadorCarga() {
 
   const solicitarConfirmacao = useCallback(
     async (arquivo) => {
-      if (
-        !arquivo ||
-        carregando ||
-        confirmacaoAberta
-      ) {
+      if (!arquivo || carregando || confirmacaoAberta) {
         return;
       }
 
-      const extensao = arquivo.name
-        .split(".")
-        .pop()
-        ?.toLowerCase();
+      const extensao = arquivo.name.split(".").pop()?.toLowerCase();
 
-      if (
-        !["xlsx", "xls", "xlsm"].includes(extensao)
-      ) {
-        setStatus(
-          "❌ Erro: selecione um arquivo Excel .xlsx, .xls ou .xlsm."
-        );
+      if (!["xlsx", "xls", "xlsm"].includes(extensao)) {
+        setStatus("❌ Erro: selecione um arquivo Excel .xlsx, .xls ou .xlsm.");
 
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -1084,8 +728,7 @@ export default function ImportadorCarga() {
         return;
       }
 
-      const requisicao =
-        ++previaRequisicaoRef.current;
+      const requisicao = ++previaRequisicaoRef.current;
 
       const destinoSelecionado = tabelaDestino;
 
@@ -1102,14 +745,9 @@ export default function ImportadorCarga() {
       setConfirmacaoAberta(true);
 
       try {
-        const quantidade = await contarRegistrosArquivo(
-          arquivo,
-          destinoSelecionado
-        );
+        const quantidade = await contarRegistrosArquivo(arquivo, destinoSelecionado);
 
-        if (
-          previaRequisicaoRef.current !== requisicao
-        ) {
+        if (previaRequisicaoRef.current !== requisicao) {
           return;
         }
 
@@ -1119,27 +757,18 @@ export default function ImportadorCarga() {
           erro: "",
         });
       } catch (erro) {
-        if (
-          previaRequisicaoRef.current !== requisicao
-        ) {
+        if (previaRequisicaoRef.current !== requisicao) {
           return;
         }
 
         setPrevia({
           carregando: false,
           quantidade: null,
-          erro:
-            erro?.message ||
-            "Não foi possível contar os registros.",
+          erro: erro?.message || "Não foi possível contar os registros.",
         });
       }
     },
-    [
-      carregando,
-      confirmacaoAberta,
-      tabelaDestino,
-      contarRegistrosArquivo,
-    ]
+    [carregando, confirmacaoAberta, tabelaDestino, contarRegistrosArquivo],
   );
 
   /* =====================================================
@@ -1196,36 +825,23 @@ export default function ImportadorCarga() {
     });
 
     processarArquivo(arquivo);
-  }, [
-    arquivoPendente,
-    carregando,
-    previa,
-    processarArquivo,
-  ]);
+  }, [arquivoPendente, carregando, previa, processarArquivo]);
 
   /* =====================================================
      ESC FECHA A CONFIRMAÇÃO
   ===================================================== */
 
-
-
   /* =====================================================
      NOME DO DESTINO
   ===================================================== */
 
-  const nomeTabelaDestino =
-    tabelaDestino === "ciclo_injetora"
-      ? "Ciclo Injetora"
-      : "Carga Máquina";
+  const nomeTabelaDestino = tabelaDestino === "ciclo_injetora" ? "Ciclo Injetora" : "Carga Máquina";
 
   /* =====================================================
      VOLTAR
   ===================================================== */
 
-  const handleVoltar = useCallback(
-    () => navigate("/"),
-    [navigate]
-  );
+  const handleVoltar = useCallback(() => navigate("/"), [navigate]);
 
   /* =====================================================
      ALTERAR TABELA
@@ -1253,11 +869,7 @@ export default function ImportadorCarga() {
   const handleDragLeave = useCallback((evento) => {
     evento.preventDefault();
 
-    if (
-      !evento.currentTarget.contains(
-        evento.relatedTarget
-      )
-    ) {
+    if (!evento.currentTarget.contains(evento.relatedTarget)) {
       setIsDragActive(false);
     }
   }, []);
@@ -1269,19 +881,11 @@ export default function ImportadorCarga() {
 
       const arquivo = evento.dataTransfer.files?.[0];
 
-      if (
-        !carregando &&
-        !confirmacaoAberta &&
-        arquivo
-      ) {
+      if (!carregando && !confirmacaoAberta && arquivo) {
         solicitarConfirmacao(arquivo);
       }
     },
-    [
-      carregando,
-      confirmacaoAberta,
-      solicitarConfirmacao,
-    ]
+    [carregando, confirmacaoAberta, solicitarConfirmacao],
   );
 
   /* =====================================================
@@ -1289,17 +893,10 @@ export default function ImportadorCarga() {
   ===================================================== */
 
   const handleDropzoneClick = useCallback(() => {
-    if (
-      !carregando &&
-      !confirmacaoAberta &&
-      fileInputRef.current
-    ) {
+    if (!carregando && !confirmacaoAberta && fileInputRef.current) {
       fileInputRef.current.click();
     }
-  }, [
-    carregando,
-    confirmacaoAberta,
-  ]);
+  }, [carregando, confirmacaoAberta]);
 
   /* =====================================================
      SELECIONAR ARQUIVO
@@ -1313,7 +910,7 @@ export default function ImportadorCarga() {
         solicitarConfirmacao(arquivo);
       }
     },
-    [solicitarConfirmacao]
+    [solicitarConfirmacao],
   );
 
   /* =====================================================
@@ -1322,15 +919,12 @@ export default function ImportadorCarga() {
 
   const handleDropzoneKeyDown = useCallback(
     (evento) => {
-      if (
-        evento.key === "Enter" ||
-        evento.key === " "
-      ) {
+      if (evento.key === "Enter" || evento.key === " ") {
         evento.preventDefault();
         handleDropzoneClick();
       }
     },
-    [handleDropzoneClick]
+    [handleDropzoneClick],
   );
 
   /* =====================================================
@@ -1349,9 +943,7 @@ export default function ImportadorCarga() {
       >
         <FiArrowLeft />
 
-        <span>
-          Página Inicial
-        </span>
+        <span>Página Inicial</span>
       </button>
 
       {/* CABEÇALHO */}
@@ -1371,26 +963,17 @@ export default function ImportadorCarga() {
         {/* TABELA DE DESTINO */}
 
         <div className="select-tabela">
-          <label htmlFor="tabela-destino">
-            Selecione a tabela de destino:
-          </label>
+          <label htmlFor="tabela-destino">Selecione a tabela de destino:</label>
 
           <select
             id="tabela-destino"
             value={tabelaDestino}
             onChange={handleTabelaChange}
-            disabled={
-              carregando ||
-              confirmacaoAberta
-            }
+            disabled={carregando || confirmacaoAberta}
           >
-            <option value="carga_maquina">
-              Carga Máquina
-            </option>
+            <option value="carga_maquina">Carga Máquina</option>
 
-            <option value="ciclo_injetora">
-              Ciclo Injetora
-            </option>
+            <option value="ciclo_injetora">Ciclo Injetora</option>
           </select>
         </div>
 
@@ -1425,17 +1008,10 @@ export default function ImportadorCarga() {
             }}
           />
 
-          <p>
-            {carregando
-              ? "Processando a aba Banco..."
-              : "Arraste o arquivo ou clique aqui"}
-          </p>
+          <p>{carregando ? "Processando a aba Banco..." : "Arraste o arquivo ou clique aqui"}</p>
 
           {!carregando && (
-            <small>
-              Formatos aceitos: XLSX, XLS e XLSM.
-              Somente a aba “Banco” será importada.
-            </small>
+            <small>Formatos aceitos: XLSX, XLS e XLSM. Somente a aba “Banco” será importada.</small>
           )}
         </div>
 
@@ -1443,9 +1019,7 @@ export default function ImportadorCarga() {
 
         {status && (
           <div className="status-container">
-            <p>
-              {status}
-            </p>
+            <p>{status}</p>
 
             {carregando && (
               <div
@@ -1463,8 +1037,7 @@ export default function ImportadorCarga() {
                   style={{
                     width: `${porcentagem}%`,
                     height: "8px",
-                    background:
-                      "linear-gradient(90deg, #0b1f5e, #2e5bba, #3dbb63)",
+                    background: "linear-gradient(90deg, #0b1f5e, #2e5bba, #3dbb63)",
                     transition: "width 0.2s ease",
                   }}
                 />
@@ -1501,19 +1074,13 @@ export default function ImportadorCarga() {
               </div>
 
               <div className="importacao-confirmacao-titulo">
-                <span>
-                  IMPORTAÇÃO DE DADOS
-                </span>
+                <span>IMPORTAÇÃO DE DADOS</span>
 
                 <ModalTitulo>
-                  <h3 id="titulo-confirmacao-importacao">
-                    Confirmar importação
-                  </h3>
+                  <h3 id="titulo-confirmacao-importacao">Confirmar importação</h3>
                 </ModalTitulo>
 
-                <p>
-                  Confira as informações antes de continuar.
-                </p>
+                <p>Confira as informações antes de continuar.</p>
               </div>
 
               <button
@@ -1538,13 +1105,9 @@ export default function ImportadorCarga() {
                 </div>
 
                 <div>
-                  <span>
-                    Arquivo selecionado
-                  </span>
+                  <span>Arquivo selecionado</span>
 
-                  <strong>
-                    {arquivoPendente.name}
-                  </strong>
+                  <strong>{arquivoPendente.name}</strong>
                 </div>
               </div>
 
@@ -1552,23 +1115,15 @@ export default function ImportadorCarga() {
 
               <div className="importacao-confirmacao-detalhes">
                 <div>
-                  <span>
-                    Destino
-                  </span>
+                  <span>Destino</span>
 
-                  <strong>
-                    {nomeTabelaDestino}
-                  </strong>
+                  <strong>{nomeTabelaDestino}</strong>
                 </div>
 
                 <div>
-                  <span>
-                    Aba importada
-                  </span>
+                  <span>Aba importada</span>
 
-                  <strong>
-                    Banco
-                  </strong>
+                  <strong>Banco</strong>
                 </div>
               </div>
 
@@ -1576,26 +1131,19 @@ export default function ImportadorCarga() {
                   NOVO: TOTAL DE REGISTROS
               ========================================= */}
 
-              <div
-                className="importacao-confirmacao-arquivo"
-                aria-live="polite"
-              >
+              <div className="importacao-confirmacao-arquivo" aria-live="polite">
                 <div className="importacao-confirmacao-arquivo-icone" data-modal-icone="">
                   <FiFileText />
                 </div>
 
                 <div>
-                  <span>
-                    Registros preparados para importação
-                  </span>
+                  <span>Registros preparados para importação</span>
 
                   <strong>
                     {previa.carregando
                       ? "Contando registros..."
                       : previa.quantidade !== null
-                        ? `${previa.quantidade.toLocaleString(
-                            "pt-BR"
-                          )} registros`
+                        ? `${previa.quantidade.toLocaleString("pt-BR")} registros`
                         : "Contagem indisponível"}
                   </strong>
                 </div>
@@ -1604,20 +1152,13 @@ export default function ImportadorCarga() {
               {/* ERRO NA CONTAGEM */}
 
               {previa.erro && (
-                <div
-                  className="importacao-confirmacao-alerta"
-                  role="alert"
-                >
+                <div className="importacao-confirmacao-alerta" role="alert">
                   <FiAlertTriangle />
 
                   <div>
-                    <strong>
-                      Não foi possível preparar a importação
-                    </strong>
+                    <strong>Não foi possível preparar a importação</strong>
 
-                    <p>
-                      {previa.erro}
-                    </p>
+                    <p>{previa.erro}</p>
                   </div>
                 </div>
               )}
@@ -1628,21 +1169,14 @@ export default function ImportadorCarga() {
                 <FiAlertTriangle />
 
                 <div>
-                  <strong>
-                    Atenção
-                  </strong>
+                  <strong>Atenção</strong>
 
                   <p>
                     Ao confirmar,{" "}
                     {previa.quantidade !== null
-                      ? `${previa.quantidade.toLocaleString(
-                          "pt-BR"
-                        )} registros preparados`
+                      ? `${previa.quantidade.toLocaleString("pt-BR")} registros preparados`
                       : "os registros encontrados"}{" "}
-                    na aba Banco serão enviados à tabela{" "}
-                    <strong>
-                      {nomeTabelaDestino}
-                    </strong>.
+                    na aba Banco serão enviados à tabela <strong>{nomeTabelaDestino}</strong>.
                   </p>
                 </div>
               </div>
@@ -1665,18 +1199,13 @@ export default function ImportadorCarga() {
                 className="importacao-confirmacao-importar"
                 onClick={confirmarImportacao}
                 disabled={
-                  carregando ||
-                  previa.carregando ||
-                  Boolean(previa.erro) ||
-                  !previa.quantidade
+                  carregando || previa.carregando || Boolean(previa.erro) || !previa.quantidade
                 }
                 data-modal-acao="secundaria"
               >
                 <FiUploadCloud />
 
-                <span>
-                  Confirmar importação
-                </span>
+                <span>Confirmar importação</span>
               </button>
             </div>
           </section>

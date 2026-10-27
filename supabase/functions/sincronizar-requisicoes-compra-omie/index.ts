@@ -73,12 +73,7 @@ async function callOmie(
         return data;
       }
 
-      ultimoErro = String(
-        data?.faultstring ||
-          data?.message ||
-          data?.faultcode ||
-          response.status,
-      );
+      ultimoErro = String(data?.faultstring || data?.message || data?.faultcode || response.status);
 
       const erroNormalizado = ultimoErro.toLowerCase();
 
@@ -94,10 +89,7 @@ async function callOmie(
 
       await sleep(tentativa === 1 ? 900 : tentativa === 2 ? 1800 : 3000);
     } catch (error) {
-      ultimoErro =
-        error instanceof Error
-          ? error.message
-          : String(error);
+      ultimoErro = error instanceof Error ? error.message : String(error);
 
       const erroNormalizado = ultimoErro.toLowerCase();
 
@@ -144,34 +136,20 @@ async function obterNumeroRequisicaoPelaAuditoria(
       { tentativas: AUDITORIA_TENTATIVAS, timeoutMs: AUDITORIA_TIMEOUT_MS },
     );
 
-    const eventos = Array.isArray(data?.eventos)
-      ? data.eventos
-      : [];
+    const eventos = Array.isArray(data?.eventos) ? data.eventos : [];
 
     for (const evento of eventos) {
-      const campos = Array.isArray(evento?.campos)
-        ? evento.campos
-        : [];
+      const campos = Array.isArray(evento?.campos) ? evento.campos : [];
 
       for (const campo of campos) {
         const nomeCampo = text(campo?.campo).toUpperCase();
-        const rotulo = text(campo?.rotulo)
-          .normalize("NFD")
-          .replace(/[̀-ͯ]/g, "")
-          .toUpperCase();
+        const rotulo = text(campo?.rotulo).normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 
-        if (
-          nomeCampo !== "NUMERO" &&
-          rotulo !== "NUMERO DA REQUISICAO"
-        ) {
+        if (nomeCampo !== "NUMERO" && rotulo !== "NUMERO DA REQUISICAO") {
           continue;
         }
 
-        const bruto = text(
-          campo?.valor_novo ??
-            campo?.valorNovo ??
-            campo?.novo_valor,
-        );
+        const bruto = text(campo?.valor_novo ?? campo?.valorNovo ?? campo?.novo_valor);
 
         if (!/^\d+$/.test(bruto)) {
           continue;
@@ -284,14 +262,10 @@ Deno.serve(async (req) => {
       totalRegistros = Math.max(0, toNumber(data?.total_de_registros));
 
       if (paginaAtual && paginaAtual !== pagina) {
-        throw new Error(
-          `Paginação inconsistente: solicitada ${pagina}, recebida ${paginaAtual}.`,
-        );
+        throw new Error(`Paginação inconsistente: solicitada ${pagina}, recebida ${paginaAtual}.`);
       }
 
-      const lista = Array.isArray(data?.requisicaoCadastro)
-        ? data.requisicaoCadastro
-        : [];
+      const lista = Array.isArray(data?.requisicaoCadastro) ? data.requisicaoCadastro : [];
 
       requisicoes.push(...lista);
 
@@ -323,9 +297,7 @@ Deno.serve(async (req) => {
 
       requisicao.categoria_nome = categorias.get(codigoCategoria) || "";
 
-      const itens = Array.isArray(requisicao?.ItensReqCompra)
-        ? requisicao.ItensReqCompra
-        : [];
+      const itens = Array.isArray(requisicao?.ItensReqCompra) ? requisicao.ItensReqCompra : [];
 
       for (const item of itens) {
         const codigoProduto = toNumber(item?.codProd);
@@ -350,8 +322,7 @@ Deno.serve(async (req) => {
 
             produto = {
               codigo_comercial:
-                text(respostaProduto?.codigo) ||
-                text(respostaProduto?.codigo_produto_integracao),
+                text(respostaProduto?.codigo) || text(respostaProduto?.codigo_produto_integracao),
               descricao: text(respostaProduto?.descricao),
               unidade: text(respostaProduto?.unidade),
             };
@@ -427,11 +398,7 @@ Deno.serve(async (req) => {
           const inicioAuditoria = Date.now();
 
           try {
-            numeroRequisicao = await obterNumeroRequisicaoPelaAuditoria(
-              codigo,
-              appKey,
-              appSecret,
-            );
+            numeroRequisicao = await obterNumeroRequisicaoPelaAuditoria(codigo, appKey, appSecret);
 
             if (numeroRequisicao) {
               numerosAuditoriaResolvidos += 1;
@@ -558,8 +525,7 @@ Deno.serve(async (req) => {
       return json({
         sucesso: true,
         ignorado: true,
-        motivo:
-          "A Omie bloqueou uma consulta redundante; será tentado novamente no próximo ciclo.",
+        motivo: "A Omie bloqueou uma consulta redundante; será tentado novamente no próximo ciclo.",
         duracao_ms: Date.now() - inicio,
       });
     }

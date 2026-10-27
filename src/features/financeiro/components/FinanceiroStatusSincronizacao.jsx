@@ -1,15 +1,6 @@
-import {
-  CheckCircle2,
-  Clock3,
-  TriangleAlert,
-} from "lucide-react";
+import { CheckCircle2, Clock3, TriangleAlert } from "lucide-react";
 
-import {
-  memo,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import "./FinanceiroStatusSincronizacao.css";
 
@@ -24,34 +15,24 @@ function obterPartesData(data) {
     return null;
   }
 
-  const valor =
-    data instanceof Date
-      ? data
-      : new Date(data);
+  const valor = data instanceof Date ? data : new Date(data);
 
   if (Number.isNaN(valor.getTime())) {
     return null;
   }
 
-  const partes =
-    new Intl.DateTimeFormat("pt-BR", {
-      timeZone: FUSO_HORARIO,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(valor);
+  const partes = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: FUSO_HORARIO,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(valor);
 
-  const mapa =
-    Object.fromEntries(
-      partes.map((parte) => [
-        parte.type,
-        parte.value,
-      ]),
-    );
+  const mapa = Object.fromEntries(partes.map((parte) => [parte.type, parte.value]));
 
   return {
     ano: Number(mapa.year),
@@ -94,24 +75,17 @@ function formatarDataHora(valor) {
     return "-";
   }
 
-  const partes =
-    new Intl.DateTimeFormat("pt-BR", {
-      timeZone: FUSO_HORARIO,
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(data);
+  const partes = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: FUSO_HORARIO,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(data);
 
-  const mapa =
-    Object.fromEntries(
-      partes.map((parte) => [
-        parte.type,
-        parte.value,
-      ]),
-    );
+  const mapa = Object.fromEntries(partes.map((parte) => [parte.type, parte.value]));
 
   return `${mapa.day}/${mapa.month}/${mapa.year} às ${mapa.hour}:${mapa.minute}`;
 }
@@ -126,22 +100,16 @@ function formatarDataHora(valor) {
    12:00 / 12:10 / 12:20 / 12:30
 ========================================================= */
 
-function analisarSincronizacao({
-  agora,
-  ultimaSincronizacao,
-}) {
-  const partesAgora =
-    obterPartesData(agora);
+function analisarSincronizacao({ agora, ultimaSincronizacao }) {
+  const partesAgora = obterPartesData(agora);
 
-  const partesUltima =
-    obterPartesData(ultimaSincronizacao);
+  const partesUltima = obterPartesData(ultimaSincronizacao);
 
   if (!partesAgora) {
     return {
       tipo: "neutro",
       titulo: "Status indisponível",
-      descricao:
-        "Não foi possível verificar o horário atual.",
+      descricao: "Não foi possível verificar o horário atual.",
     };
   }
 
@@ -149,25 +117,19 @@ function analisarSincronizacao({
     return {
       tipo: "erro",
       titulo: "Dados não atualizados",
-      descricao:
-        "Nenhuma sincronização bem-sucedida foi encontrada.",
+      descricao: "Nenhuma sincronização bem-sucedida foi encontrada.",
     };
   }
 
-  const hoje =
-    chaveData(partesAgora);
+  const hoje = chaveData(partesAgora);
 
-  const dataUltima =
-    chaveData(partesUltima);
+  const dataUltima = chaveData(partesUltima);
 
-  const minutosAgora =
-    minutosDoDia(partesAgora);
+  const minutosAgora = minutosDoDia(partesAgora);
 
-  const minutosUltima =
-    minutosDoDia(partesUltima);
+  const minutosUltima = minutosDoDia(partesUltima);
 
-  const sincronizouHoje =
-    hoje === dataUltima;
+  const sincronizouHoje = hoje === dataUltima;
 
   const INICIO_MANHA = 5 * 60;
   const LIMITE_MANHA = 5 * 60 + 40;
@@ -175,21 +137,16 @@ function analisarSincronizacao({
   const INICIO_MEIO_DIA = 12 * 60;
   const LIMITE_MEIO_DIA = 12 * 60 + 40;
 
-  const sincronizouManha =
-    sincronizouHoje &&
-    minutosUltima >= INICIO_MANHA;
+  const sincronizouManha = sincronizouHoje && minutosUltima >= INICIO_MANHA;
 
-  const sincronizouMeioDia =
-    sincronizouHoje &&
-    minutosUltima >= INICIO_MEIO_DIA;
+  const sincronizouMeioDia = sincronizouHoje && minutosUltima >= INICIO_MEIO_DIA;
 
   /* Antes das 05:00 */
   if (minutosAgora < INICIO_MANHA) {
     return {
       tipo: "sucesso",
       titulo: "Dados disponíveis",
-      descricao:
-        "Próxima atualização automática às 05:00.",
+      descricao: "Próxima atualização automática às 05:00.",
     };
   }
 
@@ -199,16 +156,14 @@ function analisarSincronizacao({
       return {
         tipo: "sucesso",
         titulo: "Dados atualizados",
-        descricao:
-          "Atualização da manhã concluída.",
+        descricao: "Atualização da manhã concluída.",
       };
     }
 
     return {
       tipo: "aguardando",
       titulo: "Atualizando dados",
-      descricao:
-        "Tentativas automáticas em andamento.",
+      descricao: "Tentativas automáticas em andamento.",
     };
   }
 
@@ -218,16 +173,14 @@ function analisarSincronizacao({
       return {
         tipo: "sucesso",
         titulo: "Dados atualizados",
-        descricao:
-          "Atualização da manhã concluída.",
+        descricao: "Atualização da manhã concluída.",
       };
     }
 
     return {
       tipo: "erro",
       titulo: "Dados desatualizados",
-      descricao:
-        "A atualização automática das 05:00 não foi concluída.",
+      descricao: "A atualização automática das 05:00 não foi concluída.",
     };
   }
 
@@ -237,16 +190,14 @@ function analisarSincronizacao({
       return {
         tipo: "sucesso",
         titulo: "Dados atualizados",
-        descricao:
-          "Atualização das 12:00 concluída.",
+        descricao: "Atualização das 12:00 concluída.",
       };
     }
 
     return {
       tipo: "aguardando",
       titulo: "Atualizando dados",
-      descricao:
-        "Tentativas automáticas em andamento.",
+      descricao: "Tentativas automáticas em andamento.",
     };
   }
 
@@ -255,16 +206,14 @@ function analisarSincronizacao({
     return {
       tipo: "sucesso",
       titulo: "Dados atualizados",
-      descricao:
-        "Atualização das 12:00 concluída.",
+      descricao: "Atualização das 12:00 concluída.",
     };
   }
 
   return {
     tipo: "erro",
     titulo: "Dados desatualizados",
-    descricao:
-      "A atualização automática das 12:00 não foi concluída.",
+    descricao: "A atualização automática das 12:00 não foi concluída.",
   };
 }
 
@@ -296,40 +245,29 @@ function obterTituloCompacto(analise) {
    COMPONENTE
 ========================================================= */
 
-function FinanceiroStatusSincronizacao({
-  sincronizacao,
-  carregando = false,
-}) {
-  const [agora, definirAgora] =
-    useState(() => new Date());
+function FinanceiroStatusSincronizacao({ sincronizacao, carregando = false }) {
+  const [agora, definirAgora] = useState(() => new Date());
 
   useEffect(() => {
-    const intervalo =
-      window.setInterval(() => {
-        definirAgora(new Date());
-      }, 60_000);
+    const intervalo = window.setInterval(() => {
+      definirAgora(new Date());
+    }, 60_000);
 
     return () => {
       window.clearInterval(intervalo);
     };
   }, []);
 
-  const ultimaSincronizacao =
-    sincronizacao?.ultima_sincronizacao ??
-    null;
+  const ultimaSincronizacao = sincronizacao?.ultima_sincronizacao ?? null;
 
-  const analise =
-    useMemo(
-      () =>
-        analisarSincronizacao({
-          agora,
-          ultimaSincronizacao,
-        }),
-      [
+  const analise = useMemo(
+    () =>
+      analisarSincronizacao({
         agora,
         ultimaSincronizacao,
-      ],
-    );
+      }),
+    [agora, ultimaSincronizacao],
+  );
 
   if (carregando) {
     return (
@@ -340,30 +278,17 @@ function FinanceiroStatusSincronizacao({
         "
         title="Verificando a última atualização."
       >
-        <span
-          className="financeiro-sync-mini__icone"
-          aria-hidden="true"
-        >
-          <Clock3
-            size={13}
-            strokeWidth={2}
-          />
+        <span className="financeiro-sync-mini__icone" aria-hidden="true">
+          <Clock3 size={13} strokeWidth={2} />
         </span>
 
-        <span className="financeiro-sync-mini__titulo">
-          Verificando
-        </span>
+        <span className="financeiro-sync-mini__titulo">Verificando</span>
 
-        <span
-          className="financeiro-sync-mini__separador"
-          aria-hidden="true"
-        >
+        <span className="financeiro-sync-mini__separador" aria-hidden="true">
           •
         </span>
 
-        <span className="financeiro-sync-mini__data">
-          consultando status
-        </span>
+        <span className="financeiro-sync-mini__data">consultando status</span>
       </div>
     );
   }
@@ -380,45 +305,23 @@ function FinanceiroStatusSincronizacao({
 
   return (
     <div
-      className={[
-        "financeiro-sync-mini",
-        `financeiro-sync-mini--${analise.tipo}`,
-      ].join(" ")}
+      className={["financeiro-sync-mini", `financeiro-sync-mini--${analise.tipo}`].join(" ")}
       title={analise.descricao}
-      aria-label={`${analise.titulo}. Última atualização: ${formatarDataHora(
-        ultimaSincronizacao,
-      )}`}
+      aria-label={`${analise.titulo}. Última atualização: ${formatarDataHora(ultimaSincronizacao)}`}
     >
-      <span
-        className="financeiro-sync-mini__icone"
-        aria-hidden="true"
-      >
-        <Icone
-          size={13}
-          strokeWidth={2}
-        />
+      <span className="financeiro-sync-mini__icone" aria-hidden="true">
+        <Icone size={13} strokeWidth={2} />
       </span>
 
-      <span className="financeiro-sync-mini__titulo">
-        {obterTituloCompacto(analise)}
-      </span>
+      <span className="financeiro-sync-mini__titulo">{obterTituloCompacto(analise)}</span>
 
-      <span
-        className="financeiro-sync-mini__separador"
-        aria-hidden="true"
-      >
+      <span className="financeiro-sync-mini__separador" aria-hidden="true">
         •
       </span>
 
-      <span className="financeiro-sync-mini__data">
-        {formatarDataHora(
-          ultimaSincronizacao,
-        )}
-      </span>
+      <span className="financeiro-sync-mini__data">{formatarDataHora(ultimaSincronizacao)}</span>
     </div>
   );
 }
 
-export default memo(
-  FinanceiroStatusSincronizacao,
-);
+export default memo(FinanceiroStatusSincronizacao);

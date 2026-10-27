@@ -1,11 +1,6 @@
-import {
-  useMemo,
-} from "react";
+import { useMemo } from "react";
 
-import {
-  LOCAL_TODOS,
-  SITUACAO_ESTOQUE,
-} from "../constants/estoque.constants";
+import { LOCAL_TODOS, SITUACAO_ESTOQUE } from "../constants/estoque.constants";
 
 import {
   consolidarEstoque,
@@ -13,7 +8,6 @@ import {
   normalizarTexto,
   numero,
 } from "../utils/estoque.utils";
-
 
 /* =========================================================
    MAPA DE PEDIDOS POR PRODUTO
@@ -23,40 +17,21 @@ import {
    Portanto, não somamos novamente aqui.
 ========================================================= */
 
-function criarMapaPedidos(
-  pedidosAbertos,
-) {
-  const mapa =
-    new Map();
+function criarMapaPedidos(pedidosAbertos) {
+  const mapa = new Map();
 
-
-  for (
-    const item of
-    pedidosAbertos
-  ) {
-    const codigo =
-      normalizarCodigo(
-        item?.codigoProduto,
-      );
-
+  for (const item of pedidosAbertos) {
+    const codigo = normalizarCodigo(item?.codigoProduto);
 
     if (!codigo) {
       continue;
     }
 
-
-    mapa.set(
-      codigo,
-      numero(
-        item?.quantidade,
-      ),
-    );
+    mapa.set(codigo, numero(item?.quantidade));
   }
-
 
   return mapa;
 }
-
 
 /* =========================================================
    PRIORIDADE DA ORDENAÇÃO
@@ -67,37 +42,21 @@ function criarMapaPedidos(
    3 = sem estoque e sem pedidos
 ========================================================= */
 
-function obterGrupoPrioridade({
-  estoque,
-  pedidos,
-}) {
-  if (
-    estoque > 0 &&
-    pedidos > 0
-  ) {
+function obterGrupoPrioridade({ estoque, pedidos }) {
+  if (estoque > 0 && pedidos > 0) {
     return 0;
   }
 
-
-  if (
-    estoque > 0 &&
-    pedidos === 0
-  ) {
+  if (estoque > 0 && pedidos === 0) {
     return 1;
   }
 
-
-  if (
-    estoque === 0 &&
-    pedidos > 0
-  ) {
+  if (estoque === 0 && pedidos > 0) {
     return 2;
   }
 
-
   return 3;
 }
-
 
 /* =========================================================
    HOOK
@@ -122,17 +81,7 @@ export default function useEstoqueProcessado({
      PEDIDOS POR PRODUTO
   ======================================================= */
 
-  const pedidosPorProduto =
-    useMemo(
-      () =>
-        criarMapaPedidos(
-          pedidosAbertos,
-        ),
-      [
-        pedidosAbertos,
-      ],
-    );
-
+  const pedidosPorProduto = useMemo(() => criarMapaPedidos(pedidosAbertos), [pedidosAbertos]);
 
   /* =======================================================
      ESTOQUE PARA EXIBIÇÃO
@@ -141,97 +90,37 @@ export default function useEstoqueProcessado({
      consolida todos os locais por produto.
   ======================================================= */
 
-  const estoqueExibicao =
-    useMemo(
-      () => {
-        if (
-          localSelecionado ===
-          LOCAL_TODOS
-        ) {
-          return consolidarEstoque(
-            estoque,
-          );
-        }
+  const estoqueExibicao = useMemo(() => {
+    if (localSelecionado === LOCAL_TODOS) {
+      return consolidarEstoque(estoque);
+    }
 
-
-        return estoque;
-      },
-      [
-        estoque,
-        localSelecionado,
-      ],
-    );
-
+    return estoque;
+  }, [estoque, localSelecionado]);
 
   /* =======================================================
      INDICADORES
   ======================================================= */
 
-  const indicadores =
-    useMemo(
-      () => {
-        const produtos =
-          new Set(
-            estoqueExibicao.map(
-              (item) =>
-                String(
-                  item.codigoProdutoOmie,
-                ),
-            ),
-          );
+  const indicadores = useMemo(() => {
+    const produtos = new Set(estoqueExibicao.map((item) => String(item.codigoProdutoOmie)));
 
+    const comSaldo = estoqueExibicao.filter((item) => numero(item.saldo) !== 0).length;
 
-        const comSaldo =
-          estoqueExibicao.filter(
-            (item) =>
-              numero(
-                item.saldo,
-              ) !==
-              0,
-          ).length;
+    const saldoTotal = estoqueExibicao.reduce((total, item) => total + numero(item.saldo), 0);
 
+    return {
+      produtos: produtos.size,
 
-        const saldoTotal =
-          estoqueExibicao.reduce(
-            (
-              total,
-              item,
-            ) =>
-              total +
-              numero(
-                item.saldo,
-              ),
-            0,
-          );
+      comSaldo,
 
+      saldoTotal,
 
-        return {
-          produtos:
-            produtos.size,
+      quantidadePedidosAbertos: numero(resumoPedidosAbertos?.quantidadeTotal),
 
-          comSaldo,
-
-          saldoTotal,
-
-          quantidadePedidosAbertos:
-            numero(
-              resumoPedidosAbertos
-                ?.quantidadeTotal,
-            ),
-
-          pedidosAbertos:
-            numero(
-              resumoPedidosAbertos
-                ?.pedidosDistintos,
-            ),
-        };
-      },
-      [
-        estoqueExibicao,
-        resumoPedidosAbertos,
-      ],
-    );
-
+      pedidosAbertos: numero(resumoPedidosAbertos?.pedidosDistintos),
+    };
+  }, [estoqueExibicao, resumoPedidosAbertos]);
 
   /* =======================================================
      FILTRAR + PREPARAR LINHAS
@@ -248,108 +137,50 @@ export default function useEstoqueProcessado({
        = estoque - pedidos em aberto
   ======================================================= */
 
-  const estoqueFiltrado =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            pesquisa,
-          );
+  const estoqueFiltrado = useMemo(() => {
+    const termo = normalizarTexto(pesquisa);
 
+    const linhas = estoqueExibicao
+      .filter((item) => {
+        const estoqueAtual = numero(item.saldo);
 
-        const linhas =
-          estoqueExibicao
-            .filter(
-              (item) => {
-                const estoqueAtual =
-                  numero(
-                    item.saldo,
-                  );
+        if (situacao === SITUACAO_ESTOQUE.COM_SALDO && estoqueAtual === 0) {
+          return false;
+        }
 
+        if (situacao === SITUACAO_ESTOQUE.SEM_SALDO && estoqueAtual !== 0) {
+          return false;
+        }
 
-                if (
-                  situacao ===
-                    SITUACAO_ESTOQUE
-                      .COM_SALDO &&
-                  estoqueAtual ===
-                    0
-                ) {
-                  return false;
-                }
+        if (!termo) {
+          return true;
+        }
 
+        const conteudo = normalizarTexto(
+          `${item.codigoProduto} ${item.codigoIntegracao} ${item.descricao}`,
+        );
 
-                if (
-                  situacao ===
-                    SITUACAO_ESTOQUE
-                      .SEM_SALDO &&
-                  estoqueAtual !==
-                    0
-                ) {
-                  return false;
-                }
+        return conteudo.includes(termo);
+      })
+      .map((item) => {
+        const codigo = normalizarCodigo(item.codigoProduto);
 
+        const estoqueAtual = numero(item.saldo);
 
-                if (!termo) {
-                  return true;
-                }
+        const quantidadePedidos = numero(pedidosPorProduto.get(codigo));
 
+        const saldoDisponivel = estoqueAtual - quantidadePedidos;
 
-                const conteudo =
-                  normalizarTexto(
-                    `${
-                      item.codigoProduto
-                    } ${
-                      item.codigoIntegracao
-                    } ${
-                      item.descricao
-                    }`,
-                  );
+        return {
+          ...item,
 
+          quantidadePedidos,
 
-                return conteudo.includes(
-                  termo,
-                );
-              },
-            )
-            .map(
-              (item) => {
-                const codigo =
-                  normalizarCodigo(
-                    item.codigoProduto,
-                  );
+          saldoDisponivel,
+        };
+      });
 
-
-                const estoqueAtual =
-                  numero(
-                    item.saldo,
-                  );
-
-
-                const quantidadePedidos =
-                  numero(
-                    pedidosPorProduto.get(
-                      codigo,
-                    ),
-                  );
-
-
-                const saldoDisponivel =
-                  estoqueAtual -
-                  quantidadePedidos;
-
-
-                return {
-                  ...item,
-
-                  quantidadePedidos,
-
-                  saldoDisponivel,
-                };
-              },
-            );
-
-
-        /* =================================================
+    /* =================================================
            ORDENAÇÃO
 
            1. possui estoque + pedidos
@@ -363,171 +194,76 @@ export default function useEstoqueProcessado({
            - descrição A → Z
         ================================================= */
 
-        return [
-          ...linhas,
-        ].sort(
-          (
-            itemA,
-            itemB,
-          ) => {
-            const estoqueA =
-              numero(
-                itemA.saldo,
-              );
+    return [...linhas].sort((itemA, itemB) => {
+      const estoqueA = numero(itemA.saldo);
 
+      const estoqueB = numero(itemB.saldo);
 
-            const estoqueB =
-              numero(
-                itemB.saldo,
-              );
+      const pedidosA = numero(itemA.quantidadePedidos);
 
+      const pedidosB = numero(itemB.quantidadePedidos);
 
-            const pedidosA =
-              numero(
-                itemA
-                  .quantidadePedidos,
-              );
+      const grupoA = obterGrupoPrioridade({
+        estoque: estoqueA,
 
+        pedidos: pedidosA,
+      });
 
-            const pedidosB =
-              numero(
-                itemB
-                  .quantidadePedidos,
-              );
+      const grupoB = obterGrupoPrioridade({
+        estoque: estoqueB,
 
+        pedidos: pedidosB,
+      });
 
-            const grupoA =
-              obterGrupoPrioridade({
-                estoque:
-                  estoqueA,
-
-                pedidos:
-                  pedidosA,
-              });
-
-
-            const grupoB =
-              obterGrupoPrioridade({
-                estoque:
-                  estoqueB,
-
-                pedidos:
-                  pedidosB,
-              });
-
-
-            /* =============================================
+      /* =============================================
                1. GRUPO
             ============================================= */
 
-            if (
-              grupoA !==
-              grupoB
-            ) {
-              return (
-                grupoA -
-                grupoB
-              );
-            }
+      if (grupoA !== grupoB) {
+        return grupoA - grupoB;
+      }
 
-
-            /* =============================================
+      /* =============================================
                2. PEDIDOS EM ABERTO
             ============================================= */
 
-            if (
-              pedidosA !==
-              pedidosB
-            ) {
-              return (
-                pedidosB -
-                pedidosA
-              );
-            }
+      if (pedidosA !== pedidosB) {
+        return pedidosB - pedidosA;
+      }
 
-
-            /* =============================================
+      /* =============================================
                3. ESTOQUE
             ============================================= */
 
-            if (
-              estoqueA !==
-              estoqueB
-            ) {
-              return (
-                estoqueB -
-                estoqueA
-              );
-            }
+      if (estoqueA !== estoqueB) {
+        return estoqueB - estoqueA;
+      }
 
-
-            /* =============================================
+      /* =============================================
                4. DESCRIÇÃO
             ============================================= */
 
-            return String(
-              itemA.descricao ??
-                "",
-            ).localeCompare(
-              String(
-                itemB.descricao ??
-                  "",
-              ),
-              "pt-BR",
-              {
-                sensitivity:
-                  "base",
-              },
-            );
-          },
-        );
-      },
-      [
-        estoqueExibicao,
-        pesquisa,
-        situacao,
-        pedidosPorProduto,
-      ],
-    );
-
+      return String(itemA.descricao ?? "").localeCompare(String(itemB.descricao ?? ""), "pt-BR", {
+        sensitivity: "base",
+      });
+    });
+  }, [estoqueExibicao, pesquisa, situacao, pedidosPorProduto]);
 
   /* =======================================================
      LOCAL ATUAL
   ======================================================= */
 
-  const localAtual =
-    useMemo(
-      () => {
-        if (
-          localSelecionado ===
-          LOCAL_TODOS
-        ) {
-          return "Todos os locais ativos";
-        }
+  const localAtual = useMemo(() => {
+    if (localSelecionado === LOCAL_TODOS) {
+      return "Todos os locais ativos";
+    }
 
-
-        const local =
-          locais.find(
-            (item) =>
-              String(
-                item.codigoLocalEstoque,
-              ) ===
-              String(
-                localSelecionado,
-              ),
-          );
-
-
-        return local
-          ? `${local.codigo} — ${local.descricao}`
-          : "Local de estoque";
-      },
-      [
-        locais,
-        localSelecionado,
-      ],
+    const local = locais.find(
+      (item) => String(item.codigoLocalEstoque) === String(localSelecionado),
     );
 
+    return local ? `${local.codigo} — ${local.descricao}` : "Local de estoque";
+  }, [locais, localSelecionado]);
 
   /* =======================================================
      RETORNO

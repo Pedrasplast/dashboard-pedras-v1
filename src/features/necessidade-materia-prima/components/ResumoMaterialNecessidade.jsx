@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 import {
@@ -24,18 +23,14 @@ function interpretarEstoqueSeguranca(valor) {
   let normalizado = texto;
 
   if (texto.includes(",")) {
-    normalizado = texto
-      .replace(/\./g, "")
-      .replace(",", ".");
+    normalizado = texto.replace(/\./g, "").replace(",", ".");
   } else if (/^\d{1,3}(\.\d{3})+$/.test(texto)) {
     normalizado = texto.replace(/\./g, "");
   }
 
   const resultado = Number(normalizado);
 
-  return Number.isFinite(resultado)
-    ? resultado
-    : null;
+  return Number.isFinite(resultado) ? resultado : null;
 }
 
 function estoqueNegativo(valor) {
@@ -52,22 +47,12 @@ function estoqueNegativo(valor) {
    COMPONENTE
 ============================================================ */
 
-export default function ResumoMaterialNecessidade({
-  materialAtual,
-  alterarAjuste,
-}) {
-  const [
-    editandoEstoqueSeguranca,
-    setEditandoEstoqueSeguranca,
-  ] = useState(false);
+export default function ResumoMaterialNecessidade({ materialAtual, alterarAjuste }) {
+  const [editandoEstoqueSeguranca, setEditandoEstoqueSeguranca] = useState(false);
 
-  const estoqueOmieNegativo = estoqueNegativo(
-    materialAtual.estoqueApi
-  );
+  const estoqueOmieNegativo = estoqueNegativo(materialAtual.estoqueApi);
 
-  const saldoProjetadoNegativo = estoqueNegativo(
-    materialAtual.saldoProjetado
-  );
+  const saldoProjetadoNegativo = estoqueNegativo(materialAtual.saldoProjetado);
 
   const estiloNegativo = {
     color: "#dc2626",
@@ -98,18 +83,14 @@ export default function ResumoMaterialNecessidade({
             {/* MATERIAL */}
 
             <th>
-              <span className="necessidade-resumo-material">
-                {materialAtual.material}
-              </span>
+              <span className="necessidade-resumo-material">{materialAtual.material}</span>
             </th>
 
             {/* CONSUMO */}
 
             <td className="necessidade-resumo-celula">
               <span className="necessidade-resumo-valor">
-                {formatarConsumo(
-                  materialAtual.consumo
-                )}
+                {formatarConsumo(materialAtual.consumo)}
               </span>
             </td>
 
@@ -125,11 +106,7 @@ export default function ResumoMaterialNecessidade({
                 value={materialAtual.percentual}
                 aria-label={`Percentual de compra ${materialAtual.material}`}
                 onChange={(event) =>
-                  alterarAjuste(
-                    materialAtual.id,
-                    "percentual",
-                    event.target.value
-                  )
+                  alterarAjuste(materialAtual.id, "percentual", event.target.value)
                 }
               />
             </td>
@@ -138,9 +115,7 @@ export default function ResumoMaterialNecessidade({
 
             <td className="necessidade-resumo-celula">
               <span className="necessidade-resumo-valor">
-                {formatarConsumo(
-                  materialAtual.consumoConsiderado
-                )}
+                {formatarConsumo(materialAtual.consumoConsiderado)}
               </span>
             </td>
 
@@ -149,10 +124,10 @@ export default function ResumoMaterialNecessidade({
             <td
               className={[
                 "necessidade-resumo-celula",
-                estoqueOmieNegativo
-                  ? "necessidade-estoque-negativo"
-                  : "",
-              ].filter(Boolean).join(" ")}
+                estoqueOmieNegativo ? "necessidade-estoque-negativo" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               <span
                 className={
@@ -160,16 +135,10 @@ export default function ResumoMaterialNecessidade({
                     ? "necessidade-resumo-valor necessidade-estoque-negativo"
                     : "necessidade-resumo-valor necessidade-resumo-valor-secundario"
                 }
-                style={
-                  estoqueOmieNegativo
-                    ? estiloNegativo
-                    : undefined
-                }
+                style={estoqueOmieNegativo ? estiloNegativo : undefined}
               >
                 {materialAtual.estoqueDisponivel
-                  ? formatarKg(
-                      materialAtual.estoqueApi
-                    )
+                  ? formatarKg(materialAtual.estoqueApi)
                   : "Sem dados"}
               </span>
             </td>
@@ -178,9 +147,7 @@ export default function ResumoMaterialNecessidade({
 
             <td className="necessidade-resumo-celula">
               <span className="necessidade-resumo-valor">
-                {formatarKg(
-                  materialAtual.comprasFuturas
-                )}
+                {formatarKg(materialAtual.comprasFuturas)}
               </span>
             </td>
 
@@ -189,10 +156,10 @@ export default function ResumoMaterialNecessidade({
             <td
               className={[
                 "necessidade-resumo-celula",
-                saldoProjetadoNegativo
-                  ? "necessidade-negativo necessidade-estoque-negativo"
-                  : "",
-              ].filter(Boolean).join(" ")}
+                saldoProjetadoNegativo ? "necessidade-negativo necessidade-estoque-negativo" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               <span
                 className={
@@ -200,17 +167,9 @@ export default function ResumoMaterialNecessidade({
                     ? "necessidade-resumo-valor necessidade-resumo-valor-negativo necessidade-estoque-negativo"
                     : "necessidade-resumo-valor necessidade-resumo-valor-secundario"
                 }
-                style={
-                  saldoProjetadoNegativo
-                    ? estiloNegativo
-                    : undefined
-                }
+                style={saldoProjetadoNegativo ? estiloNegativo : undefined}
               >
-                {materialAtual.estoqueDisponivel
-                  ? formatarKg(
-                      materialAtual.saldoProjetado
-                    )
-                  : "—"}
+                {materialAtual.estoqueDisponivel ? formatarKg(materialAtual.saldoProjetado) : "—"}
               </span>
             </td>
 
@@ -227,27 +186,13 @@ export default function ResumoMaterialNecessidade({
                     : formatarKg(materialAtual.teto)
                 }
                 aria-label={`Estoque de segurança ${materialAtual.material}`}
-                onFocus={() =>
-                  setEditandoEstoqueSeguranca(true)
-                }
-                onBlur={() =>
-                  setEditandoEstoqueSeguranca(false)
-                }
+                onFocus={() => setEditandoEstoqueSeguranca(true)}
+                onBlur={() => setEditandoEstoqueSeguranca(false)}
                 onChange={(event) => {
-                  const valor =
-                    interpretarEstoqueSeguranca(
-                      event.target.value
-                    );
+                  const valor = interpretarEstoqueSeguranca(event.target.value);
 
-                  if (
-                    valor !== null &&
-                    valor >= 0
-                  ) {
-                    alterarAjuste(
-                      materialAtual.id,
-                      "teto",
-                      valor
-                    );
+                  if (valor !== null && valor >= 0) {
+                    alterarAjuste(materialAtual.id, "teto", valor);
                   }
                 }}
               />
@@ -257,11 +202,7 @@ export default function ResumoMaterialNecessidade({
 
             <td className="necessidade-resumo-celula necessidade-resumo-celula-necessidade">
               <span className="necessidade-resumo-valor necessidade-resumo-valor-principal">
-                {materialAtual.estoqueDisponivel
-                  ? formatarKg(
-                      materialAtual.necessidade
-                    )
-                  : "—"}
+                {materialAtual.estoqueDisponivel ? formatarKg(materialAtual.necessidade) : "—"}
               </span>
             </td>
 
@@ -270,9 +211,7 @@ export default function ResumoMaterialNecessidade({
             <td className="necessidade-resumo-celula">
               <span className="necessidade-resumo-valor">
                 {materialAtual.preco != null
-                  ? formatarPrecoUnitario(
-                      materialAtual.preco
-                    )
+                  ? formatarPrecoUnitario(materialAtual.preco)
                   : "Sem preço"}
               </span>
             </td>
@@ -281,11 +220,7 @@ export default function ResumoMaterialNecessidade({
 
             <td className="necessidade-resumo-celula necessidade-resumo-celula-valor">
               <span className="necessidade-resumo-valor necessidade-resumo-valor-destaque">
-                {materialAtual.estoqueDisponivel
-                  ? formatarMoeda(
-                      materialAtual.valorEstimado
-                    )
-                  : "—"}
+                {materialAtual.estoqueDisponivel ? formatarMoeda(materialAtual.valorEstimado) : "—"}
               </span>
             </td>
           </tr>

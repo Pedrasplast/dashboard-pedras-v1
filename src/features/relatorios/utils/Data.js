@@ -15,11 +15,7 @@
  */
 
 export function obterDataDoRegistro(item) {
-  const valor =
-    item?.inicio_dia ||
-    item?.inicio ||
-    item?.data ||
-    null;
+  const valor = item?.inicio_dia || item?.inicio || item?.data || null;
 
   if (!valor) {
     return null;
@@ -47,9 +43,7 @@ export function obterDataDoRegistro(item) {
    * 01/07/26
    */
 
-  const match = texto.match(
-    /^(\d{2})\/(\d{2})\/(\d{2,4})/,
-  );
+  const match = texto.match(/^(\d{2})\/(\d{2})\/(\d{2,4})/);
 
   if (!match) {
     return null;
@@ -78,8 +72,5 @@ export function formatarDataRelatorio(item) {
     return "-";
   }
 
-  return data
-    .split("-")
-    .reverse()
-    .join("/");
+  return data.split("-").reverse().join("/");
 }

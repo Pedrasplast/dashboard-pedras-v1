@@ -2,12 +2,9 @@
    ATUALIZADOR AUTOMÁTICO DO SISTEMA
 ========================================================= */
 
-const INTERVALO_VERIFICACAO =
-  60_000;
+const INTERVALO_VERIFICACAO = 60_000;
 
-const ATRASO_INICIAL =
-  3_000;
-
+const ATRASO_INICIAL = 3_000;
 
 /* =========================================================
    VERSÃO EMBUTIDA NO BUILD
@@ -20,142 +17,78 @@ const ATRASO_INICIAL =
    version.json na primeira consulta.
 ========================================================= */
 
-const VERSAO_EMBUTIDA =
-  String(
-    import.meta.env
-      .VITE_APP_VERSION ??
-      "",
-  ).trim();
+const VERSAO_EMBUTIDA = String(import.meta.env.VITE_APP_VERSION ?? "").trim();
 
+let versaoEmExecucao = VERSAO_EMBUTIDA || null;
 
-let versaoEmExecucao =
-  VERSAO_EMBUTIDA ||
-  null;
+let verificando = false;
 
-
-let verificando =
-  false;
-
-
-let recarregando =
-  false;
-
+let recarregando = false;
 
 /* =========================================================
    CONSULTAR VERSÃO PUBLICADA
 ========================================================= */
 
 async function buscarVersaoPublicada() {
-  const url =
-    new URL(
-      "/version.json",
-      window.location.origin,
-    );
-
+  const url = new URL("/version.json", window.location.origin);
 
   /*
    * Evita qualquer reaproveitamento
    * do version.json pelo navegador,
    * proxy ou CDN.
    */
-  url.searchParams.set(
-    "t",
-    String(
-      Date.now(),
-    ),
-  );
+  url.searchParams.set("t", String(Date.now()));
 
+  const resposta = await fetch(url.toString(), {
+    method: "GET",
 
-  const resposta =
-    await fetch(
-      url.toString(),
-      {
-        method:
-          "GET",
+    cache: "no-store",
 
-        cache:
-          "no-store",
+    credentials: "same-origin",
 
-        credentials:
-          "same-origin",
+    headers: {
+      Accept: "application/json",
 
-        headers: {
-          Accept:
-            "application/json",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
 
-          "Cache-Control":
-            "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+    },
+  });
 
-          Pragma:
-            "no-cache",
-        },
-      },
-    );
-
-
-  if (
-    !resposta.ok
-  ) {
+  if (!resposta.ok) {
     return null;
   }
 
+  const dados = await resposta.json();
 
-  const dados =
-    await resposta.json();
+  const versao = String(dados?.version ?? "").trim();
 
-
-  const versao =
-    String(
-      dados?.version ??
-      "",
-    ).trim();
-
-
-  return (
-    versao ||
-    null
-  );
+  return versao || null;
 }
-
 
 /* =========================================================
    RECARREGAR SISTEMA
 ========================================================= */
 
-function recarregarSistema(
-  novaVersao: string,
-) {
-  if (
-    recarregando
-  ) {
+function recarregarSistema(novaVersao: string) {
+  if (recarregando) {
     return;
   }
 
+  recarregando = true;
 
-  recarregando =
-    true;
+  console.info("[Atualização] Recarregando sistema para nova versão.", {
+    atual: versaoEmExecucao,
 
-
-  console.info(
-    "[Atualização] Recarregando sistema para nova versão.",
-    {
-      atual:
-        versaoEmExecucao,
-
-      nova:
-        novaVersao,
-    },
-  );
-
+    nova: novaVersao,
+  });
 
   /*
    * Atualizamos primeiro a referência em memória.
    * Isso evita chamadas duplicadas durante os
    * milissegundos anteriores ao reload.
    */
-  versaoEmExecucao =
-    novaVersao;
-
+  versaoEmExecucao = novaVersao;
 
   /*
    * O Vite gera arquivos com hash.
@@ -165,19 +98,14 @@ function recarregarSistema(
   window.location.reload();
 }
 
-
 /* =========================================================
    VERIFICAR ATUALIZAÇÃO
 ========================================================= */
 
 async function verificarAtualizacao() {
-  if (
-    verificando ||
-    recarregando
-  ) {
+  if (verificando || recarregando) {
     return;
   }
-
 
   /*
    * Quando já conhecemos a versão executada,
@@ -187,31 +115,18 @@ async function verificarAtualizacao() {
    * Ao usuário voltar para a aba, fazemos
    * a consulta imediatamente.
    */
-  if (
-    versaoEmExecucao &&
-    document
-      .visibilityState ===
-      "hidden"
-  ) {
+  if (versaoEmExecucao && document.visibilityState === "hidden") {
     return;
   }
 
-
-  verificando =
-    true;
-
+  verificando = true;
 
   try {
-    const versaoPublicada =
-      await buscarVersaoPublicada();
+    const versaoPublicada = await buscarVersaoPublicada();
 
-
-    if (
-      !versaoPublicada
-    ) {
+    if (!versaoPublicada) {
       return;
     }
-
 
     /*
      * FALLBACK IMPORTANTE
@@ -224,56 +139,32 @@ async function verificarAtualizacao() {
      * Da próxima consulta em diante já será
      * possível detectar novos deployments.
      */
-    if (
-      !versaoEmExecucao
-    ) {
-      versaoEmExecucao =
-        versaoPublicada;
+    if (!versaoEmExecucao) {
+      versaoEmExecucao = versaoPublicada;
 
+      console.info("[Atualização] Versão inicial registrada.", {
+        versao: versaoEmExecucao,
 
-      console.info(
-        "[Atualização] Versão inicial registrada.",
-        {
-          versao:
-            versaoEmExecucao,
-
-          origem:
-            "version.json",
-        },
-      );
-
+        origem: "version.json",
+      });
 
       return;
     }
-
 
     /*
      * Existe um deploy diferente daquele
      * que esta aba está executando.
      */
-    if (
-      versaoPublicada !==
-      versaoEmExecucao
-    ) {
-      console.info(
-        "[Atualização] Nova versão encontrada.",
-        {
-          atual:
-            versaoEmExecucao,
+    if (versaoPublicada !== versaoEmExecucao) {
+      console.info("[Atualização] Nova versão encontrada.", {
+        atual: versaoEmExecucao,
 
-          nova:
-            versaoPublicada,
-        },
-      );
+        nova: versaoPublicada,
+      });
 
-
-      recarregarSistema(
-        versaoPublicada,
-      );
+      recarregarSistema(versaoPublicada);
     }
-  } catch (
-    erro
-  ) {
+  } catch (erro) {
     /*
      * Falha momentânea de internet,
      * Vercel ou version.json não pode
@@ -281,31 +172,21 @@ async function verificarAtualizacao() {
      *
      * Tentaremos novamente posteriormente.
      */
-    console.debug(
-      "[Atualização] Não foi possível verificar a versão.",
-      erro,
-    );
+    console.debug("[Atualização] Não foi possível verificar a versão.", erro);
   } finally {
-    verificando =
-      false;
+    verificando = false;
   }
 }
-
 
 /* =========================================================
    VOLTOU PARA A ABA
 ========================================================= */
 
 function verificarAoVoltarParaAba() {
-  if (
-    document
-      .visibilityState ===
-    "visible"
-  ) {
+  if (document.visibilityState === "visible") {
     void verificarAtualizacao();
   }
 }
-
 
 /* =========================================================
    VOLTOU PELO CACHE DO NAVEGADOR
@@ -315,7 +196,6 @@ function verificarAoRestaurarPagina() {
   void verificarAtualizacao();
 }
 
-
 /* =========================================================
    INTERNET VOLTOU
 ========================================================= */
@@ -323,7 +203,6 @@ function verificarAoRestaurarPagina() {
 function verificarAoVoltarInternet() {
   void verificarAtualizacao();
 }
-
 
 /* =========================================================
    INICIALIZAÇÃO
@@ -333,15 +212,9 @@ function iniciarAtualizadorSistema() {
   /*
    * Não executa durante SSR.
    */
-  if (
-    typeof window ===
-      "undefined" ||
-    typeof document ===
-      "undefined"
-  ) {
+  if (typeof window === "undefined" || typeof document === "undefined") {
     return;
   }
-
 
   /*
    * Durante npm run dev não queremos
@@ -349,89 +222,54 @@ function iniciarAtualizadorSistema() {
    *
    * O próprio HMR do Vite já cuida disso.
    */
-  if (
-    import.meta.env.DEV
-  ) {
+  if (import.meta.env.DEV) {
     return;
   }
 
+  console.info("[Atualização] Monitor de versão iniciado.", {
+    versaoEmbutida: VERSAO_EMBUTIDA || null,
 
-  console.info(
-    "[Atualização] Monitor de versão iniciado.",
-    {
-      versaoEmbutida:
-        VERSAO_EMBUTIDA ||
-        null,
-
-      intervaloMs:
-        INTERVALO_VERIFICACAO,
-    },
-  );
-
+    intervaloMs: INTERVALO_VERIFICACAO,
+  });
 
   /*
    * Primeira consulta rapidamente após
    * o carregamento.
    */
-  window.setTimeout(
-    () => {
-      void verificarAtualizacao();
-    },
-    ATRASO_INICIAL,
-  );
-
+  window.setTimeout(() => {
+    void verificarAtualizacao();
+  }, ATRASO_INICIAL);
 
   /*
    * Consulta periódica.
    */
-  window.setInterval(
-    () => {
-      void verificarAtualizacao();
-    },
-    INTERVALO_VERIFICACAO,
-  );
-
+  window.setInterval(() => {
+    void verificarAtualizacao();
+  }, INTERVALO_VERIFICACAO);
 
   /*
    * Usuário voltou para a aba.
    */
-  document.addEventListener(
-    "visibilitychange",
-    verificarAoVoltarParaAba,
-  );
-
+  document.addEventListener("visibilitychange", verificarAoVoltarParaAba);
 
   /*
    * Usuário voltou para a janela.
    */
-  window.addEventListener(
-    "focus",
-    verificarAoRestaurarPagina,
-  );
-
+  window.addEventListener("focus", verificarAoRestaurarPagina);
 
   /*
    * Trata inclusive restauração através
    * do back-forward cache do navegador.
    */
-  window.addEventListener(
-    "pageshow",
-    verificarAoRestaurarPagina,
-  );
-
+  window.addEventListener("pageshow", verificarAoRestaurarPagina);
 
   /*
    * Se estava sem internet e ela voltar,
    * verificamos imediatamente.
    */
-  window.addEventListener(
-    "online",
-    verificarAoVoltarInternet,
-  );
+  window.addEventListener("online", verificarAoVoltarInternet);
 }
 
-
 iniciarAtualizadorSistema();
-
 
 export {};

@@ -2,7 +2,6 @@ import { memo } from "react";
 
 import "./CampoFiltro.css";
 
-
 /* =========================================================
    CAMPO DE FILTRO COMPARTILHADO
    ---------------------------------------------------------
@@ -13,23 +12,12 @@ import "./CampoFiltro.css";
    migracao gradual para o Design System.
 ========================================================= */
 
-function CampoFiltro({
-  titulo,
-  className = "",
-  children,
-}) {
-  const classes = [
-    "campo-filtro",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+function CampoFiltro({ titulo, className = "", children }) {
+  const classes = ["campo-filtro", className].filter(Boolean).join(" ");
 
   return (
     <label className={classes}>
-      <span className="campo-filtro__label">
-        {titulo}
-      </span>
+      <span className="campo-filtro__label">{titulo}</span>
 
       {children}
     </label>

@@ -20,19 +20,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 15px;
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(37, 99, 235, 0.065),
-      rgba(5, 150, 105, 0.04)
-    ),
-    #ffffff;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.065), rgba(5, 150, 105, 0.04)), #ffffff;
 
-  box-shadow:
-    0 2px 5px
-    rgba(15, 23, 42, 0.045);
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.045);
 }
-
 
 .dmp-eyebrow {
   display: block;
@@ -48,7 +39,6 @@
   text-transform: uppercase;
 }
 
-
 .dmp-header h1 {
   margin: 0;
 
@@ -60,14 +50,10 @@
   letter-spacing: -0.025em;
 }
 
-
 .dmp-header p {
   max-width: 780px;
 
-  margin:
-    7px
-    0
-    0;
+  margin: 7px 0 0;
 
   color: #64748b;
 
@@ -75,12 +61,8 @@
   line-height: 1.5;
 }
 
-
 .dmp-header-icone {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   width: 54px;
   height: 54px;
@@ -89,28 +71,14 @@
 
   place-items: center;
 
-  border:
-    1px solid
-    rgba(
-      37,
-      99,
-      235,
-      0.14
-    );
+  border: 1px solid rgba(37, 99, 235, 0.14);
 
   border-radius: 14px;
 
-  background:
-    rgba(
-      37,
-      99,
-      235,
-      0.09
-    );
+  background: rgba(37, 99, 235, 0.09);
 
   color: #2563eb;
 }
-
 
 /* =========================================================
    FILTROS
@@ -126,16 +94,8 @@
 
   background: #ffffff;
 
-  box-shadow:
-    0 1px 2px
-    rgba(
-      15,
-      23,
-      42,
-      0.025
-    );
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
 }
-
 
 .dmp-filtros-rapidos {
   display: flex;
@@ -147,18 +107,13 @@
   margin-bottom: 11px;
 }
 
-
 .dmp-filtros-rapidos button,
 .dmp-atualizar {
   min-height: 36px;
 
-  padding:
-    0
-    12px;
+  padding: 0 12px;
 
-  border:
-    1px solid
-    #cbd5e1;
+  border: 1px solid #cbd5e1;
 
   border-radius: 9px;
 
@@ -174,7 +129,6 @@
   cursor: pointer;
 }
 
-
 .dmp-filtros-rapidos button:hover,
 .dmp-atualizar:hover:not(:disabled) {
   border-color: #94a3b8;
@@ -184,34 +138,20 @@
   color: #0f172a;
 }
 
-
 .dmp-filtros {
   display: grid;
 
   grid-template-columns:
-    minmax(
-      145px,
-      175px
-    )
-    minmax(
-      145px,
-      175px
-    )
-    minmax(
-      190px,
-      1fr
-    )
-    minmax(
-      230px,
-      1fr
-    )
+    minmax(145px, 175px)
+    minmax(145px, 175px)
+    minmax(190px, 1fr)
+    minmax(230px, 1fr)
     auto;
 
   gap: 10px;
 
   align-items: end;
 }
-
 
 .dmp-filtros label {
   min-width: 0;
@@ -223,7 +163,6 @@
   gap: 6px;
 }
 
-
 .dmp-filtros label > span {
   color: #64748b;
 
@@ -231,7 +170,6 @@
 
   font-weight: 750;
 }
-
 
 .dmp-filtros input,
 .dmp-filtros select {
@@ -241,13 +179,9 @@
 
   box-sizing: border-box;
 
-  padding:
-    0
-    11px;
+  padding: 0 11px;
 
-  border:
-    1px solid
-    #cbd5e1;
+  border: 1px solid #cbd5e1;
 
   border-radius: 9px;
 
@@ -262,24 +196,12 @@
   font-size: 13px;
 }
 
-
 .dmp-filtros input:focus,
 .dmp-filtros select:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0
-    0
-    0
-    3px
-    rgba(
-      37,
-      99,
-      235,
-      0.09
-    );
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
 }
-
 
 .dmp-atualizar {
   min-height: 40px;
@@ -292,13 +214,11 @@
   gap: 7px;
 }
 
-
 .dmp-atualizar:disabled {
   opacity: 0.55;
 
   cursor: not-allowed;
 }
-
 
 /* =========================================================
    MENSAGENS
@@ -323,51 +243,29 @@
   font-weight: 650;
 }
 
-
 .dmp-mensagem.erro {
-  border-color:
-    rgba(
-      220,
-      38,
-      38,
-      0.18
-    );
+  border-color: rgba(220, 38, 38, 0.18);
 
   background: #fef2f2;
 
   color: #b91c1c;
 }
 
-
 .dmp-mensagem.aviso {
-  border-color:
-    rgba(
-      217,
-      119,
-      6,
-      0.18
-    );
+  border-color: rgba(217, 119, 6, 0.18);
 
   background: #fffbeb;
 
   color: #92400e;
 }
 
-
 .dmp-mensagem.informativa {
-  border-color:
-    rgba(
-      37,
-      99,
-      235,
-      0.16
-    );
+  border-color: rgba(37, 99, 235, 0.16);
 
   background: #eff6ff;
 
   color: #1d4ed8;
 }
-
 
 /* =========================================================
    SEÇÕES
@@ -376,7 +274,6 @@
 .dmp-secao {
   margin-bottom: 14px;
 }
-
 
 .dmp-secao-titulo {
   display: flex;
@@ -388,11 +285,8 @@
 
   margin-bottom: 9px;
 
-  padding:
-    0
-    2px;
+  padding: 0 2px;
 }
-
 
 .dmp-secao-titulo > div > span {
   display: block;
@@ -410,7 +304,6 @@
   text-transform: uppercase;
 }
 
-
 .dmp-secao-titulo h2 {
   margin: 0;
 
@@ -421,13 +314,11 @@
   font-weight: 800;
 }
 
-
 .dmp-secao-titulo > small {
   color: #94a3b8;
 
   font-size: 10.5px;
 }
-
 
 /* =========================================================
    KPIS
@@ -436,18 +327,10 @@
 .dmp-kpis {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 11px;
 }
-
 
 .dmp-kpi {
   position: relative;
@@ -457,60 +340,40 @@
 
   padding: 15px 16px;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
   border-radius: 12px;
 
   background: #ffffff;
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 
   overflow: hidden;
 }
-
 
 .dmp-kpi::before {
   content: "";
 
   position: absolute;
 
-  inset:
-    0
-    auto
-    0
-    0;
+  inset: 0 auto 0 0;
 
   width: 4px;
 
   background: #64748b;
 }
 
-
 .dmp-kpi-azul::before {
   background: #2563eb;
 }
-
 
 .dmp-kpi-ok::before {
   background: #059669;
 }
 
-
 .dmp-kpi-alerta::before {
   background: #d97706;
 }
-
 
 .dmp-kpi-topo {
   display: flex;
@@ -523,7 +386,6 @@
   margin-bottom: 10px;
 }
 
-
 .dmp-kpi-topo > span {
   color: #64748b;
 
@@ -535,7 +397,6 @@
 
   letter-spacing: 0.035em;
 }
-
 
 .dmp-kpi-icone {
   width: 32px;
@@ -551,7 +412,6 @@
 
   color: #475569;
 }
-
 
 .dmp-kpi > strong {
   display: block;
@@ -571,7 +431,6 @@
   text-overflow: ellipsis;
 }
 
-
 .dmp-kpi > small {
   display: block;
 
@@ -582,7 +441,6 @@
   line-height: 1.4;
 }
 
-
 /* =========================================================
    MINI KPIS
 ========================================================= */
@@ -590,18 +448,10 @@
 .dmp-mini-kpis {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 10px;
 }
-
 
 .dmp-mini-kpis > article {
   min-width: 0;
@@ -610,10 +460,7 @@
 
   grid-template-columns:
     38px
-    minmax(
-      0,
-      1fr
-    );
+    minmax(0, 1fr);
 
   gap: 11px;
 
@@ -628,7 +475,6 @@
   background: #ffffff;
 }
 
-
 .dmp-mini-kpis > article > svg {
   width: 36px;
   height: 36px;
@@ -642,7 +488,6 @@
   color: #2563eb;
 }
 
-
 .dmp-mini-kpis span {
   display: block;
 
@@ -655,26 +500,21 @@
   text-transform: uppercase;
 }
 
-
 .dmp-mini-kpis strong {
   display: block;
 
-  margin:
-    2px
-    0;
+  margin: 2px 0;
 
   color: #0f172a;
 
   font-size: 18px;
 }
 
-
 .dmp-mini-kpis small {
   color: #94a3b8;
 
   font-size: 10px;
 }
-
 
 /* =========================================================
    INSIGHTS
@@ -683,18 +523,10 @@
 .dmp-insights {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 10px;
 }
-
 
 .dmp-insights > article {
   min-width: 0;
@@ -702,20 +534,12 @@
 
   padding: 13px 14px;
 
-  border:
-    1px solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
   border-radius: 11px;
 
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f8fbff
-    );
+  background: linear-gradient(145deg, #ffffff, #f8fbff);
 }
-
 
 .dmp-insights span {
   display: block;
@@ -729,16 +553,12 @@
   text-transform: uppercase;
 }
 
-
 .dmp-insights strong {
   display: block;
 
   overflow: hidden;
 
-  margin:
-    7px
-    0
-    4px;
+  margin: 7px 0 4px;
 
   color: #0f172a;
 
@@ -748,7 +568,6 @@
 
   text-overflow: ellipsis;
 }
-
 
 .dmp-insights small {
   display: block;
@@ -760,7 +579,6 @@
   line-height: 1.4;
 }
 
-
 /* =========================================================
    GRADE DOS GRÁFICOS
 ========================================================= */
@@ -768,20 +586,12 @@
 .dmp-grid-graficos {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 13px;
 
   margin-bottom: 14px;
 }
-
 
 /* =========================================================
    CARDS
@@ -790,28 +600,16 @@
 .dmp-card {
   min-width: 0;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
   border-radius: 13px;
 
   background: #ffffff;
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 
   overflow: hidden;
 }
-
 
 .dmp-card-header {
   display: flex;
@@ -823,16 +621,12 @@
 
   padding: 15px 17px;
 
-  border-bottom:
-    1px solid
-    #edf1f5;
+  border-bottom: 1px solid #edf1f5;
 }
-
 
 .dmp-card-header > div {
   min-width: 0;
 }
-
 
 .dmp-card-header > div > span {
   display: block;
@@ -850,7 +644,6 @@
   text-transform: uppercase;
 }
 
-
 .dmp-card-header h2 {
   margin: 0;
 
@@ -861,12 +654,8 @@
   font-weight: 800;
 }
 
-
 .dmp-card-header p {
-  margin:
-    4px
-    0
-    0;
+  margin: 4px 0 0;
 
   color: #94a3b8;
 
@@ -875,16 +664,11 @@
   line-height: 1.4;
 }
 
-
 .dmp-card-header > svg {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   color: #64748b;
 }
-
 
 /* =========================================================
    ÁREA DOS GRÁFICOS
@@ -893,13 +677,8 @@
 .dmp-chart {
   height: 315px;
 
-  padding:
-    12px
-    10px
-    10px
-    0;
+  padding: 12px 10px 10px 0;
 }
-
 
 /* =========================================================
    TOOLTIP
@@ -916,41 +695,22 @@
 
   padding: 10px 11px;
 
-  border:
-    1px solid
-    #cbd5e1;
+  border: 1px solid #cbd5e1;
 
   border-radius: 9px;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.985
-    );
+  background: rgba(255, 255, 255, 0.985);
 
-  box-shadow:
-    0
-    8px
-    28px
-    rgba(
-      15,
-      23,
-      42,
-      0.12
-    );
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.12);
 
   color: #334155;
 
   font-size: 11px;
 }
 
-
 .dmp-tooltip strong {
   color: #0f172a;
 }
-
 
 /* =========================================================
    TABELAS
@@ -960,13 +720,11 @@
   margin-bottom: 14px;
 }
 
-
 .dmp-tabela-wrapper {
   width: 100%;
 
   overflow: auto;
 }
-
 
 .dmp-tabela {
   width: 100%;
@@ -980,21 +738,17 @@
   font-size: 12.5px;
 }
 
-
 .dmp-tabela-material {
   min-width: 1920px;
 }
-
 
 .dmp-tabela-fornecedor {
   min-width: 1720px;
 }
 
-
 .dmp-tabela-compras {
   min-width: 1660px;
 }
-
 
 .dmp-tabela th {
   position: sticky;
@@ -1005,9 +759,7 @@
 
   padding: 10px 12px;
 
-  border-bottom:
-    1px solid
-    #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 
   background: #f8fafc;
 
@@ -1026,13 +778,10 @@
   white-space: nowrap;
 }
 
-
 .dmp-tabela td {
   padding: 11px 12px;
 
-  border-bottom:
-    1px solid
-    #edf1f5;
+  border-bottom: 1px solid #edf1f5;
 
   background: #ffffff;
 
@@ -1041,11 +790,9 @@
   vertical-align: middle;
 }
 
-
 .dmp-tabela tbody tr:hover td {
   background: #fafcff;
 }
-
 
 .dmp-tabela td strong {
   color: #0f172a;
@@ -1053,52 +800,37 @@
   font-weight: 750;
 }
 
-
 .dmp-tabela .numero {
   text-align: right;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 
   white-space: nowrap;
 }
 
-
 .dmp-total {
-  color:
-    #2563eb
-    !important;
+  color: #2563eb !important;
 
   font-weight: 850;
 }
-
 
 .dmp-custo {
-  color:
-    #047857
-    !important;
+  color: #047857 !important;
 
   font-weight: 850;
 }
 
-
 .dmp-variacao-alta {
-  color:
-    #b45309
-    !important;
+  color: #b45309 !important;
 
   font-weight: 800;
 }
-
 
 .dmp-variacao-baixa {
-  color:
-    #047857
-    !important;
+  color: #047857 !important;
 
   font-weight: 800;
 }
-
 
 /* =========================================================
    STATUS COMPRA
@@ -1113,13 +845,9 @@
   min-width: 84px;
   min-height: 24px;
 
-  padding:
-    3px
-    8px;
+  padding: 3px 8px;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
   border-radius: 999px;
 
@@ -1132,51 +860,29 @@
   font-weight: 850;
 }
 
-
 .dmp-status-compra.recebida {
-  border-color:
-    rgba(
-      5,
-      150,
-      105,
-      0.17
-    );
+  border-color: rgba(5, 150, 105, 0.17);
 
   background: #ecfdf5;
 
   color: #047857;
 }
 
-
 .dmp-status-compra.confirmada {
-  border-color:
-    rgba(
-      37,
-      99,
-      235,
-      0.17
-    );
+  border-color: rgba(37, 99, 235, 0.17);
 
   background: #eff6ff;
 
   color: #1d4ed8;
 }
 
-
 .dmp-status-compra.prevista {
-  border-color:
-    rgba(
-      217,
-      119,
-      6,
-      0.17
-    );
+  border-color: rgba(217, 119, 6, 0.17);
 
   background: #fff7ed;
 
   color: #c2410c;
 }
-
 
 /* =========================================================
    ESTADO VAZIO
@@ -1201,13 +907,11 @@
   text-align: center;
 }
 
-
 .dmp-vazio strong {
   color: #475569;
 
   font-size: 12px;
 }
-
 
 .dmp-vazio span {
   max-width: 360px;
@@ -1217,29 +921,19 @@
   line-height: 1.45;
 }
 
-
 /* =========================================================
    ANIMAÇÃO
 ========================================================= */
 
 .dmp-girando {
-  animation:
-    dmp-girar
-    0.85s
-    linear
-    infinite;
+  animation: dmp-girar 0.85s linear infinite;
 }
-
 
 @keyframes dmp-girar {
   to {
-    transform:
-      rotate(
-        360deg
-      );
+    transform: rotate(360deg);
   }
 }
-
 
 /* =========================================================
    GRÁFICOS MENSAIS
@@ -1251,42 +945,25 @@
   overflow: hidden;
 }
 
-
 .dmp-card-mensal::before {
   content: "";
 
   position: absolute;
 
-  inset:
-    0
-    0
-    auto;
+  inset: 0 0 auto;
 
   z-index: 2;
 
   height: 3px;
 }
 
-
 .dmp-card-mensal-valor::before {
-  background:
-    linear-gradient(
-      90deg,
-      #2563eb,
-      #60a5fa
-    );
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
 }
-
 
 .dmp-card-mensal-quantidade::before {
-  background:
-    linear-gradient(
-      90deg,
-      #0f766e,
-      #2dd4bf
-    );
+  background: linear-gradient(90deg, #0f766e, #2dd4bf);
 }
-
 
 .dmp-card-header-mensal {
   min-height: 96px;
@@ -1295,42 +972,20 @@
 
   padding: 17px 19px;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(
-        248,
-        250,
-        252,
-        0.92
-      ),
-      rgba(
-        255,
-        255,
-        255,
-        0.98
-      )
-    );
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
 }
 
-
 .dmp-card-header-mensal-titulo {
-  flex:
-    1
-    1
-    auto;
+  flex: 1 1 auto;
 
   min-width: 0;
 }
 
-
 .dmp-card-header-mensal h2 {
   font-size: 17px;
 
-  letter-spacing:
-    -0.015em;
+  letter-spacing: -0.015em;
 }
-
 
 .dmp-periodo-mensal {
   display: inline-flex;
@@ -1339,29 +994,19 @@
 
   min-height: 22px;
 
-  margin-top:
-    7px
-    !important;
+  margin-top: 7px !important;
 
-  padding:
-    3px
-    8px;
+  padding: 3px 8px;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
   border-radius: 999px;
 
   background: #ffffff;
 
-  color:
-    #64748b
-    !important;
+  color: #64748b !important;
 
-  font-size:
-    9.5px
-    !important;
+  font-size: 9.5px !important;
 
   font-weight: 800;
 
@@ -1370,27 +1015,16 @@
   text-transform: uppercase;
 }
 
-
 /* =========================================================
    RESUMO DO CABEÇALHO MENSAL
 ========================================================= */
 
 .dmp-chart-header-resumo {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        110px,
-        auto
-      )
-    );
+  grid-template-columns: repeat(2, minmax(110px, auto));
 
   gap: 14px;
 
@@ -1398,11 +1032,8 @@
 
   padding-left: 18px;
 
-  border-left:
-    1px solid
-    #e2e8f0;
+  border-left: 1px solid #e2e8f0;
 }
-
 
 .dmp-chart-header-resumo > div {
   min-width: 0;
@@ -1417,30 +1048,22 @@
 
   gap: 3px;
 
-  padding:
-    7px
-    9px;
+  padding: 7px 9px;
 
   border-radius: 9px;
 }
-
 
 .dmp-chart-header-resumo-principal {
   background: #f8fafc;
 }
 
-
-.dmp-card-mensal-valor
-.dmp-chart-header-resumo-principal {
+.dmp-card-mensal-valor .dmp-chart-header-resumo-principal {
   background: #eff6ff;
 }
 
-
-.dmp-card-mensal-quantidade
-.dmp-chart-header-resumo-principal {
+.dmp-card-mensal-quantidade .dmp-chart-header-resumo-principal {
   background: #f0fdfa;
 }
-
 
 .dmp-chart-header-resumo small {
   color: #94a3b8;
@@ -1449,16 +1072,12 @@
 
   font-weight: 850;
 
-  letter-spacing:
-    0.045em;
+  letter-spacing: 0.045em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
-
 
 .dmp-chart-header-resumo strong {
   color: #0f172a;
@@ -1469,22 +1088,16 @@
 
   line-height: 1.1;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
-
-.dmp-card-mensal-valor
-.dmp-chart-header-resumo strong {
+.dmp-card-mensal-valor .dmp-chart-header-resumo strong {
   color: #1d4ed8;
 }
 
-
-.dmp-card-mensal-quantidade
-.dmp-chart-header-resumo strong {
+.dmp-card-mensal-quantidade .dmp-chart-header-resumo strong {
   color: #0f766e;
 }
-
 
 .dmp-chart-header-resumo span {
   color: #475569;
@@ -1495,10 +1108,8 @@
 
   line-height: 1.2;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
-
 
 /* =========================================================
    GRÁFICO MENSAL
@@ -1507,277 +1118,166 @@
 .dmp-chart-mensal {
   height: 335px;
 
-  padding:
-    15px
-    14px
-    14px
-    0;
+  padding: 15px 14px 14px 0;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(
-        248,
-        250,
-        252,
-        0.45
-      ),
-      rgba(
-        255,
-        255,
-        255,
-        0
-      )
-      38%
-    );
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.45), rgba(255, 255, 255, 0) 38%);
 }
 
-
-.dmp-card-mensal
-.recharts-cartesian-axis-tick-value {
-  font-variant-numeric:
-    tabular-nums;
+.dmp-card-mensal .recharts-cartesian-axis-tick-value {
+  font-variant-numeric: tabular-nums;
 }
 
-
-.dmp-card-mensal
-.recharts-rectangle {
+.dmp-card-mensal .recharts-rectangle {
   transition:
-    opacity
-    0.16s
-    ease,
-    filter
-    0.16s
-    ease;
+    opacity 0.16s ease,
+    filter 0.16s ease;
 }
 
-
-.dmp-card-mensal
-.recharts-rectangle:hover {
-  filter:
-    brightness(
-      0.96
-    );
+.dmp-card-mensal .recharts-rectangle:hover {
+  filter: brightness(0.96);
 }
-
 
 /* =========================================================
    RESPONSIVIDADE GERAL
 ========================================================= */
 
 @media (max-width: 1280px) {
-
   .dmp-kpis,
   .dmp-mini-kpis,
   .dmp-insights {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 
   .dmp-filtros {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 
   .dmp-atualizar {
     width: 100%;
   }
 }
 
-
 @media (max-width: 1180px) {
-
   .dmp-card-header-mensal {
-    align-items:
-      flex-start;
+    align-items: flex-start;
   }
 
-
   .dmp-chart-header-resumo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
 
     gap: 4px;
 
     padding-left: 12px;
   }
 
-
   .dmp-chart-header-resumo > div {
-    align-items:
-      flex-end;
+    align-items: flex-end;
 
-    padding:
-      3px
-      7px;
+    padding: 3px 7px;
   }
-
 
   .dmp-chart-header-resumo strong {
     font-size: 15px;
   }
 }
 
-
 @media (max-width: 900px) {
-
   .dmp-page {
-    padding:
-      14px
-      11px
-      26px;
+    padding: 14px 11px 26px;
   }
-
 
   .dmp-header {
-    align-items:
-      flex-start;
+    align-items: flex-start;
   }
-
 
   .dmp-header h1 {
     font-size: 23px;
   }
 
-
   .dmp-grid-graficos {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
-
   .dmp-secao-titulo {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    flex-direction:
-      column;
+    flex-direction: column;
 
     gap: 3px;
   }
-
 
   .dmp-card-header-mensal {
     min-height: 0;
   }
 
-
   .dmp-chart-header-resumo {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 8px;
   }
 }
 
-
 @media (max-width: 620px) {
-
   .dmp-card-header-mensal {
-    flex-direction:
-      column;
+    flex-direction: column;
 
-    align-items:
-      stretch;
+    align-items: stretch;
 
     gap: 13px;
   }
 
-
   .dmp-chart-header-resumo {
     width: 100%;
 
-    padding:
-      11px
-      0
-      0;
+    padding: 11px 0 0;
 
-    border-top:
-      1px solid
-      #edf1f5;
+    border-top: 1px solid #edf1f5;
 
     border-left: 0;
   }
 
-
   .dmp-chart-header-resumo > div {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    padding:
-      7px
-      8px;
+    padding: 7px 8px;
   }
-
 
   .dmp-chart-mensal {
     height: 305px;
   }
-
 
   .dmp-rotulo-mensal {
     display: none;
   }
 }
 
-
 @media (max-width: 560px) {
-
   .dmp-kpis,
   .dmp-mini-kpis,
   .dmp-insights,
   .dmp-filtros {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .dmp-header-icone {
     display: none;
   }
 
-
   .dmp-chart {
     height: 290px;
   }
-
 
   .dmp-chart-mensal {
     height: 305px;
   }
 }
 
-
 @media (max-width: 420px) {
-
   .dmp-chart-header-resumo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
-
   .dmp-chart-header-resumo > div {
-    align-items:
-      flex-start;
+    align-items: flex-start;
   }
 }

@@ -1,20 +1,11 @@
-import {
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
-import {
-  Clock3,
-} from "lucide-react";
+import { Clock3 } from "lucide-react";
 
 import DashboardParadasCard from "./DashboardParadasCard";
 import ModalOcorrenciasParadas from "./ModalOcorrenciasParadas";
 
-import {
-  formatarDuracaoResumida,
-} from "../dashboardParadas.utils";
+import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 
 import "./HeatmapParadas.css";
 
@@ -22,58 +13,28 @@ import "./HeatmapParadas.css";
    UTILITÁRIOS
 ========================================================= */
 
-function obterChaveCelula(
-  diaIndice,
-  faixa,
-) {
+function obterChaveCelula(diaIndice, faixa) {
   return `${diaIndice}|${faixa}`;
 }
 
-function limitar(
-  valor,
-  minimo,
-  maximo,
-) {
-  return Math.min(
-    maximo,
-    Math.max(
-      minimo,
-      valor,
-    ),
-  );
+function limitar(valor, minimo, maximo) {
+  return Math.min(maximo, Math.max(minimo, valor));
 }
 
 /* =========================================================
    INTENSIDADE
 ========================================================= */
 
-function obterClasseIntensidade(
-  ocorrencias,
-  maxOcorrencias,
-) {
-  const quantidade =
-    Number(
-      ocorrencias || 0,
-    );
+function obterClasseIntensidade(ocorrencias, maxOcorrencias) {
+  const quantidade = Number(ocorrencias || 0);
 
-  const maximo =
-    Number(
-      maxOcorrencias || 0,
-    );
+  const maximo = Number(maxOcorrencias || 0);
 
-  if (
-    quantidade <= 0 ||
-    maximo <= 0
-  ) {
+  if (quantidade <= 0 || maximo <= 0) {
     return "nivel-0";
   }
 
-  const proporcao =
-    limitar(
-      quantidade / maximo,
-      0,
-      1,
-    );
+  const proporcao = limitar(quantidade / maximo, 0, 1);
 
   if (proporcao <= 0.2) {
     return "nivel-1";
@@ -98,154 +59,83 @@ function obterClasseIntensidade(
    HEATMAP
 ========================================================= */
 
-function HeatmapParadas({
-  dados,
-}) {
-  const [
-    celulaSelecionada,
-    setCelulaSelecionada,
-  ] = useState(null);
+function HeatmapParadas({ dados }) {
+  const [celulaSelecionada, setCelulaSelecionada] = useState(null);
 
-  const dias =
-    Array.isArray(
-      dados?.dias,
-    )
-      ? dados.dias
-      : [];
+  const dias = Array.isArray(dados?.dias) ? dados.dias : [];
 
-  const faixas =
-    Array.isArray(
-      dados?.faixas,
-    )
-      ? dados.faixas
-      : [];
+  const faixas = Array.isArray(dados?.faixas) ? dados.faixas : [];
 
-  const celulas =
-    Array.isArray(
-      dados?.celulas,
-    )
-      ? dados.celulas
-      : [];
+  const celulas = Array.isArray(dados?.celulas) ? dados.celulas : [];
 
-  const maxOcorrencias =
-    Number(
-      dados?.maxOcorrencias || 0,
-    );
+  const maxOcorrencias = Number(dados?.maxOcorrencias || 0);
 
   /* =======================================================
      MAPA DE ACESSO RÁPIDO
   ======================================================= */
 
-  const mapaCelulas =
-    useMemo(() => {
-      const mapa =
-        new Map();
+  const mapaCelulas = useMemo(() => {
+    const mapa = new Map();
 
-      for (
-        const item
-        of celulas
-      ) {
-        const chave =
-          obterChaveCelula(
-            item.dia_indice,
-            item.faixa,
-          );
+    for (const item of celulas) {
+      const chave = obterChaveCelula(item.dia_indice, item.faixa);
 
-        mapa.set(
-          chave,
-          item,
-        );
-      }
+      mapa.set(chave, item);
+    }
 
-      return mapa;
-    }, [
-      celulas,
-    ]);
+    return mapa;
+  }, [celulas]);
 
   /* =======================================================
      MAIOR CONCENTRAÇÃO
   ======================================================= */
 
-  const maiorConcentracao =
-    useMemo(() => {
-      if (
-        celulas.length === 0
-      ) {
-        return null;
+  const maiorConcentracao = useMemo(() => {
+    if (celulas.length === 0) {
+      return null;
+    }
+
+    return celulas.reduce((maior, item) => {
+      if (!maior) {
+        return item;
       }
 
-      return celulas.reduce(
-        (maior, item) => {
-          if (!maior) {
-            return item;
-          }
+      if (Number(item.ocorrencias || 0) > Number(maior.ocorrencias || 0)) {
+        return item;
+      }
 
-          if (
-            Number(
-              item.ocorrencias || 0,
-            ) >
-            Number(
-              maior.ocorrencias || 0,
-            )
-          ) {
-            return item;
-          }
-
-          return maior;
-        },
-        null,
-      );
-    }, [
-      celulas,
-    ]);
+      return maior;
+    }, null);
+  }, [celulas]);
 
   /* =======================================================
      ABRIR / FECHAR MODAL
   ======================================================= */
 
-  const abrirCelula =
-    useCallback(
-      (
-        dia,
-        diaIndice,
-        faixa,
-        celula,
-      ) => {
-        const registros =
-          Array.isArray(
-            celula?.registros,
-          )
-            ? celula.registros
-            : [];
+  const abrirCelula = useCallback((dia, diaIndice, faixa, celula) => {
+    const registros = Array.isArray(celula?.registros) ? celula.registros : [];
 
-        /*
-         * A célula só abre quando existem registros.
-         * Estes são exatamente os mesmos registros
-         * usados por consolidarParadas() para gerar
-         * quantidade e duração da célula.
-         */
-        if (
-          registros.length === 0
-        ) {
-          return;
-        }
+    /*
+     * A célula só abre quando existem registros.
+     * Estes são exatamente os mesmos registros
+     * usados por consolidarParadas() para gerar
+     * quantidade e duração da célula.
+     */
+    if (registros.length === 0) {
+      return;
+    }
 
-        setCelulaSelecionada({
-          dia,
-          diaIndice,
-          faixa,
-          celula,
-        });
-      },
-      [],
-    );
+    setCelulaSelecionada({
+      dia,
+      diaIndice,
+      faixa,
+      celula,
+    });
+  }, []);
 
-  const fecharCelula =
-    useCallback(() => {
-      setCelulaSelecionada(
-        null,
-      );
-    }, []);
+  const fecharCelula = useCallback(() => {
+    setCelulaSelecionada(null);
+  }, []);
 
   /* =======================================================
      OCORRÊNCIAS EXATAS DA CÉLULA
@@ -260,56 +150,27 @@ function HeatmapParadas({
      Isso evita divergência entre Heatmap e Modal.
   ======================================================= */
 
-  const ocorrenciasSelecionadas =
-    useMemo(() => {
-      const registros =
-        celulaSelecionada
-          ?.celula
-          ?.registros;
+  const ocorrenciasSelecionadas = useMemo(() => {
+    const registros = celulaSelecionada?.celula?.registros;
 
-      return Array.isArray(
-        registros,
-      )
-        ? registros
-        : [];
-    }, [
-      celulaSelecionada,
-    ]);
+    return Array.isArray(registros) ? registros : [];
+  }, [celulaSelecionada]);
 
   /* =======================================================
      TÍTULO DO MODAL
   ======================================================= */
 
-  const tituloModal =
-    useMemo(() => {
-      if (
-        !celulaSelecionada
-      ) {
-        return "";
-      }
+  const tituloModal = useMemo(() => {
+    if (!celulaSelecionada) {
+      return "";
+    }
 
-      const faixaLabel =
-        celulaSelecionada
-          .faixa?.label ||
-        celulaSelecionada
-          .faixa?.id ||
-        "";
+    const faixaLabel = celulaSelecionada.faixa?.label || celulaSelecionada.faixa?.id || "";
 
-      return (
-        `${celulaSelecionada.dia}` +
-        (
-          faixaLabel
-            ? ` • ${faixaLabel}`
-            : ""
-        )
-      );
-    }, [
-      celulaSelecionada,
-    ]);
+    return `${celulaSelecionada.dia}` + (faixaLabel ? ` • ${faixaLabel}` : "");
+  }, [celulaSelecionada]);
 
-  const vazio =
-    celulas.length === 0 ||
-    maxOcorrencias <= 0;
+  const vazio = celulas.length === 0 || maxOcorrencias <= 0;
 
   /* =======================================================
      RENDER
@@ -331,9 +192,7 @@ function HeatmapParadas({
 
           {maiorConcentracao && (
             <div className="dp-heatmap__insight">
-              <span>
-                Maior concentração registrada
-              </span>
+              <span>Maior concentração registrada</span>
 
               <strong>
                 {maiorConcentracao.dia}
@@ -342,17 +201,9 @@ function HeatmapParadas({
               </strong>
 
               <small>
-                {Number(
-                  maiorConcentracao.ocorrencias,
-                ).toLocaleString(
-                  "pt-BR",
-                )}{" "}
-                ocorrências
+                {Number(maiorConcentracao.ocorrencias).toLocaleString("pt-BR")} ocorrências
                 {" • "}
-                {formatarDuracaoResumida(
-                  maiorConcentracao.duracao_segundos,
-                )}{" "}
-                acumulados
+                {formatarDuracaoResumida(maiorConcentracao.duracao_segundos)} acumulados
               </small>
             </div>
           )}
@@ -365,44 +216,29 @@ function HeatmapParadas({
             <div
               className="dp-heatmap__grid"
               style={{
-                "--dp-heatmap-columns":
-                  faixas.length,
+                "--dp-heatmap-columns": faixas.length,
               }}
             >
-              <div className="dp-heatmap__corner">
-                Dia
-              </div>
+              <div className="dp-heatmap__corner">Dia</div>
 
-              {faixas.map(
-                (faixa) => (
-                  <div
-                    key={
-                      faixa.id
-                    }
-                    className="dp-heatmap__header"
-                  >
-                    {faixa.label}
-                  </div>
-                ),
-              )}
+              {faixas.map((faixa) => (
+                <div key={faixa.id} className="dp-heatmap__header">
+                  {faixa.label}
+                </div>
+              ))}
 
-              {dias.map(
-                (
-                  dia,
-                  diaIndice,
-                ) => (
-                  <MemoLinhaHeatmap
-                    key={`${dia}-${diaIndice}`}
-                    dia={dia}
-                    diaIndice={diaIndice}
-                    faixas={faixas}
-                    mapaCelulas={mapaCelulas}
-                    maxOcorrencias={maxOcorrencias}
-                    celulaSelecionada={celulaSelecionada}
-                    onSelecionarCelula={abrirCelula}
-                  />
-                ),
-              )}
+              {dias.map((dia, diaIndice) => (
+                <MemoLinhaHeatmap
+                  key={`${dia}-${diaIndice}`}
+                  dia={dia}
+                  diaIndice={diaIndice}
+                  faixas={faixas}
+                  mapaCelulas={mapaCelulas}
+                  maxOcorrencias={maxOcorrencias}
+                  celulaSelecionada={celulaSelecionada}
+                  onSelecionarCelula={abrirCelula}
+                />
+              ))}
             </div>
           </div>
 
@@ -411,9 +247,7 @@ function HeatmapParadas({
           ============================================= */}
 
           <div className="dp-heatmap__legend">
-            <span>
-              Menor concentração
-            </span>
+            <span>Menor concentração</span>
 
             <div className="dp-heatmap__legend-scale">
               <i className="nivel-1" />
@@ -423,32 +257,23 @@ function HeatmapParadas({
               <i className="nivel-5" />
             </div>
 
-            <span>
-              Maior concentração
-            </span>
+            <span>Maior concentração</span>
           </div>
 
           <div className="dp-drilldown__clique">
-            Clique em uma célula com ocorrências
-            para visualizar exatamente os registros
-            que formaram aquele valor.
+            Clique em uma célula com ocorrências para visualizar exatamente os registros que
+            formaram aquele valor.
           </div>
         </div>
       </DashboardParadasCard>
 
       <ModalOcorrenciasParadas
-        aberto={Boolean(
-          celulaSelecionada,
-        )}
+        aberto={Boolean(celulaSelecionada)}
         titulo={tituloModal}
         subtitulo="Registros exatos utilizados na consolidação desta célula"
         eyebrow="Detalhamento da concentração"
-        ocorrencias={
-          ocorrenciasSelecionadas
-        }
-        onFechar={
-          fecharCelula
-        }
+        ocorrencias={ocorrenciasSelecionadas}
+        onFechar={fecharCelula}
         icone={Clock3}
       />
     </>
@@ -470,178 +295,90 @@ function LinhaHeatmap({
 }) {
   return (
     <>
-      <div className="dp-heatmap__day">
-        {dia}
-      </div>
+      <div className="dp-heatmap__day">{dia}</div>
 
-      {faixas.map(
-        (faixa) => {
-          const chave =
-            obterChaveCelula(
-              diaIndice,
-              faixa.id,
-            );
+      {faixas.map((faixa) => {
+        const chave = obterChaveCelula(diaIndice, faixa.id);
 
-          const celula =
-            mapaCelulas.get(
-              chave,
-            );
+        const celula = mapaCelulas.get(chave);
 
-          const registros =
-            Array.isArray(
-              celula?.registros,
-            )
-              ? celula.registros
-              : [];
+        const registros = Array.isArray(celula?.registros) ? celula.registros : [];
 
-          /*
-           * Usa o tamanho da lista real como fonte da
-           * verdade para a quantidade exibida.
-           */
-          const ocorrencias =
-            registros.length;
+        /*
+         * Usa o tamanho da lista real como fonte da
+         * verdade para a quantidade exibida.
+         */
+        const ocorrencias = registros.length;
 
-          const duracaoSegundos =
-            Number(
-              celula?.duracao_segundos ||
-                0,
-            );
+        const duracaoSegundos = Number(celula?.duracao_segundos || 0);
 
-          const classe =
-            obterClasseIntensidade(
-              ocorrencias,
-              maxOcorrencias,
-            );
+        const classe = obterClasseIntensidade(ocorrencias, maxOcorrencias);
 
-          const clicavel =
-            ocorrencias > 0;
+        const clicavel = ocorrencias > 0;
 
-          const selecionada =
-            Boolean(
-              celulaSelecionada &&
-              celulaSelecionada
-                .diaIndice ===
-                diaIndice &&
-              celulaSelecionada
-                .faixa?.id ===
-                faixa.id,
-            );
+        const selecionada = Boolean(
+          celulaSelecionada &&
+          celulaSelecionada.diaIndice === diaIndice &&
+          celulaSelecionada.faixa?.id === faixa.id,
+        );
 
-          const titulo =
-            clicavel
-              ? [
-                  `${dia} • ${faixa.label}`,
-                  `${ocorrencias} ocorrências`,
-                  `${formatarDuracaoResumida(
-                    duracaoSegundos,
-                  )} de tempo acumulado`,
-                  "Clique para visualizar os registros",
-                ].join(" | ")
-              : `${dia} • ${faixa.label} | Sem ocorrências`;
+        const titulo = clicavel
+          ? [
+              `${dia} • ${faixa.label}`,
+              `${ocorrencias} ocorrências`,
+              `${formatarDuracaoResumida(duracaoSegundos)} de tempo acumulado`,
+              "Clique para visualizar os registros",
+            ].join(" | ")
+          : `${dia} • ${faixa.label} | Sem ocorrências`;
 
-          function selecionar() {
-            if (
-              !clicavel
-            ) {
-              return;
-            }
-
-            onSelecionarCelula(
-              dia,
-              diaIndice,
-              faixa,
-              celula,
-            );
+        function selecionar() {
+          if (!clicavel) {
+            return;
           }
 
-          function aoPressionarTecla(
-            evento,
-          ) {
-            if (
-              !clicavel
-            ) {
-              return;
-            }
+          onSelecionarCelula(dia, diaIndice, faixa, celula);
+        }
 
-            if (
-              evento.key ===
-                "Enter" ||
-              evento.key ===
-                " "
-            ) {
-              evento.preventDefault();
-
-              selecionar();
-            }
+        function aoPressionarTecla(evento) {
+          if (!clicavel) {
+            return;
           }
 
-          return (
-            <div
-              key={
-                faixa.id
-              }
-              className={[
-                "dp-heatmap__cell",
-                classe,
-                clicavel
-                  ? "is-clickable"
-                  : "",
-                selecionada
-                  ? "is-selected"
-                  : "",
-              ]
-                .filter(
-                  Boolean,
-                )
-                .join(" ")}
-              title={titulo}
-              aria-label={titulo}
-              role={
-                clicavel
-                  ? "button"
-                  : undefined
-              }
-              tabIndex={
-                clicavel
-                  ? 0
-                  : undefined
-              }
-              onClick={
-                clicavel
-                  ? selecionar
-                  : undefined
-              }
-              onKeyDown={
-                clicavel
-                  ? aoPressionarTecla
-                  : undefined
-              }
-            >
-              <strong>
-                {ocorrencias}
-              </strong>
+          if (evento.key === "Enter" || evento.key === " ") {
+            evento.preventDefault();
 
-              {ocorrencias >
-                0 && (
-                <small>
-                  {formatarDuracaoResumida(
-                    duracaoSegundos,
-                  )}
-                </small>
-              )}
-            </div>
-          );
-        },
-      )}
+            selecionar();
+          }
+        }
+
+        return (
+          <div
+            key={faixa.id}
+            className={[
+              "dp-heatmap__cell",
+              classe,
+              clicavel ? "is-clickable" : "",
+              selecionada ? "is-selected" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            title={titulo}
+            aria-label={titulo}
+            role={clicavel ? "button" : undefined}
+            tabIndex={clicavel ? 0 : undefined}
+            onClick={clicavel ? selecionar : undefined}
+            onKeyDown={clicavel ? aoPressionarTecla : undefined}
+          >
+            <strong>{ocorrencias}</strong>
+
+            {ocorrencias > 0 && <small>{formatarDuracaoResumida(duracaoSegundos)}</small>}
+          </div>
+        );
+      })}
     </>
   );
 }
 
-const MemoLinhaHeatmap =
-  memo(
-    LinhaHeatmap,
-  );
+const MemoLinhaHeatmap = memo(LinhaHeatmap);
 
-export default memo(
-  HeatmapParadas,
-);
+export default memo(HeatmapParadas);

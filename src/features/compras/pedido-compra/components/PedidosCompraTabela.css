@@ -16,7 +16,6 @@
    - transicoes centralizadas.
 ========================================================= */
 
-
 /* =========================================================
    TABELA DESKTOP
 ========================================================= */
@@ -26,7 +25,6 @@
 
   width: 100%;
 }
-
 
 /* =========================================================
    WRAPPER
@@ -39,7 +37,6 @@
   overflow-x: auto;
   overflow-y: hidden;
 }
-
 
 /* =========================================================
    TABELA BASE
@@ -57,7 +54,6 @@
   font-size: var(--font-size-xs);
 }
 
-
 /* =========================================================
    LARGURAS GERAIS
 ========================================================= */
@@ -66,11 +62,9 @@
   min-width: 1810px;
 }
 
-
 .compras-tabela--pedidos {
   min-width: 1690px;
 }
-
 
 .compras-tabela--requisicoes {
   width: 100%;
@@ -79,7 +73,6 @@
 
   table-layout: fixed;
 }
-
 
 /* =========================================================
    CABECALHO
@@ -92,14 +85,9 @@
 
   z-index: 1;
 
-  padding:
-    10px
-    var(--space-2);
+  padding: 10px var(--space-2);
 
-  border-bottom:
-    1px
-    solid
-    var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 
   background: var(--color-page-background);
 
@@ -117,30 +105,21 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    CELULAS
 ========================================================= */
 
 .compras-tabela td {
-  padding:
-    10px
-    var(--space-2);
+  padding: 10px var(--space-2);
 
-  border-bottom:
-    1px
-    solid
-    #edf2f7;
+  border-bottom: 1px solid #edf2f7;
 
   vertical-align: top;
 
   background: var(--color-surface);
 
-  transition:
-    background-color
-    var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
-
 
 /* =========================================================
    HOVER DA LINHA
@@ -150,7 +129,6 @@
   background: #fbfdff;
 }
 
-
 /* =========================================================
    GRUPO DESTACADO
    ---------------------------------------------------------
@@ -158,19 +136,13 @@
    todas as linhas recebem compras-grupo-destacado.
 ========================================================= */
 
-.compras-tabela tbody
-  tr.compras-grupo-destacado:not(.compras-linha-atrasada)
-  td {
+.compras-tabela tbody tr.compras-grupo-destacado:not(.compras-linha-atrasada) td {
   background: #f8fbff !important;
 }
 
-
-.compras-tabela tbody
-  tr.compras-linha-atrasada.compras-grupo-destacado
-  td {
+.compras-tabela tbody tr.compras-linha-atrasada.compras-grupo-destacado td {
   background: var(--color-danger-soft) !important;
 }
-
 
 /* =========================================================
    CELULA DE GRUPO
@@ -179,12 +151,8 @@
 .compras-tabela .compras-celula-grupo {
   vertical-align: top;
 
-  border-right:
-    1px
-    solid
-    var(--color-surface-muted);
+  border-right: 1px solid var(--color-surface-muted);
 }
-
 
 /* =========================================================
    CONTINUACAO DE ITEM
@@ -194,82 +162,57 @@
   border-top: 0;
 }
 
-
 /* =========================================================
    INICIO DE GRUPO
 ========================================================= */
 
 .compras-inicio-grupo td {
-  border-top:
-    5px
-    solid
-    var(--color-page-background);
+  border-top: 5px solid var(--color-page-background);
 }
-
 
 /* =========================================================
    COLUNAS - REQUISICOES
 ========================================================= */
 
-.compras-tabela--requisicoes
-  .compras-col-requisicao {
+.compras-tabela--requisicoes .compras-col-requisicao {
   width: 6%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-categoria {
+.compras-tabela--requisicoes .compras-col-categoria {
   width: 11%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-previsao {
+.compras-tabela--requisicoes .compras-col-previsao {
   width: 7%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-codigo {
+.compras-tabela--requisicoes .compras-col-codigo {
   width: 8%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-produto {
+.compras-tabela--requisicoes .compras-col-produto {
   width: 20%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-observacao-item {
+.compras-tabela--requisicoes .compras-col-observacao-item {
   width: 12%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-numero {
+.compras-tabela--requisicoes .compras-col-numero {
   width: 5%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-unidade {
+.compras-tabela--requisicoes .compras-col-unidade {
   width: 4%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-observacoes {
+.compras-tabela--requisicoes .compras-col-observacoes {
   width: 14%;
 }
 
-
-.compras-tabela--requisicoes
-  .compras-col-observacoes-internas {
+.compras-tabela--requisicoes .compras-col-observacoes-internas {
   width: 13%;
 }
-
 
 /* =========================================================
    REQUISICAO
@@ -279,11 +222,9 @@
   color: var(--color-text);
 }
 
-
 .compras-requisicao strong {
   font-size: 11.5px;
 }
-
 
 /* =========================================================
    PEDIDO
@@ -295,11 +236,9 @@
   color: var(--color-text);
 }
 
-
 .compras-pedido strong {
   font-size: var(--font-size-caption);
 }
-
 
 /* =========================================================
    CATEGORIA
@@ -315,7 +254,6 @@
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    FORNECEDOR
 ========================================================= */
@@ -329,7 +267,6 @@
   font-weight: 650;
 }
 
-
 /* =========================================================
    PREVISAO
 ========================================================= */
@@ -337,7 +274,6 @@
 .compras-previsao {
   color: #334155;
 }
-
 
 .compras-previsao-conteudo {
   display: flex;
@@ -348,14 +284,12 @@
   gap: 5px;
 }
 
-
 .compras-previsao-conteudo > strong {
   color: #334155;
 
   font-size: 10.5px;
   font-weight: var(--font-weight-bold);
 }
-
 
 /* =========================================================
    CODIGO
@@ -382,7 +316,6 @@
   word-break: normal;
 }
 
-
 /* =========================================================
    PRODUTO
 ========================================================= */
@@ -395,7 +328,6 @@
   overflow-wrap: anywhere;
 }
 
-
 .compras-produto-linha {
   min-width: 0;
 
@@ -407,18 +339,13 @@
   gap: 10px;
 }
 
-
 .compras-produto-descricao {
   min-width: 0;
 
-  flex:
-    1
-    1
-    auto;
+  flex: 1 1 auto;
 
   overflow-wrap: anywhere;
 }
-
 
 /* =========================================================
    BOTAO EXPANDIR ITENS
@@ -427,10 +354,7 @@
 .compras-btn-itens {
   min-height: 23px;
 
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: inline-flex;
   align-items: center;
@@ -438,14 +362,9 @@
 
   gap: var(--space-1);
 
-  padding:
-    3px
-    7px;
+  padding: 3px 7px;
 
-  border:
-    1px
-    solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
   border-radius: var(--radius-pill);
 
@@ -472,7 +391,6 @@
     box-shadow var(--transition-fast);
 }
 
-
 /* =========================================================
    BOTAO EXPANDIR - HOVER
 ========================================================= */
@@ -486,13 +404,8 @@
 
   color: var(--color-primary-hover);
 
-  box-shadow:
-    0
-    2px
-    6px
-    rgb(37 99 235 / 0.08);
+  box-shadow: 0 2px 6px rgb(37 99 235 / 0.08);
 }
-
 
 /* =========================================================
    BOTAO EXPANDIR - ABERTO
@@ -506,7 +419,6 @@
   color: var(--color-text-muted);
 }
 
-
 .compras-btn-itens--aberto:hover {
   border-color: var(--color-text-light);
 
@@ -515,20 +427,15 @@
   color: var(--color-text-secondary);
 }
 
-
 /* =========================================================
    BOTAO EXPANDIR - ICONE
 ========================================================= */
 
 .compras-btn-itens svg {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   stroke-width: 2.5;
 }
-
 
 /* =========================================================
    OBSERVACAO DO ITEM
@@ -546,7 +453,6 @@
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    QUANTIDADE
 ========================================================= */
@@ -559,13 +465,11 @@
   white-space: nowrap;
 }
 
-
 .compras-unidade {
   text-align: center;
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    SALDO
@@ -577,7 +481,6 @@
   font-weight: 750;
 }
 
-
 /* =========================================================
    SOLICITANTE
 ========================================================= */
@@ -585,7 +488,6 @@
 .compras-col-solicitante {
   min-width: 120px;
 }
-
 
 .compras-solicitante {
   min-width: 120px;
@@ -601,7 +503,6 @@
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    COMPRADOR
 ========================================================= */
@@ -615,7 +516,6 @@
   font-size: var(--font-size-micro);
   font-weight: 650;
 }
-
 
 /* =========================================================
    VALOR POR ITEM
@@ -634,13 +534,11 @@
   font-weight: var(--font-weight-bold);
 }
 
-
 .compras-valor-item {
   color: var(--color-text);
 
   font-weight: 800;
 }
-
 
 /* =========================================================
    OBSERVACOES - PEDIDOS
@@ -649,7 +547,6 @@
 .compras-col-observacoes-pedido {
   min-width: 240px;
 }
-
 
 .compras-observacoes-pedido {
   min-width: 240px;
@@ -665,7 +562,6 @@
 
   overflow-wrap: anywhere;
 }
-
 
 /* =========================================================
    OBSERVACOES - REQUISICOES
@@ -684,7 +580,6 @@
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    BADGE ATRASO
 ========================================================= */
@@ -697,14 +592,9 @@
 
   gap: var(--space-1);
 
-  padding:
-    3px
-    var(--space-2);
+  padding: 3px var(--space-2);
 
-  border:
-    1px
-    solid
-    #fecaca;
+  border: 1px solid #fecaca;
 
   border-radius: var(--radius-pill);
 
@@ -720,16 +610,11 @@
   white-space: nowrap;
 }
 
-
 .compras-tag-atraso svg {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   stroke-width: 2.2;
 }
-
 
 /* =========================================================
    LINHA ATRASADA
@@ -739,11 +624,9 @@
   background: #fffafa;
 }
 
-
 .compras-linha-atrasada:hover td {
   background: var(--color-danger-soft) !important;
 }
-
 
 /*
    Se o pedido atrasado tiver varios itens,
@@ -753,7 +636,6 @@
 .compras-linha-atrasada.compras-grupo-destacado td {
   background: var(--color-danger-soft) !important;
 }
-
 
 /* =========================================================
    BADGES DE RECEBIMENTO
@@ -769,9 +651,7 @@
   align-items: center;
   justify-content: center;
 
-  padding:
-    3px
-    7px;
+  padding: 3px 7px;
 
   border-radius: var(--radius-pill);
 
@@ -785,7 +665,6 @@
   white-space: normal;
 }
 
-
 /* =========================================================
    BADGE - RECEBIDO
 ========================================================= */
@@ -795,7 +674,6 @@
 
   color: var(--color-success-hover);
 }
-
 
 /* =========================================================
    BADGE - RECEBIDO PARCIALMENTE
@@ -807,7 +685,6 @@
   color: var(--color-warning-hover);
 }
 
-
 /* =========================================================
    BADGE - EM ATRASO
 ========================================================= */
@@ -817,7 +694,6 @@
 
   color: var(--color-danger);
 }
-
 
 /* =========================================================
    BADGE - EM ABERTO
@@ -829,7 +705,6 @@
   color: var(--color-primary-hover);
 }
 
-
 /* =========================================================
    SEM STATUS
 ========================================================= */
@@ -840,7 +715,6 @@
   font-size: var(--font-size-micro);
 }
 
-
 /* =========================================================
    MOBILE - BASE
 ========================================================= */
@@ -848,7 +722,6 @@
 .compras-cards-mobile {
   display: none;
 }
-
 
 /* =========================================================
    MOBILE - OBSERVACOES
@@ -869,7 +742,6 @@
   background: var(--color-page-background);
 }
 
-
 .compras-mobile-observacoes small {
   color: var(--color-text-muted);
 
@@ -878,7 +750,6 @@
 
   text-transform: uppercase;
 }
-
 
 .compras-mobile-observacoes span {
   color: var(--color-text-secondary);
@@ -890,7 +761,6 @@
   white-space: pre-line;
 }
 
-
 /* =========================================================
    MOBILE - OBSERVACAO DO ITEM
 ========================================================= */
@@ -900,7 +770,6 @@
 
   font-size: 8.5px !important;
 }
-
 
 /* =========================================================
    MOBILE - PRODUTO
@@ -917,16 +786,11 @@
   gap: var(--space-2);
 }
 
-
 .compras-mobile-produto-linha > span {
   min-width: 0;
 
-  flex:
-    1
-    1
-    auto;
+  flex: 1 1 auto;
 }
-
 
 /* =========================================================
    SCROLLBAR DA TABELA
@@ -936,23 +800,17 @@
   height: 8px;
 }
 
-
 .compras-tabela-wrapper::-webkit-scrollbar-track {
   background: var(--color-surface-muted);
 }
 
-
 .compras-tabela-wrapper::-webkit-scrollbar-thumb {
-  border:
-    2px
-    solid
-    var(--color-surface-muted);
+  border: 2px solid var(--color-surface-muted);
 
   border-radius: var(--radius-pill);
 
   background: #b8c4d3;
 }
-
 
 /* =========================================================
    DESKTOP MEDIO
@@ -963,42 +821,33 @@
     min-width: 1280px;
   }
 
-
   .compras-tabela--pedidos {
     min-width: 1620px;
   }
-
 
   .compras-tabela--todos {
     min-width: 1740px;
   }
 
-
   .compras-tabela--requisicoes th {
     font-size: 7.5px;
   }
-
 
   .compras-tabela--requisicoes td {
     padding-left: 7px;
     padding-right: 7px;
   }
 
-
   .compras-btn-itens {
-    padding:
-      3px
-      6px;
+    padding: 3px 6px;
 
     font-size: 7.5px;
   }
-
 
   .compras-observacoes-pedido {
     min-width: 210px;
   }
 }
-
 
 /* =========================================================
    NOTEBOOK
@@ -1009,21 +858,18 @@
     min-width: 1180px;
     .compras-col-codigo,
     .compras-codigo {
-  min-width: 105px;
-  width: 105px;
-}
+      min-width: 105px;
+      width: 105px;
+    }
   }
-
 
   .compras-tabela--pedidos {
     min-width: 1570px;
   }
 
-
   .compras-tabela--todos {
     min-width: 1680px;
   }
-
 
   .compras-observacoes-requisicao,
   .compras-observacoes-internas,
@@ -1031,12 +877,10 @@
     font-size: 8.5px;
   }
 
-
   .compras-observacoes-pedido {
     font-size: 8.5px;
   }
 }
-
 
 /* =========================================================
    NOTEBOOK MENOR
@@ -1047,17 +891,14 @@
     min-width: 1080px;
   }
 
-
   .compras-tabela--pedidos {
     min-width: 1520px;
   }
-
 
   .compras-tabela--todos {
     min-width: 1630px;
   }
 }
-
 
 /* =========================================================
    TABLET
@@ -1069,7 +910,6 @@
   }
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
@@ -1079,7 +919,6 @@
     display: none;
   }
 
-
   .compras-cards-mobile {
     display: grid;
 
@@ -1088,7 +927,6 @@
     padding: 10px;
   }
 
-
   /* =======================================================
      CARD MOBILE
   ======================================================= */
@@ -1096,36 +934,24 @@
   .compras-mobile-card {
     padding: 14px;
 
-    border:
-      1px
-      solid
-      var(--color-border);
+    border: 1px solid var(--color-border);
 
     border-radius: 10px;
 
     background: var(--color-surface);
 
-    box-shadow:
-      0
-      1px
-      3px
-      rgb(15 23 42 / 0.03);
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.03);
   }
-
 
   /* =======================================================
      CARD MOBILE ATRASADO
   ======================================================= */
 
   .compras-mobile-card.atrasado {
-    border-left:
-      4px
-      solid
-      var(--color-danger);
+    border-left: 4px solid var(--color-danger);
 
     background: #fffafa;
   }
-
 
   /* =======================================================
      TOPO MOBILE
@@ -1140,7 +966,6 @@
     gap: 10px;
   }
 
-
   .compras-mobile-topo > div {
     display: flex;
 
@@ -1148,7 +973,6 @@
 
     gap: 2px;
   }
-
 
   .compras-mobile-topo span {
     color: var(--color-text-light);
@@ -1158,28 +982,23 @@
     text-transform: uppercase;
   }
 
-
   .compras-mobile-topo strong {
     color: var(--color-text);
 
     font-size: 15px;
   }
 
-
   /* =======================================================
      TITULO MOBILE
   ======================================================= */
 
   .compras-mobile-card h3 {
-    margin:
-      12px
-      0;
+    margin: 12px 0;
 
     color: #334155;
 
     font-size: var(--font-size-caption);
   }
-
 
   /* =======================================================
      GRADE MOBILE
@@ -1201,7 +1020,6 @@
     background: var(--color-page-background);
   }
 
-
   .compras-mobile-grade > span {
     min-width: 0;
 
@@ -1212,7 +1030,6 @@
     gap: 3px;
   }
 
-
   .compras-mobile-grade small {
     color: var(--color-text-light);
 
@@ -1220,7 +1037,6 @@
 
     text-transform: uppercase;
   }
-
 
   .compras-mobile-grade strong {
     overflow: hidden;
@@ -1231,7 +1047,6 @@
 
     text-overflow: ellipsis;
   }
-
 
   /* =======================================================
      ITENS MOBILE
@@ -1245,7 +1060,6 @@
     margin-top: 10px;
   }
 
-
   .compras-mobile-item {
     display: flex;
 
@@ -1256,12 +1070,8 @@
 
     padding-top: 7px;
 
-    border-top:
-      1px
-      solid
-      #eef2f7;
+    border-top: 1px solid #eef2f7;
   }
-
 
   .compras-mobile-item > div {
     min-width: 0;
@@ -1273,13 +1083,11 @@
     gap: 2px;
   }
 
-
   .compras-mobile-item strong {
     color: #334155;
 
     font-size: 9px;
   }
-
 
   .compras-mobile-item span {
     color: var(--color-text-muted);
@@ -1289,12 +1097,8 @@
     line-height: 1.3;
   }
 
-
   .compras-mobile-item small {
-    flex:
-      0
-      0
-      auto;
+    flex: 0 0 auto;
 
     color: var(--color-text-secondary);
 
@@ -1304,7 +1108,6 @@
     text-align: right;
   }
 
-
   /* =======================================================
      BOTAO ITENS MOBILE
   ======================================================= */
@@ -1312,14 +1115,11 @@
   .compras-btn-itens {
     min-height: 24px;
 
-    padding:
-      4px
-      7px;
+    padding: 4px 7px;
 
     font-size: 8px;
   }
 }
-
 
 /* =========================================================
    CELULAR PEQUENO
@@ -1330,18 +1130,15 @@
     grid-template-columns: 1fr;
   }
 
-
   .compras-mobile-item {
     flex-direction: column;
   }
-
 
   .compras-mobile-item small {
     width: 100%;
 
     text-align: left;
   }
-
 
   .compras-mobile-produto-linha {
     width: 100%;

@@ -7,480 +7,201 @@ import { supabase } from "@/lib/supabaseClient";
 function numero(valor, fallback = 0) {
   const convertido = Number(valor);
 
-  return Number.isFinite(convertido)
-    ? convertido
-    : fallback;
+  return Number.isFinite(convertido) ? convertido : fallback;
 }
 
 function arredondar(valor, casas = 6) {
   const fator = 10 ** casas;
 
-  return Math.round(
-    (numero(valor) + Number.EPSILON) * fator,
-  ) / fator;
+  return Math.round((numero(valor) + Number.EPSILON) * fator) / fator;
 }
 
 function normalizarReceitaItens(valor) {
   return (Array.isArray(valor) ? valor : [])
     .map((item) => ({
-      fornecedorId:
-        item?.fornecedorId ??
-        null,
+      fornecedorId: item?.fornecedorId ?? null,
 
-      fornecedorNome:
-        String(
-          item?.fornecedorNome ??
-          "Fornecedor",
-        ).trim(),
+      fornecedorNome: String(item?.fornecedorNome ?? "Fornecedor").trim(),
 
-      percentual:
-        numero(
-          item?.percentual,
-        ),
+      percentual: numero(item?.percentual),
     }))
-    .filter(
-      (item) =>
-        item.fornecedorId !== null &&
-        item.percentual > 0,
-    );
+    .filter((item) => item.fornecedorId !== null && item.percentual > 0);
 }
 
-function distribuirConsumoReceita(
-  consumoTotalKg,
-  itens,
-  configurada,
-) {
-  if (
-    !configurada ||
-    itens.length === 0
-  ) {
+function distribuirConsumoReceita(consumoTotalKg, itens, configurada) {
+  if (!configurada || itens.length === 0) {
     return [];
   }
 
-  const total =
-    arredondar(
-      consumoTotalKg,
-    );
+  const total = arredondar(consumoTotalKg);
 
   let acumulado = 0;
 
-  return itens.map(
-    (
-      item,
-      indice,
-    ) => {
-      const ultimo =
-        indice ===
-        itens.length - 1;
+  return itens.map((item, indice) => {
+    const ultimo = indice === itens.length - 1;
 
-      const consumoPeriodoKg =
-        ultimo
-          ? arredondar(
-              total -
-              acumulado,
-            )
-          : arredondar(
-              total *
-                (
-                  item.percentual /
-                  100
-                ),
-            );
+    const consumoPeriodoKg = ultimo
+      ? arredondar(total - acumulado)
+      : arredondar(total * (item.percentual / 100));
 
-      acumulado =
-        arredondar(
-          acumulado +
-          consumoPeriodoKg,
-        );
+    acumulado = arredondar(acumulado + consumoPeriodoKg);
 
-      return {
-        ...item,
+    return {
+      ...item,
 
-        consumoPeriodoKg,
+      consumoPeriodoKg,
 
-        consumoKg:
-          consumoPeriodoKg,
-      };
-    },
-  );
+      consumoKg: consumoPeriodoKg,
+    };
+  });
 }
 
-function normalizarDia(
-  registro,
-) {
-  const receitaItens =
-    normalizarReceitaItens(
-      registro
-        ?.receita_itens,
-    );
+function normalizarDia(registro) {
+  const receitaItens = normalizarReceitaItens(registro?.receita_itens);
 
-  const receitaConfigurada =
-    registro
-      ?.receita_configurada ===
-    true;
+  const receitaConfigurada = registro?.receita_configurada === true;
 
-  const consumoTotalKg =
-    numero(
-      registro
-        ?.consumo_total_kg,
-    );
+  const consumoTotalKg = numero(registro?.consumo_total_kg);
 
   return {
-    programacaoId:
-      registro
-        ?.programacao_id ??
-      null,
+    programacaoId: registro?.programacao_id ?? null,
 
-    diaId:
-      registro
-        ?.dia_id ??
-      null,
+    diaId: registro?.dia_id ?? null,
 
-    data:
-      String(
-        registro
-          ?.data ??
-        "",
-      ).trim(),
+    data: String(registro?.data ?? "").trim(),
 
-    codigoProduto:
-      String(
-        registro
-          ?.codigo_produto ??
-        "",
-      ).trim(),
+    codigoProduto: String(registro?.codigo_produto ?? "").trim(),
 
-    descricao:
-      String(
-        registro
-          ?.produto ??
-        "",
-      ).trim(),
+    descricao: String(registro?.produto ?? "").trim(),
 
     materialId:
-      registro
-        ?.material_id ===
-        null ||
-      registro
-        ?.material_id ===
-        undefined
+      registro?.material_id === null || registro?.material_id === undefined
         ? null
-        : Number(
-            registro
-              .material_id,
-          ),
+        : Number(registro.material_id),
 
-    materialNome:
-      String(
-        registro
-          ?.material_nome ??
-        "",
-      ).trim(),
+    materialNome: String(registro?.material_nome ?? "").trim(),
 
-    injetora:
-      String(
-        registro
-          ?.injetora ??
-        "",
-      ).trim(),
+    injetora: String(registro?.injetora ?? "").trim(),
 
-    ativo:
-      registro
-        ?.ativo !==
-      false,
+    ativo: registro?.ativo !== false,
 
-    perfilHoras:
-      String(
-        registro
-          ?.perfil_horas ??
-        "",
-      ).trim(),
+    perfilHoras: String(registro?.perfil_horas ?? "").trim(),
 
-    minutosSolicitados:
-      numero(
-        registro
-          ?.minutos_solicitados,
-      ),
+    minutosSolicitados: numero(registro?.minutos_solicitados),
 
-    minutosDescontados:
-      numero(
-        registro
-          ?.minutos_descontados,
-      ),
+    minutosDescontados: numero(registro?.minutos_descontados),
 
-    minutosEfetivos:
-      numero(
-        registro
-          ?.minutos_efetivos,
-      ),
+    minutosEfetivos: numero(registro?.minutos_efetivos),
 
-    horasEfetivas:
-      numero(
-        registro
-          ?.horas_efetivas,
-      ),
+    horasEfetivas: numero(registro?.horas_efetivas),
 
-    cicloSegundos:
-      numero(
-        registro
-          ?.ciclo_segundos,
-        null,
-      ),
+    cicloSegundos: numero(registro?.ciclo_segundos, null),
 
-    cavidadeMolde:
-      numero(
-        registro
-          ?.cavidade_molde,
-        null,
-      ),
+    cavidadeMolde: numero(registro?.cavidade_molde, null),
 
-    pesoKg:
-      numero(
-        registro
-          ?.peso_kg,
-        null,
-      ),
+    pesoKg: numero(registro?.peso_kg, null),
 
-    ciclosCompletos:
-      Math.trunc(
-        numero(
-          registro
-            ?.ciclos_completos,
-        ),
-      ),
+    ciclosCompletos: Math.trunc(numero(registro?.ciclos_completos)),
 
-    pecasPrevistas:
-      Math.trunc(
-        numero(
-          registro
-            ?.pecas_previstas,
-        ),
-      ),
+    pecasPrevistas: Math.trunc(numero(registro?.pecas_previstas)),
 
     consumoTotalKg,
 
-    receitaId:
-      registro
-        ?.receita_id ??
-      null,
+    receitaId: registro?.receita_id ?? null,
 
-    receitaNome:
-      String(
-        registro
-          ?.receita_nome ??
-        "",
-      ).trim(),
+    receitaNome: String(registro?.receita_nome ?? "").trim(),
 
-    receitaPercentualTotal:
-      numero(
-        registro
-          ?.receita_percentual_total,
-      ),
+    receitaPercentualTotal: numero(registro?.receita_percentual_total),
 
     receitaConfigurada,
 
     receitaItens,
 
-    consumosFornecedores:
-      distribuirConsumoReceita(
-        consumoTotalKg,
-        receitaItens,
-        receitaConfigurada,
-      ),
+    consumosFornecedores: distribuirConsumoReceita(
+      consumoTotalKg,
+      receitaItens,
+      receitaConfigurada,
+    ),
 
     parametrosValidos:
-      numero(
-        registro
-          ?.ciclo_segundos,
-      ) > 0 &&
-      Number.isInteger(
-        numero(
-          registro
-            ?.cavidade_molde,
-        ),
-      ) &&
-      numero(
-        registro
-          ?.cavidade_molde,
-      ) > 0 &&
-      numero(
-        registro
-          ?.peso_kg,
-      ) > 0,
+      numero(registro?.ciclo_segundos) > 0 &&
+      Number.isInteger(numero(registro?.cavidade_molde)) &&
+      numero(registro?.cavidade_molde) > 0 &&
+      numero(registro?.peso_kg) > 0,
   };
 }
 
-function agregarConsumosFornecedores(
-  dias = [],
-) {
-  const mapa =
-    new Map();
+function agregarConsumosFornecedores(dias = []) {
+  const mapa = new Map();
 
-  for (
-    const dia
-    of dias
-  ) {
-    for (
-      const consumo
-      of dia
-        ?.consumosFornecedores ??
-      []
-    ) {
-      const chave =
-        String(
-          consumo
-            ?.fornecedorId ??
-          "",
-        );
+  for (const dia of dias) {
+    for (const consumo of dia?.consumosFornecedores ?? []) {
+      const chave = String(consumo?.fornecedorId ?? "");
 
       if (!chave) {
         continue;
       }
 
-      if (
-        !mapa.has(
-          chave,
-        )
-      ) {
-        mapa.set(
-          chave,
-          {
-            fornecedorId:
-              consumo
-                .fornecedorId,
+      if (!mapa.has(chave)) {
+        mapa.set(chave, {
+          fornecedorId: consumo.fornecedorId,
 
-            fornecedorNome:
-              consumo
-                .fornecedorNome,
+          fornecedorNome: consumo.fornecedorNome,
 
-            consumoPeriodoKg:
-              0,
+          consumoPeriodoKg: 0,
 
-            consumoKg:
-              0,
-          },
-        );
+          consumoKg: 0,
+        });
       }
 
-      const atual =
-        mapa.get(
-          chave,
-        );
+      const atual = mapa.get(chave);
 
-      atual.consumoPeriodoKg =
-        arredondar(
-          atual
-            .consumoPeriodoKg +
-          numero(
-            consumo
-              ?.consumoPeriodoKg,
-          ),
-        );
+      atual.consumoPeriodoKg = arredondar(
+        atual.consumoPeriodoKg + numero(consumo?.consumoPeriodoKg),
+      );
 
-      atual.consumoKg =
-        atual
-          .consumoPeriodoKg;
+      atual.consumoKg = atual.consumoPeriodoKg;
     }
   }
 
-  return [
-    ...mapa.values(),
-  ].sort(
-    (
-      a,
-      b,
-    ) =>
-      String(
-        a.fornecedorNome,
-      ).localeCompare(
-        String(
-          b.fornecedorNome,
-        ),
-        "pt-BR",
-        {
-          sensitivity:
-            "base",
+  return [...mapa.values()].sort((a, b) =>
+    String(a.fornecedorNome).localeCompare(String(b.fornecedorNome), "pt-BR", {
+      sensitivity: "base",
 
-          numeric:
-            true,
-        },
-      ),
+      numeric: true,
+    }),
   );
 }
 
-function listarReceitasUtilizadas(
-  dias = [],
-) {
-  const mapa =
-    new Map();
+function listarReceitasUtilizadas(dias = []) {
+  const mapa = new Map();
 
-  for (
-    const dia
-    of dias
-  ) {
-    if (
-      dia?.receitaId ===
-        null ||
-      dia?.receitaId ===
-        undefined
-    ) {
+  for (const dia of dias) {
+    if (dia?.receitaId === null || dia?.receitaId === undefined) {
       continue;
     }
 
-    const chave =
-      String(
-        dia.receitaId,
-      );
+    const chave = String(dia.receitaId);
 
-    if (
-      !mapa.has(
-        chave,
-      )
-    ) {
-      mapa.set(
-        chave,
-        {
-          id:
-            dia.receitaId,
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        id: dia.receitaId,
 
-          nome:
-            dia.receitaNome ||
-            `Receita ${dia.receitaId}`,
+        nome: dia.receitaNome || `Receita ${dia.receitaId}`,
 
-          quantidadeDias:
-            0,
-        },
-      );
+        quantidadeDias: 0,
+      });
     }
 
-    mapa.get(
-      chave,
-    ).quantidadeDias +=
-      1;
+    mapa.get(chave).quantidadeDias += 1;
   }
 
-  return [
-    ...mapa.values(),
-  ].sort(
-    (
-      a,
-      b,
-    ) =>
-      String(
-        a.nome,
-      ).localeCompare(
-        String(
-          b.nome,
-        ),
-        "pt-BR",
-        {
-          sensitivity:
-            "base",
+  return [...mapa.values()].sort((a, b) =>
+    String(a.nome).localeCompare(String(b.nome), "pt-BR", {
+      sensitivity: "base",
 
-          numeric:
-            true,
-        },
-      ),
+      numeric: true,
+    }),
   );
 }
 
@@ -493,473 +214,189 @@ export async function buscarProgramacaoDiaria({
   dataFim = null,
   apenasAtivas = true,
 } = {}) {
-  const {
-    data,
-    error,
-  } =
-    await supabase.rpc(
-      "listar_programacao_diaria_v3",
-      {
-        p_data_inicio:
-          dataInicio ||
-          null,
+  const { data, error } = await supabase.rpc("listar_programacao_diaria_v3", {
+    p_data_inicio: dataInicio || null,
 
-        p_data_fim:
-          dataFim ||
-          null,
+    p_data_fim: dataFim || null,
 
-        p_apenas_ativas:
-          Boolean(
-            apenasAtivas,
-          ),
-      },
-    );
+    p_apenas_ativas: Boolean(apenasAtivas),
+  });
 
   if (error) {
     throw error;
   }
 
-  return (
-    Array.isArray(data)
-      ? data
-      : []
-  ).map(
-    normalizarDia,
-  );
+  return (Array.isArray(data) ? data : []).map(normalizarDia);
 }
 
 /* =========================================================
    AGRUPAR PARA A TELA DE PROGRAMAÇÃO
 ========================================================= */
 
-export function agruparProgramacaoDiaria(
-  dias = [],
-) {
-  const mapa =
-    new Map();
+export function agruparProgramacaoDiaria(dias = []) {
+  const mapa = new Map();
 
-  for (
-    const dia
-    of Array.isArray(
-      dias,
-    )
-      ? dias
-      : []
-  ) {
-    const chave =
-      String(
-        dia
-          .programacaoId ??
-        "",
-      );
+  for (const dia of Array.isArray(dias) ? dias : []) {
+    const chave = String(dia.programacaoId ?? "");
 
     if (!chave) {
       continue;
     }
 
-    if (
-      !mapa.has(
-        chave,
-      )
-    ) {
-      mapa.set(
-        chave,
-        {
-          id:
-            dia
-              .programacaoId,
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        id: dia.programacaoId,
 
-          codigoProduto:
-            dia
-              .codigoProduto,
+        codigoProduto: dia.codigoProduto,
 
-          descricao:
-            dia
-              .descricao,
+        descricao: dia.descricao,
 
-          materialId:
-            dia
-              .materialId,
+        materialId: dia.materialId,
 
-          materialNome:
-            dia
-              .materialNome,
+        materialNome: dia.materialNome,
 
-          injetora:
-            dia
-              .injetora,
+        injetora: dia.injetora,
 
-          ativo:
-            dia
-              .ativo,
+        ativo: dia.ativo,
 
-          tipoProgramacao:
-            "CALENDARIO",
+        tipoProgramacao: "CALENDARIO",
 
-          cicloSegundos:
-            dia
-              .cicloSegundos,
+        cicloSegundos: dia.cicloSegundos,
 
-          cavidadeMolde:
-            dia
-              .cavidadeMolde,
+        cavidadeMolde: dia.cavidadeMolde,
 
-          pesoKg:
-            dia
-              .pesoKg,
+        pesoKg: dia.pesoKg,
 
-          diasProgramacao:
-            [],
-        },
-      );
+        diasProgramacao: [],
+      });
     }
 
-    mapa
-      .get(
-        chave,
-      )
-      .diasProgramacao
-      .push({
-        id:
-          dia
-            .diaId,
+    mapa.get(chave).diasProgramacao.push({
+      id: dia.diaId,
 
-        programacaoId:
-          dia
-            .programacaoId,
+      programacaoId: dia.programacaoId,
 
-        data:
-          dia
-            .data,
+      data: dia.data,
 
-        perfilHoras:
-          dia
-            .perfilHoras,
+      perfilHoras: dia.perfilHoras,
 
-        minutosSolicitados:
-          dia
-            .minutosSolicitados,
+      minutosSolicitados: dia.minutosSolicitados,
 
-        minutosDescontados:
-          dia
-            .minutosDescontados,
+      minutosDescontados: dia.minutosDescontados,
 
-        minutosEfetivos:
-          dia
-            .minutosEfetivos,
+      minutosEfetivos: dia.minutosEfetivos,
 
-        horasEfetivas:
-          dia
-            .horasEfetivas,
+      horasEfetivas: dia.horasEfetivas,
 
-        ciclosCompletos:
-          dia
-            .ciclosCompletos,
+      ciclosCompletos: dia.ciclosCompletos,
 
-        pecasPrevistas:
-          dia
-            .pecasPrevistas,
+      pecasPrevistas: dia.pecasPrevistas,
 
-        consumoTotalKg:
-          dia
-            .consumoTotalKg,
+      consumoTotalKg: dia.consumoTotalKg,
 
-        receitaId:
-          dia
-            .receitaId,
+      receitaId: dia.receitaId,
 
-        receitaNome:
-          dia
-            .receitaNome,
+      receitaNome: dia.receitaNome,
 
-        receitaPercentualTotal:
-          dia
-            .receitaPercentualTotal,
+      receitaPercentualTotal: dia.receitaPercentualTotal,
 
-        receitaConfigurada:
-          dia
-            .receitaConfigurada,
+      receitaConfigurada: dia.receitaConfigurada,
 
-        receitaItens:
-          dia
-            .receitaItens,
+      receitaItens: dia.receitaItens,
 
-        consumosFornecedores:
-          dia
-            .consumosFornecedores,
-      });
+      consumosFornecedores: dia.consumosFornecedores,
+    });
   }
 
-  return [
-    ...mapa.values(),
-  ]
-    .map(
-      (
-        item,
-      ) => {
-        const diasOrdenados =
-          [
-            ...item
-              .diasProgramacao,
-          ].sort(
-            (
-              a,
-              b,
-            ) =>
-              a.data
-                .localeCompare(
-                  b.data,
-                ),
-          );
+  return [...mapa.values()]
+    .map((item) => {
+      const diasOrdenados = [...item.diasProgramacao].sort((a, b) => a.data.localeCompare(b.data));
 
-        const minutosEfetivos =
-          diasOrdenados
-            .reduce(
-              (
-                total,
-                dia,
-              ) =>
-                total +
-                numero(
-                  dia
-                    .minutosEfetivos,
-                ),
-              0,
-            );
+      const minutosEfetivos = diasOrdenados.reduce(
+        (total, dia) => total + numero(dia.minutosEfetivos),
+        0,
+      );
 
-        const ciclosCompletos =
-          diasOrdenados
-            .reduce(
-              (
-                total,
-                dia,
-              ) =>
-                total +
-                numero(
-                  dia
-                    .ciclosCompletos,
-                ),
-              0,
-            );
+      const ciclosCompletos = diasOrdenados.reduce(
+        (total, dia) => total + numero(dia.ciclosCompletos),
+        0,
+      );
 
-        const pecasPrevistas =
-          diasOrdenados
-            .reduce(
-              (
-                total,
-                dia,
-              ) =>
-                total +
-                numero(
-                  dia
-                    .pecasPrevistas,
-                ),
-              0,
-            );
+      const pecasPrevistas = diasOrdenados.reduce(
+        (total, dia) => total + numero(dia.pecasPrevistas),
+        0,
+      );
 
-        const consumoPeriodoKg =
-          arredondar(
-            diasOrdenados
-              .reduce(
-                (
-                  total,
-                  dia,
-                ) =>
-                  total +
-                  numero(
-                    dia
-                      .consumoTotalKg,
-                  ),
-                0,
-              ),
-          );
+      const consumoPeriodoKg = arredondar(
+        diasOrdenados.reduce((total, dia) => total + numero(dia.consumoTotalKg), 0),
+      );
 
-        const receitasUtilizadas =
-          listarReceitasUtilizadas(
-            diasOrdenados,
-          );
+      const receitasUtilizadas = listarReceitasUtilizadas(diasOrdenados);
 
-        const receitaConfigurada =
-          diasOrdenados
-            .length >
-            0 &&
-          diasOrdenados
-            .every(
-              (
-                dia,
-              ) =>
-                dia
-                  .receitaConfigurada ===
-                true,
-            );
+      const receitaConfigurada =
+        diasOrdenados.length > 0 && diasOrdenados.every((dia) => dia.receitaConfigurada === true);
 
-        return {
-          ...item,
+      return {
+        ...item,
 
-          diasProgramacao:
-            diasOrdenados,
+        diasProgramacao: diasOrdenados,
 
-          quantidadeDias:
-            diasOrdenados
-              .length,
+        quantidadeDias: diasOrdenados.length,
 
-          dataInicio:
-            diasOrdenados[0]
-              ?.data ??
-            null,
+        dataInicio: diasOrdenados[0]?.data ?? null,
 
-          dataFim:
-            diasOrdenados
-              .at(-1)
-              ?.data ??
-            null,
+        dataFim: diasOrdenados.at(-1)?.data ?? null,
 
-          horaInicio:
-            null,
+        horaInicio: null,
 
-          horaFim:
-            null,
+        horaFim: null,
 
-          horasPeriodo:
-            arredondar(
-              minutosEfetivos /
-                60,
-              4,
-            ),
+        horasPeriodo: arredondar(minutosEfetivos / 60, 4),
 
-          minutosEfetivos,
+        minutosEfetivos,
 
-          ciclosCompletos:
-            Math.trunc(
-              ciclosCompletos,
-            ),
+        ciclosCompletos: Math.trunc(ciclosCompletos),
 
-          pecasPrevistas:
-            Math.trunc(
-              pecasPrevistas,
-            ),
+        pecasPrevistas: Math.trunc(pecasPrevistas),
 
-          quantidade:
-            Math.trunc(
-              pecasPrevistas,
-            ),
+        quantidade: Math.trunc(pecasPrevistas),
 
-          pecasPorHora:
-            numero(
-              item
-                .cicloSegundos,
-            ) > 0 &&
-            numero(
-              item
-                .cavidadeMolde,
-            ) > 0
-              ? arredondar(
-                  (
-                    3600 /
-                    item
-                      .cicloSegundos
-                  ) *
-                    item
-                      .cavidadeMolde,
-                  2,
-                )
-              : 0,
+        pecasPorHora:
+          numero(item.cicloSegundos) > 0 && numero(item.cavidadeMolde) > 0
+            ? arredondar((3600 / item.cicloSegundos) * item.cavidadeMolde, 2)
+            : 0,
 
-          consumoPorHoraKg:
-            numero(
-              item
-                .cicloSegundos,
-            ) > 0 &&
-            numero(
-              item
-                .cavidadeMolde,
-            ) > 0 &&
-            numero(
-              item
-                .pesoKg,
-            ) > 0
-              ? arredondar(
-                  (
-                    3600 /
-                    item
-                      .cicloSegundos
-                  ) *
-                    item
-                      .cavidadeMolde *
-                    item
-                      .pesoKg,
-                )
-              : 0,
+        consumoPorHoraKg:
+          numero(item.cicloSegundos) > 0 &&
+          numero(item.cavidadeMolde) > 0 &&
+          numero(item.pesoKg) > 0
+            ? arredondar((3600 / item.cicloSegundos) * item.cavidadeMolde * item.pesoKg)
+            : 0,
 
-          consumoPeriodoKg,
+        consumoPeriodoKg,
 
-          receitaConfigurada,
+        receitaConfigurada,
 
-          receitaPercentualTotal:
-            receitaConfigurada
-              ? 100
-              : 0,
+        receitaPercentualTotal: receitaConfigurada ? 100 : 0,
 
-          receitasUtilizadas,
+        receitasUtilizadas,
 
-          receitaNomes:
-            receitasUtilizadas
-              .map(
-                (
-                  receita,
-                ) =>
-                  receita.nome,
-              ),
+        receitaNomes: receitasUtilizadas.map((receita) => receita.nome),
 
-          receitaItens:
-            [],
+        receitaItens: [],
 
-          consumosFornecedores:
-            agregarConsumosFornecedores(
-              diasOrdenados,
-            ),
+        consumosFornecedores: agregarConsumosFornecedores(diasOrdenados),
 
-          calculoLegado:
-            false,
-        };
-      },
-    )
+        calculoLegado: false,
+      };
+    })
     .sort(
-      (
-        a,
-        b,
-      ) =>
-        String(
-          a.dataInicio ??
-          "",
-        ).localeCompare(
-          String(
-            b.dataInicio ??
-            "",
-          ),
-        ) ||
-        String(
-          a.injetora ??
-          "",
-        ).localeCompare(
-          String(
-            b.injetora ??
-            "",
-          ),
-          "pt-BR",
-          {
-            numeric:
-              true,
-          },
-        ) ||
-        Number(
-          a.id ??
-          0,
-        ) -
-          Number(
-            b.id ??
-            0,
-          ),
+      (a, b) =>
+        String(a.dataInicio ?? "").localeCompare(String(b.dataInicio ?? "")) ||
+        String(a.injetora ?? "").localeCompare(String(b.injetora ?? ""), "pt-BR", {
+          numeric: true,
+        }) ||
+        Number(a.id ?? 0) - Number(b.id ?? 0),
     );
 }
 
@@ -973,199 +410,107 @@ export async function buscarProgramacaoAgrupada({
   dataFim = null,
   apenasAtivas = false,
 } = {}) {
-  const dias =
-    await buscarProgramacaoDiaria({
-      dataInicio,
-      dataFim,
-      apenasAtivas,
-    });
+  const dias = await buscarProgramacaoDiaria({
+    dataInicio,
+    dataFim,
+    apenasAtivas,
+  });
 
-  return agruparProgramacaoDiaria(
-    dias,
-  );
+  return agruparProgramacaoDiaria(dias);
 }
 
 /* =========================================================
    ADAPTADOR PARA A PROJEÇÃO EXISTENTE
 ========================================================= */
 
-export function converterDiasParaProjecao(
-  dias = [],
-) {
-  return (
-    Array.isArray(
-      dias,
-    )
-      ? dias
-      : []
-  ).map(
-    (
-      dia,
-    ) => ({
-      id:
-        `${dia.programacaoId}:${dia.diaId}`,
+export function converterDiasParaProjecao(dias = []) {
+  return (Array.isArray(dias) ? dias : []).map((dia) => ({
+    id: `${dia.programacaoId}:${dia.diaId}`,
 
-      programacaoId:
-        dia
-          .programacaoId,
+    programacaoId: dia.programacaoId,
 
-      diaId:
-        dia
-          .diaId,
+    diaId: dia.diaId,
 
-      codigoProduto:
-        dia
-          .codigoProduto,
+    codigoProduto: dia.codigoProduto,
 
-      codigo_produto:
-        dia
-          .codigoProduto,
+    codigo_produto: dia.codigoProduto,
 
-      descricao:
-        dia
-          .descricao,
+    descricao: dia.descricao,
 
-      materialId:
-        dia
-          .materialId,
+    materialId: dia.materialId,
 
-      material_id:
-        dia
-          .materialId,
+    material_id: dia.materialId,
 
-      materialNome:
-        dia
-          .materialNome,
+    materialNome: dia.materialNome,
 
-      material_nome:
-        dia
-          .materialNome,
+    material_nome: dia.materialNome,
 
-      injetora:
-        dia
-          .injetora,
+    injetora: dia.injetora,
 
-      ativo:
-        dia
-          .ativo,
+    ativo: dia.ativo,
 
-      dataInicio:
-        dia
-          .data,
+    dataInicio: dia.data,
 
-      data_inicio:
-        dia
-          .data,
+    data_inicio: dia.data,
 
-      dataFim:
-        dia
-          .data,
+    dataFim: dia.data,
 
-      data_fim:
-        dia
-          .data,
+    data_fim: dia.data,
 
-      horaInicio:
-        null,
+    horaInicio: null,
 
-      hora_inicio:
-        null,
+    hora_inicio: null,
 
-      horaFim:
-        null,
+    horaFim: null,
 
-      hora_fim:
-        null,
+    hora_fim: null,
 
-      quantidade:
-        dia
-          .pecasPrevistas,
+    quantidade: dia.pecasPrevistas,
 
-      pesoKg:
-        dia
-          .pesoKg,
+    pesoKg: dia.pesoKg,
 
-      peso_kg:
-        dia
-          .pesoKg,
+    peso_kg: dia.pesoKg,
 
-      cicloSegundos:
-        dia
-          .cicloSegundos,
+    cicloSegundos: dia.cicloSegundos,
 
-      ciclo_segundos:
-        dia
-          .cicloSegundos,
+    ciclo_segundos: dia.cicloSegundos,
 
-      cavidadeMolde:
-        dia
-          .cavidadeMolde,
+    cavidadeMolde: dia.cavidadeMolde,
 
-      cavidade_molde:
-        dia
-          .cavidadeMolde,
+    cavidade_molde: dia.cavidadeMolde,
 
-      consumoPeriodoKg:
-        dia
-          .consumoTotalKg,
+    consumoPeriodoKg: dia.consumoTotalKg,
 
-      consumo_periodo_kg:
-        dia
-          .consumoTotalKg,
+    consumo_periodo_kg: dia.consumoTotalKg,
 
-      receitaId:
-        dia
-          .receitaId,
+    receitaId: dia.receitaId,
 
-      receitaNome:
-        dia
-          .receitaNome,
+    receitaNome: dia.receitaNome,
 
-      receitaConfigurada:
-        dia
-          .receitaConfigurada,
+    receitaConfigurada: dia.receitaConfigurada,
 
-      receitaPercentualTotal:
-        dia
-          .receitaPercentualTotal,
+    receitaPercentualTotal: dia.receitaPercentualTotal,
 
-      receitaItens:
-        dia
-          .receitaItens,
+    receitaItens: dia.receitaItens,
 
-      consumosFornecedores:
-        dia
-          .consumosFornecedores,
+    consumosFornecedores: dia.consumosFornecedores,
 
-      minutosEfetivos:
-        dia
-          .minutosEfetivos,
+    minutosEfetivos: dia.minutosEfetivos,
 
-      horasPeriodo:
-        dia
-          .horasEfetivas,
+    horasPeriodo: dia.horasEfetivas,
 
-      calculoLegado:
-        false,
-    }),
-  );
+    calculoLegado: false,
+  }));
 }
 
-export async function buscarProgramacaoParaProjecao({
-  dataInicio,
-  dataFim,
-}) {
-  const dias =
-    await buscarProgramacaoDiaria({
-      dataInicio,
-      dataFim,
-      apenasAtivas: true,
-    });
+export async function buscarProgramacaoParaProjecao({ dataInicio, dataFim }) {
+  const dias = await buscarProgramacaoDiaria({
+    dataInicio,
+    dataFim,
+    apenasAtivas: true,
+  });
 
   return {
-    programacao:
-      converterDiasParaProjecao(
-        dias,
-      ),
+    programacao: converterDiasParaProjecao(dias),
   };
 }

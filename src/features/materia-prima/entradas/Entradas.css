@@ -6,7 +6,6 @@
   width: 100%;
 }
 
-
 /* =========================================================
    TOOLBAR
 ========================================================= */
@@ -25,7 +24,6 @@
   background: #f8fafc;
 }
 
-
 /* =========================================================
    INDICADORES
 ========================================================= */
@@ -39,7 +37,6 @@
   flex-wrap: wrap;
 }
 
-
 .entradas-pp-indicadores > div {
   min-width: 125px;
 
@@ -50,7 +47,6 @@
 
   background: #ffffff;
 }
-
 
 .entradas-pp-indicadores span {
   display: block;
@@ -63,7 +59,6 @@
   text-transform: uppercase;
 }
 
-
 .entradas-pp-indicadores strong {
   display: block;
 
@@ -75,7 +70,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    FILTROS PRINCIPAIS
@@ -93,16 +87,13 @@
   flex-wrap: wrap;
 }
 
-
 .entradas-pp-filtros label {
   min-width: 165px;
 }
 
-
 .entradas-pp-filtros .entradas-pp-filtro-tipo {
   min-width: 125px;
 }
-
 
 .entradas-pp-filtros label > span {
   display: block;
@@ -118,7 +109,6 @@
 
   white-space: nowrap;
 }
-
 
 .entradas-pp-filtros select {
   width: 100%;
@@ -141,20 +131,11 @@
   cursor: pointer;
 }
 
-
 .entradas-pp-filtros select:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    PERÍODO
@@ -179,7 +160,6 @@
   background: #ffffff;
 }
 
-
 /* =========================================================
    TIPO DO PERÍODO
 ========================================================= */
@@ -187,7 +167,6 @@
 .entradas-pp-periodo-tipo {
   display: block;
 }
-
 
 .entradas-pp-periodo-tipo > span,
 .entradas-pp-periodo-datas label > span {
@@ -200,7 +179,6 @@
   font-size: 9px;
   font-weight: 700;
 }
-
 
 .entradas-pp-periodo-tipo select {
   box-sizing: border-box;
@@ -226,7 +204,6 @@
   cursor: pointer;
 }
 
-
 /* =========================================================
    INFORMAÇÃO
 ========================================================= */
@@ -251,7 +228,6 @@
   font-size: 10px;
 }
 
-
 /* =========================================================
    DATAS
 ========================================================= */
@@ -263,11 +239,9 @@
   gap: 8px;
 }
 
-
 .entradas-pp-periodo-datas label {
   width: 145px;
 }
-
 
 .entradas-pp-periodo-datas input {
   box-sizing: border-box;
@@ -292,7 +266,6 @@
   cursor: pointer;
 }
 
-
 /* =========================================================
    LIMPAR FILTROS
 ========================================================= */
@@ -315,14 +288,7 @@
 
   color: #be123c;
 
-  box-shadow:
-    0 2px 5px
-    rgba(
-      190,
-      18,
-      60,
-      0.10
-    );
+  box-shadow: 0 2px 5px rgba(190, 18, 60, 0.1);
 
   font: inherit;
 
@@ -341,13 +307,11 @@
     transform 0.15s ease;
 }
 
-
 .entradas-pp-limpar svg {
   flex: 0 0 auto;
 
   stroke-width: 2.6;
 }
-
 
 .entradas-pp-limpar:hover:not(:disabled) {
   border-color: #e11d48;
@@ -356,23 +320,14 @@
 
   color: #9f1239;
 
-  box-shadow:
-    0 4px 10px
-    rgba(
-      190,
-      18,
-      60,
-      0.15
-    );
+  box-shadow: 0 4px 10px rgba(190, 18, 60, 0.15);
 
   transform: translateY(-1px);
 }
 
-
 .entradas-pp-limpar:active:not(:disabled) {
   transform: translateY(0);
 }
-
 
 .entradas-pp-limpar:disabled {
   border-color: #e2e8f0;
@@ -390,7 +345,6 @@
   transform: none;
 }
 
-
 /* =========================================================
    FOCO
 ========================================================= */
@@ -399,16 +353,8 @@
 .entradas-pp-periodo-datas input:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    TABELA
@@ -420,14 +366,12 @@
   overflow-x: auto;
 }
 
-
 .entradas-pp-tabela {
   width: 100%;
   min-width: 1280px;
 
   border-collapse: collapse;
 }
-
 
 .entradas-pp-tabela th {
   padding: 9px 10px;
@@ -447,7 +391,6 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-tabela td {
   padding: 10px 10px;
 
@@ -460,11 +403,9 @@
   vertical-align: middle;
 }
 
-
 .entradas-pp-tabela tbody tr:hover {
   background: #f8fafc;
 }
-
 
 /* =========================================================
    DATA
@@ -476,7 +417,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    FORNECEDOR
 ========================================================= */
@@ -485,13 +425,11 @@
   min-width: 160px;
 }
 
-
 .entradas-pp-fornecedor strong {
   display: block;
 
   color: #0f172a;
 }
-
 
 /* =========================================================
    QUANTIDADE
@@ -505,7 +443,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    FINANCEIRO
 ========================================================= */
@@ -514,11 +451,9 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-financeiro span {
   display: block;
 }
-
 
 .entradas-pp-financeiro small,
 .entradas-pp-tabela td small {
@@ -531,7 +466,6 @@
   font-size: 9px;
 }
 
-
 .entradas-pp-total {
   color: #0f172a !important;
 
@@ -539,7 +473,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    OBSERVAÇÃO
@@ -554,7 +487,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    ESTADOS
@@ -577,11 +509,9 @@
   text-align: center;
 }
 
-
 .entradas-pp-estado strong {
   color: #0f172a;
 }
-
 
 .entradas-pp-estado p {
   margin: 0;
@@ -589,12 +519,10 @@
   font-size: 10px;
 }
 
-
 .entradas-pp-erro,
 .entradas-pp-erro strong {
   color: #b91c1c;
 }
-
 
 /* =========================================================
    LOADING
@@ -609,13 +537,8 @@
 
   border-radius: 50%;
 
-  animation:
-    entradas-girando
-    0.75s
-    linear
-    infinite;
+  animation: entradas-girando 0.75s linear infinite;
 }
-
 
 @keyframes entradas-girando {
   to {
@@ -623,19 +546,16 @@
   }
 }
 
-
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
 @media (max-width: 1200px) {
-
   .entradas-pp-toolbar {
     align-items: stretch;
 
     flex-direction: column;
   }
-
 
   .entradas-pp-filtros {
     width: 100%;
@@ -645,11 +565,9 @@
     justify-content: flex-start;
   }
 
-
   .entradas-pp-filtros label {
     flex: 1;
   }
-
 
   .entradas-pp-periodo {
     grid-template-columns:
@@ -657,41 +575,31 @@
       1fr;
   }
 
-
   .entradas-pp-periodo-datas {
-    grid-column:
-      1 /
-      -1;
+    grid-column: 1 / -1;
   }
-
 }
 
-
 @media (max-width: 800px) {
-
   .entradas-pp-indicadores {
     display: grid;
 
     grid-template-columns: 1fr;
   }
 
-
   .entradas-pp-indicadores > div {
     min-width: 0;
   }
 
-
   .entradas-pp-filtros {
     flex-direction: column;
   }
-
 
   .entradas-pp-filtros label,
   .entradas-pp-filtro-tipo {
     width: 100%;
     min-width: 0;
   }
-
 
   .entradas-pp-periodo {
     display: flex;
@@ -701,31 +609,24 @@
     align-items: stretch;
   }
 
-
   .entradas-pp-periodo-datas {
     width: 100%;
   }
-
 
   .entradas-pp-periodo-datas label {
     flex: 1;
 
     width: auto;
   }
-
 }
 
-
 @media (max-width: 600px) {
-
   .entradas-pp-periodo-datas {
     flex-direction: column;
   }
-
 
   .entradas-pp-periodo-datas label,
   .entradas-pp-limpar {
     width: 100%;
   }
-
 }

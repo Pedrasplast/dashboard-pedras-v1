@@ -1,11 +1,6 @@
-import {
-  converterDuracaoParaSegundos,
-  formatarSegundosComoDuracao,
-} from "../utils/Duracao";
+import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/Duracao";
 
-import {
-  converterNumero,
-} from "../utils/Numeros";
+import { converterNumero } from "../utils/Numeros";
 
 /* =====================================================
    PRODUÇÃO POR PRODUTO
@@ -41,22 +36,13 @@ export function agruparProducaoPorProduto(dados) {
        PRODUTO
     ================================================= */
 
-    const produto =
-      String(
-        item.cod_prod ||
-        item.produto ||
-        "SEM PRODUTO",
-      ).trim() || "SEM PRODUTO";
+    const produto = String(item.cod_prod || item.produto || "SEM PRODUTO").trim() || "SEM PRODUTO";
 
     /* =================================================
        INJETORA
     ================================================= */
 
-    const injetora =
-      String(
-        item.injetora ||
-        "SEM INJETORA",
-      ).trim() || "SEM INJETORA";
+    const injetora = String(item.injetora || "SEM INJETORA").trim() || "SEM INJETORA";
 
     /* =================================================
        CHAVE
@@ -66,8 +52,7 @@ export function agruparProducaoPorProduto(dados) {
        PRODUTO + INJETORA
     ================================================= */
 
-    const chave =
-      `${produto}|||${injetora}`;
+    const chave = `${produto}|||${injetora}`;
 
     /* =================================================
        CRIA O GRUPO
@@ -97,55 +82,41 @@ export function agruparProducaoPorProduto(dados) {
       });
     }
 
-    const registro =
-      agrupado.get(chave);
+    const registro = agrupado.get(chave);
 
     /* =================================================
        VALORES
     ================================================= */
 
-    const conforme =
-      converterNumero(
-        item.conforme,
-      );
+    const conforme = converterNumero(item.conforme);
 
-    const danificada =
-      converterNumero(
-        item.danificada,
-      );
+    const danificada = converterNumero(item.danificada);
 
     /* =================================================
        SOMA PRODUÇÃO
     ================================================= */
 
-    registro.conforme +=
-      conforme;
+    registro.conforme += conforme;
 
-    registro.danificada +=
-      danificada;
+    registro.danificada += danificada;
 
-    registro.total_produzido +=
-      conforme + danificada;
+    registro.total_produzido += conforme + danificada;
 
     /* =================================================
        SOMA DURAÇÃO
     ================================================= */
 
-    registro.duracaoSegundos +=
-      converterDuracaoParaSegundos(
-        item.duracao,
-      );
+    registro.duracaoSegundos += converterDuracaoParaSegundos(item.duracao);
   });
 
   /* =====================================================
      RESULTADO FINAL
   ===================================================== */
 
-  return Array.from(
-    agrupado.values(),
-  )
-    .map((item) => {
-      /* =================================================
+  return (
+    Array.from(agrupado.values())
+      .map((item) => {
+        /* =================================================
          HORAS DECIMAIS
 
          Exemplo:
@@ -153,12 +124,9 @@ export function agruparProducaoPorProduto(dados) {
          7200 segundos = 2 horas
       ================================================= */
 
-      const horas =
-        item.duracaoSegundos > 0
-          ? item.duracaoSegundos / 3600
-          : 0;
+        const horas = item.duracaoSegundos > 0 ? item.duracaoSegundos / 3600 : 0;
 
-      /* =================================================
+        /* =================================================
          PRODUTIVIDADE
 
          Total produzido
@@ -168,12 +136,9 @@ export function agruparProducaoPorProduto(dados) {
          Resultado = UN/H
       ================================================= */
 
-      const produtividade_hora =
-        horas > 0
-          ? item.total_produzido / horas
-          : 0;
+        const produtividade_hora = horas > 0 ? item.total_produzido / horas : 0;
 
-      /* =================================================
+        /* =================================================
          QUALIDADE
 
          Conforme
@@ -181,54 +146,38 @@ export function agruparProducaoPorProduto(dados) {
          Total Produzido
       ================================================= */
 
-      const qualidade =
-        item.total_produzido > 0
-          ? (
-              item.conforme /
-              item.total_produzido
-            ) * 100
-          : 0;
+        const qualidade =
+          item.total_produzido > 0 ? (item.conforme / item.total_produzido) * 100 : 0;
 
-      return {
-        ...item,
+        return {
+          ...item,
 
-        duracao:
-          formatarSegundosComoDuracao(
-            item.duracaoSegundos,
-          ),
+          duracao: formatarSegundosComoDuracao(item.duracaoSegundos),
 
-        produtividade_hora,
+          produtividade_hora,
 
-        qualidade,
-      };
-    })
+          qualidade,
+        };
+      })
 
-    /* =====================================================
+      /* =====================================================
        ORDENAÇÃO
     ===================================================== */
 
-    .sort((a, b) => {
-      const produto =
-        a.produto.localeCompare(
-          b.produto,
-          "pt-BR",
-          {
-            numeric: true,
-            sensitivity: "base",
-          },
-        );
-
-      if (produto !== 0) {
-        return produto;
-      }
-
-      return a.injetora.localeCompare(
-        b.injetora,
-        "pt-BR",
-        {
+      .sort((a, b) => {
+        const produto = a.produto.localeCompare(b.produto, "pt-BR", {
           numeric: true,
           sensitivity: "base",
-        },
-      );
-    });
+        });
+
+        if (produto !== 0) {
+          return produto;
+        }
+
+        return a.injetora.localeCompare(b.injetora, "pt-BR", {
+          numeric: true,
+          sensitivity: "base",
+        });
+      })
+  );
 }

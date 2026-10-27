@@ -48,7 +48,9 @@
 }
 
 @keyframes mon-girar {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ---------- Resumo ---------- */
@@ -81,10 +83,19 @@
   color: var(--color-text-muted);
 }
 
-.mon-resumo__item--ok strong { color: var(--color-success); }
-.mon-resumo__item--erro { border-color: #fecaca; background: var(--color-danger-soft); }
-.mon-resumo__item--erro strong { color: var(--color-danger); }
-.mon-resumo__item--alerta strong { color: var(--color-warning); }
+.mon-resumo__item--ok strong {
+  color: var(--color-success);
+}
+.mon-resumo__item--erro {
+  border-color: #fecaca;
+  background: var(--color-danger-soft);
+}
+.mon-resumo__item--erro strong {
+  color: var(--color-danger);
+}
+.mon-resumo__item--alerta strong {
+  color: var(--color-warning);
+}
 
 /* Banco de dados (plano free: 500 MB) */
 .mon-banco__barra {
@@ -103,14 +114,25 @@
   background: var(--color-success);
 }
 
-.mon-banco--atencao .mon-banco__barra span { background: var(--color-warning); }
-.mon-banco--atencao strong { color: var(--color-warning); }
+.mon-banco--atencao .mon-banco__barra span {
+  background: var(--color-warning);
+}
+.mon-banco--atencao strong {
+  color: var(--color-warning);
+}
 .mon-banco--alerta,
-.mon-banco--critico { border-color: #fecaca; background: var(--color-danger-soft); }
+.mon-banco--critico {
+  border-color: #fecaca;
+  background: var(--color-danger-soft);
+}
 .mon-banco--alerta strong,
-.mon-banco--critico strong { color: var(--color-danger); }
+.mon-banco--critico strong {
+  color: var(--color-danger);
+}
 .mon-banco--alerta .mon-banco__barra span,
-.mon-banco--critico .mon-banco__barra span { background: var(--color-danger); }
+.mon-banco--critico .mon-banco__barra span {
+  background: var(--color-danger);
+}
 
 /* ---------- Card e lista ---------- */
 
@@ -169,10 +191,18 @@
   overflow: hidden;
 }
 
-.mon-rotina--ok { border-left-color: var(--color-success); }
-.mon-rotina--erro { border-left-color: var(--color-danger); }
-.mon-rotina--rodando { border-left-color: var(--color-info); }
-.mon-rotina--desativada { opacity: 0.65; }
+.mon-rotina--ok {
+  border-left-color: var(--color-success);
+}
+.mon-rotina--erro {
+  border-left-color: var(--color-danger);
+}
+.mon-rotina--rodando {
+  border-left-color: var(--color-info);
+}
+.mon-rotina--desativada {
+  opacity: 0.65;
+}
 
 .mon-rotina__cabecalho {
   width: 100%;
@@ -265,11 +295,22 @@
   color: var(--color-text-secondary);
 }
 
-.mon-selo--ok { background: var(--color-success-soft); color: var(--color-success-hover); }
-.mon-selo--erro { background: var(--color-danger-soft); color: var(--color-danger-hover); }
-.mon-selo--rodando { background: var(--color-info-soft); color: var(--color-primary-hover); }
+.mon-selo--ok {
+  background: var(--color-success-soft);
+  color: var(--color-success-hover);
+}
+.mon-selo--erro {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
+}
+.mon-selo--rodando {
+  background: var(--color-info-soft);
+  color: var(--color-primary-hover);
+}
 
-.mon-texto-erro { color: var(--color-danger-hover); }
+.mon-texto-erro {
+  color: var(--color-danger-hover);
+}
 
 /* ---------- Histórico ---------- */
 
@@ -299,7 +340,9 @@
   vertical-align: top;
 }
 
-.mon-historico__linha--erro td { background: #fff7f7; }
+.mon-historico__linha--erro td {
+  background: #fff7f7;
+}
 
 .mon-historico__detalhe {
   word-break: break-word;
@@ -314,12 +357,18 @@
 /* ---------- Telas menores ---------- */
 
 @media (max-width: 1180px) {
-  .mon-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mon-resumo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
-  .mon-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .mon-banco { grid-column: 1 / -1; }
+  .mon-resumo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mon-banco {
+    grid-column: 1 / -1;
+  }
 
   .mon-rotina__cabecalho {
     grid-template-columns: minmax(0, 1fr) 24px;
@@ -331,24 +380,57 @@
     gap: 8px;
   }
 
-  .mon-rotina__cabecalho .mon-selo { grid-area: selo; justify-self: start; }
-  .mon-rotina__nome { grid-area: nome; }
-  .mon-rotina__ultima { grid-area: ultima; flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: baseline; }
-  .mon-rotina__falhas { grid-area: falhas; flex-direction: row; gap: 6px; align-items: baseline; }
-  .mon-rotina__seta { grid-area: seta; justify-self: end; }
-  .mon-rotina__erro { padding-left: 14px; }
+  .mon-rotina__cabecalho .mon-selo {
+    grid-area: selo;
+    justify-self: start;
+  }
+  .mon-rotina__nome {
+    grid-area: nome;
+  }
+  .mon-rotina__ultima {
+    grid-area: ultima;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
+  }
+  .mon-rotina__falhas {
+    grid-area: falhas;
+    flex-direction: row;
+    gap: 6px;
+    align-items: baseline;
+  }
+  .mon-rotina__seta {
+    grid-area: seta;
+    justify-self: end;
+  }
+  .mon-rotina__erro {
+    padding-left: 14px;
+  }
 }
 
 @media (max-width: 520px) {
-  .mon-container { padding: 16px; }
-  .mon-resumo { gap: 10px; }
-  .mon-resumo__item { padding: 12px 14px; }
-  .mon-resumo__item strong { font-size: 22px; }
+  .mon-container {
+    padding: 16px;
+  }
+  .mon-resumo {
+    gap: 10px;
+  }
+  .mon-resumo__item {
+    padding: 12px 14px;
+  }
+  .mon-resumo__item strong {
+    font-size: 22px;
+  }
 
   /* Histórico vira lista: início, duração e selo numa linha; detalhe embaixo. */
-  .mon-historico thead { display: none; }
+  .mon-historico thead {
+    display: none;
+  }
   .mon-historico table,
-  .mon-historico tbody { display: block; }
+  .mon-historico tbody {
+    display: block;
+  }
   .mon-historico tr {
     display: grid;
     grid-template-columns: auto auto 1fr;
@@ -357,8 +439,20 @@
     padding: 8px 2px;
     border-bottom: 1px solid var(--color-border);
   }
-  .mon-historico td { display: block; padding: 0; border: 0; background: transparent; }
-  .mon-historico td:nth-child(3) { justify-self: end; }
-  .mon-historico td.mon-historico__detalhe { grid-column: 1 / -1; color: var(--color-text-muted); }
-  .mon-historico__linha--erro { background: #fff7f7; }
+  .mon-historico td {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .mon-historico td:nth-child(3) {
+    justify-self: end;
+  }
+  .mon-historico td.mon-historico__detalhe {
+    grid-column: 1 / -1;
+    color: var(--color-text-muted);
+  }
+  .mon-historico__linha--erro {
+    background: #fff7f7;
+  }
 }

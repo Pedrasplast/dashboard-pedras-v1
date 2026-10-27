@@ -1,8 +1,4 @@
-import {
-  memo,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useMemo, useState } from "react";
 
 import {
   Activity,
@@ -14,9 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import {
-  useCargaMaquina,
-} from "@/lib/cargaMaquina";
+import { useCargaMaquina } from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 import PageHeader from "@/components/layout/PageHeader";
@@ -55,28 +49,20 @@ const criarFiltrosIniciais = () => ({
 ===================================================== */
 
 function formatarPercentual(valor) {
-  const numero =
-    Number(valor) || 0;
+  const numero = Number(valor) || 0;
 
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    },
-  )}%`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })}%`;
 }
 
 function formatarNumero(valor) {
-  const numero =
-    Number(valor) || 0;
+  const numero = Number(valor) || 0;
 
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      maximumFractionDigits: 0,
-    },
-  );
+  return numero.toLocaleString("pt-BR", {
+    maximumFractionDigits: 0,
+  });
 }
 
 /* =====================================================
@@ -92,36 +78,20 @@ const KpiCard = memo(function KpiCard({
   aviso = false,
 }) {
   return (
-    <article
-      className={`oee-kpi-card ${
-        destaque
-          ? "oee-kpi-card-destaque"
-          : ""
-      }`}
-    >
+    <article className={`oee-kpi-card ${destaque ? "oee-kpi-card-destaque" : ""}`}>
       <div className="oee-kpi-topo">
         <div className="oee-kpi-icone">
           <Icone size={20} />
         </div>
 
-        {aviso && (
-          <span className="oee-kpi-aviso">
-            estimado
-          </span>
-        )}
+        {aviso && <span className="oee-kpi-aviso">estimado</span>}
       </div>
 
-      <span className="oee-kpi-titulo">
-        {titulo}
-      </span>
+      <span className="oee-kpi-titulo">{titulo}</span>
 
-      <strong className="oee-kpi-valor">
-        {valor}
-      </strong>
+      <strong className="oee-kpi-valor">{valor}</strong>
 
-      <span className="oee-kpi-descricao">
-        {descricao}
-      </span>
+      <span className="oee-kpi-descricao">{descricao}</span>
     </article>
   );
 });
@@ -130,31 +100,15 @@ const KpiCard = memo(function KpiCard({
    BARRA DE INDICADOR
 ===================================================== */
 
-const IndicadorBarra = memo(function IndicadorBarra({
-  titulo,
-  valor,
-}) {
-  const percentual =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        Number(valor) || 0,
-      ),
-    );
+const IndicadorBarra = memo(function IndicadorBarra({ titulo, valor }) {
+  const percentual = Math.max(0, Math.min(100, Number(valor) || 0));
 
   return (
     <div className="oee-indicador-barra">
       <div className="oee-indicador-barra-topo">
-        <span>
-          {titulo}
-        </span>
+        <span>{titulo}</span>
 
-        <strong>
-          {formatarPercentual(
-            percentual,
-          )}
-        </strong>
+        <strong>{formatarPercentual(percentual)}</strong>
       </div>
 
       <div className="oee-barra-track">
@@ -176,29 +130,15 @@ const IndicadorBarra = memo(function IndicadorBarra({
 ===================================================== */
 
 function DashboardProdutividadeEmValidacao() {
-  const {
-    dados,
-    loading,
-    erro,
-  } =
-    useCargaMaquina();
+  const { dados, loading, erro } = useCargaMaquina();
 
-  const [
-    filtros,
-    setFiltros,
-  ] =
-    useState(
-      criarFiltrosIniciais,
-    );
+  const [filtros, setFiltros] = useState(criarFiltrosIniciais);
 
   /* =====================================================
      TIPOS DISPONÍVEIS
   ===================================================== */
 
-  const tiposDisponiveis = useMemo(
-    () => obterTiposDisponiveisOee(dados),
-    [dados],
-  );
+  const tiposDisponiveis = useMemo(() => obterTiposDisponiveisOee(dados), [dados]);
 
   /* =====================================================
      PRODUTOS DISPONÍVEIS
@@ -218,10 +158,7 @@ function DashboardProdutividadeEmValidacao() {
      MATÉRIAS-PRIMAS
   ===================================================== */
 
-  const mpsDisponiveis = useMemo(
-    () => obterMateriasPrimasDisponiveisOee(dados),
-    [dados],
-  );
+  const mpsDisponiveis = useMemo(() => obterMateriasPrimasDisponiveisOee(dados), [dados]);
 
   /* =====================================================
      BASE OPERACIONAL DO OEE
@@ -259,37 +196,21 @@ function DashboardProdutividadeEmValidacao() {
      CALCULA OEE
   ===================================================== */
 
-  const indicadores =
-    useMemo(() => {
-      return calcularOeeCargaMaquina(
-        dadosCalculoOee,
-        dadosHistoricosPerformance,
-      );
-    }, [
-      dadosCalculoOee,
-      dadosHistoricosPerformance,
-    ]);
+  const indicadores = useMemo(() => {
+    return calcularOeeCargaMaquina(dadosCalculoOee, dadosHistoricosPerformance);
+  }, [dadosCalculoOee, dadosHistoricosPerformance]);
 
   /* =====================================================
      REFUGO
   ===================================================== */
 
-  const refugoPercentual =
-    useMemo(() => {
-      if (
-        indicadores.totalProduzido <=
-        0
-      ) {
-        return 0;
-      }
+  const refugoPercentual = useMemo(() => {
+    if (indicadores.totalProduzido <= 0) {
+      return 0;
+    }
 
-      return (
-        indicadores.danificada /
-        indicadores.totalProduzido
-      ) * 100;
-    }, [
-      indicadores,
-    ]);
+    return (indicadores.danificada / indicadores.totalProduzido) * 100;
+  }, [indicadores]);
 
   /* =====================================================
      LOADING
@@ -300,9 +221,7 @@ function DashboardProdutividadeEmValidacao() {
       <div className="produtividade-loading">
         <div className="produtividade-spinner" />
 
-        <span>
-          Carregando indicadores de produtividade...
-        </span>
+        <span>Carregando indicadores de produtividade...</span>
       </div>
     );
   }
@@ -314,18 +233,12 @@ function DashboardProdutividadeEmValidacao() {
   if (erro) {
     return (
       <div className="produtividade-erro">
-        <AlertTriangle
-          size={22}
-        />
+        <AlertTriangle size={22} />
 
         <div>
-          <strong>
-            Não foi possível carregar o dashboard
-          </strong>
+          <strong>Não foi possível carregar o dashboard</strong>
 
-          <span>
-            {erro}
-          </span>
+          <span>{erro}</span>
         </div>
       </div>
     );
@@ -338,7 +251,6 @@ function DashboardProdutividadeEmValidacao() {
   return (
     <div className="produtividade-layout">
       <main className="produtividade-main">
-
         {/* CABEÇALHO */}
 
         <PageHeader
@@ -354,55 +266,24 @@ function DashboardProdutividadeEmValidacao() {
         <section className="produtividade-filtros-card">
           <div className="produtividade-section-header">
             <div>
-              <h2>
-                Filtros
-              </h2>
+              <h2>Filtros</h2>
 
-              <p>
-                Refine os indicadores por período,
-                injetora ou produto.
-              </p>
+              <p>Refine os indicadores por período, injetora ou produto.</p>
             </div>
           </div>
 
           <FiltrosDashboard
-            filtros={
-              filtros
-            }
-
-            setFiltros={
-              setFiltros
-            }
-
-            rawDados={
-              dados
-            }
-
+            filtros={filtros}
+            setFiltros={setFiltros}
+            rawDados={dados}
             exibirPeriodo
-
             exibirInjetora
-
             exibirProduto
-
-            exibirMp={
-              false
-            }
-
-            exibirTipo={
-              false
-            }
-
-            tiposDisponiveis={
-              tiposDisponiveis
-            }
-
-            produtosDisponiveis={
-              produtosDisponiveis
-            }
-
-            mpsDisponiveis={
-              mpsDisponiveis
-            }
+            exibirMp={false}
+            exibirTipo={false}
+            tiposDisponiveis={tiposDisponiveis}
+            produtosDisponiveis={produtosDisponiveis}
+            mpsDisponiveis={mpsDisponiveis}
           />
         </section>
 
@@ -411,69 +292,31 @@ function DashboardProdutividadeEmValidacao() {
         <section className="oee-kpis-grid">
           <KpiCard
             titulo="Disponibilidade"
-
-            valor={
-              formatarPercentual(
-                indicadores.disponibilidade,
-              )
-            }
-
+            valor={formatarPercentual(indicadores.disponibilidade)}
             descricao="Tempo produtivo sobre o tempo considerado."
-
-            Icone={
-              TimerReset
-            }
+            Icone={TimerReset}
           />
 
           <KpiCard
             titulo="Performance"
-
-            valor={
-              formatarPercentual(
-                indicadores.performance,
-              )
-            }
-
+            valor={formatarPercentual(indicadores.performance)}
             descricao="Eficiência frente ao melhor ciclo histórico."
-
-            Icone={
-              Gauge
-            }
-
+            Icone={Gauge}
             aviso
           />
 
           <KpiCard
             titulo="Qualidade"
-
-            valor={
-              formatarPercentual(
-                indicadores.qualidade,
-              )
-            }
-
+            valor={formatarPercentual(indicadores.qualidade)}
             descricao="Peças conformes sobre a produção total."
-
-            Icone={
-              ShieldCheck
-            }
+            Icone={ShieldCheck}
           />
 
           <KpiCard
             titulo="OEE"
-
-            valor={
-              formatarPercentual(
-                indicadores.oee,
-              )
-            }
-
+            valor={formatarPercentual(indicadores.oee)}
             descricao="Eficiência global calculada pelos três fatores."
-
-            Icone={
-              Activity
-            }
-
+            Icone={Activity}
             destaque
           />
         </section>
@@ -481,52 +324,23 @@ function DashboardProdutividadeEmValidacao() {
         {/* DETALHAMENTO */}
 
         <section className="produtividade-grid-detalhes">
-
           <article className="produtividade-card produtividade-card-indicadores">
             <div className="produtividade-card-header">
               <div>
-                <span className="produtividade-card-eyebrow">
-                  Indicadores
-                </span>
+                <span className="produtividade-card-eyebrow">Indicadores</span>
 
-                <h2>
-                  Composição do OEE
-                </h2>
+                <h2>Composição do OEE</h2>
               </div>
             </div>
 
             <div className="oee-indicadores-lista">
-              <IndicadorBarra
-                titulo="Disponibilidade"
+              <IndicadorBarra titulo="Disponibilidade" valor={indicadores.disponibilidade} />
 
-                valor={
-                  indicadores.disponibilidade
-                }
-              />
+              <IndicadorBarra titulo="Performance" valor={indicadores.performance} />
 
-              <IndicadorBarra
-                titulo="Performance"
+              <IndicadorBarra titulo="Qualidade" valor={indicadores.qualidade} />
 
-                valor={
-                  indicadores.performance
-                }
-              />
-
-              <IndicadorBarra
-                titulo="Qualidade"
-
-                valor={
-                  indicadores.qualidade
-                }
-              />
-
-              <IndicadorBarra
-                titulo="OEE"
-
-                valor={
-                  indicadores.oee
-                }
-              />
+              <IndicadorBarra titulo="OEE" valor={indicadores.oee} />
             </div>
           </article>
 
@@ -535,55 +349,31 @@ function DashboardProdutividadeEmValidacao() {
           <article className="produtividade-card">
             <div className="produtividade-card-header">
               <div>
-                <span className="produtividade-card-eyebrow">
-                  Disponibilidade
-                </span>
+                <span className="produtividade-card-eyebrow">Disponibilidade</span>
 
-                <h2>
-                  Tempo operacional
-                </h2>
+                <h2>Tempo operacional</h2>
               </div>
 
-              <Factory
-                size={19}
-              />
+              <Factory size={19} />
             </div>
 
             <div className="produtividade-metricas-lista">
               <div className="produtividade-metrica">
-                <span>
-                  Tempo produzindo
-                </span>
+                <span>Tempo produzindo</span>
 
-                <strong>
-                  {
-                    indicadores.tempoProduzindo
-                  }
-                </strong>
+                <strong>{indicadores.tempoProduzindo}</strong>
               </div>
 
               <div className="produtividade-metrica">
-                <span>
-                  Tempo parado
-                </span>
+                <span>Tempo parado</span>
 
-                <strong>
-                  {
-                    indicadores.tempoParado
-                  }
-                </strong>
+                <strong>{indicadores.tempoParado}</strong>
               </div>
 
               <div className="produtividade-metrica produtividade-metrica-destaque">
-                <span>
-                  Tempo considerado
-                </span>
+                <span>Tempo considerado</span>
 
-                <strong>
-                  {
-                    indicadores.tempoConsiderado
-                  }
-                </strong>
+                <strong>{indicadores.tempoConsiderado}</strong>
               </div>
             </div>
           </article>
@@ -593,67 +383,37 @@ function DashboardProdutividadeEmValidacao() {
           <article className="produtividade-card">
             <div className="produtividade-card-header">
               <div>
-                <span className="produtividade-card-eyebrow">
-                  Qualidade
-                </span>
+                <span className="produtividade-card-eyebrow">Qualidade</span>
 
-                <h2>
-                  Produção e refugo
-                </h2>
+                <h2>Produção e refugo</h2>
               </div>
 
-              <Boxes
-                size={19}
-              />
+              <Boxes size={19} />
             </div>
 
             <div className="produtividade-metricas-lista">
               <div className="produtividade-metrica">
-                <span>
-                  Conformes
-                </span>
+                <span>Conformes</span>
 
-                <strong>
-                  {formatarNumero(
-                    indicadores.conforme,
-                  )}
-                </strong>
+                <strong>{formatarNumero(indicadores.conforme)}</strong>
               </div>
 
               <div className="produtividade-metrica">
-                <span>
-                  Danificadas
-                </span>
+                <span>Danificadas</span>
 
-                <strong>
-                  {formatarNumero(
-                    indicadores.danificada,
-                  )}
-                </strong>
+                <strong>{formatarNumero(indicadores.danificada)}</strong>
               </div>
 
               <div className="produtividade-metrica">
-                <span>
-                  Total produzido
-                </span>
+                <span>Total produzido</span>
 
-                <strong>
-                  {formatarNumero(
-                    indicadores.totalProduzido,
-                  )}
-                </strong>
+                <strong>{formatarNumero(indicadores.totalProduzido)}</strong>
               </div>
 
               <div className="produtividade-metrica produtividade-metrica-destaque">
-                <span>
-                  Refugo
-                </span>
+                <span>Refugo</span>
 
-                <strong>
-                  {formatarPercentual(
-                    refugoPercentual,
-                  )}
-                </strong>
+                <strong>{formatarPercentual(refugoPercentual)}</strong>
               </div>
             </div>
           </article>
@@ -662,9 +422,7 @@ function DashboardProdutividadeEmValidacao() {
         {/* OBSERVAÇÃO */}
 
         <section className="produtividade-nota">
-          <Gauge
-            size={17}
-          />
+          <Gauge size={17} />
         </section>
       </main>
     </div>
@@ -686,84 +444,60 @@ function DashboardProdutividade() {
       <main
         className="produtividade-main"
         style={{
-          minHeight:
-            "calc(100vh - 80px)",
+          minHeight: "calc(100vh - 80px)",
 
-          display:
-            "flex",
+          display: "flex",
 
-          alignItems:
-            "center",
+          alignItems: "center",
 
-          justifyContent:
-            "center",
+          justifyContent: "center",
 
-          padding:
-            "40px 24px",
+          padding: "40px 24px",
         }}
       >
         <section
           className="produtividade-card"
           style={{
-            width:
-              "100%",
+            width: "100%",
 
-            maxWidth:
-              "680px",
+            maxWidth: "680px",
 
-            padding:
-              "56px 40px",
+            padding: "56px 40px",
 
-            textAlign:
-              "center",
+            textAlign: "center",
           }}
         >
           <div
             style={{
-              width:
-                "72px",
+              width: "72px",
 
-              height:
-                "72px",
+              height: "72px",
 
-              margin:
-                "0 auto 24px",
+              margin: "0 auto 24px",
 
-              borderRadius:
-                "18px",
+              borderRadius: "18px",
 
-              display:
-                "flex",
+              display: "flex",
 
-              alignItems:
-                "center",
+              alignItems: "center",
 
-              justifyContent:
-                "center",
+              justifyContent: "center",
 
-              background:
-                "#fff7ed",
+              background: "#fff7ed",
 
-              color:
-                "#ea580c",
+              color: "#ea580c",
             }}
           >
-            <AlertTriangle
-              size={34}
-            />
+            <AlertTriangle size={34} />
           </div>
 
-          <span className="produtividade-subtitle">
-            Dashboard de OEE
-          </span>
+          <span className="produtividade-subtitle">Dashboard de OEE</span>
 
           <h1
             style={{
-              marginTop:
-                "10px",
+              marginTop: "10px",
 
-              marginBottom:
-                "14px",
+              marginBottom: "14px",
             }}
           >
             Tela em construção
@@ -771,44 +505,32 @@ function DashboardProdutividade() {
 
           <p
             style={{
-              maxWidth:
-                "500px",
+              maxWidth: "500px",
 
-              margin:
-                "0 auto",
+              margin: "0 auto",
 
-              lineHeight:
-                "1.7",
+              lineHeight: "1.7",
             }}
           >
-            Os indicadores e métricas de OEE
-            ainda estão em fase de validação.
-            Esta tela será disponibilizada
-            após a conclusão das validações.
+            Os indicadores e métricas de OEE ainda estão em fase de validação. Esta tela será
+            disponibilizada após a conclusão das validações.
           </p>
 
           <div
             style={{
-              marginTop:
-                "28px",
+              marginTop: "28px",
 
-              padding:
-                "14px 18px",
+              padding: "14px 18px",
 
-              borderRadius:
-                "10px",
+              borderRadius: "10px",
 
-              background:
-                "#f8fafc",
+              background: "#f8fafc",
 
-              border:
-                "1px solid #e2e8f0",
+              border: "1px solid #e2e8f0",
 
-              fontSize:
-                "0.82rem",
+              fontSize: "0.82rem",
 
-              color:
-                "#64748b",
+              color: "#64748b",
             }}
           >
             Disponibilidade • Performance • Qualidade • OEE

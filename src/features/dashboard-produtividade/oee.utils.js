@@ -3,12 +3,7 @@ export function normalizarValorOee(valor) {
 }
 
 export function obterDataRegistroOee(item) {
-  const valor =
-    item?.lista_de_data ||
-    item?.inicio ||
-    item?.inicio_dia ||
-    item?.data ||
-    null;
+  const valor = item?.lista_de_data || item?.inicio || item?.inicio_dia || item?.data || null;
 
   if (!valor) {
     return "";
@@ -18,9 +13,7 @@ export function obterDataRegistroOee(item) {
     .trim()
     .match(/^(\d{4})-(\d{2})-(\d{2})/);
 
-  return correspondencia
-    ? `${correspondencia[1]}-${correspondencia[2]}-${correspondencia[3]}`
-    : "";
+  return correspondencia ? `${correspondencia[1]}-${correspondencia[2]}-${correspondencia[3]}` : "";
 }
 
 export function registroEhParadaOee(item) {
@@ -54,16 +47,12 @@ export function obterProdutosDisponiveisOee(dados, filtros = {}) {
     return [];
   }
 
-  const injetoraSelecionada = normalizarValorOee(
-    filtros.injetora,
-  ).toLocaleUpperCase("pt-BR");
+  const injetoraSelecionada = normalizarValorOee(filtros.injetora).toLocaleUpperCase("pt-BR");
 
   const produtos = new Set();
 
   for (const item of dados) {
-    const injetoraRegistro = normalizarValorOee(
-      item?.injetora,
-    ).toLocaleUpperCase("pt-BR");
+    const injetoraRegistro = normalizarValorOee(item?.injetora).toLocaleUpperCase("pt-BR");
 
     if (injetoraRegistro !== injetoraSelecionada) {
       continue;
@@ -71,17 +60,11 @@ export function obterProdutosDisponiveisOee(dados, filtros = {}) {
 
     const dataRegistro = obterDataRegistroOee(item);
 
-    if (
-      filtros.dataInicio &&
-      (!dataRegistro || dataRegistro < filtros.dataInicio)
-    ) {
+    if (filtros.dataInicio && (!dataRegistro || dataRegistro < filtros.dataInicio)) {
       continue;
     }
 
-    if (
-      filtros.dataFim &&
-      (!dataRegistro || dataRegistro > filtros.dataFim)
-    ) {
+    if (filtros.dataFim && (!dataRegistro || dataRegistro > filtros.dataFim)) {
       continue;
     }
 
@@ -163,8 +146,7 @@ export function filtrarDadosCalculoOee(dadosBaseOee, codigoProduto) {
 
   return dadosBaseOee.filter(
     (item) =>
-      registroEhParadaOee(item) ||
-      normalizarValorOee(item?.cod_prod) === produtoSelecionado,
+      registroEhParadaOee(item) || normalizarValorOee(item?.cod_prod) === produtoSelecionado,
   );
 }
 
@@ -179,7 +161,5 @@ export function filtrarHistoricoPerformanceOee(dados, injetora) {
 
   const injetoraSelecionada = normalizarValorOee(injetora);
 
-  return dados.filter(
-    (item) => normalizarValorOee(item?.injetora) === injetoraSelecionada,
-  );
+  return dados.filter((item) => normalizarValorOee(item?.injetora) === injetoraSelecionada);
 }

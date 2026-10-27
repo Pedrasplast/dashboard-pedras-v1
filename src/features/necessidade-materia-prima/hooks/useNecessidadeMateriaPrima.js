@@ -1,9 +1,6 @@
-
 import { useQuery } from "@tanstack/react-query";
 
-import {
-  buscarNecessidadeMateriaPrima,
-} from "../services/necessidadeMateriaPrima.service";
+import { buscarNecessidadeMateriaPrima } from "../services/necessidadeMateriaPrima.service";
 import { useAtualizarAoAlterarMateriais } from "@/features/cadastros/materiais/hooks/useAtualizarAoAlterarMateriais";
 
 const CINCO_MINUTOS = 5 * 60 * 1000;

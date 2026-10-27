@@ -29,7 +29,9 @@ function criarSupabaseAdmin() {
 }
 
 function normalizarEmail(valor: unknown) {
-  return String(valor ?? "").trim().toLowerCase();
+  return String(valor ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 async function buscarUsuarioExistente(
@@ -40,11 +42,10 @@ async function buscarUsuarioExistente(
   let pagina = 1;
 
   for (;;) {
-    const { data, error } =
-      await supabaseAdmin.auth.admin.listUsers({
-        page: pagina,
-        perPage: porPagina,
-      });
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({
+      page: pagina,
+      perPage: porPagina,
+    });
 
     if (error) {
       throw error;
@@ -52,10 +53,7 @@ async function buscarUsuarioExistente(
 
     const usuarios = data?.users || [];
 
-    const encontrado = usuarios.find(
-      (usuario) =>
-        normalizarEmail(usuario?.email) === email,
-    );
+    const encontrado = usuarios.find((usuario) => normalizarEmail(usuario?.email) === email);
 
     if (encontrado) {
       return encontrado;
@@ -88,8 +86,7 @@ Deno.serve(async (req) => {
 
     const supabaseAdmin = criarSupabaseAdmin();
 
-    const { data: usuarioLogado, error: erroUsuario } =
-      await supabaseAdmin.auth.getUser(token);
+    const { data: usuarioLogado, error: erroUsuario } = await supabaseAdmin.auth.getUser(token);
 
     if (erroUsuario || !usuarioLogado?.user) {
       return responder({ erro: "Sessão inválida ou expirada." }, 401);
@@ -102,10 +99,7 @@ Deno.serve(async (req) => {
       .single();
 
     if (erroPerfil || perfil?.regra !== "admin") {
-      return responder(
-        { erro: "Somente administradores podem cadastrar usuários." },
-        403,
-      );
+      return responder({ erro: "Somente administradores podem cadastrar usuários." }, 403);
     }
 
     const corpo = await req.json().catch(() => ({}));
@@ -128,20 +122,13 @@ Deno.serve(async (req) => {
       return responder({ erro: "URL de primeiro acesso inválida." }, 400);
     }
 
-    const ehLocal =
-      destino.hostname === "localhost" ||
-      destino.hostname === "127.0.0.1";
+    const ehLocal = destino.hostname === "localhost" || destino.hostname === "127.0.0.1";
 
     if (destino.protocol !== "https:" && !ehLocal) {
-      return responder(
-        { erro: "A URL de primeiro acesso precisa usar HTTPS." },
-        400,
-      );
+      return responder({ erro: "A URL de primeiro acesso precisa usar HTTPS." }, 400);
     }
 
-    const origemRequisicao = String(
-      req.headers.get("Origin") || "",
-    ).trim();
+    const origemRequisicao = String(req.headers.get("Origin") || "").trim();
 
     if (origemRequisicao) {
       try {
@@ -158,39 +145,32 @@ Deno.serve(async (req) => {
       }
     }
 
-    const usuarioExistente = await buscarUsuarioExistente(
-      supabaseAdmin,
-      email,
-    );
+    const usuarioExistente = await buscarUsuarioExistente(supabaseAdmin, email);
 
     if (usuarioExistente) {
       return responder(
         {
-          erro:
-            "Este e-mail já pertence a um usuário cadastrado. Nenhuma alteração foi realizada.",
+          erro: "Este e-mail já pertence a um usuário cadastrado. Nenhuma alteração foi realizada.",
         },
         409,
       );
     }
 
-    const { data, error } =
-      await supabaseAdmin.auth.admin.generateLink({
-        type: "invite",
-        email,
-        options: {
-          redirectTo: destino.toString(),
-        },
-      });
+    const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: "invite",
+      email,
+      options: {
+        redirectTo: destino.toString(),
+      },
+    });
 
     if (error) {
-      const mensagem =
-        error.message || "Não foi possível cadastrar o usuário.";
+      const mensagem = error.message || "Não foi possível cadastrar o usuário.";
 
       if (/already|registered|exists|exist/i.test(mensagem)) {
         return responder(
           {
-            erro:
-              "Este e-mail já pertence a um usuário cadastrado. Nenhuma alteração foi realizada.",
+            erro: "Este e-mail já pertence a um usuário cadastrado. Nenhuma alteração foi realizada.",
           },
           409,
         );
@@ -236,10 +216,7 @@ Deno.serve(async (req) => {
 
     return responder(
       {
-        erro:
-          erro instanceof Error
-            ? erro.message
-            : "Erro inesperado ao cadastrar usuário.",
+        erro: erro instanceof Error ? erro.message : "Erro inesperado ao cadastrar usuário.",
       },
       500,
     );

@@ -1,17 +1,8 @@
-import {
-  Boxes,
-  PackageCheck,
-  ShoppingCart,
-  Warehouse,
-} from "lucide-react";
+import { Boxes, PackageCheck, ShoppingCart, Warehouse } from "lucide-react";
 
-import EstoqueKpiCard
-  from "./EstoqueKpiCard";
+import EstoqueKpiCard from "./EstoqueKpiCard";
 
-import {
-  formatarNumero,
-} from "../utils/estoque.utils";
-
+import { formatarNumero } from "../utils/estoque.utils";
 
 export default function EstoqueKpis({
   indicadores,
@@ -21,96 +12,45 @@ export default function EstoqueKpis({
   carregando,
 }) {
   return (
-    <section
-      className="estoque-kpis"
-      aria-label="Indicadores do estoque"
-    >
-
+    <section className="estoque-kpis" aria-label="Indicadores do estoque">
       <EstoqueKpiCard
         titulo="Produtos"
-        valor={
-          carregando
-            ? "-"
-            : formatarNumero(
-                indicadores
-                  .produtos,
-                0,
-              )
-        }
-        subtitulo={
-          localAtual
-        }
-        icone={
-          Boxes
-        }
+        valor={carregando ? "-" : formatarNumero(indicadores.produtos, 0)}
+        subtitulo={localAtual}
+        icone={Boxes}
         tipo="azul"
       />
 
-
       <EstoqueKpiCard
         titulo="Com saldo"
-        valor={
-          carregando
-            ? "-"
-            : formatarNumero(
-                indicadores
-                  .comSaldo,
-                0,
-              )
-        }
+        valor={carregando ? "-" : formatarNumero(indicadores.comSaldo, 0)}
         subtitulo="Saldo diferente de zero"
-        icone={
-          PackageCheck
-        }
+        icone={PackageCheck}
         tipo="verde"
       />
 
-
       <EstoqueKpiCard
         titulo="Saldo total"
-        valor={
-          carregando
-            ? "-"
-            : formatarNumero(
-                indicadores
-                  .saldoTotal,
-              )
-        }
+        valor={carregando ? "-" : formatarNumero(indicadores.saldoTotal)}
         subtitulo="Quantidade disponível no local"
-        icone={
-          Warehouse
-        }
+        icone={Warehouse}
         tipo="roxo"
       />
 
-
       <EstoqueKpiCard
         titulo="Quantidade em aberto"
-        valor={
-          carregando
-            ? "-"
-            : formatarNumero(
-                indicadores
-                  .quantidadePedidosAbertos,
-              )
-        }
+        valor={carregando ? "-" : formatarNumero(indicadores.quantidadePedidosAbertos)}
         subtitulo={
           carregando
             ? "Carregando pedidos..."
-            : `${
-                formatarNumero(
-                  indicadores
-                    .pedidosAbertos,
-                  0,
-                )
-              } pedidos • mesma base da tela de Pedidos`
+            : `${formatarNumero(
+                indicadores.pedidosAbertos,
+                0,
+              )} pedidos • mesma base da tela de Pedidos`
         }
-        icone={
-          ShoppingCart
-        }
+        icone={ShoppingCart}
         tipo="laranja"
       />
-
     </section>
   );
 }

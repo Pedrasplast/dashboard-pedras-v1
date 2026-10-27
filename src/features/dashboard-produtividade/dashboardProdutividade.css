@@ -22,7 +22,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    CABEÇALHO
 ========================================================= */
@@ -42,9 +41,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 12px;
 
-  box-shadow:
-    0 4px 14px
-    rgba(15, 23, 42, 0.035);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
 }
 
 .produtividade-subtitle {
@@ -86,7 +83,6 @@
   line-height: 1.5;
 }
 
-
 /* =========================================================
    CARD DE FILTROS
 ========================================================= */
@@ -104,11 +100,8 @@
 
   box-sizing: border-box;
 
-  box-shadow:
-    0 2px 8px
-    rgba(15, 23, 42, 0.025);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.025);
 }
-
 
 /* =========================================================
    CABEÇALHO DOS FILTROS
@@ -142,7 +135,6 @@
   font-size: 0.62rem;
 }
 
-
 /* =========================================================
    FILTROS — LAYOUT COMPACTO
 
@@ -150,8 +142,7 @@
    DATA INICIAL | DATA FINAL | INJETORA | CÓD. PROD
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section {
+.produtividade-filtros-card .filter-section {
   display: grid;
 
   grid-template-columns:
@@ -173,13 +164,11 @@
   width: 100%;
 }
 
-
 /* =========================================================
    CABEÇALHO DO PERÍODO
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-header-row {
+.produtividade-filtros-card .filter-header-row {
   grid-column: 1 / -1;
 
   display: flex;
@@ -191,8 +180,7 @@
   margin: 0 0 3px;
 }
 
-.produtividade-filtros-card
-  .filter-header-row label {
+.produtividade-filtros-card .filter-header-row label {
   margin: 0;
 
   color: #64748b;
@@ -205,13 +193,11 @@
   text-transform: uppercase;
 }
 
-
 /* =========================================================
    BOTÃO LIMPAR
 ========================================================= */
 
-.produtividade-filtros-card
-  .clear-date-btn {
+.produtividade-filtros-card .clear-date-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -238,20 +224,17 @@
     color 0.15s ease;
 }
 
-.produtividade-filtros-card
-  .clear-date-btn:hover {
+.produtividade-filtros-card .clear-date-btn:hover {
   background: #fef2f2;
 
   color: #dc2626;
 }
 
-
 /* =========================================================
    CAMPOS DE DATA
 ========================================================= */
 
-.produtividade-filtros-card
-  .date-inputs-container {
+.produtividade-filtros-card .date-inputs-container {
   grid-column: 1 / 3;
   grid-row: 2 / 4;
 
@@ -269,16 +252,14 @@
   margin: 0;
 }
 
-.produtividade-filtros-card
-  .calendar-field {
+.produtividade-filtros-card .calendar-field {
   position: relative;
 
   width: 190px;
   max-width: 190px;
 }
 
-.produtividade-filtros-card
-  .calendar-trigger {
+.produtividade-filtros-card .calendar-trigger {
   width: 100%;
   min-height: 40px;
 
@@ -308,26 +289,21 @@
     background-color 0.15s ease;
 }
 
-.produtividade-filtros-card
-  .calendar-trigger:hover:not(:disabled) {
+.produtividade-filtros-card .calendar-trigger:hover:not(:disabled) {
   border-color: #b8c4d1;
 
   background: #fbfcfd;
 }
 
-.produtividade-filtros-card
-  .calendar-trigger:focus-visible {
+.produtividade-filtros-card .calendar-trigger:focus-visible {
   outline: none;
 
   border-color: #6d9cef;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
-.produtividade-filtros-card
-  .calendar-trigger span {
+.produtividade-filtros-card .calendar-trigger span {
   color: #8290a3;
 
   font-size: 0.54rem;
@@ -336,8 +312,7 @@
   letter-spacing: 0.04em;
 }
 
-.produtividade-filtros-card
-  .calendar-trigger strong {
+.produtividade-filtros-card .calendar-trigger strong {
   color: #172033;
 
   font-size: 0.74rem;
@@ -346,13 +321,11 @@
   line-height: 1.2;
 }
 
-
 /* =========================================================
    CALENDÁRIO POPUP
 ========================================================= */
 
-.produtividade-filtros-card
-  .calendar-popover {
+.produtividade-filtros-card .calendar-popover {
   position: absolute;
 
   top: calc(100% + 6px);
@@ -371,15 +344,11 @@
   border-radius: 10px;
 
   box-shadow:
-    0 12px 30px
-    rgba(15, 23, 42, 0.14),
-    0 3px 8px
-    rgba(15, 23, 42, 0.05);
+    0 12px 30px rgba(15, 23, 42, 0.14),
+    0 3px 8px rgba(15, 23, 42, 0.05);
 }
 
-.produtividade-filtros-card
-  .calendar-popover
-  .rdp-root {
+.produtividade-filtros-card .calendar-popover .rdp-root {
   --rdp-day-height: 30px;
   --rdp-day-width: 30px;
 
@@ -394,14 +363,11 @@
   font-size: 0.72rem;
 }
 
-
 /* =========================================================
    LABEL INJETORA
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section
-  > label:nth-of-type(1) {
+.produtividade-filtros-card .filter-section > label:nth-of-type(1) {
   grid-column: 3;
   grid-row: 2;
 
@@ -418,15 +384,12 @@
 
   text-transform: uppercase;
 }
-
 
 /* =========================================================
    SELECT INJETORA
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section
-  > select:nth-of-type(1) {
+.produtividade-filtros-card .filter-section > select:nth-of-type(1) {
   grid-column: 3;
   grid-row: 3;
 
@@ -436,14 +399,11 @@
   margin: 0;
 }
 
-
 /* =========================================================
    LABEL CÓDIGO PRODUTO
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section
-  > label:nth-of-type(2) {
+.produtividade-filtros-card .filter-section > label:nth-of-type(2) {
   grid-column: 4;
   grid-row: 2;
 
@@ -461,14 +421,11 @@
   text-transform: uppercase;
 }
 
-
 /* =========================================================
    SELECT PRODUTO
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section
-  > select:nth-of-type(2) {
+.produtividade-filtros-card .filter-section > select:nth-of-type(2) {
   grid-column: 4;
   grid-row: 3;
 
@@ -478,14 +435,11 @@
   margin: 0;
 }
 
-
 /* =========================================================
    SELECTS
 ========================================================= */
 
-.produtividade-filtros-card
-  .filter-section
-  > select {
+.produtividade-filtros-card .filter-section > select {
   min-height: 40px;
 
   padding: 0 34px 0 10px;
@@ -513,25 +467,17 @@
     background-color 0.15s ease;
 }
 
-.produtividade-filtros-card
-  .filter-section
-  > select:hover {
+.produtividade-filtros-card .filter-section > select:hover {
   border-color: #b8c4d1;
 }
 
-.produtividade-filtros-card
-  .filter-section
-  > select:focus {
+.produtividade-filtros-card .filter-section > select:focus {
   border-color: #6d9cef;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
-.produtividade-filtros-card
-  .filter-section
-  > select:disabled {
+.produtividade-filtros-card .filter-section > select:disabled {
   color: #8d9aaa;
 
   background: #f1f5f9;
@@ -541,7 +487,6 @@
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    GRID DOS PRINCIPAIS INDICADORES
 ========================================================= */
@@ -549,17 +494,12 @@
 .oee-kpis-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 12px;
 
   margin-bottom: 16px;
 }
-
 
 /* =========================================================
    KPI
@@ -582,9 +522,7 @@
 
   box-sizing: border-box;
 
-  box-shadow:
-    0 2px 9px
-    rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 9px rgba(15, 23, 42, 0.03);
 
   transition:
     border-color 0.16s ease,
@@ -595,13 +533,10 @@
 .oee-kpi-card:hover {
   border-color: #cbd5e1;
 
-  box-shadow:
-    0 7px 18px
-    rgba(15, 23, 42, 0.055);
+  box-shadow: 0 7px 18px rgba(15, 23, 42, 0.055);
 
   transform: translateY(-1px);
 }
-
 
 /* =========================================================
    KPI OEE EM DESTAQUE
@@ -614,10 +549,8 @@
 
   box-shadow:
     inset 3px 0 0 #2563eb,
-    0 3px 12px
-      rgba(37, 99, 235, 0.055);
+    0 3px 12px rgba(37, 99, 235, 0.055);
 }
-
 
 /* =========================================================
    TOPO DO KPI
@@ -669,7 +602,6 @@
   text-transform: uppercase;
 }
 
-
 /* =========================================================
    CONTEÚDO DO KPI
 ========================================================= */
@@ -710,7 +642,6 @@
   line-height: 1.4;
 }
 
-
 /* =========================================================
    GRID DE DETALHES
 ========================================================= */
@@ -728,7 +659,6 @@
   align-items: stretch;
 }
 
-
 /* =========================================================
    CARD GERAL
 ========================================================= */
@@ -745,9 +675,7 @@
 
   box-sizing: border-box;
 
-  box-shadow:
-    0 2px 9px
-    rgba(15, 23, 42, 0.03);
+  box-shadow: 0 2px 9px rgba(15, 23, 42, 0.03);
 }
 
 .produtividade-card-header {
@@ -790,7 +718,6 @@
   font-weight: 800;
 }
 
-
 /* =========================================================
    COMPOSIÇÃO DO OEE
 ========================================================= */
@@ -830,7 +757,6 @@
   font-weight: 800;
 }
 
-
 /* =========================================================
    BARRAS
 ========================================================= */
@@ -853,10 +779,8 @@
 
   border-radius: inherit;
 
-  transition:
-    width 0.25s ease;
+  transition: width 0.25s ease;
 }
-
 
 /* =========================================================
    LISTA DE MÉTRICAS
@@ -903,7 +827,6 @@
   text-align: right;
 }
 
-
 /* =========================================================
    MÉTRICA EM DESTAQUE
 ========================================================= */
@@ -927,7 +850,6 @@
 .produtividade-metrica-destaque strong {
   color: #1d4ed8;
 }
-
 
 /* =========================================================
    OBSERVAÇÃO
@@ -977,14 +899,10 @@
 
   border-radius: 4px;
 
-  font-family:
-    Consolas,
-    Monaco,
-    monospace;
+  font-family: Consolas, Monaco, monospace;
 
   font-size: 0.62rem;
 }
-
 
 /* =========================================================
    LOADING
@@ -1016,9 +934,7 @@
 
   border-radius: 50%;
 
-  animation:
-    produtividade-spin
-    0.75s linear infinite;
+  animation: produtividade-spin 0.75s linear infinite;
 }
 
 @keyframes produtividade-spin {
@@ -1026,7 +942,6 @@
     transform: rotate(360deg);
   }
 }
-
 
 /* =========================================================
    ERRO
@@ -1075,19 +990,16 @@
   line-height: 1.4;
 }
 
-
 /* =========================================================
    NOTEBOOK
 ========================================================= */
 
 @media (max-width: 1200px) {
   .produtividade-main {
-    padding:
-      22px 22px 38px;
+    padding: 22px 22px 38px;
   }
 
-  .produtividade-filtros-card
-    .filter-section {
+  .produtividade-filtros-card .filter-section {
     grid-template-columns:
       180px
       180px
@@ -1095,37 +1007,29 @@
       1fr;
   }
 
-  .produtividade-filtros-card
-    .date-inputs-container {
+  .produtividade-filtros-card .date-inputs-container {
     grid-template-columns:
       180px
       180px;
   }
 
-  .produtividade-filtros-card
-    .calendar-field {
+  .produtividade-filtros-card .calendar-field {
     width: 180px;
     max-width: 180px;
   }
 
   .oee-kpis-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .produtividade-grid-detalhes {
-    grid-template-columns:
-      1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .produtividade-card-indicadores {
     grid-column: 1 / -1;
   }
 }
-
 
 /* =========================================================
    TABLET
@@ -1133,27 +1037,22 @@
 
 @media (max-width: 900px) {
   .produtividade-main {
-    padding:
-      18px 16px 32px;
+    padding: 18px 16px 32px;
   }
 
-  .produtividade-filtros-card
-    .filter-section {
+  .produtividade-filtros-card .filter-section {
     grid-template-columns:
       1fr
       1fr;
 
-    grid-template-rows:
-      auto;
+    grid-template-rows: auto;
   }
 
-  .produtividade-filtros-card
-    .filter-header-row {
+  .produtividade-filtros-card .filter-header-row {
     grid-column: 1 / -1;
   }
 
-  .produtividade-filtros-card
-    .date-inputs-container {
+  .produtividade-filtros-card .date-inputs-container {
     grid-column: 1 / -1;
     grid-row: auto;
 
@@ -1164,38 +1063,26 @@
     width: 100%;
   }
 
-  .produtividade-filtros-card
-    .calendar-field {
+  .produtividade-filtros-card .calendar-field {
     width: 100%;
     max-width: none;
   }
 
-  .produtividade-filtros-card
-    .filter-section
-    > label:nth-of-type(1),
-  .produtividade-filtros-card
-    .filter-section
-    > label:nth-of-type(2),
-  .produtividade-filtros-card
-    .filter-section
-    > select:nth-of-type(1),
-  .produtividade-filtros-card
-    .filter-section
-    > select:nth-of-type(2) {
+  .produtividade-filtros-card .filter-section > label:nth-of-type(1),
+  .produtividade-filtros-card .filter-section > label:nth-of-type(2),
+  .produtividade-filtros-card .filter-section > select:nth-of-type(1),
+  .produtividade-filtros-card .filter-section > select:nth-of-type(2) {
     grid-column: auto;
     grid-row: auto;
   }
 
-  .produtividade-filtros-card
-    .filter-section
-    > select {
+  .produtividade-filtros-card .filter-section > select {
     width: 100%;
     max-width: 100%;
   }
 
   .produtividade-grid-detalhes {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .produtividade-card-indicadores {
@@ -1203,15 +1090,13 @@
   }
 }
 
-
 /* =========================================================
    CELULAR
 ========================================================= */
 
 @media (max-width: 640px) {
   .produtividade-main {
-    padding:
-      14px 11px 26px;
+    padding: 14px 11px 26px;
   }
 
   .produtividade-header {
@@ -1230,52 +1115,35 @@
     padding: 12px;
   }
 
-  .produtividade-filtros-card
-    .filter-section {
-    grid-template-columns:
-      1fr;
+  .produtividade-filtros-card .filter-section {
+    grid-template-columns: 1fr;
   }
 
-  .produtividade-filtros-card
-    .filter-header-row {
+  .produtividade-filtros-card .filter-header-row {
     grid-column: auto;
   }
 
-  .produtividade-filtros-card
-    .date-inputs-container {
+  .produtividade-filtros-card .date-inputs-container {
     grid-column: auto;
 
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
 
     width: 100%;
   }
 
-  .produtividade-filtros-card
-    .calendar-field {
+  .produtividade-filtros-card .calendar-field {
     width: 100%;
     max-width: 100%;
   }
 
-  .produtividade-filtros-card
-    .calendar-popover {
-    width:
-      min(
-        296px,
-        calc(
-          100vw - 52px
-        )
-      );
+  .produtividade-filtros-card .calendar-popover {
+    width: min(296px, calc(100vw - 52px));
 
-    max-width:
-      calc(
-        100vw - 52px
-      );
+    max-width: calc(100vw - 52px);
   }
 
   .oee-kpis-grid {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 
   .oee-kpi-card {

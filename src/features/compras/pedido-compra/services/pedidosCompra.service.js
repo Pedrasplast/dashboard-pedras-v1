@@ -1,15 +1,8 @@
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
-import {
-  enriquecerPedido,
-  ordenarPedidos,
-} from "../utils/pedidosCompra.utils";
+import { enriquecerPedido, ordenarPedidos } from "../utils/pedidosCompra.utils";
 
-const TAMANHO_PAGINA =
-  1000;
-
+const TAMANHO_PAGINA = 1000;
 
 /*
  * Os nomes de fornecedores/compradores mudam com muito menos
@@ -19,111 +12,57 @@ const TAMANHO_PAGINA =
  * refresh da tela a cada 30 segundos não invoque a Edge Function
  * repetidamente.
  */
-const TEMPO_CACHE_NOMES_OMIE =
-  15 * 60 * 1000;
+const TEMPO_CACHE_NOMES_OMIE = 15 * 60 * 1000;
 
 let cacheNomesOmie = null;
 let cacheNomesOmieEm = 0;
 
-async function buscarTodos(
-  nomeTabela,
-  colunas,
-  configurarConsulta,
-) {
-  const registros =
-    [];
+async function buscarTodos(nomeTabela, colunas, configurarConsulta) {
+  const registros = [];
 
-  let inicio =
-    0;
+  let inicio = 0;
 
   while (true) {
-    let consulta =
-      supabase
-        .from(
-          nomeTabela,
-        )
-        .select(
-          colunas,
-        );
+    let consulta = supabase.from(nomeTabela).select(colunas);
 
-    if (
-      typeof configurarConsulta ===
-      "function"
-    ) {
-      consulta =
-        configurarConsulta(
-          consulta,
-        );
+    if (typeof configurarConsulta === "function") {
+      consulta = configurarConsulta(consulta);
     }
 
-    const {
-      data,
-      error,
-    } =
-      await consulta.range(
-        inicio,
-        inicio +
-          TAMANHO_PAGINA -
-          1,
-      );
+    const { data, error } = await consulta.range(inicio, inicio + TAMANHO_PAGINA - 1);
 
-    if (
-      error
-    ) {
+    if (error) {
       throw error;
     }
 
-    const pagina =
-      Array.isArray(
-        data,
-      )
-        ? data
-        : [];
+    const pagina = Array.isArray(data) ? data : [];
 
-    registros.push(
-      ...pagina,
-    );
+    registros.push(...pagina);
 
-    if (
-      pagina.length <
-      TAMANHO_PAGINA
-    ) {
+    if (pagina.length < TAMANHO_PAGINA) {
       break;
     }
 
-    inicio +=
-      TAMANHO_PAGINA;
+    inicio += TAMANHO_PAGINA;
   }
 
   return registros;
 }
 
 async function buscarEstadoSincronizacao() {
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "sincronizacao_pedidos_compra_omie",
-      )
-      .select(
-        "id,status,iniciado_em,finalizado_em,atualizado_em,varredura_iniciada_em,total_pedidos,total_paginas,mensagem",
-      )
-      .eq(
-        "id",
-        1,
-      )
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from("sincronizacao_pedidos_compra_omie")
+    .select(
+      "id,status,iniciado_em,finalizado_em,atualizado_em,varredura_iniciada_em,total_pedidos,total_paginas,mensagem",
+    )
+    .eq("id", 1)
+    .maybeSingle();
 
-  if (
-    error
-  ) {
+  if (error) {
     throw error;
   }
 
-  return data ??
-    null;
+  return data ?? null;
 }
 
 /*
@@ -144,16 +83,10 @@ async function buscarDocumentosAtuais() {
 
     COLUNAS_DOCUMENTOS_COMPRA,
 
-    (
-      consulta,
-    ) =>
-      consulta.order(
-        "documento_id",
-        {
-          ascending:
-            true,
-        },
-      ),
+    (consulta) =>
+      consulta.order("documento_id", {
+        ascending: true,
+      }),
   );
 }
 
@@ -163,16 +96,10 @@ async function buscarItens() {
 
     "documento_id,tipo_documento,cod_ped_compra,cod_req_compra,numero_documento,codigo_item,codigo_produto,codigo_comercial,descricao,unidade,quantidade,quantidade_recebida,preco_unitario,valor_total,desconto,observacao,local_estoque,sequencia",
 
-    (
-      consulta,
-    ) =>
-      consulta.order(
-        "documento_id",
-        {
-          ascending:
-            true,
-        },
-      ),
+    (consulta) =>
+      consulta.order("documento_id", {
+        ascending: true,
+      }),
   );
 }
 
@@ -182,110 +109,59 @@ async function buscarFornecedoresCache() {
 
     "codigo,nome,atualizado_em",
 
-    (
-      consulta,
-    ) =>
-      consulta.order(
-        "codigo",
-        {
-          ascending:
-            true,
-        },
-      ),
+    (consulta) =>
+      consulta.order("codigo", {
+        ascending: true,
+      }),
   );
 }
 
 async function buscarNomesOmie() {
-  const agora =
-    Date.now();
+  const agora = Date.now();
 
-  if (
-    cacheNomesOmie &&
-    agora -
-      cacheNomesOmieEm <
-      TEMPO_CACHE_NOMES_OMIE
-  ) {
+  if (cacheNomesOmie && agora - cacheNomesOmieEm < TEMPO_CACHE_NOMES_OMIE) {
     return cacheNomesOmie;
   }
 
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .functions
-      .invoke(
-        "nomes-fornecedores-pedidos-compra",
-        {
-          body: {},
-        },
-      );
+  const { data, error } = await supabase.functions.invoke("nomes-fornecedores-pedidos-compra", {
+    body: {},
+  });
 
-  if (
-    error
-  ) {
-    console.warn(
-      "Não foi possível atualizar os nomes dos pedidos de compra:",
-      error.message,
-    );
+  if (error) {
+    console.warn("Não foi possível atualizar os nomes dos pedidos de compra:", error.message);
 
     /*
      * Se já existe um cache válido anterior, preservamos os nomes
      * conhecidos em vez de trocar tudo por 'não identificado'.
      */
-    if (
-      cacheNomesOmie
-    ) {
+    if (cacheNomesOmie) {
       return {
         ...cacheNomesOmie,
-        consulta_omie_falhou:
-          true,
+        consulta_omie_falhou: true,
       };
     }
 
     return {
-      fornecedores:
-        {},
+      fornecedores: {},
 
-      compradores:
-        {},
+      compradores: {},
 
-      consulta_omie_falhou:
-        true,
+      consulta_omie_falhou: true,
     };
   }
 
   const resultado = {
     fornecedores:
-      data
-        ?.fornecedores &&
-      typeof data
-        .fornecedores ===
-        "object"
-        ? data.fornecedores
-        : {},
+      data?.fornecedores && typeof data.fornecedores === "object" ? data.fornecedores : {},
 
-    compradores:
-      data
-        ?.compradores &&
-      typeof data
-        .compradores ===
-        "object"
-        ? data.compradores
-        : {},
+    compradores: data?.compradores && typeof data.compradores === "object" ? data.compradores : {},
 
-    consulta_omie_falhou:
-      Boolean(
-        data
-          ?.consulta_omie_falhou,
-      ),
+    consulta_omie_falhou: Boolean(data?.consulta_omie_falhou),
   };
 
-  cacheNomesOmie =
-    resultado;
+  cacheNomesOmie = resultado;
 
-  cacheNomesOmieEm =
-    agora;
+  cacheNomesOmieEm = agora;
 
   return resultado;
 }
@@ -296,247 +172,85 @@ export async function buscarPedidosCompra() {
    * Antes o estado de sincronização precisava terminar para só
    * então iniciar documentos, itens, fornecedores e nomes.
    */
-  const [
-    estado,
-    documentos,
-    itens,
-    fornecedoresCache,
-    nomesOmie,
-  ] =
-    await Promise.all(
-      [
-        buscarEstadoSincronizacao(),
+  const [estado, documentos, itens, fornecedoresCache, nomesOmie] = await Promise.all([
+    buscarEstadoSincronizacao(),
 
-        buscarDocumentosAtuais(),
+    buscarDocumentosAtuais(),
 
-        buscarItens(),
+    buscarItens(),
 
-        buscarFornecedoresCache(),
+    buscarFornecedoresCache(),
 
-        buscarNomesOmie(),
-      ],
-    );
+    buscarNomesOmie(),
+  ]);
 
-  const idsAtuais =
-    new Set(
-      documentos.map(
-        (
-          documento,
-        ) =>
-          String(
-            documento
-              .documento_id ??
-              "",
-          ),
-      ),
-    );
+  const idsAtuais = new Set(documentos.map((documento) => String(documento.documento_id ?? "")));
 
-  const itensPorDocumento =
-    new Map();
+  const itensPorDocumento = new Map();
 
-  for (
-    const item
-    of itens
-  ) {
-    const documentoId =
-      String(
-        item
-          ?.documento_id ??
-          "",
-      );
+  for (const item of itens) {
+    const documentoId = String(item?.documento_id ?? "");
 
-    if (
-      !idsAtuais.has(
-        documentoId,
-      )
-    ) {
+    if (!idsAtuais.has(documentoId)) {
       continue;
     }
 
-    if (
-      !itensPorDocumento.has(
-        documentoId,
-      )
-    ) {
-      itensPorDocumento.set(
-        documentoId,
-        [],
-      );
+    if (!itensPorDocumento.has(documentoId)) {
+      itensPorDocumento.set(documentoId, []);
     }
 
-    itensPorDocumento
-      .get(
-        documentoId,
-      )
-      .push(
-        item,
-      );
+    itensPorDocumento.get(documentoId).push(item);
   }
 
-  for (
-    const lista
-    of itensPorDocumento.values()
-  ) {
-    lista.sort(
-      (
-        a,
-        b,
-      ) =>
-        Number(
-          a
-            ?.sequencia ??
-            0,
-        ) -
-        Number(
-          b
-            ?.sequencia ??
-            0,
-        ),
-    );
+  for (const lista of itensPorDocumento.values()) {
+    lista.sort((a, b) => Number(a?.sequencia ?? 0) - Number(b?.sequencia ?? 0));
   }
 
-  const mapaFornecedores =
-    new Map(
-      fornecedoresCache
-        .map(
-          (
-            fornecedor,
-          ) => [
-            String(
-              fornecedor
-                .codigo ??
-                "",
-            ).trim(),
+  const mapaFornecedores = new Map(
+    fornecedoresCache
+      .map((fornecedor) => [
+        String(fornecedor.codigo ?? "").trim(),
 
-            String(
-              fornecedor
-                .nome ??
-                "",
-            ).trim(),
-          ],
-        )
-        .filter(
-          (
-            [
-              codigo,
-              nome,
-            ],
-          ) =>
-            codigo &&
-            nome,
-        ),
-    );
+        String(fornecedor.nome ?? "").trim(),
+      ])
+      .filter(([codigo, nome]) => codigo && nome),
+  );
 
-  for (
-    const [
-      codigo,
-      nome,
-    ]
-    of Object.entries(
-      nomesOmie
-        .fornecedores,
-    )
-  ) {
-    const codigoNormalizado =
-      String(
-        codigo ??
-          "",
-      ).trim();
+  for (const [codigo, nome] of Object.entries(nomesOmie.fornecedores)) {
+    const codigoNormalizado = String(codigo ?? "").trim();
 
-    const nomeNormalizado =
-      String(
-        nome ??
-          "",
-      ).trim();
+    const nomeNormalizado = String(nome ?? "").trim();
 
-    if (
-      codigoNormalizado &&
-      nomeNormalizado
-    ) {
-      mapaFornecedores.set(
-        codigoNormalizado,
-        nomeNormalizado,
-      );
+    if (codigoNormalizado && nomeNormalizado) {
+      mapaFornecedores.set(codigoNormalizado, nomeNormalizado);
     }
   }
 
-  const mapaCompradores =
-    new Map(
-      Object.entries(
-        nomesOmie
-          .compradores,
-      )
-        .map(
-          (
-            [
-              codigo,
-              nome,
-            ],
-          ) => [
-            String(
-              codigo ??
-                "",
-            ).trim(),
+  const mapaCompradores = new Map(
+    Object.entries(nomesOmie.compradores)
+      .map(([codigo, nome]) => [String(codigo ?? "").trim(), String(nome ?? "").trim()])
+      .filter(([codigo, nome]) => codigo && nome),
+  );
 
-            String(
-              nome ??
-                "",
-            ).trim(),
-          ],
-        )
-        .filter(
-          (
-            [
-              codigo,
-              nome,
-            ],
-          ) =>
-            codigo &&
-            nome,
-        ),
-    );
+  const documentosEnriquecidos = documentos.map((documento) =>
+    enriquecerPedido(
+      documento,
 
-  const documentosEnriquecidos =
-    documentos.map(
-      (
-        documento,
-      ) =>
-        enriquecerPedido(
-          documento,
+      itensPorDocumento.get(String(documento.documento_id ?? "")) ?? [],
 
-          itensPorDocumento.get(
-            String(
-              documento
-                .documento_id ??
-                "",
-            ),
-          ) ??
-            [],
+      mapaFornecedores,
 
-          mapaFornecedores,
-
-          mapaCompradores,
-        ),
-    );
+      mapaCompradores,
+    ),
+  );
 
   return {
-    pedidos:
-      ordenarPedidos(
-        documentosEnriquecidos,
-      ),
+    pedidos: ordenarPedidos(documentosEnriquecidos),
 
-    estadoSincronizacao:
-      estado,
+    estadoSincronizacao: estado,
 
-    atualizadoEm:
-      estado
-        ?.finalizado_em ??
-      estado
-        ?.atualizado_em ??
-      null,
+    atualizadoEm: estado?.finalizado_em ?? estado?.atualizado_em ?? null,
 
-    consultaNomesOmieFalhou:
-      nomesOmie
-        .consulta_omie_falhou,
+    consultaNomesOmieFalhou: nomesOmie.consulta_omie_falhou,
   };
 }

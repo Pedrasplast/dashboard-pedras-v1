@@ -1,44 +1,17 @@
-export default function EstoqueKpiCard({
-  titulo,
-  valor,
-  subtitulo,
-  icone: Icone,
-  tipo,
-}) {
+export default function EstoqueKpiCard({ titulo, valor, subtitulo, icone: Icone, tipo }) {
   return (
-    <article
-      className={
-        `estoque-kpi estoque-kpi--${tipo}`
-      }
-    >
-
+    <article className={`estoque-kpi estoque-kpi--${tipo}`}>
       <div className="estoque-kpi__topo">
-
-        <span>
-          {titulo}
-        </span>
-
+        <span>{titulo}</span>
 
         <div className="estoque-kpi__icone">
-
-          <Icone
-            size={18}
-          />
-
+          <Icone size={18} />
         </div>
-
       </div>
 
+      <strong>{valor}</strong>
 
-      <strong>
-        {valor}
-      </strong>
-
-
-      <small>
-        {subtitulo}
-      </small>
-
+      <small>{subtitulo}</small>
     </article>
   );
 }

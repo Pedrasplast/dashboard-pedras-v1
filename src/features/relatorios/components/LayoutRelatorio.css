@@ -462,7 +462,9 @@
 
     transform: translateX(-105%);
     visibility: hidden;
-    transition: transform 0.22s ease, visibility 0.22s;
+    transition:
+      transform 0.22s ease,
+      visibility 0.22s;
 
     box-shadow: 10px 0 30px rgba(15, 23, 42, 0.25);
   }
@@ -618,7 +620,6 @@
 .rl-filtros-corpo .rel-pedidos-filtros-titulo {
   display: none;
 }
-
 
 /* =========================================================
    MAIS COMPACTO (23/10): menos espaço, mais área para os dados
@@ -860,7 +861,10 @@
   grid-column: 1 / -1 !important;
 }
 
-.rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) > :is(:has(> input[type="date"]), :has(> .calendar-field)) {
+.rl
+  .rl-filtros-corpo
+  :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo))
+  > :is(:has(> input[type="date"]), :has(> .calendar-field)) {
   grid-column: auto !important;
   min-width: 0;
 }
@@ -1009,7 +1013,10 @@
   white-space: nowrap;
 
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .rl .rl-filtros-corpo .clear-date-btn-relatorio::before {
@@ -1275,7 +1282,6 @@
   text-align: left;
   line-height: 1 !important;
 }
-
 
 /* =========================================================
    CABEÇALHO DA TABELA SEM "VÃO" EM CIMA (26/10)

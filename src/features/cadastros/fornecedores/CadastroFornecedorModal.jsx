@@ -1,15 +1,8 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  Save,
-  Truck,
-  X,
-} from "lucide-react";
+import { Save, Truck, X } from "lucide-react";
 
 import "../CadastroProdutoModal.css";
 
@@ -18,53 +11,31 @@ import "../CadastroProdutoModal.css";
 ========================================================= */
 
 function valorParaCampo(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return "";
   }
 
-  return String(valor).replace(
-    ".",
-    ",",
-  );
+  return String(valor).replace(".", ",");
 }
 
 function normalizarNumero(valor) {
-  const texto =
-    String(valor ?? "").trim();
+  const texto = String(valor ?? "").trim();
 
   if (!texto) {
     return null;
   }
 
-  let normalizado =
-    texto.replace(/\s/g, "");
+  let normalizado = texto.replace(/\s/g, "");
 
-  if (
-    normalizado.includes(",") &&
-    normalizado.includes(".")
-  ) {
-    normalizado =
-      normalizado
-        .replace(/\./g, "")
-        .replace(",", ".");
+  if (normalizado.includes(",") && normalizado.includes(".")) {
+    normalizado = normalizado.replace(/\./g, "").replace(",", ".");
   } else {
-    normalizado =
-      normalizado.replace(
-        ",",
-        ".",
-      );
+    normalizado = normalizado.replace(",", ".");
   }
 
-  const numero =
-    Number(normalizado);
+  const numero = Number(normalizado);
 
-  return Number.isFinite(numero)
-    ? numero
-    : null;
+  return Number.isFinite(numero) ? numero : null;
 }
 
 /* =========================================================
@@ -80,152 +51,75 @@ export default function CadastroFornecedorModal({
   onCancelar,
   onSalvar,
 }) {
-  const [
-    nome,
-    setNome,
-  ] = useState("");
+  const [nome, setNome] = useState("");
 
-  const [
-    estoqueMinimoKg,
-    setEstoqueMinimoKg,
-  ] = useState("");
+  const [estoqueMinimoKg, setEstoqueMinimoKg] = useState("");
 
-  const [
-    estoqueAlvoKg,
-    setEstoqueAlvoKg,
-  ] = useState("");
+  const [estoqueAlvoKg, setEstoqueAlvoKg] = useState("");
 
-  const [
-    leadTimeDias,
-    setLeadTimeDias,
-  ] = useState("");
+  const [leadTimeDias, setLeadTimeDias] = useState("");
 
-  const [
-    ativo,
-    setAtivo,
-  ] = useState(true);
+  const [ativo, setAtivo] = useState(true);
 
-  const [
-    materiaisSelecionados,
-    setMateriaisSelecionados,
-  ] = useState([]);
+  const [materiaisSelecionados, setMateriaisSelecionados] = useState([]);
 
-  const [
-    materialPadraoId,
-    setMaterialPadraoId,
-  ] = useState("");
+  const [materialPadraoId, setMaterialPadraoId] = useState("");
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
+  const [erro, setErro] = useState("");
 
   /* =======================================================
      CARREGAR
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (!aberto) {
-        return;
-      }
+  useEffect(() => {
+    if (!aberto) {
+      return;
+    }
 
-      if (item) {
-        setNome(
-          item.nome || "",
-        );
+    if (item) {
+      setNome(item.nome || "");
 
-        setEstoqueMinimoKg(
-          valorParaCampo(
-            item.estoqueMinimoKg,
-          ),
-        );
+      setEstoqueMinimoKg(valorParaCampo(item.estoqueMinimoKg));
 
-        setEstoqueAlvoKg(
-          valorParaCampo(
-            item.estoqueAlvoKg,
-          ),
-        );
+      setEstoqueAlvoKg(valorParaCampo(item.estoqueAlvoKg));
 
-        setLeadTimeDias(
-          valorParaCampo(
-            item.leadTimeDias,
-          ),
-        );
+      setLeadTimeDias(valorParaCampo(item.leadTimeDias));
 
-        setAtivo(
-          item.ativo !== false,
-        );
-      } else {
-        setNome("");
-        setEstoqueMinimoKg("");
-        setEstoqueAlvoKg("");
-        setLeadTimeDias("");
-        setAtivo(true);
-      }
+      setAtivo(item.ativo !== false);
+    } else {
+      setNome("");
+      setEstoqueMinimoKg("");
+      setEstoqueAlvoKg("");
+      setLeadTimeDias("");
+      setAtivo(true);
+    }
 
-      const vinculosAtivos =
-        (
-          Array.isArray(
-            vinculosMateriais,
-          )
-            ? vinculosMateriais
-            : []
-        ).filter(
-          (vinculo) =>
-            vinculo.ativo !==
-            false,
-        );
+    const vinculosAtivos = (Array.isArray(vinculosMateriais) ? vinculosMateriais : []).filter(
+      (vinculo) => vinculo.ativo !== false,
+    );
 
-      setMateriaisSelecionados(
-        vinculosAtivos.map(
-          (vinculo) =>
-            String(
-              vinculo.materialId,
-            ),
-        ),
-      );
+    setMateriaisSelecionados(vinculosAtivos.map((vinculo) => String(vinculo.materialId)));
 
-      const vinculoPadrao =
-        vinculosAtivos.find(
-          (vinculo) =>
-            vinculo.padrao ===
-            true,
-        );
+    const vinculoPadrao = vinculosAtivos.find((vinculo) => vinculo.padrao === true);
 
-      setMaterialPadraoId(
-        vinculoPadrao
-          ? String(
-              vinculoPadrao.materialId,
-            )
-          : vinculosAtivos[0]
-            ? String(
-                vinculosAtivos[0]
-                  .materialId,
-              )
-            : "",
-      );
+    setMaterialPadraoId(
+      vinculoPadrao
+        ? String(vinculoPadrao.materialId)
+        : vinculosAtivos[0]
+          ? String(vinculosAtivos[0].materialId)
+          : "",
+    );
 
-      setErro("");
-    },
-    [
-      aberto,
-      item,
-      vinculosMateriais,
-    ],
-  );
+    setErro("");
+  }, [aberto, item, vinculosMateriais]);
 
   /* =======================================================
      ESC
   ======================================================= */
 
-
-
   /* =======================================================
      SCROLL
   ======================================================= */
-
-
 
   /* =======================================================
      SALVAR
@@ -236,168 +130,92 @@ export default function CadastroFornecedorModal({
 
     setErro("");
 
-    const nomeFinal =
-      nome.trim();
+    const nomeFinal = nome.trim();
 
     if (!nomeFinal) {
-      setErro(
-        "Informe o nome do fornecedor.",
-      );
+      setErro("Informe o nome do fornecedor.");
 
       return;
     }
 
-    const minimoFinal =
-      normalizarNumero(
-        estoqueMinimoKg,
-      );
+    const minimoFinal = normalizarNumero(estoqueMinimoKg);
 
-    const alvoFinal =
-      normalizarNumero(
-        estoqueAlvoKg,
-      );
+    const alvoFinal = normalizarNumero(estoqueAlvoKg);
 
-    const leadFinal =
-      normalizarNumero(
-        leadTimeDias,
-      );
+    const leadFinal = normalizarNumero(leadTimeDias);
 
-    if (
-      estoqueMinimoKg.trim() &&
-      minimoFinal === null
-    ) {
-      setErro(
-        "Informe um estoque mínimo válido.",
-      );
+    if (estoqueMinimoKg.trim() && minimoFinal === null) {
+      setErro("Informe um estoque mínimo válido.");
 
       return;
     }
 
-    if (
-      minimoFinal !== null &&
-      minimoFinal < 0
-    ) {
-      setErro(
-        "O estoque mínimo não pode ser negativo.",
-      );
+    if (minimoFinal !== null && minimoFinal < 0) {
+      setErro("O estoque mínimo não pode ser negativo.");
 
       return;
     }
 
-    if (
-      estoqueAlvoKg.trim() &&
-      alvoFinal === null
-    ) {
-      setErro(
-        "Informe um estoque alvo válido.",
-      );
+    if (estoqueAlvoKg.trim() && alvoFinal === null) {
+      setErro("Informe um estoque alvo válido.");
 
       return;
     }
 
-    if (
-      alvoFinal !== null &&
-      alvoFinal < 0
-    ) {
-      setErro(
-        "O estoque alvo não pode ser negativo.",
-      );
+    if (alvoFinal !== null && alvoFinal < 0) {
+      setErro("O estoque alvo não pode ser negativo.");
 
       return;
     }
 
-    if (
-      minimoFinal !== null &&
-      alvoFinal !== null &&
-      alvoFinal < minimoFinal
-    ) {
-      setErro(
-        "O estoque alvo não pode ser menor que o estoque mínimo.",
-      );
+    if (minimoFinal !== null && alvoFinal !== null && alvoFinal < minimoFinal) {
+      setErro("O estoque alvo não pode ser menor que o estoque mínimo.");
 
       return;
     }
 
-    if (
-      leadTimeDias.trim() &&
-      (
-        leadFinal === null ||
-        !Number.isInteger(
-          leadFinal,
-        )
-      )
-    ) {
-      setErro(
-        "O lead time deve ser um número inteiro.",
-      );
+    if (leadTimeDias.trim() && (leadFinal === null || !Number.isInteger(leadFinal))) {
+      setErro("O lead time deve ser um número inteiro.");
 
       return;
     }
 
-    if (
-      leadFinal !== null &&
-      leadFinal < 0
-    ) {
-      setErro(
-        "O lead time não pode ser negativo.",
-      );
+    if (leadFinal !== null && leadFinal < 0) {
+      setErro("O lead time não pode ser negativo.");
 
       return;
     }
 
-    if (
-      materiaisSelecionados.length ===
-      0
-    ) {
-      setErro(
-        "Selecione pelo menos um material fornecido.",
-      );
+    if (materiaisSelecionados.length === 0) {
+      setErro("Selecione pelo menos um material fornecido.");
 
       return;
     }
 
-    const materialPadraoFinal =
-      materiaisSelecionados.includes(
-        String(
-          materialPadraoId,
-        ),
-      )
-        ? String(
-            materialPadraoId,
-          )
-        : materiaisSelecionados[0];
+    const materialPadraoFinal = materiaisSelecionados.includes(String(materialPadraoId))
+      ? String(materialPadraoId)
+      : materiaisSelecionados[0];
 
     try {
       await onSalvar?.({
-        id:
-          item?.id ??
-          null,
+        id: item?.id ?? null,
 
-        nome:
-          nomeFinal,
+        nome: nomeFinal,
 
         ativo,
 
-        estoqueMinimoKg:
-          minimoFinal,
+        estoqueMinimoKg: minimoFinal,
 
-        estoqueAlvoKg:
-          alvoFinal,
+        estoqueAlvoKg: alvoFinal,
 
-        leadTimeDias:
-          leadFinal,
+        leadTimeDias: leadFinal,
 
-        materialIds:
-          materiaisSelecionados,
+        materialIds: materiaisSelecionados,
 
-        materialPadraoId:
-          materialPadraoFinal,
+        materialPadraoId: materialPadraoFinal,
       });
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível salvar o fornecedor.",
-      );
+      setErro(error?.message || "Não foi possível salvar o fornecedor.");
     }
   }
 
@@ -422,29 +240,19 @@ export default function CadastroFornecedorModal({
       >
         <div className="produto-pp-modal-header" data-modal-header="">
           <div className="produto-pp-modal-header-icone" data-modal-icone="">
-            <Truck
-              size={22}
-              aria-hidden="true"
-            />
+            <Truck size={22} aria-hidden="true" />
           </div>
 
           <div className="produto-pp-modal-header-texto">
-            <span>
-              Cadastro
-            </span>
+            <span>Cadastro</span>
 
             <ModalTitulo>
               <h3 id="cadastro-fornecedor-modal-titulo">
-                {item
-                  ? "Editar fornecedor"
-                  : "Cadastrar fornecedor"}
+                {item ? "Editar fornecedor" : "Cadastrar fornecedor"}
               </h3>
             </ModalTitulo>
 
-            <p>
-              Dados utilizados no planejamento
-              e abastecimento de matéria-prima.
-            </p>
+            <p>Dados utilizados no planejamento e abastecimento de matéria-prima.</p>
           </div>
 
           <button
@@ -459,23 +267,15 @@ export default function CadastroFornecedorModal({
           </button>
         </div>
 
-        <form
-          className="produto-pp-modal-form"
-          onSubmit={enviar}
-          data-modal-form=""
-        >
+        <form className="produto-pp-modal-form" onSubmit={enviar} data-modal-form="">
           <label className="produto-pp-modal-campo">
-            <span>
-              Nome do fornecedor
-            </span>
+            <span>Nome do fornecedor</span>
 
             <input
               type="text"
               value={nome}
               onChange={(event) => {
-                setNome(
-                  event.target.value,
-                );
+                setNome(event.target.value);
 
                 setErro("");
               }}
@@ -487,21 +287,15 @@ export default function CadastroFornecedorModal({
 
           <div className="produto-pp-modal-grid">
             <label className="produto-pp-modal-campo">
-              <span>
-                Estoque mínimo
-              </span>
+              <span>Estoque mínimo</span>
 
               <div className="produto-pp-modal-peso">
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    estoqueMinimoKg
-                  }
+                  value={estoqueMinimoKg}
                   onChange={(event) => {
-                    setEstoqueMinimoKg(
-                      event.target.value,
-                    );
+                    setEstoqueMinimoKg(event.target.value);
 
                     setErro("");
                   }}
@@ -509,28 +303,20 @@ export default function CadastroFornecedorModal({
                   disabled={salvando}
                 />
 
-                <span>
-                  kg
-                </span>
+                <span>kg</span>
               </div>
             </label>
 
             <label className="produto-pp-modal-campo">
-              <span>
-                Estoque alvo
-              </span>
+              <span>Estoque alvo</span>
 
               <div className="produto-pp-modal-peso">
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={
-                    estoqueAlvoKg
-                  }
+                  value={estoqueAlvoKg}
                   onChange={(event) => {
-                    setEstoqueAlvoKg(
-                      event.target.value,
-                    );
+                    setEstoqueAlvoKg(event.target.value);
 
                     setErro("");
                   }}
@@ -538,30 +324,22 @@ export default function CadastroFornecedorModal({
                   disabled={salvando}
                 />
 
-                <span>
-                  kg
-                </span>
+                <span>kg</span>
               </div>
             </label>
           </div>
 
           <label className="produto-pp-modal-campo">
-            <span>
-              Lead time
-            </span>
+            <span>Lead time</span>
 
             <div className="produto-pp-modal-peso">
               <input
                 type="number"
                 min="0"
                 step="1"
-                value={
-                  leadTimeDias
-                }
+                value={leadTimeDias}
                 onChange={(event) => {
-                  setLeadTimeDias(
-                    event.target.value,
-                  );
+                  setLeadTimeDias(event.target.value);
 
                   setErro("");
                 }}
@@ -569,169 +347,88 @@ export default function CadastroFornecedorModal({
                 disabled={salvando}
               />
 
-              <span>
-                dias
-              </span>
+              <span>dias</span>
             </div>
           </label>
 
           <div className="produto-pp-modal-campo">
-            <span>
-              Materiais fornecidos
-            </span>
+            <span>Materiais fornecidos</span>
 
             <div className="cadastro-fornecedor-materiais">
               {materiais
                 .filter(
                   (material) =>
-                    material.ativo ||
-                    materiaisSelecionados.includes(
-                      String(
-                        material.id,
-                      ),
-                    ),
+                    material.ativo || materiaisSelecionados.includes(String(material.id)),
                 )
-                .map(
-                  (material) => {
-                    const materialId =
-                      String(
-                        material.id,
-                      );
+                .map((material) => {
+                  const materialId = String(material.id);
 
-                    const selecionado =
-                      materiaisSelecionados.includes(
-                        materialId,
-                      );
+                  const selecionado = materiaisSelecionados.includes(materialId);
 
-                    return (
-                      <div
-                        key={
-                          material.id
-                        }
-                        className={
-                          selecionado
-                            ? "cadastro-fornecedor-material cadastro-fornecedor-material--selecionado"
-                            : "cadastro-fornecedor-material"
-                        }
-                      >
-                        <label className="cadastro-fornecedor-material__check">
-                          <input
-                            type="checkbox"
-                            checked={
-                              selecionado
-                            }
-                            onChange={
-                              (event) => {
-                                const marcado =
-                                  event
-                                    .target
-                                    .checked;
+                  return (
+                    <div
+                      key={material.id}
+                      className={
+                        selecionado
+                          ? "cadastro-fornecedor-material cadastro-fornecedor-material--selecionado"
+                          : "cadastro-fornecedor-material"
+                      }
+                    >
+                      <label className="cadastro-fornecedor-material__check">
+                        <input
+                          type="checkbox"
+                          checked={selecionado}
+                          onChange={(event) => {
+                            const marcado = event.target.checked;
 
-                                setErro(
-                                  "",
-                                );
+                            setErro("");
 
-                                setMateriaisSelecionados(
-                                  (
-                                    atual,
-                                  ) => {
-                                    const proximos =
-                                      marcado
-                                        ? [
-                                            ...new Set([
-                                              ...atual,
-                                              materialId,
-                                            ]),
-                                          ]
-                                        : atual.filter(
-                                            (
-                                              id,
-                                            ) =>
-                                              id !==
-                                              materialId,
-                                          );
+                            setMateriaisSelecionados((atual) => {
+                              const proximos = marcado
+                                ? [...new Set([...atual, materialId])]
+                                : atual.filter((id) => id !== materialId);
 
-                                    if (
-                                      !proximos.includes(
-                                        String(
-                                          materialPadraoId,
-                                        ),
-                                      )
-                                    ) {
-                                      setMaterialPadraoId(
-                                        proximos[0] ??
-                                          "",
-                                      );
-                                    }
-
-                                    return proximos;
-                                  },
-                                );
+                              if (!proximos.includes(String(materialPadraoId))) {
+                                setMaterialPadraoId(proximos[0] ?? "");
                               }
-                            }
-                            disabled={
-                              salvando
-                            }
+
+                              return proximos;
+                            });
+                          }}
+                          disabled={salvando}
+                        />
+
+                        <span>{material.nome}</span>
+                      </label>
+
+                      {selecionado && (
+                        <label className="cadastro-fornecedor-material__padrao">
+                          <input
+                            type="radio"
+                            name="material-padrao"
+                            checked={String(materialPadraoId) === materialId}
+                            onChange={() => setMaterialPadraoId(materialId)}
+                            disabled={salvando}
                           />
 
-                          <span>
-                            {
-                              material.nome
-                            }
-                          </span>
+                          <span>Padrão</span>
                         </label>
-
-                        {selecionado && (
-                          <label className="cadastro-fornecedor-material__padrao">
-                            <input
-                              type="radio"
-                              name="material-padrao"
-                              checked={
-                                String(
-                                  materialPadraoId,
-                                ) ===
-                                materialId
-                              }
-                              onChange={
-                                () =>
-                                  setMaterialPadraoId(
-                                    materialId,
-                                  )
-                              }
-                              disabled={
-                                salvando
-                              }
-                            />
-
-                            <span>
-                              Padrão
-                            </span>
-                          </label>
-                        )}
-                      </div>
-                    );
-                  },
-                )}
+                      )}
+                    </div>
+                  );
+                })}
             </div>
 
-            {materiais.length ===
-              0 && (
+            {materiais.length === 0 && (
               <small className="cadastro-fornecedor-materiais-ajuda">
-                Cadastre primeiro
-                um material em
-                Cadastro &gt;
-                Material.
+                Cadastre primeiro um material em Cadastro &gt; Material.
               </small>
             )}
 
-            {materiais.length >
-              0 && (
+            {materiais.length > 0 && (
               <small className="cadastro-fornecedor-materiais-ajuda">
-                Selecione todos
-                os materiais que
-                este fornecedor
-                vende e marque um
-                deles como padrão.
+                Selecione todos os materiais que este fornecedor vende e marque um deles como
+                padrão.
               </small>
             )}
           </div>
@@ -741,9 +438,7 @@ export default function CadastroFornecedorModal({
               type="checkbox"
               checked={ativo}
               onChange={(event) => {
-                setAtivo(
-                  event.target.checked,
-                );
+                setAtivo(event.target.checked);
 
                 setErro("");
               }}
@@ -751,22 +446,13 @@ export default function CadastroFornecedorModal({
             />
 
             <div>
-              <strong>
-                Fornecedor ativo
-              </strong>
+              <strong>Fornecedor ativo</strong>
 
-              <span>
-                Fornecedores inativos permanecem
-                no histórico e nas receitas antigas.
-              </span>
+              <span>Fornecedores inativos permanecem no histórico e nas receitas antigas.</span>
             </div>
           </label>
 
-          {erro && (
-            <div className="produto-pp-modal-erro">
-              {erro}
-            </div>
-          )}
+          {erro && <div className="produto-pp-modal-erro">{erro}</div>}
 
           <div className="produto-pp-modal-acoes" data-modal-footer="">
             <button
@@ -787,9 +473,7 @@ export default function CadastroFornecedorModal({
             >
               <Save size={17} />
 
-              {salvando
-                ? "Salvando..."
-                : "Salvar fornecedor"}
+              {salvando ? "Salvando..." : "Salvar fornecedor"}
             </button>
           </div>
         </form>

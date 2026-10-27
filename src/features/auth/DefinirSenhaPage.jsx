@@ -1,19 +1,8 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import {
-  FiAlertTriangle,
-  FiCheckCircle,
-  FiLock,
-} from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiLock } from "react-icons/fi";
 
-import {
-  criarClientePrimeiroAcesso,
-  STORAGE_KEY_PRIMEIRO_ACESSO,
-} from "@/lib/supabaseClient";
+import { criarClientePrimeiroAcesso, STORAGE_KEY_PRIMEIRO_ACESSO } from "@/lib/supabaseClient";
 
 import { useNavigate } from "@/lib/navegacao";
 
@@ -33,9 +22,7 @@ const TAMANHO_MINIMO_SENHA = 6;
 ========================================================= */
 
 function traduzirErroAutenticacao(error) {
-  const mensagem = String(
-    error?.message || ""
-  ).toLowerCase();
+  const mensagem = String(error?.message || "").toLowerCase();
 
   if (
     mensagem.includes("auth session missing") ||
@@ -55,8 +42,7 @@ function traduzirErroAutenticacao(error) {
     mensagem.includes("token has")
   ) {
     return (
-      "Este convite expirou ou já foi utilizado. " +
-      "Solicite um novo convite ao administrador."
+      "Este convite expirou ou já foi utilizado. " + "Solicite um novo convite ao administrador."
     );
   }
 
@@ -66,15 +52,11 @@ function traduzirErroAutenticacao(error) {
     mensagem.includes("weak password")
   ) {
     return (
-      "A senha não atende aos requisitos de segurança. " +
-      "Escolha outra senha e tente novamente."
+      "A senha não atende aos requisitos de segurança. " + "Escolha outra senha e tente novamente."
     );
   }
 
-  return (
-    error?.message ||
-    "Não foi possível concluir o primeiro acesso."
-  );
+  return error?.message || "Não foi possível concluir o primeiro acesso.";
 }
 
 /* =========================================================
@@ -93,33 +75,19 @@ function traduzirErroAutenticacao(error) {
 ========================================================= */
 
 function obterDadosConvite() {
-  const parametros = new URLSearchParams(
-    window.location.search
-  );
+  const parametros = new URLSearchParams(window.location.search);
 
   const hash = new URLSearchParams(
-    window.location.hash.startsWith("#")
-      ? window.location.hash.slice(1)
-      : ""
+    window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "",
   );
 
-  const tipo =
-    parametros.get("type") ||
-    hash.get("type");
+  const tipo = parametros.get("type") || hash.get("type");
 
-  const token =
-    parametros.get("t") ||
-    (
-      tipo === "invite"
-        ? parametros.get("token_hash")
-        : null
-    );
+  const token = parametros.get("t") || (tipo === "invite" ? parametros.get("token_hash") : null);
 
-  const accessToken =
-    hash.get("access_token");
+  const accessToken = hash.get("access_token");
 
-  const refreshToken =
-    hash.get("refresh_token");
+  const refreshToken = hash.get("refresh_token");
 
   const ehRecuperacao =
     parametros.has("modo") ||
@@ -134,10 +102,7 @@ function obterDadosConvite() {
     ehRecuperacao,
 
     possuiCredenciais: Boolean(
-      token ||
-      accessToken ||
-      refreshToken ||
-      parametros.has("token_hash")
+      token || accessToken || refreshToken || parametros.has("token_hash"),
     ),
   };
 }
@@ -151,11 +116,7 @@ function obterDadosConvite() {
 ========================================================= */
 
 function limparCredenciaisUrl() {
-  window.history.replaceState(
-    window.history.state,
-    "",
-    window.location.pathname
-  );
+  window.history.replaceState(window.history.state, "", window.location.pathname);
 }
 
 /* =========================================================
@@ -183,31 +144,17 @@ export default function DefinirSenhaPage() {
 
   const [senha, setSenha] = useState("");
 
-  const [
-    confirmarSenha,
-    setConfirmarSenha,
-  ] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
 
-  const [
-    carregandoSessao,
-    setCarregandoSessao,
-  ] = useState(true);
+  const [carregandoSessao, setCarregandoSessao] = useState(true);
 
-  const [
-    sessaoValida,
-    setSessaoValida,
-  ] = useState(false);
+  const [sessaoValida, setSessaoValida] = useState(false);
 
-  const [salvando, setSalvando] =
-    useState(false);
+  const [salvando, setSalvando] = useState(false);
 
-  const [sucesso, setSucesso] =
-    useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
-  const [
-    mensagemErro,
-    setMensagemErro,
-  ] = useState("");
+  const [mensagemErro, setMensagemErro] = useState("");
 
   /* =====================================================
      VALIDAR CONVITE E SESSÃO
@@ -225,8 +172,7 @@ export default function DefinirSenhaPage() {
   ===================================================== */
 
   async function validarPrimeiroAcesso() {
-    const cliente =
-      criarClientePrimeiroAcesso();
+    const cliente = criarClientePrimeiroAcesso();
 
     clienteRef.current = cliente;
 
@@ -241,9 +187,7 @@ export default function DefinirSenhaPage() {
         limparCredenciaisUrl();
       }
 
-      throw new Error(
-        "Este endereço aceita somente convites de primeiro acesso."
-      );
+      throw new Error("Este endereço aceita somente convites de primeiro acesso.");
     }
 
     let sessaoDoConvite = null;
@@ -260,10 +204,7 @@ export default function DefinirSenhaPage() {
 
       limparCredenciaisUrl();
 
-      const {
-        data,
-        error,
-      } = await cliente.auth.verifyOtp({
+      const { data, error } = await cliente.auth.verifyOtp({
         token_hash: convite.token,
 
         type: "invite",
@@ -273,8 +214,7 @@ export default function DefinirSenhaPage() {
         throw error;
       }
 
-      sessaoDoConvite =
-        data?.session ?? null;
+      sessaoDoConvite = data?.session ?? null;
 
       if (
         !sessaoDoConvite?.access_token ||
@@ -283,26 +223,17 @@ export default function DefinirSenhaPage() {
       ) {
         throw new Error(
           "O convite não retornou uma sessão válida. " +
-          "Solicite um novo convite ao administrador."
+            "Solicite um novo convite ao administrador.",
         );
       }
-    }
+    } else if (convite.tipo === "invite" && convite.accessToken && convite.refreshToken) {
 
     /* =================================================
        CENÁRIO 2: LINK COM TOKENS DE SESSÃO
     ================================================= */
-
-    else if (
-      convite.tipo === "invite" &&
-      convite.accessToken &&
-      convite.refreshToken
-    ) {
       limparCredenciaisUrl();
 
-      const {
-        data,
-        error,
-      } = await cliente.auth.setSession({
+      const { data, error } = await cliente.auth.setSession({
         access_token: convite.accessToken,
 
         refresh_token: convite.refreshToken,
@@ -312,15 +243,12 @@ export default function DefinirSenhaPage() {
         throw error;
       }
 
-      sessaoDoConvite =
-        data?.session ?? null;
+      sessaoDoConvite = data?.session ?? null;
 
       if (!sessaoDoConvite?.user?.id) {
-        throw new Error(
-          "Não foi possível estabelecer a sessão do convite."
-        );
+        throw new Error("Não foi possível estabelecer a sessão do convite.");
       }
-    }
+    } else if (!convite.possuiCredenciais) {
 
     /* =================================================
        CENÁRIO 3: PÁGINA RECARREGADA
@@ -331,37 +259,25 @@ export default function DefinirSenhaPage() {
 
        Recupera somente a sessão temporária isolada.
     ================================================= */
-
-    else if (!convite.possuiCredenciais) {
-      const {
-        data,
-        error,
-      } = await cliente.auth.getSession();
+      const { data, error } = await cliente.auth.getSession();
 
       if (error) {
         throw error;
       }
 
-      sessaoDoConvite =
-        data?.session ?? null;
+      sessaoDoConvite = data?.session ?? null;
 
       if (!sessaoDoConvite?.user?.id) {
-        throw new Error(
-          "Abra o convite de primeiro acesso fornecido pelo administrador."
-        );
+        throw new Error("Abra o convite de primeiro acesso fornecido pelo administrador.");
       }
-    }
+    } else {
 
     /* =================================================
        LINK INCOMPLETO OU INVÁLIDO
     ================================================= */
-
-    else {
       limparCredenciaisUrl();
 
-      throw new Error(
-        "Este link de primeiro acesso está incompleto ou inválido."
-      );
+      throw new Error("Este link de primeiro acesso está incompleto ou inválido.");
     }
 
     /* =================================================
@@ -371,17 +287,13 @@ export default function DefinirSenhaPage() {
        no cliente que será utilizado para salvar a senha.
     ================================================= */
 
-    let {
-      data: dadosSessao,
-      error: erroSessao,
-    } = await cliente.auth.getSession();
+    let { data: dadosSessao, error: erroSessao } = await cliente.auth.getSession();
 
     if (erroSessao) {
       throw erroSessao;
     }
 
-    let sessaoAtual =
-      dadosSessao?.session ?? null;
+    let sessaoAtual = dadosSessao?.session ?? null;
 
     /* =================================================
        RECUPERAÇÃO DE SESSÃO
@@ -391,41 +303,28 @@ export default function DefinirSenhaPage() {
        estabelece a sessão explicitamente.
     ================================================= */
 
-    if (
-      !sessaoAtual &&
-      sessaoDoConvite?.access_token &&
-      sessaoDoConvite?.refresh_token
-    ) {
-      const {
-        data,
-        error,
-      } = await cliente.auth.setSession({
-        access_token:
-          sessaoDoConvite.access_token,
+    if (!sessaoAtual && sessaoDoConvite?.access_token && sessaoDoConvite?.refresh_token) {
+      const { data, error } = await cliente.auth.setSession({
+        access_token: sessaoDoConvite.access_token,
 
-        refresh_token:
-          sessaoDoConvite.refresh_token,
+        refresh_token: sessaoDoConvite.refresh_token,
       });
 
       if (error) {
         throw error;
       }
 
-      sessaoAtual =
-        data?.session ?? null;
+      sessaoAtual = data?.session ?? null;
     }
 
     /* =================================================
        VERIFICAR IDENTIDADE E TOKEN
     ================================================= */
 
-    if (
-      !sessaoAtual?.access_token ||
-      !sessaoAtual?.user?.id
-    ) {
+    if (!sessaoAtual?.access_token || !sessaoAtual?.user?.id) {
       throw new Error(
         "Sua sessão de primeiro acesso não foi estabelecida. " +
-        "Solicite um novo convite ao administrador."
+          "Solicite um novo convite ao administrador.",
       );
     }
 
@@ -436,25 +335,16 @@ export default function DefinirSenhaPage() {
      * no navegador.
      */
 
-    const {
-      data: dadosUsuario,
-      error: erroUsuario,
-    } = await cliente.auth.getUser();
+    const { data: dadosUsuario, error: erroUsuario } = await cliente.auth.getUser();
 
     if (erroUsuario) {
       throw erroUsuario;
     }
 
-    const usuarioValidado =
-      dadosUsuario?.user ?? null;
+    const usuarioValidado = dadosUsuario?.user ?? null;
 
-    if (
-      !usuarioValidado?.id ||
-      usuarioValidado.id !== sessaoAtual.user.id
-    ) {
-      throw new Error(
-        "Não foi possível confirmar a identidade do usuário convidado."
-      );
+    if (!usuarioValidado?.id || usuarioValidado.id !== sessaoAtual.user.id) {
+      throw new Error("Não foi possível confirmar a identidade do usuário convidado.");
     }
 
     /*
@@ -462,13 +352,8 @@ export default function DefinirSenhaPage() {
      * confirma que a sessão pertence ao mesmo usuário.
      */
 
-    if (
-      sessaoDoConvite?.user?.id &&
-      sessaoDoConvite.user.id !== usuarioValidado.id
-    ) {
-      throw new Error(
-        "A sessão encontrada não corresponde ao usuário convidado."
-      );
+    if (sessaoDoConvite?.user?.id && sessaoDoConvite.user.id !== usuarioValidado.id) {
+      throw new Error("A sessão encontrada não corresponde ao usuário convidado.");
     }
 
     return usuarioValidado.id;
@@ -485,8 +370,7 @@ export default function DefinirSenhaPage() {
     let ativo = true;
 
     if (!validacaoRef.current) {
-      validacaoRef.current =
-        validarPrimeiroAcesso();
+      validacaoRef.current = validarPrimeiroAcesso();
     }
 
     validacaoRef.current
@@ -495,8 +379,7 @@ export default function DefinirSenhaPage() {
           return;
         }
 
-        usuarioConviteRef.current =
-          usuarioId;
+        usuarioConviteRef.current = usuarioId;
 
         setSessaoValida(true);
 
@@ -509,19 +392,13 @@ export default function DefinirSenhaPage() {
           return;
         }
 
-        console.error(
-          "Erro ao validar primeiro acesso:",
-          error
-        );
+        console.error("Erro ao validar primeiro acesso:", error);
 
-        usuarioConviteRef.current =
-          null;
+        usuarioConviteRef.current = null;
 
         setSessaoValida(false);
 
-        setMensagemErro(
-          traduzirErroAutenticacao(error)
-        );
+        setMensagemErro(traduzirErroAutenticacao(error));
 
         setCarregandoSessao(false);
       });
@@ -530,9 +407,7 @@ export default function DefinirSenhaPage() {
       ativo = false;
 
       if (timerRef.current) {
-        window.clearTimeout(
-          timerRef.current
-        );
+        window.clearTimeout(timerRef.current);
       }
     };
   }, []);
@@ -551,36 +426,25 @@ export default function DefinirSenhaPage() {
     ================================================= */
 
     if (!senha) {
-      setMensagemErro(
-        "Informe sua nova senha."
-      );
+      setMensagemErro("Informe sua nova senha.");
 
       return;
     }
 
-    if (
-      senha.length <
-      TAMANHO_MINIMO_SENHA
-    ) {
-      setMensagemErro(
-        `A senha deve possuir pelo menos ${TAMANHO_MINIMO_SENHA} caracteres.`
-      );
+    if (senha.length < TAMANHO_MINIMO_SENHA) {
+      setMensagemErro(`A senha deve possuir pelo menos ${TAMANHO_MINIMO_SENHA} caracteres.`);
 
       return;
     }
 
     if (!confirmarSenha) {
-      setMensagemErro(
-        "Confirme sua nova senha."
-      );
+      setMensagemErro("Confirme sua nova senha.");
 
       return;
     }
 
     if (senha !== confirmarSenha) {
-      setMensagemErro(
-        "As senhas informadas não são iguais."
-      );
+      setMensagemErro("As senhas informadas não são iguais.");
 
       return;
     }
@@ -589,14 +453,9 @@ export default function DefinirSenhaPage() {
        IMPEDIR ENVIO SEM SESSÃO VALIDADA
     ================================================= */
 
-    if (
-      !sessaoValida ||
-      !clienteRef.current ||
-      !usuarioConviteRef.current
-    ) {
+    if (!sessaoValida || !clienteRef.current || !usuarioConviteRef.current) {
       setMensagemErro(
-        "Sua sessão ainda não foi validada. " +
-        "Abra novamente o convite de primeiro acesso."
+        "Sua sessão ainda não foi validada. " + "Abra novamente o convite de primeiro acesso.",
       );
 
       return;
@@ -609,58 +468,40 @@ export default function DefinirSenhaPage() {
     try {
       setSalvando(true);
 
-      const cliente =
-        clienteRef.current;
+      const cliente = clienteRef.current;
 
       /* =================================================
          CONFIRMAR SESSÃO ANTES DE SALVAR
       ================================================= */
 
-      const {
-        data: dadosSessao,
-        error: erroSessao,
-      } = await cliente.auth.getSession();
+      const { data: dadosSessao, error: erroSessao } = await cliente.auth.getSession();
 
       if (erroSessao) {
         throw erroSessao;
       }
 
-      const sessao =
-        dadosSessao?.session ?? null;
+      const sessao = dadosSessao?.session ?? null;
 
       if (
         !sessao?.access_token ||
         !sessao?.user?.id ||
-        sessao.user.id !==
-          usuarioConviteRef.current
+        sessao.user.id !== usuarioConviteRef.current
       ) {
-        throw new Error(
-          "Sua sessão expirou. Solicite um novo link."
-        );
+        throw new Error("Sua sessão expirou. Solicite um novo link.");
       }
 
       /* =================================================
          CONFIRMAR O USUÁRIO NO SERVIDOR
       ================================================= */
 
-      const {
-        data: dadosUsuario,
-        error: erroUsuario,
-      } = await cliente.auth.getUser();
+      const { data: dadosUsuario, error: erroUsuario } = await cliente.auth.getUser();
 
       if (erroUsuario) {
         throw erroUsuario;
       }
 
-      if (
-        !dadosUsuario?.user?.id ||
-        dadosUsuario.user.id !==
-          usuarioConviteRef.current
-      ) {
-        throw new Error(
-          "Não foi possível confirmar sua sessão. " +
-          "Solicite um novo link."
-        );
+      if (!dadosUsuario?.user?.id || dadosUsuario.user.id !== usuarioConviteRef.current) {
+        throw new Error("Não foi possível confirmar sua sessão. " + "Solicite um novo link.");
       }
 
       /* =================================================
@@ -672,9 +513,7 @@ export default function DefinirSenhaPage() {
          A sessão do administrador não é utilizada.
       ================================================= */
 
-      const {
-        error: erroAtualizacao,
-      } = await cliente.auth.updateUser({
+      const { error: erroAtualizacao } = await cliente.auth.updateUser({
         password: senha,
       });
 
@@ -701,23 +540,15 @@ export default function DefinirSenhaPage() {
       ================================================= */
 
       try {
-        const {
-          error: erroSaida,
-        } = await cliente.auth.signOut({
+        const { error: erroSaida } = await cliente.auth.signOut({
           scope: "local",
         });
 
         if (erroSaida) {
-          console.error(
-            "Erro ao encerrar sessão temporária:",
-            erroSaida
-          );
+          console.error("Erro ao encerrar sessão temporária:", erroSaida);
         }
       } catch (erroSaida) {
-        console.error(
-          "Erro ao encerrar sessão temporária:",
-          erroSaida
-        );
+        console.error("Erro ao encerrar sessão temporária:", erroSaida);
       }
 
       /*
@@ -726,38 +557,26 @@ export default function DefinirSenhaPage() {
        */
 
       try {
-        window.sessionStorage.removeItem(
-          STORAGE_KEY_PRIMEIRO_ACESSO
-        );
+        window.sessionStorage.removeItem(STORAGE_KEY_PRIMEIRO_ACESSO);
       } catch (erroStorage) {
-        console.error(
-          "Não foi possível limpar armazenamento temporário:",
-          erroStorage
-        );
+        console.error("Não foi possível limpar armazenamento temporário:", erroStorage);
       }
 
-      usuarioConviteRef.current =
-        null;
+      usuarioConviteRef.current = null;
 
       /* =================================================
          REDIRECIONAR PARA O LOGIN
       ================================================= */
 
-      timerRef.current =
-        window.setTimeout(() => {
-          navigate("/", {
-            replace: true,
-          });
-        }, 1800);
+      timerRef.current = window.setTimeout(() => {
+        navigate("/", {
+          replace: true,
+        });
+      }, 1800);
     } catch (error) {
-      console.error(
-        "Erro ao definir senha:",
-        error
-      );
+      console.error("Erro ao definir senha:", error);
 
-      setMensagemErro(
-        traduzirErroAutenticacao(error)
-      );
+      setMensagemErro(traduzirErroAutenticacao(error));
     } finally {
       setSalvando(false);
     }
@@ -771,9 +590,7 @@ export default function DefinirSenhaPage() {
     return (
       <div className="definir-senha-page">
         <div className="definir-senha-card">
-          <div className="definir-senha-carregando">
-            Verificando seu link de acesso...
-          </div>
+          <div className="definir-senha-carregando">Verificando seu link de acesso...</div>
         </div>
       </div>
     );
@@ -787,19 +604,13 @@ export default function DefinirSenhaPage() {
     return (
       <div className="definir-senha-page">
         <div className="definir-senha-card">
-
           <div className="definir-senha-icon erro">
             <FiAlertTriangle />
           </div>
 
-          <h1>
-            Link inválido ou expirado
-          </h1>
+          <h1>Link inválido ou expirado</h1>
 
-          <p>
-            {mensagemErro ||
-              "Este link não é mais válido."}
-          </p>
+          <p>{mensagemErro || "Este link não é mais válido."}</p>
 
           <p className="definir-senha-texto-secundario">
             Solicite um novo convite ao administrador.
@@ -816,7 +627,6 @@ export default function DefinirSenhaPage() {
           >
             Voltar para o login
           </button>
-
         </div>
       </div>
     );
@@ -830,23 +640,15 @@ export default function DefinirSenhaPage() {
     return (
       <div className="definir-senha-page">
         <div className="definir-senha-card">
-
           <div className="definir-senha-icon sucesso">
             <FiCheckCircle />
           </div>
 
-          <h1>
-            Senha definida!
-          </h1>
+          <h1>Senha definida!</h1>
 
-          <p>
-            Sua nova senha foi salva com sucesso.
-          </p>
+          <p>Sua nova senha foi salva com sucesso.</p>
 
-          <p className="definir-senha-texto-secundario">
-            Você será direcionado para o login.
-          </p>
-
+          <p className="definir-senha-texto-secundario">Você será direcionado para o login.</p>
         </div>
       </div>
     );
@@ -859,7 +661,6 @@ export default function DefinirSenhaPage() {
   return (
     <div className="definir-senha-page">
       <div className="definir-senha-card">
-
         {/* ÍCONE */}
 
         <div className="definir-senha-icon">
@@ -868,107 +669,65 @@ export default function DefinirSenhaPage() {
 
         {/* TÍTULO */}
 
-        <h1>
-          Defina sua senha
-        </h1>
+        <h1>Defina sua senha</h1>
 
-        <p>
-          Este é o seu primeiro acesso.
-          Crie uma senha para utilizar o sistema.
-        </p>
+        <p>Este é o seu primeiro acesso. Crie uma senha para utilizar o sistema.</p>
 
         {/* FORMULÁRIO */}
 
-        <form
-          onSubmit={definirSenha}
-          autoComplete="off"
-        >
-
+        <form onSubmit={definirSenha} autoComplete="off">
           {/* NOVA SENHA */}
 
           <div className="definir-senha-campo">
-
-            <label htmlFor="nova-senha">
-              Nova senha
-            </label>
+            <label htmlFor="nova-senha">Nova senha</label>
 
             <input
               id="nova-senha"
               type="password"
               value={senha}
-              onChange={(event) =>
-                setSenha(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setSenha(event.target.value)}
               placeholder="Mínimo de 6 caracteres"
               autoComplete="new-password"
               disabled={salvando}
               autoFocus
             />
-
           </div>
 
           {/* CONFIRMAR SENHA */}
 
           <div className="definir-senha-campo">
-
-            <label htmlFor="confirmar-nova-senha">
-              Confirmar nova senha
-            </label>
+            <label htmlFor="confirmar-nova-senha">Confirmar nova senha</label>
 
             <input
               id="confirmar-nova-senha"
               type="password"
               value={confirmarSenha}
-              onChange={(event) =>
-                setConfirmarSenha(
-                  event.target.value
-                )
-              }
+              onChange={(event) => setConfirmarSenha(event.target.value)}
               placeholder="Digite a senha novamente"
               autoComplete="new-password"
               disabled={salvando}
             />
-
           </div>
 
           {/* ERRO */}
 
           {mensagemErro && (
-            <div
-              className="definir-senha-erro"
-              role="alert"
-            >
+            <div className="definir-senha-erro" role="alert">
               <FiAlertTriangle />
 
-              <span>
-                {mensagemErro}
-              </span>
+              <span>{mensagemErro}</span>
             </div>
           )}
 
           {/* REGRAS */}
 
-          <div className="definir-senha-regras">
-            A senha deve possuir pelo menos 6 caracteres.
-          </div>
+          <div className="definir-senha-regras">A senha deve possuir pelo menos 6 caracteres.</div>
 
           {/* BOTÃO */}
 
-          <button
-            type="submit"
-            className="definir-senha-btn"
-            disabled={
-              salvando ||
-              !sessaoValida
-            }
-          >
-            {salvando
-              ? "Salvando..."
-              : "Definir senha"}
+          <button type="submit" className="definir-senha-btn" disabled={salvando || !sessaoValida}>
+            {salvando ? "Salvando..." : "Definir senha"}
           </button>
-
         </form>
       </div>
     </div>

@@ -37,9 +37,7 @@ export const KpiHoras = memo(function KpiHoras({
       <span>{titulo}</span>
 
       {percentual !== undefined && percentual !== null && (
-        <div className={`percentual-horas-indicador ${classePercentual || ""}`}>
-          {percentual}%
-        </div>
+        <div className={`percentual-horas-indicador ${classePercentual || ""}`}>{percentual}%</div>
       )}
 
       <strong className="valor-horas-trabalhadas">{valor} hrs</strong>

@@ -13,7 +13,6 @@
   background: transparent;
 }
 
-
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -28,7 +27,6 @@
 
   padding: 0 4px;
 }
-
 
 /* =========================================================
    ABA
@@ -69,40 +67,27 @@
     background-color 0.16s ease;
 }
 
-
 /* =========================================================
    HOVER
 ========================================================= */
 
 .materia-prima-nav-item:hover:not(.ativo) {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(248, 250, 252, 0.2) 0%,
-      #f8fafc 100%
-    );
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.2) 0%, #f8fafc 100%);
 
   color: #334155;
 }
-
 
 /* =========================================================
    ATIVO
 ========================================================= */
 
 .materia-prima-nav-item.ativo {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(239, 246, 255, 0) 0%,
-      rgba(239, 246, 255, 0.65) 100%
-    );
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0) 0%, rgba(239, 246, 255, 0.65) 100%);
 
   color: #0f172a;
 
   font-weight: 800;
 }
-
 
 /* =========================================================
    ÍCONE
@@ -132,9 +117,7 @@
     box-shadow 0.16s ease;
 }
 
-
-.materia-prima-nav-item:hover:not(.ativo)
-.materia-prima-nav-icone {
+.materia-prima-nav-item:hover:not(.ativo) .materia-prima-nav-icone {
   border-color: #e2e8f0;
 
   background: #ffffff;
@@ -142,24 +125,15 @@
   color: #475569;
 }
 
-
-.materia-prima-nav-item.ativo
-.materia-prima-nav-icone {
+.materia-prima-nav-item.ativo .materia-prima-nav-icone {
   border-color: #bfdbfe;
 
-  background:
-    linear-gradient(
-      180deg,
-      #eff6ff 0%,
-      #dbeafe 100%
-    );
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
 
   color: #2563eb;
 
-  box-shadow:
-    0 2px 6px rgba(37, 99, 235, 0.10);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
 }
-
 
 /* =========================================================
    INDICADOR ATIVO
@@ -176,18 +150,10 @@
 
   border-radius: 999px 999px 0 0;
 
-  background:
-    linear-gradient(
-      90deg,
-      #2563eb 0%,
-      #3b82f6 55%,
-      #60a5fa 100%
-    );
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 55%, #60a5fa 100%);
 
-  box-shadow:
-    0 -1px 7px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 -1px 7px rgba(37, 99, 235, 0.18);
 }
-
 
 /* =========================================================
    EFEITO ATIVO
@@ -215,7 +181,6 @@
   pointer-events: none;
 }
 
-
 /* =========================================================
    FOCO
 ========================================================= */
@@ -223,10 +188,8 @@
 .materia-prima-nav-item:focus-visible {
   background: #f8fafc;
 
-  box-shadow:
-    inset 0 0 0 2px #bfdbfe;
+  box-shadow: inset 0 0 0 2px #bfdbfe;
 }
-
 
 /* =========================================================
    TABLET
@@ -239,7 +202,6 @@
     min-height: 48px;
   }
 
-
   .materia-prima-nav-item {
     flex: 1;
 
@@ -250,7 +212,6 @@
     font-size: 11px;
   }
 
-
   .materia-prima-nav-icone {
     width: 28px;
     height: 28px;
@@ -258,7 +219,6 @@
     padding: 5px;
   }
 }
-
 
 /* =========================================================
    MOBILE
@@ -270,17 +230,12 @@
 
     display: grid;
 
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 0;
 
     padding: 0;
   }
-
 
   .materia-prima-nav-item {
     width: 100%;
@@ -294,14 +249,12 @@
     font-size: 10px;
   }
 
-
   .materia-prima-nav-icone {
     width: 26px;
     height: 26px;
 
     padding: 5px;
   }
-
 
   .materia-prima-nav-indicador {
     left: 10px;
@@ -310,7 +263,6 @@
     height: 2px;
   }
 }
-
 
 /* =========================================================
    MOBILE MUITO PEQUENO
@@ -324,7 +276,6 @@
 
     font-size: 9px;
   }
-
 
   .materia-prima-nav-icone {
     width: 24px;

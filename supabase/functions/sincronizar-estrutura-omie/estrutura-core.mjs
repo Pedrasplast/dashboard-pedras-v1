@@ -6,9 +6,9 @@
  * aparecem como componente (tipo 04) ficam de fora.
  */
 
-const texto = (v) => String(v ?? '').trim();
+const texto = (v) => String(v ?? "").trim();
 
-const semAcento = (t) => texto(t).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const semAcento = (t) => texto(t).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 export function numero(v) {
   const n = Number(v ?? 0);
@@ -17,12 +17,16 @@ export function numero(v) {
 
 /** Linha da estrutura é matéria-prima? */
 export function ehMateriaPrima(item) {
-  return texto(item?.tipoProdMalha) === '01' || semAcento(item?.descrFamMalha).includes('materia prima');
+  return (
+    texto(item?.tipoProdMalha) === "01" || semAcento(item?.descrFamMalha).includes("materia prima")
+  );
 }
 
 /** Códigos distintos (maiúsculos) dos produtos dos pedidos. */
 export function codigosProdutos(pedidos) {
-  return [...new Set((pedidos ?? []).map((p) => texto(p?.codigo_produto).toUpperCase()).filter(Boolean))];
+  return [
+    ...new Set((pedidos ?? []).map((p) => texto(p?.codigo_produto).toUpperCase()).filter(Boolean)),
+  ];
 }
 
 /**
@@ -70,17 +74,29 @@ export function extrairEstrutura(codigo, resposta, erro = null) {
 /** Falha do Omie que significa "produto sem estrutura" (não é erro da rotina). */
 export function semEstrutura(falha) {
   const n = semAcento(falha);
-  return n.includes('nao existe') || n.includes('nao encontrad') || n.includes('nao cadastrad') || n.includes('nao possui');
+  return (
+    n.includes("nao existe") ||
+    n.includes("nao encontrad") ||
+    n.includes("nao cadastrad") ||
+    n.includes("nao possui")
+  );
 }
 
 /** Falha temporária do Omie: esperar e tentar de novo. */
 export function falhaTemporaria(falha) {
   const n = semAcento(falha);
-  return n.includes('redundante') || n.includes('sendo executada') || n.includes('tipo de dado');
+  return n.includes("redundante") || n.includes("sendo executada") || n.includes("tipo de dado");
 }
 
 /** Ordem de leitura: nunca lidos primeiro, depois os mais antigos. */
 export function ordemLeitura(codigos, lidos) {
-  const quando = new Map((lidos ?? []).map((l) => [texto(l.codigo_produto).toUpperCase(), Date.parse(l.sincronizado_em) || 0]));
-  return [...codigos].sort((a, b) => (quando.get(a) ?? -1) - (quando.get(b) ?? -1) || a.localeCompare(b));
+  const quando = new Map(
+    (lidos ?? []).map((l) => [
+      texto(l.codigo_produto).toUpperCase(),
+      Date.parse(l.sincronizado_em) || 0,
+    ]),
+  );
+  return [...codigos].sort(
+    (a, b) => (quando.get(a) ?? -1) - (quando.get(b) ?? -1) || a.localeCompare(b),
+  );
 }

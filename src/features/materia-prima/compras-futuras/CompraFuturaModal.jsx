@@ -1,49 +1,18 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
+import { useEffect, useMemo, useState } from "react";
 
-  useEffect,
-
-  useMemo,
-
-  useState,
-
-} from "react";
-
-
+import { CheckCircle2, Save, ShoppingCart, X } from "lucide-react";
 
 import {
-
-  CheckCircle2,
-
-  Save,
-
-  ShoppingCart,
-
-  X,
-
-} from "lucide-react";
-
-
-
-import {
-
   calcularResumoFinanceiroCompra,
-
   TIPOS_CLASSIFICACAO,
-
   TIPOS_FRETE,
-
 } from "./comprasFuturasService";
-
-
 
 import "./CompraFuturaModal.css";
 
-
-
 function dataHojeLocal() {
-
   const agora = new Date();
 
   const ano = agora.getFullYear();
@@ -52,82 +21,43 @@ function dataHojeLocal() {
 
   const dia = String(agora.getDate()).padStart(2, "0");
 
-
-
   return `${ano}-${mes}-${dia}`;
-
 }
 
-
-
 function normalizarNumero(valor) {
-
   if (valor === null || valor === undefined || valor === "") {
-
     return null;
-
   }
-
-
 
   if (typeof valor === "number") {
-
     return Number.isFinite(valor) ? valor : null;
-
   }
-
-
 
   const texto = String(valor).trim().replace(/\s/g, "");
 
   if (!texto) return null;
 
-
-
-  const normalizado = texto.includes(",")
-
-    ? texto.replace(/\./g, "").replace(",", ".")
-
-    : texto;
-
-
+  const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
 
   const numero = Number(normalizado);
 
   return Number.isFinite(numero) ? numero : null;
-
 }
-
-
 
 function numeroParaInput(valor) {
-
   if (valor === null || valor === undefined || valor === "") {
-
     return "";
-
   }
-
-
 
   return String(valor).replace(".", ",");
-
 }
 
-
-
 function formatarMoeda(valor) {
-
   if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-
     return "-";
-
   }
 
-
-
   return Number(valor).toLocaleString("pt-BR", {
-
     style: "currency",
 
     currency: "BRL",
@@ -135,25 +65,15 @@ function formatarMoeda(valor) {
     minimumFractionDigits: 2,
 
     maximumFractionDigits: 2,
-
   });
-
 }
 
-
-
 function formatarPrecoKg(valor) {
-
   if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-
     return "-";
-
   }
 
-
-
   return `${Number(valor).toLocaleString("pt-BR", {
-
     style: "currency",
 
     currency: "BRL",
@@ -161,15 +81,10 @@ function formatarPrecoKg(valor) {
     minimumFractionDigits: 4,
 
     maximumFractionDigits: 6,
-
   })}/kg`;
-
 }
 
-
-
 function CampoNumero({
-
   titulo,
 
   value,
@@ -181,71 +96,39 @@ function CampoNumero({
   sufixo = null,
 
   disabled = false,
-
 }) {
-
   return (
-
     <label className="compra-futura-modal-campo">
-
       <span>{titulo}</span>
 
-
-
       {sufixo ? (
-
         <div className="compra-futura-modal-numero">
-
           <input
-
             type="text"
-
             inputMode="decimal"
-
             value={value}
-
             onChange={(event) => onChange(event.target.value)}
-
             placeholder={placeholder}
-
             disabled={disabled}
-
           />
 
           <span>{sufixo}</span>
-
         </div>
-
       ) : (
-
         <input
-
           type="text"
-
           inputMode="decimal"
-
           value={value}
-
           onChange={(event) => onChange(event.target.value)}
-
           placeholder={placeholder}
-
           disabled={disabled}
-
         />
-
       )}
-
     </label>
-
   );
-
 }
 
-
-
 export default function CompraFuturaModal({
-
   aberto,
 
   item = null,
@@ -261,9 +144,7 @@ export default function CompraFuturaModal({
   onCancelar,
 
   onSalvar,
-
 }) {
-
   const [dataCompra, setDataCompra] = useState("");
 
   const [dataPrevista, setDataPrevista] = useState("");
@@ -281,8 +162,6 @@ export default function CompraFuturaModal({
   const [observacao, setObservacao] = useState("");
 
   const [ativo, setAtivo] = useState(true);
-
-
 
   const [precoUnitario, setPrecoUnitario] = useState("");
 
@@ -302,24 +181,14 @@ export default function CompraFuturaModal({
 
   const [observacaoFinanceira, setObservacaoFinanceira] = useState("");
 
-
-
   const [erro, setErro] = useState("");
 
-
-
   useEffect(() => {
-
     if (!aberto) return;
-
-
 
     const hoje = dataHojeLocal();
 
-
-
     if (item) {
-
       setDataCompra(item.dataCompra || hoje);
 
       setDataPrevista(item.dataPrevista || hoje);
@@ -338,8 +207,6 @@ export default function CompraFuturaModal({
 
       setAtivo(item.ativo !== false);
 
-
-
       setPrecoUnitario(numeroParaInput(item.precoUnitario));
 
       setIpiPercentual(numeroParaInput(item.ipiPercentual));
@@ -357,9 +224,7 @@ export default function CompraFuturaModal({
       setCondicaoPagamento(item.condicaoPagamento || "");
 
       setObservacaoFinanceira(item.observacaoFinanceira || "");
-
     } else {
-
       setDataCompra(hoje);
 
       setDataPrevista(hoje);
@@ -378,8 +243,6 @@ export default function CompraFuturaModal({
 
       setAtivo(true);
 
-
-
       setPrecoUnitario("");
 
       setIpiPercentual("");
@@ -397,163 +260,74 @@ export default function CompraFuturaModal({
       setCondicaoPagamento("");
 
       setObservacaoFinanceira("");
-
     }
 
-
-
     setErro("");
-
   }, [aberto, item]);
 
-
-
-
-
-
-
   const vinculosFornecedorSelecionado = useMemo(
-
     () =>
-
       fornecedorMateriais.filter(
-
         (vinculo) =>
-
-          vinculo.ativo !== false &&
-
-          String(vinculo.fornecedorId) === String(fornecedorId),
-
+          vinculo.ativo !== false && String(vinculo.fornecedorId) === String(fornecedorId),
       ),
 
-    [
-
-      fornecedorMateriais,
-
-      fornecedorId,
-
-    ],
-
+    [fornecedorMateriais, fornecedorId],
   );
 
-
-
   const materiaisDisponiveis = useMemo(
-
     () =>
-
       vinculosFornecedorSelecionado
 
         .map((vinculo) => {
-
           const material = materiais.find(
-
-            (itemMaterial) =>
-
-              String(itemMaterial.id) === String(vinculo.materialId),
-
+            (itemMaterial) => String(itemMaterial.id) === String(vinculo.materialId),
           );
 
-
-
           if (!material) {
-
             return null;
-
           }
 
-
-
-          if (
-
-            material.ativo === false &&
-
-            String(material.id) !== String(materialId)
-
-          ) {
-
+          if (material.ativo === false && String(material.id) !== String(materialId)) {
             return null;
-
           }
-
-
 
           return {
-
             ...material,
 
             padrao: vinculo.padrao === true,
-
           };
-
         })
 
         .filter(Boolean),
 
-    [
-
-      vinculosFornecedorSelecionado,
-
-      materiais,
-
-      materialId,
-
-    ],
-
+    [vinculosFornecedorSelecionado, materiais, materialId],
   );
 
-
-
   function alterarFornecedor(novoFornecedorId) {
-
     setFornecedorId(novoFornecedorId);
 
     setErro("");
 
-
-
     const vinculos = fornecedorMateriais.filter(
-
       (vinculo) =>
-
-        vinculo.ativo !== false &&
-
-        String(vinculo.fornecedorId) === String(novoFornecedorId),
-
+        vinculo.ativo !== false && String(vinculo.fornecedorId) === String(novoFornecedorId),
     );
 
-
-
     if (vinculos.length === 0) {
-
       setMaterialId("");
 
       return;
-
     }
 
-
-
-    const vinculoPadrao =
-
-      vinculos.find((vinculo) => vinculo.padrao === true) ??
-
-      vinculos[0];
-
-
+    const vinculoPadrao = vinculos.find((vinculo) => vinculo.padrao === true) ?? vinculos[0];
 
     setMaterialId(String(vinculoPadrao.materialId));
-
   }
 
-
-
   const resumoFinanceiro = useMemo(
-
     () =>
-
       calcularResumoFinanceiroCompra({
-
         quantidadeKg,
 
         precoUnitario,
@@ -567,11 +341,9 @@ export default function CompraFuturaModal({
         valorDesconto,
 
         outrasDespesas,
-
       }),
 
     [
-
       quantidadeKg,
 
       precoUnitario,
@@ -585,37 +357,21 @@ export default function CompraFuturaModal({
       valorDesconto,
 
       outrasDespesas,
-
     ],
-
   );
 
-
-
   function alterarTipoFrete(novoTipo) {
-
     setTipoFrete(novoTipo);
 
-
-
     if (novoTipo === "SEM_FRETE") {
-
       setValorFrete("0");
-
     }
 
-
-
     setErro("");
-
   }
 
-
-
   function validarFinanceiro() {
-
     const campos = [
-
       ["Preço unitário", precoUnitario, { minimo: 0 }],
 
       ["IPI", ipiPercentual, { minimo: 0, maximo: 100 }],
@@ -625,167 +381,92 @@ export default function CompraFuturaModal({
       ["Desconto", valorDesconto, { minimo: 0 }],
 
       ["Outras despesas", outrasDespesas, { minimo: 0 }],
-
     ];
 
-
-
     for (const [nome, valor, regra] of campos) {
-
       if (String(valor ?? "").trim() === "") continue;
-
-
 
       const numero = normalizarNumero(valor);
 
-
-
       if (numero === null) {
-
         return `${nome}: informe um valor numérico válido.`;
-
       }
-
-
 
       if (numero < regra.minimo) {
-
         return `${nome}: o valor não pode ser negativo.`;
-
       }
-
-
 
       if (regra.maximo !== undefined && numero > regra.maximo) {
-
         return `${nome}: o valor máximo é ${regra.maximo}.`;
-
       }
-
     }
 
-
-
-    if (
-
-      resumoFinanceiro.valorTotal !== null &&
-
-      resumoFinanceiro.valorTotal < 0
-
-    ) {
-
+    if (resumoFinanceiro.valorTotal !== null && resumoFinanceiro.valorTotal < 0) {
       return "O valor total ficou negativo. Revise o desconto informado.";
-
     }
-
-
 
     return "";
-
   }
 
-
-
   async function enviar(event) {
-
     event.preventDefault();
 
     setErro("");
 
-
-
     const quantidade = normalizarNumero(quantidadeKg);
 
-
-
     if (!dataCompra) {
-
       setErro("Informe a data da compra.");
 
       return;
-
     }
 
-
-
     if (!dataPrevista) {
-
       setErro("Informe a previsão de chegada.");
 
       return;
-
     }
 
-
-
     if (dataPrevista < dataCompra) {
-
       setErro("A previsão não pode ser anterior à data da compra.");
 
       return;
-
     }
 
-
-
     if (!fornecedorId) {
-
       setErro("Selecione o fornecedor.");
 
       return;
-
     }
 
-
-
     if (!materialId) {
-
       setErro("Selecione o material.");
 
       return;
-
     }
 
-
-
     if (!tipoClassificacao) {
-
       setErro("Selecione o tipo do material.");
 
       return;
-
     }
 
-
-
     if (quantidade === null || quantidade <= 0) {
-
       setErro("Informe uma quantidade maior que zero.");
 
       return;
-
     }
-
-
 
     const erroFinanceiro = validarFinanceiro();
 
-
-
     if (erroFinanceiro) {
-
       setErro(erroFinanceiro);
 
       return;
-
     }
 
-
-
     try {
-
       await onSalvar?.({
-
         id: item?.id ?? null,
 
         dataCompra,
@@ -805,18 +486,11 @@ export default function CompraFuturaModal({
         tipoClassificacao,
 
         status:
-
-          item?.status === "RECEBIDA" || item?.status === "CANCELADA"
-
-            ? item.status
-
-            : "CONFIRMADA",
+          item?.status === "RECEBIDA" || item?.status === "CANCELADA" ? item.status : "CONFIRMADA",
 
         observacao,
 
         ativo,
-
-
 
         precoUnitario: normalizarNumero(precoUnitario),
 
@@ -835,25 +509,15 @@ export default function CompraFuturaModal({
         condicaoPagamento,
 
         observacaoFinanceira,
-
       });
-
     } catch (error) {
-
       setErro(error?.message || "Não foi possível salvar a compra.");
-
     }
-
   }
-
-
 
   if (!aberto) return null;
 
-
-
   return (
-
     <Modal
       asChild
       aberto={aberto}
@@ -862,803 +526,408 @@ export default function CompraFuturaModal({
       tamanho="medio"
       fecharAoClicarFora={false}
     >
-
       <div className="compra-futura-modal">
-
         <div className="compra-futura-modal-header" data-modal-header="">
-
           <div className="compra-futura-modal-icone" data-modal-icone="">
-
             <ShoppingCart size={22} aria-hidden="true" />
-
           </div>
-
-
 
           <div className="compra-futura-modal-header-texto">
-
             <span>Matéria-Prima</span>
 
-
-
             <ModalTitulo>
-              <h3>
-
-                {item ? "Editar compra" : "Nova compra futura"}
-
-              </h3>
+              <h3>{item ? "Editar compra" : "Nova compra futura"}</h3>
             </ModalTitulo>
 
-
-
-            <p>
-
-              Cadastre ou edite os dados da compra. A chegada é confirmada separadamente.
-
-            </p>
-
+            <p>Cadastre ou edite os dados da compra. A chegada é confirmada separadamente.</p>
           </div>
 
-
-
           <button
-
             type="button"
-
             className="compra-futura-modal-fechar"
-
             onClick={onCancelar}
-
             disabled={salvando}
-
             aria-label="Fechar"
             data-modal-fechar=""
           >
-
             <X size={19} />
-
           </button>
-
         </div>
 
-
-
         <form className="compra-futura-modal-form" onSubmit={enviar} data-modal-form="">
-
           <section className="compra-futura-modal-secao">
-
             <div className="compra-futura-modal-secao-titulo">
-
               <strong>Dados da compra</strong>
 
               <span>Informações operacionais e previsão de recebimento.</span>
-
             </div>
 
-
-
             <div className="compra-futura-modal-grid">
-
               <label className="compra-futura-modal-campo">
-
                 <span>Data da compra</span>
 
-
-
                 <input
-
                   type="date"
-
                   value={dataCompra}
-
                   onChange={(event) => {
-
                     const valor = event.target.value;
 
                     setDataCompra(valor);
 
-
-
                     if (dataPrevista < valor) {
-
                       setDataPrevista(valor);
-
                     }
-
                   }}
-
                   disabled={salvando}
-
                 />
-
               </label>
 
-
-
               <label className="compra-futura-modal-campo">
-
                 <span>Previsão de chegada</span>
 
-
-
                 <input
-
                   type="date"
-
                   min={dataCompra}
-
                   value={dataPrevista}
-
                   onChange={(event) => setDataPrevista(event.target.value)}
-
                   disabled={salvando}
-
                 />
-
               </label>
-
             </div>
 
-
-
             <div className="compra-futura-modal-grid">
-
               <label className="compra-futura-modal-campo">
-
                 <span>Fornecedor / fonte</span>
 
-
-
                 <select
-
                   value={fornecedorId}
-
                   onChange={(event) => alterarFornecedor(event.target.value)}
-
                   disabled={salvando}
-
                 >
-
                   <option value="">Selecione</option>
-
-
 
                   {fornecedores
 
                     .filter(
-
                       (fornecedor) =>
-
-                        fornecedor.ativo ||
-
-                        String(fornecedor.id) === String(fornecedorId),
-
+                        fornecedor.ativo || String(fornecedor.id) === String(fornecedorId),
                     )
 
                     .map((fornecedor) => (
-
                       <option key={fornecedor.id} value={fornecedor.id}>
-
                         {fornecedor.nome}
 
                         {!fornecedor.ativo ? " (Inativo)" : ""}
-
                       </option>
-
                     ))}
-
                 </select>
-
               </label>
 
-
-
               <label className="compra-futura-modal-campo">
-
                 <span>Material</span>
 
-
-
                 <select
-
                   value={materialId}
-
                   onChange={(event) => {
-
                     setMaterialId(event.target.value);
 
                     setErro("");
-
                   }}
-
-                  disabled={
-
-                    salvando ||
-
-                    !fornecedorId ||
-
-                    materiaisDisponiveis.length === 0
-
-                  }
-
+                  disabled={salvando || !fornecedorId || materiaisDisponiveis.length === 0}
                 >
-
                   <option value="">
-
                     {!fornecedorId
-
                       ? "Selecione primeiro o fornecedor"
-
                       : materiaisDisponiveis.length === 0
-
                         ? "Fornecedor sem material cadastrado"
-
                         : "Selecione"}
-
                   </option>
 
-
-
                   {materiaisDisponiveis.map((material) => (
-
                     <option key={material.id} value={material.id}>
-
                       {material.nome}
 
                       {material.padrao ? " (padrão)" : ""}
-
                     </option>
-
                   ))}
-
                 </select>
-
               </label>
-
             </div>
 
-
-
             {fornecedorId && materiaisDisponiveis.length === 0 && (
-
               <p className="compra-futura-modal-ajuda">
-
-                Este fornecedor não possui material ativo vinculado.
-
-                Faça o vínculo em Cadastro &gt; Fornecedor.
-
+                Este fornecedor não possui material ativo vinculado. Faça o vínculo em Cadastro &gt;
+                Fornecedor.
               </p>
-
             )}
 
-
-
             <div className="compra-futura-modal-grid compra-futura-modal-grid-3">
-
               <label className="compra-futura-modal-campo">
-
                 <span>Tipo</span>
 
-
-
                 <select
-
                   value={tipoClassificacao}
-
                   onChange={(event) => {
-
                     setTipoClassificacao(event.target.value);
 
                     setErro("");
-
                   }}
-
                   disabled={salvando}
-
                 >
-
                   <option value="">Selecione</option>
 
-
-
                   {TIPOS_CLASSIFICACAO.map((tipo) => (
-
                     <option key={tipo.valor} value={tipo.valor}>
-
                       {tipo.nome}
-
                     </option>
-
                   ))}
-
                 </select>
-
               </label>
-
-
 
               <CampoNumero
-
                 titulo="Quantidade"
-
                 value={quantidadeKg}
-
                 onChange={setQuantidadeKg}
-
                 placeholder="Ex.: 12000"
-
                 sufixo="kg"
-
                 disabled={salvando}
-
               />
-
-
 
               <label className="compra-futura-modal-campo">
-
                 <span>Pedido / OC</span>
 
-
-
                 <input
-
                   type="text"
-
                   value={numeroPedido}
-
                   onChange={(event) => setNumeroPedido(event.target.value)}
-
                   placeholder="Ex.: 14587"
-
                   disabled={salvando}
-
                 />
-
               </label>
-
             </div>
-
-
 
             <div className="compra-futura-modal-status">
-
               <CheckCircle2 size={17} aria-hidden="true" />
 
-
-
               <div>
-
                 <strong>
-
-                  Status: {item?.status === "RECEBIDA"
-
+                  Status:{" "}
+                  {item?.status === "RECEBIDA"
                     ? "Recebida"
-
                     : item?.status === "CANCELADA"
-
                       ? "Cancelada"
-
                       : "Confirmada"}
-
                 </strong>
 
-
-
                 <span>
-
                   {item?.status === "RECEBIDA"
-
                     ? "A chegada desta compra já foi confirmada. O recebimento não é alterado nesta edição."
-
                     : item?.status === "CANCELADA"
-
                       ? "A compra está cancelada e o status não é alterado nesta edição."
-
                       : "A compra permanece confirmada. Para registrar a chegada, use o botão Confirmar chegada na tabela."}
-
                 </span>
-
               </div>
-
             </div>
 
-
-
             <label className="compra-futura-modal-campo">
-
               <span>Observação</span>
 
-
-
               <textarea
-
                 rows={3}
-
                 value={observacao}
-
                 onChange={(event) => setObservacao(event.target.value)}
-
                 placeholder="Informações operacionais adicionais..."
-
                 disabled={salvando}
-
               />
-
             </label>
-
           </section>
 
-
-
           <section className="compra-futura-modal-secao compra-futura-modal-secao-financeira">
-
             <div className="compra-futura-modal-secao-titulo">
-
               <strong>Valores e custos</strong>
 
               <span>
-
-                Preencha o que estiver disponível. Os totais são calculados
-
-                automaticamente.
-
+                Preencha o que estiver disponível. Os totais são calculados automaticamente.
               </span>
-
             </div>
 
-
-
             <div className="compra-futura-modal-grid compra-futura-modal-grid-3">
-
               <CampoNumero
-
                 titulo="Preço unitário"
-
                 value={precoUnitario}
-
                 onChange={setPrecoUnitario}
-
                 placeholder="Ex.: 4,25"
-
                 sufixo="R$/kg"
-
                 disabled={salvando}
-
               />
-
-
 
               <CampoNumero
-
                 titulo="IPI"
-
                 value={ipiPercentual}
-
                 onChange={setIpiPercentual}
-
                 placeholder="Ex.: 5"
-
                 sufixo="%"
-
                 disabled={salvando}
-
               />
-
-
 
               <label className="compra-futura-modal-campo">
-
                 <span>Tipo de frete</span>
 
-
-
                 <select
-
                   value={tipoFrete}
-
                   onChange={(event) => alterarTipoFrete(event.target.value)}
-
                   disabled={salvando}
-
                 >
-
                   {TIPOS_FRETE.map((tipo) => (
-
                     <option key={tipo.valor || "NAO_INFORMADO"} value={tipo.valor}>
-
                       {tipo.nome}
-
                     </option>
-
                   ))}
-
                 </select>
-
               </label>
-
             </div>
-
-
 
             <div className="compra-futura-modal-grid compra-futura-modal-grid-3">
-
               <CampoNumero
-
                 titulo="Valor do frete"
-
                 value={valorFrete}
-
                 onChange={setValorFrete}
-
                 placeholder="Ex.: 1200,00"
-
                 sufixo="R$"
-
                 disabled={salvando || tipoFrete === "SEM_FRETE"}
-
               />
 
-
-
               <CampoNumero
-
                 titulo="Desconto"
-
                 value={valorDesconto}
-
                 onChange={setValorDesconto}
-
                 placeholder="Ex.: 500,00"
-
                 sufixo="R$"
-
                 disabled={salvando}
-
               />
-
-
 
               <CampoNumero
-
                 titulo="Outras despesas"
-
                 value={outrasDespesas}
-
                 onChange={setOutrasDespesas}
-
                 placeholder="Ex.: 0,00"
-
                 sufixo="R$"
-
                 disabled={salvando}
-
               />
-
             </div>
 
-
-
             <div className="compra-futura-modal-resumo">
-
               <div>
-
                 <span>Subtotal</span>
 
                 <strong>{formatarMoeda(resumoFinanceiro.subtotalProdutos)}</strong>
-
               </div>
 
-
-
               <div>
-
                 <span>Valor do IPI</span>
 
                 <strong>{formatarMoeda(resumoFinanceiro.valorIpi)}</strong>
-
               </div>
 
-
-
               <div className="compra-futura-modal-resumo-destaque">
-
                 <span>Total da compra</span>
 
                 <strong>{formatarMoeda(resumoFinanceiro.valorTotal)}</strong>
-
               </div>
 
-
-
               <div>
-
                 <span>Custo efetivo</span>
 
                 <strong>{formatarPrecoKg(resumoFinanceiro.custoEfetivoKg)}</strong>
-
               </div>
-
             </div>
-
-
 
             {!resumoFinanceiro.precoUnitario && (
-
               <p className="compra-futura-modal-ajuda">
-
-                Informe o preço unitário para calcular subtotal, total e custo
-
-                efetivo por kg.
-
+                Informe o preço unitário para calcular subtotal, total e custo efetivo por kg.
               </p>
-
             )}
 
-
-
             <div className="compra-futura-modal-grid">
-
               <label className="compra-futura-modal-campo">
-
                 <span>Número da NF</span>
 
-
-
                 <input
-
                   type="text"
-
                   value={numeroNf}
-
                   onChange={(event) => setNumeroNf(event.target.value)}
-
                   placeholder="Ex.: 123456"
-
                   disabled={salvando}
-
                 />
-
               </label>
-
-
 
               <label className="compra-futura-modal-campo">
-
                 <span>Condição de pagamento</span>
 
-
-
                 <input
-
                   type="text"
-
                   value={condicaoPagamento}
-
                   onChange={(event) => setCondicaoPagamento(event.target.value)}
-
                   placeholder="Ex.: 30/60 dias"
-
                   disabled={salvando}
-
                 />
-
               </label>
-
             </div>
 
-
-
             <label className="compra-futura-modal-campo">
-
               <span>Observação financeira</span>
 
-
-
               <textarea
-
                 rows={3}
-
                 value={observacaoFinanceira}
-
                 onChange={(event) => setObservacaoFinanceira(event.target.value)}
-
                 placeholder="Condições comerciais, ajustes, créditos ou informações fiscais..."
-
                 disabled={salvando}
-
               />
-
             </label>
-
           </section>
 
-
-
           <label className="compra-futura-modal-status">
-
             <input
-
               type="checkbox"
-
               checked={ativo}
-
               onChange={(event) => setAtivo(event.target.checked)}
-
               disabled={salvando}
-
             />
 
-
-
             <div>
-
               <strong>Compra ativa</strong>
 
               <span>Compras inativas não entram nos cálculos da projeção.</span>
-
             </div>
-
           </label>
 
-
-
-          {erro && (
-
-            <div className="compra-futura-modal-erro">
-
-              {erro}
-
-            </div>
-
-          )}
-
-
+          {erro && <div className="compra-futura-modal-erro">{erro}</div>}
 
           <div className="compra-futura-modal-acoes" data-modal-footer="">
-
             <button
-
               type="button"
-
               className="compra-futura-modal-cancelar"
-
               onClick={onCancelar}
-
               disabled={salvando}
               data-modal-acao="secundaria"
             >
-
               Cancelar
-
             </button>
 
-
-
             <button
-
               type="submit"
-
               className="compra-futura-modal-salvar"
-
               disabled={salvando}
               data-modal-acao="primaria"
             >
-
               <Save size={17} />
 
               {salvando ? "Salvando..." : "Salvar compra"}
-
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </Modal>
-
   );
-
 }

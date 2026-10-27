@@ -1,4 +1,3 @@
-
 import { supabase } from "@/lib/supabaseClient";
 
 /* ============================================================
@@ -53,19 +52,13 @@ function normalizarId(valor) {
 }
 
 function numeroOpcional(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
   }
 
   const convertido = Number(valor);
 
-  return Number.isFinite(convertido)
-    ? convertido
-    : null;
+  return Number.isFinite(convertido) ? convertido : null;
 }
 
 /* ============================================================
@@ -75,32 +68,21 @@ function numeroOpcional(valor) {
    de linhas do Supabase.
 ============================================================ */
 
-async function consultarTabela(
-  tabela,
-  colunas,
-  prepararConsulta
-) {
+async function consultarTabela(tabela, colunas, prepararConsulta) {
   const registros = [];
   let inicio = 0;
 
   while (true) {
-    let consulta = supabase
-      .from(tabela)
-      .select(colunas);
+    let consulta = supabase.from(tabela).select(colunas);
 
     if (prepararConsulta) {
       consulta = prepararConsulta(consulta);
     }
 
-    const { data, error } = await consulta.range(
-      inicio,
-      inicio + TAMANHO_PAGINA - 1
-    );
+    const { data, error } = await consulta.range(inicio, inicio + TAMANHO_PAGINA - 1);
 
     if (error) {
-      throw new Error(
-        `Erro ao consultar ${tabela}: ${error.message}`
-      );
+      throw new Error(`Erro ao consultar ${tabela}: ${error.message}`);
     }
 
     const pagina = data ?? [];
@@ -123,18 +105,12 @@ async function consultarTabela(
 function buscarMateriaisHabilitados() {
   return consultarTabela(
     FONTES.MATERIAIS,
-    [
-      "id",
-      "nome",
-      "ativo",
-      "codigo_omie",
-      "exibir_necessidade_compra",
-    ].join(","),
+    ["id", "nome", "ativo", "codigo_omie", "exibir_necessidade_compra"].join(","),
     (consulta) =>
       consulta
         .eq("ativo", true)
         .eq("exibir_necessidade_compra", true)
-        .order("id", { ascending: true })
+        .order("id", { ascending: true }),
   );
 }
 
@@ -146,27 +122,46 @@ function buscarMateriaisHabilitados() {
 ============================================================ */
 
 function buscarPedidos() {
-  return consultarTabela(FONTES.PEDIDOS, "codigo_pedido_omie,numero_pedido,item_sequencia,codigo_produto,produto,quantidade,unidade,previsao,status,kg_un,material_id,material,consumo_kg,situacao_cadastro", q => q.order("pedido_item_id", { ascending: true }));
+  return consultarTabela(
+    FONTES.PEDIDOS,
+    "codigo_pedido_omie,numero_pedido,item_sequencia,codigo_produto,produto,quantidade,unidade,previsao,status,kg_un,material_id,material,consumo_kg,situacao_cadastro",
+    (q) => q.order("pedido_item_id", { ascending: true }),
+  );
 }
 
 /* Estrutura (malha) do Omie: KG/UN e matéria-prima de cada produto (23/10). */
 function buscarEstruturaProdutos() {
-  return consultarTabela(FONTES.ESTRUTURA_PRODUTOS, "codigo_produto,descricao,total_itens,erro,sincronizado_em",
-    q => q.order("codigo_produto", { ascending: true }));
+  return consultarTabela(
+    FONTES.ESTRUTURA_PRODUTOS,
+    "codigo_produto,descricao,total_itens,erro,sincronizado_em",
+    (q) => q.order("codigo_produto", { ascending: true }),
+  );
 }
 
 function buscarEstruturaItens() {
-  return consultarTabela(FONTES.ESTRUTURA_ITENS, "codigo_produto,id_malha,codigo_mp,descricao_mp,unidade,quantidade,percentual_perda",
-    q => q.order("codigo_produto", { ascending: true }).order("id_malha", { ascending: true }));
+  return consultarTabela(
+    FONTES.ESTRUTURA_ITENS,
+    "codigo_produto,id_malha,codigo_mp,descricao_mp,unidade,quantidade,percentual_perda",
+    (q) => q.order("codigo_produto", { ascending: true }).order("id_malha", { ascending: true }),
+  );
 }
 
 function buscarDecisoesPeso() {
-  return consultarTabela(FONTES.DECISOES_PESO, "codigo_produto,codigo_mp,quantidade,decisao,decidido_por_email,decidido_em",
-    q => q.order("codigo_produto", { ascending: true }));
+  return consultarTabela(
+    FONTES.DECISOES_PESO,
+    "codigo_produto,codigo_mp,quantidade,decisao,decidido_por_email,decidido_em",
+    (q) => q.order("codigo_produto", { ascending: true }),
+  );
 }
 
 /* Aceitar/recusar peso suspeito (vale só para essa quantidade). */
-export async function decidirPesoSuspeito({ codigoProduto, codigoMp, quantidade, decisao, usuario }) {
+export async function decidirPesoSuspeito({
+  codigoProduto,
+  codigoMp,
+  quantidade,
+  decisao,
+  usuario,
+}) {
   if (!["ACEITO", "RECUSADO"].includes(decisao)) throw new Error("Decisão inválida.");
   const { error } = await supabase.from(FONTES.DECISOES_PESO).upsert({
     codigo_produto: codigoProduto,
@@ -182,8 +177,11 @@ export async function decidirPesoSuspeito({ codigoProduto, codigoMp, quantidade,
 
 /* Desfazer a decisão: o peso volta a ficar pendente. */
 export async function desfazerDecisaoPeso({ codigoProduto, codigoMp }) {
-  const { error } = await supabase.from(FONTES.DECISOES_PESO).delete()
-    .eq("codigo_produto", codigoProduto).eq("codigo_mp", codigoMp);
+  const { error } = await supabase
+    .from(FONTES.DECISOES_PESO)
+    .delete()
+    .eq("codigo_produto", codigoProduto)
+    .eq("codigo_mp", codigoMp);
   if (error) throw new Error(`Não foi possível desfazer a decisão: ${error.message}`);
 }
 
@@ -202,13 +200,9 @@ function buscarVinculosHistoricos() {
 function buscarEstoques() {
   return consultarTabela(
     FONTES.ESTOQUES,
-    [
-      "codigo_produto_omie",
-      "codigo_produto",
-      "fisico",
-      "data_posicao",
-      "sincronizado_em",
-    ].join(",")
+    ["codigo_produto_omie", "codigo_produto", "fisico", "data_posicao", "sincronizado_em"].join(
+      ",",
+    ),
   );
 }
 
@@ -216,16 +210,17 @@ function buscarEstoques() {
    COMPRAS FUTURAS E PREÇOS
 ============================================================ */
 
-
 /* Estoque exclusivamente do depósito selecionado; físico não abate reservado
    porque os pedidos já estão na demanda e descontar reserva pode duplicar. */
 function buscarEstoqueProdutos() {
   return consultarTabela(
     FONTES.ESTOQUE_PRODUTOS,
     "codigo_produto,codigo_local_estoque,fisico,reservado,saldo,estoque_minimo,data_posicao,sincronizado_em",
-    q => q.eq("codigo_local_estoque", LOCAL_ESTOQUE.codigo)
-          .eq("ativo", true)
-          .order("id", { ascending: true })
+    (q) =>
+      q
+        .eq("codigo_local_estoque", LOCAL_ESTOQUE.codigo)
+        .eq("ativo", true)
+        .order("id", { ascending: true }),
   );
 }
 
@@ -234,7 +229,10 @@ function buscarComprasFuturas() {
 }
 
 function buscarPrecos() {
-  return consultarTabela(FONTES.PRECOS, "codigo_produto,codigo_produto_omie,preco_medio_30d,quantidade_30d,ultimo_preco,ultima_compra");
+  return consultarTabela(
+    FONTES.PRECOS,
+    "codigo_produto,codigo_produto_omie,preco_medio_30d,quantidade_30d,ultimo_preco,ultima_compra",
+  );
 }
 
 /* ============================================================
@@ -246,23 +244,12 @@ function buscarPrecos() {
 
 function criarConjuntoCodigos(materiais) {
   return new Set(
-    materiais
-      .map((material) =>
-        normalizarCodigo(material.codigo_omie)
-      )
-      .filter(Boolean)
+    materiais.map((material) => normalizarCodigo(material.codigo_omie)).filter(Boolean),
   );
 }
 
-function filtrarPorCodigosAtuais(
-  registros,
-  codigos
-) {
-  return registros.filter((registro) =>
-    codigos.has(
-      normalizarCodigo(registro.codigo_produto)
-    )
-  );
+function filtrarPorCodigosAtuais(registros, codigos) {
+  return registros.filter((registro) => codigos.has(normalizarCodigo(registro.codigo_produto)));
 }
 
 /* ============================================================
@@ -271,32 +258,20 @@ function filtrarPorCodigosAtuais(
    Mantém somente o código atual de cada material.
 ============================================================ */
 
-function resolverVinculos({
-  materiais,
-  vinculosHistoricos,
-  estoques,
-  comprasFuturas,
-  precos,
-}) {
+function resolverVinculos({ materiais, vinculosHistoricos, estoques, comprasFuturas, precos }) {
   const indices = new Map();
 
   const fontes = [
-    ...vinculosHistoricos.filter(
-      (item) => item.ativo
-    ),
+    ...vinculosHistoricos.filter((item) => item.ativo),
     ...estoques,
     ...comprasFuturas,
     ...precos,
   ];
 
   for (const registro of fontes) {
-    const codigo = normalizarCodigo(
-      registro.codigo_produto
-    );
+    const codigo = normalizarCodigo(registro.codigo_produto);
 
-    const codigoInterno = normalizarId(
-      registro.codigo_produto_omie
-    );
+    const codigoInterno = normalizarId(registro.codigo_produto_omie);
 
     if (!codigo || !codigoInterno) {
       continue;
@@ -313,9 +288,7 @@ function resolverVinculos({
   const pendencias = [];
 
   for (const material of materiais) {
-    const codigo = normalizarCodigo(
-      material.codigo_omie
-    );
+    const codigo = normalizarCodigo(material.codigo_omie);
 
     if (!codigo) {
       pendencias.push({
@@ -328,18 +301,14 @@ function resolverVinculos({
       continue;
     }
 
-    const encontrados =
-      indices.get(codigo) ?? new Set();
+    const encontrados = indices.get(codigo) ?? new Set();
 
     if (encontrados.size !== 1) {
       pendencias.push({
         material_id: material.id,
         material: material.nome,
         codigo_omie: codigo,
-        motivo:
-          encontrados.size === 0
-            ? "CODIGO_NAO_LOCALIZADO"
-            : "CODIGO_AMBIGUO",
+        motivo: encontrados.size === 0 ? "CODIGO_NAO_LOCALIZADO" : "CODIGO_AMBIGUO",
       });
 
       continue;
@@ -373,9 +342,7 @@ function resumirPedidos(pedidos) {
   let itensPendentes = 0;
 
   for (const pedido of pedidos) {
-    const codigoPedido = normalizarId(
-      pedido.codigo_pedido_omie
-    );
+    const codigoPedido = normalizarId(pedido.codigo_pedido_omie);
 
     if (codigoPedido) {
       pedidosDistintos.add(codigoPedido);
@@ -386,12 +353,9 @@ function resumirPedidos(pedidos) {
     } else {
       itensPendentes += 1;
 
-      const situacao =
-        pedido.situacao_cadastro ??
-        "DESCONHECIDO";
+      const situacao = pedido.situacao_cadastro ?? "DESCONHECIDO";
 
-      porSituacao[situacao] =
-        (porSituacao[situacao] ?? 0) + 1;
+      porSituacao[situacao] = (porSituacao[situacao] ?? 0) + 1;
     }
   }
 
@@ -412,40 +376,24 @@ function resumirPedidos(pedidos) {
    Estoque ausente permanece sem dados.
 ============================================================ */
 
-function verificarSituacaoEstoques(
-  materiais,
-  estoques
-) {
+function verificarSituacaoEstoques(materiais, estoques) {
   const codigosComEstoque = new Set(
     estoques
-      .filter(
-        (item) =>
-          numeroOpcional(item.fisico) !== null
-      )
-      .map((item) =>
-        normalizarCodigo(item.codigo_produto)
-      )
+      .filter((item) => numeroOpcional(item.fisico) !== null)
+      .map((item) => normalizarCodigo(item.codigo_produto)),
   );
 
   return materiais.map((material) => {
-    const codigo = normalizarCodigo(
-      material.codigo_omie
-    );
+    const codigo = normalizarCodigo(material.codigo_omie);
 
-    const disponivel =
-      Boolean(codigo) &&
-      codigosComEstoque.has(codigo);
+    const disponivel = Boolean(codigo) && codigosComEstoque.has(codigo);
 
     return {
       material_id: material.id,
       material: material.nome,
       codigo_omie: codigo || null,
       estoqueDisponivel: disponivel,
-      situacao: !codigo
-        ? "SEM_CODIGO"
-        : disponivel
-          ? "COM_ESTOQUE"
-          : "SEM_ESTOQUE",
+      situacao: !codigo ? "SEM_CODIGO" : disponivel ? "COM_ESTOQUE" : "SEM_ESTOQUE",
     };
   });
 }
@@ -522,14 +470,9 @@ export async function buscarNecessidadeMateriaPrima() {
      IDENTIFICADORES E CÓDIGOS DOS MATERIAIS HABILITADOS
   ======================================================== */
 
-  const idsPermitidos = new Set(
-    materiais.map((material) =>
-      normalizarId(material.id)
-    )
-  );
+  const idsPermitidos = new Set(materiais.map((material) => normalizarId(material.id)));
 
-  const codigosPermitidos =
-    criarConjuntoCodigos(materiais);
+  const codigosPermitidos = criarConjuntoCodigos(materiais);
 
   /* ========================================================
      CONSUMOS
@@ -537,51 +480,35 @@ export async function buscarNecessidadeMateriaPrima() {
      Somente materiais habilitados.
   ======================================================== */
 
-  const consumos = todosConsumos.filter(
-    (item) =>
-      idsPermitidos.has(
-        normalizarId(item.material_id)
-      )
+  const consumos = todosConsumos.filter((item) =>
+    idsPermitidos.has(normalizarId(item.material_id)),
   );
 
   /* ========================================================
      ESTOQUES
   ======================================================== */
 
-  const estoques = filtrarPorCodigosAtuais(
-    todosEstoques,
-    codigosPermitidos
-  ).filter(
-    (item) =>
-      numeroOpcional(item.fisico) !== null
+  const estoques = filtrarPorCodigosAtuais(todosEstoques, codigosPermitidos).filter(
+    (item) => numeroOpcional(item.fisico) !== null,
   );
 
   /* ========================================================
      COMPRAS FUTURAS
   ======================================================== */
 
-  const comprasFuturas = filtrarPorCodigosAtuais(
-    todasCompras,
-    codigosPermitidos
-  );
+  const comprasFuturas = filtrarPorCodigosAtuais(todasCompras, codigosPermitidos);
 
   /* ========================================================
      PREÇOS
   ======================================================== */
 
-  const precos = filtrarPorCodigosAtuais(
-    todosPrecos,
-    codigosPermitidos
-  );
+  const precos = filtrarPorCodigosAtuais(todosPrecos, codigosPermitidos);
 
   /* ========================================================
      VÍNCULOS OMIE
   ======================================================== */
 
-  const {
-    vinculos,
-    pendencias,
-  } = resolverVinculos({
+  const { vinculos, pendencias } = resolverVinculos({
     materiais,
     vinculosHistoricos,
     estoques,
@@ -593,37 +520,24 @@ export async function buscarNecessidadeMateriaPrima() {
      SITUAÇÃO DE ESTOQUE
   ======================================================== */
 
-  const situacaoEstoques =
-    verificarSituacaoEstoques(
-      materiais,
-      estoques
-    );
+  const situacaoEstoques = verificarSituacaoEstoques(materiais, estoques);
 
-  const materiaisComEstoque =
-    situacaoEstoques.filter(
-      (item) => item.estoqueDisponivel
-    );
+  const materiaisComEstoque = situacaoEstoques.filter((item) => item.estoqueDisponivel);
 
-  const materiaisSemEstoque =
-    situacaoEstoques.filter(
-      (item) => !item.estoqueDisponivel
-    );
+  const materiaisSemEstoque = situacaoEstoques.filter((item) => !item.estoqueDisponivel);
 
   /* ========================================================
      RESUMO
   ======================================================== */
 
-  const resumoPedidos = resumirPedidos(
-    pedidosAbertos
-  );
+  const resumoPedidos = resumirPedidos(pedidosAbertos);
 
-  const codigosPorMaterial =
-    Object.fromEntries(
-      materiais.map((material) => [
-        normalizarId(material.id),
-        normalizarCodigo(material.codigo_omie),
-      ])
-    );
+  const codigosPorMaterial = Object.fromEntries(
+    materiais.map((material) => [
+      normalizarId(material.id),
+      normalizarCodigo(material.codigo_omie),
+    ]),
+  );
 
   /* ========================================================
      RETORNO
@@ -670,17 +584,13 @@ export async function buscarNecessidadeMateriaPrima() {
     localEstoque: LOCAL_ESTOQUE,
 
     validacao: {
-      cadastroCompleto:
-        resumoPedidos.cadastroCompleto,
+      cadastroCompleto: resumoPedidos.cadastroCompleto,
 
-      codigosCompletos:
-        pendencias.length === 0,
+      codigosCompletos: pendencias.length === 0,
 
-      estoqueSincronizado:
-        estoques.length > 0,
+      estoqueSincronizado: estoques.length > 0,
 
-      todosEstoquesDisponiveis:
-        materiaisSemEstoque.length === 0,
+      todosEstoquesDisponiveis: materiaisSemEstoque.length === 0,
 
       quantidadePendenteValidada: false,
 

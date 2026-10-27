@@ -1,7 +1,4 @@
-import {
-  converterDuracaoParaSegundos,
-  formatarSegundosComoDuracao,
-} from "../utils/Duracao";
+import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/Duracao";
 
 /* =====================================================
    IMPACTO DAS PARADAS POR MOTIVO
@@ -40,18 +37,12 @@ export function impactoParadasPorMotivo(dados) {
   ===================================================== */
 
   dados.forEach((item) => {
-    const tipo = String(
-      item.tipo ?? "",
-    ).trim();
+    const tipo = String(item.tipo ?? "").trim();
 
     /*
      * Somente registros classificados como parada.
      */
-    if (
-      tipo !== "1" &&
-      tipo !== "2" &&
-      tipo !== "3"
-    ) {
+    if (tipo !== "1" && tipo !== "2" && tipo !== "3") {
       return;
     }
 
@@ -59,14 +50,9 @@ export function impactoParadasPorMotivo(dados) {
        MOTIVO
     ================================================= */
 
-    const motivoOriginal = String(
-      item.motivo ||
-        "SEM MOTIVO INFORMADO",
-    ).trim();
+    const motivoOriginal = String(item.motivo || "SEM MOTIVO INFORMADO").trim();
 
-    const motivo =
-      motivoOriginal ||
-      "SEM MOTIVO INFORMADO";
+    const motivo = motivoOriginal || "SEM MOTIVO INFORMADO";
 
     /*
      * Normalização da chave.
@@ -78,10 +64,7 @@ export function impactoParadasPorMotivo(dados) {
      * aguardando mecânica
      */
 
-    const chave =
-      motivo.toLocaleUpperCase(
-        "pt-BR",
-      );
+    const chave = motivo.toLocaleUpperCase("pt-BR");
 
     /* =================================================
        DURAÇÃO
@@ -89,10 +72,7 @@ export function impactoParadasPorMotivo(dados) {
        Utiliza SOMENTE a coluna duracao.
     ================================================= */
 
-    const duracaoSegundos =
-      converterDuracaoParaSegundos(
-        item.duracao,
-      );
+    const duracaoSegundos = converterDuracaoParaSegundos(item.duracao);
 
     /* =================================================
        CRIA O GRUPO
@@ -108,8 +88,7 @@ export function impactoParadasPorMotivo(dados) {
       });
     }
 
-    const registro =
-      agrupado.get(chave);
+    const registro = agrupado.get(chave);
 
     /*
      * Toda parada conta como ocorrência,
@@ -122,17 +101,14 @@ export function impactoParadasPorMotivo(dados) {
      * Soma a duração da parada.
      */
 
-    registro.duracao_segundos +=
-      duracaoSegundos;
+    registro.duracao_segundos += duracaoSegundos;
   });
 
   /* =====================================================
      ARRAY DOS MOTIVOS
   ===================================================== */
 
-  let resultado = Array.from(
-    agrupado.values(),
-  );
+  let resultado = Array.from(agrupado.values());
 
   /* =====================================================
      TEMPO TOTAL PARADO
@@ -152,43 +128,28 @@ export function impactoParadasPorMotivo(dados) {
      sobre esse recorte.
   ===================================================== */
 
-  const tempoTotalParado =
-    resultado.reduce(
-      (total, item) =>
-        total +
-        item.duracao_segundos,
-      0,
-    );
+  const tempoTotalParado = resultado.reduce((total, item) => total + item.duracao_segundos, 0);
 
   /* =====================================================
      ORDENA MAIOR IMPACTO PRIMEIRO
   ===================================================== */
 
-  resultado.sort(
-    (a, b) =>
-      b.duracao_segundos -
-      a.duracao_segundos,
-  );
+  resultado.sort((a, b) => b.duracao_segundos - a.duracao_segundos);
 
   /* =====================================================
      INDICADORES
   ===================================================== */
 
-  return resultado.map(
-    (item) => {
-      /* =================================================
+  return resultado.map((item) => {
+    /* =================================================
          TEMPO MÉDIO
 
          tempo total / ocorrências
       ================================================= */
 
-      const tempoMedioSegundos =
-        item.ocorrencias > 0
-          ? item.duracao_segundos /
-            item.ocorrencias
-          : 0;
+    const tempoMedioSegundos = item.ocorrencias > 0 ? item.duracao_segundos / item.ocorrencias : 0;
 
-      /* =================================================
+    /* =================================================
          % IMPACTO
 
          tempo do motivo
@@ -196,46 +157,27 @@ export function impactoParadasPorMotivo(dados) {
          tempo total parado
       ================================================= */
 
-      const percentualImpacto =
-        tempoTotalParado > 0
-          ? (
-              item.duracao_segundos /
-              tempoTotalParado
-            ) *
-            100
-          : 0;
-     return {
-        
-        motivo:
-          item.motivo,
+    const percentualImpacto =
+      tempoTotalParado > 0 ? (item.duracao_segundos / tempoTotalParado) * 100 : 0;
+    return {
+      motivo: item.motivo,
 
-        ocorrencias:
-          item.ocorrencias,
+      ocorrencias: item.ocorrencias,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            item.duracao_segundos,
-          ),
+      tempo_total: formatarSegundosComoDuracao(item.duracao_segundos),
 
-        tempo_medio:
-          formatarSegundosComoDuracao(
-            tempoMedioSegundos,
-          ),
+      tempo_medio: formatarSegundosComoDuracao(tempoMedioSegundos),
 
-        percentual_impacto:
-          percentualImpacto,
+      percentual_impacto: percentualImpacto,
 
-        /*
-         * Mantemos internamente para
-         * futuras análises e gráficos.
-         */
+      /*
+       * Mantemos internamente para
+       * futuras análises e gráficos.
+       */
 
-        duracao_segundos:
-          item.duracao_segundos,
+      duracao_segundos: item.duracao_segundos,
 
-        tempo_medio_segundos:
-          tempoMedioSegundos,
-      };
-    },
-  );
+      tempo_medio_segundos: tempoMedioSegundos,
+    };
+  });
 }

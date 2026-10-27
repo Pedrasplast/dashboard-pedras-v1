@@ -14,7 +14,6 @@
    - cores especificas de categorias mantidas localmente.
 ========================================================= */
 
-
 /* =========================================================
    BACKDROP
 ========================================================= */
@@ -33,22 +32,14 @@
   align-items: center;
   justify-content: center;
 
-  padding:
-    18px
-    24px
-    24px;
+  padding: 18px 24px 24px;
 
-  background:
-    rgb(15 23 42 / 0.58);
+  background: rgb(15 23 42 / 0.58);
 
   backdrop-filter: blur(5px);
 
-  animation:
-    compras-modal-backdrop-in
-    var(--transition-base)
-    ease-out;
+  animation: compras-modal-backdrop-in var(--transition-base) ease-out;
 }
-
 
 /* =========================================================
    MODAL
@@ -61,59 +52,31 @@
 
   isolation: isolate;
 
-  width:
-    min(
-      1180px,
-      calc(100vw - 48px)
-    );
+  width: min(1180px, calc(100vw - 48px));
 
-  max-height:
-    calc(100vh - 110px);
+  max-height: calc(100vh - 110px);
 
   display: flex;
   flex-direction: column;
 
   overflow: hidden;
 
-  border:
-    1px
-    solid
-    rgb(203 213 225 / 0.9);
+  border: 1px solid rgb(203 213 225 / 0.9);
 
   border-radius: 20px;
 
   background: var(--color-surface);
 
   box-shadow:
-    0
-    32px
-    80px
-    rgb(15 23 42 / 0.28),
-    0
-    8px
-    24px
-    rgb(15 23 42 / 0.08);
+    0 32px 80px rgb(15 23 42 / 0.28),
+    0 8px 24px rgb(15 23 42 / 0.08);
 
-  animation:
-    compras-modal-in
-    0.22s
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    );
+  animation: compras-modal-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 
 .compras-card-modal--requisicao {
-  width:
-    min(
-      1500px,
-      calc(100vw - 42px)
-    );
+  width: min(1500px, calc(100vw - 42px));
 }
-
 
 /* =========================================================
    LINHA SUPERIOR DECORATIVA
@@ -132,15 +95,8 @@
 
   height: 3px;
 
-  background:
-    linear-gradient(
-      90deg,
-      var(--color-primary) 0%,
-      #6366f1 48%,
-      #8b5cf6 100%
-    );
+  background: linear-gradient(90deg, var(--color-primary) 0%, #6366f1 48%, #8b5cf6 100%);
 }
-
 
 /* =========================================================
    HEADER
@@ -149,10 +105,7 @@
 .compras-card-modal-header {
   position: relative;
 
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: flex;
 
@@ -161,25 +114,12 @@
 
   gap: 22px;
 
-  padding:
-    24px
-    28px
-    21px;
+  padding: 24px 28px 21px;
 
-  border-bottom:
-    1px
-    solid
-    var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--color-surface) 0%,
-      #f8fbff 55%,
-      #f5f7ff 100%
-    );
+  background: linear-gradient(135deg, var(--color-surface) 0%, #f8fbff 55%, #f5f7ff 100%);
 }
-
 
 .compras-card-modal-heading {
   min-width: 0;
@@ -190,7 +130,6 @@
   gap: var(--space-4);
 }
 
-
 /* =========================================================
    ICONE
 ========================================================= */
@@ -199,37 +138,21 @@
   width: 50px;
   height: 50px;
 
-  flex:
-    0
-    0
-    50px;
+  flex: 0 0 50px;
 
   display: grid;
   place-items: center;
 
-  border:
-    1px
-    solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
   border-radius: 14px;
 
-  background:
-    linear-gradient(
-      145deg,
-      var(--color-primary-soft),
-      #e0ecff
-    );
+  background: linear-gradient(145deg, var(--color-primary-soft), #e0ecff);
 
   color: var(--color-primary);
 
-  box-shadow:
-    0
-    6px
-    16px
-    rgb(37 99 235 / 0.08);
+  box-shadow: 0 6px 16px rgb(37 99 235 / 0.08);
 }
-
 
 /* =========================================================
    ICONE - ATRASADOS
@@ -238,16 +161,10 @@
 .compras-card-modal-icon--atrasados {
   border-color: #fecaca;
 
-  background:
-    linear-gradient(
-      145deg,
-      #fff1f2,
-      #fee2e2
-    );
+  background: linear-gradient(145deg, #fff1f2, #fee2e2);
 
   color: var(--color-danger);
 }
-
 
 /* =========================================================
    ICONE - VALOR
@@ -256,16 +173,10 @@
 .compras-card-modal-icon--valor {
   border-color: #bbf7d0;
 
-  background:
-    linear-gradient(
-      145deg,
-      #f0fdf4,
-      #dcfce7
-    );
+  background: linear-gradient(145deg, #f0fdf4, #dcfce7);
 
   color: var(--color-success);
 }
-
 
 /* =========================================================
    ICONE - PROXIMOS
@@ -274,16 +185,10 @@
 .compras-card-modal-icon--proximos {
   border-color: #ddd6fe;
 
-  background:
-    linear-gradient(
-      145deg,
-      #faf5ff,
-      #ede9fe
-    );
+  background: linear-gradient(145deg, #faf5ff, #ede9fe);
 
   color: #7c3aed;
 }
-
 
 /* =========================================================
    ICONE - HOJE
@@ -292,16 +197,10 @@
 .compras-card-modal-icon--hoje {
   border-color: #a5f3fc;
 
-  background:
-    linear-gradient(
-      145deg,
-      #ecfeff,
-      #cffafe
-    );
+  background: linear-gradient(145deg, #ecfeff, #cffafe);
 
   color: #0891b2;
 }
-
 
 /* =========================================================
    ICONE - REQUISICOES
@@ -310,72 +209,42 @@
 .compras-card-modal-icon--requisicoes {
   border-color: #c7d2fe;
 
-  background:
-    linear-gradient(
-      145deg,
-      #eef2ff,
-      #e0e7ff
-    );
+  background: linear-gradient(145deg, #eef2ff, #e0e7ff);
 
   color: #4f46e5;
 }
 
-
 .compras-card-modal-icon--requisicoes-valor {
   border-color: #bbf7d0;
 
-  background:
-    linear-gradient(
-      145deg,
-      #f0fdf4,
-      #dcfce7
-    );
+  background: linear-gradient(145deg, #f0fdf4, #dcfce7);
 
   color: var(--color-success);
 }
 
-
 .compras-card-modal-icon--requisicoes-itens {
   border-color: #fed7aa;
 
-  background:
-    linear-gradient(
-      145deg,
-      #fff7ed,
-      #ffedd5
-    );
+  background: linear-gradient(145deg, #fff7ed, #ffedd5);
 
   color: #ea580c;
 }
 
-
 .compras-card-modal-icon--requisicoes-proximos {
   border-color: #e9d5ff;
 
-  background:
-    linear-gradient(
-      145deg,
-      #faf5ff,
-      #f3e8ff
-    );
+  background: linear-gradient(145deg, #faf5ff, #f3e8ff);
 
   color: #9333ea;
 }
 
-
 .compras-card-modal-icon--requisicoes-hoje {
   border-color: #a5f3fc;
 
-  background:
-    linear-gradient(
-      145deg,
-      #ecfeff,
-      #cffafe
-    );
+  background: linear-gradient(145deg, #ecfeff, #cffafe);
 
   color: #0891b2;
 }
-
 
 /* =========================================================
    TEXTOS HEADER
@@ -397,7 +266,6 @@
   text-transform: uppercase;
 }
 
-
 .compras-card-modal-heading h2 {
   margin: 0;
 
@@ -411,14 +279,10 @@
   line-height: var(--line-height-tight);
 }
 
-
 .compras-card-modal-heading p {
   max-width: 760px;
 
-  margin:
-    6px
-    0
-    0;
+  margin: 6px 0 0;
 
   color: var(--color-text-muted);
 
@@ -426,7 +290,6 @@
 
   line-height: 1.55;
 }
-
 
 /* =========================================================
    BOTAO X
@@ -436,33 +299,22 @@
   width: var(--control-height-md);
   height: var(--control-height-md);
 
-  flex:
-    0
-    0
-    var(--control-height-md);
+  flex: 0 0 var(--control-height-md);
 
   display: grid;
   place-items: center;
 
-  border:
-    1px
-    solid
-    #dbe3ee;
+  border: 1px solid #dbe3ee;
 
   border-radius: 11px;
 
-  background:
-    rgb(255 255 255 / 0.85);
+  background: rgb(255 255 255 / 0.85);
 
   color: var(--color-text-muted);
 
   cursor: pointer;
 
-  box-shadow:
-    0
-    2px
-    6px
-    rgb(15 23 42 / 0.04);
+  box-shadow: 0 2px 6px rgb(15 23 42 / 0.04);
 
   transition:
     transform var(--transition-fast),
@@ -471,7 +323,6 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
-
 
 .compras-card-modal-fechar:hover {
   transform: translateY(-1px);
@@ -483,87 +334,53 @@
   color: var(--color-text);
 }
 
-
 .compras-card-modal-fechar:focus {
   outline: none;
 }
 
-
 .compras-card-modal-fechar:focus-visible {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    RESUMO / KPIs
 ========================================================= */
 
 .compras-card-modal-resumo {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 10px;
 
-  padding:
-    14px
-    28px;
+  padding: 14px 28px;
 
-  border-bottom:
-    1px
-    solid
-    var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 
   background: var(--color-page-background);
 }
-
 
 .compras-card-modal-resumo > div {
   position: relative;
 
   min-width: 0;
 
-  padding:
-    12px
-    14px;
+  padding: 12px 14px;
 
   overflow: hidden;
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: 11px;
 
   background: var(--color-surface);
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgb(15 23 42 / 0.025);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.025);
 }
-
 
 .compras-card-modal-resumo > div::before {
   content: "";
@@ -579,21 +396,17 @@
   background: var(--color-border-strong);
 }
 
-
 .compras-card-modal-resumo > div:nth-child(2)::before {
   background: #6366f1;
 }
-
 
 .compras-card-modal-resumo > div:nth-child(3)::before {
   background: #10b981;
 }
 
-
 .compras-card-modal-resumo > div:nth-child(4)::before {
   background: #8b5cf6;
 }
-
 
 .compras-card-modal-resumo span {
   display: block;
@@ -607,7 +420,6 @@
 
   letter-spacing: 0.01em;
 }
-
 
 .compras-card-modal-resumo strong {
   display: block;
@@ -628,28 +440,19 @@
   white-space: nowrap;
 }
 
-
 .compras-card-modal-resumo-destaque {
   border-color: #bfdbfe !important;
 
-  background:
-    linear-gradient(
-      145deg,
-      var(--color-primary-soft),
-      var(--color-surface)
-    ) !important;
+  background: linear-gradient(145deg, var(--color-primary-soft), var(--color-surface)) !important;
 }
-
 
 .compras-card-modal-resumo-destaque::before {
   background: var(--color-primary) !important;
 }
 
-
 .compras-card-modal-resumo-destaque strong {
   color: var(--color-primary-hover);
 }
-
 
 /* =========================================================
    CORPO
@@ -660,20 +463,14 @@
 
   min-height: 0;
 
-  flex:
-    1
-    1
-    auto;
+  flex: 1 1 auto;
 
   overflow: auto;
 
-  padding:
-    0
-    28px;
+  padding: 0 28px;
 
   background: var(--color-surface);
 }
-
 
 /* =========================================================
    TABELA WRAPPER
@@ -687,7 +484,6 @@
 
   background: var(--color-surface);
 }
-
 
 /* =========================================================
    TABELA
@@ -706,18 +502,15 @@
   font-family: var(--font-family-sans);
 }
 
-
 .compras-card-modal-tabela--pedidos {
   min-width: 900px;
 }
-
 
 .compras-card-modal-tabela--requisicoes {
   min-width: 1120px;
 
   table-layout: auto;
 }
-
 
 /* =========================================================
    CABECALHO DA TABELA
@@ -730,14 +523,9 @@
 
   z-index: 4;
 
-  padding:
-    11px
-    10px;
+  padding: 11px 10px;
 
-  border-bottom:
-    1px
-    solid
-    var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
 
   background: #f4f7fb;
 
@@ -755,20 +543,14 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    CELULAS DA TABELA
 ========================================================= */
 
 .compras-card-modal-tabela td {
-  padding:
-    12px
-    10px;
+  padding: 12px 10px;
 
-  border-bottom:
-    1px
-    solid
-    #edf1f5;
+  border-bottom: 1px solid #edf1f5;
 
   background: var(--color-surface);
 
@@ -778,34 +560,24 @@
 
   vertical-align: top;
 
-  transition:
-    background-color
-    var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
-
 
 .compras-card-modal-tabela tbody tr:nth-child(even) td {
   background: #fcfdff;
 }
 
-
 .compras-card-modal-tabela tbody tr:hover td {
   background: #f4f8ff;
 }
-
 
 .compras-card-modal-tabela tbody tr:last-child td {
   border-bottom: 0;
 }
 
-
 .compras-card-modal-celula-grupo {
-  border-right:
-    1px
-    solid
-    #e8edf3;
+  border-right: 1px solid #e8edf3;
 }
-
 
 /* =========================================================
    PEDIDO
@@ -818,14 +590,12 @@
   gap: var(--space-1);
 }
 
-
 .compras-card-modal-pedido > strong {
   color: var(--color-text);
 
   font-size: var(--font-size-caption);
   font-weight: 800;
 }
-
 
 .compras-card-modal-pedido > span {
   width: max-content;
@@ -835,9 +605,7 @@
 
   gap: var(--space-1);
 
-  padding:
-    3px
-    6px;
+  padding: 3px 6px;
 
   border-radius: var(--radius-pill);
 
@@ -848,7 +616,6 @@
   font-size: 8.5px;
   font-weight: 750;
 }
-
 
 /* =========================================================
    FORNECEDOR
@@ -870,7 +637,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    REQUISICAO
 ========================================================= */
@@ -879,14 +645,9 @@
   display: inline-flex;
   align-items: center;
 
-  padding:
-    3px
-    7px;
+  padding: 3px 7px;
 
-  border:
-    1px
-    solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
   border-radius: 7px;
 
@@ -899,7 +660,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    CATEGORIA
@@ -916,11 +676,9 @@
   line-height: 1.35;
 }
 
-
 .compras-card-modal-categoria::first-line {
   font-weight: 750;
 }
-
 
 /* =========================================================
    CODIGO
@@ -937,7 +695,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    PRODUTO
 ========================================================= */
@@ -946,7 +703,6 @@
   min-width: 220px;
   max-width: 360px;
 }
-
 
 .compras-card-modal-produto > strong {
   display: block;
@@ -959,15 +715,12 @@
   line-height: 1.4;
 }
 
-
 .compras-card-modal-item-observacao {
   display: inline-block;
 
   margin-top: 5px;
 
-  padding:
-    3px
-    6px;
+  padding: 3px 6px;
 
   border-radius: 5px;
 
@@ -979,7 +732,6 @@
 
   line-height: 1.35;
 }
-
 
 /* =========================================================
    NUMEROS
@@ -994,7 +746,6 @@
   white-space: nowrap;
 }
 
-
 .compras-card-modal-col-valor,
 .compras-card-modal-valor {
   text-align: right !important;
@@ -1006,18 +757,15 @@
   white-space: nowrap;
 }
 
-
 .compras-card-modal-valor--aberto {
   color: var(--color-primary);
 }
-
 
 .compras-card-modal-valor--requisicao {
   color: var(--color-text);
 
   font-weight: 850;
 }
-
 
 /* =========================================================
    BADGES
@@ -1029,14 +777,9 @@
   display: inline-flex;
   align-items: center;
 
-  padding:
-    3px
-    var(--space-2);
+  padding: 3px var(--space-2);
 
-  border:
-    1px
-    solid
-    transparent;
+  border: 1px solid transparent;
 
   border-radius: var(--radius-pill);
 
@@ -1045,7 +788,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    BADGE - EM ABERTO
@@ -1059,7 +801,6 @@
   color: var(--color-primary-hover);
 }
 
-
 /* =========================================================
    BADGE - EM ATRASO
 ========================================================= */
@@ -1071,7 +812,6 @@
 
   color: var(--color-danger-hover);
 }
-
 
 /* =========================================================
    BADGE - RECEBIDO PARCIALMENTE
@@ -1085,7 +825,6 @@
   color: #92400e;
 }
 
-
 /* =========================================================
    BADGE - RECEBIDO
 ========================================================= */
@@ -1098,7 +837,6 @@
   color: #15803d;
 }
 
-
 /* =========================================================
    SEM STATUS
 ========================================================= */
@@ -1106,7 +844,6 @@
 .compras-card-modal-sem-status {
   color: var(--color-text-light);
 }
-
 
 /* =========================================================
    ESTADO VAZIO
@@ -1130,28 +867,22 @@
   text-align: center;
 }
 
-
 .compras-card-modal-vazio strong {
   color: var(--color-text);
 
   font-size: var(--font-size-md);
 }
 
-
 .compras-card-modal-vazio span {
   font-size: var(--font-size-xs);
 }
-
 
 /* =========================================================
    FOOTER
 ========================================================= */
 
 .compras-card-modal-footer {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: flex;
 
@@ -1160,25 +891,18 @@
 
   gap: 18px;
 
-  padding:
-    13px
-    28px;
+  padding: 13px 28px;
 
-  border-top:
-    1px
-    solid
-    var(--color-border);
+  border-top: 1px solid var(--color-border);
 
   background: var(--color-page-background);
 }
-
 
 .compras-card-modal-footer > span {
   color: var(--color-text-muted);
 
   font-size: 9.5px;
 }
-
 
 /* =========================================================
    BOTAO FECHAR
@@ -1187,14 +911,9 @@
 .compras-card-modal-botao-fechar {
   min-width: 92px;
 
-  padding:
-    var(--space-2)
-    var(--space-4);
+  padding: var(--space-2) var(--space-4);
 
-  border:
-    1px
-    solid
-    var(--color-primary);
+  border: 1px solid var(--color-primary);
 
   border-radius: var(--radius-md);
 
@@ -1209,11 +928,7 @@
 
   cursor: pointer;
 
-  box-shadow:
-    0
-    4px
-    10px
-    rgb(37 99 235 / 0.16);
+  box-shadow: 0 4px 10px rgb(37 99 235 / 0.16);
 
   transition:
     transform var(--transition-fast),
@@ -1221,7 +936,6 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
-
 
 .compras-card-modal-botao-fechar:hover {
   transform: translateY(-1px);
@@ -1231,26 +945,17 @@
   background: var(--color-primary-hover);
 }
 
-
 .compras-card-modal-botao-fechar:active {
   transform: translateY(0);
 }
-
 
 .compras-card-modal-botao-fechar:focus {
   outline: none;
 }
 
-
 .compras-card-modal-botao-fechar:focus-visible {
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    SCROLLBAR
@@ -1262,25 +967,19 @@
   height: 8px;
 }
 
-
 .compras-card-modal-body::-webkit-scrollbar-track,
 .compras-card-modal-tabela-wrapper::-webkit-scrollbar-track {
   background: var(--color-surface-muted);
 }
 
-
 .compras-card-modal-body::-webkit-scrollbar-thumb,
 .compras-card-modal-tabela-wrapper::-webkit-scrollbar-thumb {
-  border:
-    2px
-    solid
-    var(--color-surface-muted);
+  border: 2px solid var(--color-surface-muted);
 
   border-radius: var(--radius-pill);
 
   background: var(--color-text-light);
 }
-
 
 /* =========================================================
    ANIMACOES
@@ -1290,20 +989,15 @@
   from {
     opacity: 0;
 
-    transform:
-      translateY(12px)
-      scale(0.985);
+    transform: translateY(12px) scale(0.985);
   }
 
   to {
     opacity: 1;
 
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0) scale(1);
   }
 }
-
 
 @keyframes compras-modal-backdrop-in {
   from {
@@ -1314,7 +1008,6 @@
     opacity: 1;
   }
 }
-
 
 /* =========================================================
    NOTEBOOK / DESKTOP MENOR
@@ -1327,24 +1020,18 @@
     padding: 14px;
   }
 
-
   .compras-card-modal {
-    max-height:
-      calc(100vh - 96px);
+    max-height: calc(100vh - 96px);
   }
-
 
   .compras-card-modal--requisicao {
-    width:
-      calc(100vw - 28px);
+    width: calc(100vw - 28px);
   }
-
 
   .compras-card-modal-tabela--requisicoes {
     min-width: 1040px;
   }
 }
-
 
 /* =========================================================
    TABLET
@@ -1359,33 +1046,21 @@
     padding: var(--space-3);
   }
 
-
   .compras-card-modal {
     width: 100%;
 
-    max-height:
-      calc(100vh - 76px);
+    max-height: calc(100vh - 76px);
 
-    border-radius:
-      17px
-      17px
-      10px
-      10px;
+    border-radius: 17px 17px 10px 10px;
   }
-
 
   .compras-card-modal-header {
-    padding:
-      18px
-      18px
-      15px;
+    padding: 18px 18px 15px;
   }
-
 
   .compras-card-modal-heading h2 {
     font-size: 20px;
   }
-
 
   .compras-card-modal-resumo {
     grid-template-columns:
@@ -1394,31 +1069,21 @@
 
     gap: var(--space-2);
 
-    padding:
-      var(--space-3)
-      18px;
+    padding: var(--space-3) 18px;
   }
-
 
   .compras-card-modal-body {
-    padding:
-      0
-      18px;
+    padding: 0 18px;
   }
-
 
   .compras-card-modal-footer {
-    padding:
-      var(--space-3)
-      18px;
+    padding: var(--space-3) 18px;
   }
-
 
   .compras-card-modal-tabela--requisicoes {
     min-width: 940px;
   }
 }
-
 
 /* =========================================================
    MOBILE
@@ -1433,35 +1098,23 @@
     padding: 0;
   }
 
-
   .compras-card-modal {
     width: 100%;
 
-    max-height:
-      calc(100vh - 60px);
+    max-height: calc(100vh - 60px);
 
-    border-radius:
-      19px
-      19px
-      0
-      0;
+    border-radius: 19px 19px 0 0;
   }
-
 
   .compras-card-modal-header {
     gap: 10px;
 
-    padding:
-      var(--space-4)
-      14px
-      13px;
+    padding: var(--space-4) 14px 13px;
   }
-
 
   .compras-card-modal-heading {
     gap: 10px;
   }
-
 
   .compras-card-modal-icon {
     width: var(--control-height-lg);
@@ -1470,21 +1123,17 @@
     flex-basis: var(--control-height-lg);
   }
 
-
   .compras-card-modal-heading h2 {
     font-size: var(--font-size-xl);
   }
-
 
   .compras-card-modal-heading p {
     font-size: var(--font-size-micro);
   }
 
-
   .compras-card-modal-eyebrow {
     font-size: 8px;
   }
-
 
   .compras-card-modal-resumo {
     grid-template-columns:
@@ -1496,28 +1145,21 @@
     padding: 10px;
   }
 
-
   .compras-card-modal-resumo > div {
     padding: 9px;
   }
-
 
   .compras-card-modal-resumo span {
     font-size: 8px;
   }
 
-
   .compras-card-modal-resumo strong {
     font-size: var(--font-size-md);
   }
 
-
   .compras-card-modal-body {
-    padding:
-      0
-      10px;
+    padding: 0 10px;
   }
-
 
   .compras-card-modal-footer {
     align-items: stretch;
@@ -1529,12 +1171,10 @@
     padding: 10px;
   }
 
-
   .compras-card-modal-botao-fechar {
     width: 100%;
   }
 }
-
 
 /* =========================================================
    MOBILE PEQUENO

@@ -33,8 +33,6 @@ import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
 
-
-
 import "./Home.css";
 
 /* =========================================================
@@ -648,8 +646,6 @@ function Home({ user, isAdmin }) {
               <button type="submit" className="home-login-button" disabled={loadingLogin}>
                 {loadingLogin ? "Autenticando..." : "Entrar no sistema"}
               </button>
-
-
             </form>
 
             <div className="home-login-security">

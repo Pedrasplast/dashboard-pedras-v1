@@ -5,7 +5,6 @@
    Migrado para o Pedrasplast Design System.
 ========================================================= */
 
-
 /* =========================================================
    GRID PRINCIPAL
 ========================================================= */
@@ -13,38 +12,22 @@
 .compras-resumo {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      5,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 
   gap: 14px;
 
   margin-bottom: var(--space-5);
 }
 
-
 /* =========================================================
    GRID COMPLETO
 ========================================================= */
 
 .compras-resumo--completo {
-  grid-template-columns:
-    repeat(
-      5,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 
   gap: 10px;
 }
-
 
 /* =========================================================
    CARD
@@ -59,31 +42,21 @@
 
   gap: 14px;
 
-  padding:
-    17px
-    18px;
+  padding: 17px 18px;
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-lg);
 
   background: var(--color-surface);
 
-  box-shadow:
-    0
-    1px
-    4px
-    rgb(15 23 42 / 0.04);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.04);
 
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
 }
-
 
 /* =========================================================
    CARD COMPACTO
@@ -94,11 +67,8 @@
 
   gap: 10px;
 
-  padding:
-    12px
-    13px;
+  padding: 12px 13px;
 }
-
 
 /* =========================================================
    CARD CLICAVEL
@@ -108,19 +78,13 @@
   cursor: pointer;
 }
 
-
 .compras-resumo-card--clicavel:hover {
   border-color: var(--color-border-strong);
 
-  box-shadow:
-    0
-    4px
-    14px
-    rgb(15 23 42 / 0.07);
+  box-shadow: 0 4px 14px rgb(15 23 42 / 0.07);
 
   transform: translateY(-1px);
 }
-
 
 /* =========================================================
    CARD ATIVO
@@ -129,28 +93,18 @@
 .compras-resumo-card--ativo {
   border-color: #60a5fa;
 
-  box-shadow:
-    0
-    0
-    0
-    2px
-    rgb(59 130 246 / 0.08);
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.08);
 }
-
 
 /* =========================================================
    CARD DANGER
 ========================================================= */
 
 .compras-resumo-card--danger {
-  border-left:
-    3px
-    solid
-    #ef4444;
+  border-left: 3px solid #ef4444;
 
   background: #fffafa;
 }
-
 
 /* =========================================================
    ICONE
@@ -160,10 +114,7 @@
   width: 44px;
   height: 44px;
 
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: flex;
   align-items: center;
@@ -176,19 +127,16 @@
   color: var(--color-primary);
 }
 
-
 /* =========================================================
    ICONE COMPACTO
 ========================================================= */
 
-.compras-resumo-card--compacto
-  .compras-resumo-card-icone {
+.compras-resumo-card--compacto .compras-resumo-card-icone {
   width: 36px;
   height: 36px;
 
   border-radius: 9px;
 }
-
 
 /* =========================================================
    ICONE DANGER
@@ -200,7 +148,6 @@
   color: #ef4444;
 }
 
-
 /* =========================================================
    ICONE SUCCESS
 ========================================================= */
@@ -210,7 +157,6 @@
 
   color: var(--color-success);
 }
-
 
 /* =========================================================
    ICONE PURPLE
@@ -222,7 +168,6 @@
   color: #7c3aed;
 }
 
-
 /* =========================================================
    ICONE CYAN
 ========================================================= */
@@ -232,7 +177,6 @@
 
   color: #0891b2;
 }
-
 
 /* =========================================================
    ICONE REQUISICAO
@@ -244,7 +188,6 @@
   color: #4f46e5;
 }
 
-
 /* =========================================================
    ICONE REQUISICAO VALOR
 ========================================================= */
@@ -254,7 +197,6 @@
 
   color: #16a34a;
 }
-
 
 /* =========================================================
    ICONE REQUISICAO ITENS
@@ -266,7 +208,6 @@
   color: #ea580c;
 }
 
-
 /* =========================================================
    ICONE REQUISICAO FUTURO
 ========================================================= */
@@ -277,7 +218,6 @@
   color: #9333ea;
 }
 
-
 /* =========================================================
    ICONE REQUISICAO HOJE
 ========================================================= */
@@ -287,7 +227,6 @@
 
   color: #0e7490;
 }
-
 
 /* =========================================================
    CONTEUDO
@@ -301,7 +240,6 @@
 
   gap: 5px;
 }
-
 
 /* =========================================================
    TITULO
@@ -319,7 +257,6 @@
 
   text-overflow: ellipsis;
 }
-
 
 /* =========================================================
    VALOR
@@ -340,36 +277,29 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    TITULO COMPACTO
 ========================================================= */
 
-.compras-resumo-card--compacto
-  .compras-resumo-card-titulo {
+.compras-resumo-card--compacto .compras-resumo-card-titulo {
   font-size: 8.5px;
 }
-
 
 /* =========================================================
    VALOR COMPACTO
 ========================================================= */
 
-.compras-resumo-card--compacto
-  .compras-resumo-card-valor {
+.compras-resumo-card--compacto .compras-resumo-card-valor {
   font-size: 15px;
 }
-
 
 /* =========================================================
    VALOR DANGER
 ========================================================= */
 
-.compras-resumo-card--danger
-  .compras-resumo-card-valor {
+.compras-resumo-card--danger .compras-resumo-card-valor {
   color: var(--color-danger);
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 1500
@@ -377,35 +307,19 @@
 
 @media (max-width: 1500px) {
   .compras-resumo {
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .compras-resumo--completo {
-    grid-template-columns:
-      repeat(
-        5,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
-  .compras-resumo--completo
-    .compras-resumo-card {
+  .compras-resumo--completo .compras-resumo-card {
     min-height: 76px;
 
     padding: 10px;
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 1200
@@ -413,17 +327,9 @@
 
 @media (max-width: 1200px) {
   .compras-resumo--completo {
-    grid-template-columns:
-      repeat(
-        4,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 950
@@ -432,17 +338,9 @@
 @media (max-width: 950px) {
   .compras-resumo,
   .compras-resumo--completo {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 560
@@ -458,8 +356,6 @@
   .compras-resumo-card--compacto {
     min-height: 72px;
 
-    padding:
-      11px
-      12px;
+    padding: 11px 12px;
   }
 }

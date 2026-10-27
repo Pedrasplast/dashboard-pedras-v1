@@ -8,15 +8,7 @@ import {
 
 import { formatarNumero } from "../utils/format.utils";
 
-
-function CardResumo({
-  icon: Icon,
-  label,
-  valor,
-  tipo,
-  isLoading,
-  onClick,
-}) {
+function CardResumo({ icon: Icon, label, valor, tipo, isLoading, onClick }) {
   return (
     <button
       type="button"
@@ -30,18 +22,13 @@ function CardResumo({
       </div>
 
       <div>
-        <span className="pedidos-card-label">
-          {label}
-        </span>
+        <span className="pedidos-card-label">{label}</span>
 
-        <strong>
-          {valor}
-        </strong>
+        <strong>{valor}</strong>
       </div>
     </button>
   );
 }
-
 
 export default function PedidosResumo({
   isLoading,
@@ -52,80 +39,54 @@ export default function PedidosResumo({
   faturamentosHoje,
   onCardClick,
 }) {
-  const carregando =
-    isLoading
-      ? "-"
-      : null;
+  const carregando = isLoading ? "-" : null;
 
   return (
     <section className="pedidos-resumo">
-
       <CardResumo
         icon={ShoppingCart}
         label="Pedidos em aberto"
-        valor={
-          carregando ??
-          quantidadePedidos
-        }
+        valor={carregando ?? quantidadePedidos}
         tipo="abertos"
         isLoading={isLoading}
         onClick={onCardClick}
       />
 
-
       <CardResumo
         icon={AlertTriangle}
         label="Pedidos atrasados"
-        valor={
-          carregando ??
-          pedidosAtrasados
-        }
+        valor={carregando ?? pedidosAtrasados}
         tipo="atrasados"
         isLoading={isLoading}
         onClick={onCardClick}
       />
 
-
       <CardResumo
         icon={PackageSearch}
         label="Quantidade total"
-        valor={
-          carregando ??
-          formatarNumero(
-            quantidadeTotal,
-          )
-        }
+        valor={carregando ?? formatarNumero(quantidadeTotal)}
         tipo="quantidade"
         isLoading={isLoading}
         onClick={onCardClick}
       />
 
-
       <CardResumo
         icon={CalendarClock}
         label="Faturamentos próximos 7 dias"
-        valor={
-          carregando ??
-          entregasProximos7Dias
-        }
+        valor={carregando ?? entregasProximos7Dias}
         tipo="proximos"
         isLoading={isLoading}
         onClick={onCardClick}
       />
 
-
       <CardResumo
         icon={CalendarCheck2}
         label="Faturamento do dia"
-        valor={
-          carregando ??
-          faturamentosHoje
-        }
+        valor={carregando ?? faturamentosHoje}
         tipo="hoje"
         isLoading={isLoading}
         onClick={onCardClick}
       />
-
     </section>
   );
 }

@@ -91,14 +91,16 @@ async function chamarUmaVez(
         call: "ListarPosEstoque",
         app_key: appKey,
         app_secret: appSecret,
-        param: [{
-          nPagina: pagina,
-          nRegPorPagina: 100,
-          dDataPosicao: dataPosicao,
-          cExibeTodos: "N",
-          lista_local_estoque: "TODOS",
-          cTipoItem: "04",
-        }],
+        param: [
+          {
+            nPagina: pagina,
+            nRegPorPagina: 100,
+            dDataPosicao: dataPosicao,
+            cExibeTodos: "N",
+            lista_local_estoque: "TODOS",
+            cTipoItem: "04",
+          },
+        ],
       }),
     });
 
@@ -131,12 +133,7 @@ async function chamarUmaVez(
 // rápido fazia o Omie responder "Consumo redundante" e a execução desistia.
 // Agora espera 5/10/15 s quando o Omie está ocupado e o tempo que ele pede
 // (até 60 s) no consumo redundante; outros erros continuam falhando na hora.
-function chamarOmie(
-  pagina: number,
-  dataPosicao: string,
-  appKey: string,
-  appSecret: string,
-) {
+function chamarOmie(pagina: number, dataPosicao: string, appKey: string, appSecret: string) {
   return comRetentativa(() => chamarUmaVez(pagina, dataPosicao, appKey, appSecret), esperar);
 }
 
@@ -166,14 +163,21 @@ Deno.serve(async (req) => {
     travou = lock.data === true;
 
     if (!travou) {
-      return new Response(JSON.stringify({
-        sucesso: true,
-        ignorado: true,
-        modo: "rapido",
-        motivo: "Existe outra sincronização de estoque em andamento.",
-        criou_cron: false,
-        duracao_ms: Date.now() - inicioMs,
-      }, null, 2), { status: 200, headers });
+      return new Response(
+        JSON.stringify(
+          {
+            sucesso: true,
+            ignorado: true,
+            modo: "rapido",
+            motivo: "Existe outra sincronização de estoque em andamento.",
+            criou_cron: false,
+            duracao_ms: Date.now() - inicioMs,
+          },
+          null,
+          2,
+        ),
+        { status: 200, headers },
+      );
     }
 
     await supabase
@@ -204,22 +208,25 @@ Deno.serve(async (req) => {
       (locaisResult.data ?? []).map((l: any) => String(l.codigo_local_estoque)),
     );
 
-    const baseValida = base.filter((b: any) =>
-      b.ativo === true &&
-      String(b.tipo_item) === "04" &&
-      locaisAtivos.has(String(b.codigo_local_estoque))
+    const baseValida = base.filter(
+      (b: any) =>
+        b.ativo === true &&
+        String(b.tipo_item) === "04" &&
+        locaisAtivos.has(String(b.codigo_local_estoque)),
     );
 
     const chavesBase = new Set(
-      baseValida.map((b: any) => `${String(b.codigo_produto_omie)}:${String(b.codigo_local_estoque)}`),
+      baseValida.map(
+        (b: any) => `${String(b.codigo_produto_omie)}:${String(b.codigo_local_estoque)}`,
+      ),
     );
 
-    const produtosBase = new Set(
-      baseValida.map((b: any) => String(b.codigo_produto_omie)),
-    );
+    const produtosBase = new Set(baseValida.map((b: any) => String(b.codigo_produto_omie)));
 
     if (chavesBase.size === 0) {
-      throw new Error("Base definitiva vazia ou sem posições válidas; sincronização rápida cancelada.");
+      throw new Error(
+        "Base definitiva vazia ou sem posições válidas; sincronização rápida cancelada.",
+      );
     }
 
     const dataPosicaoBr = formatarDataBrasil(new Date());
@@ -242,7 +249,7 @@ Deno.serve(async (req) => {
     const posicoesFiltradas = posicoes
       .filter((p: any) => locaisAtivos.has(String(p?.codigo_local_estoque ?? "")))
       .filter((p: any) =>
-        chavesBase.has(`${String(p?.nCodProd ?? "")}:${String(p?.codigo_local_estoque ?? "")}`)
+        chavesBase.has(`${String(p?.nCodProd ?? "")}:${String(p?.codigo_local_estoque ?? "")}`),
       )
       .map((p: any) => ({
         codigo_produto_omie: numero(p?.nCodProd),
@@ -253,7 +260,9 @@ Deno.serve(async (req) => {
       }));
 
     if (!posicoesFiltradas.length) {
-      throw new Error("Consulta rápida não retornou nenhuma posição válida; nenhuma alteração foi aplicada.");
+      throw new Error(
+        "Consulta rápida não retornou nenhuma posição válida; nenhuma alteração foi aplicada.",
+      );
     }
 
     const chavesRetorno = new Set(
@@ -261,7 +270,9 @@ Deno.serve(async (req) => {
     );
 
     if (chavesRetorno.size !== posicoesFiltradas.length) {
-      throw new Error("Consulta rápida retornou chaves duplicadas; nenhuma alteração foi aplicada.");
+      throw new Error(
+        "Consulta rápida retornou chaves duplicadas; nenhuma alteração foi aplicada.",
+      );
     }
 
     const sincronizadoEm = new Date().toISOString();
@@ -321,35 +332,42 @@ Deno.serve(async (req) => {
       throw new Error(`Finalizando controle da sincronização rápida: ${conclusao.error.message}`);
     }
 
-    return new Response(JSON.stringify({
-      sucesso: true,
-      modo: "rapido",
-      cExibeTodos: "N",
-      versao_logica: 3,
-      base_paginada: true,
-      trava_compartilhada_com_sincronizacao_completa: true,
-      tabela: "estoque_produto_acabado_omie",
-      tipo_item: "04",
-      somente_produtos_ja_validados_na_base: true,
-      somente_locais_ativos: true,
-      campo_pendente_preservado: true,
-      criou_cron: false,
-      linhas_base_lidas: base.length,
-      chaves_base_validas: chavesBase.size,
-      produtos_base_validos: produtosBase.size,
-      paginas_estoque: totalPaginas,
-      registros_retornados_omie: posicoes.length,
-      posicoes_validas_aplicadas: posicoesFiltradas.length,
-      resultado_snapshot: resultado,
-      linhas_depois: totalDepois ?? 0,
-      matriz: {
-        registros: (matrizDados ?? []).length,
-        produtos_com_saldo_diferente_zero: matrizComSaldo,
-        pendente_total_preservado: pendenteTotalMatriz,
-      },
-      data_posicao: dataPosicaoBr,
-      duracao_ms: duracaoMs,
-    }, null, 2), { status: 200, headers });
+    return new Response(
+      JSON.stringify(
+        {
+          sucesso: true,
+          modo: "rapido",
+          cExibeTodos: "N",
+          versao_logica: 3,
+          base_paginada: true,
+          trava_compartilhada_com_sincronizacao_completa: true,
+          tabela: "estoque_produto_acabado_omie",
+          tipo_item: "04",
+          somente_produtos_ja_validados_na_base: true,
+          somente_locais_ativos: true,
+          campo_pendente_preservado: true,
+          criou_cron: false,
+          linhas_base_lidas: base.length,
+          chaves_base_validas: chavesBase.size,
+          produtos_base_validos: produtosBase.size,
+          paginas_estoque: totalPaginas,
+          registros_retornados_omie: posicoes.length,
+          posicoes_validas_aplicadas: posicoesFiltradas.length,
+          resultado_snapshot: resultado,
+          linhas_depois: totalDepois ?? 0,
+          matriz: {
+            registros: (matrizDados ?? []).length,
+            produtos_com_saldo_diferente_zero: matrizComSaldo,
+            pendente_total_preservado: pendenteTotalMatriz,
+          },
+          data_posicao: dataPosicaoBr,
+          duracao_ms: duracaoMs,
+        },
+        null,
+        2,
+      ),
+      { status: 200, headers },
+    );
   } catch (erro) {
     if (supabase && travou) {
       const fim = new Date().toISOString();
@@ -366,15 +384,22 @@ Deno.serve(async (req) => {
         .eq("id", 1);
     }
 
-    return new Response(JSON.stringify({
-      sucesso: false,
-      modo: "rapido",
-      versao_logica: 3,
-      base_paginada: true,
-      trava_compartilhada_com_sincronizacao_completa: true,
-      criou_cron: false,
-      erro: textoErro(erro),
-      duracao_ms: Date.now() - inicioMs,
-    }, null, 2), { status: 500, headers });
+    return new Response(
+      JSON.stringify(
+        {
+          sucesso: false,
+          modo: "rapido",
+          versao_logica: 3,
+          base_paginada: true,
+          trava_compartilhada_com_sincronizacao_completa: true,
+          criou_cron: false,
+          erro: textoErro(erro),
+          duracao_ms: Date.now() - inicioMs,
+        },
+        null,
+        2,
+      ),
+      { status: 500, headers },
+    );
   }
 });

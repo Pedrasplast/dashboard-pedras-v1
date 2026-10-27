@@ -123,20 +123,11 @@ for (const arquivo of arquivos) {
       ? ts.ScriptKind.JSX
       : ts.ScriptKind.JS;
 
-  const sourceFile = ts.createSourceFile(
-    arquivo,
-    codigo,
-    ts.ScriptTarget.Latest,
-    true,
-    scriptKind,
-  );
+  const sourceFile = ts.createSourceFile(arquivo, codigo, ts.ScriptTarget.Latest, true, scriptKind);
 
   for (const declaracao of sourceFile.statements) {
     if (
-      !(
-        ts.isImportDeclaration(declaracao) ||
-        ts.isExportDeclaration(declaracao)
-      ) ||
+      !(ts.isImportDeclaration(declaracao) || ts.isExportDeclaration(declaracao)) ||
       !declaracao.moduleSpecifier ||
       !ts.isStringLiteral(declaracao.moduleSpecifier)
     ) {
@@ -147,9 +138,7 @@ for (const arquivo of arquivos) {
     const resolvido = resolverImportLocal(especificador, arquivo);
 
     if (resolvido === false) {
-      erros.push(
-        `${path.relative(raiz, arquivo)}: import local não encontrado: ${especificador}`,
-      );
+      erros.push(`${path.relative(raiz, arquivo)}: import local não encontrado: ${especificador}`);
     }
   }
 }

@@ -76,10 +76,9 @@ const formatarTempoComMilhar = (valor) => {
   if (partes.length < 2) return texto;
   const horas = Number(partes[0]);
   if (!Number.isFinite(horas)) return texto;
-  return [
-    horas.toLocaleString("pt-BR", { maximumFractionDigits: 0 }),
-    ...partes.slice(1),
-  ].join(":");
+  return [horas.toLocaleString("pt-BR", { maximumFractionDigits: 0 }), ...partes.slice(1)].join(
+    ":",
+  );
 };
 
 export const criarTituloAutomatico = (chave) =>
@@ -114,9 +113,9 @@ export const obterValorVisualizacao = (item, chave) => {
     case "duracao":
       return formatarTempoComMilhar(item.duracao || item.tempo);
     case "produtividade_hora":
-      return Math.round(
-        converterNumeroVisualizacao(item.produtividade_hora),
-      ).toLocaleString("pt-BR");
+      return Math.round(converterNumeroVisualizacao(item.produtividade_hora)).toLocaleString(
+        "pt-BR",
+      );
     case "qualidade":
       return `${converterNumeroVisualizacao(item.qualidade).toLocaleString("pt-BR", {
         minimumFractionDigits: 2,

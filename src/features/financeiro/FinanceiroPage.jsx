@@ -1,33 +1,20 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import "./FinanceiroPage.css";
 
-import {
-  WalletCards,
-} from "lucide-react";
+import { WalletCards } from "lucide-react";
 
-import PageHeader
-  from "@/components/layout/PageHeader";
+import PageHeader from "@/components/layout/PageHeader";
 
-import FinanceiroStatusSincronizacao
-  from "./components/FinanceiroStatusSincronizacao";
+import FinanceiroStatusSincronizacao from "./components/FinanceiroStatusSincronizacao";
 
-import FinanceiroDetalhes
-  from "./components/FinanceiroDetalhes";
+import FinanceiroDetalhes from "./components/FinanceiroDetalhes";
 
-import FinanceiroFiltros
-  from "./components/FinanceiroFiltros";
+import FinanceiroFiltros from "./components/FinanceiroFiltros";
 
-import FinanceiroResumo
-  from "./components/FinanceiroResumo";
+import FinanceiroResumo from "./components/FinanceiroResumo";
 
-import FinanceiroTabela
-  from "./components/FinanceiroTabela";
+import FinanceiroTabela from "./components/FinanceiroTabela";
 
 import {
   useFinanceiroAnos,
@@ -35,31 +22,21 @@ import {
   useFinanceiroSincronizacao,
 } from "./hooks/useFinanceiro";
 
-import {
-  mesesFinanceiro,
-  processarFinanceiro,
-} from "./utils/financeiro.utils";
-
+import { mesesFinanceiro, processarFinanceiro } from "./utils/financeiro.utils";
 
 /* =========================================================
    PERÍODO INICIAL
 ========================================================= */
 
 function obterPeriodoAtual() {
-  const agora =
-    new Date();
-
+  const agora = new Date();
 
   return {
-    ano:
-      agora.getFullYear(),
+    ano: agora.getFullYear(),
 
-    mes:
-      agora.getMonth() +
-      1,
+    mes: agora.getMonth() + 1,
   };
 }
-
 
 /* =========================================================
    NORMALIZAR TEXTO PARA PESQUISA
@@ -73,63 +50,26 @@ function obterPeriodoAtual() {
    "Manutenção" -> "manutencao"
 ========================================================= */
 
-function normalizarTexto(
-  valor,
-) {
-  return String(
-    valor ?? "",
-  )
-    .normalize(
-      "NFD",
-    )
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    )
+function normalizarTexto(valor) {
+  return String(valor ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim()
     .toLowerCase();
 }
-
 
 /* =========================================================
    PÁGINA
 ========================================================= */
 
 export default function FinanceiroPage() {
-  const periodoInicial =
-    useMemo(
-      () =>
-        obterPeriodoAtual(),
-      [],
-    );
+  const periodoInicial = useMemo(() => obterPeriodoAtual(), []);
 
+  const [ano, definirAno] = useState(periodoInicial.ano);
 
-  const [
-    ano,
-    definirAno,
-  ] =
-    useState(
-      periodoInicial.ano,
-    );
+  const [mes, definirMes] = useState(periodoInicial.mes);
 
-
-  const [
-    mes,
-    definirMes,
-  ] =
-    useState(
-      periodoInicial.mes,
-    );
-
-
-  const [
-    tipo,
-    definirTipo,
-  ] =
-    useState(
-      "todos",
-    );
-
+  const [tipo, definirTipo] = useState("todos");
 
   /*
    * Categoria utilizada para filtrar
@@ -137,14 +77,7 @@ export default function FinanceiroPage() {
    *
    * "todas" = nenhuma categoria específica.
    */
-  const [
-    categoriaFiltro,
-    definirCategoriaFiltro,
-  ] =
-    useState(
-      "todas",
-    );
-
+  const [categoriaFiltro, definirCategoriaFiltro] = useState("todas");
 
   /*
    * Pesquisa livre.
@@ -154,39 +87,20 @@ export default function FinanceiroPage() {
    * - categoria
    * - tipo
    */
-  const [
-    buscaLivre,
-    definirBuscaLivre,
-  ] =
-    useState(
-      "",
-    );
-
+  const [buscaLivre, definirBuscaLivre] = useState("");
 
   /*
    * Categoria aberta no modal de detalhes.
    *
    * Não confundir com categoriaFiltro.
    */
-  const [
-    categoriaSelecionada,
-    definirCategoriaSelecionada,
-  ] =
-    useState(
-      null,
-    );
-
+  const [categoriaSelecionada, definirCategoriaSelecionada] = useState(null);
 
   /* =======================================================
      ANOS DISPONÍVEIS NO BANCO
   ======================================================= */
 
-  const {
-    data:
-      anosDisponiveis = [],
-  } =
-    useFinanceiroAnos();
-
+  const { data: anosDisponiveis = [] } = useFinanceiroAnos();
 
   /* =======================================================
      SE O ANO ATUAL NÃO EXISTIR NO BANCO
@@ -194,107 +108,55 @@ export default function FinanceiroPage() {
      Selecionamos automaticamente o ano mais recente.
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (
-        !Array.isArray(
-          anosDisponiveis,
-        ) ||
-        anosDisponiveis.length ===
-          0
-      ) {
-        return;
-      }
+  useEffect(() => {
+    if (!Array.isArray(anosDisponiveis) || anosDisponiveis.length === 0) {
+      return;
+    }
 
+    const anoExiste = anosDisponiveis.includes(Number(ano));
 
-      const anoExiste =
-        anosDisponiveis.includes(
-          Number(
-            ano,
-          ),
-        );
+    if (!anoExiste) {
+      definirAno(anosDisponiveis[0]);
 
+      definirCategoriaSelecionada(null);
 
-      if (!anoExiste) {
-        definirAno(
-          anosDisponiveis[0],
-        );
+      definirCategoriaFiltro("todas");
 
-        definirCategoriaSelecionada(
-          null,
-        );
-
-        definirCategoriaFiltro(
-          "todas",
-        );
-
-        definirBuscaLivre(
-          "",
-        );
-      }
-    },
-    [
-      anosDisponiveis,
-      ano,
-    ],
-  );
-
+      definirBuscaLivre("");
+    }
+  }, [anosDisponiveis, ano]);
 
   /* =======================================================
      RESUMO FINANCEIRO
   ======================================================= */
 
   const {
-    data:
-      dadosFinanceiro = [],
+    data: dadosFinanceiro = [],
 
-    isLoading:
-      carregandoFinanceiro,
+    isLoading: carregandoFinanceiro,
 
-    isFetching:
-      atualizandoFinanceiro,
+    isFetching: atualizandoFinanceiro,
 
-    isError:
-      erroFinanceiro,
+    isError: erroFinanceiro,
 
-    error:
-      detalheErroFinanceiro,
-  } =
-    useFinanceiroResumo(
-      ano,
-      mes,
-    );
-
+    error: detalheErroFinanceiro,
+  } = useFinanceiroResumo(ano, mes);
 
   /* =======================================================
      SINCRONIZAÇÃO
   ======================================================= */
 
   const {
-    data:
-      sincronizacao,
+    data: sincronizacao,
 
-    isLoading:
-      carregandoSincronizacao,
-  } =
-    useFinanceiroSincronizacao();
-
+    isLoading: carregandoSincronizacao,
+  } = useFinanceiroSincronizacao();
 
   /* =======================================================
      PROCESSAR
   ======================================================= */
 
-  const financeiro =
-    useMemo(
-      () =>
-        processarFinanceiro(
-          dadosFinanceiro,
-        ),
-      [
-        dadosFinanceiro,
-      ],
-    );
-
+  const financeiro = useMemo(() => processarFinanceiro(dadosFinanceiro), [dadosFinanceiro]);
 
   /* =======================================================
      FILTRO POR TIPO
@@ -307,36 +169,17 @@ export default function FinanceiroPage() {
      Depois os outros filtros são aplicados.
   ======================================================= */
 
-  const linhasPorTipo =
-    useMemo(
-      () => {
-        if (
-          tipo ===
-          "receitas"
-        ) {
-          return financeiro
-            .receitas;
-        }
+  const linhasPorTipo = useMemo(() => {
+    if (tipo === "receitas") {
+      return financeiro.receitas;
+    }
 
+    if (tipo === "despesas") {
+      return financeiro.despesas;
+    }
 
-        if (
-          tipo ===
-          "despesas"
-        ) {
-          return financeiro
-            .despesas;
-        }
-
-
-        return financeiro
-          .linhas;
-      },
-      [
-        financeiro,
-        tipo,
-      ],
-    );
-
+    return financeiro.linhas;
+  }, [financeiro, tipo]);
 
   /* =======================================================
      CATEGORIAS DISPONÍVEIS
@@ -348,101 +191,41 @@ export default function FinanceiroPage() {
      evitando problemas com categorias de mesmo nome.
   ======================================================= */
 
-  const categoriasDisponiveis =
-    useMemo(
-      () => {
-        const mapa =
-          new Map();
+  const categoriasDisponiveis = useMemo(() => {
+    const mapa = new Map();
 
+    for (const linha of linhasPorTipo) {
+      const codigo = String(linha?.codigo_categoria ?? "").trim();
 
-        for (
-          const linha of
-          linhasPorTipo
-        ) {
-          const codigo =
-            String(
-              linha
-                ?.codigo_categoria ??
-                "",
-            ).trim();
+      const categoria = String(linha?.categoria ?? "").trim();
 
+      if (!codigo && !categoria) {
+        continue;
+      }
 
-          const categoria =
-            String(
-              linha
-                ?.categoria ??
-                "",
-            ).trim();
+      const chave = codigo || categoria;
 
+      if (mapa.has(chave)) {
+        continue;
+      }
 
-          if (
-            !codigo &&
-            !categoria
-          ) {
-            continue;
-          }
+      mapa.set(chave, {
+        valor: chave,
 
+        codigo,
 
-          const chave =
-            codigo ||
-            categoria;
+        categoria,
 
+        label: codigo && categoria ? `${codigo} - ${categoria}` : categoria || codigo,
+      });
+    }
 
-          if (
-            mapa.has(
-              chave,
-            )
-          ) {
-            continue;
-          }
-
-
-          mapa.set(
-            chave,
-            {
-              valor:
-                chave,
-
-              codigo,
-
-              categoria,
-
-              label:
-                codigo &&
-                categoria
-                  ? `${codigo} - ${categoria}`
-                  : categoria ||
-                    codigo,
-            },
-          );
-        }
-
-
-        return Array
-          .from(
-            mapa.values(),
-          )
-          .sort(
-            (
-              primeiro,
-              segundo,
-            ) =>
-              primeiro.label
-                .localeCompare(
-                  segundo.label,
-                  "pt-BR",
-                  {
-                    numeric:
-                      true,
-                  },
-                ),
-          );
-      },
-      [
-        linhasPorTipo,
-      ],
+    return Array.from(mapa.values()).sort((primeiro, segundo) =>
+      primeiro.label.localeCompare(segundo.label, "pt-BR", {
+        numeric: true,
+      }),
     );
-
+  }, [linhasPorTipo]);
 
   /* =======================================================
      CORRIGIR CATEGORIA QUANDO TIPO MUDAR
@@ -454,39 +237,17 @@ export default function FinanceiroPage() {
      A categoria antiga deixa de ser válida.
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (
-        categoriaFiltro ===
-        "todas"
-      ) {
-        return;
-      }
+  useEffect(() => {
+    if (categoriaFiltro === "todas") {
+      return;
+    }
 
+    const existe = categoriasDisponiveis.some((categoria) => categoria.valor === categoriaFiltro);
 
-      const existe =
-        categoriasDisponiveis
-          .some(
-            (
-              categoria,
-            ) =>
-              categoria.valor ===
-              categoriaFiltro,
-          );
-
-
-      if (!existe) {
-        definirCategoriaFiltro(
-          "todas",
-        );
-      }
-    },
-    [
-      categoriasDisponiveis,
-      categoriaFiltro,
-    ],
-  );
-
+    if (!existe) {
+      definirCategoriaFiltro("todas");
+    }
+  }, [categoriasDisponiveis, categoriaFiltro]);
 
   /* =======================================================
      FILTRAR TABELA
@@ -497,300 +258,122 @@ export default function FinanceiroPage() {
      3. Pesquisa livre
   ======================================================= */
 
-  const linhasTabela =
-    useMemo(
-      () => {
-        let resultado =
-          linhasPorTipo;
+  const linhasTabela = useMemo(() => {
+    let resultado = linhasPorTipo;
 
-
-        /* ===============================================
+    /* ===============================================
            CATEGORIA
         =============================================== */
 
-        if (
-          categoriaFiltro !==
-          "todas"
-        ) {
-          resultado =
-            resultado.filter(
-              (
-                linha,
-              ) => {
-                const codigo =
-                  String(
-                    linha
-                      ?.codigo_categoria ??
-                      "",
-                  ).trim();
+    if (categoriaFiltro !== "todas") {
+      resultado = resultado.filter((linha) => {
+        const codigo = String(linha?.codigo_categoria ?? "").trim();
 
+        const categoria = String(linha?.categoria ?? "").trim();
 
-                const categoria =
-                  String(
-                    linha
-                      ?.categoria ??
-                      "",
-                  ).trim();
+        return codigo === categoriaFiltro || categoria === categoriaFiltro;
+      });
+    }
 
-
-                return (
-                  codigo ===
-                    categoriaFiltro ||
-                  categoria ===
-                    categoriaFiltro
-                );
-              },
-            );
-        }
-
-
-        /* ===============================================
+    /* ===============================================
            PESQUISA LIVRE
         =============================================== */
 
-        const termo =
-          normalizarTexto(
-            buscaLivre,
-          );
+    const termo = normalizarTexto(buscaLivre);
 
+    if (termo) {
+      resultado = resultado.filter((linha) => {
+        const conteudo = normalizarTexto(
+          [linha?.codigo_categoria, linha?.categoria, linha?.tipo].filter(Boolean).join(" "),
+        );
 
-        if (termo) {
-          resultado =
-            resultado.filter(
-              (
-                linha,
-              ) => {
-                const conteudo =
-                  normalizarTexto(
-                    [
-                      linha
-                        ?.codigo_categoria,
+        return conteudo.includes(termo);
+      });
+    }
 
-                      linha
-                        ?.categoria,
-
-                      linha
-                        ?.tipo,
-                    ]
-                      .filter(
-                        Boolean,
-                      )
-                      .join(
-                        " ",
-                      ),
-                  );
-
-
-                return conteudo.includes(
-                  termo,
-                );
-              },
-            );
-        }
-
-
-        return resultado;
-      },
-      [
-        linhasPorTipo,
-        categoriaFiltro,
-        buscaLivre,
-      ],
-    );
-
+    return resultado;
+  }, [linhasPorTipo, categoriaFiltro, buscaLivre]);
 
   /* =======================================================
      NOME MÊS
   ======================================================= */
 
-  const nomeMes =
-    useMemo(
-      () =>
-        mesesFinanceiro.find(
-          (
-            item,
-          ) =>
-            item.valor ===
-            mes,
-        )?.nome ??
-        "",
-      [
-        mes,
-      ],
-    );
-
+  const nomeMes = useMemo(
+    () => mesesFinanceiro.find((item) => item.valor === mes)?.nome ?? "",
+    [mes],
+  );
 
   /* =======================================================
      DETALHES
   ======================================================= */
 
-  const abrirDetalhes =
-    useCallback(
-      (
-        categoria,
-      ) => {
-        definirCategoriaSelecionada(
-          categoria,
-        );
-      },
-      [],
-    );
+  const abrirDetalhes = useCallback((categoria) => {
+    definirCategoriaSelecionada(categoria);
+  }, []);
 
-
-  const fecharDetalhes =
-    useCallback(
-      () => {
-        definirCategoriaSelecionada(
-          null,
-        );
-      },
-      [],
-    );
-
+  const fecharDetalhes = useCallback(() => {
+    definirCategoriaSelecionada(null);
+  }, []);
 
   /* =======================================================
      FILTROS
   ======================================================= */
 
-  const alterarMes =
-    useCallback(
-      (
-        novoMes,
-      ) => {
-        definirMes(
-          novoMes,
-        );
+  const alterarMes = useCallback((novoMes) => {
+    definirMes(novoMes);
 
-        definirCategoriaSelecionada(
-          null,
-        );
+    definirCategoriaSelecionada(null);
 
-        definirCategoriaFiltro(
-          "todas",
-        );
+    definirCategoriaFiltro("todas");
 
-        definirBuscaLivre(
-          "",
-        );
-      },
-      [],
-    );
+    definirBuscaLivre("");
+  }, []);
 
+  const alterarAno = useCallback((novoAno) => {
+    definirAno(novoAno);
 
-  const alterarAno =
-    useCallback(
-      (
-        novoAno,
-      ) => {
-        definirAno(
-          novoAno,
-        );
+    definirCategoriaSelecionada(null);
 
-        definirCategoriaSelecionada(
-          null,
-        );
+    definirCategoriaFiltro("todas");
 
-        definirCategoriaFiltro(
-          "todas",
-        );
+    definirBuscaLivre("");
+  }, []);
 
-        definirBuscaLivre(
-          "",
-        );
-      },
-      [],
-    );
+  const alterarTipo = useCallback((novoTipo) => {
+    definirTipo(novoTipo);
 
+    definirCategoriaSelecionada(null);
 
-  const alterarTipo =
-    useCallback(
-      (
-        novoTipo,
-      ) => {
-        definirTipo(
-          novoTipo,
-        );
+    definirCategoriaFiltro("todas");
+  }, []);
 
-        definirCategoriaSelecionada(
-          null,
-        );
+  const alterarCategoriaFiltro = useCallback((novaCategoria) => {
+    definirCategoriaFiltro(novaCategoria);
 
-        definirCategoriaFiltro(
-          "todas",
-        );
-      },
-      [],
-    );
+    definirCategoriaSelecionada(null);
+  }, []);
 
+  const alterarBuscaLivre = useCallback((novoValor) => {
+    definirBuscaLivre(novoValor);
 
-  const alterarCategoriaFiltro =
-    useCallback(
-      (
-        novaCategoria,
-      ) => {
-        definirCategoriaFiltro(
-          novaCategoria,
-        );
+    definirCategoriaSelecionada(null);
+  }, []);
 
-        definirCategoriaSelecionada(
-          null,
-        );
-      },
-      [],
-    );
+  const limparFiltros = useCallback(() => {
+    definirTipo("todos");
 
+    definirCategoriaFiltro("todas");
 
-  const alterarBuscaLivre =
-    useCallback(
-      (
-        novoValor,
-      ) => {
-        definirBuscaLivre(
-          novoValor,
-        );
+    definirBuscaLivre("");
 
-        definirCategoriaSelecionada(
-          null,
-        );
-      },
-      [],
-    );
-
-
-  const limparFiltros =
-    useCallback(
-      () => {
-        definirTipo(
-          "todos",
-        );
-
-        definirCategoriaFiltro(
-          "todas",
-        );
-
-        definirBuscaLivre(
-          "",
-        );
-
-        definirCategoriaSelecionada(
-          null,
-        );
-      },
-      [],
-    );
-
+    definirCategoriaSelecionada(null);
+  }, []);
 
   const possuiFiltroAdicional =
-    tipo !== "todos" ||
-    categoriaFiltro !== "todas" ||
-    Boolean(
-      buscaLivre.trim(),
-    );
-
+    tipo !== "todos" || categoriaFiltro !== "todas" || Boolean(buscaLivre.trim());
 
   return (
     <main className="financeiro-page">
-
       {/* ===================================================
           CABEÇALHO
       =================================================== */}
@@ -799,113 +382,56 @@ export default function FinanceiroPage() {
         eyebrow="Gestão financeira"
         title="Financeiro"
         description="Previsto x realizado"
-        icon={
-          WalletCards
-        }
+        icon={WalletCards}
         className="financeiro-cabecalho"
         actions={
           <FinanceiroStatusSincronizacao
-            sincronizacao={
-              sincronizacao
-            }
-            carregando={
-              carregandoSincronizacao
-            }
+            sincronizacao={sincronizacao}
+            carregando={carregandoSincronizacao}
           />
         }
       />
-
 
       {/* ===================================================
           FILTROS
       =================================================== */}
 
       <FinanceiroFiltros
-        mes={
-          mes
-        }
-
-        ano={
-          ano
-        }
-
-        tipo={
-          tipo
-        }
-
-        categoria={
-          categoriaFiltro
-        }
-
-        busca={
-          buscaLivre
-        }
-
-        categoriasDisponiveis={
-          categoriasDisponiveis
-        }
-
-        anosDisponiveis={
-          anosDisponiveis
-        }
-
-        possuiFiltroAdicional={
-          possuiFiltroAdicional
-        }
-
-        aoAlterarMes={
-          alterarMes
-        }
-
-        aoAlterarAno={
-          alterarAno
-        }
-
-        aoAlterarTipo={
-          alterarTipo
-        }
-
-        aoAlterarCategoria={
-          alterarCategoriaFiltro
-        }
-
-        aoAlterarBusca={
-          alterarBuscaLivre
-        }
-
-        aoLimparFiltros={
-          limparFiltros
-        }
+        mes={mes}
+        ano={ano}
+        tipo={tipo}
+        categoria={categoriaFiltro}
+        busca={buscaLivre}
+        categoriasDisponiveis={categoriasDisponiveis}
+        anosDisponiveis={anosDisponiveis}
+        possuiFiltroAdicional={possuiFiltroAdicional}
+        aoAlterarMes={alterarMes}
+        aoAlterarAno={alterarAno}
+        aoAlterarTipo={alterarTipo}
+        aoAlterarCategoria={alterarCategoriaFiltro}
+        aoAlterarBusca={alterarBuscaLivre}
+        aoLimparFiltros={limparFiltros}
       />
-
 
       {/* ===================================================
           PERÍODO
       =================================================== */}
 
       <div className="financeiro-periodo">
-
-        <span>
-          Período selecionado
-        </span>
+        <span>Período selecionado</span>
 
         <strong>
           {nomeMes} / {ano}
         </strong>
-
       </div>
-
 
       {/* ===================================================
           CARREGANDO
       =================================================== */}
 
       {carregandoFinanceiro && (
-        <div className="financeiro-status">
-          Carregando dados financeiros...
-        </div>
+        <div className="financeiro-status">Carregando dados financeiros...</div>
       )}
-
 
       {/* ===================================================
           ERRO
@@ -913,24 +439,17 @@ export default function FinanceiroPage() {
 
       {erroFinanceiro && (
         <div className="financeiro-status financeiro-status-erro">
-
-          {detalheErroFinanceiro
-            ?.message ||
-            "Não foi possível carregar os dados financeiros."}
-
+          {detalheErroFinanceiro?.message || "Não foi possível carregar os dados financeiros."}
         </div>
       )}
-
 
       {/* ===================================================
           DADOS
       =================================================== */}
 
-      {!carregandoFinanceiro &&
-        !erroFinanceiro && (
-          <>
-
-            {/* =============================================
+      {!carregandoFinanceiro && !erroFinanceiro && (
+        <>
+          {/* =============================================
                 RESUMO
 
                 Os cards continuam representando o período
@@ -938,109 +457,47 @@ export default function FinanceiroPage() {
                 somente a tabela.
             ============================================= */}
 
-            <FinanceiroResumo
-              resumo={
-                financeiro
-                  .resumo
-              }
-            />
+          <FinanceiroResumo resumo={financeiro.resumo} />
 
+          {atualizandoFinanceiro && (
+            <div className="financeiro-atualizando">Atualizando dados...</div>
+          )}
 
-            {atualizandoFinanceiro && (
-              <div className="financeiro-atualizando">
-                Atualizando dados...
+          <section className="financeiro-conteudo">
+            <div className="financeiro-tabela-cabecalho">
+              <div>
+                <h2>Categorias financeiras</h2>
+
+                <span>
+                  {linhasTabela.length} categoria
+                  {linhasTabela.length === 1 ? "" : "s"}
+                  {possuiFiltroAdicional && (
+                    <>
+                      {" "}
+                      encontrada
+                      {linhasTabela.length === 1 ? "" : "s"}
+                    </>
+                  )}
+                </span>
               </div>
-            )}
+            </div>
 
-
-            <section className="financeiro-conteudo">
-
-              <div className="financeiro-tabela-cabecalho">
-
-                <div>
-
-                  <h2>
-                    Categorias financeiras
-                  </h2>
-
-                  <span>
-                    {
-                      linhasTabela
-                        .length
-                    }{" "}
-                    categoria
-                    {
-                      linhasTabela
-                        .length ===
-                      1
-                        ? ""
-                        : "s"
-                    }
-
-                    {possuiFiltroAdicional && (
-                      <>
-                        {" "}
-                        encontrada
-                        {
-                          linhasTabela
-                            .length ===
-                          1
-                            ? ""
-                            : "s"
-                        }
-                      </>
-                    )}
-                  </span>
-
-                </div>
-
-              </div>
-
-
-              <FinanceiroTabela
-                linhas={
-                  linhasTabela
-                }
-
-                aoDetalhar={
-                  abrirDetalhes
-                }
-              />
-
-            </section>
-
-          </>
-        )}
-
+            <FinanceiroTabela linhas={linhasTabela} aoDetalhar={abrirDetalhes} />
+          </section>
+        </>
+      )}
 
       {/* ===================================================
           DETALHAMENTO
       =================================================== */}
 
       <FinanceiroDetalhes
-        aberto={
-          Boolean(
-            categoriaSelecionada,
-          )
-        }
-
-        ano={
-          ano
-        }
-
-        mes={
-          mes
-        }
-
-        categoria={
-          categoriaSelecionada
-        }
-
-        aoFechar={
-          fecharDetalhes
-        }
+        aberto={Boolean(categoriaSelecionada)}
+        ano={ano}
+        mes={mes}
+        categoria={categoriaSelecionada}
+        aoFechar={fecharDetalhes}
       />
-
     </main>
   );
 }

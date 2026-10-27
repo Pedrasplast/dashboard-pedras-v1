@@ -2,11 +2,7 @@ import Paginacao from "@/components/paginacao/Paginacao";
 
 import { PEDIDOS_POR_PAGINA } from "../constants/pedidos.constants";
 import PedidosTabela from "./PedidosTabela";
-import {
-  PedidosCarregando,
-  PedidosErro,
-  PedidosVazio,
-} from "./PedidosEstado";
+import { PedidosCarregando, PedidosErro, PedidosVazio } from "./PedidosEstado";
 
 export default function PedidosConteudo({
   tituloLista,
@@ -27,9 +23,7 @@ export default function PedidosConteudo({
 }) {
   return (
     <section
-      className={`pedidos-content${
-        visualizandoCancelados ? " pedidos-content-cancelados" : ""
-      }`}
+      className={`pedidos-content${visualizandoCancelados ? " pedidos-content-cancelados" : ""}`}
     >
       <div className="pedidos-content-header">
         <div>
@@ -48,9 +42,7 @@ export default function PedidosConteudo({
 
         <span
           className={
-            visualizandoCancelados
-              ? "pedidos-demo pedidos-demo-cancelado"
-              : "pedidos-demo"
+            visualizandoCancelados ? "pedidos-demo pedidos-demo-cancelado" : "pedidos-demo"
           }
         >
           {visualizandoCancelados ? "Somente consulta" : "Dados do Omie"}

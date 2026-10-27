@@ -24,67 +24,27 @@ import { usePermissoes } from "@/hooks/usePermissoes";
  *   exclusivamente administrativas,
  *   como Gerenciar Usuários.
  */
-export default function RotaProtegida({
-  children,
-  exigirAdmin = false,
-  permissao = null,
-}) {
-  const {
-    user,
-    isAdmin,
-    loadingAuth,
-    loadingPerfil,
-  } = useAuthContext();
+export default function RotaProtegida({ children, exigirAdmin = false, permissao = null }) {
+  const { user, isAdmin, loadingAuth, loadingPerfil } = useAuthContext();
 
-  const {
-    podeAcessarTela,
-    loadingPermissoes,
-  } = usePermissoes();
+  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
 
   const navigate = useNavigate();
 
-  const precisaCarregarPermissoes =
-    Boolean(
-      user &&
-      !isAdmin &&
-      !exigirAdmin &&
-      permissao
-    );
+  const precisaCarregarPermissoes = Boolean(user && !isAdmin && !exigirAdmin && permissao);
 
   const carregando =
-    loadingAuth ||
-    loadingPerfil ||
-    (
-      precisaCarregarPermissoes &&
-      loadingPermissoes
-    );
+    loadingAuth || loadingPerfil || (precisaCarregarPermissoes && loadingPermissoes);
 
-  const semLogin =
-    !carregando &&
-    !user;
+  const semLogin = !carregando && !user;
 
-  const semAcessoAdmin =
-    !carregando &&
-    Boolean(
-      user &&
-      exigirAdmin &&
-      !isAdmin
-    );
+  const semAcessoAdmin = !carregando && Boolean(user && exigirAdmin && !isAdmin);
 
   const semPermissaoTela =
     !carregando &&
-    Boolean(
-      user &&
-      !isAdmin &&
-      !exigirAdmin &&
-      permissao &&
-      !podeAcessarTela(permissao)
-    );
+    Boolean(user && !isAdmin && !exigirAdmin && permissao && !podeAcessarTela(permissao));
 
-  const semAcesso =
-    semLogin ||
-    semAcessoAdmin ||
-    semPermissaoTela;
+  const semAcesso = semLogin || semAcessoAdmin || semPermissaoTela;
 
   useEffect(() => {
     if (!semAcesso) {
@@ -92,34 +52,20 @@ export default function RotaProtegida({
     }
 
     if (!user) {
-      navigate(
-        "/login",
-        {
-          replace: true,
-        }
-      );
+      navigate("/login", {
+        replace: true,
+      });
 
       return;
     }
 
-    navigate(
-      "/",
-      {
-        replace: true,
-      }
-    );
-  }, [
-    semAcesso,
-    user,
-    navigate,
-  ]);
+    navigate("/", {
+      replace: true,
+    });
+  }, [semAcesso, user, navigate]);
 
   if (carregando) {
-    return (
-      <div className="estado-carregando">
-        Carregando...
-      </div>
-    );
+    return <div className="estado-carregando">Carregando...</div>;
   }
 
   if (semAcesso) {

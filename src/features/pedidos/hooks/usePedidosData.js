@@ -14,10 +14,7 @@ import {
   buscarPedidosDiretoSupabase,
   marcarPedidoComoVisualizado as marcarPedidoComoVisualizadoService,
 } from "../services/pedidos.service";
-import {
-  criarMapaNotificacoes,
-  obterCodigoPedidoOmie,
-} from "../utils/pedidos.utils";
+import { criarMapaNotificacoes, obterCodigoPedidoOmie } from "../utils/pedidos.utils";
 
 export function usePedidosData() {
   const {
@@ -37,10 +34,7 @@ export function usePedidosData() {
     retry: 1,
   });
 
-  const {
-    data: notificacoesPendentes = [],
-    refetch: refetchNotificacoes,
-  } = useQuery({
+  const { data: notificacoesPendentes = [], refetch: refetchNotificacoes } = useQuery({
     queryKey: QUERY_KEY_NOTIFICACOES,
     queryFn: buscarNotificacoesPendentes,
     refetchInterval: INTERVALO_NOTIFICACOES,
@@ -93,9 +87,7 @@ export function usePedidosData() {
 
         await refetchNotificacoes();
 
-        window.dispatchEvent(
-          new CustomEvent("pedidos-notificacoes-atualizadas"),
-        );
+        window.dispatchEvent(new CustomEvent("pedidos-notificacoes-atualizadas"));
       } catch (error) {
         console.error("Erro ao marcar pedido como visualizado:", error);
       }
@@ -105,9 +97,7 @@ export function usePedidosData() {
 
   return {
     respostaPedidos,
-    pedidos: Array.isArray(respostaPedidos?.pedidos)
-      ? respostaPedidos.pedidos
-      : [],
+    pedidos: Array.isArray(respostaPedidos?.pedidos) ? respostaPedidos.pedidos : [],
     erroConsulta,
     isLoading,
     isFetching,

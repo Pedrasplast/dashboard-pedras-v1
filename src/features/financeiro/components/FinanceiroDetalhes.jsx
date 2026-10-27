@@ -1,11 +1,7 @@
 import "./FinanceiroDetalhes.css";
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  memo,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useMemo, useState } from "react";
 
 import {
   BarChart3,
@@ -18,15 +14,9 @@ import {
   X,
 } from "lucide-react";
 
-import {
-  useFinanceiroDetalhes,
-} from "../hooks/useFinanceiro";
+import { useFinanceiroDetalhes } from "../hooks/useFinanceiro";
 
-import {
-  formatarData,
-  formatarMoeda,
-} from "../utils/financeiro.utils";
-
+import { formatarData, formatarMoeda } from "../utils/financeiro.utils";
 
 /* =========================================================
    COMPONENTE / STATUS
@@ -44,7 +34,6 @@ function nomeComponente(componente) {
   return "-";
 }
 
-
 /* =========================================================
    TEXTO PARA BUSCA
 ========================================================= */
@@ -54,12 +43,8 @@ function normalizarTexto(valor) {
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+    .replace(/[\u0300-\u036f]/g, "");
 }
-
 
 /* =========================================================
    RESUMO DOS LANÇAMENTOS
@@ -73,24 +58,16 @@ function calcularResumoDetalhes(registros) {
   let quantidadeARealizar = 0;
 
   for (const registro of registros) {
-    const valor = Number(
-      registro?.valor_componente ?? 0,
-    );
+    const valor = Number(registro?.valor_componente ?? 0);
 
-    if (
-      registro?.componente ===
-      "realizado"
-    ) {
+    if (registro?.componente === "realizado") {
       totalRealizado += valor;
       quantidadeRealizado += 1;
 
       continue;
     }
 
-    if (
-      registro?.componente ===
-      "a_realizar"
-    ) {
+    if (registro?.componente === "a_realizar") {
       totalARealizar += valor;
       quantidadeARealizar += 1;
     }
@@ -100,124 +77,66 @@ function calcularResumoDetalhes(registros) {
     totalRealizado,
     totalARealizar,
 
-    totalGeral:
-      totalRealizado +
-      totalARealizar,
+    totalGeral: totalRealizado + totalARealizar,
 
-    quantidade:
-      registros.length,
+    quantidade: registros.length,
 
     quantidadeRealizado,
     quantidadeARealizar,
   };
 }
 
-
 /* =========================================================
    LINHA DA TABELA
 ========================================================= */
 
-const LinhaDetalhe = memo(
-  function LinhaDetalhe({
-    registro,
-  }) {
-    const componente =
-      registro?.componente;
+const LinhaDetalhe = memo(function LinhaDetalhe({ registro }) {
+  const componente = registro?.componente;
 
-    return (
-      <tr>
-        <td className="financeiro-detalhes-data">
-          {formatarData(
-            registro?.data_referencia,
-          )}
-        </td>
+  return (
+    <tr>
+      <td className="financeiro-detalhes-data">{formatarData(registro?.data_referencia)}</td>
 
-        <td className="financeiro-detalhes-cliente">
-          <span
-            title={
-              registro
-                ?.cliente_fornecedor ||
-              ""
-            }
-          >
-            {
-              registro
-                ?.cliente_fornecedor ||
-              "-"
-            }
-          </span>
-        </td>
+      <td className="financeiro-detalhes-cliente">
+        <span title={registro?.cliente_fornecedor || ""}>
+          {registro?.cliente_fornecedor || "-"}
+        </span>
+      </td>
 
-        <td>
-          {
-            registro
-              ?.numero_documento ||
-            "-"
-          }
-        </td>
+      <td>{registro?.numero_documento || "-"}</td>
 
-        <td>
-          {
-            registro
-              ?.numero_pedido ||
-            "-"
-          }
-        </td>
+      <td>{registro?.numero_pedido || "-"}</td>
 
-        <td>
-          <span
-            className={[
-              "financeiro-detalhes-badge",
+      <td>
+        <span
+          className={[
+            "financeiro-detalhes-badge",
 
-              componente ===
-              "realizado"
-                ? "financeiro-detalhes-badge-realizado"
-                : "financeiro-detalhes-badge-a-realizar",
-            ].join(" ")}
-          >
-            {nomeComponente(
-              componente,
-            )}
-          </span>
-        </td>
+            componente === "realizado"
+              ? "financeiro-detalhes-badge-realizado"
+              : "financeiro-detalhes-badge-a-realizar",
+          ].join(" ")}
+        >
+          {nomeComponente(componente)}
+        </span>
+      </td>
 
-        <td>
-          {
-            registro?.status ||
-            "-"
-          }
-        </td>
+      <td>{registro?.status || "-"}</td>
 
-        <td className="financeiro-detalhes-numero">
-          {formatarMoeda(
-            registro
-              ?.valor_documento,
-          )}
-        </td>
+      <td className="financeiro-detalhes-numero">{formatarMoeda(registro?.valor_documento)}</td>
 
-        <td className="financeiro-detalhes-numero financeiro-detalhes-valor-principal">
-          {formatarMoeda(
-            registro
-              ?.valor_componente,
-          )}
-        </td>
-      </tr>
-    );
-  },
-);
-
+      <td className="financeiro-detalhes-numero financeiro-detalhes-valor-principal">
+        {formatarMoeda(registro?.valor_componente)}
+      </td>
+    </tr>
+  );
+});
 
 /* =========================================================
    CARD DE INDICADOR
 ========================================================= */
 
-function IndicadorDetalhe({
-  titulo,
-  valor,
-  subtitulo,
-  icone: Icone,
-  variante = "neutro",
-}) {
+function IndicadorDetalhe({ titulo, valor, subtitulo, icone: Icone, variante = "neutro" }) {
   return (
     <div
       className={[
@@ -226,190 +145,102 @@ function IndicadorDetalhe({
       ].join(" ")}
     >
       <div className="financeiro-detalhes-indicador-icone">
-        <Icone
-          size={20}
-          strokeWidth={2}
-          aria-hidden="true"
-        />
+        <Icone size={20} strokeWidth={2} aria-hidden="true" />
       </div>
 
       <div className="financeiro-detalhes-indicador-conteudo">
-        <span>
-          {titulo}
-        </span>
+        <span>{titulo}</span>
 
-        <strong>
-          {valor}
-        </strong>
+        <strong>{valor}</strong>
 
-        {subtitulo && (
-          <small>
-            {subtitulo}
-          </small>
-        )}
+        {subtitulo && <small>{subtitulo}</small>}
       </div>
     </div>
   );
 }
 
-
 /* =========================================================
    COMPONENTE PRINCIPAL
 ========================================================= */
 
-function FinanceiroDetalhes({
-  aberto,
-  ano,
-  mes,
-  categoria,
-  aoFechar,
-}) {
-  const [
-    busca,
-    definirBusca,
-  ] = useState("");
+function FinanceiroDetalhes({ aberto, ano, mes, categoria, aoFechar }) {
+  const [busca, definirBusca] = useState("");
 
-  const [
-    filtroComponente,
-    definirFiltroComponente,
-  ] = useState("todos");
+  const [filtroComponente, definirFiltroComponente] = useState("todos");
 
-
-  const codigoCategoria =
-    categoria
-      ?.codigo_categoria ??
-    "";
-
+  const codigoCategoria = categoria?.codigo_categoria ?? "";
 
   /* =======================================================
      QUERY
   ======================================================= */
 
   const {
-    data:
-      detalhes = [],
+    data: detalhes = [],
 
-    isLoading:
-      carregando,
+    isLoading: carregando,
 
-    isFetching:
-      atualizando,
+    isFetching: atualizando,
 
-    isError:
-      erro,
+    isError: erro,
 
-    error:
-      detalheErro,
-  } =
-    useFinanceiroDetalhes({
-      ano,
-      mes,
-      codigoCategoria,
+    error: detalheErro,
+  } = useFinanceiroDetalhes({
+    ano,
+    mes,
+    codigoCategoria,
 
-      habilitado:
-        aberto &&
-        Boolean(
-          codigoCategoria,
-        ),
-    });
-
+    habilitado: aberto && Boolean(codigoCategoria),
+  });
 
   /* =======================================================
      RESUMO
   ======================================================= */
 
-  const resumo =
-    useMemo(
-      () =>
-        calcularResumoDetalhes(
-          detalhes,
-        ),
-      [detalhes],
-    );
-
+  const resumo = useMemo(() => calcularResumoDetalhes(detalhes), [detalhes]);
 
   /* =======================================================
      FILTROS
   ======================================================= */
 
-  const detalhesFiltrados =
-    useMemo(
-      () => {
-        const textoBusca =
-          normalizarTexto(
-            busca,
-          );
+  const detalhesFiltrados = useMemo(() => {
+    const textoBusca = normalizarTexto(busca);
 
-        const resultado =
-          [];
+    const resultado = [];
 
-        for (
-          const registro
-          of detalhes
-        ) {
-          if (
-            filtroComponente !==
-              "todos" &&
-            registro
-              ?.componente !==
-              filtroComponente
-          ) {
-            continue;
-          }
+    for (const registro of detalhes) {
+      if (filtroComponente !== "todos" && registro?.componente !== filtroComponente) {
+        continue;
+      }
 
-          if (!textoBusca) {
-            resultado.push(
-              registro,
-            );
+      if (!textoBusca) {
+        resultado.push(registro);
 
-            continue;
-          }
+        continue;
+      }
 
-          const conteudo =
-            normalizarTexto(
-              [
-                registro
-                  ?.cliente_fornecedor,
+      const conteudo = normalizarTexto(
+        [
+          registro?.cliente_fornecedor,
 
-                registro
-                  ?.numero_documento,
+          registro?.numero_documento,
 
-                registro
-                  ?.numero_pedido,
+          registro?.numero_pedido,
 
-                registro
-                  ?.status,
+          registro?.status,
 
-                registro
-                  ?.codigo_titulo_omie,
+          registro?.codigo_titulo_omie,
 
-                nomeComponente(
-                  registro
-                    ?.componente,
-                ),
-              ].join(" "),
-            );
+          nomeComponente(registro?.componente),
+        ].join(" "),
+      );
 
-          if (
-            conteudo.includes(
-              textoBusca,
-            )
-          ) {
-            resultado.push(
-              registro,
-            );
-          }
-        }
+      if (conteudo.includes(textoBusca)) {
+        resultado.push(registro);
+      }
+    }
 
-        return resultado;
-      },
-      [
-        detalhes,
-        busca,
-        filtroComponente,
-      ],
-    );
-
+    return resultado;
+  }, [detalhes, busca, filtroComponente]);
 
   /* =======================================================
      FECHAR
@@ -418,21 +249,14 @@ function FinanceiroDetalhes({
   function fecharPainel() {
     definirBusca("");
 
-    definirFiltroComponente(
-      "todos",
-    );
+    definirFiltroComponente("todos");
 
     aoFechar();
   }
 
-
-  if (
-    !aberto ||
-    !categoria
-  ) {
+  if (!aberto || !categoria) {
     return null;
   }
-
 
   return (
     <Modal
@@ -443,432 +267,218 @@ function FinanceiroDetalhes({
       tamanho="grande"
       fecharAoClicarFora={true}
     >
-
       <aside className="financeiro-detalhes-painel">
-
         {/* =================================================
             CABEÇALHO
         ================================================= */}
 
         <header className="financeiro-detalhes-cabecalho" data-modal-header="">
-
           <div className="financeiro-detalhes-identificacao">
-
-            <span className="financeiro-detalhes-codigo">
-              {
-                categoria
-                  .codigo_categoria
-              }
-            </span>
+            <span className="financeiro-detalhes-codigo">{categoria.codigo_categoria}</span>
 
             <ModalTitulo>
-              <h2 className="financeiro-detalhes-titulo">
-                {
-                  categoria
-                    .categoria
-                }
-              </h2>
+              <h2 className="financeiro-detalhes-titulo">{categoria.categoria}</h2>
             </ModalTitulo>
 
             <div className="financeiro-detalhes-periodo">
-
-              <CalendarDays
-                size={15}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <CalendarDays size={15} strokeWidth={2} aria-hidden="true" />
 
               <span>
-                {String(
-                  mes,
-                ).padStart(
-                  2,
-                  "0",
-                )}
-                /
-                {ano}
+                {String(mes).padStart(2, "0")}/{ano}
               </span>
-
             </div>
-
           </div>
-
 
           <button
             type="button"
             className="financeiro-detalhes-fechar"
             aria-label="Fechar"
-            onClick={
-              fecharPainel
-            }
+            onClick={fecharPainel}
             data-modal-fechar=""
           >
-            <X
-              size={19}
-              aria-hidden="true"
-            />
+            <X size={19} aria-hidden="true" />
           </button>
-
         </header>
-
 
         {/* =================================================
             INDICADORES PRINCIPAIS
         ================================================= */}
 
         <section className="financeiro-detalhes-principais">
-
           <IndicadorDetalhe
             titulo="Previsto"
-            valor={formatarMoeda(
-              categoria
-                .valor_previsto,
-            )}
-            icone={
-              DollarSign
-            }
+            valor={formatarMoeda(categoria.valor_previsto)}
+            icone={DollarSign}
             variante="previsto"
           />
 
           <IndicadorDetalhe
             titulo="Realizado / a realizar"
-            valor={formatarMoeda(
-              categoria
-                .valor_realizado,
-            )}
-            icone={
-              BarChart3
-            }
+            valor={formatarMoeda(categoria.valor_realizado)}
+            icone={BarChart3}
             variante="total"
           />
-
         </section>
-
 
         {/* =================================================
             COMPOSIÇÃO
         ================================================= */}
 
-        {!carregando &&
-          !erro && (
-            <section className="financeiro-detalhes-resumo">
+        {!carregando && !erro && (
+          <section className="financeiro-detalhes-resumo">
+            <IndicadorDetalhe
+              titulo="Realizado"
+              valor={formatarMoeda(resumo.totalRealizado)}
+              subtitulo={`${resumo.quantidadeRealizado} ${
+                resumo.quantidadeRealizado === 1 ? "lançamento" : "lançamentos"
+              }`}
+              icone={CheckCircle2}
+              variante="realizado"
+            />
 
-              <IndicadorDetalhe
-                titulo="Realizado"
-                valor={formatarMoeda(
-                  resumo
-                    .totalRealizado,
-                )}
-                subtitulo={`${
-                  resumo
-                    .quantidadeRealizado
-                } ${
-                  resumo
-                    .quantidadeRealizado ===
-                  1
-                    ? "lançamento"
-                    : "lançamentos"
-                }`}
-                icone={
-                  CheckCircle2
-                }
-                variante="realizado"
-              />
+            <IndicadorDetalhe
+              titulo="A realizar"
+              valor={formatarMoeda(resumo.totalARealizar)}
+              subtitulo={`${resumo.quantidadeARealizar} ${
+                resumo.quantidadeARealizar === 1 ? "lançamento" : "lançamentos"
+              }`}
+              icone={Clock3}
+              variante="a-realizar"
+            />
 
-              <IndicadorDetalhe
-                titulo="A realizar"
-                valor={formatarMoeda(
-                  resumo
-                    .totalARealizar,
-                )}
-                subtitulo={`${
-                  resumo
-                    .quantidadeARealizar
-                } ${
-                  resumo
-                    .quantidadeARealizar ===
-                  1
-                    ? "lançamento"
-                    : "lançamentos"
-                }`}
-                icone={
-                  Clock3
-                }
-                variante="a-realizar"
-              />
-
-              <IndicadorDetalhe
-                titulo="Total da composição"
-                valor={formatarMoeda(
-                  resumo
-                    .totalGeral,
-                )}
-                subtitulo={`${
-                  resumo
-                    .quantidade
-                } ${
-                  resumo
-                    .quantidade ===
-                  1
-                    ? "registro"
-                    : "registros"
-                }`}
-                icone={
-                  Layers3
-                }
-                variante="composicao"
-              />
-
-            </section>
-          )}
-
+            <IndicadorDetalhe
+              titulo="Total da composição"
+              valor={formatarMoeda(resumo.totalGeral)}
+              subtitulo={`${resumo.quantidade} ${
+                resumo.quantidade === 1 ? "registro" : "registros"
+              }`}
+              icone={Layers3}
+              variante="composicao"
+            />
+          </section>
+        )}
 
         {/* =================================================
             FILTROS
         ================================================= */}
 
-        {!carregando &&
-          !erro &&
-          detalhes.length >
-            0 && (
-            <div className="financeiro-detalhes-filtros">
+        {!carregando && !erro && detalhes.length > 0 && (
+          <div className="financeiro-detalhes-filtros">
+            <div className="financeiro-detalhes-busca">
+              <Search size={17} aria-hidden="true" />
 
-              <div className="financeiro-detalhes-busca">
+              <input
+                type="text"
+                value={busca}
+                placeholder="Buscar cliente, documento, pedido ou status..."
+                onChange={(evento) => definirBusca(evento.target.value)}
+              />
 
-                <Search
-                  size={17}
-                  aria-hidden="true"
-                />
-
-                <input
-                  type="text"
-                  value={
-                    busca
-                  }
-                  placeholder="Buscar cliente, documento, pedido ou status..."
-                  onChange={(evento) =>
-                    definirBusca(
-                      evento
-                        .target
-                        .value,
-                    )
-                  }
-                />
-
-                {busca && (
-                  <button
-                    type="button"
-                    aria-label="Limpar busca"
-                    onClick={() =>
-                      definirBusca(
-                        "",
-                      )
-                    }
-                  >
-                    <X
-                      size={15}
-                      aria-hidden="true"
-                    />
-                  </button>
-                )}
-
-              </div>
-
-
-              <div className="financeiro-detalhes-filtro-componente">
-
-                <button
-                  type="button"
-                  className={
-                    filtroComponente ===
-                    "todos"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() =>
-                    definirFiltroComponente(
-                      "todos",
-                    )
-                  }
-                >
-                  Todos
+              {busca && (
+                <button type="button" aria-label="Limpar busca" onClick={() => definirBusca("")}>
+                  <X size={15} aria-hidden="true" />
                 </button>
-
-                <button
-                  type="button"
-                  className={
-                    filtroComponente ===
-                    "realizado"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() =>
-                    definirFiltroComponente(
-                      "realizado",
-                    )
-                  }
-                >
-                  Realizado
-                </button>
-
-                <button
-                  type="button"
-                  className={
-                    filtroComponente ===
-                    "a_realizar"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() =>
-                    definirFiltroComponente(
-                      "a_realizar",
-                    )
-                  }
-                >
-                  A realizar
-                </button>
-
-              </div>
-
-
-              <span className="financeiro-detalhes-resultado-contagem">
-                {
-                  detalhesFiltrados
-                    .length
-                }{" "}
-                de{" "}
-                {
-                  detalhes
-                    .length
-                }
-              </span>
-
+              )}
             </div>
-          )}
 
+            <div className="financeiro-detalhes-filtro-componente">
+              <button
+                type="button"
+                className={filtroComponente === "todos" ? "active" : ""}
+                onClick={() => definirFiltroComponente("todos")}
+              >
+                Todos
+              </button>
+
+              <button
+                type="button"
+                className={filtroComponente === "realizado" ? "active" : ""}
+                onClick={() => definirFiltroComponente("realizado")}
+              >
+                Realizado
+              </button>
+
+              <button
+                type="button"
+                className={filtroComponente === "a_realizar" ? "active" : ""}
+                onClick={() => definirFiltroComponente("a_realizar")}
+              >
+                A realizar
+              </button>
+            </div>
+
+            <span className="financeiro-detalhes-resultado-contagem">
+              {detalhesFiltrados.length} de {detalhes.length}
+            </span>
+          </div>
+        )}
 
         {/* =================================================
             STATUS
         ================================================= */}
 
-        {carregando && (
-          <div className="financeiro-detalhes-status">
-            Carregando lançamentos...
-          </div>
-        )}
+        {carregando && <div className="financeiro-detalhes-status">Carregando lançamentos...</div>}
 
         {erro && (
           <div className="financeiro-detalhes-status financeiro-detalhes-erro">
-            {detalheErro
-              ?.message ||
-              "Não foi possível carregar os lançamentos."}
+            {detalheErro?.message || "Não foi possível carregar os lançamentos."}
           </div>
         )}
 
-        {!carregando &&
-          !erro &&
-          detalhes.length ===
-            0 && (
-            <div className="financeiro-detalhes-status">
-              Nenhum lançamento encontrado para esta categoria.
-            </div>
-          )}
+        {!carregando && !erro && detalhes.length === 0 && (
+          <div className="financeiro-detalhes-status">
+            Nenhum lançamento encontrado para esta categoria.
+          </div>
+        )}
 
-        {!carregando &&
-          !erro &&
-          detalhes.length >
-            0 &&
-          detalhesFiltrados
-              .length ===
-            0 && (
-            <div className="financeiro-detalhes-status">
-              Nenhum lançamento corresponde aos filtros informados.
-            </div>
-          )}
-
+        {!carregando && !erro && detalhes.length > 0 && detalhesFiltrados.length === 0 && (
+          <div className="financeiro-detalhes-status">
+            Nenhum lançamento corresponde aos filtros informados.
+          </div>
+        )}
 
         {/* =================================================
             TABELA
         ================================================= */}
 
-        {!carregando &&
-          !erro &&
-          detalhesFiltrados
-              .length >
-            0 && (
-            <div className="financeiro-detalhes-tabela-container">
+        {!carregando && !erro && detalhesFiltrados.length > 0 && (
+          <div className="financeiro-detalhes-tabela-container">
+            {atualizando && (
+              <div className="financeiro-detalhes-atualizando">Atualizando dados...</div>
+            )}
 
-              {atualizando && (
-                <div className="financeiro-detalhes-atualizando">
-                  Atualizando dados...
-                </div>
-              )}
+            <table className="financeiro-detalhes-tabela">
+              <thead>
+                <tr>
+                  <th>Data</th>
 
-              <table className="financeiro-detalhes-tabela">
+                  <th>Cliente / Fornecedor</th>
 
-                <thead>
-                  <tr>
-                    <th>
-                      Data
-                    </th>
+                  <th>Documento</th>
 
-                    <th>
-                      Cliente / Fornecedor
-                    </th>
+                  <th>Pedido</th>
 
-                    <th>
-                      Documento
-                    </th>
+                  <th>Componente</th>
 
-                    <th>
-                      Pedido
-                    </th>
+                  <th>Status</th>
 
-                    <th>
-                      Componente
-                    </th>
+                  <th className="financeiro-detalhes-numero">Valor título</th>
 
-                    <th>
-                      Status
-                    </th>
+                  <th className="financeiro-detalhes-numero">Valor composição</th>
+                </tr>
+              </thead>
 
-                    <th className="financeiro-detalhes-numero">
-                      Valor título
-                    </th>
-
-                    <th className="financeiro-detalhes-numero">
-                      Valor composição
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {detalhesFiltrados.map(
-                    (registro) => (
-                      <LinhaDetalhe
-                        key={
-                          registro.id
-                        }
-                        registro={
-                          registro
-                        }
-                      />
-                    ),
-                  )}
-                </tbody>
-
-              </table>
-
-            </div>
-          )}
-
+              <tbody>
+                {detalhesFiltrados.map((registro) => (
+                  <LinhaDetalhe key={registro.id} registro={registro} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </aside>
-
     </Modal>
   );
 }
 
-
-export default memo(
-  FinanceiroDetalhes,
-);
+export default memo(FinanceiroDetalhes);

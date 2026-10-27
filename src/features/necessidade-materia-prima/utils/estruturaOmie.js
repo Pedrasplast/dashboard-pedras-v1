@@ -27,7 +27,10 @@ export const MOTIVOS = Object.freeze({
   SEM_ESTOQUE_MINIMO: "Sem estoque mínimo",
 });
 
-const codigo = (v) => String(v ?? "").trim().toUpperCase();
+const codigo = (v) =>
+  String(v ?? "")
+    .trim()
+    .toUpperCase();
 
 const num = (v) => {
   const n = Number(v);
@@ -114,12 +117,21 @@ export function avaliarProduto(cod, { estrutura, mapaMateriais, estoques, deciso
     }
     const materialId = mapaMateriais.get(mp);
     if (!materialId) {
-      motivos.push({ tipo: "MP_SEM_MATERIAL", texto: `${MOTIVOS.MP_SEM_MATERIAL} (${mp})`, codigoMp: mp });
+      motivos.push({
+        tipo: "MP_SEM_MATERIAL",
+        texto: `${MOTIVOS.MP_SEM_MATERIAL} (${mp})`,
+        codigoMp: mp,
+      });
     }
     if (kg > PESO_SUSPEITO_KG) {
       const decisao = decisoes.get(`${cod}|${mp}`);
       const vale = decisao && mesmoPeso(decisao.quantidade, kg);
-      const peso = { codigoMp: mp, descricaoMp: item.descricao_mp ?? null, quantidade: kg, decisao: vale ? decisao : null };
+      const peso = {
+        codigoMp: mp,
+        descricaoMp: item.descricao_mp ?? null,
+        quantidade: kg,
+        decisao: vale ? decisao : null,
+      };
       if (vale && decisao.decisao === "ACEITO") {
         pesosAceitos.push(peso);
       } else if (vale && decisao.decisao === "RECUSADO") {
@@ -138,7 +150,8 @@ export function avaliarProduto(cod, { estrutura, mapaMateriais, estoques, deciso
 
   const estoque = estoques.get(cod);
   if (!estoque) motivos.push({ tipo: "SEM_ESTOQUE", texto: MOTIVOS.SEM_ESTOQUE });
-  else if (!(estoque.minimo > 0)) motivos.push({ tipo: "SEM_ESTOQUE_MINIMO", texto: MOTIVOS.SEM_ESTOQUE_MINIMO });
+  else if (!(estoque.minimo > 0))
+    motivos.push({ tipo: "SEM_ESTOQUE_MINIMO", texto: MOTIVOS.SEM_ESTOQUE_MINIMO });
 
   return { motivos, linhasMaterial, pesosSuspeitos, pesosAceitos };
 }
@@ -150,13 +163,10 @@ export function avaliarProduto(cod, { estrutura, mapaMateriais, estoques, deciso
  *  - pendencias: [{ codigo, produto, motivos }], um por produto;
  *  - pesosAceitos: [{ codigo, produto, codigoMp, quantidade, decisao }].
  */
-export function aplicarEstruturaOmie(pedidos = [], {
-  estrutura = {},
-  vinculos = [],
-  materiais = [],
-  estoqueProdutos = [],
-  decisoes = [],
-} = {}) {
+export function aplicarEstruturaOmie(
+  pedidos = [],
+  { estrutura = {}, vinculos = [], materiais = [], estoqueProdutos = [], decisoes = [] } = {},
+) {
   const ctx = {
     estrutura: indexarEstrutura(estrutura),
     mapaMateriais: criarMapaMateriais({ vinculos, materiais }),

@@ -1,27 +1,14 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  AlertTriangle,
-  CircleDollarSign,
-} from "lucide-react";
+import { AlertTriangle, CircleDollarSign } from "lucide-react";
 
-import useDashboardMateriaPrima
-  from "./useDashboardMateriaPrima.js";
+import useDashboardMateriaPrima from "./useDashboardMateriaPrima.js";
 
-import DashboardMateriaPrimaFiltros
-  from "./components/DashboardMateriaPrimaFiltros.jsx";
+import DashboardMateriaPrimaFiltros from "./components/DashboardMateriaPrimaFiltros.jsx";
 
-import {
-  ORIGEM_OMIE,
-} from "./origemOmie.js";
+import { ORIGEM_OMIE } from "./origemOmie.js";
 
-import PainelFinanceiroMateriaPrima
-  from "./components/PainelFinanceiroMateriaPrima.jsx";
+import PainelFinanceiroMateriaPrima from "./components/PainelFinanceiroMateriaPrima.jsx";
 
 import {
   criarComprasMensais,
@@ -35,31 +22,21 @@ import {
   criarResumoFinanceiro,
 } from "./dashboardMateriaPrimaSelectors.js";
 
-import {
-  adicionarDias,
-  formatarDataISO,
-  periodoMesAtual,
-} from "./dashboardMateriaPrimaUtils.js";
+import { adicionarDias, formatarDataISO, periodoMesAtual } from "./dashboardMateriaPrimaUtils.js";
 
 import "./DashboardMateriaPrima.css";
-
 
 /* =========================================================
    CONFIGURAÇÃO
 ========================================================= */
 
-const DATA_INICIAL_SEM_FILTRO =
-  "0001-01-01";
+const DATA_INICIAL_SEM_FILTRO = "0001-01-01";
 
-const DATA_FINAL_SEM_FILTRO =
-  "9999-12-31";
+const DATA_FINAL_SEM_FILTRO = "9999-12-31";
 
-const MATERIAL_PADRAO =
-  "1";
+const MATERIAL_PADRAO = "1";
 
-const STORAGE_FILTROS =
-  "pedrasplast:dashboard-materia-prima:filtros:v2";
-
+const STORAGE_FILTROS = "pedrasplast:dashboard-materia-prima:filtros:v2";
 
 const FILTROS_PADRAO = {
   dataInicial: "",
@@ -70,16 +47,12 @@ const FILTROS_PADRAO = {
   materialSelecionado: MATERIAL_PADRAO,
 };
 
-
 /* =========================================================
    PERSISTÊNCIA DOS FILTROS
 ========================================================= */
 
 function carregarFiltros() {
-  if (
-    typeof window ===
-    "undefined"
-  ) {
+  if (typeof window === "undefined") {
     return {
       ...FILTROS_PADRAO,
       ...periodoMesAtual(),
@@ -87,10 +60,7 @@ function carregarFiltros() {
   }
 
   try {
-    const salvo =
-      window.localStorage.getItem(
-        STORAGE_FILTROS,
-      );
+    const salvo = window.localStorage.getItem(STORAGE_FILTROS);
 
     if (!salvo) {
       return {
@@ -101,9 +71,7 @@ function carregarFiltros() {
 
     return {
       ...FILTROS_PADRAO,
-      ...JSON.parse(
-        salvo,
-      ),
+      ...JSON.parse(salvo),
       /* O período sempre abre no mês atual (os demais filtros ficam salvos). */
       ...periodoMesAtual(),
     };
@@ -115,19 +83,12 @@ function carregarFiltros() {
   }
 }
 
-
 /* =========================================================
    DASHBOARD
 ========================================================= */
 
 export default function DashboardMateriaPrima() {
-  const [
-    filtros,
-    setFiltros,
-  ] =
-    useState(
-      carregarFiltros,
-    );
+  const [filtros, setFiltros] = useState(carregarFiltros);
 
   /* =======================================================
      MÊS ATUAL AUTOMÁTICO
@@ -137,149 +98,78 @@ export default function DashboardMateriaPrima() {
      voltar para a tela. Período escolhido à mão não muda.
   ======================================================= */
 
-  const periodoAutomaticoRef =
-    useRef(
-      periodoMesAtual(),
-    );
+  const periodoAutomaticoRef = useRef(periodoMesAtual());
 
-  useEffect(
-    () => {
-      function atualizarMes() {
-        const novo =
-          periodoMesAtual();
+  useEffect(() => {
+    function atualizarMes() {
+      const novo = periodoMesAtual();
 
-        const anterior =
-          periodoAutomaticoRef.current;
+      const anterior = periodoAutomaticoRef.current;
 
-        if (
-          novo.dataInicial ===
-          anterior.dataInicial
-        ) {
-          return;
-        }
-
-        periodoAutomaticoRef.current =
-          novo;
-
-        setFiltros(
-          (
-            atual,
-          ) =>
-            atual.dataInicial ===
-              anterior.dataInicial &&
-            atual.dataFinal ===
-              anterior.dataFinal
-              ? {
-                  ...atual,
-                  ...novo,
-                }
-              : atual,
-        );
+      if (novo.dataInicial === anterior.dataInicial) {
+        return;
       }
 
-      window.addEventListener(
-        "focus",
-        atualizarMes,
+      periodoAutomaticoRef.current = novo;
+
+      setFiltros((atual) =>
+        atual.dataInicial === anterior.dataInicial && atual.dataFinal === anterior.dataFinal
+          ? {
+              ...atual,
+              ...novo,
+            }
+          : atual,
       );
+    }
 
-      document.addEventListener(
-        "visibilitychange",
-        atualizarMes,
-      );
+    window.addEventListener("focus", atualizarMes);
 
-      const intervalo =
-        window.setInterval(
-          atualizarMes,
-          60 * 60 * 1000,
-        );
+    document.addEventListener("visibilitychange", atualizarMes);
 
-      return () => {
-        window.removeEventListener(
-          "focus",
-          atualizarMes,
-        );
+    const intervalo = window.setInterval(atualizarMes, 60 * 60 * 1000);
 
-        document.removeEventListener(
-          "visibilitychange",
-          atualizarMes,
-        );
+    return () => {
+      window.removeEventListener("focus", atualizarMes);
 
-        window.clearInterval(
-          intervalo,
-        );
-      };
-    },
-    [],
-  );
+      document.removeEventListener("visibilitychange", atualizarMes);
 
-  const {
-    dataInicial,
-    dataFinal,
-    tipoData,
-    origem,
-    fornecedorSelecionado,
-    materialSelecionado,
-  } =
+      window.clearInterval(intervalo);
+    };
+  }, []);
+
+  const { dataInicial, dataFinal, tipoData, origem, fornecedorSelecionado, materialSelecionado } =
     filtros;
-
 
   /* =======================================================
      PERSISTIR FILTROS
   ======================================================= */
 
-  useEffect(
-    () => {
-      try {
-        window.localStorage.setItem(
-          STORAGE_FILTROS,
-          JSON.stringify(
-            filtros,
-          ),
-        );
-      } catch {
-        // O dashboard continua funcionando
-        // mesmo se o navegador bloquear o storage.
-      }
-    },
-    [
-      filtros,
-    ],
-  );
-
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_FILTROS, JSON.stringify(filtros));
+    } catch {
+      // O dashboard continua funcionando
+      // mesmo se o navegador bloquear o storage.
+    }
+  }, [filtros]);
 
   /* =======================================================
      ALTERAR UM FILTRO
   ======================================================= */
 
-  function alterarFiltro(
-    campo,
-    valor,
-  ) {
-    setFiltros(
-      (
-        atual,
-      ) => ({
-        ...atual,
+  function alterarFiltro(campo, valor) {
+    setFiltros((atual) => ({
+      ...atual,
 
-        [campo]:
-          valor,
-      }),
-    );
+      [campo]: valor,
+    }));
   }
-
 
   /* =======================================================
      PERÍODO
   ======================================================= */
 
-  const periodoInvalido =
-    Boolean(
-      dataInicial &&
-      dataFinal &&
-      dataFinal <
-        dataInicial,
-    );
-
+  const periodoInvalido = Boolean(dataInicial && dataFinal && dataFinal < dataInicial);
 
   /*
    * Datas ficam vazias visualmente.
@@ -287,184 +177,98 @@ export default function DashboardMateriaPrima() {
    * não existe filtro por data.
    */
 
-  const dataInicialConsulta =
-    dataInicial ||
-    DATA_INICIAL_SEM_FILTRO;
+  const dataInicialConsulta = dataInicial || DATA_INICIAL_SEM_FILTRO;
 
-  const dataFinalConsulta =
-    dataFinal ||
-    DATA_FINAL_SEM_FILTRO;
-
+  const dataFinalConsulta = dataFinal || DATA_FINAL_SEM_FILTRO;
 
   /* =======================================================
      DADOS
   ======================================================= */
 
-  const {
-    dados,
-    carregando,
-    erro,
-  } =
-    useDashboardMateriaPrima({
-      dataInicial:
-        dataInicialConsulta,
+  const { dados, carregando, erro } = useDashboardMateriaPrima({
+    dataInicial: dataInicialConsulta,
 
-      dataFinal:
-        dataFinalConsulta,
+    dataFinal: dataFinalConsulta,
 
-      tipoData,
+    tipoData,
 
-      origem,
+    origem,
 
-      habilitado:
-        !periodoInvalido,
-    });
+    habilitado: !periodoInvalido,
+  });
 
+  const financeiro = dados?.financeiro || {
+    compras: [],
 
-  const financeiro =
-    dados?.financeiro || {
-      compras:
-        [],
-
-      recebimentos:
-        [],
-    };
-
+    recebimentos: [],
+  };
 
   /* =======================================================
      FILTROS DISPONÍVEIS
   ======================================================= */
 
-  const materiaisFiltro =
-    useMemo(
-      () =>
-        criarMateriaisFiltro(
-          financeiro,
-        ),
-      [
-        financeiro,
-      ],
-    );
-
+  const materiaisFiltro = useMemo(() => criarMateriaisFiltro(financeiro), [financeiro]);
 
   /* Só fornecedores com compra do material selecionado no período. */
-  const fornecedoresFiltro =
-    useMemo(
-      () => {
-        const doMaterial =
-          criarFinanceiroFiltrado({
-            financeiro,
-            fornecedorSelecionado:
-              "todos",
-            materialSelecionado,
-          });
+  const fornecedoresFiltro = useMemo(() => {
+    const doMaterial = criarFinanceiroFiltrado({
+      financeiro,
+      fornecedorSelecionado: "todos",
+      materialSelecionado,
+    });
 
-        return criarFornecedoresFiltro({
-          compras:
-            doMaterial.compras.filter(
-              (item) =>
-                item.status !==
-                  "CANCELADA" &&
-                Number(item.quantidadeKg) > 0,
-            ),
-          recebimentos:
-            doMaterial.recebimentos,
-        });
-      },
-      [
-        financeiro,
-        materialSelecionado,
-      ],
-    );
-
+    return criarFornecedoresFiltro({
+      compras: doMaterial.compras.filter(
+        (item) => item.status !== "CANCELADA" && Number(item.quantidadeKg) > 0,
+      ),
+      recebimentos: doMaterial.recebimentos,
+    });
+  }, [financeiro, materialSelecionado]);
 
   /* Fornecedor escolhido sem compra do material: volta para "todos". */
-  useEffect(
-    () => {
-      if (
-        carregando ||
-        fornecedorSelecionado ===
-          "todos" ||
-        fornecedoresFiltro.some(
-          (item) =>
-            String(item.fornecedorId) ===
-            String(fornecedorSelecionado),
-        )
-      ) {
-        return;
-      }
+  useEffect(() => {
+    if (
+      carregando ||
+      fornecedorSelecionado === "todos" ||
+      fornecedoresFiltro.some((item) => String(item.fornecedorId) === String(fornecedorSelecionado))
+    ) {
+      return;
+    }
 
-      setFiltros(
-        (atual) => ({
-          ...atual,
-          fornecedorSelecionado:
-            "todos",
-        }),
-      );
-    },
-    [
-      carregando,
-      fornecedorSelecionado,
-      fornecedoresFiltro,
-    ],
-  );
-
+    setFiltros((atual) => ({
+      ...atual,
+      fornecedorSelecionado: "todos",
+    }));
+  }, [carregando, fornecedorSelecionado, fornecedoresFiltro]);
 
   /* =======================================================
      FINANCEIRO FILTRADO
   ======================================================= */
 
-  const financeiroFiltrado =
-    useMemo(
-      () =>
-        criarFinanceiroFiltrado({
-          financeiro,
-          fornecedorSelecionado,
-          materialSelecionado,
-        }),
-      [
+  const financeiroFiltrado = useMemo(
+    () =>
+      criarFinanceiroFiltrado({
         financeiro,
         fornecedorSelecionado,
         materialSelecionado,
-      ],
-    );
+      }),
+    [financeiro, fornecedorSelecionado, materialSelecionado],
+  );
 
+  const resumoFinanceiro = useMemo(
+    () => criarResumoFinanceiro(financeiroFiltrado),
+    [financeiroFiltrado],
+  );
 
-  const resumoFinanceiro =
-    useMemo(
-      () =>
-        criarResumoFinanceiro(
-          financeiroFiltrado,
-        ),
-      [
-        financeiroFiltrado,
-      ],
-    );
+  const financeiroPorMaterial = useMemo(
+    () => criarFinanceiroPorMaterial(financeiroFiltrado),
+    [financeiroFiltrado],
+  );
 
-
-  const financeiroPorMaterial =
-    useMemo(
-      () =>
-        criarFinanceiroPorMaterial(
-          financeiroFiltrado,
-        ),
-      [
-        financeiroFiltrado,
-      ],
-    );
-
-
-  const financeiroPorFornecedor =
-    useMemo(
-      () =>
-        criarFinanceiroPorFornecedor(
-          financeiroFiltrado,
-        ),
-      [
-        financeiroFiltrado,
-      ],
-    );
-
+  const financeiroPorFornecedor = useMemo(
+    () => criarFinanceiroPorFornecedor(financeiroFiltrado),
+    [financeiroFiltrado],
+  );
 
   /* =======================================================
      BASE TEMPORAL DOS GRÁFICOS
@@ -479,59 +283,30 @@ export default function DashboardMateriaPrima() {
      anteriormente.
   ======================================================= */
 
-  const financeiroTemporal =
-    useMemo(
-      () => {
-        if (
-          tipoData !==
-          "recebimento"
-        ) {
-          return financeiroFiltrado;
-        }
+  const financeiroTemporal = useMemo(() => {
+    if (tipoData !== "recebimento") {
+      return financeiroFiltrado;
+    }
 
-        return {
-          ...financeiroFiltrado,
+    return {
+      ...financeiroFiltrado,
 
-          compras:
-            (
-              financeiroFiltrado
-                .compras ||
-              []
-            ).map(
-              (
-                item,
-              ) => ({
-                ...item,
+      compras: (financeiroFiltrado.compras || []).map((item) => ({
+        ...item,
 
-                dataCompra:
-                  item.dataRecebimento ||
-                  item.dataCompra,
-              }),
-            ),
-        };
-      },
-      [
-        financeiroFiltrado,
-        tipoData,
-      ],
-    );
-
+        dataCompra: item.dataRecebimento || item.dataCompra,
+      })),
+    };
+  }, [financeiroFiltrado, tipoData]);
 
   /* =======================================================
      EVOLUÇÃO FINANCEIRA
   ======================================================= */
 
-  const evolucaoFinanceira =
-    useMemo(
-      () =>
-        criarEvolucaoFinanceira(
-          financeiroTemporal,
-        ),
-      [
-        financeiroTemporal,
-      ],
-    );
-
+  const evolucaoFinanceira = useMemo(
+    () => criarEvolucaoFinanceira(financeiroTemporal),
+    [financeiroTemporal],
+  );
 
   /* =======================================================
      COMPRAS MENSAIS
@@ -540,87 +315,53 @@ export default function DashboardMateriaPrima() {
      Meses sem movimentação aparecem com zero.
   ======================================================= */
 
-  const comprasMensais =
-    useMemo(
-      () =>
-        criarComprasMensais(
-          financeiroTemporal,
-        ),
-      [
-        financeiroTemporal,
-      ],
-    );
-
+  const comprasMensais = useMemo(
+    () => criarComprasMensais(financeiroTemporal),
+    [financeiroTemporal],
+  );
 
   /* =======================================================
      INSIGHTS
   ======================================================= */
 
-  const insightsGerenciais =
-    useMemo(
-      () =>
-        criarInsightsGerenciais({
-          resumo:
-            resumoFinanceiro,
+  const insightsGerenciais = useMemo(
+    () =>
+      criarInsightsGerenciais({
+        resumo: resumoFinanceiro,
 
-          porMaterial:
-            financeiroPorMaterial,
+        porMaterial: financeiroPorMaterial,
 
-          porFornecedor:
-            financeiroPorFornecedor,
-        }),
-      [
-        resumoFinanceiro,
-        financeiroPorMaterial,
-        financeiroPorFornecedor,
-      ],
-    );
-
+        porFornecedor: financeiroPorFornecedor,
+      }),
+    [resumoFinanceiro, financeiroPorMaterial, financeiroPorFornecedor],
+  );
 
   /* =======================================================
      PERÍODO RÁPIDO
   ======================================================= */
 
-  function aplicarPeriodoRapido(
-    dias,
-  ) {
-    const fim =
-      formatarDataISO(
-        new Date(),
-      );
+  function aplicarPeriodoRapido(dias) {
+    const fim = formatarDataISO(new Date());
 
-    const inicio =
-      adicionarDias(
-        fim,
-        -(dias - 1),
-      );
+    const inicio = adicionarDias(fim, -(dias - 1));
 
-    setFiltros(
-      (
-        atual,
-      ) => ({
-        ...atual,
+    setFiltros((atual) => ({
+      ...atual,
 
-        dataInicial:
-          inicio,
+      dataInicial: inicio,
 
-        dataFinal:
-          fim,
-      }),
-    );
+      dataFinal: fim,
+    }));
   }
-
 
   /* =======================================================
      LIMPAR FILTROS
   ======================================================= */
 
   function limparFiltros() {
-    const periodo =
-      periodoMesAtual();
+    const periodo = periodoMesAtual();
 
-    periodoAutomaticoRef.current =
-      periodo;
+    periodoAutomaticoRef.current = periodo;
 
     setFiltros({
       ...FILTROS_PADRAO,
@@ -628,219 +369,83 @@ export default function DashboardMateriaPrima() {
     });
   }
 
-
   /* =======================================================
      RENDER
   ======================================================= */
 
   return (
     <main className="dmp-page">
-
       <section className="dmp-header">
-
         <div>
-          <span className="dmp-eyebrow">
-            Compras • Custos • Fornecedores
-          </span>
+          <span className="dmp-eyebrow">Compras • Custos • Fornecedores</span>
 
-          <h1>
-            Gestão de Matéria-Prima
-          </h1>
+          <h1>Gestão de Matéria-Prima</h1>
 
           <p>
-            Visão gerencial de compras, preços, custo efetivo,
-            concentração por fornecedor e desempenho de entrega.
+            Visão gerencial de compras, preços, custo efetivo, concentração por fornecedor e
+            desempenho de entrega.
           </p>
         </div>
 
         <div className="dmp-header-icone">
-          <CircleDollarSign
-            size={30}
-          />
+          <CircleDollarSign size={30} />
         </div>
-
       </section>
 
-
       <DashboardMateriaPrimaFiltros
-        dataInicial={
-          dataInicial
+        dataInicial={dataInicial}
+        dataFinal={dataFinal}
+        tipoData={tipoData}
+        origem={origem}
+        fornecedorSelecionado={fornecedorSelecionado}
+        materialSelecionado={materialSelecionado}
+        fornecedores={fornecedoresFiltro}
+        materiais={materiaisFiltro}
+        materialPadrao={MATERIAL_PADRAO}
+        periodoPadrao={periodoAutomaticoRef.current}
+        onDataInicialChange={(valor) => alterarFiltro("dataInicial", valor)}
+        onDataFinalChange={(valor) => alterarFiltro("dataFinal", valor)}
+        onTipoDataChange={(valor) => alterarFiltro("tipoData", valor)}
+        onOrigemChange={(valor) =>
+          /* Fornecedores mudam de cadastro entre Manual e Omie. */
+          setFiltros((atual) => ({
+            ...atual,
+            origem: valor,
+            fornecedorSelecionado: "todos",
+          }))
         }
-
-        dataFinal={
-          dataFinal
-        }
-
-        tipoData={
-          tipoData
-        }
-
-        origem={
-          origem
-        }
-
-        fornecedorSelecionado={
-          fornecedorSelecionado
-        }
-
-        materialSelecionado={
-          materialSelecionado
-        }
-
-        fornecedores={
-          fornecedoresFiltro
-        }
-
-        materiais={
-          materiaisFiltro
-        }
-
-        materialPadrao={
-          MATERIAL_PADRAO
-        }
-
-        periodoPadrao={
-          periodoAutomaticoRef.current
-        }
-
-        onDataInicialChange={
-          (
-            valor,
-          ) =>
-            alterarFiltro(
-              "dataInicial",
-              valor,
-            )
-        }
-
-        onDataFinalChange={
-          (
-            valor,
-          ) =>
-            alterarFiltro(
-              "dataFinal",
-              valor,
-            )
-        }
-
-        onTipoDataChange={
-          (
-            valor,
-          ) =>
-            alterarFiltro(
-              "tipoData",
-              valor,
-            )
-        }
-
-        onOrigemChange={
-          (
-            valor,
-          ) =>
-            /* Fornecedores mudam de cadastro entre Manual e Omie. */
-            setFiltros(
-              (
-                atual,
-              ) => ({
-                ...atual,
-                origem:
-                  valor,
-                fornecedorSelecionado:
-                  "todos",
-              }),
-            )
-        }
-
-        onFornecedorChange={
-          (
-            valor,
-          ) =>
-            alterarFiltro(
-              "fornecedorSelecionado",
-              valor,
-            )
-        }
-
-        onMaterialChange={
-          (
-            valor,
-          ) =>
-            alterarFiltro(
-              "materialSelecionado",
-              valor,
-            )
-        }
-
-        onPeriodoRapido={
-          aplicarPeriodoRapido
-        }
-
-        onLimparFiltros={
-          limparFiltros
-        }
+        onFornecedorChange={(valor) => alterarFiltro("fornecedorSelecionado", valor)}
+        onMaterialChange={(valor) => alterarFiltro("materialSelecionado", valor)}
+        onPeriodoRapido={aplicarPeriodoRapido}
+        onLimparFiltros={limparFiltros}
       />
-
 
       {periodoInvalido && (
         <div className="dmp-mensagem erro">
-          <AlertTriangle
-            size={18}
-          />
+          <AlertTriangle size={18} />
 
-          <span>
-            A data final não pode ser anterior à data inicial.
-          </span>
+          <span>A data final não pode ser anterior à data inicial.</span>
         </div>
       )}
-
 
       {erro && (
         <div className="dmp-mensagem erro">
-          <AlertTriangle
-            size={18}
-          />
+          <AlertTriangle size={18} />
 
-          <span>
-            {erro}
-          </span>
+          <span>{erro}</span>
         </div>
       )}
 
-
       <PainelFinanceiroMateriaPrima
-        resumo={
-          resumoFinanceiro
-        }
-
-        porMaterial={
-          financeiroPorMaterial
-        }
-
-        porFornecedor={
-          financeiroPorFornecedor
-        }
-
-        evolucao={
-          evolucaoFinanceira
-        }
-
-        mensal={
-          comprasMensais
-        }
-
-        insights={
-          insightsGerenciais
-        }
-
-        materialSelecionado={
-          materialSelecionado
-        }
-
-        carregando={
-          carregando
-        }
+        resumo={resumoFinanceiro}
+        porMaterial={financeiroPorMaterial}
+        porFornecedor={financeiroPorFornecedor}
+        evolucao={evolucaoFinanceira}
+        mensal={comprasMensais}
+        insights={insightsGerenciais}
+        materialSelecionado={materialSelecionado}
+        carregando={carregando}
       />
-
     </main>
   );
 }

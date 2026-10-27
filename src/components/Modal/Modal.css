@@ -55,12 +55,7 @@
   inset: 0 0 auto;
   z-index: 5;
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--color-primary, #2563eb),
-    #6366f1 48%,
-    #8b5cf6
-  );
+  background: linear-gradient(90deg, var(--color-primary, #2563eb), #6366f1 48%, #8b5cf6);
   pointer-events: none;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
@@ -73,12 +68,7 @@
   margin: 0;
   padding: 24px 28px 21px;
   border-bottom: 1px solid var(--color-border, #e2e8f0);
-  background: linear-gradient(
-    135deg,
-    var(--color-surface, #fff),
-    #f8fbff 55%,
-    #f5f7ff
-  );
+  background: linear-gradient(135deg, var(--color-surface, #fff), #f8fbff 55%, #f5f7ff);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] > div {
   min-width: 0;
@@ -110,9 +100,7 @@
   background: #eff6ff;
   color: var(--color-primary, #2563eb);
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-header]
-  [data-modal-fechar] {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-header] [data-modal-fechar] {
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
@@ -183,17 +171,13 @@
   font-weight: 750;
   cursor: pointer;
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-footer]
-  [data-modal-acao="primaria"] {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="primaria"] {
   border-color: var(--color-primary, #2563eb);
   background: var(--color-primary, #2563eb);
   color: #fff;
   box-shadow: 0 4px 10px rgb(37 99 235 / 0.16);
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-footer]
-  [data-modal-acao="perigo"] {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="perigo"] {
   border-color: var(--color-danger, #dc2626);
   background: var(--color-danger, #dc2626);
   color: #fff;
@@ -203,9 +187,7 @@
   cursor: not-allowed;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-fechar]:focus-visible,
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-footer]
-  button:focus-visible {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] button:focus-visible {
   outline: 2px solid var(--color-primary, #2563eb);
   outline-offset: 3px;
 }
@@ -288,18 +270,14 @@
 .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
   padding: 20px 28px;
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-form]
-  > [data-modal-footer] {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
   margin: 0 -28px -20px;
 }
 @media (max-width: 900px) {
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
     padding: 12px 18px;
   }
-  .sistema-modal.sistema-modal.sistema-modal
-    [data-modal-form]
-    > [data-modal-footer] {
+  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -18px -12px;
   }
 }
@@ -307,17 +285,13 @@
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
     padding: 12px 14px;
   }
-  .sistema-modal.sistema-modal.sistema-modal
-    [data-modal-form]
-    > [data-modal-footer] {
+  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -14px -12px;
   }
 }
 
 /* O botao Fechar do rodape mantem sua cor em todos os modais. */
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-footer]
-  [data-modal-fechar] {
+.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-fechar] {
   background: var(--color-primary, #2563eb);
   border-color: var(--color-primary, #2563eb);
   color: var(--color-text-inverse, #fff);

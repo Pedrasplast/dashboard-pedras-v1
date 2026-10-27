@@ -3,100 +3,67 @@
 ========================================================= */
 
 .dp-chart--pareto {
-  height:
-    330px;
+  height: 330px;
 }
-
 
 /* =========================================================
    BARRAS
 ========================================================= */
 
-.dp-chart--pareto
-.recharts-bar-rectangle
-path {
-  fill:
-    #2563eb;
+.dp-chart--pareto .recharts-bar-rectangle path {
+  fill: #2563eb;
 }
-
 
 /* =========================================================
    LINHA DO PARETO
 ========================================================= */
 
-.dp-chart--pareto
-.recharts-line-curve {
-  stroke:
-    #059669;
+.dp-chart--pareto .recharts-line-curve {
+  stroke: #059669;
 
-  stroke-width:
-    2.5;
+  stroke-width: 2.5;
 }
 
+.dp-chart--pareto .recharts-line-dot {
+  fill: #059669;
 
-.dp-chart--pareto
-.recharts-line-dot {
-  fill:
-    #059669;
-
-  stroke:
-    #ffffff;
+  stroke: #ffffff;
 }
-
 
 /* =========================================================
    LINHA DE REFERÊNCIA
 ========================================================= */
 
-.dp-chart--pareto
-.recharts-reference-line-line {
-  stroke:
-    #94a3b8;
+.dp-chart--pareto .recharts-reference-line-line {
+  stroke: #94a3b8;
 }
-
 
 /* =========================================================
    DRILL-DOWN
 ========================================================= */
 
-.dp-chart--pareto-clicavel
-.recharts-bar-rectangle
-path {
-  cursor:
-    pointer;
+.dp-chart--pareto-clicavel .recharts-bar-rectangle path {
+  cursor: pointer;
 
-  transition:
-    opacity 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
-
-.dp-chart--pareto-clicavel
-.recharts-bar-rectangle
-path:hover {
-  opacity:
-    0.82;
+.dp-chart--pareto-clicavel .recharts-bar-rectangle path:hover {
+  opacity: 0.82;
 }
-
 
 .dp-pareto-barra {
-  cursor:
-    pointer;
+  cursor: pointer;
 }
-
 
 /* =========================================================
    RESPONSIVIDADE
 ========================================================= */
 
-@media (
-  max-width:
-    760px
-) {
+@media (max-width: 760px) {
   .dp-chart--pareto {
-    width:
-      100%;
+    width: 100%;
 
-    height:
-      390px;
+    height: 390px;
   }
 }

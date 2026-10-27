@@ -16,14 +16,8 @@ import { valoresUnicosOrdenados } from "@/lib/colecoes";
 import { useCargaMaquina } from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "./FiltrosDashboard";
-import {
-  filtrarRegistrosDashboard,
-} from "./dashboard.utils";
-import {
-  KpiHoras,
-  KpiSimples,
-  MotivosParada,
-} from "./components/DashboardIndicadores";
+import { filtrarRegistrosDashboard } from "./dashboard.utils";
+import { KpiHoras, KpiSimples, MotivosParada } from "./components/DashboardIndicadores";
 
 import "./Dashboard.css";
 import "./SidebarProducao.css";
@@ -80,13 +74,9 @@ export default function Dashboard() {
 
   const horasTotaisDec = Number(metrics?.horasTotaisDec || 0);
   const percentualHoraTrabalhada =
-    horasTotaisDec > 0
-      ? (Number(metrics?.horasTrabalhadasDec || 0) / horasTotaisDec) * 100
-      : 0;
+    horasTotaisDec > 0 ? (Number(metrics?.horasTrabalhadasDec || 0) / horasTotaisDec) * 100 : 0;
   const percentualHoraParada =
-    horasTotaisDec > 0
-      ? (Number(metrics?.horasParadasDec || 0) / horasTotaisDec) * 100
-      : 0;
+    horasTotaisDec > 0 ? (Number(metrics?.horasParadasDec || 0) / horasTotaisDec) * 100 : 0;
 
   if (loading) {
     return <div className="loading-spinner">Processando dados de produção...</div>;
@@ -95,21 +85,21 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container producao-page">
       <div className="producao-sidebar-shell">
-      <Sidebar>
-        <FiltrosDashboard
-          filtros={filtros}
-          setFiltros={setFiltros}
-          rawDados={rawDados}
-          tiposDisponiveis={tiposDisponiveis}
-          produtosDisponiveis={produtosDisponiveis}
-          exibirPeriodo
-          exibirInjetora
-          exibirTurno
-          exibirProduto
-          exibirMp={false}
-          exibirTipo
-        />
-      </Sidebar>
+        <Sidebar>
+          <FiltrosDashboard
+            filtros={filtros}
+            setFiltros={setFiltros}
+            rawDados={rawDados}
+            tiposDisponiveis={tiposDisponiveis}
+            produtosDisponiveis={produtosDisponiveis}
+            exibirPeriodo
+            exibirInjetora
+            exibirTurno
+            exibirProduto
+            exibirMp={false}
+            exibirTipo
+          />
+        </Sidebar>
       </div>
 
       <main className="main-content">

@@ -8,8 +8,8 @@ export default function PedidosAvisoCancelados() {
       <div>
         <strong>Consulta de pedidos cancelados</strong>
         <span>
-          Estes pedidos são exibidos somente para consulta e não participam dos
-          indicadores operacionais.
+          Estes pedidos são exibidos somente para consulta e não participam dos indicadores
+          operacionais.
         </span>
       </div>
     </div>

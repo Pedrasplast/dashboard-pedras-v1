@@ -1,487 +1,196 @@
-import {
-  formatarDataCurta,
-  numero,
-  statusCompraAberta,
-} from "./dashboardMateriaPrimaUtils.js";
-
+import { formatarDataCurta, numero, statusCompraAberta } from "./dashboardMateriaPrimaUtils.js";
 
 /* =========================================================
    COMPRAS VÁLIDAS
 ========================================================= */
 
-function comprasValidas(
-  financeiro,
-) {
-  return (
-    Array.isArray(
-      financeiro?.compras,
-    )
-      ? financeiro.compras
-      : []
-  ).filter(
-    (
-      item,
-    ) =>
-      item.status !==
-      "CANCELADA",
+function comprasValidas(financeiro) {
+  return (Array.isArray(financeiro?.compras) ? financeiro.compras : []).filter(
+    (item) => item.status !== "CANCELADA",
   );
 }
-
 
 /* =========================================================
    RECEBIMENTOS VÁLIDOS
 ========================================================= */
 
-function recebimentosValidos(
-  financeiro,
-) {
-  return Array.isArray(
-    financeiro?.recebimentos,
-  )
-    ? financeiro.recebimentos
-    : [];
+function recebimentosValidos(financeiro) {
+  return Array.isArray(financeiro?.recebimentos) ? financeiro.recebimentos : [];
 }
-
 
 /* =========================================================
    CHAVE MATERIAL
 ========================================================= */
 
-function chaveMaterial(
-  item,
-) {
-  return String(
-    item?.materialId ??
-    item?.tipoMaterial ??
-    "sem-material",
-  );
+function chaveMaterial(item) {
+  return String(item?.materialId ?? item?.tipoMaterial ?? "sem-material");
 }
-
 
 /* =========================================================
    DIFERENÇA EM DIAS
 ========================================================= */
 
-function diferencaDias(
-  dataInicial,
-  dataFinal,
-) {
-  if (
-    !dataInicial ||
-    !dataFinal
-  ) {
+function diferencaDias(dataInicial, dataFinal) {
+  if (!dataInicial || !dataFinal) {
     return null;
   }
 
-  const [
-    anoInicial,
-    mesInicial,
-    diaInicial,
-  ] =
-    String(
-      dataInicial,
-    )
-      .split("-")
-      .map(Number);
+  const [anoInicial, mesInicial, diaInicial] = String(dataInicial).split("-").map(Number);
 
-  const [
-    anoFinal,
-    mesFinal,
-    diaFinal,
-  ] =
-    String(
-      dataFinal,
-    )
-      .split("-")
-      .map(Number);
+  const [anoFinal, mesFinal, diaFinal] = String(dataFinal).split("-").map(Number);
 
-  if (
-    !anoInicial ||
-    !mesInicial ||
-    !diaInicial ||
-    !anoFinal ||
-    !mesFinal ||
-    !diaFinal
-  ) {
+  if (!anoInicial || !mesInicial || !diaInicial || !anoFinal || !mesFinal || !diaFinal) {
     return null;
   }
 
-  const inicio =
-    Date.UTC(
-      anoInicial,
-      mesInicial - 1,
-      diaInicial,
-    );
+  const inicio = Date.UTC(anoInicial, mesInicial - 1, diaInicial);
 
-  const fim =
-    Date.UTC(
-      anoFinal,
-      mesFinal - 1,
-      diaFinal,
-    );
+  const fim = Date.UTC(anoFinal, mesFinal - 1, diaFinal);
 
-  return Math.round(
-    (
-      fim -
-      inicio
-    ) /
-    86400000,
-  );
+  return Math.round((fim - inicio) / 86400000);
 }
-
 
 /* =========================================================
    PERCENTUAL
 ========================================================= */
 
-function percentual(
-  numerador,
-  denominador,
-) {
-  const base =
-    numero(
-      denominador,
-    );
+function percentual(numerador, denominador) {
+  const base = numero(denominador);
 
-  if (
-    base === 0
-  ) {
+  if (base === 0) {
     return null;
   }
 
-  return (
-    numero(
-      numerador,
-    ) /
-    base
-  ) *
-  100;
+  return (numero(numerador) / base) * 100;
 }
-
 
 /* =========================================================
    MÉTRICAS DE ENTREGA
 ========================================================= */
 
-function criarMetricasEntrega(
-  lista,
-) {
-  const recebidos =
-    (
-      Array.isArray(
-        lista,
-      )
-        ? lista
-        : []
-    ).filter(
-      (
-        item,
-      ) =>
-        Boolean(
-          item.dataRecebimento,
-        ),
-    );
+function criarMetricasEntrega(lista) {
+  const recebidos = (Array.isArray(lista) ? lista : []).filter((item) =>
+    Boolean(item.dataRecebimento),
+  );
 
-  const prazos =
-    recebidos
-      .map(
-        (
-          item,
-        ) =>
-          diferencaDias(
-            item.dataCompra,
-            item.dataRecebimento,
-          ),
-      )
-      .filter(
-        (
-          valor,
-        ) =>
-          valor !== null &&
-          Number.isFinite(
-            valor,
-          ) &&
-          valor >= 0,
-      );
+  const prazos = recebidos
+    .map((item) => diferencaDias(item.dataCompra, item.dataRecebimento))
+    .filter((valor) => valor !== null && Number.isFinite(valor) && valor >= 0);
 
-  const avaliadosPontualidade =
-    recebidos
-      .map(
-        (
-          item,
-        ) => {
-          const atraso =
-            diferencaDias(
-              item.dataPrevista,
-              item.dataRecebimento,
-            );
+  const avaliadosPontualidade = recebidos
+    .map((item) => {
+      const atraso = diferencaDias(item.dataPrevista, item.dataRecebimento);
 
-          if (
-            atraso === null
-          ) {
-            return null;
-          }
+      if (atraso === null) {
+        return null;
+      }
 
-          return {
-            pontual:
-              atraso <= 0,
+      return {
+        pontual: atraso <= 0,
 
-            atrasoDias:
-              Math.max(
-                0,
-                atraso,
-              ),
-          };
-        },
-      )
-      .filter(
-        Boolean,
-      );
+        atrasoDias: Math.max(0, atraso),
+      };
+    })
+    .filter(Boolean);
 
-  const atrasados =
-    avaliadosPontualidade.filter(
-      (
-        item,
-      ) =>
-        !item.pontual,
-    );
+  const atrasados = avaliadosPontualidade.filter((item) => !item.pontual);
 
   return {
-    entregasAvaliadas:
-      prazos.length,
+    entregasAvaliadas: prazos.length,
 
     prazoMedioEntregaDias:
-      prazos.length >
-        0
-        ? prazos.reduce(
-            (
-              soma,
-              valor,
-            ) =>
-              soma +
-              valor,
-            0,
-          ) /
-          prazos.length
-        : null,
+      prazos.length > 0 ? prazos.reduce((soma, valor) => soma + valor, 0) / prazos.length : null,
 
     pontualidadePercentual:
-      avaliadosPontualidade.length >
-        0
-        ? (
-            avaliadosPontualidade.filter(
-              (
-                item,
-              ) =>
-                item.pontual,
-            ).length /
-            avaliadosPontualidade.length
-          ) *
+      avaliadosPontualidade.length > 0
+        ? (avaliadosPontualidade.filter((item) => item.pontual).length /
+            avaliadosPontualidade.length) *
           100
         : null,
 
-    atrasos:
-      atrasados.length,
+    atrasos: atrasados.length,
 
     atrasoMedioDias:
-      atrasados.length >
-        0
-        ? atrasados.reduce(
-            (
-              soma,
-              item,
-            ) =>
-              soma +
-              item.atrasoDias,
-            0,
-          ) /
-          atrasados.length
+      atrasados.length > 0
+        ? atrasados.reduce((soma, item) => soma + item.atrasoDias, 0) / atrasados.length
         : 0,
   };
 }
-
 
 /* =========================================================
    FILTRO DE MATERIAIS
 ========================================================= */
 
-export function criarMateriaisFiltro(
-  financeiro,
-) {
-  const mapa =
-    new Map();
+export function criarMateriaisFiltro(financeiro) {
+  const mapa = new Map();
 
-  for (
-    const item of comprasValidas(
-      financeiro,
-    )
-  ) {
-    const chave =
-      chaveMaterial(
-        item,
-      );
+  for (const item of comprasValidas(financeiro)) {
+    const chave = chaveMaterial(item);
 
-    if (
-      !mapa.has(
-        chave,
-      )
-    ) {
-      mapa.set(
-        chave,
-        {
-          materialId:
-            item.materialId ??
-            chave,
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        materialId: item.materialId ?? chave,
 
-          tipoMaterial:
-            item.tipoMaterial ||
-            "Material não informado",
-        },
-      );
+        tipoMaterial: item.tipoMaterial || "Material não informado",
+      });
     }
   }
 
-  return [
-    ...mapa.values(),
-  ].sort(
-    (
-      a,
-      b,
-    ) =>
-      String(
-        a.tipoMaterial,
-      ).localeCompare(
-        String(
-          b.tipoMaterial,
-        ),
-        "pt-BR",
-      ),
+  return [...mapa.values()].sort((a, b) =>
+    String(a.tipoMaterial).localeCompare(String(b.tipoMaterial), "pt-BR"),
   );
 }
-
 
 /* =========================================================
    FILTRO DE FORNECEDORES
 ========================================================= */
 
-export function criarFornecedoresFiltro(
-  financeiro,
-) {
-  const mapa =
-    new Map();
+export function criarFornecedoresFiltro(financeiro) {
+  const mapa = new Map();
 
-  for (
-    const lista of [
-      financeiro?.compras || [],
-      financeiro?.recebimentos || [],
-    ]
-  ) {
-    for (
-      const item of lista
-    ) {
-      if (
-        item?.fornecedorId ===
-          null ||
-        item?.fornecedorId ===
-          undefined
-      ) {
+  for (const lista of [financeiro?.compras || [], financeiro?.recebimentos || []]) {
+    for (const item of lista) {
+      if (item?.fornecedorId === null || item?.fornecedorId === undefined) {
         continue;
       }
 
-      const chave =
-        String(
-          item.fornecedorId,
-        );
+      const chave = String(item.fornecedorId);
 
-      if (
-        !mapa.has(
-          chave,
-        )
-      ) {
-        mapa.set(
-          chave,
-          {
-            fornecedorId:
-              item.fornecedorId,
+      if (!mapa.has(chave)) {
+        mapa.set(chave, {
+          fornecedorId: item.fornecedorId,
 
-            fornecedorNome:
-              item.fornecedorNome ||
-              "Fornecedor sem nome",
-          },
-        );
+          fornecedorNome: item.fornecedorNome || "Fornecedor sem nome",
+        });
       }
     }
   }
 
-  return [
-    ...mapa.values(),
-  ].sort(
-    (
-      a,
-      b,
-    ) =>
-      String(
-        a.fornecedorNome,
-      ).localeCompare(
-        String(
-          b.fornecedorNome,
-        ),
-        "pt-BR",
-      ),
+  return [...mapa.values()].sort((a, b) =>
+    String(a.fornecedorNome).localeCompare(String(b.fornecedorNome), "pt-BR"),
   );
 }
-
 
 /* =========================================================
    FILTRAR LISTA
 ========================================================= */
 
-function filtrarLista({
-  lista,
-  fornecedorSelecionado,
-  materialSelecionado,
-}) {
-  return (
-    Array.isArray(
-      lista,
-    )
-      ? lista
-      : []
-  ).filter(
-    (
-      item,
-    ) => {
-      if (
-        fornecedorSelecionado !==
-          "todos" &&
-        String(
-          item.fornecedorId,
-        ) !==
-          String(
-            fornecedorSelecionado,
-          )
-      ) {
-        return false;
-      }
+function filtrarLista({ lista, fornecedorSelecionado, materialSelecionado }) {
+  return (Array.isArray(lista) ? lista : []).filter((item) => {
+    if (
+      fornecedorSelecionado !== "todos" &&
+      String(item.fornecedorId) !== String(fornecedorSelecionado)
+    ) {
+      return false;
+    }
 
-      if (
-        materialSelecionado !==
-          "todos" &&
-        chaveMaterial(
-          item,
-        ) !==
-          String(
-            materialSelecionado,
-          )
-      ) {
-        return false;
-      }
+    if (materialSelecionado !== "todos" && chaveMaterial(item) !== String(materialSelecionado)) {
+      return false;
+    }
 
-      return true;
-    },
-  );
+    return true;
+  });
 }
-
 
 /* =========================================================
    FINANCEIRO FILTRADO
@@ -493,684 +202,271 @@ export function criarFinanceiroFiltrado({
   materialSelecionado,
 }) {
   return {
-    compras:
-      filtrarLista({
-        lista:
-          financeiro?.compras,
+    compras: filtrarLista({
+      lista: financeiro?.compras,
 
-        fornecedorSelecionado,
+      fornecedorSelecionado,
 
-        materialSelecionado,
-      }),
+      materialSelecionado,
+    }),
 
-    recebimentos:
-      filtrarLista({
-        lista:
-          financeiro?.recebimentos,
+    recebimentos: filtrarLista({
+      lista: financeiro?.recebimentos,
 
-        fornecedorSelecionado,
+      fornecedorSelecionado,
 
-        materialSelecionado,
-      }),
+      materialSelecionado,
+    }),
   };
 }
-
 
 /* =========================================================
    AGRUPAMENTO BASE
 ========================================================= */
 
-function agruparBase(
-  compras,
-  obterChave,
-  criarInicial,
-) {
-  const mapa =
-    new Map();
+function agruparBase(compras, obterChave, criarInicial) {
+  const mapa = new Map();
 
-  for (
-    const item of compras
-  ) {
-    const chave =
-      obterChave(
-        item,
-      );
+  for (const item of compras) {
+    const chave = obterChave(item);
 
-    const atual =
-      mapa.get(
-        chave,
-      ) ||
-      criarInicial(
-        item,
-      );
+    const atual = mapa.get(chave) || criarInicial(item);
 
-    atual.compras +=
-      1;
+    atual.compras += 1;
 
-    atual.quantidadeKg +=
-      numero(
-        item.quantidadeKg,
-      );
+    atual.quantidadeKg += numero(item.quantidadeKg);
 
-    atual.fornecedoresSet?.add(
-      String(
-        item.fornecedorId,
-      ),
-    );
+    atual.fornecedoresSet?.add(String(item.fornecedorId));
 
-    if (
-      item.precoUnitario !==
-        null &&
-      item.precoUnitario !==
-        undefined
-    ) {
-      atual.precos.push(
-        numero(
-          item.precoUnitario,
-        ),
-      );
+    if (item.precoUnitario !== null && item.precoUnitario !== undefined) {
+      atual.precos.push(numero(item.precoUnitario));
 
       atual.historicoPrecos.push({
-        data:
-          item.dataCompra ||
-          "",
+        data: item.dataCompra || "",
 
-        id:
-          numero(
-            item.id,
-          ),
+        id: numero(item.id),
 
-        preco:
-          numero(
-            item.precoUnitario,
-          ),
+        preco: numero(item.precoUnitario),
 
-        fornecedor:
-          item.fornecedorNome,
+        fornecedor: item.fornecedorNome,
       });
     }
 
-    if (
-      item.precoUnitario !==
-        null &&
-      item.subtotalProdutos !==
-        null
-    ) {
-      atual.quantidadeComPrecoKg +=
-        numero(
-          item.quantidadeKg,
-        );
+    if (item.precoUnitario !== null && item.subtotalProdutos !== null) {
+      atual.quantidadeComPrecoKg += numero(item.quantidadeKg);
 
-      atual.subtotal +=
-        numero(
-          item.subtotalProdutos,
-        );
+      atual.subtotal += numero(item.subtotalProdutos);
     }
 
-    if (
-      item.valorTotal !==
-      null
-    ) {
-      atual.quantidadeComTotalKg +=
-        numero(
-          item.quantidadeKg,
-        );
+    if (item.valorTotal !== null) {
+      atual.quantidadeComTotalKg += numero(item.quantidadeKg);
 
-      atual.total +=
-        numero(
-          item.valorTotal,
-        );
+      atual.total += numero(item.valorTotal);
     }
 
-    atual.ipi +=
-      numero(
-        item.valorIpi,
-      );
+    atual.ipi += numero(item.valorIpi);
 
-    atual.frete +=
-      numero(
-        item.valorFrete,
-      );
+    atual.frete += numero(item.valorFrete);
 
-    atual.desconto +=
-      numero(
-        item.valorDesconto,
-      );
+    atual.desconto += numero(item.valorDesconto);
 
-    atual.outrasDespesas +=
-      numero(
-        item.outrasDespesas,
-      );
+    atual.outrasDespesas += numero(item.outrasDespesas);
 
-    if (
-      statusCompraAberta(
-        item.status,
-      )
-    ) {
-      atual.valorAberto +=
-        numero(
-          item.valorTotal,
-        );
+    if (statusCompraAberta(item.status)) {
+      atual.valorAberto += numero(item.valorTotal);
 
-      atual.quantidadeAbertaKg +=
-        numero(
-          item.quantidadeKg,
-        );
+      atual.quantidadeAbertaKg += numero(item.quantidadeKg);
     }
 
-    if (
-      item.dataRecebimento
-    ) {
-      const diasEntrega =
-        diferencaDias(
-          item.dataCompra,
-          item.dataRecebimento,
-        );
+    if (item.dataRecebimento) {
+      const diasEntrega = diferencaDias(item.dataCompra, item.dataRecebimento);
 
-      if (
-        diasEntrega !== null &&
-        diasEntrega >= 0
-      ) {
-        atual.prazosEntrega.push(
-          diasEntrega,
-        );
+      if (diasEntrega !== null && diasEntrega >= 0) {
+        atual.prazosEntrega.push(diasEntrega);
       }
 
-      const atraso =
-        diferencaDias(
-          item.dataPrevista,
-          item.dataRecebimento,
-        );
+      const atraso = diferencaDias(item.dataPrevista, item.dataRecebimento);
 
-      if (
-        atraso !== null
-      ) {
-        atual.pontualidades.push(
-          atraso <= 0,
-        );
+      if (atraso !== null) {
+        atual.pontualidades.push(atraso <= 0);
       }
     }
 
-    mapa.set(
-      chave,
-      atual,
-    );
+    mapa.set(chave, atual);
   }
 
-  return [
-    ...mapa.values(),
-  ].map(
-    (
-      item,
-    ) => {
-      const historico =
-        [
-          ...item.historicoPrecos,
-        ].sort(
-          (
-            a,
-            b,
-          ) =>
-            a.data.localeCompare(
-              b.data,
-            ) ||
-            a.id -
-            b.id,
-        );
+  return [...mapa.values()].map((item) => {
+    const historico = [...item.historicoPrecos].sort(
+      (a, b) => a.data.localeCompare(b.data) || a.id - b.id,
+    );
 
-      const ultimo =
-        historico[
-          historico.length -
-          1
-        ] ||
-        null;
+    const ultimo = historico[historico.length - 1] || null;
 
-      const anterior =
-        historico[
-          historico.length -
-          2
-        ] ||
-        null;
+    const anterior = historico[historico.length - 2] || null;
 
-      const precoMinimoKg =
-        item.precos.length >
-          0
-          ? Math.min(
-              ...item.precos,
-            )
-          : null;
+    const precoMinimoKg = item.precos.length > 0 ? Math.min(...item.precos) : null;
 
-      const precoMaximoKg =
-        item.precos.length >
-          0
-          ? Math.max(
-              ...item.precos,
-            )
-          : null;
+    const precoMaximoKg = item.precos.length > 0 ? Math.max(...item.precos) : null;
 
-      const precoMedioKg =
-        item.quantidadeComPrecoKg >
-          0
-          ? item.subtotal /
-            item.quantidadeComPrecoKg
-          : null;
+    const precoMedioKg =
+      item.quantidadeComPrecoKg > 0 ? item.subtotal / item.quantidadeComPrecoKg : null;
 
-      const custoMedioKg =
-        item.quantidadeComTotalKg >
-          0
-          ? item.total /
-            item.quantidadeComTotalKg
-          : null;
+    const custoMedioKg =
+      item.quantidadeComTotalKg > 0 ? item.total / item.quantidadeComTotalKg : null;
 
-      return {
-        ...item,
+    return {
+      ...item,
 
-        fornecedores:
-          item.fornecedoresSet
-            ?.size ??
-          0,
+      fornecedores: item.fornecedoresSet?.size ?? 0,
 
-        precoMedioKg,
+      precoMedioKg,
 
-        custoMedioKg,
+      custoMedioKg,
 
-        custoAdicionalKg:
-          precoMedioKg !==
-            null &&
-          custoMedioKg !==
-            null
-            ? custoMedioKg -
-              precoMedioKg
-            : null,
+      custoAdicionalKg:
+        precoMedioKg !== null && custoMedioKg !== null ? custoMedioKg - precoMedioKg : null,
 
-        impactoCustoPercentual:
-          precoMedioKg !==
-            null &&
-          precoMedioKg >
-            0 &&
-          custoMedioKg !==
-            null
-            ? (
-                (
-                  custoMedioKg -
-                  precoMedioKg
-                ) /
-                precoMedioKg
-              ) *
-              100
-            : null,
+      impactoCustoPercentual:
+        precoMedioKg !== null && precoMedioKg > 0 && custoMedioKg !== null
+          ? ((custoMedioKg - precoMedioKg) / precoMedioKg) * 100
+          : null,
 
-        precoMinimoKg,
+      precoMinimoKg,
 
-        precoMaximoKg,
+      precoMaximoKg,
 
-        amplitudePrecoPercentual:
-          precoMinimoKg !==
-            null &&
-          precoMinimoKg >
-            0 &&
-          precoMaximoKg !==
-            null
-            ? (
-                (
-                  precoMaximoKg -
-                  precoMinimoKg
-                ) /
-                precoMinimoKg
-              ) *
-              100
-            : null,
+      amplitudePrecoPercentual:
+        precoMinimoKg !== null && precoMinimoKg > 0 && precoMaximoKg !== null
+          ? ((precoMaximoKg - precoMinimoKg) / precoMinimoKg) * 100
+          : null,
 
-        ultimoPrecoKg:
-          ultimo
-            ?.preco ??
-          null,
+      ultimoPrecoKg: ultimo?.preco ?? null,
 
-        ultimoFornecedor:
-          ultimo
-            ?.fornecedor ??
-          "",
+      ultimoFornecedor: ultimo?.fornecedor ?? "",
 
-        variacaoUltimaCompraPercentual:
-          ultimo &&
-          anterior &&
-          anterior.preco >
-            0
-            ? (
-                (
-                  ultimo.preco -
-                  anterior.preco
-                ) /
-                anterior.preco
-              ) *
-              100
-            : null,
+      variacaoUltimaCompraPercentual:
+        ultimo && anterior && anterior.preco > 0
+          ? ((ultimo.preco - anterior.preco) / anterior.preco) * 100
+          : null,
 
-        prazoMedioEntregaDias:
-          item.prazosEntrega.length >
-            0
-            ? item.prazosEntrega.reduce(
-                (
-                  soma,
-                  valor,
-                ) =>
-                  soma +
-                  valor,
-                0,
-              ) /
-              item.prazosEntrega.length
-            : null,
+      prazoMedioEntregaDias:
+        item.prazosEntrega.length > 0
+          ? item.prazosEntrega.reduce((soma, valor) => soma + valor, 0) / item.prazosEntrega.length
+          : null,
 
-        pontualidadePercentual:
-          item.pontualidades.length >
-            0
-            ? (
-                item.pontualidades.filter(
-                  Boolean,
-                ).length /
-                item.pontualidades.length
-              ) *
-              100
-            : null,
-      };
-    },
-  );
+      pontualidadePercentual:
+        item.pontualidades.length > 0
+          ? (item.pontualidades.filter(Boolean).length / item.pontualidades.length) * 100
+          : null,
+    };
+  });
 }
-
 
 /* =========================================================
    BASE INICIAL
 ========================================================= */
 
-function criarInicialBase(
-  item,
-) {
+function criarInicialBase(item) {
   return {
-    materialId:
-      item.materialId ??
-      chaveMaterial(
-        item,
-      ),
+    materialId: item.materialId ?? chaveMaterial(item),
 
-    material:
-      item.tipoMaterial ||
-      "Material não informado",
+    material: item.tipoMaterial || "Material não informado",
 
-    compras:
-      0,
+    compras: 0,
 
-    quantidadeKg:
-      0,
+    quantidadeKg: 0,
 
-    quantidadeComPrecoKg:
-      0,
+    quantidadeComPrecoKg: 0,
 
-    quantidadeComTotalKg:
-      0,
+    quantidadeComTotalKg: 0,
 
-    subtotal:
-      0,
+    subtotal: 0,
 
-    ipi:
-      0,
+    ipi: 0,
 
-    frete:
-      0,
+    frete: 0,
 
-    desconto:
-      0,
+    desconto: 0,
 
-    outrasDespesas:
-      0,
+    outrasDespesas: 0,
 
-    total:
-      0,
+    total: 0,
 
-    valorAberto:
-      0,
+    valorAberto: 0,
 
-    quantidadeAbertaKg:
-      0,
+    quantidadeAbertaKg: 0,
 
-    fornecedoresSet:
-      new Set(),
+    fornecedoresSet: new Set(),
 
-    precos:
-      [],
+    precos: [],
 
-    historicoPrecos:
-      [],
+    historicoPrecos: [],
 
-    prazosEntrega:
-      [],
+    prazosEntrega: [],
 
-    pontualidades:
-      [],
+    pontualidades: [],
   };
 }
-
 
 /* =========================================================
    RESUMO FINANCEIRO
 ========================================================= */
 
-export function criarResumoFinanceiro(
-  financeiro,
-) {
-  const compras =
-    comprasValidas(
-      financeiro,
-    );
+export function criarResumoFinanceiro(financeiro) {
+  const compras = comprasValidas(financeiro);
 
-  const recebimentos =
-    recebimentosValidos(
-      financeiro,
-    );
+  const recebimentos = recebimentosValidos(financeiro);
 
-  const materiais =
-    new Set(
-      compras.map(
-        chaveMaterial,
-      ),
-    );
+  const materiais = new Set(compras.map(chaveMaterial));
 
-  const fornecedores =
-    new Set(
-      compras.map(
-        (
-          item,
-        ) =>
-          String(
-            item.fornecedorId,
-          ),
-      ),
-    );
+  const fornecedores = new Set(compras.map((item) => String(item.fornecedorId)));
 
-  const comPreco =
-    compras.filter(
-      (
-        item,
-      ) =>
-        item.precoUnitario !==
-          null &&
-        item.subtotalProdutos !==
-          null,
-    );
+  const comPreco = compras.filter(
+    (item) => item.precoUnitario !== null && item.subtotalProdutos !== null,
+  );
 
-  const comTotal =
-    compras.filter(
-      (
-        item,
-      ) =>
-        item.valorTotal !==
-        null,
-    );
+  const comTotal = compras.filter((item) => item.valorTotal !== null);
 
-  const quantidadeComPrecoKg =
-    comPreco.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.quantidadeKg,
-        ),
-      0,
-    );
+  const quantidadeComPrecoKg = comPreco.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
 
-  const quantidadeComTotalKg =
-    comTotal.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.quantidadeKg,
-        ),
-      0,
-    );
+  const quantidadeComTotalKg = comTotal.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
 
-  const quantidadeCompradaKg =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.quantidadeKg,
-        ),
-      0,
-    );
+  const quantidadeCompradaKg = compras.reduce((soma, item) => soma + numero(item.quantidadeKg), 0);
 
-  const subtotalProdutos =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.subtotalProdutos,
-        ),
-      0,
-    );
+  const subtotalProdutos = compras.reduce((soma, item) => soma + numero(item.subtotalProdutos), 0);
 
-  const valorIpi =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.valorIpi,
-        ),
-      0,
-    );
+  const valorIpi = compras.reduce((soma, item) => soma + numero(item.valorIpi), 0);
 
-  const valorFrete =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.valorFrete,
-        ),
-      0,
-    );
+  const valorFrete = compras.reduce((soma, item) => soma + numero(item.valorFrete), 0);
 
-  const valorDesconto =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.valorDesconto,
-        ),
-      0,
-    );
+  const valorDesconto = compras.reduce((soma, item) => soma + numero(item.valorDesconto), 0);
 
-  const outrasDespesas =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.outrasDespesas,
-        ),
-      0,
-    );
+  const outrasDespesas = compras.reduce((soma, item) => soma + numero(item.outrasDespesas), 0);
 
-  const valorTotal =
-    compras.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.valorTotal,
-        ),
-      0,
-    );
+  const valorTotal = compras.reduce((soma, item) => soma + numero(item.valorTotal), 0);
 
-  const acrescimosLiquidos =
-    valorIpi +
-    valorFrete +
-    outrasDespesas -
-    valorDesconto;
+  const acrescimosLiquidos = valorIpi + valorFrete + outrasDespesas - valorDesconto;
 
-  const comprasAbertas =
-    compras.filter(
-      (
-        item,
-      ) =>
-        statusCompraAberta(
-          item.status,
-        ),
-    );
+  const comprasAbertas = compras.filter((item) => statusCompraAberta(item.status));
 
-  const materiaisDistintos =
-    materiais.size;
+  const materiaisDistintos = materiais.size;
 
-  const entregas =
-    criarMetricasEntrega(
-      recebimentos,
-    );
+  const entregas = criarMetricasEntrega(recebimentos);
 
   return {
-    compras:
-      compras.length,
+    compras: compras.length,
 
-    comprasComPreco:
-      comPreco.length,
+    comprasComPreco: comPreco.length,
 
-    comprasSemPreco:
-      compras.length -
-      comPreco.length,
+    comprasSemPreco: compras.length - comPreco.length,
 
     materiaisDistintos,
 
-    fornecedoresDistintos:
-      fornecedores.size,
+    fornecedoresDistintos: fornecedores.size,
 
     quantidadeCompradaKg,
 
-    quantidadeMediaCompraKg:
-      compras.length >
-        0
-        ? quantidadeCompradaKg /
-          compras.length
-        : null,
+    quantidadeMediaCompraKg: compras.length > 0 ? quantidadeCompradaKg / compras.length : null,
 
     subtotalProdutos,
 
@@ -1184,527 +480,220 @@ export function criarResumoFinanceiro(
 
     acrescimosLiquidos,
 
-    impactoAcrescimosPercentual:
-      percentual(
-        acrescimosLiquidos,
-        subtotalProdutos,
-      ),
+    impactoAcrescimosPercentual: percentual(acrescimosLiquidos, subtotalProdutos),
 
     valorTotal,
 
-    ticketMedio:
-      compras.length >
-        0
-        ? valorTotal /
-          compras.length
-        : null,
+    ticketMedio: compras.length > 0 ? valorTotal / compras.length : null,
 
     precoMedioKg:
-      materiaisDistintos ===
-        1 &&
-      quantidadeComPrecoKg >
-        0
-        ? subtotalProdutos /
-          quantidadeComPrecoKg
+      materiaisDistintos === 1 && quantidadeComPrecoKg > 0
+        ? subtotalProdutos / quantidadeComPrecoKg
         : null,
 
     custoEfetivoMedioKg:
-      materiaisDistintos ===
-        1 &&
-      quantidadeComTotalKg >
-        0
-        ? valorTotal /
-          quantidadeComTotalKg
+      materiaisDistintos === 1 && quantidadeComTotalKg > 0
+        ? valorTotal / quantidadeComTotalKg
         : null,
 
-    valorComprasAbertas:
-      comprasAbertas.reduce(
-        (
-          soma,
-          item,
-        ) =>
-          soma +
-          numero(
-            item.valorTotal,
-          ),
-        0,
-      ),
+    valorComprasAbertas: comprasAbertas.reduce((soma, item) => soma + numero(item.valorTotal), 0),
 
-    quantidadeComprasAbertasKg:
-      comprasAbertas.reduce(
-        (
-          soma,
-          item,
-        ) =>
-          soma +
-          numero(
-            item.quantidadeKg,
-          ),
-        0,
-      ),
+    quantidadeComprasAbertasKg: comprasAbertas.reduce(
+      (soma, item) => soma + numero(item.quantidadeKg),
+      0,
+    ),
 
-    comprasAbertas:
-      comprasAbertas.length,
+    comprasAbertas: comprasAbertas.length,
 
-    valorRecebidoPeriodo:
-      recebimentos.reduce(
-        (
-          soma,
-          item,
-        ) =>
-          soma +
-          numero(
-            item.valorTotal,
-          ),
-        0,
-      ),
+    valorRecebidoPeriodo: recebimentos.reduce((soma, item) => soma + numero(item.valorTotal), 0),
 
-    quantidadeRecebidaKg:
-      recebimentos.reduce(
-        (
-          soma,
-          item,
-        ) =>
-          soma +
-          numero(
-            item.quantidadeKg,
-          ),
-        0,
-      ),
+    quantidadeRecebidaKg: recebimentos.reduce((soma, item) => soma + numero(item.quantidadeKg), 0),
 
-    recebimentosPeriodo:
-      recebimentos.length,
+    recebimentosPeriodo: recebimentos.length,
 
     ...entregas,
   };
 }
 
-
 /* =========================================================
    FINANCEIRO POR MATERIAL
 ========================================================= */
 
-export function criarFinanceiroPorMaterial(
-  financeiro,
-) {
-  const lista =
-    agruparBase(
-      comprasValidas(
-        financeiro,
-      ),
-      chaveMaterial,
-      criarInicialBase,
-    );
+export function criarFinanceiroPorMaterial(financeiro) {
+  const lista = agruparBase(comprasValidas(financeiro), chaveMaterial, criarInicialBase);
 
-  const totalGeral =
-    lista.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        numero(
-          item.total,
-        ),
-      0,
-    );
+  const totalGeral = lista.reduce((soma, item) => soma + numero(item.total), 0);
 
   return lista
-    .map(
-      (
-        item,
-      ) => ({
-        ...item,
+    .map((item) => ({
+      ...item,
 
-        participacaoValorPercentual:
-          percentual(
-            item.total,
-            totalGeral,
-          ),
-      }),
-    )
-    .sort(
-      (
-        a,
-        b,
-      ) =>
-        b.total -
-        a.total,
-    );
+      participacaoValorPercentual: percentual(item.total, totalGeral),
+    }))
+    .sort((a, b) => b.total - a.total);
 }
-
 
 /* =========================================================
    FINANCEIRO POR FORNECEDOR
 ========================================================= */
 
-export function criarFinanceiroPorFornecedor(
-  financeiro,
-) {
-  const lista =
-    agruparBase(
-      comprasValidas(
-        financeiro,
-      ),
+export function criarFinanceiroPorFornecedor(financeiro) {
+  const lista = agruparBase(
+    comprasValidas(financeiro),
 
-      (
-        item,
-      ) =>
-        `${chaveMaterial(
-          item,
-        )}::${item.fornecedorId}`,
+    (item) => `${chaveMaterial(item)}::${item.fornecedorId}`,
 
-      (
-        item,
-      ) => ({
-        ...criarInicialBase(
-          item,
-        ),
+    (item) => ({
+      ...criarInicialBase(item),
 
-        fornecedorId:
-          item.fornecedorId,
+      fornecedorId: item.fornecedorId,
 
-        fornecedor:
-          item.fornecedorNome,
-      }),
-    );
+      fornecedor: item.fornecedorNome,
+    }),
+  );
 
-  const totaisPorMaterial =
-    new Map();
+  const totaisPorMaterial = new Map();
 
-  for (
-    const item of lista
-  ) {
-    const chave =
-      String(
-        item.materialId,
-      );
+  for (const item of lista) {
+    const chave = String(item.materialId);
 
-    totaisPorMaterial.set(
-      chave,
-      (
-        totaisPorMaterial.get(
-          chave,
-        ) ||
-        0
-      ) +
-      numero(
-        item.total,
-      ),
-    );
+    totaisPorMaterial.set(chave, (totaisPorMaterial.get(chave) || 0) + numero(item.total));
   }
 
   return lista
-    .map(
-      (
-        item,
-      ) => ({
-        ...item,
+    .map((item) => ({
+      ...item,
 
-        participacaoMaterialPercentual:
-          percentual(
-            item.total,
+      participacaoMaterialPercentual: percentual(
+        item.total,
 
-            totaisPorMaterial.get(
-              String(
-                item.materialId,
-              ),
-            ),
-          ),
-      }),
-    )
-    .sort(
-      (
-        a,
-        b,
-      ) =>
-        a.material.localeCompare(
-          b.material,
-          "pt-BR",
-        ) ||
-        b.total -
-        a.total,
-    );
+        totaisPorMaterial.get(String(item.materialId)),
+      ),
+    }))
+    .sort((a, b) => a.material.localeCompare(b.material, "pt-BR") || b.total - a.total);
 }
-
 
 /* =========================================================
    EVOLUÇÃO FINANCEIRA
 ========================================================= */
 
-export function criarEvolucaoFinanceira(
-  financeiro,
-) {
-  const compras =
-    comprasValidas(
-      financeiro,
-    );
+export function criarEvolucaoFinanceira(financeiro) {
+  const compras = comprasValidas(financeiro);
 
-  const materiais =
-    new Set(
-      compras.map(
-        chaveMaterial,
-      ),
-    );
+  const materiais = new Set(compras.map(chaveMaterial));
 
-  if (
-    materiais.size !==
-    1
-  ) {
+  if (materiais.size !== 1) {
     return [];
   }
 
-  const mapa =
-    new Map();
+  const mapa = new Map();
 
-  for (
-    const item of compras
-  ) {
-    if (
-      !item.dataCompra
-    ) {
+  for (const item of compras) {
+    if (!item.dataCompra) {
       continue;
     }
 
-    const atual =
-      mapa.get(
-        item.dataCompra,
-      ) ||
-      {
-        data:
-          item.dataCompra,
+    const atual = mapa.get(item.dataCompra) || {
+      data: item.dataCompra,
 
-        dataLabel:
-          formatarDataCurta(
-            item.dataCompra,
-          ),
+      dataLabel: formatarDataCurta(item.dataCompra),
 
-        quantidadeComPrecoKg:
-          0,
+      quantidadeComPrecoKg: 0,
 
-        quantidadeComTotalKg:
-          0,
+      quantidadeComTotalKg: 0,
 
-        subtotal:
-          0,
+      subtotal: 0,
 
-        total:
-          0,
-      };
+      total: 0,
+    };
 
-    if (
-      item.precoUnitario !==
-        null &&
-      item.subtotalProdutos !==
-        null
-    ) {
-      atual.quantidadeComPrecoKg +=
-        numero(
-          item.quantidadeKg,
-        );
+    if (item.precoUnitario !== null && item.subtotalProdutos !== null) {
+      atual.quantidadeComPrecoKg += numero(item.quantidadeKg);
 
-      atual.subtotal +=
-        numero(
-          item.subtotalProdutos,
-        );
+      atual.subtotal += numero(item.subtotalProdutos);
     }
 
-    if (
-      item.valorTotal !==
-      null
-    ) {
-      atual.quantidadeComTotalKg +=
-        numero(
-          item.quantidadeKg,
-        );
+    if (item.valorTotal !== null) {
+      atual.quantidadeComTotalKg += numero(item.quantidadeKg);
 
-      atual.total +=
-        numero(
-          item.valorTotal,
-        );
+      atual.total += numero(item.valorTotal);
     }
 
-    mapa.set(
-      item.dataCompra,
-      atual,
-    );
+    mapa.set(item.dataCompra, atual);
   }
 
-  return [
-    ...mapa.values(),
-  ]
-    .sort(
-      (
-        a,
-        b,
-      ) =>
-        a.data.localeCompare(
-          b.data,
-        ),
-    )
-    .map(
-      (
-        item,
-      ) => ({
-        ...item,
+  return [...mapa.values()]
+    .sort((a, b) => a.data.localeCompare(b.data))
+    .map((item) => ({
+      ...item,
 
-        precoMedioKg:
-          item.quantidadeComPrecoKg >
-            0
-            ? item.subtotal /
-              item.quantidadeComPrecoKg
-            : null,
+      precoMedioKg:
+        item.quantidadeComPrecoKg > 0 ? item.subtotal / item.quantidadeComPrecoKg : null,
 
-        custoMedioKg:
-          item.quantidadeComTotalKg >
-            0
-            ? item.total /
-              item.quantidadeComTotalKg
-            : null,
-      }),
-    );
+      custoMedioKg: item.quantidadeComTotalKg > 0 ? item.total / item.quantidadeComTotalKg : null,
+    }));
 }
-
 
 /* =========================================================
    COMPRAS POR MÊS
 ========================================================= */
 
-export function criarComprasMensais(
-  financeiro,
-) {
-  const compras =
-    comprasValidas(
-      financeiro,
-    ).filter(
-      (
-        item,
-      ) =>
-        Boolean(
-          item.dataCompra,
-        ),
-    );
+export function criarComprasMensais(financeiro) {
+  const compras = comprasValidas(financeiro).filter((item) => Boolean(item.dataCompra));
 
-  if (
-    compras.length ===
-    0
-  ) {
+  if (compras.length === 0) {
     return [];
   }
-
 
   /* =======================================================
      EXTRAIR ANO E MÊS
   ======================================================= */
 
-  const registros =
-    compras
-      .map(
-        (
-          item,
-        ) => {
-          const match =
-            String(
-              item.dataCompra ||
-              "",
-            ).match(
-              /^(\d{4})-(\d{2})/,
-            );
+  const registros = compras
+    .map((item) => {
+      const match = String(item.dataCompra || "").match(/^(\d{4})-(\d{2})/);
 
-          if (
-            !match
-          ) {
-            return null;
-          }
+      if (!match) {
+        return null;
+      }
 
-          const ano =
-            Number(
-              match[1],
-            );
+      const ano = Number(match[1]);
 
-          const mes =
-            Number(
-              match[2],
-            );
+      const mes = Number(match[2]);
 
-          if (
-            !Number.isInteger(
-              ano,
-            ) ||
-            !Number.isInteger(
-              mes,
-            ) ||
-            mes < 1 ||
-            mes > 12
-          ) {
-            return null;
-          }
+      if (!Number.isInteger(ano) || !Number.isInteger(mes) || mes < 1 || mes > 12) {
+        return null;
+      }
 
-          return {
-            ano,
-            mes,
-            item,
-          };
-        },
-      )
-      .filter(
-        Boolean,
-      );
+      return {
+        ano,
+        mes,
+        item,
+      };
+    })
+    .filter(Boolean);
 
-  if (
-    registros.length ===
-    0
-  ) {
+  if (registros.length === 0) {
     return [];
   }
-
 
   /* =======================================================
      ANO MAIS RECENTE DISPONÍVEL APÓS OS FILTROS
   ======================================================= */
 
-  const anoReferencia =
-    Math.max(
-      ...registros.map(
-        (
-          registro,
-        ) =>
-          registro.ano,
-      ),
-    );
+  const anoReferencia = Math.max(...registros.map((registro) => registro.ano));
 
+  const registrosAno = registros.filter((registro) => registro.ano === anoReferencia);
 
-  const registrosAno =
-    registros.filter(
-      (
-        registro,
-      ) =>
-        registro.ano ===
-        anoReferencia,
-    );
-
-  if (
-    registrosAno.length ===
-    0
-  ) {
+  if (registrosAno.length === 0) {
     return [];
   }
-
 
   /* =======================================================
      ÚLTIMO MÊS COM COMPRA
   ======================================================= */
 
-  const ultimoMes =
-    Math.max(
-      ...registrosAno.map(
-        (
-          registro,
-        ) =>
-          registro.mes,
-      ),
-    );
-
+  const ultimoMes = Math.max(...registrosAno.map((registro) => registro.mes));
 
   const nomesMeses = [
     "Jan",
@@ -1721,10 +710,7 @@ export function criarComprasMensais(
     "Dez",
   ];
 
-
-  const mapa =
-    new Map();
-
+  const mapa = new Map();
 
   /* =======================================================
      JANEIRO ATÉ O ÚLTIMO MÊS
@@ -1732,316 +718,148 @@ export function criarComprasMensais(
      Meses sem compra aparecem com zero.
   ======================================================= */
 
-  for (
-    let mes = 1;
-    mes <= ultimoMes;
-    mes += 1
-  ) {
-    mapa.set(
+  for (let mes = 1; mes <= ultimoMes; mes += 1) {
+    mapa.set(mes, {
+      ano: anoReferencia,
+
       mes,
-      {
-        ano:
-          anoReferencia,
 
-        mes,
+      mesLabel: nomesMeses[mes - 1],
 
-        mesLabel:
-          nomesMeses[
-            mes - 1
-          ],
+      valorComprado: 0,
 
-        valorComprado:
-          0,
+      quantidadeKg: 0,
 
-        quantidadeKg:
-          0,
-
-        compras:
-          0,
-      },
-    );
+      compras: 0,
+    });
   }
-
 
   /* =======================================================
      CONSOLIDAR VALOR E QUANTIDADE
   ======================================================= */
 
-  for (
-    const registro of
-    registrosAno
-  ) {
-    const atual =
-      mapa.get(
-        registro.mes,
-      );
+  for (const registro of registrosAno) {
+    const atual = mapa.get(registro.mes);
 
-    if (
-      !atual
-    ) {
+    if (!atual) {
       continue;
     }
 
-    atual.valorComprado +=
-      numero(
-        registro
-          .item
-          .valorTotal,
-      );
+    atual.valorComprado += numero(registro.item.valorTotal);
 
-    atual.quantidadeKg +=
-      numero(
-        registro
-          .item
-          .quantidadeKg,
-      );
+    atual.quantidadeKg += numero(registro.item.quantidadeKg);
 
-    atual.compras +=
-      1;
+    atual.compras += 1;
   }
 
-
-  return [
-    ...mapa.values(),
-  ];
+  return [...mapa.values()];
 }
-
 
 /* =========================================================
    INSIGHTS GERENCIAIS
 ========================================================= */
 
-export function criarInsightsGerenciais({
-  resumo,
-  porMaterial,
-  porFornecedor,
-}) {
-  const insights =
-    [];
+export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) {
+  const insights = [];
 
+  const maiorMaterial = porMaterial?.[0] || null;
 
-  const maiorMaterial =
-    porMaterial?.[0] ||
-    null;
-
-  if (
-    maiorMaterial
-  ) {
+  if (maiorMaterial) {
     insights.push({
-      titulo:
-        "Maior participação no gasto",
+      titulo: "Maior participação no gasto",
 
-      valor:
-        maiorMaterial.material,
+      valor: maiorMaterial.material,
 
       detalhe:
-        maiorMaterial.participacaoValorPercentual !==
-          null
-          ? `${maiorMaterial.participacaoValorPercentual.toFixed(
-              1,
-            )}% do valor comprado no filtro`
+        maiorMaterial.participacaoValorPercentual !== null
+          ? `${maiorMaterial.participacaoValorPercentual.toFixed(1)}% do valor comprado no filtro`
           : "Material com maior valor comprado",
     });
   }
 
-
   const maiorAmplitude =
-    [
-      ...(porMaterial ||
-      []),
-    ]
-      .filter(
-        (
-          item,
-        ) =>
-          item.amplitudePrecoPercentual !==
-            null,
-      )
-      .sort(
-        (
-          a,
-          b,
-        ) =>
-          numero(
-            b.amplitudePrecoPercentual,
-          ) -
-          numero(
-            a.amplitudePrecoPercentual,
-          ),
-      )[0] ||
+    [...(porMaterial || [])]
+      .filter((item) => item.amplitudePrecoPercentual !== null)
+      .sort((a, b) => numero(b.amplitudePrecoPercentual) - numero(a.amplitudePrecoPercentual))[0] ||
     null;
 
-  if (
-    maiorAmplitude
-  ) {
+  if (maiorAmplitude) {
     insights.push({
-      titulo:
-        "Maior variação de preço",
+      titulo: "Maior variação de preço",
 
-      valor:
-        maiorAmplitude.material,
+      valor: maiorAmplitude.material,
 
-      detalhe:
-        `${maiorAmplitude.amplitudePrecoPercentual.toFixed(
-          1,
-        )}% entre menor e maior preço do período`,
+      detalhe: `${maiorAmplitude.amplitudePrecoPercentual.toFixed(
+        1,
+      )}% entre menor e maior preço do período`,
     });
   }
-
 
   const maiorConcentracao =
-    [
-      ...(porFornecedor ||
-      []),
-    ]
-      .filter(
-        (
-          item,
-        ) =>
-          item.participacaoMaterialPercentual !==
-            null,
-      )
+    [...(porFornecedor || [])]
+      .filter((item) => item.participacaoMaterialPercentual !== null)
       .sort(
-        (
-          a,
-          b,
-        ) =>
-          numero(
-            b.participacaoMaterialPercentual,
-          ) -
-          numero(
-            a.participacaoMaterialPercentual,
-          ),
-      )[0] ||
-    null;
+        (a, b) =>
+          numero(b.participacaoMaterialPercentual) - numero(a.participacaoMaterialPercentual),
+      )[0] || null;
 
-  if (
-    maiorConcentracao
-  ) {
+  if (maiorConcentracao) {
     insights.push({
-      titulo:
-        "Maior concentração por fornecedor",
+      titulo: "Maior concentração por fornecedor",
 
-      valor:
-        maiorConcentracao.fornecedor,
+      valor: maiorConcentracao.fornecedor,
 
-      detalhe:
-        `${maiorConcentracao.participacaoMaterialPercentual.toFixed(
-          1,
-        )}% das compras de ${maiorConcentracao.material}`,
+      detalhe: `${maiorConcentracao.participacaoMaterialPercentual.toFixed(
+        1,
+      )}% das compras de ${maiorConcentracao.material}`,
     });
   }
-
 
   const maiorImpactoCustos =
-    [
-      ...(porMaterial ||
-      []),
-    ]
+    [...(porMaterial || [])]
       .filter(
-        (
-          item,
-        ) =>
-          item.impactoCustoPercentual !==
-            null &&
-          Number.isFinite(
-            Number(
-              item.impactoCustoPercentual,
-            ),
-          ),
+        (item) =>
+          item.impactoCustoPercentual !== null &&
+          Number.isFinite(Number(item.impactoCustoPercentual)),
       )
-      .sort(
-        (
-          a,
-          b,
-        ) =>
-          numero(
-            b.impactoCustoPercentual,
-          ) -
-          numero(
-            a.impactoCustoPercentual,
-          ),
-      )[0] ||
+      .sort((a, b) => numero(b.impactoCustoPercentual) - numero(a.impactoCustoPercentual))[0] ||
     null;
 
-  if (
-    maiorImpactoCustos
-  ) {
-    const acrescimoKg =
-      numero(
-        maiorImpactoCustos.custoAdicionalKg,
-      ).toLocaleString(
-        "pt-BR",
-        {
-          style:
-            "currency",
+  if (maiorImpactoCustos) {
+    const acrescimoKg = numero(maiorImpactoCustos.custoAdicionalKg).toLocaleString("pt-BR", {
+      style: "currency",
 
-          currency:
-            "BRL",
+      currency: "BRL",
 
-          minimumFractionDigits:
-            3,
+      minimumFractionDigits: 3,
 
-          maximumFractionDigits:
-            3,
-        },
-      );
+      maximumFractionDigits: 3,
+    });
 
     insights.push({
-      titulo:
-        "Maior impacto de custos adicionais",
+      titulo: "Maior impacto de custos adicionais",
 
-      valor:
-        maiorImpactoCustos.material,
+      valor: maiorImpactoCustos.material,
 
-      detalhe:
-        `${maiorImpactoCustos.impactoCustoPercentual.toFixed(
-          1,
-        )}% sobre o preço base • +${acrescimoKg}/kg`,
+      detalhe: `${maiorImpactoCustos.impactoCustoPercentual.toFixed(
+        1,
+      )}% sobre o preço base • +${acrescimoKg}/kg`,
     });
   }
 
-
-  return insights.slice(
-    0,
-    4,
-  );
+  return insights.slice(0, 4);
 }
-
 
 /* =========================================================
    ÚLTIMAS COMPRAS
 ========================================================= */
 
-export function criarUltimasCompras(
-  financeiro,
-) {
-  return comprasValidas(
-    financeiro,
-  )
+export function criarUltimasCompras(financeiro) {
+  return comprasValidas(financeiro)
     .sort(
-      (
-        a,
-        b,
-      ) =>
-        String(
-          b.dataCompra ||
-          "",
-        ).localeCompare(
-          String(
-            a.dataCompra ||
-            "",
-          ),
-        ) ||
-        numero(
-          b.id,
-        ) -
-        numero(
-          a.id,
-        ),
+      (a, b) =>
+        String(b.dataCompra || "").localeCompare(String(a.dataCompra || "")) ||
+        numero(b.id) - numero(a.id),
     )
-    .slice(
-      0,
-      20,
-    );
+    .slice(0, 20);
 }

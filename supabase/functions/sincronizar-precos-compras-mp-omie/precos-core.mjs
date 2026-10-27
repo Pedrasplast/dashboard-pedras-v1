@@ -12,12 +12,12 @@
  * Baseado no script de teste do usuário (teste-simplificado-02).
  */
 
-export const ETAPA = '15';
-export const DEPARTAMENTO = '9069810185';
+export const ETAPA = "15";
+export const DEPARTAMENTO = "9069810185";
 export const DIAS_JANELA = 60;
 export const JANELAS = [30, 45, 60];
 
-const texto = (v) => String(v ?? '').trim();
+const texto = (v) => String(v ?? "").trim();
 
 function numero(v, campo) {
   const n = Number(v ?? 0);
@@ -30,17 +30,17 @@ export function parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina = 5
   return {
     nPagina: pagina,
     nRegsPorPagina: porPagina,
-    lApenasImportadoApi: 'F',
-    lApenasAlterados: 'F',
+    lApenasImportadoApi: "F",
+    lApenasAlterados: "F",
     dDataInicial: dataInicial,
     dDataFinal: dataFinal,
-    lExibirPedidosPendentes: 'T',
-    lExibirPedidosRecebidos: 'T',
-    lExibirPedidosRecParciais: 'T',
-    lExibirPedidosFaturados: 'T',
-    lExibirPedidosFatParciais: 'T',
-    lExibirPedidosEncerrados: 'T',
-    lExibirPedidosCancelados: 'F',
+    lExibirPedidosPendentes: "T",
+    lExibirPedidosRecebidos: "T",
+    lExibirPedidosRecParciais: "T",
+    lExibirPedidosFaturados: "T",
+    lExibirPedidosFatParciais: "T",
+    lExibirPedidosEncerrados: "T",
+    lExibirPedidosCancelados: "F",
   };
 }
 
@@ -52,15 +52,19 @@ export function dataISO(v) {
 
 /** Data de hoje e de N dias atrás no fuso de São Paulo, nos dois formatos. */
 export function periodo(agora = new Date(), dias = DIAS_JANELA) {
-  const fmt = (d) => new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric',
-  }).format(d);
+  const fmt = (d) =>
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(d);
   const fim = fmt(agora);
   const fimIso = dataISO(fim);
   const inicioData = new Date(`${fimIso}T12:00:00Z`);
   inicioData.setUTCDate(inicioData.getUTCDate() - dias);
   const inicioIso = inicioData.toISOString().slice(0, 10);
-  const [a, m, d] = inicioIso.split('-');
+  const [a, m, d] = inicioIso.split("-");
   return { inicio: `${d}/${m}/${a}`, fim, inicioIso, fimIso };
 }
 
@@ -74,27 +78,31 @@ export function extrairItens(pedidos, materiais, inicioIso, fimIso) {
     const cab = pedido?.cabecalho_consulta ?? {};
     if (texto(cab.cEtapa) !== ETAPA) continue;
 
-    const departamentos = Array.isArray(pedido?.departamentos_consulta) ? pedido.departamentos_consulta : [];
+    const departamentos = Array.isArray(pedido?.departamentos_consulta)
+      ? pedido.departamentos_consulta
+      : [];
     const noDepartamento = departamentos.some(
-      (d) => texto(d?.cCodDepto) === DEPARTAMENTO && numero(d?.nPerc ?? 100, 'nPerc') > 0,
+      (d) => texto(d?.cCodDepto) === DEPARTAMENTO && numero(d?.nPerc ?? 100, "nPerc") > 0,
     );
     if (!noDepartamento) continue;
 
     const data = dataISO(cab.dIncData);
     if (!data || data < inicioIso || data > fimIso) continue;
 
-    const codPed = numero(cab.nCodPed, 'nCodPed');
-    if (!Number.isSafeInteger(codPed) || codPed <= 0) throw new Error('Pedido sem código válido no Omie');
+    const codPed = numero(cab.nCodPed, "nCodPed");
+    if (!Number.isSafeInteger(codPed) || codPed <= 0)
+      throw new Error("Pedido sem código válido no Omie");
 
     for (const item of Array.isArray(pedido?.produtos_consulta) ? pedido.produtos_consulta : []) {
       const codigo = texto(item?.cProduto).toUpperCase();
       if (!materiais.has(codigo)) continue;
-      const quantidade = numero(item?.nQtde, 'nQtde');
-      const valor = numero(item?.nValTot, 'nValTot');
+      const quantidade = numero(item?.nQtde, "nQtde");
+      const valor = numero(item?.nValTot, "nValTot");
       if (quantidade <= 0 || valor < 0) continue;
-      const codigoItem = numero(item?.nCodItem, 'nCodItem');
-      if (!Number.isSafeInteger(codigoItem) || codigoItem <= 0) throw new Error(`Item sem código no pedido ${texto(cab.cNumero)}`);
-      const codProd = numero(item?.nCodProd, 'nCodProd');
+      const codigoItem = numero(item?.nCodItem, "nCodItem");
+      if (!Number.isSafeInteger(codigoItem) || codigoItem <= 0)
+        throw new Error(`Item sem código no pedido ${texto(cab.cNumero)}`);
+      const codProd = numero(item?.nCodProd, "nCodProd");
       itens.push({
         cod_ped_compra: codPed,
         codigo_item: codigoItem,
@@ -104,7 +112,7 @@ export function extrairItens(pedidos, materiais, inicioIso, fimIso) {
         codigo_produto: codigo,
         codigo_produto_omie: codProd > 0 ? codProd : null,
         quantidade,
-        quantidade_recebida: numero(item?.nQtdeRec, 'nQtdeRec'),
+        quantidade_recebida: numero(item?.nQtdeRec, "nQtdeRec"),
         valor_total: valor,
       });
     }

@@ -30,7 +30,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    ÍCONE
 ========================================================= */
@@ -54,7 +53,6 @@
 .financeiro-sync-mini__icone svg {
   display: block;
 }
-
 
 /* =========================================================
    TEXTO
@@ -85,60 +83,49 @@
   font-variant-numeric: tabular-nums;
 }
 
-
 /* =========================================================
    SUCESSO
 ========================================================= */
 
-.financeiro-sync-mini--sucesso
-.financeiro-sync-mini__icone {
+.financeiro-sync-mini--sucesso .financeiro-sync-mini__icone {
   background: #ecfdf5;
   color: #059669;
 }
-
 
 /* =========================================================
    AGUARDANDO
 ========================================================= */
 
-.financeiro-sync-mini--aguardando
-.financeiro-sync-mini__icone {
+.financeiro-sync-mini--aguardando .financeiro-sync-mini__icone {
   background: #fffbeb;
   color: #d97706;
 }
 
-.financeiro-sync-mini--aguardando
-.financeiro-sync-mini__titulo {
+.financeiro-sync-mini--aguardando .financeiro-sync-mini__titulo {
   color: #92400e;
 }
-
 
 /* =========================================================
    ERRO / DESATUALIZADO
 ========================================================= */
 
-.financeiro-sync-mini--erro
-.financeiro-sync-mini__icone {
+.financeiro-sync-mini--erro .financeiro-sync-mini__icone {
   background: #fef2f2;
   color: #dc2626;
 }
 
-.financeiro-sync-mini--erro
-.financeiro-sync-mini__titulo {
+.financeiro-sync-mini--erro .financeiro-sync-mini__titulo {
   color: #b91c1c;
 }
-
 
 /* =========================================================
    NEUTRO
 ========================================================= */
 
-.financeiro-sync-mini--neutro
-.financeiro-sync-mini__icone {
+.financeiro-sync-mini--neutro .financeiro-sync-mini__icone {
   background: #f1f5f9;
   color: #64748b;
 }
-
 
 /* =========================================================
    CELULAR
@@ -171,7 +158,6 @@
     flex-basis: 16px;
   }
 }
-
 
 /* =========================================================
    CELULARES PEQUENOS

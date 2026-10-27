@@ -1,4 +1,3 @@
-
 import { FiRefreshCcw } from "react-icons/fi";
 
 import "@/components/filtros/Filtros.css";
@@ -21,26 +20,16 @@ export default function FiltroPeriodoNecessidade({
 
   const totalPedidos = new Set(
     pedidosAbertos
-      .map((pedido) =>
-        String(
-          pedido.codigo_pedido_omie ??
-          pedido.numero_pedido ??
-          "",
-        ).trim(),
-      )
+      .map((pedido) => String(pedido.codigo_pedido_omie ?? pedido.numero_pedido ?? "").trim())
       .filter(Boolean),
   ).size;
 
   return (
-    <section
-      className="necessidade-periodo"
-      aria-label="Filtrar por previsão de faturamento"
-    >
+    <section className="necessidade-periodo" aria-label="Filtrar por previsão de faturamento">
       <div className="necessidade-periodo-titulo">
         <strong>Previsão de faturamento</strong>
         <span>
-          Selecione o intervalo para calcular a necessidade
-          dos pedidos previstos no período.
+          Selecione o intervalo para calcular a necessidade dos pedidos previstos no período.
         </span>
       </div>
 
@@ -51,9 +40,7 @@ export default function FiltroPeriodoNecessidade({
             type="date"
             value={dataInicio || ""}
             max={dataFim || undefined}
-            onChange={(evento) =>
-              setDataInicio(evento.target.value)
-            }
+            onChange={(evento) => setDataInicio(evento.target.value)}
           />
         </label>
 
@@ -63,17 +50,13 @@ export default function FiltroPeriodoNecessidade({
             type="date"
             value={dataFim || ""}
             min={dataInicio || undefined}
-            onChange={(evento) =>
-              setDataFim(evento.target.value)
-            }
+            onChange={(evento) => setDataFim(evento.target.value)}
           />
         </label>
 
         <button
           type="button"
-          className={`filtros-compartilhados-limpar ${
-            temFiltros ? "filtros-limpar-ativo" : ""
-          }`}
+          className={`filtros-compartilhados-limpar ${temFiltros ? "filtros-limpar-ativo" : ""}`}
           onClick={onLimpar}
           disabled={!temFiltros}
           aria-label="Limpar filtros de período"
@@ -84,19 +67,14 @@ export default function FiltroPeriodoNecessidade({
       </div>
 
       {periodoInvalido && (
-        <p
-          role="alert"
-          className="necessidade-periodo-erro"
-        >
-          A data inicial deve ser anterior ou igual
-          à data final.
+        <p role="alert" className="necessidade-periodo-erro">
+          A data inicial deve ser anterior ou igual à data final.
         </p>
       )}
 
       {periodoAtivo && !periodoInvalido && (
         <p className="necessidade-periodo-contagem">
-          {totalPedidos} pedido(s) com previsão de
-          faturamento dentro do intervalo.
+          {totalPedidos} pedido(s) com previsão de faturamento dentro do intervalo.
         </p>
       )}
     </section>

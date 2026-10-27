@@ -11,13 +11,9 @@ import {
   WalletCards,
 } from "lucide-react";
 
-import {
-  TIPOS_DOCUMENTO,
-} from "../constants/pedidosCompra.constants";
+import { TIPOS_DOCUMENTO } from "../constants/pedidosCompra.constants";
 
-import {
-  formatarMoeda,
-} from "../utils/pedidosCompra.utils";
+import { formatarMoeda } from "../utils/pedidosCompra.utils";
 
 import "./PedidosCompraResumo.css";
 
@@ -36,52 +32,31 @@ function CardResumo({
   const classes = [
     "compras-resumo-card",
 
-    variante
-      ? `compras-resumo-card--${variante}`
-      : "",
+    variante ? `compras-resumo-card--${variante}` : "",
 
-    ativo
-      ? "compras-resumo-card--ativo"
-      : "",
+    ativo ? "compras-resumo-card--ativo" : "",
 
-    clicavel
-      ? "compras-resumo-card--clicavel"
-      : "",
+    clicavel ? "compras-resumo-card--clicavel" : "",
 
-    compacto
-      ? "compras-resumo-card--compacto"
-      : "",
+    compacto ? "compras-resumo-card--compacto" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   function abrirCard() {
-    if (
-      !clicavel ||
-      typeof onClick !==
-        "function"
-    ) {
+    if (!clicavel || typeof onClick !== "function") {
       return;
     }
 
     onClick(id);
   }
 
-  function aoPressionarTecla(
-    event,
-  ) {
-    if (
-      !clicavel
-    ) {
+  function aoPressionarTecla(event) {
+    if (!clicavel) {
       return;
     }
 
-    if (
-      event.key ===
-        "Enter" ||
-      event.key ===
-        " "
-    ) {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
 
       abrirCard();
@@ -90,52 +65,24 @@ function CardResumo({
 
   return (
     <article
-      className={
-        classes
-      }
-      onClick={
-        abrirCard
-      }
-      onKeyDown={
-        aoPressionarTecla
-      }
-      role={
-        clicavel
-          ? "button"
-          : undefined
-      }
-      tabIndex={
-        clicavel
-          ? 0
-          : undefined
-      }
+      className={classes}
+      onClick={abrirCard}
+      onKeyDown={aoPressionarTecla}
+      role={clicavel ? "button" : undefined}
+      tabIndex={clicavel ? 0 : undefined}
     >
       <div
         className={`compras-resumo-card-icone${
-          variante
-            ? ` compras-resumo-card-icone--${variante}`
-            : ""
+          variante ? ` compras-resumo-card-icone--${variante}` : ""
         }`}
       >
-        <Icon
-          size={
-            compacto
-              ? 18
-              : 21
-          }
-        />
+        <Icon size={compacto ? 18 : 21} />
       </div>
 
       <div className="compras-resumo-card-conteudo">
-        <span className="compras-resumo-card-titulo">
-          {titulo}
-        </span>
+        <span className="compras-resumo-card-titulo">{titulo}</span>
 
-        <strong className="compras-resumo-card-valor">
-          {loading
-            ? "-"
-            : valor}
-        </strong>
+        <strong className="compras-resumo-card-valor">{loading ? "-" : valor}</strong>
       </div>
     </article>
   );
@@ -150,162 +97,78 @@ export default function PedidosCompraResumo({
   cardAtivo,
   onCardClick,
 }) {
-  const mostrarPedidos =
-    tipoDocumento !==
-    TIPOS_DOCUMENTO.REQUISICAO;
+  const mostrarPedidos = tipoDocumento !== TIPOS_DOCUMENTO.REQUISICAO;
 
-  const mostrarRequisicoes =
-    tipoDocumento !==
-    TIPOS_DOCUMENTO.PEDIDO;
+  const mostrarRequisicoes = tipoDocumento !== TIPOS_DOCUMENTO.PEDIDO;
 
-  const exibindoAmbos =
-    tipoDocumento ===
-    TIPOS_DOCUMENTO.TODOS;
+  const exibindoAmbos = tipoDocumento === TIPOS_DOCUMENTO.TODOS;
 
   return (
-    <section
-      className={`compras-resumo${
-        exibindoAmbos
-          ? " compras-resumo--completo"
-          : ""
-      }`}
-    >
+    <section className={`compras-resumo${exibindoAmbos ? " compras-resumo--completo" : ""}`}>
       {mostrarPedidos && (
         <>
           <CardResumo
             id="abertos"
             titulo="Pedidos em aberto"
-            valor={
-              indicadores
-                .abertos
-            }
-            icon={
-              ShoppingBag
-            }
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "abertos"
-            }
+            valor={indicadores.abertos}
+            icon={ShoppingBag}
+            loading={loading}
+            ativo={cardAtivo === "abertos"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="atrasados"
             titulo="Pedidos atrasados"
-            valor={
-              indicadores
-                .atrasados
-            }
-            icon={
-              AlertTriangle
-            }
+            valor={indicadores.atrasados}
+            icon={AlertTriangle}
             variante="danger"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "atrasados"
-            }
+            loading={loading}
+            ativo={cardAtivo === "atrasados"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="valor-aberto"
             titulo="Valor total em aberto"
-            valor={
-              formatarMoeda(
-                indicadores
-                  .valorEmAberto,
-              )
-            }
-            icon={
-              DollarSign
-            }
+            valor={formatarMoeda(indicadores.valorEmAberto)}
+            icon={DollarSign}
             variante="success"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "valor-aberto"
-            }
+            loading={loading}
+            ativo={cardAtivo === "valor-aberto"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="proximos-7-dias"
             titulo="Recebimentos próximos 7 dias"
-            valor={
-              indicadores
-                .proximos7Dias
-            }
-            icon={
-              CalendarClock
-            }
+            valor={indicadores.proximos7Dias}
+            icon={CalendarClock}
             variante="purple"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "proximos-7-dias"
-            }
+            loading={loading}
+            ativo={cardAtivo === "proximos-7-dias"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="hoje"
             titulo="Recebimentos do dia"
-            valor={
-              indicadores
-                .hoje
-            }
-            icon={
-              CalendarCheck2
-            }
+            valor={indicadores.hoje}
+            icon={CalendarCheck2}
             variante="cyan"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "hoje"
-            }
+            loading={loading}
+            ativo={cardAtivo === "hoje"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
         </>
       )}
@@ -315,139 +178,66 @@ export default function PedidosCompraResumo({
           <CardResumo
             id="requisicoes-total"
             titulo="Requisições abertas"
-            valor={
-              indicadoresRequisicoes
-                .total
-            }
-            icon={
-              ClipboardList
-            }
+            valor={indicadoresRequisicoes.total}
+            icon={ClipboardList}
             variante="requisicao"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "requisicoes-total"
-            }
+            loading={loading}
+            ativo={cardAtivo === "requisicoes-total"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="requisicoes-valor"
             titulo="Valor requisitado"
-            valor={
-              formatarMoeda(
-                indicadoresRequisicoes
-                  .valorTotal,
-              )
-            }
-            icon={
-              WalletCards
-            }
+            valor={formatarMoeda(indicadoresRequisicoes.valorTotal)}
+            icon={WalletCards}
             variante="requisicao-valor"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "requisicoes-valor"
-            }
+            loading={loading}
+            ativo={cardAtivo === "requisicoes-valor"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="requisicoes-itens"
             titulo="Itens requisitados"
-            valor={
-              indicadoresRequisicoes
-                .itens
-            }
-            icon={
-              PackageSearch
-            }
+            valor={indicadoresRequisicoes.itens}
+            icon={PackageSearch}
             variante="requisicao-itens"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "requisicoes-itens"
-            }
+            loading={loading}
+            ativo={cardAtivo === "requisicoes-itens"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="requisicoes-proximos-7-dias"
             titulo="Requisições próximos 7 dias"
-            valor={
-              indicadoresRequisicoes
-                .proximos7Dias
-            }
-            icon={
-              ListChecks
-            }
+            valor={indicadoresRequisicoes.proximos7Dias}
+            icon={ListChecks}
             variante="requisicao-futuro"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "requisicoes-proximos-7-dias"
-            }
+            loading={loading}
+            ativo={cardAtivo === "requisicoes-proximos-7-dias"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
 
           <CardResumo
             id="recebimentos-fisicos-7-dias"
             titulo="Recebimentos físicos 7 dias"
-            valor={
-              indicadoresRecebimentoFisico
-                ?.pedidos ??
-              0
-            }
-            icon={
-              PackageCheck
-            }
+            valor={indicadoresRecebimentoFisico?.pedidos ?? 0}
+            icon={PackageCheck}
             variante="requisicao-hoje"
-            loading={
-              loading
-            }
-            ativo={
-              cardAtivo ===
-              "recebimentos-fisicos-7-dias"
-            }
+            loading={loading}
+            ativo={cardAtivo === "recebimentos-fisicos-7-dias"}
             clicavel
-            compacto={
-              exibindoAmbos
-            }
-            onClick={
-              onCardClick
-            }
+            compacto={exibindoAmbos}
+            onClick={onCardClick}
           />
         </>
       )}

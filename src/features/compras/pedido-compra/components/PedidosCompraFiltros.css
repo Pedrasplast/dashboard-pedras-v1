@@ -14,7 +14,6 @@
    - estados de foco padronizados.
 ========================================================= */
 
-
 /* =========================================================
    CONTAINER PRINCIPAL
 ========================================================= */
@@ -29,22 +28,14 @@
 
   margin-bottom: var(--space-5);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-lg);
 
   background: var(--color-surface);
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgb(15 23 42 / 0.025);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.025);
 }
-
 
 /* =========================================================
    LINHA PRINCIPAL
@@ -54,32 +45,16 @@
   display: grid;
 
   grid-template-columns:
-    minmax(
-      350px,
-      1.75fr
-    )
-    minmax(
-      165px,
-      0.75fr
-    )
-    minmax(
-      185px,
-      0.85fr
-    )
-    minmax(
-      175px,
-      0.8fr
-    )
-    minmax(
-      190px,
-      0.8fr
-    );
+    minmax(350px, 1.75fr)
+    minmax(165px, 0.75fr)
+    minmax(185px, 0.85fr)
+    minmax(175px, 0.8fr)
+    minmax(190px, 0.8fr);
 
   align-items: center;
 
   gap: 10px;
 }
-
 
 /* =========================================================
    LINHA DE PERIODO
@@ -91,17 +66,13 @@
   grid-template-columns:
     160px
     160px
-    minmax(
-      260px,
-      1fr
-    )
+    minmax(260px, 1fr)
     auto;
 
   align-items: end;
 
   gap: 10px;
 }
-
 
 /* =========================================================
    PESQUISA
@@ -117,14 +88,9 @@
 
   gap: 9px;
 
-  padding:
-    0
-    var(--space-3);
+  padding: 0 var(--space-3);
 
-  border:
-    1px
-    solid
-    var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
 
   border-radius: var(--radius-md);
 
@@ -138,7 +104,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    PESQUISA - FOCO
 ========================================================= */
@@ -148,14 +113,8 @@
 .compras-filtro-data input:focus {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    PESQUISA - INPUT
@@ -178,7 +137,6 @@
   font-weight: var(--font-weight-medium);
 }
 
-
 /* =========================================================
    PESQUISA - PLACEHOLDER
 ========================================================= */
@@ -191,7 +149,6 @@
   font-weight: var(--font-weight-regular);
 }
 
-
 /* =========================================================
    SELECTS
 ========================================================= */
@@ -202,16 +159,9 @@
 
   height: var(--control-height-lg);
 
-  padding:
-    0
-    30px
-    0
-    10px;
+  padding: 0 30px 0 10px;
 
-  border:
-    1px
-    solid
-    var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
 
   border-radius: var(--radius-md);
 
@@ -233,7 +183,6 @@
     box-shadow var(--transition-base);
 }
 
-
 /* =========================================================
    SELECTS - HOVER
 ========================================================= */
@@ -241,7 +190,6 @@
 .compras-filtros select:hover:not(:disabled) {
   border-color: var(--color-text-light);
 }
-
 
 /* =========================================================
    FILTROS DESATIVADOS
@@ -259,11 +207,9 @@
   opacity: 0.72;
 }
 
-
 .compras-filtros select:disabled:hover {
   border-color: var(--color-border);
 }
-
 
 /* =========================================================
    DATA
@@ -278,7 +224,6 @@
   gap: 6px;
 }
 
-
 /* =========================================================
    DATA - LABEL
 ========================================================= */
@@ -290,7 +235,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-
 /* =========================================================
    DATA - INPUT
 ========================================================= */
@@ -300,14 +244,9 @@
 
   height: var(--control-height-lg);
 
-  padding:
-    0
-    10px;
+  padding: 0 10px;
 
-  border:
-    1px
-    solid
-    var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
 
   border-radius: var(--radius-md);
 
@@ -328,82 +267,59 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    DATA - PLACEHOLDER NATIVO
 ========================================================= */
 
-.compras-filtro-data
-  input[type="date"]:not(:valid) {
+.compras-filtro-data input[type="date"]:not(:valid) {
   color: var(--color-text-light);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:not(:valid)::-webkit-datetime-edit {
+.compras-filtro-data input[type="date"]:not(:valid)::-webkit-datetime-edit {
   color: var(--color-text-light);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:not(:valid)::-webkit-datetime-edit-text {
+.compras-filtro-data input[type="date"]:not(:valid)::-webkit-datetime-edit-text {
   color: var(--color-text-light);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:not(:valid)::-webkit-datetime-edit-day-field,
-.compras-filtro-data
-  input[type="date"]:not(:valid)::-webkit-datetime-edit-month-field,
-.compras-filtro-data
-  input[type="date"]:not(:valid)::-webkit-datetime-edit-year-field {
+.compras-filtro-data input[type="date"]:not(:valid)::-webkit-datetime-edit-day-field,
+.compras-filtro-data input[type="date"]:not(:valid)::-webkit-datetime-edit-month-field,
+.compras-filtro-data input[type="date"]:not(:valid)::-webkit-datetime-edit-year-field {
   color: var(--color-text-light);
 }
-
 
 /* =========================================================
    DATA - VALOR SELECIONADO
 ========================================================= */
 
-.compras-filtro-data
-  input[type="date"]:valid {
+.compras-filtro-data input[type="date"]:valid {
   color: var(--color-text-secondary);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:valid::-webkit-datetime-edit {
+.compras-filtro-data input[type="date"]:valid::-webkit-datetime-edit {
   color: var(--color-text-secondary);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:valid::-webkit-datetime-edit-text {
+.compras-filtro-data input[type="date"]:valid::-webkit-datetime-edit-text {
   color: var(--color-text-secondary);
 }
 
-
-.compras-filtro-data
-  input[type="date"]:valid::-webkit-datetime-edit-day-field,
-.compras-filtro-data
-  input[type="date"]:valid::-webkit-datetime-edit-month-field,
-.compras-filtro-data
-  input[type="date"]:valid::-webkit-datetime-edit-year-field {
+.compras-filtro-data input[type="date"]:valid::-webkit-datetime-edit-day-field,
+.compras-filtro-data input[type="date"]:valid::-webkit-datetime-edit-month-field,
+.compras-filtro-data input[type="date"]:valid::-webkit-datetime-edit-year-field {
   color: var(--color-text-secondary);
 }
-
 
 /* =========================================================
    DATA - ICONE DO CALENDARIO
 ========================================================= */
 
-.compras-filtro-data
-  input[type="date"]::-webkit-calendar-picker-indicator {
+.compras-filtro-data input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0.5;
 
   cursor: pointer;
 }
-
 
 /* =========================================================
    TEXTO DO PERIODO
@@ -415,14 +331,9 @@
   display: flex;
   align-items: center;
 
-  padding:
-    0
-    var(--space-3);
+  padding: 0 var(--space-3);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -433,7 +344,6 @@
   font-size: var(--font-size-micro);
   font-weight: var(--font-weight-regular);
 }
-
 
 /* =========================================================
    LIMPAR FILTROS
@@ -448,14 +358,9 @@
 
   gap: 7px;
 
-  padding:
-    0
-    15px;
+  padding: 0 15px;
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -479,7 +384,6 @@
     transform var(--transition-fast);
 }
 
-
 /* =========================================================
    LIMPAR FILTROS - ATIVO
 ========================================================= */
@@ -494,7 +398,6 @@
   cursor: pointer;
 }
 
-
 /* =========================================================
    LIMPAR FILTROS - HOVER
 ========================================================= */
@@ -506,14 +409,8 @@
 
   color: #be123c;
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    rgb(244 63 94 / 0.07);
+  box-shadow: 0 0 0 var(--focus-ring-width) rgb(244 63 94 / 0.07);
 }
-
 
 /* =========================================================
    LIMPAR FILTROS - ACTIVE
@@ -523,7 +420,6 @@
   transform: translateY(1px);
 }
 
-
 /* =========================================================
    LIMPAR FILTROS - FOCO
 ========================================================= */
@@ -532,18 +428,11 @@
   outline: none;
 }
 
-
 .compras-btn-limpar--ativo:focus-visible {
   border-color: #f43f5e;
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    rgb(244 63 94 / 0.1);
+  box-shadow: 0 0 0 var(--focus-ring-width) rgb(244 63 94 / 0.1);
 }
-
 
 /* =========================================================
    LIMPAR FILTROS - DISABLED
@@ -553,7 +442,6 @@
   opacity: 1;
 }
 
-
 /* =========================================================
    RESPONSIVIDADE - 1450px
 ========================================================= */
@@ -561,20 +449,10 @@
 @media (max-width: 1450px) {
   .compras-filtros-linha-principal {
     grid-template-columns:
-      minmax(
-        300px,
-        1.5fr
-      )
-      repeat(
-        4,
-        minmax(
-          145px,
-          1fr
-        )
-      );
+      minmax(300px, 1.5fr)
+      repeat(4, minmax(145px, 1fr));
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 1150px
@@ -587,12 +465,9 @@
       1fr;
   }
 
-
   .compras-pesquisa {
-    grid-column:
-      1 / -1;
+    grid-column: 1 / -1;
   }
-
 
   .compras-filtros-linha-periodo {
     grid-template-columns:
@@ -600,18 +475,14 @@
       1fr;
   }
 
-
   .compras-periodo-info {
-    grid-column:
-      1 / 2;
+    grid-column: 1 / 2;
   }
-
 
   .compras-btn-limpar {
     width: 100%;
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 700px
@@ -619,15 +490,12 @@
 
 @media (max-width: 700px) {
   .compras-filtros-linha-principal {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .compras-pesquisa {
     grid-column: auto;
   }
-
 
   .compras-filtros-linha-periodo {
     grid-template-columns:
@@ -635,19 +503,14 @@
       1fr;
   }
 
-
   .compras-periodo-info {
-    grid-column:
-      1 / -1;
+    grid-column: 1 / -1;
   }
-
 
   .compras-btn-limpar {
-    grid-column:
-      1 / -1;
+    grid-column: 1 / -1;
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 520px
@@ -658,12 +521,9 @@
     padding: 10px;
   }
 
-
   .compras-filtros-linha-periodo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .compras-periodo-info,
   .compras-btn-limpar {

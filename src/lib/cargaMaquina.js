@@ -14,8 +14,7 @@ const DB_VERSION = 1;
 const STORE_DADOS = "carga_maquina";
 const STORE_META = "meta";
 
-const META_ULTIMA_ATUALIZACAO =
-  "carga_maquina_ultima_atualizacao";
+const META_ULTIMA_ATUALIZACAO = "carga_maquina_ultima_atualizacao";
 
 const DADOS_VAZIOS = Object.freeze([]);
 const DESCRICOES_VAZIAS = Object.freeze({});
@@ -66,10 +65,7 @@ export function normalizarCodigoProduto(valor) {
 
 function abrirBancoLocal() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(
-      DB_NAME,
-      DB_VERSION,
-    );
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = () => {
       reject(request.error);
@@ -85,31 +81,21 @@ function abrirBancoLocal() {
       /* STORE DOS DADOS */
 
       if (!db.objectStoreNames.contains(STORE_DADOS)) {
-        const store = db.createObjectStore(
-          STORE_DADOS,
-          {
-            keyPath: "id",
-          },
-        );
+        const store = db.createObjectStore(STORE_DADOS, {
+          keyPath: "id",
+        });
 
-        store.createIndex(
-          "criado_em",
-          "criado_em",
-          {
-            unique: false,
-          },
-        );
+        store.createIndex("criado_em", "criado_em", {
+          unique: false,
+        });
       }
 
       /* STORE DE METADADOS */
 
       if (!db.objectStoreNames.contains(STORE_META)) {
-        db.createObjectStore(
-          STORE_META,
-          {
-            keyPath: "chave",
-          },
-        );
+        db.createObjectStore(STORE_META, {
+          keyPath: "chave",
+        });
       }
     };
   });
@@ -123,10 +109,7 @@ async function lerDadosIndexedDB() {
   const db = await abrirBancoLocal();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readonly",
-    );
+    const transaction = db.transaction(STORE_DADOS, "readonly");
 
     const store = transaction.objectStore(STORE_DADOS);
 
@@ -158,19 +141,12 @@ async function salvarDadosIndexedDB(dados) {
   const db = await abrirBancoLocal();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readwrite",
-    );
+    const transaction = db.transaction(STORE_DADOS, "readwrite");
 
     const store = transaction.objectStore(STORE_DADOS);
 
     dados.forEach((item) => {
-      if (
-        item &&
-        item.id !== undefined &&
-        item.id !== null
-      ) {
+      if (item && item.id !== undefined && item.id !== null) {
         store.put(item);
       }
     });
@@ -198,10 +174,7 @@ async function limparDadosIndexedDB() {
   const db = await abrirBancoLocal();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_DADOS,
-      "readwrite",
-    );
+    const transaction = db.transaction(STORE_DADOS, "readwrite");
 
     const store = transaction.objectStore(STORE_DADOS);
 
@@ -234,10 +207,7 @@ async function lerMeta(chave) {
   const db = await abrirBancoLocal();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_META,
-      "readonly",
-    );
+    const transaction = db.transaction(STORE_META, "readonly");
 
     const store = transaction.objectStore(STORE_META);
 
@@ -265,10 +235,7 @@ async function salvarMeta(chave, valor) {
   const db = await abrirBancoLocal();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      STORE_META,
-      "readwrite",
-    );
+    const transaction = db.transaction(STORE_META, "readwrite");
 
     const store = transaction.objectStore(STORE_META);
 
@@ -299,10 +266,7 @@ async function salvarMeta(chave, valor) {
 export async function limparCacheCargaMaquina() {
   await limparDadosIndexedDB();
 
-  await salvarMeta(
-    META_ULTIMA_ATUALIZACAO,
-    null,
-  );
+  await salvarMeta(META_ULTIMA_ATUALIZACAO, null);
 }
 
 /* =====================================================
@@ -339,8 +303,7 @@ async function buscarTodosOsRegistros() {
   for (;;) {
     const inicioPagina = pagina * TAMANHO_PAGINA;
 
-    const fimPagina =
-      inicioPagina + TAMANHO_PAGINA - 1;
+    const fimPagina = inicioPagina + TAMANHO_PAGINA - 1;
 
     const { data, error } = await supabase
       .from("carga_maquina")
@@ -385,8 +348,7 @@ async function buscarNovosRegistros(ultimaAtualizacao) {
   for (;;) {
     const inicioPagina = pagina * TAMANHO_PAGINA;
 
-    const fimPagina =
-      inicioPagina + TAMANHO_PAGINA - 1;
+    const fimPagina = inicioPagina + TAMANHO_PAGINA - 1;
 
     let consulta = supabase
       .from("carga_maquina")
@@ -399,16 +361,10 @@ async function buscarNovosRegistros(ultimaAtualizacao) {
       });
 
     if (ultimaAtualizacao) {
-      consulta = consulta.gte(
-        "criado_em",
-        ultimaAtualizacao,
-      );
+      consulta = consulta.gte("criado_em", ultimaAtualizacao);
     }
 
-    const { data, error } = await consulta.range(
-      inicioPagina,
-      fimPagina,
-    );
+    const { data, error } = await consulta.range(inicioPagina, fimPagina);
 
     if (error) {
       throw error;
@@ -443,10 +399,7 @@ async function buscarNovosRegistros(ultimaAtualizacao) {
 export async function buscarCargaMaquina() {
   /* 1. LER CACHE */
 
-  const [
-    dadosCache,
-    ultimaAtualizacaoCache,
-  ] = await Promise.all([
+  const [dadosCache, ultimaAtualizacaoCache] = await Promise.all([
     lerDadosIndexedDB(),
     lerMeta(META_ULTIMA_ATUALIZACAO),
   ]);
@@ -454,22 +407,15 @@ export async function buscarCargaMaquina() {
   /* 2. PRIMEIRA CARGA */
 
   if (dadosCache.length === 0) {
-    logDesenvolvimento(
-      "[Carga Máquina] IndexedDB vazio. Fazendo primeira carga completa...",
-    );
+    logDesenvolvimento("[Carga Máquina] IndexedDB vazio. Fazendo primeira carga completa...");
 
-    const todosOsDados =
-      await buscarTodosOsRegistros();
+    const todosOsDados = await buscarTodosOsRegistros();
 
     await salvarDadosIndexedDB(todosOsDados);
 
-    const ultimaAtualizacaoBanco =
-      await buscarUltimaAtualizacaoBanco();
+    const ultimaAtualizacaoBanco = await buscarUltimaAtualizacaoBanco();
 
-    await salvarMeta(
-      META_ULTIMA_ATUALIZACAO,
-      ultimaAtualizacaoBanco,
-    );
+    await salvarMeta(META_ULTIMA_ATUALIZACAO, ultimaAtualizacaoBanco);
 
     logDesenvolvimento(
       `[Carga Máquina] Primeira carga concluída: ${todosOsDados.length} registros.`,
@@ -480,48 +426,33 @@ export async function buscarCargaMaquina() {
 
   /* 3. CACHE EXISTENTE */
 
-  logDesenvolvimento(
-    `[Carga Máquina] IndexedDB encontrado: ${dadosCache.length} registros.`,
-  );
+  logDesenvolvimento(`[Carga Máquina] IndexedDB encontrado: ${dadosCache.length} registros.`);
 
-  const ultimaAtualizacaoBanco =
-    await buscarUltimaAtualizacaoBanco();
+  const ultimaAtualizacaoBanco = await buscarUltimaAtualizacaoBanco();
 
   /* 4. SEM NOVOS REGISTROS */
 
-  if (
-    ultimaAtualizacaoBanco ===
-    ultimaAtualizacaoCache
-  ) {
-    logDesenvolvimento(
-      "[Carga Máquina] Banco sem novos registros. Usando IndexedDB.",
-    );
+  if (ultimaAtualizacaoBanco === ultimaAtualizacaoCache) {
+    logDesenvolvimento("[Carga Máquina] Banco sem novos registros. Usando IndexedDB.");
 
     return dadosCache;
   }
 
   /* 5. SINCRONIZAÇÃO INCREMENTAL */
 
-  logDesenvolvimento(
-    "[Carga Máquina] Novos registros detectados. Sincronizando...",
-  );
+  logDesenvolvimento("[Carga Máquina] Novos registros detectados. Sincronizando...");
 
-  const novosRegistros =
-    await buscarNovosRegistros(ultimaAtualizacaoCache);
+  const novosRegistros = await buscarNovosRegistros(ultimaAtualizacaoCache);
 
   if (novosRegistros.length > 0) {
     await salvarDadosIndexedDB(novosRegistros);
   }
 
-  await salvarMeta(
-    META_ULTIMA_ATUALIZACAO,
-    ultimaAtualizacaoBanco,
-  );
+  await salvarMeta(META_ULTIMA_ATUALIZACAO, ultimaAtualizacaoBanco);
 
   /* 6. DADOS ATUALIZADOS */
 
-  const dadosAtualizados =
-    await lerDadosIndexedDB();
+  const dadosAtualizados = await lerDadosIndexedDB();
 
   logDesenvolvimento(
     `[Carga Máquina] Sincronização concluída. ${dadosAtualizados.length} registros disponíveis.`,
@@ -558,18 +489,13 @@ export async function buscarCargaMaquina() {
  * que consultava somente parâmetros.
  */
 
-export const chaveDescricoesProdutos = [
-  "descricoes_produtos_estoque_parametros_v4",
-];
+export const chaveDescricoesProdutos = ["descricoes_produtos_estoque_parametros_v4"];
 
 /* =====================================================
    BUSCAR DESCRIÇÕES PAGINADAS
 ===================================================== */
 
-async function buscarRegistrosDescricoes(
-  tabela,
-  campoCodigo,
-) {
+async function buscarRegistrosDescricoes(tabela, campoCodigo) {
   const registros = [];
 
   let pagina = 0;
@@ -577,8 +503,7 @@ async function buscarRegistrosDescricoes(
   for (;;) {
     const inicioPagina = pagina * TAMANHO_PAGINA;
 
-    const fimPagina =
-      inicioPagina + TAMANHO_PAGINA - 1;
+    const fimPagina = inicioPagina + TAMANHO_PAGINA - 1;
 
     const { data, error } = await supabase
       .from(tabela)
@@ -622,34 +547,17 @@ async function buscarRegistrosDescricoes(
    Não duplica registros de produção.
 ===================================================== */
 
-function adicionarDescricoesAoMapa(
-  mapa,
-  registros,
-  campoCodigo,
-) {
+function adicionarDescricoesAoMapa(mapa, registros, campoCodigo) {
   for (const item of registros) {
-    const codigo = normalizarCodigoProduto(
-      item?.[campoCodigo],
-    );
+    const codigo = normalizarCodigoProduto(item?.[campoCodigo]);
 
-    const descricao = String(
-      item?.descricao ?? "",
-    ).trim();
+    const descricao = String(item?.descricao ?? "").trim();
 
-    if (
-      !codigo ||
-      !descricao ||
-      descricao === "-"
-    ) {
+    if (!codigo || !descricao || descricao === "-") {
       continue;
     }
 
-    if (
-      !Object.prototype.hasOwnProperty.call(
-        mapa,
-        codigo,
-      )
-    ) {
+    if (!Object.prototype.hasOwnProperty.call(mapa, codigo)) {
       mapa[codigo] = descricao;
     }
   }
@@ -660,38 +568,24 @@ function adicionarDescricoesAoMapa(
 ===================================================== */
 
 async function buscarDescricoesProdutos() {
-  const [
-    resultadoEstoque,
-    resultadoParametros,
-  ] = await Promise.allSettled([
-    buscarRegistrosDescricoes(
-      "estoque_produto_acabado_omie",
-      "codigo_produto",
-    ),
+  const [resultadoEstoque, resultadoParametros] = await Promise.allSettled([
+    buscarRegistrosDescricoes("estoque_produto_acabado_omie", "codigo_produto"),
 
-    buscarRegistrosDescricoes(
-      "parametros_produto",
-      "cod_prod",
-    ),
+    buscarRegistrosDescricoes("parametros_produto", "cod_prod"),
   ]);
 
   /* =================================================
      VERIFICAR FALHAS
   ================================================= */
 
-  if (
-    resultadoEstoque.status === "rejected" &&
-    resultadoParametros.status === "rejected"
-  ) {
+  if (resultadoEstoque.status === "rejected" && resultadoParametros.status === "rejected") {
     console.error(
       "[Descrições Produtos] Falha ao consultar as duas fontes:",
       resultadoEstoque.reason,
       resultadoParametros.reason,
     );
 
-    throw new Error(
-      "Não foi possível consultar as descrições dos produtos.",
-    );
+    throw new Error("Não foi possível consultar as descrições dos produtos.");
   }
 
   const descricoes = Object.create(null);
@@ -701,11 +595,7 @@ async function buscarDescricoesProdutos() {
   ================================================= */
 
   if (resultadoEstoque.status === "fulfilled") {
-    adicionarDescricoesAoMapa(
-      descricoes,
-      resultadoEstoque.value,
-      "codigo_produto",
-    );
+    adicionarDescricoesAoMapa(descricoes, resultadoEstoque.value, "codigo_produto");
 
     logDesenvolvimento(
       `[Descrições Produtos] Estoque OMIE: ${resultadoEstoque.value.length} registros consultados.`,
@@ -722,11 +612,7 @@ async function buscarDescricoesProdutos() {
   ================================================= */
 
   if (resultadoParametros.status === "fulfilled") {
-    adicionarDescricoesAoMapa(
-      descricoes,
-      resultadoParametros.value,
-      "cod_prod",
-    );
+    adicionarDescricoesAoMapa(descricoes, resultadoParametros.value, "cod_prod");
 
     logDesenvolvimento(
       `[Descrições Produtos] Parâmetros: ${resultadoParametros.value.length} registros consultados.`,
@@ -769,16 +655,14 @@ export function useDescricoesProdutos(opcoes = {}) {
   });
 
   return {
-    descricoesProdutos:
-      consulta.data ?? DESCRICOES_VAZIAS,
+    descricoesProdutos: consulta.data ?? DESCRICOES_VAZIAS,
 
     loadingDescricoes: consulta.isPending,
 
     atualizandoDescricoes: consulta.isFetching,
 
     erroDescricoes: consulta.error
-      ? consulta.error.message ||
-        "Não foi possível carregar as descrições dos produtos."
+      ? consulta.error.message || "Não foi possível carregar as descrições dos produtos."
       : "",
 
     recarregarDescricoes: consulta.refetch,
@@ -818,21 +702,15 @@ export function useCargaMaquina(opcoes = {}) {
   ================================================= */
 
   async function recarregarCompleto() {
-    logDesenvolvimento(
-      "[Carga Máquina] Atualização completa solicitada. Limpando cache local...",
-    );
+    logDesenvolvimento("[Carga Máquina] Atualização completa solicitada. Limpando cache local...");
 
     await limparCacheCargaMaquina();
 
-    logDesenvolvimento(
-      "[Carga Máquina] Cache local limpo. Buscando base completa novamente...",
-    );
+    logDesenvolvimento("[Carga Máquina] Cache local limpo. Buscando base completa novamente...");
 
     const resultado = await consulta.refetch();
 
-    logDesenvolvimento(
-      "[Carga Máquina] Atualização completa finalizada.",
-    );
+    logDesenvolvimento("[Carga Máquina] Atualização completa finalizada.");
 
     return resultado;
   }
@@ -845,8 +723,7 @@ export function useCargaMaquina(opcoes = {}) {
     atualizando: consulta.isFetching,
 
     erro: consulta.error
-      ? consulta.error.message ||
-        "Não foi possível carregar os dados de produção."
+      ? consulta.error.message || "Não foi possível carregar os dados de produção."
       : "",
 
     recarregar: consulta.refetch,

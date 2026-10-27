@@ -38,20 +38,27 @@ describe("situacaoDaRotina", () => {
   const base = { ativa: true, ultima_status_cron: "succeeded" };
 
   it("desativada vence tudo", () => {
-    expect(situacaoDaRotina({ ...base, ativa: false, ultimo_sucesso: false, ultima_chamada: "x" }))
-      .toBe(SITUACAO.DESATIVADA);
+    expect(
+      situacaoDaRotina({ ...base, ativa: false, ultimo_sucesso: false, ultima_chamada: "x" }),
+    ).toBe(SITUACAO.DESATIVADA);
   });
 
   it("chamada com falha = erro (caso real: Omie ocupado)", () => {
-    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: false })).toBe(SITUACAO.ERRO);
+    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: false })).toBe(
+      SITUACAO.ERRO,
+    );
   });
 
   it("chamada sem resposta ainda = rodando", () => {
-    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: null })).toBe(SITUACAO.RODANDO);
+    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: null })).toBe(
+      SITUACAO.RODANDO,
+    );
   });
 
   it("chamada ok = ok", () => {
-    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: true })).toBe(SITUACAO.OK);
+    expect(situacaoDaRotina({ ...base, ultima_chamada: "x", ultimo_sucesso: true })).toBe(
+      SITUACAO.OK,
+    );
   });
 
   it("rotina só de banco usa o status do cron", () => {
@@ -61,22 +68,43 @@ describe("situacaoDaRotina", () => {
   });
 
   it("falha do próprio cron conta mesmo se a última chamada foi ok", () => {
-    expect(situacaoDaRotina({ ...base, ultima_status_cron: "failed", ultima_chamada: "x", ultimo_sucesso: true }))
-      .toBe(SITUACAO.ERRO);
+    expect(
+      situacaoDaRotina({
+        ...base,
+        ultima_status_cron: "failed",
+        ultima_chamada: "x",
+        ultimo_sucesso: true,
+      }),
+    ).toBe(SITUACAO.ERRO);
   });
 });
 
 describe("mensagemErro e ordenação", () => {
   it("mostra o erro da função ou do cron", () => {
-    expect(mensagemErro({ ultimo_sucesso: false, ultimo_erro: "Consumo redundante" })).toBe("Consumo redundante");
-    expect(mensagemErro({ ultima_status_cron: "failed", ultimo_erro_cron: "syntax error" })).toBe("syntax error");
+    expect(mensagemErro({ ultimo_sucesso: false, ultimo_erro: "Consumo redundante" })).toBe(
+      "Consumo redundante",
+    );
+    expect(mensagemErro({ ultima_status_cron: "failed", ultimo_erro_cron: "syntax error" })).toBe(
+      "syntax error",
+    );
     expect(mensagemErro({ ultimo_sucesso: true, ultimo_erro: null })).toBeNull();
   });
 
   it("rotinas com erro aparecem primeiro e recebem nome amigável", () => {
     const lista = prepararRotinas([
-      { rotina: "sincronizar-pedidos-omie-15min", ativa: true, ultima_chamada: "x", ultimo_sucesso: true },
-      { rotina: "sincronizar-estoque-mp-matriz-30min", ativa: true, ultima_chamada: "x", ultimo_sucesso: false, ultimo_erro: "ocupado" },
+      {
+        rotina: "sincronizar-pedidos-omie-15min",
+        ativa: true,
+        ultima_chamada: "x",
+        ultimo_sucesso: true,
+      },
+      {
+        rotina: "sincronizar-estoque-mp-matriz-30min",
+        ativa: true,
+        ultima_chamada: "x",
+        ultimo_sucesso: false,
+        ultimo_erro: "ocupado",
+      },
       { rotina: "rotina-nova-sem-nome", ativa: false },
     ]);
     expect(lista.map((r) => r.nome)).toEqual([

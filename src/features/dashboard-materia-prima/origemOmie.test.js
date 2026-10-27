@@ -154,7 +154,11 @@ describe("pedido encerrado no Omie", () => {
   });
 
   it("recebido por completo continua RECEBIDA mesmo encerrado", () => {
-    const c = normalizarCompraOmie({ ...PARCIAL, situacao_recebimento: "RECEBIDO", encerrado: true });
+    const c = normalizarCompraOmie({
+      ...PARCIAL,
+      situacao_recebimento: "RECEBIDO",
+      encerrado: true,
+    });
     expect(c.status).toBe("RECEBIDA");
   });
 

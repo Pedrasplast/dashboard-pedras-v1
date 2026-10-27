@@ -1,41 +1,27 @@
-import {
-  memo,
-  useMemo,
-} from "react";
+import { memo, useMemo } from "react";
 
-import {
-  Search,
-  X,
-} from "lucide-react";
+import { Search, X } from "lucide-react";
 
-import LimparFiltrosButton
-  from "@/components/ui/LimparFiltrosButton";
+import LimparFiltrosButton from "@/components/ui/LimparFiltrosButton";
 
-import {
-  mesesFinanceiro,
-} from "../utils/financeiro.utils";
+import { mesesFinanceiro } from "../utils/financeiro.utils";
 
 import "./FinanceiroFiltros.css";
-
 
 function FinanceiroFiltros({
   mes,
   ano,
   tipo,
 
-  categoria =
-    "todas",
+  categoria = "todas",
 
-  busca =
-    "",
+  busca = "",
 
-  categoriasDisponiveis =
-    [],
+  categoriasDisponiveis = [],
 
   anosDisponiveis,
 
-  possuiFiltroAdicional =
-    false,
+  possuiFiltroAdicional = false,
 
   aoAlterarMes,
   aoAlterarAno,
@@ -44,96 +30,41 @@ function FinanceiroFiltros({
   aoAlterarBusca,
   aoLimparFiltros,
 }) {
-  const anos =
-    useMemo(
-      () => {
-        if (
-          Array.isArray(
-            anosDisponiveis,
-          ) &&
-          anosDisponiveis.length >
-            0
-        ) {
-          return anosDisponiveis;
-        }
+  const anos = useMemo(() => {
+    if (Array.isArray(anosDisponiveis) && anosDisponiveis.length > 0) {
+      return anosDisponiveis;
+    }
 
+    return [Number(ano)];
+  }, [anosDisponiveis, ano]);
 
-        return [
-          Number(
-            ano,
-          ),
-        ];
-      },
-      [
-        anosDisponiveis,
-        ano,
-      ],
-    );
-
-
-  const categorias =
-    Array.isArray(
-      categoriasDisponiveis,
-    )
-      ? categoriasDisponiveis
-      : [];
-
+  const categorias = Array.isArray(categoriasDisponiveis) ? categoriasDisponiveis : [];
 
   return (
     <div className="financeiro-filtros">
-
       <div
         className="
           financeiro-filtro-grupo
           financeiro-filtro-grupo-mes
         "
       >
-        <label
-          className="financeiro-filtro-label"
-          htmlFor="financeiro-mes"
-        >
+        <label className="financeiro-filtro-label" htmlFor="financeiro-mes">
           Mês
         </label>
-
 
         <select
           id="financeiro-mes"
           className="financeiro-filtro-select"
-          value={
-            mes
-          }
-          onChange={
-            (
-              evento,
-            ) =>
-              aoAlterarMes(
-                Number(
-                  evento
-                    .target
-                    .value,
-                ),
-              )
-          }
+          value={mes}
+          onChange={(evento) => aoAlterarMes(Number(evento.target.value))}
         >
-          {mesesFinanceiro.map(
-            (
-              item,
-            ) => (
-              <option
-                key={
-                  item.valor
-                }
-                value={
-                  item.valor
-                }
-              >
-                {item.nome}
-              </option>
-            ),
-          )}
+          {mesesFinanceiro.map((item) => (
+            <option key={item.valor} value={item.valor}>
+              {item.nome}
+            </option>
+          ))}
         </select>
       </div>
-
 
       <div
         className="
@@ -141,52 +72,23 @@ function FinanceiroFiltros({
           financeiro-filtro-grupo-ano
         "
       >
-        <label
-          className="financeiro-filtro-label"
-          htmlFor="financeiro-ano"
-        >
+        <label className="financeiro-filtro-label" htmlFor="financeiro-ano">
           Ano
         </label>
-
 
         <select
           id="financeiro-ano"
           className="financeiro-filtro-select"
-          value={
-            ano
-          }
-          onChange={
-            (
-              evento,
-            ) =>
-              aoAlterarAno(
-                Number(
-                  evento
-                    .target
-                    .value,
-                ),
-              )
-          }
+          value={ano}
+          onChange={(evento) => aoAlterarAno(Number(evento.target.value))}
         >
-          {anos.map(
-            (
-              itemAno,
-            ) => (
-              <option
-                key={
-                  itemAno
-                }
-                value={
-                  itemAno
-                }
-              >
-                {itemAno}
-              </option>
-            ),
-          )}
+          {anos.map((itemAno) => (
+            <option key={itemAno} value={itemAno}>
+              {itemAno}
+            </option>
+          ))}
         </select>
       </div>
-
 
       <div
         className="
@@ -194,45 +96,23 @@ function FinanceiroFiltros({
           financeiro-filtro-grupo-tipo
         "
       >
-        <label
-          className="financeiro-filtro-label"
-          htmlFor="financeiro-tipo"
-        >
+        <label className="financeiro-filtro-label" htmlFor="financeiro-tipo">
           Tipo
         </label>
-
 
         <select
           id="financeiro-tipo"
           className="financeiro-filtro-select"
-          value={
-            tipo
-          }
-          onChange={
-            (
-              evento,
-            ) =>
-              aoAlterarTipo(
-                evento
-                  .target
-                  .value,
-              )
-          }
+          value={tipo}
+          onChange={(evento) => aoAlterarTipo(evento.target.value)}
         >
-          <option value="todos">
-            Todos
-          </option>
+          <option value="todos">Todos</option>
 
-          <option value="receitas">
-            Receitas
-          </option>
+          <option value="receitas">Receitas</option>
 
-          <option value="despesas">
-            Despesas
-          </option>
+          <option value="despesas">Despesas</option>
         </select>
       </div>
-
 
       <div
         className="
@@ -240,55 +120,25 @@ function FinanceiroFiltros({
           financeiro-filtro-grupo-categoria
         "
       >
-        <label
-          className="financeiro-filtro-label"
-          htmlFor="financeiro-categoria"
-        >
+        <label className="financeiro-filtro-label" htmlFor="financeiro-categoria">
           Categoria
         </label>
-
 
         <select
           id="financeiro-categoria"
           className="financeiro-filtro-select"
-          value={
-            categoria
-          }
-          onChange={
-            (
-              evento,
-            ) =>
-              aoAlterarCategoria(
-                evento
-                  .target
-                  .value,
-              )
-          }
+          value={categoria}
+          onChange={(evento) => aoAlterarCategoria(evento.target.value)}
         >
-          <option value="todas">
-            Todas as categorias
-          </option>
+          <option value="todas">Todas as categorias</option>
 
-
-          {categorias.map(
-            (
-              item,
-            ) => (
-              <option
-                key={
-                  item.valor
-                }
-                value={
-                  item.valor
-                }
-              >
-                {item.label}
-              </option>
-            ),
-          )}
+          {categorias.map((item) => (
+            <option key={item.valor} value={item.valor}>
+              {item.label}
+            </option>
+          ))}
         </select>
       </div>
-
 
       <div
         className="
@@ -296,24 +146,12 @@ function FinanceiroFiltros({
           financeiro-filtro-grupo-busca
         "
       >
-        <label
-          className="financeiro-filtro-label"
-          htmlFor="financeiro-busca"
-        >
+        <label className="financeiro-filtro-label" htmlFor="financeiro-busca">
           Buscar
         </label>
 
-
         <div className="financeiro-filtro-busca-wrapper">
-
-          <Search
-            className="financeiro-filtro-busca-icone"
-            size={
-              15
-            }
-            aria-hidden="true"
-          />
-
+          <Search className="financeiro-filtro-busca-icone" size={15} aria-hidden="true" />
 
           <input
             id="financeiro-busca"
@@ -322,50 +160,25 @@ function FinanceiroFiltros({
               financeiro-filtro-select
               financeiro-filtro-busca-input
             "
-            value={
-              busca
-            }
+            value={busca}
             placeholder="Digite código ou categoria..."
             autoComplete="off"
-            onChange={
-              (
-                evento,
-              ) =>
-                aoAlterarBusca(
-                  evento
-                    .target
-                    .value,
-                )
-            }
+            onChange={(evento) => aoAlterarBusca(evento.target.value)}
           />
 
-
-          {Boolean(
-            busca,
-          ) && (
+          {Boolean(busca) && (
             <button
               type="button"
               className="financeiro-filtro-busca-limpar"
               aria-label="Limpar pesquisa"
               title="Limpar pesquisa"
-              onClick={
-                () =>
-                  aoAlterarBusca(
-                    "",
-                  )
-              }
+              onClick={() => aoAlterarBusca("")}
             >
-              <X
-                size={
-                  15
-                }
-              />
+              <X size={15} />
             </button>
           )}
-
         </div>
       </div>
-
 
       <div
         className="
@@ -383,22 +196,10 @@ function FinanceiroFiltros({
           &nbsp;
         </span>
 
-
-        <LimparFiltrosButton
-          ativo={
-            possuiFiltroAdicional
-          }
-          onClick={
-            aoLimparFiltros
-          }
-        />
+        <LimparFiltrosButton ativo={possuiFiltroAdicional} onClick={aoLimparFiltros} />
       </div>
-
     </div>
   );
 }
 
-
-export default memo(
-  FinanceiroFiltros,
-);
+export default memo(FinanceiroFiltros);

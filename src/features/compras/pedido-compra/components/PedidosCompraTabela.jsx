@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 
-import {
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   AlertTriangle,
@@ -13,9 +11,7 @@ import {
   Info,
 } from "lucide-react";
 
-import {
-  TIPOS_DOCUMENTO,
-} from "../constants/pedidosCompra.constants";
+import { TIPOS_DOCUMENTO } from "../constants/pedidosCompra.constants";
 
 import {
   calcularDiasAtraso,
@@ -36,51 +32,30 @@ import "./PedidosCompraRecebimentoFisico.css";
 
 function obterNomeCategoria(pedido) {
   return (
-    String(
-      pedido?.categoria_nome ?? "",
-    ).trim() ||
-    String(
-      pedido?.categoria ?? "",
-    ).trim() ||
-    "-"
+    String(pedido?.categoria_nome ?? "").trim() || String(pedido?.categoria ?? "").trim() || "-"
   );
 }
 
 function obterSolicitante(pedido) {
-  const valor =
-    pedido?.solicitante ??
-    pedido?.contato ??
-    pedido?.snapshot?.contato ??
-    "";
+  const valor = pedido?.solicitante ?? pedido?.contato ?? pedido?.snapshot?.contato ?? "";
 
   return String(valor).trim() || "-";
 }
 
 function obterCodigoItem(item) {
-  const codigo =
-    String(
-      item?.codigo_comercial ?? "",
-    ).trim();
+  const codigo = String(item?.codigo_comercial ?? "").trim();
 
   if (codigo) {
     return codigo;
   }
 
-  const codigoOmie =
-    String(
-      item?.codigo_produto ?? "",
-    ).trim();
+  const codigoOmie = String(item?.codigo_produto ?? "").trim();
 
-  return codigoOmie
-    ? `OMIE ${codigoOmie}`
-    : "-";
+  return codigoOmie ? `OMIE ${codigoOmie}` : "-";
 }
 
 function obterDescricaoItem(item) {
-  const descricao =
-    String(
-      item?.descricao ?? "",
-    ).trim();
+  const descricao = String(item?.descricao ?? "").trim();
 
   if (descricao) {
     return descricao;
@@ -90,49 +65,29 @@ function obterDescricaoItem(item) {
 }
 
 function obterValorItem(item) {
-  const valorTotal =
-    Number(item?.valor_total);
+  const valorTotal = Number(item?.valor_total);
 
-  if (
-    Number.isFinite(valorTotal)
-  ) {
+  if (Number.isFinite(valorTotal)) {
     return valorTotal;
   }
 
-  const quantidade =
-    Number(
-      item?.quantidade ?? 0,
-    );
+  const quantidade = Number(item?.quantidade ?? 0);
 
-  const precoUnitario =
-    Number(
-      item?.preco_unitario ?? 0,
-    );
+  const precoUnitario = Number(item?.preco_unitario ?? 0);
 
-  return (
-    quantidade *
-    precoUnitario
-  );
+  return quantidade * precoUnitario;
 }
 
 function obterCodigoPedidoCompra(pedido) {
   const codigo = Number(
-    pedido?.cod_ped_compra ??
-      pedido?.codigo_pedido_compra ??
-      pedido?.codigoPedidoCompra ??
-      null,
+    pedido?.cod_ped_compra ?? pedido?.codigo_pedido_compra ?? pedido?.codigoPedidoCompra ?? null,
   );
 
-  return Number.isFinite(codigo) && codigo > 0
-    ? codigo
-    : null;
+  return Number.isFinite(codigo) && codigo > 0 ? codigo : null;
 }
 
-
 function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
-  const itens = Array.isArray(pedido?.itens)
-    ? pedido.itens
-    : [];
+  const itens = Array.isArray(pedido?.itens) ? pedido.itens : [];
 
   let totalItens = itens.length;
   let itensCompletosOmie = 0;
@@ -142,10 +97,7 @@ function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
 
   for (const item of itens) {
     const quantidade = Math.max(Number(item?.quantidade ?? 0), 0);
-    const recebidaOmie = Math.min(
-      Math.max(Number(item?.quantidade_recebida ?? 0), 0),
-      quantidade,
-    );
+    const recebidaOmie = Math.min(Math.max(Number(item?.quantidade_recebida ?? 0), 0), quantidade);
     const saldoOmie = Math.max(quantidade - recebidaOmie, 0);
 
     quantidadeOmiePedida += quantidade;
@@ -160,19 +112,13 @@ function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
     }
   }
 
-  const situacaoManual =
-    resumoManual?.situacao_recebimento_fisico ||
-    "NAO_RECEBIDO";
+  const situacaoManual = resumoManual?.situacao_recebimento_fisico || "NAO_RECEBIDO";
 
-  const completoOmie =
-    totalItens > 0 &&
-    itensCompletosOmie === totalItens;
+  const completoOmie = totalItens > 0 && itensCompletosOmie === totalItens;
 
-  const completoManual =
-    situacaoManual === "COMPLETO";
+  const completoManual = situacaoManual === "COMPLETO";
 
-  const parcialManual =
-    situacaoManual === "PARCIAL";
+  const parcialManual = situacaoManual === "PARCIAL";
 
   let situacao = "NAO_RECEBIDO";
 
@@ -202,10 +148,7 @@ function calcularResumoRecebimentoFisicoVisual(pedido, resumoManual) {
     itens_completos:
       situacao === "COMPLETO" && completoOmie
         ? totalItens
-        : Math.max(
-            itensCompletosOmie,
-            Number(resumoManual?.itens_completos ?? 0),
-          ),
+        : Math.max(itensCompletosOmie, Number(resumoManual?.itens_completos ?? 0)),
     omie_quantidade_recebida: quantidadeOmieRecebida,
     omie_quantidade_pedida: quantidadeOmiePedida,
   };
@@ -226,9 +169,7 @@ function formatarDataHoraRecebimentoFisico(valor) {
 }
 
 function RecebimentoFisicoResumo({ resumo, onClick }) {
-  const situacao =
-    resumo?.situacao_recebimento_fisico ||
-    "NAO_RECEBIDO";
+  const situacao = resumo?.situacao_recebimento_fisico || "NAO_RECEBIDO";
 
   const configuracao =
     situacao === "COMPLETO"
@@ -264,10 +205,7 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
 
     if (Number(resumo?.omie_quantidade_pedida ?? 0) > 0) {
       linhasTitulo.push(
-        `Omie: ${formatarNumero(
-          resumo.omie_quantidade_recebida,
-          2,
-        )} de ${formatarNumero(
+        `Omie: ${formatarNumero(resumo.omie_quantidade_recebida, 2)} de ${formatarNumero(
           resumo.omie_quantidade_pedida,
           2,
         )}`,
@@ -284,9 +222,7 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
     );
 
     if (resumo.ultima_movimentacao_produto) {
-      linhasTitulo.push(
-        `Item: ${resumo.ultima_movimentacao_produto}`,
-      );
+      linhasTitulo.push(`Item: ${resumo.ultima_movimentacao_produto}`);
     }
   }
 
@@ -306,136 +242,71 @@ function RecebimentoFisicoResumo({ resumo, onClick }) {
       <Icone size={15} />
       <span>{configuracao.rotulo}</span>
 
-      {situacao === "PARCIAL" &&
-        resumo?.total_itens > 0 && (
-          <small>
-            {resumo.itens_completos || 0}/
-            {resumo.total_itens} itens
-          </small>
-        )}
+      {situacao === "PARCIAL" && resumo?.total_itens > 0 && (
+        <small>
+          {resumo.itens_completos || 0}/{resumo.total_itens} itens
+        </small>
+      )}
 
       <Info size={13} aria-hidden="true" />
     </button>
   );
 }
 
-function BadgeRecebimento({
-  situacao,
-}) {
+function BadgeRecebimento({ situacao }) {
   if (!situacao) {
-    return (
-      <span className="compras-sem-status">
-        -
-      </span>
-    );
+    return <span className="compras-sem-status">-</span>;
   }
 
-  const classe =
-    String(situacao)
-      .toLowerCase()
-      .replaceAll("_", "-");
+  const classe = String(situacao).toLowerCase().replaceAll("_", "-");
 
   return (
-    <span
-      className={`compras-badge compras-badge--${classe}`}
-    >
-      {
-        obterRotuloSituacaoRecebimento(
-          situacao,
-        )
-      }
+    <span className={`compras-badge compras-badge--${classe}`}>
+      {obterRotuloSituacaoRecebimento(situacao)}
     </span>
   );
 }
 
-function PrevisaoRecebimento({
-  pedido,
-}) {
-  if (
-    pedido?.tipo_documento ===
-    TIPOS_DOCUMENTO.REQUISICAO
-  ) {
+function PrevisaoRecebimento({ pedido }) {
+  if (pedido?.tipo_documento === TIPOS_DOCUMENTO.REQUISICAO) {
     return (
       <div className="compras-previsao-conteudo">
-        <strong>
-          {
-            formatarData(
-              pedido.data_previsao,
-            )
-          }
-        </strong>
+        <strong>{formatarData(pedido.data_previsao)}</strong>
       </div>
     );
   }
 
-  const atrasado =
-    pedido.situacao_recebimento ===
-    "EM_ATRASO";
+  const atrasado = pedido.situacao_recebimento === "EM_ATRASO";
 
-  const diasAtraso =
-    atrasado
-      ? calcularDiasAtraso(
-          pedido.data_previsao,
-        )
-      : 0;
+  const diasAtraso = atrasado ? calcularDiasAtraso(pedido.data_previsao) : 0;
 
   return (
     <div className="compras-previsao-conteudo">
-      <strong>
-        {
-          formatarData(
-            pedido.data_previsao,
-          )
-        }
-      </strong>
+      <strong>{formatarData(pedido.data_previsao)}</strong>
 
-      {atrasado &&
-        diasAtraso > 0 && (
-          <span className="compras-tag-atraso">
-            <AlertTriangle
-              size={12}
-            />
-
-            {diasAtraso}{" "}
-            {diasAtraso === 1
-              ? "dia"
-              : "dias"}{" "}
-            em atraso
-          </span>
-        )}
+      {atrasado && diasAtraso > 0 && (
+        <span className="compras-tag-atraso">
+          <AlertTriangle size={12} />
+          {diasAtraso} {diasAtraso === 1 ? "dia" : "dias"} em atraso
+        </span>
+      )}
     </div>
   );
 }
 
-function BotaoItens({
-  totalItens,
-  expandido,
-  onClick,
-}) {
+function BotaoItens({ totalItens, expandido, onClick }) {
   if (totalItens <= 1) {
     return null;
   }
 
-  const itensOcultos =
-    Math.max(
-      totalItens - 1,
-      0,
-    );
+  const itensOcultos = Math.max(totalItens - 1, 0);
 
   return (
     <button
       type="button"
-      className={`compras-btn-itens${
-        expandido
-          ? " compras-btn-itens--aberto"
-          : ""
-      }`}
+      className={`compras-btn-itens${expandido ? " compras-btn-itens--aberto" : ""}`}
       onClick={onClick}
-      title={
-        expandido
-          ? "Recolher itens"
-          : "Ver todos os itens"
-      }
+      title={expandido ? "Recolher itens" : "Ver todos os itens"}
     >
       {expandido ? (
         <>
@@ -444,10 +315,7 @@ function BotaoItens({
         </>
       ) : (
         <>
-          +{itensOcultos}{" "}
-          {itensOcultos === 1
-            ? "item"
-            : "itens"}
+          +{itensOcultos} {itensOcultos === 1 ? "item" : "itens"}
           <ChevronDown size={13} />
         </>
       )}
@@ -465,28 +333,11 @@ function ProdutoComExpansao({
 }) {
   return (
     <div className="compras-produto-linha">
-      <span className="compras-produto-descricao">
-        {
-          obterDescricaoItem(
-            item,
-          )
-        }
-      </span>
+      <span className="compras-produto-descricao">{obterDescricaoItem(item)}</span>
 
-      {primeiro &&
-        possuiMaisItens && (
-          <BotaoItens
-            totalItens={
-              totalItens
-            }
-            expandido={
-              expandido
-            }
-            onClick={
-              onAlternarItens
-            }
-          />
-        )}
+      {primeiro && possuiMaisItens && (
+        <BotaoItens totalItens={totalItens} expandido={expandido} onClick={onAlternarItens} />
+      )}
     </div>
   );
 }
@@ -504,261 +355,135 @@ function TabelaRequisicoes({
       <table className="compras-tabela compras-tabela--requisicoes">
         <thead>
           <tr>
-            <th className="compras-col-requisicao">
-              Requisição
-            </th>
+            <th className="compras-col-requisicao">Requisição</th>
 
-            <th className="compras-col-categoria">
-              Categoria
-            </th>
+            <th className="compras-col-categoria">Categoria</th>
 
-            <th className="compras-col-previsao">
-              Previsão
-            </th>
+            <th className="compras-col-previsao">Previsão</th>
 
-            <th className="compras-col-codigo">
-              Código
-            </th>
+            <th className="compras-col-codigo">Código</th>
 
-            <th className="compras-col-produto">
-              Produto
-            </th>
+            <th className="compras-col-produto">Produto</th>
 
-            <th className="compras-col-observacao-item">
-              Observação do item
-            </th>
+            <th className="compras-col-observacao-item">Observação do item</th>
 
-            <th className="compras-col-numero">
-              Qtd.
-            </th>
+            <th className="compras-col-numero">Qtd.</th>
 
-            <th className="compras-col-unidade">
-              Un.
-            </th>
+            <th className="compras-col-unidade">Un.</th>
 
-            <th className="compras-col-observacoes">
-              Observações
-            </th>
+            <th className="compras-col-observacoes">Observações</th>
 
-            <th className="compras-col-observacoes-internas">
-              Observações internas
-            </th>
+            <th className="compras-col-observacoes-internas">Observações internas</th>
           </tr>
         </thead>
 
         <tbody>
-          {pedidos.flatMap(
-            (pedido) => {
-              const todosItens =
-                Array.isArray(
-                  pedido?.itens,
-                ) &&
-                pedido.itens.length
-                  ? pedido.itens
-                  : [
-                      {
-                        codigo_item:
-                          `vazio-${pedido.documento_id}`,
-                      },
-                    ];
+          {pedidos.flatMap((pedido) => {
+            const todosItens =
+              Array.isArray(pedido?.itens) && pedido.itens.length
+                ? pedido.itens
+                : [
+                    {
+                      codigo_item: `vazio-${pedido.documento_id}`,
+                    },
+                  ];
 
-              const documentoId =
-                String(
-                  pedido.documento_id,
-                );
+            const documentoId = String(pedido.documento_id);
 
-              const expandido =
-                documentosExpandidos.has(
-                  documentoId,
-                );
+            const expandido = documentosExpandidos.has(documentoId);
 
-              const possuiMaisItens =
-                todosItens.length > 1;
+            const possuiMaisItens = todosItens.length > 1;
 
-              const itensVisiveis =
-                expandido
-                  ? todosItens
-                  : todosItens.slice(
-                      0,
-                      1,
-                    );
+            const itensVisiveis = expandido ? todosItens : todosItens.slice(0, 1);
 
-              return itensVisiveis.map(
-                (
-                  item,
-                  indice,
-                ) => {
-                  const primeiro =
-                    indice === 0;
+            return itensVisiveis.map((item, indice) => {
+              const primeiro = indice === 0;
 
-                  const quantidade =
-                    Number(
-                      item?.quantidade ??
-                        0,
-                    );
+              const quantidade = Number(item?.quantidade ?? 0);
 
-                  const destacado =
-                    documentoEmFoco ===
-                    documentoId;
+              const destacado = documentoEmFoco === documentoId;
 
-                  const classes = [
-                    primeiro
-                      ? "compras-inicio-grupo"
-                      : "compras-item-continuacao",
+              const classes = [
+                primeiro ? "compras-inicio-grupo" : "compras-item-continuacao",
 
-                    destacado
-                      ? "compras-grupo-destacado"
-                      : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
+                destacado ? "compras-grupo-destacado" : "",
+              ]
+                .filter(Boolean)
+                .join(" ");
 
-                  return (
-                    <tr
-                      key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
-                      data-documento-id={
-                        documentoId
-                      }
-                      className={
-                        classes
-                      }
-                      onMouseEnter={() =>
-                        onEntrarDocumento(
-                          documentoId,
-                        )
-                      }
-                      onMouseLeave={(
-                        evento,
-                      ) =>
-                        onSairDocumento(
-                          evento,
-                          documentoId,
-                        )
-                      }
-                    >
-                      {primeiro && (
-                        <>
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-requisicao"
-                          >
-                            <strong>
-                              {pedido.numero_requisicao ||
-                                "-"}
-                            </strong>
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-categoria-requisicao"
-                          >
-                            {
-                              obterNomeCategoria(
-                                pedido,
-                              )
-                            }
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-previsao"
-                          >
-                            <PrevisaoRecebimento
-                              pedido={
-                                pedido
-                              }
-                            />
-                          </td>
-                        </>
-                      )}
-
-                      <td className="compras-codigo">
-                        {
-                          obterCodigoItem(
-                            item,
-                          )
-                        }
+              return (
+                <tr
+                  key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
+                  data-documento-id={documentoId}
+                  className={classes}
+                  onMouseEnter={() => onEntrarDocumento(documentoId)}
+                  onMouseLeave={(evento) => onSairDocumento(evento, documentoId)}
+                >
+                  {primeiro && (
+                    <>
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-requisicao"
+                      >
+                        <strong>{pedido.numero_requisicao || "-"}</strong>
                       </td>
 
-                      <td className="compras-produto">
-                        <ProdutoComExpansao
-                          item={
-                            item
-                          }
-                          primeiro={
-                            primeiro
-                          }
-                          possuiMaisItens={
-                            possuiMaisItens
-                          }
-                          totalItens={
-                            todosItens.length
-                          }
-                          expandido={
-                            expandido
-                          }
-                          onAlternarItens={() =>
-                            onAlternarItens(
-                              documentoId,
-                            )
-                          }
-                        />
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-categoria-requisicao"
+                      >
+                        {obterNomeCategoria(pedido)}
                       </td>
 
-                      <td className="compras-observacao-item">
-                        {item?.observacao ||
-                          "-"}
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-previsao"
+                      >
+                        <PrevisaoRecebimento pedido={pedido} />
+                      </td>
+                    </>
+                  )}
+
+                  <td className="compras-codigo">{obterCodigoItem(item)}</td>
+
+                  <td className="compras-produto">
+                    <ProdutoComExpansao
+                      item={item}
+                      primeiro={primeiro}
+                      possuiMaisItens={possuiMaisItens}
+                      totalItens={todosItens.length}
+                      expandido={expandido}
+                      onAlternarItens={() => onAlternarItens(documentoId)}
+                    />
+                  </td>
+
+                  <td className="compras-observacao-item">{item?.observacao || "-"}</td>
+
+                  <td className="compras-numero">{formatarNumero(quantidade, 2)}</td>
+
+                  <td className="compras-unidade">{item?.unidade || "-"}</td>
+
+                  {primeiro && (
+                    <>
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-observacoes-requisicao"
+                      >
+                        {pedido.observacoes || "-"}
                       </td>
 
-                      <td className="compras-numero">
-                        {
-                          formatarNumero(
-                            quantidade,
-                            2,
-                          )
-                        }
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-observacoes-internas"
+                      >
+                        {pedido.observacoes_internas || "-"}
                       </td>
-
-                      <td className="compras-unidade">
-                        {item?.unidade ||
-                          "-"}
-                      </td>
-
-                      {primeiro && (
-                        <>
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-observacoes-requisicao"
-                          >
-                            {pedido.observacoes ||
-                              "-"}
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-observacoes-internas"
-                          >
-                            {pedido.observacoes_internas ||
-                              "-"}
-                          </td>
-                        </>
-                      )}
-                    </tr>
-                  );
-                },
+                    </>
+                  )}
+                </tr>
               );
-            },
-          )}
+            });
+          })}
         </tbody>
       </table>
     </div>
@@ -780,548 +505,271 @@ function TabelaPedidos({
     <div className="compras-tabela-wrapper">
       <table
         className={`compras-tabela ${
-          mostrarRequisicao
-            ? "compras-tabela--todos"
-            : "compras-tabela--pedidos"
+          mostrarRequisicao ? "compras-tabela--todos" : "compras-tabela--pedidos"
         }`}
       >
         <thead>
           <tr>
-            {mostrarRequisicao && (
-              <th>
-                Requisição
-              </th>
-            )}
+            {mostrarRequisicao && <th>Requisição</th>}
 
-            <th>
-              Pedido
-            </th>
+            <th>Pedido</th>
 
-            <th>
-              Fornecedor
-            </th>
+            <th>Fornecedor</th>
 
-            <th>
-              Data inclusão
-            </th>
+            <th>Data inclusão</th>
 
-            <th>
-              Previsão
-            </th>
+            <th>Previsão</th>
 
-            <th>
-              Código
-            </th>
+            <th>Código</th>
 
-            <th className="compras-col-produto">
-              Produto
-            </th>
+            <th className="compras-col-produto">Produto</th>
 
-            <th className="compras-col-numero">
-              Qtd.
-            </th>
+            <th className="compras-col-numero">Qtd.</th>
 
-            <th className="compras-col-numero">
-              Recebido
-            </th>
+            <th className="compras-col-numero">Recebido</th>
 
-            <th className="compras-col-numero">
-              Saldo
-            </th>
+            <th className="compras-col-numero">Saldo</th>
 
-            <th className="compras-col-recebimento-fisico">
-              Recebido físico
-            </th>
+            <th className="compras-col-recebimento-fisico">Recebido físico</th>
 
-            <th>
-              Un.
-            </th>
+            <th>Un.</th>
 
-            <th className="compras-col-solicitante">
-              Solicitante
-            </th>
+            <th className="compras-col-solicitante">Solicitante</th>
 
-            <th>
-              Comprador
-            </th>
+            <th>Comprador</th>
 
-            <th className="compras-col-valor">
-              Valor item
-            </th>
+            <th className="compras-col-valor">Valor item</th>
 
-            <th className="compras-col-observacoes-pedido">
-              Observações
-            </th>
+            <th className="compras-col-observacoes-pedido">Observações</th>
           </tr>
         </thead>
 
         <tbody>
-          {pedidos.flatMap(
-            (pedido) => {
-              const todosItens =
-                Array.isArray(
-                  pedido?.itens,
-                ) &&
-                pedido.itens.length
-                  ? pedido.itens
-                  : [
-                      {
-                        codigo_item:
-                          `vazio-${pedido.documento_id}`,
-                      },
-                    ];
+          {pedidos.flatMap((pedido) => {
+            const todosItens =
+              Array.isArray(pedido?.itens) && pedido.itens.length
+                ? pedido.itens
+                : [
+                    {
+                      codigo_item: `vazio-${pedido.documento_id}`,
+                    },
+                  ];
 
-              const documentoId =
-                String(
-                  pedido.documento_id,
-                );
+            const documentoId = String(pedido.documento_id);
 
-              const expandido =
-                documentosExpandidos.has(
-                  documentoId,
-                );
+            const expandido = documentosExpandidos.has(documentoId);
 
-              const possuiMaisItens =
-                todosItens.length > 1;
+            const possuiMaisItens = todosItens.length > 1;
 
-              const itensVisiveis =
-                expandido
-                  ? todosItens
-                  : todosItens.slice(
-                      0,
-                      1,
-                    );
+            const itensVisiveis = expandido ? todosItens : todosItens.slice(0, 1);
 
-              const atrasado =
-                pedido
-                  .situacao_recebimento ===
-                "EM_ATRASO";
+            const atrasado = pedido.situacao_recebimento === "EM_ATRASO";
 
-              const codigoPedidoCompra =
-                obterCodigoPedidoCompra(
-                  pedido,
-                );
+            const codigoPedidoCompra = obterCodigoPedidoCompra(pedido);
 
-              const resumoFisicoManual =
-                codigoPedidoCompra
-                  ? resumosFisicos?.[
-                      String(
-                        codigoPedidoCompra,
-                      )
-                    ] || null
-                  : null;
+            const resumoFisicoManual = codigoPedidoCompra
+              ? resumosFisicos?.[String(codigoPedidoCompra)] || null
+              : null;
 
-              const resumoFisico =
-                calcularResumoRecebimentoFisicoVisual(
-                  pedido,
-                  resumoFisicoManual,
-                );
+            const resumoFisico = calcularResumoRecebimentoFisicoVisual(pedido, resumoFisicoManual);
 
-              return itensVisiveis.map(
-                (
-                  item,
-                  indice,
-                ) => {
-                  const primeiro =
-                    indice === 0;
+            return itensVisiveis.map((item, indice) => {
+              const primeiro = indice === 0;
 
-                  const quantidade =
-                    Number(
-                      item?.quantidade ??
-                        0,
-                    );
+              const quantidade = Number(item?.quantidade ?? 0);
 
-                  const recebida =
-                    Math.min(
-                      Number(
-                        item?.quantidade_recebida ??
-                          0,
-                      ),
-                      quantidade,
-                    );
+              const recebida = Math.min(Number(item?.quantidade_recebida ?? 0), quantidade);
 
-                  const saldo =
-                    Math.max(
-                      quantidade -
-                        recebida,
-                      0,
-                    );
+              const saldo = Math.max(quantidade - recebida, 0);
 
-                  const valorItem =
-                    obterValorItem(
-                      item,
-                    );
+              const valorItem = obterValorItem(item);
 
-                  const destacado =
-                    documentoEmFoco ===
-                    documentoId;
+              const destacado = documentoEmFoco === documentoId;
 
-                  const classes = [
-                    primeiro
-                      ? "compras-inicio-grupo"
-                      : "compras-item-continuacao",
+              const classes = [
+                primeiro ? "compras-inicio-grupo" : "compras-item-continuacao",
 
-                    atrasado
-                      ? "compras-linha-atrasada"
-                      : "",
+                atrasado ? "compras-linha-atrasada" : "",
 
-                    destacado
-                      ? "compras-grupo-destacado"
-                      : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
+                destacado ? "compras-grupo-destacado" : "",
+              ]
+                .filter(Boolean)
+                .join(" ");
 
-                  return (
-                    <tr
-                      key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
-                      data-documento-id={
-                        documentoId
-                      }
-                      className={
-                        classes
-                      }
-                      onMouseEnter={() =>
-                        onEntrarDocumento(
-                          documentoId,
-                        )
-                      }
-                      onMouseLeave={(
-                        evento,
-                      ) =>
-                        onSairDocumento(
-                          evento,
-                          documentoId,
-                        )
-                      }
+              return (
+                <tr
+                  key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
+                  data-documento-id={documentoId}
+                  className={classes}
+                  onMouseEnter={() => onEntrarDocumento(documentoId)}
+                  onMouseLeave={(evento) => onSairDocumento(evento, documentoId)}
+                >
+                  {primeiro && (
+                    <>
+                      {mostrarRequisicao && (
+                        <td
+                          rowSpan={itensVisiveis.length}
+                          className="compras-celula-grupo compras-requisicao"
+                        >
+                          <strong>{pedido.numero_requisicao || "-"}</strong>
+                        </td>
+                      )}
+
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-pedido"
+                      >
+                        <strong>{pedido.numero_pedido || "-"}</strong>
+                      </td>
+
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-fornecedor"
+                      >
+                        {pedido.fornecedor_nome}
+                      </td>
+
+                      <td rowSpan={itensVisiveis.length} className="compras-celula-grupo">
+                        {formatarData(pedido.data_inclusao)}
+                      </td>
+
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-previsao"
+                      >
+                        <PrevisaoRecebimento pedido={pedido} />
+                      </td>
+                    </>
+                  )}
+
+                  <td className="compras-codigo">{item?.codigo_comercial || "-"}</td>
+
+                  <td className="compras-produto">
+                    <ProdutoComExpansao
+                      item={item}
+                      primeiro={primeiro}
+                      possuiMaisItens={possuiMaisItens}
+                      totalItens={todosItens.length}
+                      expandido={expandido}
+                      onAlternarItens={() => onAlternarItens(documentoId)}
+                    />
+                  </td>
+
+                  <td className="compras-numero">{formatarNumero(quantidade, 2)}</td>
+
+                  <td className="compras-numero">{formatarNumero(recebida, 2)}</td>
+
+                  <td className="compras-numero compras-saldo">{formatarNumero(saldo, 2)}</td>
+
+                  {primeiro && (
+                    <td
+                      rowSpan={itensVisiveis.length}
+                      className="compras-celula-grupo compras-col-recebimento-fisico"
                     >
-                      {primeiro && (
-                        <>
-                          {mostrarRequisicao && (
-                            <td
-                              rowSpan={
-                                itensVisiveis.length
-                              }
-                              className="compras-celula-grupo compras-requisicao"
-                            >
-                              <strong>
-                                {pedido.numero_requisicao ||
-                                  "-"}
-                              </strong>
-                            </td>
-                          )}
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-pedido"
-                          >
-                            <strong>
-                              {pedido.numero_pedido ||
-                                "-"}
-                            </strong>
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-fornecedor"
-                          >
-                            {
-                              pedido.fornecedor_nome
-                            }
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo"
-                          >
-                            {
-                              formatarData(
-                                pedido.data_inclusao,
-                              )
-                            }
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-previsao"
-                          >
-                            <PrevisaoRecebimento
-                              pedido={
-                                pedido
-                              }
-                            />
-                          </td>
-                        </>
-                      )}
-
-                      <td className="compras-codigo">
-                        {item?.codigo_comercial ||
-                          "-"}
-                      </td>
-
-                      <td className="compras-produto">
-                        <ProdutoComExpansao
-                          item={
-                            item
-                          }
-                          primeiro={
-                            primeiro
-                          }
-                          possuiMaisItens={
-                            possuiMaisItens
-                          }
-                          totalItens={
-                            todosItens.length
-                          }
-                          expandido={
-                            expandido
-                          }
-                          onAlternarItens={() =>
-                            onAlternarItens(
-                              documentoId,
-                            )
-                          }
+                      {codigoPedidoCompra ? (
+                        <RecebimentoFisicoResumo
+                          resumo={resumoFisico}
+                          onClick={() => onAbrirRecebimentoFisico(pedido)}
                         />
-                      </td>
-
-                      <td className="compras-numero">
-                        {
-                          formatarNumero(
-                            quantidade,
-                            2,
-                          )
-                        }
-                      </td>
-
-                      <td className="compras-numero">
-                        {
-                          formatarNumero(
-                            recebida,
-                            2,
-                          )
-                        }
-                      </td>
-
-                      <td className="compras-numero compras-saldo">
-                        {
-                          formatarNumero(
-                            saldo,
-                            2,
-                          )
-                        }
-                      </td>
-
-                      {primeiro && (
-                        <td
-                          rowSpan={
-                            itensVisiveis.length
-                          }
-                          className="compras-celula-grupo compras-col-recebimento-fisico"
-                        >
-                          {codigoPedidoCompra ? (
-                            <RecebimentoFisicoResumo
-                              resumo={
-                                resumoFisico
-                              }
-                              onClick={() =>
-                                onAbrirRecebimentoFisico(
-                                  pedido,
-                                )
-                              }
-                            />
-                          ) : (
-                            <span className="compras-sem-status">
-                              -
-                            </span>
-                          )}
-                        </td>
+                      ) : (
+                        <span className="compras-sem-status">-</span>
                       )}
+                    </td>
+                  )}
 
-                      <td>
-                        {item?.unidade ||
-                          "-"}
+                  <td>{item?.unidade || "-"}</td>
+
+                  {primeiro && (
+                    <>
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-solicitante"
+                      >
+                        {obterSolicitante(pedido)}
                       </td>
 
-                      {primeiro && (
-                        <>
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-solicitante"
-                          >
-                            {
-                              obterSolicitante(
-                                pedido,
-                              )
-                            }
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-comprador"
-                          >
-                            {
-                              pedido.comprador_nome
-                            }
-                          </td>
-                        </>
-                      )}
-
-                      <td className="compras-valor compras-valor-item">
-                        {
-                          formatarMoeda(
-                            valorItem,
-                          )
-                        }
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-celula-grupo compras-comprador"
+                      >
+                        {pedido.comprador_nome}
                       </td>
+                    </>
+                  )}
 
-                      {primeiro && (
-                        <td
-                          rowSpan={
-                            itensVisiveis.length
-                          }
-                          className="compras-celula-grupo compras-observacoes-pedido"
-                        >
-                          {pedido.observacoes ||
-                            "-"}
-                        </td>
-                      )}
-                    </tr>
-                  );
-                },
+                  <td className="compras-valor compras-valor-item">{formatarMoeda(valorItem)}</td>
+
+                  {primeiro && (
+                    <td
+                      rowSpan={itensVisiveis.length}
+                      className="compras-celula-grupo compras-observacoes-pedido"
+                    >
+                      {pedido.observacoes || "-"}
+                    </td>
+                  )}
+                </tr>
               );
-            },
-          )}
+            });
+          })}
         </tbody>
       </table>
     </div>
   );
 }
 
-export default function PedidosCompraTabela({
-  pedidos,
-  tipoDocumento,
-}) {
-  const [
-    documentosExpandidos,
-    setDocumentosExpandidos,
-  ] =
-    useState(
-      () =>
-        new Set(),
-    );
+export default function PedidosCompraTabela({ pedidos, tipoDocumento }) {
+  const [documentosExpandidos, setDocumentosExpandidos] = useState(() => new Set());
 
-  const [
-    documentoEmFoco,
-    setDocumentoEmFoco,
-  ] =
-    useState(null);
+  const [documentoEmFoco, setDocumentoEmFoco] = useState(null);
 
-  const queryClient =
-    useQueryClient();
+  const queryClient = useQueryClient();
 
-  const [
-    pedidoRecebimentoFisico,
-    setPedidoRecebimentoFisico,
-  ] = useState(null);
+  const [pedidoRecebimentoFisico, setPedidoRecebimentoFisico] = useState(null);
 
-  const codigosPedidosVisiveis =
-    useMemo(
-      () =>
-        [
-          ...new Set(
-            (pedidos || [])
-              .filter(
-                (pedido) =>
-                  pedido?.tipo_documento !==
-                  TIPOS_DOCUMENTO.REQUISICAO,
-              )
-              .map(
-                obterCodigoPedidoCompra,
-              )
-              .filter(Boolean),
-          ),
-        ],
-      [pedidos],
-    );
+  const codigosPedidosVisiveis = useMemo(
+    () => [
+      ...new Set(
+        (pedidos || [])
+          .filter((pedido) => pedido?.tipo_documento !== TIPOS_DOCUMENTO.REQUISICAO)
+          .map(obterCodigoPedidoCompra)
+          .filter(Boolean),
+      ),
+    ],
+    [pedidos],
+  );
 
   /*
    * A tabela consulta apenas os resumos físicos dos pedidos que
    * estão visíveis na página atual. O resultado fica no cache do
    * React Query e é reaproveitado ao navegar entre telas.
    */
-  const {
-    resumos:
-      resumosFisicos,
-  } =
-    useResumosRecebimentoFisico(
-      codigosPedidosVisiveis,
-      {
-        enabled:
-          codigosPedidosVisiveis.length > 0,
-      },
-    );
+  const { resumos: resumosFisicos } = useResumosRecebimentoFisico(codigosPedidosVisiveis, {
+    enabled: codigosPedidosVisiveis.length > 0,
+  });
 
-  const somenteRequisicoes =
-    tipoDocumento ===
-    TIPOS_DOCUMENTO.REQUISICAO;
+  const somenteRequisicoes = tipoDocumento === TIPOS_DOCUMENTO.REQUISICAO;
 
-  const somentePedidos =
-    tipoDocumento ===
-    TIPOS_DOCUMENTO.PEDIDO;
+  const somentePedidos = tipoDocumento === TIPOS_DOCUMENTO.PEDIDO;
 
-  function alternarItens(
-    documentoId,
-  ) {
-    setDocumentosExpandidos(
-      (atual) => {
-        const proximo =
-          new Set(
-            atual,
-          );
+  function alternarItens(documentoId) {
+    setDocumentosExpandidos((atual) => {
+      const proximo = new Set(atual);
 
-        if (
-          proximo.has(
-            documentoId,
-          )
-        ) {
-          proximo.delete(
-            documentoId,
-          );
-        } else {
-          proximo.add(
-            documentoId,
-          );
-        }
+      if (proximo.has(documentoId)) {
+        proximo.delete(documentoId);
+      } else {
+        proximo.add(documentoId);
+      }
 
-        return proximo;
-      },
-    );
+      return proximo;
+    });
   }
 
-  function entrarDocumento(
-    documentoId,
-  ) {
-    setDocumentoEmFoco(
-      documentoId,
-    );
+  function entrarDocumento(documentoId) {
+    setDocumentoEmFoco(documentoId);
   }
 
-  function sairDocumento(
-    evento,
-    documentoId,
-  ) {
+  function sairDocumento(evento, documentoId) {
     /*
      * IMPORTANTE:
      *
@@ -1334,252 +782,127 @@ export default function PedidosCompraTabela({
      * seguinte não pertence ao mesmo
      * documento.
      */
-    const proximoElemento =
-      evento.relatedTarget;
+    const proximoElemento = evento.relatedTarget;
 
     const proximaLinha =
-      proximoElemento &&
-      typeof proximoElemento.closest ===
-        "function"
-        ? proximoElemento.closest(
-            "tr[data-documento-id]",
-          )
+      proximoElemento && typeof proximoElemento.closest === "function"
+        ? proximoElemento.closest("tr[data-documento-id]")
         : null;
 
-    const proximoDocumentoId =
-      proximaLinha
-        ?.dataset
-        ?.documentoId;
+    const proximoDocumentoId = proximaLinha?.dataset?.documentoId;
 
-    if (
-      proximoDocumentoId ===
-      documentoId
-    ) {
+    if (proximoDocumentoId === documentoId) {
       return;
     }
 
-    setDocumentoEmFoco(
-      null,
-    );
+    setDocumentoEmFoco(null);
   }
 
-  if (
-    somenteRequisicoes
-  ) {
+  if (somenteRequisicoes) {
     return (
       <>
         <div className="compras-tabela-desktop">
           <TabelaRequisicoes
-            pedidos={
-              pedidos
-            }
-            documentosExpandidos={
-              documentosExpandidos
-            }
-            onAlternarItens={
-              alternarItens
-            }
-            documentoEmFoco={
-              documentoEmFoco
-            }
-            onEntrarDocumento={
-              entrarDocumento
-            }
-            onSairDocumento={
-              sairDocumento
-            }
+            pedidos={pedidos}
+            documentosExpandidos={documentosExpandidos}
+            onAlternarItens={alternarItens}
+            documentoEmFoco={documentoEmFoco}
+            onEntrarDocumento={entrarDocumento}
+            onSairDocumento={sairDocumento}
           />
         </div>
 
         <div className="compras-cards-mobile">
-          {pedidos.map(
-            (pedido) => {
-              const documentoId =
-                String(
-                  pedido.documento_id,
-                );
+          {pedidos.map((pedido) => {
+            const documentoId = String(pedido.documento_id);
 
-              const expandido =
-                documentosExpandidos.has(
-                  documentoId,
-                );
+            const expandido = documentosExpandidos.has(documentoId);
 
-              const todosItens =
-                Array.isArray(
-                  pedido.itens,
-                )
-                  ? pedido.itens
-                  : [];
+            const todosItens = Array.isArray(pedido.itens) ? pedido.itens : [];
 
-              const itensVisiveis =
-                expandido
-                  ? todosItens
-                  : todosItens.slice(
-                      0,
-                      1,
-                    );
+            const itensVisiveis = expandido ? todosItens : todosItens.slice(0, 1);
 
-              return (
-                <article
-                  key={
-                    pedido.documento_id
-                  }
-                  className="compras-mobile-card"
-                >
-                  <div className="compras-mobile-topo">
-                    <div>
-                      <span>
-                        Requisição
-                      </span>
+            return (
+              <article key={pedido.documento_id} className="compras-mobile-card">
+                <div className="compras-mobile-topo">
+                  <div>
+                    <span>Requisição</span>
 
-                      <strong>
-                        {pedido.numero_requisicao ||
-                          "-"}
-                      </strong>
-                    </div>
+                    <strong>{pedido.numero_requisicao || "-"}</strong>
                   </div>
+                </div>
 
-                  <div className="compras-mobile-grade">
-                    <span>
-                      <small>
-                        Categoria
-                      </small>
+                <div className="compras-mobile-grade">
+                  <span>
+                    <small>Categoria</small>
 
-                      <strong>
-                        {
-                          obterNomeCategoria(
-                            pedido,
-                          )
-                        }
-                      </strong>
-                    </span>
+                    <strong>{obterNomeCategoria(pedido)}</strong>
+                  </span>
 
-                    <span>
-                      <small>
-                        Previsão
-                      </small>
+                  <span>
+                    <small>Previsão</small>
 
-                      <strong>
-                        {
-                          formatarData(
-                            pedido.data_previsao,
-                          )
-                        }
-                      </strong>
-                    </span>
+                    <strong>{formatarData(pedido.data_previsao)}</strong>
+                  </span>
+                </div>
+
+                {pedido.observacoes && (
+                  <div className="compras-mobile-observacoes">
+                    <small>Observações</small>
+
+                    <span>{pedido.observacoes}</span>
                   </div>
+                )}
 
-                  {pedido.observacoes && (
-                    <div className="compras-mobile-observacoes">
-                      <small>
-                        Observações
-                      </small>
+                {pedido.observacoes_internas && (
+                  <div className="compras-mobile-observacoes">
+                    <small>Observações internas</small>
 
-                      <span>
-                        {
-                          pedido.observacoes
-                        }
-                      </span>
-                    </div>
-                  )}
+                    <span>{pedido.observacoes_internas}</span>
+                  </div>
+                )}
 
-                  {pedido.observacoes_internas && (
-                    <div className="compras-mobile-observacoes">
-                      <small>
-                        Observações internas
-                      </small>
+                <div className="compras-mobile-itens">
+                  {itensVisiveis.map((item, indice) => {
+                    const quantidade = Number(item?.quantidade ?? 0);
 
-                      <span>
-                        {
-                          pedido.observacoes_internas
-                        }
-                      </span>
-                    </div>
-                  )}
+                    return (
+                      <div
+                        key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
+                        className="compras-mobile-item"
+                      >
+                        <div>
+                          <strong>{obterCodigoItem(item)}</strong>
 
-                  <div className="compras-mobile-itens">
-                    {itensVisiveis.map(
-                      (
-                        item,
-                        indice,
-                      ) => {
-                        const quantidade =
-                          Number(
-                            item?.quantidade ??
-                              0,
-                          );
+                          <div className="compras-mobile-produto-linha">
+                            <span>{obterDescricaoItem(item)}</span>
 
-                        return (
-                          <div
-                            key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
-                            className="compras-mobile-item"
-                          >
-                            <div>
-                              <strong>
-                                {
-                                  obterCodigoItem(
-                                    item,
-                                  )
-                                }
-                              </strong>
-
-                              <div className="compras-mobile-produto-linha">
-                                <span>
-                                  {
-                                    obterDescricaoItem(
-                                      item,
-                                    )
-                                  }
-                                </span>
-
-                                {indice === 0 &&
-                                  todosItens.length >
-                                    1 && (
-                                    <BotaoItens
-                                      totalItens={
-                                        todosItens.length
-                                      }
-                                      expandido={
-                                        expandido
-                                      }
-                                      onClick={() =>
-                                        alternarItens(
-                                          documentoId,
-                                        )
-                                      }
-                                    />
-                                  )}
-                              </div>
-
-                              {item.observacao && (
-                                <span className="compras-mobile-item-observacao">
-                                  Obs.:{" "}
-                                  {
-                                    item.observacao
-                                  }
-                                </span>
-                              )}
-                            </div>
-
-                            <small>
-                              {
-                                formatarNumero(
-                                  quantidade,
-                                  2,
-                                )
-                              }{" "}
-                              {item.unidade ||
-                                ""}
-                            </small>
+                            {indice === 0 && todosItens.length > 1 && (
+                              <BotaoItens
+                                totalItens={todosItens.length}
+                                expandido={expandido}
+                                onClick={() => alternarItens(documentoId)}
+                              />
+                            )}
                           </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </article>
-              );
-            },
-          )}
+
+                          {item.observacao && (
+                            <span className="compras-mobile-item-observacao">
+                              Obs.: {item.observacao}
+                            </span>
+                          )}
+                        </div>
+
+                        <small>
+                          {formatarNumero(quantidade, 2)} {item.unidade || ""}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </>
     );
@@ -1589,307 +912,141 @@ export default function PedidosCompraTabela({
     <>
       <div className="compras-tabela-desktop">
         <TabelaPedidos
-          pedidos={
-            pedidos
-          }
-          mostrarRequisicao={
-            !somentePedidos
-          }
-          documentosExpandidos={
-            documentosExpandidos
-          }
-          onAlternarItens={
-            alternarItens
-          }
-          documentoEmFoco={
-            documentoEmFoco
-          }
-          onEntrarDocumento={
-            entrarDocumento
-          }
-          onSairDocumento={
-            sairDocumento
-          }
-          resumosFisicos={
-            resumosFisicos
-          }
-          onAbrirRecebimentoFisico={
-            setPedidoRecebimentoFisico
-          }
+          pedidos={pedidos}
+          mostrarRequisicao={!somentePedidos}
+          documentosExpandidos={documentosExpandidos}
+          onAlternarItens={alternarItens}
+          documentoEmFoco={documentoEmFoco}
+          onEntrarDocumento={entrarDocumento}
+          onSairDocumento={sairDocumento}
+          resumosFisicos={resumosFisicos}
+          onAbrirRecebimentoFisico={setPedidoRecebimentoFisico}
         />
       </div>
 
       <div className="compras-cards-mobile">
-        {pedidos.map(
-          (pedido) => {
-            const atrasado =
-              pedido.situacao_recebimento ===
-              "EM_ATRASO";
+        {pedidos.map((pedido) => {
+          const atrasado = pedido.situacao_recebimento === "EM_ATRASO";
 
-            const diasAtraso =
-              atrasado
-                ? calcularDiasAtraso(
-                    pedido.data_previsao,
-                  )
-                : 0;
+          const diasAtraso = atrasado ? calcularDiasAtraso(pedido.data_previsao) : 0;
 
-            const documentoId =
-              String(
-                pedido.documento_id,
-              );
+          const documentoId = String(pedido.documento_id);
 
-            const expandido =
-              documentosExpandidos.has(
-                documentoId,
-              );
+          const expandido = documentosExpandidos.has(documentoId);
 
-            const todosItens =
-              Array.isArray(
-                pedido.itens,
-              )
-                ? pedido.itens
-                : [];
+          const todosItens = Array.isArray(pedido.itens) ? pedido.itens : [];
 
-            const itensVisiveis =
-              expandido
-                ? todosItens
-                : todosItens.slice(
-                    0,
-                    1,
-                  );
+          const itensVisiveis = expandido ? todosItens : todosItens.slice(0, 1);
 
-            return (
-              <article
-                key={
-                  pedido.documento_id
-                }
-                className={`compras-mobile-card${
-                  atrasado
-                    ? " atrasado"
-                    : ""
-                }`}
-              >
-                <div className="compras-mobile-topo">
-                  <div>
-                    <span>
-                      Pedido
-                    </span>
+          return (
+            <article
+              key={pedido.documento_id}
+              className={`compras-mobile-card${atrasado ? " atrasado" : ""}`}
+            >
+              <div className="compras-mobile-topo">
+                <div>
+                  <span>Pedido</span>
 
-                    <strong>
-                      {pedido.numero_pedido ||
-                        "-"}
-                    </strong>
-                  </div>
-
-                  <div className="compras-mobile-status-grupo">
-                    <BadgeRecebimento
-                      situacao={
-                        pedido.situacao_recebimento
-                      }
-                    />
-
-                    {obterCodigoPedidoCompra(
-                      pedido,
-                    ) && (
-                      <RecebimentoFisicoResumo
-                        resumo={
-                          calcularResumoRecebimentoFisicoVisual(
-                            pedido,
-                            resumosFisicos?.[
-                              String(
-                                obterCodigoPedidoCompra(
-                                  pedido,
-                                ),
-                              )
-                            ] || null,
-                          )
-                        }
-                        onClick={() =>
-                          setPedidoRecebimentoFisico(
-                            pedido,
-                          )
-                        }
-                      />
-                    )}
-                  </div>
+                  <strong>{pedido.numero_pedido || "-"}</strong>
                 </div>
 
-                <h3>
-                  {
-                    pedido.fornecedor_nome
-                  }
-                </h3>
+                <div className="compras-mobile-status-grupo">
+                  <BadgeRecebimento situacao={pedido.situacao_recebimento} />
 
-                <div className="compras-mobile-grade">
-                  <span>
-                    <small>
-                      Previsão
-                    </small>
-
-                    <strong>
-                      {
-                        formatarData(
-                          pedido.data_previsao,
-                        )
-                      }
-                    </strong>
-
-                    {atrasado &&
-                      diasAtraso >
-                        0 && (
-                        <span className="compras-tag-atraso">
-                          <AlertTriangle
-                            size={12}
-                          />
-
-                          {diasAtraso}{" "}
-                          {diasAtraso === 1
-                            ? "dia"
-                            : "dias"}{" "}
-                          em atraso
-                        </span>
+                  {obterCodigoPedidoCompra(pedido) && (
+                    <RecebimentoFisicoResumo
+                      resumo={calcularResumoRecebimentoFisicoVisual(
+                        pedido,
+                        resumosFisicos?.[String(obterCodigoPedidoCompra(pedido))] || null,
                       )}
-                  </span>
-
-                  <span>
-                    <small>
-                      Valor total
-                    </small>
-
-                    <strong>
-                      {
-                        formatarMoeda(
-                          pedido.valorTotal,
-                        )
-                      }
-                    </strong>
-                  </span>
-
-                  <span>
-                    <small>
-                      Solicitante
-                    </small>
-
-                    <strong>
-                      {
-                        obterSolicitante(
-                          pedido,
-                        )
-                      }
-                    </strong>
-                  </span>
-
-                  <span>
-                    <small>
-                      Comprador
-                    </small>
-
-                    <strong>
-                      {
-                        pedido.comprador_nome
-                      }
-                    </strong>
-                  </span>
-                </div>
-
-                {pedido.observacoes && (
-                  <div className="compras-mobile-observacoes">
-                    <small>
-                      Observações
-                    </small>
-
-                    <span>
-                      {
-                        pedido.observacoes
-                      }
-                    </span>
-                  </div>
-                )}
-
-                <div className="compras-mobile-itens">
-                  {itensVisiveis.map(
-                    (
-                      item,
-                      indice,
-                    ) => (
-                      <div
-                        key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
-                        className="compras-mobile-item"
-                      >
-                        <div>
-                          <strong>
-                            {item.codigo_comercial ||
-                              "-"}
-                          </strong>
-
-                          <div className="compras-mobile-produto-linha">
-                            <span>
-                              {item.descricao ||
-                                "-"}
-                            </span>
-
-                            {indice === 0 &&
-                              todosItens.length >
-                                1 && (
-                                <BotaoItens
-                                  totalItens={
-                                    todosItens.length
-                                  }
-                                  expandido={
-                                    expandido
-                                  }
-                                  onClick={() =>
-                                    alternarItens(
-                                      documentoId,
-                                    )
-                                  }
-                                />
-                              )}
-                          </div>
-                        </div>
-
-                        <small>
-                          {
-                            formatarNumero(
-                              item.quantidade,
-                              2,
-                            )
-                          }{" "}
-                          {item.unidade ||
-                            ""}
-
-                          <br />
-
-                          <strong>
-                            {
-                              formatarMoeda(
-                                obterValorItem(
-                                  item,
-                                ),
-                              )
-                            }
-                          </strong>
-                        </small>
-                      </div>
-                    ),
+                      onClick={() => setPedidoRecebimentoFisico(pedido)}
+                    />
                   )}
                 </div>
-              </article>
-            );
-          },
-        )}
+              </div>
+
+              <h3>{pedido.fornecedor_nome}</h3>
+
+              <div className="compras-mobile-grade">
+                <span>
+                  <small>Previsão</small>
+
+                  <strong>{formatarData(pedido.data_previsao)}</strong>
+
+                  {atrasado && diasAtraso > 0 && (
+                    <span className="compras-tag-atraso">
+                      <AlertTriangle size={12} />
+                      {diasAtraso} {diasAtraso === 1 ? "dia" : "dias"} em atraso
+                    </span>
+                  )}
+                </span>
+
+                <span>
+                  <small>Valor total</small>
+
+                  <strong>{formatarMoeda(pedido.valorTotal)}</strong>
+                </span>
+
+                <span>
+                  <small>Solicitante</small>
+
+                  <strong>{obterSolicitante(pedido)}</strong>
+                </span>
+
+                <span>
+                  <small>Comprador</small>
+
+                  <strong>{pedido.comprador_nome}</strong>
+                </span>
+              </div>
+
+              {pedido.observacoes && (
+                <div className="compras-mobile-observacoes">
+                  <small>Observações</small>
+
+                  <span>{pedido.observacoes}</span>
+                </div>
+              )}
+
+              <div className="compras-mobile-itens">
+                {itensVisiveis.map((item, indice) => (
+                  <div
+                    key={`${pedido.documento_id}-${item.codigo_item ?? indice}`}
+                    className="compras-mobile-item"
+                  >
+                    <div>
+                      <strong>{item.codigo_comercial || "-"}</strong>
+
+                      <div className="compras-mobile-produto-linha">
+                        <span>{item.descricao || "-"}</span>
+
+                        {indice === 0 && todosItens.length > 1 && (
+                          <BotaoItens
+                            totalItens={todosItens.length}
+                            expandido={expandido}
+                            onClick={() => alternarItens(documentoId)}
+                          />
+                        )}
+                      </div>
+                    </div>
+
+                    <small>
+                      {formatarNumero(item.quantidade, 2)} {item.unidade || ""}
+                      <br />
+                      <strong>{formatarMoeda(obterValorItem(item))}</strong>
+                    </small>
+                  </div>
+                ))}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <PedidosCompraRecebimentoFisicoModal
         pedido={pedidoRecebimentoFisico}
-        aberto={Boolean(
-          pedidoRecebimentoFisico,
-        )}
-        onFechar={() =>
-          setPedidoRecebimentoFisico(
-            null,
-          )
-        }
+        aberto={Boolean(pedidoRecebimentoFisico)}
+        onFechar={() => setPedidoRecebimentoFisico(null)}
         onAlterado={() => {
           /*
            * Invalida qualquer resumo físico ativo, inclusive o
@@ -1897,8 +1054,7 @@ export default function PedidosCompraTabela({
            * no modal aparece sem recarregar a tela inteira.
            */
           queryClient.invalidateQueries({
-            queryKey:
-              QUERY_KEY_RECEBIMENTO_FISICO,
+            queryKey: QUERY_KEY_RECEBIMENTO_FISICO,
           });
         }}
       />

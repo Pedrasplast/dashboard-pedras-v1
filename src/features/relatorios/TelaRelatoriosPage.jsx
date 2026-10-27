@@ -108,13 +108,9 @@ function pedidoCorrespondeAoFiltro(item, filtroPedidos) {
     return true;
   }
 
-  const numeroVisual = normalizarTexto(
-    obterNumeroPedidoVisual(item),
-  );
+  const numeroVisual = normalizarTexto(obterNumeroPedidoVisual(item));
 
-  const numeroOriginal = normalizarTexto(
-    obterNumeroPedidoOriginal(item),
-  );
+  const numeroOriginal = normalizarTexto(obterNumeroPedidoOriginal(item));
 
   return pedidosFiltro.some((numeroFiltro) => {
     if (numeroFiltro.includes("/")) {
@@ -152,11 +148,7 @@ function contarRegistrosRelatorio(relatorio, dados = []) {
 
   for (const item of dados) {
     const numeroPedido = String(
-      item?.pedido ??
-      item?.numero_pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
+      item?.pedido ?? item?.numero_pedido ?? item?.codigoPedido ?? item?.codigo_pedido ?? "",
     ).trim();
 
     if (numeroPedido) {
@@ -172,24 +164,15 @@ function contarRegistrosRelatorio(relatorio, dados = []) {
 ===================================================== */
 
 function TelaRelatorios({ dadosBrutos: dadosExternos }) {
-
   /* =====================================================
      ESTADOS
   ===================================================== */
 
-  const [
-    relatorioSelecionadoId,
-    setRelatorioSelecionadoId,
-  ] = useState(null);
+  const [relatorioSelecionadoId, setRelatorioSelecionadoId] = useState(null);
 
-  const [filtros, setFiltros] = useState(
-    () => criarFiltrosIniciais(),
-  );
+  const [filtros, setFiltros] = useState(() => criarFiltrosIniciais());
 
-  const [
-    visualizacaoAberta,
-    setVisualizacaoAberta,
-  ] = useState(false);
+  const [visualizacaoAberta, setVisualizacaoAberta] = useState(false);
 
   /* =====================================================
      ESTADO DA PAGINAÇÃO
@@ -201,34 +184,19 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      ESTADOS DO CATÁLOGO DE RELATÓRIOS
   ===================================================== */
 
-  const [
-    categoriaSelecionada,
-    setCategoriaSelecionada,
-  ] = useState("Todos");
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
 
-  const [
-    buscaRelatorios,
-    setBuscaRelatorios,
-  ] = useState("");
+  const [buscaRelatorios, setBuscaRelatorios] = useState("");
 
   /* =====================================================
      ESTADOS DAS PERMISSÕES
   ===================================================== */
 
-  const [
-    permissoesRelatoriosCarregadas,
-    setPermissoesRelatoriosCarregadas,
-  ] = useState(false);
+  const [permissoesRelatoriosCarregadas, setPermissoesRelatoriosCarregadas] = useState(false);
 
-  const [
-    relatoriosPermitidosIds,
-    setRelatoriosPermitidosIds,
-  ] = useState(() => new Set());
+  const [relatoriosPermitidosIds, setRelatoriosPermitidosIds] = useState(() => new Set());
 
-  const [
-    erroPermissoesRelatorios,
-    setErroPermissoesRelatorios,
-  ] = useState("");
+  const [erroPermissoesRelatorios, setErroPermissoesRelatorios] = useState("");
 
   /* =====================================================
      CARREGAR PERMISSÕES DOS RELATÓRIOS
@@ -244,10 +212,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           setErroPermissoesRelatorios("");
         }
 
-        const {
-          data: dadosUsuario,
-          error: erroUsuario,
-        } = await supabase.auth.getUser();
+        const { data: dadosUsuario, error: erroUsuario } = await supabase.auth.getUser();
 
         if (erroUsuario) {
           throw erroUsuario;
@@ -265,10 +230,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
         /* PERFIL */
 
-        const {
-          data: perfil,
-          error: erroPerfil,
-        } = await supabase
+        const { data: perfil, error: erroPerfil } = await supabase
           .from("perfis")
           .select("regra")
           .eq("id", usuario.id)
@@ -282,11 +244,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
         if (perfil?.regra === "admin") {
           if (ativo) {
-            setRelatoriosPermitidosIds(
-              new Set(
-                RELATORIOS.map((relatorio) => relatorio.id),
-              ),
-            );
+            setRelatoriosPermitidosIds(new Set(RELATORIOS.map((relatorio) => relatorio.id)));
           }
 
           return;
@@ -294,14 +252,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
         /* PERMISSÕES DOS DEMAIS USUÁRIOS */
 
-        const [
-          respostaRelatorios,
-          respostaPermissoes,
-        ] = await Promise.all([
-          supabase
-            .from("relatorios_sistema")
-            .select("id, chave, ativo")
-            .eq("ativo", true),
+        const [respostaRelatorios, respostaPermissoes] = await Promise.all([
+          supabase.from("relatorios_sistema").select("id, chave, ativo").eq("ativo", true),
 
           supabase
             .from("usuario_relatorio_permissoes")
@@ -319,49 +271,35 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         }
 
         const idsPermitidos = new Set(
-          (respostaPermissoes.data || []).map(
-            (permissao) => String(permissao.relatorio_id),
-          ),
+          (respostaPermissoes.data || []).map((permissao) => String(permissao.relatorio_id)),
         );
 
         const chavesPermitidas = new Set(
           (respostaRelatorios.data || [])
-            .filter((relatorio) =>
-              idsPermitidos.has(String(relatorio.id)),
-            )
-            .map((relatorio) =>
-              String(relatorio.chave || "").trim(),
-            )
+            .filter((relatorio) => idsPermitidos.has(String(relatorio.id)))
+            .map((relatorio) => String(relatorio.chave || "").trim())
             .filter(Boolean),
         );
 
         if (ativo) {
           setRelatoriosPermitidosIds(
             new Set(
-              RELATORIOS
-                .filter((relatorio) =>
-                  chavesPermitidas.has(relatorio.id),
-                )
-                .map((relatorio) => relatorio.id),
+              RELATORIOS.filter((relatorio) => chavesPermitidas.has(relatorio.id)).map(
+                (relatorio) => relatorio.id,
+              ),
             ),
           );
         }
-
       } catch (error) {
-        console.error(
-          "Erro ao carregar permissões dos relatórios:",
-          error,
-        );
+        console.error("Erro ao carregar permissões dos relatórios:", error);
 
         if (ativo) {
           setRelatoriosPermitidosIds(new Set());
 
           setErroPermissoesRelatorios(
-            error?.message ||
-            "Não foi possível verificar as permissões dos relatórios.",
+            error?.message || "Não foi possível verificar as permissões dos relatórios.",
           );
         }
-
       } finally {
         if (ativo) {
           setPermissoesRelatoriosCarregadas(true);
@@ -381,10 +319,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const relatoriosDisponiveis = useMemo(
-    () =>
-      RELATORIOS.filter((relatorio) =>
-        relatoriosPermitidosIds.has(relatorio.id),
-      ),
+    () => RELATORIOS.filter((relatorio) => relatoriosPermitidosIds.has(relatorio.id)),
     [relatoriosPermitidosIds],
   );
 
@@ -406,10 +341,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     return mapa;
   }, [relatoriosDisponiveis]);
 
-  const categorias = useMemo(
-    () => [...relatoriosPorCategoria.keys()],
-    [relatoriosPorCategoria],
-  );
+  const categorias = useMemo(() => [...relatoriosPorCategoria.keys()], [relatoriosPorCategoria]);
 
   /* =====================================================
      CATÁLOGO DE RELATÓRIOS
@@ -427,15 +359,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       ...categorias.map((categoria) => ({
         nome: categoria,
-        quantidade:
-          relatoriosPorCategoria.get(categoria)?.length || 0,
+        quantidade: relatoriosPorCategoria.get(categoria)?.length || 0,
       })),
     ],
-    [
-      categorias,
-      relatoriosDisponiveis.length,
-      relatoriosPorCategoria,
-    ],
+    [categorias, relatoriosDisponiveis.length, relatoriosPorCategoria],
   );
 
   const relatoriosCatalogo = useMemo(() => {
@@ -452,38 +379,21 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     return listaBase.filter((relatorio) => {
       const conteudo = normalizarTexto(
-        [
-          relatorio.categoria,
-          relatorio.titulo,
-          relatorio.descricao,
-        ].join(" "),
+        [relatorio.categoria, relatorio.titulo, relatorio.descricao].join(" "),
       );
 
       return conteudo.includes(termo);
     });
-  }, [
-    buscaRelatorios,
-    categoriaSelecionada,
-    relatoriosDisponiveis,
-    relatoriosPorCategoria,
-  ]);
+  }, [buscaRelatorios, categoriaSelecionada, relatoriosDisponiveis, relatoriosPorCategoria]);
 
   const tituloCatalogo =
-    categoriaSelecionada === "Todos"
-      ? "Todos os relatórios"
-      : categoriaSelecionada;
+    categoriaSelecionada === "Todos" ? "Todos os relatórios" : categoriaSelecionada;
 
   useEffect(() => {
-    if (
-      categoriaSelecionada !== "Todos" &&
-      !categorias.includes(categoriaSelecionada)
-    ) {
+    if (categoriaSelecionada !== "Todos" && !categorias.includes(categoriaSelecionada)) {
       setCategoriaSelecionada("Todos");
     }
-  }, [
-    categoriaSelecionada,
-    categorias,
-  ]);
+  }, [categoriaSelecionada, categorias]);
 
   /* =====================================================
      RELATÓRIO SELECIONADO
@@ -491,19 +401,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
   const relatorioSelecionado = useMemo(
     () =>
-      relatoriosDisponiveis.find(
-        (relatorio) =>
-          relatorio.id === relatorioSelecionadoId,
-      ) || null,
+      relatoriosDisponiveis.find((relatorio) => relatorio.id === relatorioSelecionadoId) || null,
     [relatorioSelecionadoId, relatoriosDisponiveis],
   );
 
   // Neste relatório o total aparece exclusivamente no PDF.
-  const relatorioProdutosPorData =
-    relatorioSelecionado?.id === "pedidos-produto-data";
+  const relatorioProdutosPorData = relatorioSelecionado?.id === "pedidos-produto-data";
 
-  const fonteEhPedidos =
-    relatorioSelecionado?.fonteDados === "pedidos";
+  const fonteEhPedidos = relatorioSelecionado?.fonteDados === "pedidos";
 
   const relatorioEhCustom =
     relatorioSelecionado?.tipoRelatorio === "custom" ||
@@ -518,10 +423,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   useEffect(() => {
-    if (
-      !permissoesRelatoriosCarregadas ||
-      !relatorioSelecionadoId
-    ) {
+    if (!permissoesRelatoriosCarregadas || !relatorioSelecionadoId) {
       return;
     }
 
@@ -531,35 +433,20 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       setVisualizacaoAberta(false);
       setPaginaAtual(1);
     }
-
-  }, [
-    permissoesRelatoriosCarregadas,
-    relatorioSelecionadoId,
-    relatoriosPermitidosIds,
-  ]);
+  }, [permissoesRelatoriosCarregadas, relatorioSelecionadoId, relatoriosPermitidosIds]);
 
   /* =====================================================
      DADOS DE PRODUÇÃO
   ===================================================== */
 
-  const temDadosExternos =
-    Array.isArray(dadosExternos) &&
-    dadosExternos.length > 0;
+  const temDadosExternos = Array.isArray(dadosExternos) && dadosExternos.length > 0;
 
-  const {
-    dados: dadosProducao,
-    loading: carregandoProducao,
-  } = useCargaMaquina({
+  const { dados: dadosProducao, loading: carregandoProducao } = useCargaMaquina({
     enabled:
-      Boolean(relatorioSelecionado) &&
-      !temDadosExternos &&
-      !fonteEhPedidos &&
-      !relatorioEhCustom,
+      Boolean(relatorioSelecionado) && !temDadosExternos && !fonteEhPedidos && !relatorioEhCustom,
   });
 
-  const dadosProducaoBrutos = temDadosExternos
-    ? dadosExternos
-    : dadosProducao;
+  const dadosProducaoBrutos = temDadosExternos ? dadosExternos : dadosProducao;
 
   /* =====================================================
      DADOS DOS PEDIDOS
@@ -600,14 +487,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      Estoque OMIE + Parâmetros.
   ===================================================== */
 
-  const {
-    descricoesProdutos,
-    loadingDescricoes,
-    erroDescricoes,
-  } = useDescricoesProdutos({
-    enabled:
-      !relatorioEhCustom &&
-      relatorioSelecionadoId === "producao-produto",
+  const { descricoesProdutos, loadingDescricoes, erroDescricoes } = useDescricoesProdutos({
+    enabled: !relatorioEhCustom && relatorioSelecionadoId === "producao-produto",
   });
 
   /* =====================================================
@@ -615,11 +496,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const carregandoRelatorio =
-    loading ||
-    (
-      relatorioSelecionadoId === "producao-produto" &&
-      loadingDescricoes
-    );
+    loading || (relatorioSelecionadoId === "producao-produto" && loadingDescricoes);
 
   /* =====================================================
      COLUNAS DA VISUALIZAÇÃO
@@ -641,32 +518,19 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     if (relatorioSelecionado.id === "producao-produto") {
       const indiceProduto = chaves.indexOf("produto");
 
-      if (
-        indiceProduto !== -1 &&
-        !chaves.includes("descricao_produto")
-      ) {
-        chaves.splice(
-          indiceProduto + 1,
-          0,
-          "descricao_produto",
-        );
+      if (indiceProduto !== -1 && !chaves.includes("descricao_produto")) {
+        chaves.splice(indiceProduto + 1, 0, "descricao_produto");
       }
     }
 
     return chaves.map((chave) => ({
       chave,
 
-      titulo:
-        TITULOS_COLUNAS_VISUALIZACAO[chave] ||
-        criarTituloAutomatico(chave),
+      titulo: TITULOS_COLUNAS_VISUALIZACAO[chave] || criarTituloAutomatico(chave),
 
       numerica: COLUNAS_NUMERICAS.has(chave),
     }));
-
-  }, [
-    relatorioEhCustom,
-    relatorioSelecionado,
-  ]);
+  }, [relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      PRODUTOS DISPONÍVEIS
@@ -677,100 +541,53 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    let lista = Array.isArray(dadosBrutos)
-      ? dadosBrutos
-      : [];
+    let lista = Array.isArray(dadosBrutos) ? dadosBrutos : [];
 
-    if (
-      filtros.injetora &&
-      filtros.injetora !== "Todos"
-    ) {
+    if (filtros.injetora && filtros.injetora !== "Todos") {
       lista = lista.filter(
-        (item) =>
-          String(item.injetora || "").trim() ===
-          String(filtros.injetora).trim(),
+        (item) => String(item.injetora || "").trim() === String(filtros.injetora).trim(),
       );
     }
 
-    return valoresUnicos(
-      lista.map(
-        (item) => item.cod_prod || item.produto,
-      ),
-    );
-
-  }, [
-    dadosBrutos,
-    filtros.injetora,
-    fonteEhPedidos,
-    relatorioEhCustom,
-  ]);
+    return valoresUnicos(lista.map((item) => item.cod_prod || item.produto));
+  }, [dadosBrutos, filtros.injetora, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      MATÉRIAS-PRIMAS DISPONÍVEIS
   ===================================================== */
 
   const mpsDisponiveis = useMemo(() => {
-    if (
-      fonteEhPedidos ||
-      relatorioEhCustom ||
-      !Array.isArray(dadosBrutos)
-    ) {
+    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
       return [];
     }
 
-    return valoresUnicos(
-      dadosBrutos.map(
-        (item) => item.mp || item.materia_prima,
-      ),
-    );
-
-  }, [
-    dadosBrutos,
-    fonteEhPedidos,
-    relatorioEhCustom,
-  ]);
+    return valoresUnicos(dadosBrutos.map((item) => item.mp || item.materia_prima));
+  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      TIPOS DISPONÍVEIS
   ===================================================== */
 
   const tiposDisponiveis = useMemo(() => {
-    if (
-      fonteEhPedidos ||
-      relatorioEhCustom ||
-      !Array.isArray(dadosBrutos)
-    ) {
+    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
       return [];
     }
 
     return [
       ...new Set(
         dadosBrutos
-          .map((item) =>
-            String(item.tipo ?? "").trim(),
-          )
-          .filter((tipo) =>
-            ["1", "2", "3"].includes(tipo),
-          ),
+          .map((item) => String(item.tipo ?? "").trim())
+          .filter((tipo) => ["1", "2", "3"].includes(tipo)),
       ),
     ].sort((a, b) => Number(a) - Number(b));
-
-  }, [
-    dadosBrutos,
-    fonteEhPedidos,
-    relatorioEhCustom,
-  ]);
+  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      FILTRAGEM DOS DADOS
   ===================================================== */
 
   const dadosFiltrados = useMemo(() => {
-    if (
-      relatorioEhCustom ||
-      !Array.isArray(dadosBrutos) ||
-      !relatorioSelecionado
-    ) {
+    if (relatorioEhCustom || !Array.isArray(dadosBrutos) || !relatorioSelecionado) {
       return [];
     }
 
@@ -780,39 +597,22 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     if (fonteEhPedidos) {
       return dadosBrutos.filter((item) => {
-
         /* FILTRO FIXO */
 
-        if (
-          relatorioSelecionado.filtroFixo &&
-          !relatorioSelecionado.filtroFixo(item)
-        ) {
+        if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
           return false;
         }
 
         /* PEDIDO(S) */
 
-        if (
-          filtros.pedidos &&
-          !pedidoCorrespondeAoFiltro(
-            item,
-            filtros.pedidos,
-          )
-        ) {
+        if (filtros.pedidos && !pedidoCorrespondeAoFiltro(item, filtros.pedidos)) {
           return false;
         }
 
         /* STATUS */
 
-        if (
-          relatorioSelecionado.filtros.status &&
-          filtros.status &&
-          filtros.status !== "todos"
-        ) {
-          if (
-            normalizarTexto(item.status) !==
-            normalizarTexto(filtros.status)
-          ) {
+        if (relatorioSelecionado.filtros.status && filtros.status && filtros.status !== "todos") {
+          if (normalizarTexto(item.status) !== normalizarTexto(filtros.status)) {
             return false;
           }
         }
@@ -820,27 +620,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         /* PERÍODO */
 
         if (relatorioSelecionado.filtros.periodo) {
-          const dataRegistro =
-            obterDataPedidoRelatorio(item);
+          const dataRegistro = obterDataPedidoRelatorio(item);
 
-          if (
-            (filtros.dataInicio || filtros.dataFim) &&
-            !dataRegistro
-          ) {
+          if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
             return false;
           }
 
-          if (
-            filtros.dataInicio &&
-            dataRegistro < filtros.dataInicio
-          ) {
+          if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
             return false;
           }
 
-          if (
-            filtros.dataFim &&
-            dataRegistro > filtros.dataFim
-          ) {
+          if (filtros.dataFim && dataRegistro > filtros.dataFim) {
             return false;
           }
         }
@@ -852,10 +642,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.cliente &&
           filtros.cliente !== "todos"
         ) {
-          if (
-            String(item.cliente || "").trim() !==
-            String(filtros.cliente).trim()
-          ) {
+          if (String(item.cliente || "").trim() !== String(filtros.cliente).trim()) {
             return false;
           }
         }
@@ -867,10 +654,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.vendedor &&
           filtros.vendedor !== "todos"
         ) {
-          if (
-            String(item.vendedor || "").trim() !==
-            String(filtros.vendedor).trim()
-          ) {
+          if (String(item.vendedor || "").trim() !== String(filtros.vendedor).trim()) {
             return false;
           }
         }
@@ -883,15 +667,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           filtros.cod_prod !== "Todos"
         ) {
           const codigo = String(
-            item.codigoProduto ??
-            item.codigo_produto ??
-            item.codigo ??
-            "",
+            item.codigoProduto ?? item.codigo_produto ?? item.codigo ?? "",
           ).trim();
 
-          if (
-            codigo !== String(filtros.cod_prod).trim()
-          ) {
+          if (codigo !== String(filtros.cod_prod).trim()) {
             return false;
           }
         }
@@ -905,13 +684,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     ================================================= */
 
     return dadosBrutos.filter((item) => {
-
       /* FILTRO FIXO */
 
-      if (
-        relatorioSelecionado.filtroFixo &&
-        !relatorioSelecionado.filtroFixo(item)
-      ) {
+      if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
         return false;
       }
 
@@ -920,24 +695,15 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       if (relatorioSelecionado.filtros.periodo) {
         const dataRegistro = obterDataDoRegistro(item);
 
-        if (
-          (filtros.dataInicio || filtros.dataFim) &&
-          !dataRegistro
-        ) {
+        if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
           return false;
         }
 
-        if (
-          filtros.dataInicio &&
-          dataRegistro < filtros.dataInicio
-        ) {
+        if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
           return false;
         }
 
-        if (
-          filtros.dataFim &&
-          dataRegistro > filtros.dataFim
-        ) {
+        if (filtros.dataFim && dataRegistro > filtros.dataFim) {
           return false;
         }
       }
@@ -949,10 +715,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         filtros.injetora &&
         filtros.injetora !== "Todos"
       ) {
-        if (
-          String(item.injetora || "").trim() !==
-          String(filtros.injetora).trim()
-        ) {
+        if (String(item.injetora || "").trim() !== String(filtros.injetora).trim()) {
           return false;
         }
       }
@@ -964,31 +727,19 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         filtros.cod_prod &&
         filtros.cod_prod !== "Todos"
       ) {
-        const produto = String(
-          item.cod_prod || item.produto || "",
-        ).trim();
+        const produto = String(item.cod_prod || item.produto || "").trim();
 
-        if (
-          produto !== String(filtros.cod_prod).trim()
-        ) {
+        if (produto !== String(filtros.cod_prod).trim()) {
           return false;
         }
       }
 
       /* MATÉRIA-PRIMA */
 
-      if (
-        relatorioSelecionado.filtros.mp &&
-        filtros.mp &&
-        filtros.mp !== "Todos"
-      ) {
-        const mp = String(
-          item.mp || item.materia_prima || "",
-        ).trim();
+      if (relatorioSelecionado.filtros.mp && filtros.mp && filtros.mp !== "Todos") {
+        const mp = String(item.mp || item.materia_prima || "").trim();
 
-        if (
-          mp !== String(filtros.mp).trim()
-        ) {
+        if (mp !== String(filtros.mp).trim()) {
           return false;
         }
       }
@@ -1000,13 +751,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         Array.isArray(filtros.tipo) &&
         filtros.tipo.length > 0
       ) {
-        const tipo = String(
-          item.tipo || "",
-        ).trim();
+        const tipo = String(item.tipo || "").trim();
 
-        const selecionados = filtros.tipo.map(
-          (valor) => String(valor).trim(),
-        );
+        const selecionados = filtros.tipo.map((valor) => String(valor).trim());
 
         if (!selecionados.includes(tipo)) {
           return false;
@@ -1015,43 +762,23 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       return true;
     });
-
-  }, [
-    dadosBrutos,
-    filtros,
-    fonteEhPedidos,
-    relatorioEhCustom,
-    relatorioSelecionado,
-  ]);
+  }, [dadosBrutos, filtros, fonteEhPedidos, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      TRANSFORMAR DADOS
   ===================================================== */
 
   const dadosRelatorio = useMemo(() => {
-    if (
-      !relatorioSelecionado ||
-      relatorioEhCustom
-    ) {
+    if (!relatorioSelecionado || relatorioEhCustom) {
       return [];
     }
 
-    if (
-      typeof relatorioSelecionado.transformarDados ===
-      "function"
-    ) {
-      return relatorioSelecionado.transformarDados(
-        dadosFiltrados,
-      );
+    if (typeof relatorioSelecionado.transformarDados === "function") {
+      return relatorioSelecionado.transformarDados(dadosFiltrados);
     }
 
     return dadosFiltrados;
-
-  }, [
-    dadosFiltrados,
-    relatorioEhCustom,
-    relatorioSelecionado,
-  ]);
+  }, [dadosFiltrados, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      ASSOCIAÇÃO DA DESCRIÇÃO DO PRODUTO
@@ -1062,18 +789,13 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    if (
-      relatorioSelecionado?.id !== "producao-produto"
-    ) {
+    if (relatorioSelecionado?.id !== "producao-produto") {
       return dadosRelatorio;
     }
 
     return dadosRelatorio.map((item) => {
       const codigo = normalizarCodigoProduto(
-        item.produto ||
-        item.cod_prod ||
-        item.codigo_produto ||
-        "",
+        item.produto || item.cod_prod || item.codigo_produto || "",
       );
 
       const descricaoCadastrada =
@@ -1081,30 +803,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           ? descricoesProdutos.get(codigo)
           : descricoesProdutos?.[codigo];
 
-      const descricaoExistente = String(
-        item.descricao_produto ?? "",
-      ).trim();
+      const descricaoExistente = String(item.descricao_produto ?? "").trim();
 
       return {
         ...item,
 
         descricao_produto:
           descricaoCadastrada ||
-          (
-            descricaoExistente &&
-            descricaoExistente !== "-"
-              ? descricaoExistente
-              : "-"
-          ),
+          (descricaoExistente && descricaoExistente !== "-" ? descricaoExistente : "-"),
       };
     });
-
-  }, [
-    dadosRelatorio,
-    descricoesProdutos,
-    relatorioEhCustom,
-    relatorioSelecionado,
-  ]);
+  }, [dadosRelatorio, descricoesProdutos, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
      PAGINAÇÃO DA PRÉ-VISUALIZAÇÃO
@@ -1118,35 +827,22 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
   const totalPaginasVisualizacao = Math.max(
     1,
-    Math.ceil(
-      dadosRelatorioFinal.length / LINHAS_POR_PAGINA,
-    ),
+    Math.ceil(dadosRelatorioFinal.length / LINHAS_POR_PAGINA),
   );
 
   /* Página válida mesmo se a quantidade de dados diminuir. */
 
-  const paginaVisualizacao = Math.min(
-    paginaAtual,
-    totalPaginasVisualizacao,
-  );
+  const paginaVisualizacao = Math.min(paginaAtual, totalPaginasVisualizacao);
 
   /* =====================================================
      DADOS EXIBIDOS NA PÁGINA ATUAL
   ===================================================== */
 
   const dadosPaginaVisualizacao = useMemo(() => {
-    const inicio =
-      (paginaVisualizacao - 1) * LINHAS_POR_PAGINA;
+    const inicio = (paginaVisualizacao - 1) * LINHAS_POR_PAGINA;
 
-    return dadosRelatorioFinal.slice(
-      inicio,
-      inicio + LINHAS_POR_PAGINA,
-    );
-
-  }, [
-    dadosRelatorioFinal,
-    paginaVisualizacao,
-  ]);
+    return dadosRelatorioFinal.slice(inicio, inicio + LINHAS_POR_PAGINA);
+  }, [dadosRelatorioFinal, paginaVisualizacao]);
 
   /* =====================================================
      REINICIAR PAGINAÇÃO QUANDO FILTROS MUDAREM
@@ -1154,10 +850,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
   useEffect(() => {
     setPaginaAtual(1);
-  }, [
-    filtros,
-    relatorioSelecionadoId,
-  ]);
+  }, [filtros, relatorioSelecionadoId]);
 
   /* =====================================================
      IMPEDIR PÁGINA FORA DO INTERVALO
@@ -1167,21 +860,14 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     if (paginaAtual > totalPaginasVisualizacao) {
       setPaginaAtual(totalPaginasVisualizacao);
     }
-  }, [
-    paginaAtual,
-    totalPaginasVisualizacao,
-  ]);
+  }, [paginaAtual, totalPaginasVisualizacao]);
 
   /* =====================================================
      INTERVALO DE REGISTROS EXIBIDOS
   ===================================================== */
 
   const inicioVisualizacao =
-    dadosRelatorioFinal.length > 0
-      ? (paginaVisualizacao - 1) *
-          LINHAS_POR_PAGINA +
-        1
-      : 0;
+    dadosRelatorioFinal.length > 0 ? (paginaVisualizacao - 1) * LINHAS_POR_PAGINA + 1 : 0;
 
   const fimVisualizacao = Math.min(
     paginaVisualizacao * LINHAS_POR_PAGINA,
@@ -1195,15 +881,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const totalRegistrosRelatorio = useMemo(
-    () =>
-      contarRegistrosRelatorio(
-        relatorioSelecionado,
-        dadosRelatorioFinal,
-      ),
-    [
-      relatorioSelecionado,
-      dadosRelatorioFinal,
-    ],
+    () => contarRegistrosRelatorio(relatorioSelecionado, dadosRelatorioFinal),
+    [relatorioSelecionado, dadosRelatorioFinal],
   );
 
   /* =====================================================
@@ -1211,9 +890,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   ===================================================== */
 
   const selecionarRelatorio = (id) => {
-    const relatorio = relatoriosDisponiveis.find(
-      (item) => item.id === id,
-    );
+    const relatorio = relatoriosDisponiveis.find((item) => item.id === id);
 
     if (!relatorio) {
       return;
@@ -1221,11 +898,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     setRelatorioSelecionadoId(id);
 
-    setFiltros(
-      criarFiltrosIniciais(
-        relatorio?.fonteDados || "producao",
-      ),
-    );
+    setFiltros(criarFiltrosIniciais(relatorio?.fonteDados || "producao"));
 
     setVisualizacaoAberta(false);
 
@@ -1264,69 +937,40 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     if (fonteEhPedidos) {
       if (filtros.pedidos) {
-        const pedidosSelecionados =
-          normalizarListaPedidosFiltro(
-            filtros.pedidos,
-          );
+        const pedidosSelecionados = normalizarListaPedidosFiltro(filtros.pedidos);
 
         if (pedidosSelecionados.length > 0) {
-          lista.push(
-            `Pedidos: ${pedidosSelecionados.join(", ")}`,
-          );
+          lista.push(`Pedidos: ${pedidosSelecionados.join(", ")}`);
         }
       }
 
-      if (
-        filtros.cliente &&
-        filtros.cliente !== "todos"
-      ) {
+      if (filtros.cliente && filtros.cliente !== "todos") {
         lista.push(`Cliente: ${filtros.cliente}`);
       }
 
-      if (
-        filtros.vendedor &&
-        filtros.vendedor !== "todos"
-      ) {
+      if (filtros.vendedor && filtros.vendedor !== "todos") {
         lista.push(`Vendedor: ${filtros.vendedor}`);
       }
 
-      if (
-        filtros.cod_prod &&
-        filtros.cod_prod !== "Todos"
-      ) {
+      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
         lista.push(`Produto: ${filtros.cod_prod}`);
       }
 
-      if (
-        relatorioSelecionado?.filtros?.status &&
-        filtros.status &&
-        filtros.status !== "todos"
-      ) {
+      if (relatorioSelecionado?.filtros?.status && filtros.status && filtros.status !== "todos") {
         lista.push(`Status: ${filtros.status}`);
       }
-
     } else {
-
       /* PRODUÇÃO */
 
-      if (
-        filtros.injetora &&
-        filtros.injetora !== "Todos"
-      ) {
+      if (filtros.injetora && filtros.injetora !== "Todos") {
         lista.push(`Injetora: ${filtros.injetora}`);
       }
 
-      if (
-        filtros.cod_prod &&
-        filtros.cod_prod !== "Todos"
-      ) {
+      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
         lista.push(`Produto: ${filtros.cod_prod}`);
       }
 
-      if (
-        filtros.mp &&
-        filtros.mp !== "Todos"
-      ) {
+      if (filtros.mp && filtros.mp !== "Todos") {
         lista.push(`MP: ${filtros.mp}`);
       }
     }
@@ -1334,23 +978,13 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     /* DATA INICIAL */
 
     if (filtros.dataInicio) {
-      lista.push(
-        `De: ${filtros.dataInicio
-          .split("-")
-          .reverse()
-          .join("/")}`,
-      );
+      lista.push(`De: ${filtros.dataInicio.split("-").reverse().join("/")}`);
     }
 
     /* DATA FINAL */
 
     if (filtros.dataFim) {
-      lista.push(
-        `Até: ${filtros.dataFim
-          .split("-")
-          .reverse()
-          .join("/")}`,
-      );
+      lista.push(`Até: ${filtros.dataFim.split("-").reverse().join("/")}`);
     }
 
     return lista.length > 0
@@ -1371,9 +1005,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return;
     }
 
-    const {
-      gerarPdfRelatorio,
-    } = await import("./exportacao/GerarPDF");
+    const { gerarPdfRelatorio } = await import("./exportacao/GerarPDF");
 
     gerarPdfRelatorio({
       relatorio: relatorioSelecionado,
@@ -1396,9 +1028,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return;
     }
 
-    const {
-      gerarExcelRelatorio,
-    } = await import("./exportacao/GerarExcel");
+    const { gerarExcelRelatorio } = await import("./exportacao/GerarExcel");
 
     await gerarExcelRelatorio({
       relatorio: relatorioSelecionado,
@@ -1420,9 +1050,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         <div className="relatorios-loading-card">
           <div className="relatorios-spinner" />
 
-          <p>
-            Verificando permissões dos relatórios...
-          </p>
+          <p>Verificando permissões dos relatórios...</p>
         </div>
       </div>
     );
@@ -1432,18 +1060,13 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      CARREGANDO DADOS
   ===================================================== */
 
-  if (
-    carregandoRelatorio &&
-    relatorioSelecionado
-  ) {
+  if (carregandoRelatorio && relatorioSelecionado) {
     return (
       <div className="relatorios-loading">
         <div className="relatorios-loading-card">
           <div className="relatorios-spinner" />
 
-          <p>
-            Carregando dados do relatório...
-          </p>
+          <p>Carregando dados do relatório...</p>
         </div>
       </div>
     );
@@ -1459,23 +1082,16 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         relatorioSelecionado ? "relatorios-container--aberto" : ""
       }`}
     >
-
       {/* ===============================================
           VOLTAR
       =============================================== */}
 
       {relatorioSelecionado && (
         <div className="relatorios-navegacao-topo">
-          <button
-            type="button"
-            className="btn-voltar-topo"
-            onClick={voltarListaRelatorios}
-          >
+          <button type="button" className="btn-voltar-topo" onClick={voltarListaRelatorios}>
             <FiArrowLeft />
 
-            <span>
-              Voltar aos relatórios
-            </span>
+            <span>Voltar aos relatórios</span>
           </button>
 
           <nav className="relatorios-trilha" aria-label="Você está em">
@@ -1496,50 +1112,40 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
           CABEÇALHO PRINCIPAL
       =============================================== */}
 
-
-
       {/* ===============================================
           ERRO DE PERMISSÕES
       =============================================== */}
 
-      {!relatorioSelecionado &&
-        erroPermissoesRelatorios && (
-          <div className="relatorios-erro">
-            {erroPermissoesRelatorios}
-          </div>
-        )}
+      {!relatorioSelecionado && erroPermissoesRelatorios && (
+        <div className="relatorios-erro">{erroPermissoesRelatorios}</div>
+      )}
 
       {/* ===============================================
           SEM RELATÓRIOS LIBERADOS
       =============================================== */}
 
-      {!relatorioSelecionado &&
-        !erroPermissoesRelatorios &&
-        relatoriosDisponiveis.length === 0 && (
-          <div className="relatorios-erro">
-            Você não possui relatórios liberados.
-            Solicite a um administrador a permissão
-            necessária.
-          </div>
-        )}
+      {!relatorioSelecionado && !erroPermissoesRelatorios && relatoriosDisponiveis.length === 0 && (
+        <div className="relatorios-erro">
+          Você não possui relatórios liberados. Solicite a um administrador a permissão necessária.
+        </div>
+      )}
 
       {/* ===============================================
           CATÁLOGO DOS RELATÓRIOS
       =============================================== */}
 
-      {!relatorioSelecionado &&
-        relatoriosDisponiveis.length > 0 && (
-          <PainelRelatorios
-            relatoriosDisponiveis={relatoriosDisponiveis}
-            relatoriosCatalogo={relatoriosCatalogo}
-            categoriasCatalogo={categoriasCatalogo}
-            categoriaSelecionada={categoriaSelecionada}
-            onCategoria={setCategoriaSelecionada}
-            busca={buscaRelatorios}
-            onBusca={setBuscaRelatorios}
-            onAbrir={selecionarRelatorio}
-          />
-        )}
+      {!relatorioSelecionado && relatoriosDisponiveis.length > 0 && (
+        <PainelRelatorios
+          relatoriosDisponiveis={relatoriosDisponiveis}
+          relatoriosCatalogo={relatoriosCatalogo}
+          categoriasCatalogo={categoriasCatalogo}
+          categoriaSelecionada={categoriaSelecionada}
+          onCategoria={setCategoriaSelecionada}
+          busca={buscaRelatorios}
+          onBusca={setBuscaRelatorios}
+          onAbrir={selecionarRelatorio}
+        />
+      )}
 
       {/* ===============================================
           RELATÓRIO SELECIONADO
@@ -1547,7 +1153,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
       {relatorioSelecionado && (
         <div className="relatorio-selecionado">
-
           {/* ===========================================
               CABEÇALHO DO RELATÓRIO
           =========================================== */}
@@ -1556,12 +1161,9 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               RELATÓRIO CUSTOMIZADO
           =========================================== */}
 
-          {relatorioEhCustom &&
-            ComponenteCustomizado && (
-              <ComponenteCustomizado
-                relatorio={relatorioSelecionado}
-              />
-            )}
+          {relatorioEhCustom && ComponenteCustomizado && (
+            <ComponenteCustomizado relatorio={relatorioSelecionado} />
+          )}
 
           {/* ===========================================
               ERRO DOS PEDIDOS
@@ -1569,8 +1171,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
           {fonteEhPedidos && erroPedidos && (
             <div className="relatorios-erro">
-              {erroPedidos.message ||
-                "Não foi possível carregar os pedidos."}
+              {erroPedidos.message || "Não foi possível carregar os pedidos."}
             </div>
           )}
 
@@ -1578,17 +1179,12 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
               ERRO DAS DESCRIÇÕES
           =========================================== */}
 
-          {relatorioSelecionadoId ===
-            "producao-produto" &&
-            erroDescricoes && (
-              <div className="relatorios-erro">
-                {erroDescricoes}
-                {" "}
-                A produção permanece disponível,
-                mas algumas descrições podem
-                aparecer como "-".
-              </div>
-            )}
+          {relatorioSelecionadoId === "producao-produto" && erroDescricoes && (
+            <div className="relatorios-erro">
+              {erroDescricoes} A produção permanece disponível, mas algumas descrições podem
+              aparecer como "-".
+            </div>
+          )}
 
           {/* ===========================================
               AÇÕES DO RELATÓRIO
@@ -1596,47 +1192,35 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
           {!relatorioEhCustom && (
             <>
-
               <LayoutRelatorio
                 relatorio={relatorioSelecionado}
                 fixo
                 filtros={
                   <>
-                {fonteEhPedidos ? (
-                  <FiltrosPedidosRelatorio
-                    filtros={filtros}
-                    setFiltros={setFiltros}
-                    pedidos={pedidosBrutos}
-                    relatorio={relatorioSelecionado}
-                  />
-                ) : (
-                  <FiltrosDashboard
-                    filtros={filtros}
-                    setFiltros={setFiltros}
-                    rawDados={dadosBrutos}
-                    exibirPeriodo={
-                      relatorioSelecionado.filtros.periodo
-                    }
-                    exibirInjetora={
-                      relatorioSelecionado.filtros.injetora
-                    }
-                    exibirTurno={false}
-                    exibirProduto={
-                      relatorioSelecionado.filtros.produto
-                    }
-                    exibirMp={
-                      relatorioSelecionado.filtros.mp
-                    }
-                    exibirTipo={
-                      relatorioSelecionado.filtros.tipo
-                    }
-                    tiposDisponiveis={tiposDisponiveis}
-                    produtosDisponiveis={produtosDisponiveis}
-                    mpsDisponiveis={mpsDisponiveis}
-                    modoRelatorio={true}
-                  />
-                )}
-
+                    {fonteEhPedidos ? (
+                      <FiltrosPedidosRelatorio
+                        filtros={filtros}
+                        setFiltros={setFiltros}
+                        pedidos={pedidosBrutos}
+                        relatorio={relatorioSelecionado}
+                      />
+                    ) : (
+                      <FiltrosDashboard
+                        filtros={filtros}
+                        setFiltros={setFiltros}
+                        rawDados={dadosBrutos}
+                        exibirPeriodo={relatorioSelecionado.filtros.periodo}
+                        exibirInjetora={relatorioSelecionado.filtros.injetora}
+                        exibirTurno={false}
+                        exibirProduto={relatorioSelecionado.filtros.produto}
+                        exibirMp={relatorioSelecionado.filtros.mp}
+                        exibirTipo={relatorioSelecionado.filtros.tipo}
+                        tiposDisponiveis={tiposDisponiveis}
+                        produtosDisponiveis={produtosDisponiveis}
+                        mpsDisponiveis={mpsDisponiveis}
+                        modoRelatorio={true}
+                      />
+                    )}
                   </>
                 }
                 acoes={{
@@ -1662,247 +1246,176 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                   },
                 ]}
               >
-              {/* =====================================
+                {/* =====================================
                   PRÉ-VISUALIZAÇÃO
               ===================================== */}
 
-              {visualizacaoAberta && (
-                <section className="relatorio-visualizacao">
+                {visualizacaoAberta && (
+                  <section className="relatorio-visualizacao">
+                    {/* CABEÇALHO */}
 
-                  {/* CABEÇALHO */}
+                    <div className="relatorio-visualizacao-header">
+                      <div>
+                        <span className="relatorio-visualizacao-eyebrow">Pré-visualização</span>
 
-                  <div className="relatorio-visualizacao-header">
+                        <h3>{relatorioSelecionado.titulo}</h3>
+                      </div>
 
-                    <div>
-                      <span className="relatorio-visualizacao-eyebrow">
-                        Pré-visualização
-                      </span>
-
-                      <h3>
-                        {relatorioSelecionado.titulo}
-                      </h3>
+                      <button
+                        type="button"
+                        className="relatorio-visualizacao-fechar"
+                        onClick={() => setVisualizacaoAberta(false)}
+                        aria-label="Fechar visualização"
+                      >
+                        <FiX />
+                      </button>
                     </div>
 
-                    <button
-                      type="button"
-                      className="relatorio-visualizacao-fechar"
-                      onClick={() =>
-                        setVisualizacaoAberta(false)
-                      }
-                      aria-label="Fechar visualização"
-                    >
-                      <FiX />
-                    </button>
-
-                  </div>
-
-                  {/* =================================
+                    {/* =================================
                       INFORMAÇÕES DO RELATÓRIO
                   ================================= */}
 
-                  <div className="relatorio-visualizacao-info">
+                    <div className="relatorio-visualizacao-info">
+                      <div className="relatorio-visualizacao-info-item">
+                        <span>Filtros</span>
 
-                    <div className="relatorio-visualizacao-info-item">
+                        <strong>{montarTextoFiltros()}</strong>
+                      </div>
 
-                      <span>
-                        Filtros
-                      </span>
-
-                      <strong>
-                        {montarTextoFiltros()}
-                      </strong>
-
+                      {/* Sem total ou contagem na pré-visualização deste relatório. */}
+                      {!relatorioProdutosPorData && (
+                        <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
+                          <span>Registros</span>
+                          <strong>{totalRegistrosRelatorio}</strong>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Sem total ou contagem na pré-visualização deste relatório. */}
-                    {!relatorioProdutosPorData && (
-                      <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-                        <span>Registros</span>
-                        <strong>{totalRegistrosRelatorio}</strong>
-                      </div>
-                    )}
-
-                  </div>
-
-                  {/* =================================
+                    {/* =================================
                       TABELA COM PAGINAÇÃO
                   ================================= */}
 
-                  {dadosRelatorioFinal.length > 0 ? (
+                    {dadosRelatorioFinal.length > 0 ? (
+                      <div className="relatorio-visualizacao-tabela-wrapper">
+                        <table className="relatorio-visualizacao-tabela">
+                          {/* CABEÇALHO DA TABELA */}
 
-                    <div className="relatorio-visualizacao-tabela-wrapper">
+                          <thead>
+                            <tr>
+                              {colunasVisualizacao.map((coluna) => (
+                                <th
+                                  key={coluna.chave}
+                                  className={coluna.numerica ? "coluna-numerica" : ""}
+                                >
+                                  {coluna.titulo}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
 
-                      <table className="relatorio-visualizacao-tabela">
-
-                        {/* CABEÇALHO DA TABELA */}
-
-                        <thead>
-                          <tr>
-
-                            {colunasVisualizacao.map((coluna) => (
-                              <th
-                                key={coluna.chave}
-                                className={
-                                  coluna.numerica
-                                    ? "coluna-numerica"
-                                    : ""
-                                }
-                              >
-                                {coluna.titulo}
-                              </th>
-                            ))}
-
-                          </tr>
-                        </thead>
-
-                        {/* =================================
+                          {/* =================================
                             CORPO DA TABELA
 
                             ALTERAÇÃO PRINCIPAL:
                             usa dadosPaginaVisualizacao.
                         ================================= */}
 
-                        <tbody>
-
-                          {dadosPaginaVisualizacao.map(
-                            (item, indice) => (
-
+                          <tbody>
+                            {dadosPaginaVisualizacao.map((item, indice) => (
                               <tr
                                 className={
                                   Object.values(item || {}).some(
                                     (valor) =>
-                                      String(valor ?? "").trim().toUpperCase() === "TOTAL GERAL",
+                                      String(valor ?? "")
+                                        .trim()
+                                        .toUpperCase() === "TOTAL GERAL",
                                   )
                                     ? "linha-total"
                                     : undefined
                                 }
                                 key={`${relatorioSelecionado.id}-${
-                                  (paginaVisualizacao - 1) *
-                                  LINHAS_POR_PAGINA +
-                                  indice
+                                  (paginaVisualizacao - 1) * LINHAS_POR_PAGINA + indice
                                 }`}
                               >
-
-                                {colunasVisualizacao.map(
-                                  (coluna) => (
-
-                                    <td
-                                      key={coluna.chave}
-                                      className={
-                                        coluna.numerica
-                                          ? "coluna-numerica"
-                                          : ""
-                                      }
-                                    >
-                                      {obterValorVisualizacao(
-                                        item,
-                                        coluna.chave,
-                                      )}
-                                    </td>
-
-                                  ),
-                                )}
-
+                                {colunasVisualizacao.map((coluna) => (
+                                  <td
+                                    key={coluna.chave}
+                                    className={coluna.numerica ? "coluna-numerica" : ""}
+                                  >
+                                    {obterValorVisualizacao(item, coluna.chave)}
+                                  </td>
+                                ))}
                               </tr>
-
-                            ),
-                          )}
-
-                        </tbody>
-
-                      </table>
-
-                    </div>
-
-                  ) : (
-
-                    /* =================================
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      /* =================================
                        SEM REGISTROS
                     ================================= */
 
-                    <div className="relatorio-visualizacao-vazia">
+                      <div className="relatorio-visualizacao-vazia">
+                        <FiFileText />
 
-                      <FiFileText />
+                        <strong>Nenhum registro encontrado</strong>
 
-                      <strong>
-                        Nenhum registro encontrado
-                      </strong>
+                        <span>Ajuste os filtros para visualizar os dados.</span>
+                      </div>
+                    )}
 
-                      <span>
-                        Ajuste os filtros para visualizar
-                        os dados.
-                      </span>
-
-                    </div>
-
-                  )}
-
-                  {/* =================================
+                    {/* =================================
                       RODAPÉ DA PRÉ-VISUALIZAÇÃO
 
                       Mostra intervalo e total real.
                   ================================= */}
 
-                  <div className="relatorio-visualizacao-footer">
+                    <div className="relatorio-visualizacao-footer">
+                      <span>
+                        Exibindo {inicioVisualizacao} a {fimVisualizacao} de{" "}
+                        {dadosRelatorioFinal.length} linha(s)
+                      </span>
 
-                    <span>
-                      Exibindo {inicioVisualizacao} a{" "}
-                      {fimVisualizacao} de{" "}
-                      {dadosRelatorioFinal.length} linha(s)
-                    </span>
+                      <span>Visualização atualizada conforme os filtros</span>
+                    </div>
 
-                    <span>
-                      Visualização atualizada conforme
-                      os filtros
-                    </span>
-
-                  </div>
-
-                  {/* =================================
+                    {/* =================================
                       PAGINAÇÃO PADRÃO DO SISTEMA
 
                       Exibida somente quando há
                       mais de uma página.
                   ================================= */}
 
-                  {dadosRelatorioFinal.length >
-                    LINHAS_POR_PAGINA && (
+                    {dadosRelatorioFinal.length > LINHAS_POR_PAGINA && (
+                      <Paginacao
+                        paginaAtual={paginaVisualizacao}
+                        totalItens={dadosRelatorioFinal.length}
+                        itensPorPagina={LINHAS_POR_PAGINA}
+                        onChangePagina={setPaginaAtual}
+                      />
+                    )}
+                  </section>
+                )}
 
-                    <Paginacao
-                      paginaAtual={paginaVisualizacao}
-                      totalItens={dadosRelatorioFinal.length}
-                      itensPorPagina={LINHAS_POR_PAGINA}
-                      onChangePagina={setPaginaAtual}
-                    />
-
-                  )}
-
-                </section>
-              )}
-
-              {!visualizacaoAberta && (
-                <div className="rl-vazio">
-                  <strong>
-                    {dadosRelatorioFinal.length > 0
-                      ? "Clique em Visualizar para conferir os dados"
-                      : "Nenhum registro com os filtros atuais"}
-                  </strong>
-                  <span>
-                    {dadosRelatorioFinal.length > 0
-                      ? "Ou baixe direto em PDF ou Excel."
-                      : "Ajuste os filtros para ver os dados."}
-                  </span>
-                </div>
-              )}
-
+                {!visualizacaoAberta && (
+                  <div className="rl-vazio">
+                    <strong>
+                      {dadosRelatorioFinal.length > 0
+                        ? "Clique em Visualizar para conferir os dados"
+                        : "Nenhum registro com os filtros atuais"}
+                    </strong>
+                    <span>
+                      {dadosRelatorioFinal.length > 0
+                        ? "Ou baixe direto em PDF ou Excel."
+                        : "Ajuste os filtros para ver os dados."}
+                    </span>
+                  </div>
+                )}
               </LayoutRelatorio>
-
             </>
           )}
-
         </div>
       )}
-
     </div>
   );
 }

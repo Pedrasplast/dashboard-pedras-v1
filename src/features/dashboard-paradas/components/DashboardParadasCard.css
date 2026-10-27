@@ -13,17 +13,13 @@
 
   box-sizing: border-box;
 
-  background:
-    var(--dp-surface);
+  background: var(--dp-surface);
 
-  border:
-    1px solid
-    var(--dp-border);
+  border: 1px solid var(--dp-border);
 
   border-radius: 14px;
 
-  box-shadow:
-    var(--dp-shadow);
+  box-shadow: var(--dp-shadow);
 
   transition:
     border-color 0.18s ease,
@@ -31,13 +27,10 @@
 }
 
 .dp-card:hover {
-  border-color:
-    #cbd5e1;
+  border-color: #cbd5e1;
 
-  box-shadow:
-    var(--dp-shadow-hover);
+  box-shadow: var(--dp-shadow-hover);
 }
-
 
 /* =========================================================
    CABEÇALHO DO CARD
@@ -53,16 +46,11 @@
 
   gap: 14px;
 
-  padding:
-    15px
-    17px
-    13px;
+  padding: 15px 17px 13px;
 
   box-sizing: border-box;
 
-  border-bottom:
-    1px solid
-    var(--dp-border-soft);
+  border-bottom: 1px solid var(--dp-border-soft);
 }
 
 .dp-card__heading {
@@ -85,11 +73,9 @@
 
   place-items: center;
 
-  color:
-    var(--dp-primary);
+  color: var(--dp-primary);
 
-  background:
-    var(--dp-primary-soft);
+  background: var(--dp-primary-soft);
 
   border-radius: 8px;
 }
@@ -101,8 +87,7 @@
 .dp-card__titles h2 {
   margin: 0;
 
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
   font-size: 0.91rem;
 
@@ -110,18 +95,13 @@
 
   line-height: 1.25;
 
-  letter-spacing:
-    -0.01em;
+  letter-spacing: -0.01em;
 }
 
 .dp-card__titles p {
-  margin:
-    4px
-    0
-    0;
+  margin: 4px 0 0;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.67rem;
 
@@ -138,7 +118,6 @@
   justify-content: flex-end;
 }
 
-
 /* =========================================================
    CONTEÚDO DOS CARDS
 ========================================================= */
@@ -152,12 +131,8 @@
   display: flex;
   flex-direction: column;
 
-  padding:
-    12px
-    15px
-    16px;
+  padding: 12px 15px 16px;
 }
-
 
 /* =========================================================
    ESTADO VAZIO
@@ -192,18 +167,15 @@
 
   margin-bottom: 3px;
 
-  color:
-    var(--dp-muted-light);
+  color: var(--dp-muted-light);
 
-  background:
-    #f8fafc;
+  background: #f8fafc;
 
   border-radius: 50%;
 }
 
 .dp-card__empty strong {
-  color:
-    var(--dp-text-secondary);
+  color: var(--dp-text-secondary);
 
   font-size: 0.78rem;
 }
@@ -213,8 +185,7 @@
 
   margin: 0;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.7rem;
 
@@ -225,9 +196,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (
-  max-width: 760px
-) {
+@media (max-width: 760px) {
   .dp-card__header {
     flex-direction: column;
 

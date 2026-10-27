@@ -1,13 +1,10 @@
-
 import { createFileRoute } from "@tanstack/react-router";
 
 import RotaProtegida from "@/components/layout/RotaProtegida";
 
 import TabelaPrecosMateriaPrimaPage from "@/features/tabela-precos-materia-prima/TabelaPrecosMateriaPrimaPage";
 
-export const Route = createFileRoute(
-  "/tabela-precos-materia-prima"
-)({
+export const Route = createFileRoute("/tabela-precos-materia-prima")({
   ssr: false,
 
   component: TabelaPrecosMateriaPrimaRoute,

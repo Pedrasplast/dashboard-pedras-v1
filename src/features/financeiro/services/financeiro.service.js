@@ -1,56 +1,28 @@
 import { supabase } from "../../../lib/supabaseClient";
 
-
 /* =========================================================
    VALIDAR PERÍODO
 ========================================================= */
 
-function validarPeriodo(
-  ano,
-  mes,
-) {
-  const anoNumero =
-    Number(ano);
+function validarPeriodo(ano, mes) {
+  const anoNumero = Number(ano);
 
-  const mesNumero =
-    Number(mes);
+  const mesNumero = Number(mes);
 
-
-  if (
-    !Number.isInteger(
-      anoNumero,
-    ) ||
-    anoNumero < 2000 ||
-    anoNumero > 2100
-  ) {
-    throw new Error(
-      "Ano inválido.",
-    );
+  if (!Number.isInteger(anoNumero) || anoNumero < 2000 || anoNumero > 2100) {
+    throw new Error("Ano inválido.");
   }
 
-
-  if (
-    !Number.isInteger(
-      mesNumero,
-    ) ||
-    mesNumero < 1 ||
-    mesNumero > 12
-  ) {
-    throw new Error(
-      "Mês inválido.",
-    );
+  if (!Number.isInteger(mesNumero) || mesNumero < 1 || mesNumero > 12) {
+    throw new Error("Mês inválido.");
   }
-
 
   return {
-    ano:
-      anoNumero,
+    ano: anoNumero,
 
-    mes:
-      mesNumero,
+    mes: mesNumero,
   };
 }
-
 
 /* =========================================================
    ANOS DISPONÍVEIS
@@ -60,69 +32,30 @@ function validarPeriodo(
 ========================================================= */
 
 export async function buscarAnosFinanceiro() {
-  const {
-    data,
-    error,
-  } =
-    await supabase.rpc(
-      "listar_anos_financeiro",
-    );
-
+  const { data, error } = await supabase.rpc("listar_anos_financeiro");
 
   if (error) {
-    throw new Error(
-      `Erro ao carregar anos financeiros: ${error.message}`,
-    );
+    throw new Error(`Erro ao carregar anos financeiros: ${error.message}`);
   }
 
-
-  if (
-    !Array.isArray(data)
-  ) {
+  if (!Array.isArray(data)) {
     return [];
   }
 
-
-  return data
-    .map(
-      (registro) =>
-        Number(
-          registro?.ano,
-        ),
-    )
-    .filter(
-      (ano) =>
-        Number.isInteger(
-          ano,
-        ),
-    );
+  return data.map((registro) => Number(registro?.ano)).filter((ano) => Number.isInteger(ano));
 }
-
 
 /* =========================================================
    RESUMO FINANCEIRO
 ========================================================= */
 
-export async function buscarResumoFinanceiro(
-  ano,
-  mes,
-) {
-  const periodo =
-    validarPeriodo(
-      ano,
-      mes,
-    );
+export async function buscarResumoFinanceiro(ano, mes) {
+  const periodo = validarPeriodo(ano, mes);
 
-
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "financeiro_omie_resumo",
-      )
-      .select(`
+  const { data, error } = await supabase
+    .from("financeiro_omie_resumo")
+    .select(
+      `
         id,
         ano,
         mes,
@@ -132,76 +65,38 @@ export async function buscarResumoFinanceiro(
         valor_previsto,
         valor_realizado,
         sincronizado_em
-      `)
-      .eq(
-        "ano",
-        periodo.ano,
-      )
-      .eq(
-        "mes",
-        periodo.mes,
-      )
-      .order(
-        "codigo_categoria",
-        {
-          ascending:
-            true,
-        },
-      );
-
+      `,
+    )
+    .eq("ano", periodo.ano)
+    .eq("mes", periodo.mes)
+    .order("codigo_categoria", {
+      ascending: true,
+    });
 
   if (error) {
-    throw new Error(
-      `Erro ao carregar financeiro: ${error.message}`,
-    );
+    throw new Error(`Erro ao carregar financeiro: ${error.message}`);
   }
 
-
-  return Array.isArray(data)
-    ? data
-    : [];
+  return Array.isArray(data) ? data : [];
 }
-
 
 /* =========================================================
    DETALHES
 ========================================================= */
 
-export async function buscarDetalhesFinanceiro({
-  ano,
-  mes,
-  codigoCategoria,
-}) {
-  const periodo =
-    validarPeriodo(
-      ano,
-      mes,
-    );
+export async function buscarDetalhesFinanceiro({ ano, mes, codigoCategoria }) {
+  const periodo = validarPeriodo(ano, mes);
 
-
-  const codigo =
-    String(
-      codigoCategoria ??
-        "",
-    ).trim();
-
+  const codigo = String(codigoCategoria ?? "").trim();
 
   if (!codigo) {
-    throw new Error(
-      "Código da categoria não informado.",
-    );
+    throw new Error("Código da categoria não informado.");
   }
 
-
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "financeiro_omie_lancamentos",
-      )
-      .select(`
+  const { data, error } = await supabase
+    .from("financeiro_omie_lancamentos")
+    .select(
+      `
         id,
         ano,
         mes,
@@ -225,65 +120,36 @@ export async function buscarDetalhesFinanceiro({
         percentual_categoria,
         status,
         sincronizado_em
-      `)
-      .eq(
-        "ano",
-        periodo.ano,
-      )
-      .eq(
-        "mes",
-        periodo.mes,
-      )
-      .eq(
-        "codigo_categoria",
-        codigo,
-      )
-      .order(
-        "data_referencia",
-        {
-          ascending:
-            true,
+      `,
+    )
+    .eq("ano", periodo.ano)
+    .eq("mes", periodo.mes)
+    .eq("codigo_categoria", codigo)
+    .order("data_referencia", {
+      ascending: true,
 
-          nullsFirst:
-            false,
-        },
-      )
-      .order(
-        "codigo_titulo_omie",
-        {
-          ascending:
-            true,
-        },
-      );
-
+      nullsFirst: false,
+    })
+    .order("codigo_titulo_omie", {
+      ascending: true,
+    });
 
   if (error) {
-    throw new Error(
-      `Erro ao carregar detalhes financeiros: ${error.message}`,
-    );
+    throw new Error(`Erro ao carregar detalhes financeiros: ${error.message}`);
   }
 
-
-  return Array.isArray(data)
-    ? data
-    : [];
+  return Array.isArray(data) ? data : [];
 }
-
 
 /* =========================================================
    STATUS DA SINCRONIZAÇÃO
 ========================================================= */
 
 export async function buscarStatusSincronizacaoFinanceiro() {
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "sincronizacao_financeiro_omie",
-      )
-      .select(`
+  const { data, error } = await supabase
+    .from("sincronizacao_financeiro_omie")
+    .select(
+      `
         id,
         ultima_sincronizacao,
         inicio_em,
@@ -297,70 +163,35 @@ export async function buscarStatusSincronizacaoFinanceiro() {
         duracao_ms,
         mensagem,
         atualizado_em
-      `)
-      .eq(
-        "id",
-        1,
-      )
-      .maybeSingle();
-
+      `,
+    )
+    .eq("id", 1)
+    .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Erro ao consultar sincronização financeira: ${error.message}`,
-    );
+    throw new Error(`Erro ao consultar sincronização financeira: ${error.message}`);
   }
 
-
-  return data ??
-    null;
+  return data ?? null;
 }
-
 
 /* =========================================================
    VARIAÇÃO
 ========================================================= */
 
-export function calcularVariacaoFinanceiro(
-  previsto,
-  realizado,
-) {
-  const valorPrevisto =
-    Number(
-      previsto ??
-        0,
-    );
+export function calcularVariacaoFinanceiro(previsto, realizado) {
+  const valorPrevisto = Number(previsto ?? 0);
 
-  const valorRealizado =
-    Number(
-      realizado ??
-        0,
-    );
+  const valorRealizado = Number(realizado ?? 0);
 
+  const variacao = valorRealizado - valorPrevisto;
 
-  const variacao =
-    valorRealizado -
-    valorPrevisto;
-
-
-  const percentual =
-    valorPrevisto !== 0
-      ? (
-          variacao /
-          Math.abs(
-            valorPrevisto,
-          )
-        ) *
-        100
-      : null;
-
+  const percentual = valorPrevisto !== 0 ? (variacao / Math.abs(valorPrevisto)) * 100 : null;
 
   return {
-    previsto:
-      valorPrevisto,
+    previsto: valorPrevisto,
 
-    realizado:
-      valorRealizado,
+    realizado: valorRealizado,
 
     variacao,
 
@@ -368,40 +199,20 @@ export function calcularVariacaoFinanceiro(
   };
 }
 
-
 /* =========================================================
    TIPO DA CATEGORIA
 ========================================================= */
 
-export function identificarTipoCategoria(
-  codigoCategoria,
-) {
-  const codigo =
-    String(
-      codigoCategoria ??
-        "",
-    ).trim();
+export function identificarTipoCategoria(codigoCategoria) {
+  const codigo = String(codigoCategoria ?? "").trim();
 
-
-  if (
-    codigo === "1" ||
-    codigo.startsWith(
-      "1.",
-    )
-  ) {
+  if (codigo === "1" || codigo.startsWith("1.")) {
     return "Receita";
   }
 
-
-  if (
-    codigo === "2" ||
-    codigo.startsWith(
-      "2.",
-    )
-  ) {
+  if (codigo === "2" || codigo.startsWith("2.")) {
     return "Despesa";
   }
-
 
   return "Outro";
 }

@@ -6,7 +6,6 @@
    2) Histórico Expandido
 ========================================================= */
 
-
 /* =========================================================
    CORES
 ========================================================= */
@@ -36,7 +35,6 @@ const CORES = {
   texto: "FF0F172A",
 };
 
-
 /* =========================================================
    DATA
 ========================================================= */
@@ -46,91 +44,54 @@ function formatarFiltroData(valor) {
     return "Sem limite";
   }
 
-  return String(valor)
-    .split("-")
-    .reverse()
-    .join("/");
+  return String(valor).split("-").reverse().join("/");
 }
-
 
 function obterDataHoraEmissao() {
-  return new Date().toLocaleString(
-    "pt-BR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  );
+  return new Date().toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
-
 
 /* =========================================================
    NOME DO ARQUIVO
 ========================================================= */
 
 function obterNomeArquivo() {
-  const data =
-    new Date()
-      .toISOString()
-      .slice(0, 10);
+  const data = new Date().toISOString().slice(0, 10);
 
   return `Pedidos_Alterados_${data}.xlsx`;
 }
-
 
 /* =========================================================
    DOWNLOAD
 ========================================================= */
 
-function baixarArquivo(
-  buffer,
-  nomeArquivo,
-) {
-  const blob =
-    new Blob(
-      [buffer],
-      {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      },
-    );
+function baixarArquivo(buffer, nomeArquivo) {
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
 
+  const url = window.URL.createObjectURL(blob);
 
-  const url =
-    window.URL.createObjectURL(
-      blob,
-    );
+  const link = document.createElement("a");
 
+  link.href = url;
 
-  const link =
-    document.createElement("a");
+  link.download = nomeArquivo;
 
-
-  link.href =
-    url;
-
-  link.download =
-    nomeArquivo;
-
-
-  document.body.appendChild(
-    link,
-  );
-
+  document.body.appendChild(link);
 
   link.click();
 
   link.remove();
 
-
-  window.URL.revokeObjectURL(
-    url,
-  );
+  window.URL.revokeObjectURL(url);
 }
-
 
 /* =========================================================
    BORDA PADRÃO
@@ -142,8 +103,7 @@ function bordaPadrao() {
       style: "thin",
 
       color: {
-        argb:
-          CORES.cinzaBorda,
+        argb: CORES.cinzaBorda,
       },
     },
 
@@ -151,8 +111,7 @@ function bordaPadrao() {
       style: "thin",
 
       color: {
-        argb:
-          CORES.cinzaBorda,
+        argb: CORES.cinzaBorda,
       },
     },
 
@@ -160,8 +119,7 @@ function bordaPadrao() {
       style: "thin",
 
       color: {
-        argb:
-          CORES.cinzaBorda,
+        argb: CORES.cinzaBorda,
       },
     },
 
@@ -169,13 +127,11 @@ function bordaPadrao() {
       style: "thin",
 
       color: {
-        argb:
-          CORES.cinzaBorda,
+        argb: CORES.cinzaBorda,
       },
     },
   };
 }
-
 
 /* =========================================================
    CABEÇALHO DA TABELA
@@ -183,27 +139,9 @@ function bordaPadrao() {
    PINTA SOMENTE AS CÉLULAS UTILIZADAS
 ========================================================= */
 
-function estilizarCabecalho(
-  worksheet,
-  linha,
-  colunaInicial,
-  colunaFinal,
-) {
-  for (
-    let coluna =
-      colunaInicial;
-
-    coluna <=
-    colunaFinal;
-
-    coluna += 1
-  ) {
-    const cell =
-      worksheet.getCell(
-        linha,
-        coluna,
-      );
-
+function estilizarCabecalho(worksheet, linha, colunaInicial, colunaFinal) {
+  for (let coluna = colunaInicial; coluna <= colunaFinal; coluna += 1) {
+    const cell = worksheet.getCell(linha, coluna);
 
     cell.fill = {
       type: "pattern",
@@ -211,88 +149,65 @@ function estilizarCabecalho(
       pattern: "solid",
 
       fgColor: {
-        argb:
-          CORES.azulCabecalho,
+        argb: CORES.azulCabecalho,
       },
     };
-
 
     cell.font = {
       bold: true,
 
       color: {
-        argb:
-          CORES.azul,
+        argb: CORES.azul,
       },
 
       size: 10,
     };
 
-
     cell.alignment = {
-      vertical:
-        "middle",
+      vertical: "middle",
 
-      horizontal:
-        "left",
+      horizontal: "left",
 
-      wrapText:
-        true,
+      wrapText: true,
     };
-
 
     cell.border = {
       bottom: {
-        style:
-          "thin",
+        style: "thin",
 
         color: {
-          argb:
-            "FFD6DEF0",
+          argb: "FFD6DEF0",
         },
       },
     };
   }
 
-
-  worksheet.getRow(
-    linha,
-  ).height =
-    24;
+  worksheet.getRow(linha).height = 24;
 }
-
 
 /* =========================================================
    ESTILIZAR INFORMAÇÕES SUPERIORES
 ========================================================= */
 
-function estilizarInfo(
-  cell,
-) {
+function estilizarInfo(cell) {
   cell.font = {
     size: 9,
 
     color: {
-      argb:
-        CORES.cinzaTexto,
+      argb: CORES.cinzaTexto,
     },
 
     bold: true,
   };
 
-
   cell.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
 
-    wrapText:
-      true,
+    wrapText: true,
   };
 }
-
 
 /* =========================================================
    CABEÇALHO DO RELATÓRIO
@@ -310,20 +225,11 @@ function criarCabecalhoRelatorio({
      TÍTULO
   ======================================================= */
 
-  worksheet.mergeCells(
-    `A1:${ultimaColuna}1`,
-  );
+  worksheet.mergeCells(`A1:${ultimaColuna}1`);
 
+  const tituloCell = worksheet.getCell("A1");
 
-  const tituloCell =
-    worksheet.getCell(
-      "A1",
-    );
-
-
-  tituloCell.value =
-    titulo;
-
+  tituloCell.value = titulo;
 
   tituloCell.font = {
     bold: true,
@@ -331,77 +237,49 @@ function criarCabecalhoRelatorio({
     size: 16,
 
     color: {
-      argb:
-        CORES.azul,
+      argb: CORES.azul,
     },
   };
 
-
   tituloCell.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
   };
 
-
-  worksheet.getRow(
-    1,
-  ).height =
-    28;
-
+  worksheet.getRow(1).height = 28;
 
   /* =======================================================
      FAIXA AZUL
   ======================================================= */
 
-  worksheet.mergeCells(
-    `A2:${ultimaColuna}2`,
-  );
+  worksheet.mergeCells(`A2:${ultimaColuna}2`);
 
+  const faixa = worksheet.getCell("A2");
 
-  const faixa =
-    worksheet.getCell(
-      "A2",
-    );
-
-
-  faixa.value =
-    "PEDIDOS";
-
+  faixa.value = "PEDIDOS";
 
   faixa.border = {
     bottom: { style: "medium", color: { argb: CORES.verdeMarca } },
   };
 
-
   faixa.font = {
     bold: true,
 
     color: {
-      argb:
-        CORES.verdeTexto,
+      argb: CORES.verdeTexto,
     },
 
     size: 9,
   };
 
-
   faixa.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
   };
 
-
-  worksheet.getRow(
-    2,
-  ).height =
-    21;
-
+  worksheet.getRow(2).height = 21;
 
   /* =======================================================
      INFORMAÇÕES
@@ -413,184 +291,90 @@ function criarCabecalhoRelatorio({
      Os merges precisam ser diferentes.
   ======================================================= */
 
-  if (
-    ultimaColuna ===
-    "G"
-  ) {
-    worksheet.mergeCells(
-      "A3:C3",
-    );
+  if (ultimaColuna === "G") {
+    worksheet.mergeCells("A3:C3");
 
-    worksheet.mergeCells(
-      "D3:E3",
-    );
+    worksheet.mergeCells("D3:E3");
 
-    worksheet.mergeCells(
-      "F3:G3",
-    );
+    worksheet.mergeCells("F3:G3");
 
+    const periodo = worksheet.getCell("A3");
 
-    const periodo =
-      worksheet.getCell(
-        "A3",
-      );
+    const emissao = worksheet.getCell("D3");
 
-    const emissao =
-      worksheet.getCell(
-        "D3",
-      );
+    const filtro = worksheet.getCell("F3");
 
-    const filtro =
-      worksheet.getCell(
-        "F3",
-      );
+    periodo.value = `Período: ${formatarFiltroData(dataInicial)} até ${formatarFiltroData(
+      dataFinal,
+    )}`;
 
+    emissao.value = `Emitido em: ${obterDataHoraEmissao()}`;
 
-    periodo.value =
-      `Período: ${formatarFiltroData(
-        dataInicial,
-      )} até ${formatarFiltroData(
-        dataFinal,
-      )}`;
+    filtro.value = pesquisa ? `Filtro: ${pesquisa}` : "Filtro: Todos";
 
+    estilizarInfo(periodo);
 
-    emissao.value =
-      `Emitido em: ${obterDataHoraEmissao()}`;
+    estilizarInfo(emissao);
 
-
-    filtro.value =
-      pesquisa
-        ? `Filtro: ${pesquisa}`
-        : "Filtro: Todos";
-
-
-    estilizarInfo(
-      periodo,
-    );
-
-    estilizarInfo(
-      emissao,
-    );
-
-    estilizarInfo(
-      filtro,
-    );
-
+    estilizarInfo(filtro);
   } else {
     /*
      * Histórico possui somente A:E.
      */
 
-    worksheet.mergeCells(
-      "A3:B3",
-    );
+    worksheet.mergeCells("A3:B3");
 
-    worksheet.mergeCells(
-      "C3:D3",
-    );
+    worksheet.mergeCells("C3:D3");
 
+    const periodo = worksheet.getCell("A3");
 
-    const periodo =
-      worksheet.getCell(
-        "A3",
-      );
+    const emissao = worksheet.getCell("C3");
 
-    const emissao =
-      worksheet.getCell(
-        "C3",
-      );
+    const filtro = worksheet.getCell("E3");
 
-    const filtro =
-      worksheet.getCell(
-        "E3",
-      );
+    periodo.value = `Período: ${formatarFiltroData(dataInicial)} até ${formatarFiltroData(
+      dataFinal,
+    )}`;
 
+    emissao.value = `Emitido em: ${obterDataHoraEmissao()}`;
 
-    periodo.value =
-      `Período: ${formatarFiltroData(
-        dataInicial,
-      )} até ${formatarFiltroData(
-        dataFinal,
-      )}`;
+    filtro.value = pesquisa ? `Filtro: ${pesquisa}` : "Filtro: Todos";
 
+    estilizarInfo(periodo);
 
-    emissao.value =
-      `Emitido em: ${obterDataHoraEmissao()}`;
+    estilizarInfo(emissao);
 
-
-    filtro.value =
-      pesquisa
-        ? `Filtro: ${pesquisa}`
-        : "Filtro: Todos";
-
-
-    estilizarInfo(
-      periodo,
-    );
-
-    estilizarInfo(
-      emissao,
-    );
-
-    estilizarInfo(
-      filtro,
-    );
+    estilizarInfo(filtro);
   }
 
+  worksheet.getRow(3).height = 21;
 
-  worksheet.getRow(
-    3,
-  ).height =
-    21;
-
-
-  worksheet.getRow(
-    4,
-  ).height =
-    8;
+  worksheet.getRow(4).height = 8;
 }
-
 
 /* =========================================================
    ABA RESUMO
 ========================================================= */
 
-function criarAbaResumo({
-  workbook,
-  pedidos,
-  dataInicial,
-  dataFinal,
-  pesquisa,
-  formatarDataHora,
-}) {
-  const worksheet =
-    workbook.addWorksheet(
-      "Resumo",
+function criarAbaResumo({ workbook, pedidos, dataInicial, dataFinal, pesquisa, formatarDataHora }) {
+  const worksheet = workbook.addWorksheet("Resumo", {
+    views: [
       {
-        views: [
-          {
-            state:
-              "frozen",
+        state: "frozen",
 
-            ySplit:
-              5,
+        ySplit: 5,
 
-            showGridLines:
-              false,
-          },
-        ],
+        showGridLines: false,
       },
-    );
-
+    ],
+  });
 
   criarCabecalhoRelatorio({
     worksheet,
 
-    titulo:
-      "Pedidos Alterados",
+    titulo: "Pedidos Alterados",
 
-    ultimaColuna:
-      "G",
+    ultimaColuna: "G",
 
     dataInicial,
 
@@ -598,7 +382,6 @@ function criarAbaResumo({
 
     pesquisa,
   });
-
 
   /* =======================================================
      CABEÇALHO DA TABELA
@@ -614,326 +397,175 @@ function criarAbaResumo({
     "O que foi alterado",
   ];
 
-
-  for (
-    let coluna = 1;
-    coluna <= 7;
-    coluna += 1
-  ) {
-    worksheet.getCell(
-      5,
-      coluna,
-    ).value =
-      cabecalhos[
-        coluna - 1
-      ];
+  for (let coluna = 1; coluna <= 7; coluna += 1) {
+    worksheet.getCell(5, coluna).value = cabecalhos[coluna - 1];
   }
-
 
   /*
    * Apenas A5:G5 é pintado.
    */
-  estilizarCabecalho(
-    worksheet,
-    5,
-    1,
-    7,
-  );
-
+  estilizarCabecalho(worksheet, 5, 1, 7);
 
   /* =======================================================
      DADOS
   ======================================================= */
 
-  let linhaAtual =
-    6;
+  let linhaAtual = 6;
 
+  pedidos.forEach((pedido, indice) => {
+    const campos = Array.isArray(pedido?.campos_alterados)
+      ? pedido.campos_alterados.join(", ")
+      : "-";
 
-  pedidos.forEach(
-    (
-      pedido,
-      indice,
-    ) => {
-      const campos =
-        Array.isArray(
-          pedido
-            ?.campos_alterados,
-        )
-          ? pedido
-              .campos_alterados
-              .join(
-                ", ",
-              )
-          : "-";
+    const valores = [
+      pedido?.numero_pedido || pedido?.codigo_pedido_omie || "-",
 
+      pedido?.cliente || "-",
 
-      const valores = [
-        pedido
-          ?.numero_pedido ||
-          pedido
-            ?.codigo_pedido_omie ||
-          "-",
+      pedido?.vendedor || "-",
 
-        pedido
-          ?.cliente ||
-          "-",
+      formatarDataHora(pedido?.primeira_alteracao),
 
-        pedido
-          ?.vendedor ||
-          "-",
+      formatarDataHora(pedido?.ultima_alteracao),
 
-        formatarDataHora(
-          pedido
-            ?.primeira_alteracao,
-        ),
+      Number(pedido?.quantidade_alteracoes ?? 0),
 
-        formatarDataHora(
-          pedido
-            ?.ultima_alteracao,
-        ),
+      campos || "-",
+    ];
 
-        Number(
-          pedido
-            ?.quantidade_alteracoes ??
-            0,
-        ),
+    for (let coluna = 1; coluna <= 7; coluna += 1) {
+      const cell = worksheet.getCell(linhaAtual, coluna);
 
-        campos ||
-          "-",
-      ];
+      cell.value = valores[coluna - 1];
 
+      cell.font = {
+        size: 9,
 
-      for (
-        let coluna = 1;
-        coluna <= 7;
-        coluna += 1
-      ) {
-        const cell =
-          worksheet.getCell(
-            linhaAtual,
-            coluna,
-          );
+        color: {
+          argb: CORES.texto,
+        },
+      };
 
+      cell.alignment = {
+        vertical: "middle",
 
-        cell.value =
-          valores[
-            coluna - 1
-          ];
+        horizontal: "left",
 
+        wrapText: true,
+      };
 
-        cell.font = {
-          size: 9,
+      cell.border = {
+        bottom: {
+          style: "thin",
 
           color: {
-            argb:
-              CORES.texto,
+            argb: CORES.cinzaBorda,
+          },
+        },
+      };
+
+      if (indice % 2 === 1) {
+        cell.fill = {
+          type: "pattern",
+
+          pattern: "solid",
+
+          fgColor: {
+            argb: CORES.cinzaMuitoClaro,
           },
         };
-
-
-        cell.alignment = {
-          vertical:
-            "middle",
-
-          horizontal:
-            "left",
-
-          wrapText:
-            true,
-        };
-
-
-        cell.border = {
-          bottom: {
-            style:
-              "thin",
-
-            color: {
-              argb:
-                CORES.cinzaBorda,
-            },
-          },
-        };
-
-
-        if (
-          indice % 2 ===
-          1
-        ) {
-          cell.fill = {
-            type: "pattern",
-
-            pattern: "solid",
-
-            fgColor: {
-              argb:
-                CORES.cinzaMuitoClaro,
-            },
-          };
-        }
       }
+    }
 
-
-      /* ===================================================
+    /* ===================================================
          PEDIDO
       =================================================== */
 
-      worksheet.getCell(
-        linhaAtual,
-        1,
-      ).font = {
-        bold: true,
+    worksheet.getCell(linhaAtual, 1).font = {
+      bold: true,
 
-        color: {
-          argb:
-            CORES.azul,
-        },
+      color: {
+        argb: CORES.azul,
+      },
 
-        size: 9,
-      };
+      size: 9,
+    };
 
-
-      /* ===================================================
+    /* ===================================================
          CLIENTE
       =================================================== */
 
-      worksheet.getCell(
-        linhaAtual,
-        2,
-      ).font = {
-        bold: true,
+    worksheet.getCell(linhaAtual, 2).font = {
+      bold: true,
 
-        color: {
-          argb:
-            "FF334155",
-        },
+      color: {
+        argb: "FF334155",
+      },
 
-        size: 9,
-      };
+      size: 9,
+    };
 
-
-      /* ===================================================
+    /* ===================================================
          Nº ALTERAÇÕES
       =================================================== */
 
-      const quantidade =
-        Number(
-          pedido
-            ?.quantidade_alteracoes ??
-            0,
-        );
+    const quantidade = Number(pedido?.quantidade_alteracoes ?? 0);
 
+    const cellQtd = worksheet.getCell(linhaAtual, 6);
 
-      const cellQtd =
-        worksheet.getCell(
-          linhaAtual,
-          6,
-        );
+    cellQtd.font = {
+      bold: true,
 
+      color: {
+        argb: quantidade > 1 ? CORES.vermelho : CORES.azul,
+      },
 
-      cellQtd.font = {
-        bold: true,
+      size: 10,
+    };
 
-        color: {
-          argb:
-            quantidade >
-            1
-              ? CORES.vermelho
-              : CORES.azul,
-        },
+    cellQtd.alignment = {
+      horizontal: "center",
 
-        size: 10,
-      };
+      vertical: "middle",
+    };
 
+    worksheet.getRow(linhaAtual).height = 22;
 
-      cellQtd.alignment = {
-        horizontal:
-          "center",
-
-        vertical:
-          "middle",
-      };
-
-
-      worksheet.getRow(
-        linhaAtual,
-      ).height =
-        22;
-
-
-      linhaAtual +=
-        1;
-    },
-  );
-
+    linhaAtual += 1;
+  });
 
   /* =======================================================
      AUTOFILTRO
   ======================================================= */
 
-  if (
-    pedidos.length >
-    0
-  ) {
+  if (pedidos.length > 0) {
     worksheet.autoFilter = {
-      from:
-        "A5",
+      from: "A5",
 
-      to:
-        `G${linhaAtual - 1}`,
+      to: `G${linhaAtual - 1}`,
     };
   }
-
 
   /* =======================================================
      LARGURAS
   ======================================================= */
 
-  worksheet.getColumn(
-    "A",
-  ).width =
-    13;
+  worksheet.getColumn("A").width = 13;
 
+  worksheet.getColumn("B").width = 38;
 
-  worksheet.getColumn(
-    "B",
-  ).width =
-    38;
+  worksheet.getColumn("C").width = 24;
 
+  worksheet.getColumn("D").width = 22;
 
-  worksheet.getColumn(
-    "C",
-  ).width =
-    24;
+  worksheet.getColumn("E").width = 22;
 
+  worksheet.getColumn("F").width = 15;
 
-  worksheet.getColumn(
-    "D",
-  ).width =
-    22;
-
-
-  worksheet.getColumn(
-    "E",
-  ).width =
-    22;
-
-
-  worksheet.getColumn(
-    "F",
-  ).width =
-    15;
-
-
-  worksheet.getColumn(
-    "G",
-  ).width =
-    42;
-
+  worksheet.getColumn("G").width = 42;
 
   return worksheet;
 }
-
 
 /* =========================================================
    ABA HISTÓRICO
@@ -948,28 +580,20 @@ function criarAbaHistorico({
   extrairMudancas,
   formatarDataHora,
 }) {
-  const worksheet =
-    workbook.addWorksheet(
-      "Histórico Expandido",
+  const worksheet = workbook.addWorksheet("Histórico Expandido", {
+    views: [
       {
-        views: [
-          {
-            showGridLines:
-              false,
-          },
-        ],
+        showGridLines: false,
       },
-    );
-
+    ],
+  });
 
   criarCabecalhoRelatorio({
     worksheet,
 
-    titulo:
-      "Pedidos Alterados — histórico expandido",
+    titulo: "Pedidos Alterados — histórico expandido",
 
-    ultimaColuna:
-      "E",
+    ultimaColuna: "E",
 
     dataInicial,
 
@@ -978,65 +602,30 @@ function criarAbaHistorico({
     pesquisa,
   });
 
-
-  let linhaAtual =
-    5;
-
+  let linhaAtual = 5;
 
   /* =======================================================
      PEDIDOS
   ======================================================= */
 
-  for (
-    const pedido
-    of pedidos
-  ) {
-    const numeroPedido =
-      pedido
-        ?.numero_pedido ||
-      pedido
-        ?.codigo_pedido_omie ||
-      "-";
+  for (const pedido of pedidos) {
+    const numeroPedido = pedido?.numero_pedido || pedido?.codigo_pedido_omie || "-";
 
+    const cliente = pedido?.cliente || "-";
 
-    const cliente =
-      pedido
-        ?.cliente ||
-      "-";
+    const vendedor = pedido?.vendedor || "-";
 
-
-    const vendedor =
-      pedido
-        ?.vendedor ||
-      "-";
-
-
-    const quantidadeAlteracoes =
-      Number(
-        pedido
-          ?.quantidade_alteracoes ??
-          0,
-      );
-
+    const quantidadeAlteracoes = Number(pedido?.quantidade_alteracoes ?? 0);
 
     /* =====================================================
        NÚMERO DO PEDIDO
     ===================================================== */
 
-    worksheet.mergeCells(
-      `A${linhaAtual}:E${linhaAtual}`,
-    );
+    worksheet.mergeCells(`A${linhaAtual}:E${linhaAtual}`);
 
+    const cabecalhoPedido = worksheet.getCell(`A${linhaAtual}`);
 
-    const cabecalhoPedido =
-      worksheet.getCell(
-        `A${linhaAtual}`,
-      );
-
-
-    cabecalhoPedido.value =
-      `PEDIDO ${numeroPedido}`;
-
+    cabecalhoPedido.value = `PEDIDO ${numeroPedido}`;
 
     cabecalhoPedido.fill = {
       type: "pattern",
@@ -1044,11 +633,9 @@ function criarAbaHistorico({
       pattern: "solid",
 
       fgColor: {
-        argb:
-          CORES.azulClaro,
+        argb: CORES.azulClaro,
       },
     };
-
 
     cabecalhoPedido.font = {
       bold: true,
@@ -1056,53 +643,31 @@ function criarAbaHistorico({
       size: 12,
 
       color: {
-        argb:
-          CORES.azul,
+        argb: CORES.azul,
       },
     };
 
-
     cabecalhoPedido.alignment = {
-      vertical:
-        "middle",
+      vertical: "middle",
 
-      horizontal:
-        "left",
+      horizontal: "left",
     };
 
+    cabecalhoPedido.border = bordaPadrao();
 
-    cabecalhoPedido.border =
-      bordaPadrao();
+    worksheet.getRow(linhaAtual).height = 25;
 
-
-    worksheet.getRow(
-      linhaAtual,
-    ).height =
-      25;
-
-
-    linhaAtual +=
-      1;
-
+    linhaAtual += 1;
 
     /* =====================================================
        INFORMAÇÕES
     ===================================================== */
 
-    worksheet.mergeCells(
-      `A${linhaAtual}:E${linhaAtual}`,
-    );
+    worksheet.mergeCells(`A${linhaAtual}:E${linhaAtual}`);
 
+    const info = worksheet.getCell(`A${linhaAtual}`);
 
-    const info =
-      worksheet.getCell(
-        `A${linhaAtual}`,
-      );
-
-
-    info.value =
-      `Cliente: ${cliente}   |   Vendedor: ${vendedor}   |   Total de alterações: ${quantidadeAlteracoes}`;
-
+    info.value = `Cliente: ${cliente}   |   Vendedor: ${vendedor}   |   Total de alterações: ${quantidadeAlteracoes}`;
 
     info.font = {
       size: 9,
@@ -1110,264 +675,136 @@ function criarAbaHistorico({
       bold: true,
 
       color: {
-        argb:
-          "FF475569",
+        argb: "FF475569",
       },
     };
-
 
     info.fill = {
-      type:
-        "pattern",
+      type: "pattern",
 
-      pattern:
-        "solid",
+      pattern: "solid",
 
       fgColor: {
-        argb:
-          "FFFBFDFF",
+        argb: "FFFBFDFF",
       },
     };
 
-
     info.alignment = {
-      vertical:
-        "middle",
+      vertical: "middle",
 
-      horizontal:
-        "left",
+      horizontal: "left",
 
-      wrapText:
-        true,
+      wrapText: true,
     };
 
+    worksheet.getRow(linhaAtual).height = 21;
 
-    worksheet.getRow(
-      linhaAtual,
-    ).height =
-      21;
-
-
-    linhaAtual +=
-      1;
-
+    linhaAtual += 1;
 
     /* =====================================================
        CABEÇALHO DA TABELA
     ===================================================== */
 
-    const cabecalhos = [
-      "Ocorrência",
-      "Data da alteração",
-      "Campo alterado",
-      "Antes",
-      "Depois",
-    ];
+    const cabecalhos = ["Ocorrência", "Data da alteração", "Campo alterado", "Antes", "Depois"];
 
-
-    for (
-      let coluna = 1;
-      coluna <= 5;
-      coluna += 1
-    ) {
-      worksheet.getCell(
-        linhaAtual,
-        coluna,
-      ).value =
-        cabecalhos[
-          coluna - 1
-        ];
+    for (let coluna = 1; coluna <= 5; coluna += 1) {
+      worksheet.getCell(linhaAtual, coluna).value = cabecalhos[coluna - 1];
     }
 
+    estilizarCabecalho(worksheet, linhaAtual, 1, 5);
 
-    estilizarCabecalho(
-      worksheet,
-      linhaAtual,
-      1,
-      5,
-    );
-
-
-    linhaAtual +=
-      1;
-
+    linhaAtual += 1;
 
     /* =====================================================
        OCORRÊNCIAS
     ===================================================== */
 
-    const ocorrencias =
-      Array.isArray(
-        pedido
-          ?.detalhes_alteracoes,
-      )
-        ? pedido
-            .detalhes_alteracoes
-        : [];
+    const ocorrencias = Array.isArray(pedido?.detalhes_alteracoes)
+      ? pedido.detalhes_alteracoes
+      : [];
 
+    if (ocorrencias.length === 0) {
+      worksheet.mergeCells(`A${linhaAtual}:E${linhaAtual}`);
 
-    if (
-      ocorrencias.length ===
-      0
-    ) {
-      worksheet.mergeCells(
-        `A${linhaAtual}:E${linhaAtual}`,
-      );
+      const cell = worksheet.getCell(`A${linhaAtual}`);
 
-
-      const cell =
-        worksheet.getCell(
-          `A${linhaAtual}`,
-        );
-
-
-      cell.value =
-        pedido
-          ?.ultimo_resumo ||
-        "Alteração registrada sem detalhamento.";
-
+      cell.value = pedido?.ultimo_resumo || "Alteração registrada sem detalhamento.";
 
       cell.font = {
         italic: true,
 
         color: {
-          argb:
-            CORES.cinzaTexto,
+          argb: CORES.cinzaTexto,
         },
 
         size: 9,
       };
 
-
       cell.fill = {
-        type:
-          "pattern",
+        type: "pattern",
 
-        pattern:
-          "solid",
+        pattern: "solid",
 
         fgColor: {
-          argb:
-            CORES.cinzaMuitoClaro,
+          argb: CORES.cinzaMuitoClaro,
         },
       };
 
-
-      linhaAtual +=
-        1;
+      linhaAtual += 1;
     }
 
+    for (let indice = 0; indice < ocorrencias.length; indice += 1) {
+      const ocorrencia = ocorrencias[indice];
 
-    for (
-      let indice = 0;
-      indice <
-      ocorrencias.length;
-      indice += 1
-    ) {
-      const ocorrencia =
-        ocorrencias[
-          indice
-        ];
+      const numeroOcorrencia = ocorrencias.length - indice;
 
+      const mudancas = extrairMudancas(ocorrencia);
 
-      const numeroOcorrencia =
-        ocorrencias.length -
-        indice;
-
-
-      const mudancas =
-        extrairMudancas(
-          ocorrencia,
-        );
-
-
-      if (
-        mudancas.length ===
-        0
-      ) {
+      if (mudancas.length === 0) {
         const valores = [
           `Alteração #${numeroOcorrencia}`,
 
-          formatarDataHora(
-            ocorrencia
-              ?.alterado_em,
-          ),
+          formatarDataHora(ocorrencia?.alterado_em),
 
-          ocorrencia
-            ?.resumo ||
-            "Alteração registrada",
+          ocorrencia?.resumo || "Alteração registrada",
 
           "-",
 
           "-",
         ];
 
+        for (let coluna = 1; coluna <= 5; coluna += 1) {
+          const cell = worksheet.getCell(linhaAtual, coluna);
 
-        for (
-          let coluna = 1;
-          coluna <= 5;
-          coluna += 1
-        ) {
-          const cell =
-            worksheet.getCell(
-              linhaAtual,
-              coluna,
-            );
+          cell.value = valores[coluna - 1];
 
-
-          cell.value =
-            valores[
-              coluna - 1
-            ];
-
-
-          cell.border =
-            bordaPadrao();
-
+          cell.border = bordaPadrao();
 
           cell.alignment = {
-            vertical:
-              "middle",
+            vertical: "middle",
 
-            horizontal:
-              "left",
+            horizontal: "left",
 
-            wrapText:
-              true,
+            wrapText: true,
           };
         }
 
-
-        linhaAtual +=
-          1;
+        linhaAtual += 1;
 
         continue;
       }
-
 
       /* ===================================================
          CAMPOS ALTERADOS
       =================================================== */
 
-      for (
-        let indiceMudanca = 0;
-        indiceMudanca <
-        mudancas.length;
-        indiceMudanca += 1
-      ) {
-        const mudanca =
-          mudancas[
-            indiceMudanca
-          ];
-
+      for (let indiceMudanca = 0; indiceMudanca < mudancas.length; indiceMudanca += 1) {
+        const mudanca = mudancas[indiceMudanca];
 
         const valores = [
           `Alteração #${numeroOcorrencia}`,
 
-          formatarDataHora(
-            ocorrencia
-              ?.alterado_em,
-          ),
+          formatarDataHora(ocorrencia?.alterado_em),
 
           mudanca.campo,
 
@@ -1376,225 +813,138 @@ function criarAbaHistorico({
           mudanca.novo,
         ];
 
+        for (let coluna = 1; coluna <= 5; coluna += 1) {
+          const cell = worksheet.getCell(linhaAtual, coluna);
 
-        for (
-          let coluna = 1;
-          coluna <= 5;
-          coluna += 1
-        ) {
-          const cell =
-            worksheet.getCell(
-              linhaAtual,
-              coluna,
-            );
-
-
-          cell.value =
-            valores[
-              coluna - 1
-            ];
-
+          cell.value = valores[coluna - 1];
 
           cell.font = {
             size: 9,
 
             color: {
-              argb:
-                CORES.texto,
+              argb: CORES.texto,
             },
           };
 
-
           cell.alignment = {
-            vertical:
-              "top",
+            vertical: "top",
 
-            horizontal:
-              "left",
+            horizontal: "left",
 
-            wrapText:
-              true,
+            wrapText: true,
           };
 
-
-          cell.border =
-            bordaPadrao();
+          cell.border = bordaPadrao();
         }
-
 
         /* ===============================================
            OCORRÊNCIA
         =============================================== */
 
-        worksheet.getCell(
-          linhaAtual,
-          1,
-        ).font = {
+        worksheet.getCell(linhaAtual, 1).font = {
           bold: true,
 
           color: {
-            argb:
-              "FF334155",
+            argb: "FF334155",
           },
 
           size: 9,
         };
-
 
         /* ===============================================
            CAMPO
         =============================================== */
 
-        worksheet.getCell(
-          linhaAtual,
-          3,
-        ).font = {
+        worksheet.getCell(linhaAtual, 3).font = {
           bold: true,
 
           color: {
-            argb:
-              CORES.texto,
+            argb: CORES.texto,
           },
 
           size: 9,
         };
-
 
         /* ===============================================
            ANTES
         =============================================== */
 
-        const antes =
-          worksheet.getCell(
-            linhaAtual,
-            4,
-          );
-
+        const antes = worksheet.getCell(linhaAtual, 4);
 
         antes.fill = {
-          type:
-            "pattern",
+          type: "pattern",
 
-          pattern:
-            "solid",
+          pattern: "solid",
 
           fgColor: {
-            argb:
-              CORES.vermelhoClaro,
+            argb: CORES.vermelhoClaro,
           },
         };
 
-
         antes.font = {
           color: {
-            argb:
-              "FF991B1B",
+            argb: "FF991B1B",
           },
 
           size: 9,
         };
-
 
         /* ===============================================
            DEPOIS
         =============================================== */
 
-        const depois =
-          worksheet.getCell(
-            linhaAtual,
-            5,
-          );
-
+        const depois = worksheet.getCell(linhaAtual, 5);
 
         depois.fill = {
-          type:
-            "pattern",
+          type: "pattern",
 
-          pattern:
-            "solid",
+          pattern: "solid",
 
           fgColor: {
-            argb:
-              CORES.verdeClaro,
+            argb: CORES.verdeClaro,
           },
         };
-
 
         depois.font = {
           bold: true,
 
           color: {
-            argb:
-              "FF047857",
+            argb: "FF047857",
           },
 
           size: 9,
         };
 
+        worksheet.getRow(linhaAtual).height = 25;
 
-        worksheet.getRow(
-          linhaAtual,
-        ).height =
-          25;
-
-
-        linhaAtual +=
-          1;
+        linhaAtual += 1;
       }
     }
-
 
     /*
      * Espaço entre pedidos.
      */
-    worksheet.getRow(
-      linhaAtual,
-    ).height =
-      10;
+    worksheet.getRow(linhaAtual).height = 10;
 
-
-    linhaAtual +=
-      1;
+    linhaAtual += 1;
   }
-
 
   /* =======================================================
      LARGURAS
   ======================================================= */
 
-  worksheet.getColumn(
-    "A",
-  ).width =
-    19;
+  worksheet.getColumn("A").width = 19;
 
+  worksheet.getColumn("B").width = 23;
 
-  worksheet.getColumn(
-    "B",
-  ).width =
-    23;
+  worksheet.getColumn("C").width = 32;
 
+  worksheet.getColumn("D").width = 46;
 
-  worksheet.getColumn(
-    "C",
-  ).width =
-    32;
-
-
-  worksheet.getColumn(
-    "D",
-  ).width =
-    46;
-
-
-  worksheet.getColumn(
-    "E",
-  ).width =
-    46;
-
+  worksheet.getColumn("E").width = 46;
 
   return worksheet;
 }
-
 
 /* =========================================================
    EXPORTAR
@@ -1608,52 +958,28 @@ export async function exportarExcelPedidosAlterados({
   extrairMudancas,
   formatarDataHora,
 }) {
-  if (
-    !Array.isArray(
-      pedidos,
-    ) ||
-    pedidos.length ===
-      0
-  ) {
-    window.alert(
-      "Não existem dados para exportar.",
-    );
+  if (!Array.isArray(pedidos) || pedidos.length === 0) {
+    window.alert("Não existem dados para exportar.");
 
     return;
   }
 
-
   try {
-    const moduloExcel =
-      await import(
-        "exceljs"
-      );
+    const moduloExcel = await import("exceljs");
 
+    const ExcelJS = moduloExcel.default || moduloExcel;
 
-    const ExcelJS =
-      moduloExcel.default ||
-      moduloExcel;
+    const workbook = new ExcelJS.Workbook();
 
+    workbook.creator = "Pedrasplast";
 
-    const workbook =
-      new ExcelJS.Workbook();
+    workbook.company = "Pedrasplast";
 
+    workbook.subject = "Relatório de Pedidos Alterados";
 
-    workbook.creator =
-      "Pedrasplast";
+    workbook.title = "Pedidos Alterados";
 
-    workbook.company =
-      "Pedrasplast";
-
-    workbook.subject =
-      "Relatório de Pedidos Alterados";
-
-    workbook.title =
-      "Pedidos Alterados";
-
-    workbook.created =
-      new Date();
-
+    workbook.created = new Date();
 
     /* =====================================================
        RESUMO
@@ -1672,7 +998,6 @@ export async function exportarExcelPedidosAlterados({
 
       formatarDataHora,
     });
-
 
     /* =====================================================
        HISTÓRICO
@@ -1694,34 +1019,20 @@ export async function exportarExcelPedidosAlterados({
       formatarDataHora,
     });
 
-
     /* =====================================================
        GERAR
     ===================================================== */
 
-    const buffer =
-      await workbook.xlsx
-        .writeBuffer();
+    const buffer = await workbook.xlsx.writeBuffer();
 
-
-    baixarArquivo(
-      buffer,
-      obterNomeArquivo(),
-    );
-
+    baixarArquivo(buffer, obterNomeArquivo());
   } catch (erro) {
     /*
      * IMPORTANTE PARA DEBUG:
      * agora mostra o erro verdadeiro no console.
      */
-    console.error(
-      "ERRO AO GERAR EXCEL:",
-      erro,
-    );
+    console.error("ERRO AO GERAR EXCEL:", erro);
 
-
-    window.alert(
-      `Não foi possível gerar o Excel.\n\n${erro?.message || "Erro desconhecido"}`,
-    );
+    window.alert(`Não foi possível gerar o Excel.\n\n${erro?.message || "Erro desconhecido"}`);
   }
 }

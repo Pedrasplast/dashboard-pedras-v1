@@ -90,11 +90,13 @@ export const ROTINAS = Object.freeze({
 });
 
 /* Rotinas que rodam só no banco (não chamam funções nem o Omie). */
-export const ROTINAS_SO_BANCO = Object.freeze(new Set([
-  "limpar-historico-cron-14d",
-  "limpar-sincronizacao-omie-historico-60d",
-  "monitorar-tamanho-banco-diario",
-]));
+export const ROTINAS_SO_BANCO = Object.freeze(
+  new Set([
+    "limpar-historico-cron-14d",
+    "limpar-sincronizacao-omie-historico-60d",
+    "monitorar-tamanho-banco-diario",
+  ]),
+);
 
 export const SITUACAO = Object.freeze({
   ERRO: "erro",

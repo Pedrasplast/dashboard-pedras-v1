@@ -1,10 +1,6 @@
-export function criarDadosExportacaoEntradasCompras(
-  registros,
-  resumo,
-) {
+export function criarDadosExportacaoEntradasCompras(registros, resumo) {
   const linhas = registros.map((registro) => ({
-    pedido:
-      registro.pedido || "-",
+    pedido: registro.pedido || "-",
 
     recebido:
       registro.situacao === "FUTURA"
@@ -13,77 +9,50 @@ export function criarDadosExportacaoEntradasCompras(
           ? "Encerrado"
           : registro.recebido || "",
 
-    emissao:
-      registro.emissao || "",
+    emissao: registro.emissao || "",
 
-    previsao_recebimento:
-      registro.previsaoRecebimento || "",
+    previsao_recebimento: registro.previsaoRecebimento || "",
 
-    fornecedor_mp:
-      registro.fornecedor || "-",
+    fornecedor_mp: registro.fornecedor || "-",
 
-    material_mp:
-      registro.material || "-",
+    material_mp: registro.material || "-",
 
-    quantidade_kg:
-      Number(registro.quantidadeKg ?? 0),
+    quantidade_kg: Number(registro.quantidadeKg ?? 0),
 
-    preco:
-      registro.preco,
+    preco: registro.preco,
 
-    ipi:
-      registro.ipiPercentual,
+    ipi: registro.ipiPercentual,
 
-    total:
-      Number(registro.total ?? 0),
+    total: Number(registro.total ?? 0),
   }));
 
   linhas.push({
-    pedido:
-      "TOTAL GERAL",
+    pedido: "TOTAL GERAL",
 
-    recebido:
-      "",
+    recebido: "",
 
-    emissao:
-      "",
+    emissao: "",
 
-    previsao_recebimento:
-      "",
+    previsao_recebimento: "",
 
-    fornecedor_mp:
-      "",
+    fornecedor_mp: "",
 
-    material_mp:
-      "",
+    material_mp: "",
 
-    quantidade_kg:
-      Number(resumo?.quantidadeKg ?? 0),
+    quantidade_kg: Number(resumo?.quantidadeKg ?? 0),
 
-    preco:
-      null,
+    preco: null,
 
-    ipi:
-      null,
+    ipi: null,
 
-    total:
-      Number(resumo?.valorTotal ?? 0),
+    total: Number(resumo?.valorTotal ?? 0),
   });
 
   return linhas;
 }
 
-
-export async function exportarEntradasComprasPDF({
-  relatorio,
-  dados,
-  textoFiltros,
-}) {
-  const {
-    gerarPdfRelatorio,
-  } = await import(
-    "../../../exportacao/GerarPDF"
-  );
+export async function exportarEntradasComprasPDF({ relatorio, dados, textoFiltros }) {
+  const { gerarPdfRelatorio } = await import("../../../exportacao/GerarPDF");
 
   return gerarPdfRelatorio({
     relatorio,
@@ -92,17 +61,8 @@ export async function exportarEntradasComprasPDF({
   });
 }
 
-
-export async function exportarEntradasComprasExcel({
-  relatorio,
-  dados,
-  textoFiltros,
-}) {
-  const {
-    gerarExcelRelatorio,
-  } = await import(
-    "../../../exportacao/GerarExcel"
-  );
+export async function exportarEntradasComprasExcel({ relatorio, dados, textoFiltros }) {
+  const { gerarExcelRelatorio } = await import("../../../exportacao/GerarExcel");
 
   return gerarExcelRelatorio({
     relatorio,

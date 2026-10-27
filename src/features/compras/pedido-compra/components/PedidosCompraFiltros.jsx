@@ -1,12 +1,6 @@
-import {
-  RotateCcw,
-  Search,
-} from "lucide-react";
+import { RotateCcw, Search } from "lucide-react";
 
-import {
-  SITUACOES_RECEBIMENTO,
-  TIPOS_DOCUMENTO,
-} from "../constants/pedidosCompra.constants";
+import { SITUACOES_RECEBIMENTO, TIPOS_DOCUMENTO } from "../constants/pedidosCompra.constants";
 
 import "./PedidosCompraFiltros.css";
 
@@ -18,249 +12,98 @@ export default function PedidosCompraFiltros({
   onChange,
   onLimpar,
 }) {
-  const somenteRequisicoes =
-    filtros.tipoDocumento ===
-    TIPOS_DOCUMENTO.REQUISICAO;
+  const somenteRequisicoes = filtros.tipoDocumento === TIPOS_DOCUMENTO.REQUISICAO;
 
   return (
     <section className="compras-filtros">
       <div className="compras-filtros-linha-principal">
         <div className="compras-pesquisa">
-          <Search
-            size={18}
-          />
+          <Search size={18} />
 
           <input
             type="text"
-            value={
-              filtros.pesquisa
-            }
-            onChange={(
-              event,
-            ) =>
-              onChange(
-                "pesquisa",
-                event.target.value,
-              )
-            }
+            value={filtros.pesquisa}
+            onChange={(event) => onChange("pesquisa", event.target.value)}
             placeholder="Buscar por requisição, pedido, código, produto, categoria ou observação..."
           />
         </div>
 
         <select
-          value={
-            filtros.tipoDocumento
-          }
-          onChange={(
-            event,
-          ) =>
-            onChange(
-              "tipoDocumento",
-              event.target.value,
-            )
-          }
+          value={filtros.tipoDocumento}
+          onChange={(event) => onChange("tipoDocumento", event.target.value)}
         >
-          <option
-            value={
-              TIPOS_DOCUMENTO.TODOS
-            }
-          >
-            Pedidos e requisições
-          </option>
+          <option value={TIPOS_DOCUMENTO.TODOS}>Pedidos e requisições</option>
 
-          <option
-            value={
-              TIPOS_DOCUMENTO.PEDIDO
-            }
-          >
-            Somente pedidos
-          </option>
+          <option value={TIPOS_DOCUMENTO.PEDIDO}>Somente pedidos</option>
 
-          <option
-            value={
-              TIPOS_DOCUMENTO.REQUISICAO
-            }
-          >
-            Somente requisições
-          </option>
+          <option value={TIPOS_DOCUMENTO.REQUISICAO}>Somente requisições</option>
         </select>
 
         <select
-          value={
-            filtros.fornecedor
-          }
-          disabled={
-            somenteRequisicoes
-          }
-          onChange={(
-            event,
-          ) =>
-            onChange(
-              "fornecedor",
-              event.target.value,
-            )
-          }
-          title={
-            somenteRequisicoes
-              ? "Filtro não utilizado em requisições"
-              : undefined
-          }
+          value={filtros.fornecedor}
+          disabled={somenteRequisicoes}
+          onChange={(event) => onChange("fornecedor", event.target.value)}
+          title={somenteRequisicoes ? "Filtro não utilizado em requisições" : undefined}
         >
           <option value="todos">
-            {somenteRequisicoes
-              ? "Fornecedor não se aplica"
-              : "Todos os fornecedores"}
+            {somenteRequisicoes ? "Fornecedor não se aplica" : "Todos os fornecedores"}
           </option>
 
           {!somenteRequisicoes &&
-            fornecedores.map(
-              (
-                nome,
-              ) => (
-                <option
-                  key={
-                    nome
-                  }
-                  value={
-                    nome
-                  }
-                >
-                  {nome}
-                </option>
-              ),
-            )}
+            fornecedores.map((nome) => (
+              <option key={nome} value={nome}>
+                {nome}
+              </option>
+            ))}
         </select>
 
         <select
-          value={
-            filtros.comprador
-          }
-          disabled={
-            somenteRequisicoes
-          }
-          onChange={(
-            event,
-          ) =>
-            onChange(
-              "comprador",
-              event.target.value,
-            )
-          }
-          title={
-            somenteRequisicoes
-              ? "Filtro não utilizado em requisições"
-              : undefined
-          }
+          value={filtros.comprador}
+          disabled={somenteRequisicoes}
+          onChange={(event) => onChange("comprador", event.target.value)}
+          title={somenteRequisicoes ? "Filtro não utilizado em requisições" : undefined}
         >
           <option value="todos">
-            {somenteRequisicoes
-              ? "Comprador não se aplica"
-              : "Todos os compradores"}
+            {somenteRequisicoes ? "Comprador não se aplica" : "Todos os compradores"}
           </option>
 
           {!somenteRequisicoes &&
-            compradores.map(
-              (
-                nome,
-              ) => (
-                <option
-                  key={
-                    nome
-                  }
-                  value={
-                    nome
-                  }
-                >
-                  {nome}
-                </option>
-              ),
-            )}
+            compradores.map((nome) => (
+              <option key={nome} value={nome}>
+                {nome}
+              </option>
+            ))}
         </select>
 
         <select
-          value={
-            filtros.recebimento
-          }
-          disabled={
-            somenteRequisicoes
-          }
-          onChange={(
-            event,
-          ) =>
-            onChange(
-              "recebimento",
-              event.target.value,
-            )
-          }
-          title={
-            somenteRequisicoes
-              ? "Filtro não utilizado em requisições"
-              : undefined
-          }
+          value={filtros.recebimento}
+          disabled={somenteRequisicoes}
+          onChange={(event) => onChange("recebimento", event.target.value)}
+          title={somenteRequisicoes ? "Filtro não utilizado em requisições" : undefined}
         >
-          <option
-            value={
-              SITUACOES_RECEBIMENTO.TODOS
-            }
-          >
-            {somenteRequisicoes
-              ? "Situação não se aplica"
-              : "Todas as situações"}
+          <option value={SITUACOES_RECEBIMENTO.TODOS}>
+            {somenteRequisicoes ? "Situação não se aplica" : "Todas as situações"}
           </option>
 
           {!somenteRequisicoes && (
             <>
-              <option
-                value={
-                  SITUACOES_RECEBIMENTO.EM_ABERTO
-                }
-              >
-                Em aberto
-              </option>
+              <option value={SITUACOES_RECEBIMENTO.EM_ABERTO}>Em aberto</option>
 
-              <option
-                value={
-                  SITUACOES_RECEBIMENTO.EM_ATRASO
-                }
-              >
-                Em atraso
-              </option>
+              <option value={SITUACOES_RECEBIMENTO.EM_ATRASO}>Em atraso</option>
 
-              <option
-                value={
-                  SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE
-                }
-              >
+              <option value={SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE}>
                 Recebido parcialmente
               </option>
 
-              <option
-                value={
-                  SITUACOES_RECEBIMENTO.RECEBIDO
-                }
-              >
-                Recebido
-              </option>
+              <option value={SITUACOES_RECEBIMENTO.RECEBIDO}>Recebido</option>
             </>
           )}
         </select>
 
         <select
-          value={
-            filtros.recebimentoFisico ??
-            "TODOS"
-          }
-          disabled={
-            somenteRequisicoes
-          }
-          onChange={(
-            event,
-          ) =>
-            onChange(
-              "recebimentoFisico",
-              event.target.value,
-            )
-          }
+          value={filtros.recebimentoFisico ?? "TODOS"}
+          disabled={somenteRequisicoes}
+          onChange={(event) => onChange("recebimentoFisico", event.target.value)}
           title={
             somenteRequisicoes
               ? "Filtro não utilizado em requisições"
@@ -268,24 +111,16 @@ export default function PedidosCompraFiltros({
           }
         >
           <option value="TODOS">
-            {somenteRequisicoes
-              ? "Recebimento físico não se aplica"
-              : "Recebimento físico: todos"}
+            {somenteRequisicoes ? "Recebimento físico não se aplica" : "Recebimento físico: todos"}
           </option>
 
           {!somenteRequisicoes && (
             <>
-              <option value="NAO_RECEBIDO">
-                Físico: não recebido
-              </option>
+              <option value="NAO_RECEBIDO">Físico: não recebido</option>
 
-              <option value="PARCIAL">
-                Físico: parcial
-              </option>
+              <option value="PARCIAL">Físico: parcial</option>
 
-              <option value="COMPLETO">
-                Físico: completo
-              </option>
+              <option value="COMPLETO">Físico: completo</option>
             </>
           )}
         </select>
@@ -293,88 +128,42 @@ export default function PedidosCompraFiltros({
 
       <div className="compras-filtros-linha-periodo">
         <div className="compras-filtro-data">
-          <label
-            htmlFor="compras-data-inicio"
-          >
-            De
-          </label>
+          <label htmlFor="compras-data-inicio">De</label>
 
           <input
             id="compras-data-inicio"
             type="date"
-            value={
-              filtros.dataInicio
-            }
-            max={
-              filtros.dataFim ||
-              undefined
-            }
-            onChange={(
-              event,
-            ) =>
-              onChange(
-                "dataInicio",
-                event.target.value,
-              )
-            }
+            value={filtros.dataInicio}
+            max={filtros.dataFim || undefined}
+            onChange={(event) => onChange("dataInicio", event.target.value)}
           />
         </div>
 
         <div className="compras-filtro-data">
-          <label
-            htmlFor="compras-data-fim"
-          >
-            Até
-          </label>
+          <label htmlFor="compras-data-fim">Até</label>
 
           <input
             id="compras-data-fim"
             type="date"
-            value={
-              filtros.dataFim
-            }
-            min={
-              filtros.dataInicio ||
-              undefined
-            }
-            onChange={(
-              event,
-            ) =>
-              onChange(
-                "dataFim",
-                event.target.value,
-              )
-            }
+            value={filtros.dataFim}
+            min={filtros.dataInicio || undefined}
+            onChange={(event) => onChange("dataFim", event.target.value)}
           />
         </div>
 
         <div className="compras-periodo-info">
-          {filtros.dataInicio ||
-          filtros.dataFim
+          {filtros.dataInicio || filtros.dataFim
             ? "Período aplicado."
             : "Sem período definido — exibindo todo o histórico disponível."}
         </div>
 
         <button
           type="button"
-          className={`compras-btn-limpar${
-            possuiFiltro
-              ? " compras-btn-limpar--ativo"
-              : ""
-          }`}
-          onClick={
-            possuiFiltro
-              ? onLimpar
-              : undefined
-          }
-          disabled={
-            !possuiFiltro
-          }
+          className={`compras-btn-limpar${possuiFiltro ? " compras-btn-limpar--ativo" : ""}`}
+          onClick={possuiFiltro ? onLimpar : undefined}
+          disabled={!possuiFiltro}
         >
-          <RotateCcw
-            size={16}
-          />
-
+          <RotateCcw size={16} />
           Limpar filtros
         </button>
       </div>

@@ -1,10 +1,6 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   AlertTriangle,
@@ -22,10 +18,7 @@ import {
   X,
 } from "lucide-react";
 
-import {
-  SITUACOES_RECEBIMENTO,
-  TIPOS_DOCUMENTO,
-} from "../constants/pedidosCompra.constants";
+import { SITUACOES_RECEBIMENTO, TIPOS_DOCUMENTO } from "../constants/pedidosCompra.constants";
 
 import {
   calcularDiasAtraso,
@@ -80,7 +73,8 @@ const CONFIGURACOES = Object.freeze({
 
   "requisicoes-total": {
     titulo: "Requisições abertas",
-    descricao: "Requisições de compra atualmente disponíveis no Omie considerando os filtros aplicados.",
+    descricao:
+      "Requisições de compra atualmente disponíveis no Omie considerando os filtros aplicados.",
     icone: ClipboardList,
     tipo: "requisicoes",
     documento: TIPOS_DOCUMENTO.REQUISICAO,
@@ -112,7 +106,8 @@ const CONFIGURACOES = Object.freeze({
 
   "recebimentos-fisicos-7-dias": {
     titulo: "Recebimentos físicos - últimos 7 dias",
-    descricao: "Recebimentos físicos registrados nos últimos 7 dias, considerando hoje e os 6 dias anteriores.",
+    descricao:
+      "Recebimentos físicos registrados nos últimos 7 dias, considerando hoje e os 6 dias anteriores.",
     icone: PackageCheck,
     tipo: "hoje",
     documento: TIPOS_DOCUMENTO.PEDIDO,
@@ -166,9 +161,7 @@ function obterNomeCategoria(requisicao) {
 
 function obterCodigoProduto(item) {
   return (
-    String(item?.codigo_comercial ?? "").trim() ||
-    String(item?.codigo_produto ?? "").trim() ||
-    "-"
+    String(item?.codigo_comercial ?? "").trim() || String(item?.codigo_produto ?? "").trim() || "-"
   );
 }
 
@@ -201,751 +194,362 @@ function obterDocumentoId(documento) {
   );
 }
 
-function BadgeRecebimento({
-  situacao,
-}) {
+function BadgeRecebimento({ situacao }) {
   if (!situacao) {
-    return (
-      <span className="compras-card-modal-sem-status">
-        -
-      </span>
-    );
+    return <span className="compras-card-modal-sem-status">-</span>;
   }
 
-  const classe = String(
-    situacao,
-  )
-    .toLowerCase()
-    .replaceAll(
-      "_",
-      "-",
-    );
+  const classe = String(situacao).toLowerCase().replaceAll("_", "-");
 
   return (
-    <span
-      className={`compras-card-modal-badge compras-card-modal-badge--${classe}`}
-    >
-      {
-        obterRotuloSituacaoRecebimento(
-          situacao,
-        )
-      }
+    <span className={`compras-card-modal-badge compras-card-modal-badge--${classe}`}>
+      {obterRotuloSituacaoRecebimento(situacao)}
     </span>
   );
 }
 
-function BotaoItensModal({
-  totalItens,
-  expandido,
-  onClick,
-}) {
-  if (
-    totalItens <= 1
-  ) {
+function BotaoItensModal({ totalItens, expandido, onClick }) {
+  if (totalItens <= 1) {
     return null;
   }
 
-  const itensOcultos =
-    Math.max(
-      totalItens - 1,
-      0,
-    );
+  const itensOcultos = Math.max(totalItens - 1, 0);
 
   return (
     <button
       type="button"
-      className={`compras-btn-itens${
-        expandido
-          ? " compras-btn-itens--aberto"
-          : ""
-      }`}
-      onClick={
-        onClick
-      }
-      title={
-        expandido
-          ? "Recolher itens"
-          : "Ver todos os itens"
-      }
-      aria-expanded={
-        expandido
-      }
+      className={`compras-btn-itens${expandido ? " compras-btn-itens--aberto" : ""}`}
+      onClick={onClick}
+      title={expandido ? "Recolher itens" : "Ver todos os itens"}
+      aria-expanded={expandido}
     >
       {expandido ? (
         <>
           Recolher
-
-          <ChevronUp
-            size={
-              12
-            }
-          />
+          <ChevronUp size={12} />
         </>
       ) : (
         <>
-          +{itensOcultos}{" "}
-          {itensOcultos ===
-          1
-            ? "item"
-            : "itens"}
-
-          <ChevronDown
-            size={
-              12
-            }
-          />
+          +{itensOcultos} {itensOcultos === 1 ? "item" : "itens"}
+          <ChevronDown size={12} />
         </>
       )}
     </button>
   );
 }
 
-function TabelaPedidos({
-  pedidos,
-  documentosExpandidos,
-  onAlternarItens,
-}) {
+function TabelaPedidos({ pedidos, documentosExpandidos, onAlternarItens }) {
   return (
     <div className="compras-card-modal-tabela-wrapper">
       <table className="compras-card-modal-tabela compras-card-modal-tabela--pedidos">
         <thead>
           <tr>
-            <th>
-              Pedido
-            </th>
+            <th>Pedido</th>
 
-            <th>
-              Fornecedor
-            </th>
+            <th>Fornecedor</th>
 
-            <th>
-              Comprador
-            </th>
+            <th>Comprador</th>
 
-            <th>
-              Previsão
-            </th>
+            <th>Previsão</th>
 
-            <th>
-              Recebimento
-            </th>
+            <th>Recebimento</th>
 
-            <th className="compras-card-modal-col-valor">
-              Valor pedido
-            </th>
+            <th className="compras-card-modal-col-valor">Valor pedido</th>
 
-            <th className="compras-card-modal-col-valor">
-              Em aberto
-            </th>
+            <th className="compras-card-modal-col-valor">Em aberto</th>
           </tr>
         </thead>
 
         <tbody>
-          {pedidos.flatMap(
-            (
-              pedido,
-            ) => {
-              const atrasado =
-                pedido
-                  .situacao_recebimento ===
-                SITUACOES_RECEBIMENTO.EM_ATRASO;
+          {pedidos.flatMap((pedido) => {
+            const atrasado = pedido.situacao_recebimento === SITUACOES_RECEBIMENTO.EM_ATRASO;
 
-              const diasAtraso =
-                atrasado
-                  ? calcularDiasAtraso(
-                      pedido.data_previsao,
-                    )
-                  : 0;
+            const diasAtraso = atrasado ? calcularDiasAtraso(pedido.data_previsao) : 0;
 
-              const documentoId =
-                obterDocumentoId(
-                  pedido,
-                );
+            const documentoId = obterDocumentoId(pedido);
 
-              const todosItens =
-                Array.isArray(
-                  pedido
-                    ?.itens,
-                )
-                  ? pedido.itens
-                  : [];
+            const todosItens = Array.isArray(pedido?.itens) ? pedido.itens : [];
 
-              const possuiMaisItens =
-                todosItens.length >
-                1;
+            const possuiMaisItens = todosItens.length > 1;
 
-              const expandido =
-                documentosExpandidos.has(
-                  documentoId,
-                );
+            const expandido = documentosExpandidos.has(documentoId);
 
-              const linhaPrincipal = (
-                <tr
-                  key={`pedido-${documentoId}`}
-                >
-                  <td>
-                    <div className="compras-card-modal-pedido">
-                      <div
-                        style={{
-                          display:
-                            "flex",
-                          alignItems:
-                            "flex-start",
-                          justifyContent:
-                            "space-between",
-                          gap:
-                            8,
-                        }}
-                      >
-                        <strong>
-                          {pedido.numero_pedido ||
-                            "-"}
-                        </strong>
+            const linhaPrincipal = (
+              <tr key={`pedido-${documentoId}`}>
+                <td>
+                  <div className="compras-card-modal-pedido">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        gap: 8,
+                      }}
+                    >
+                      <strong>{pedido.numero_pedido || "-"}</strong>
 
-                        {possuiMaisItens && (
-                          <BotaoItensModal
-                            totalItens={
-                              todosItens.length
-                            }
-                            expandido={
-                              expandido
-                            }
-                            onClick={() =>
-                              onAlternarItens(
-                                documentoId,
-                              )
-                            }
-                          />
-                        )}
-                      </div>
-
-                      {atrasado &&
-                        diasAtraso >
-                          0 && (
-                          <span>
-                            <AlertTriangle
-                              size={
-                                11
-                              }
-                            />
-
-                            {
-                              diasAtraso
-                            }{" "}
-
-                            {diasAtraso ===
-                            1
-                              ? "dia"
-                              : "dias"}{" "}
-
-                            em atraso
-                          </span>
-                        )}
+                      {possuiMaisItens && (
+                        <BotaoItensModal
+                          totalItens={todosItens.length}
+                          expandido={expandido}
+                          onClick={() => onAlternarItens(documentoId)}
+                        />
+                      )}
                     </div>
-                  </td>
 
-                  <td>
-                    <strong className="compras-card-modal-fornecedor">
-                      {pedido.fornecedor_nome ||
-                        "Fornecedor não identificado"}
-                    </strong>
-                  </td>
+                    {atrasado && diasAtraso > 0 && (
+                      <span>
+                        <AlertTriangle size={11} />
+                        {diasAtraso} {diasAtraso === 1 ? "dia" : "dias"} em atraso
+                      </span>
+                    )}
+                  </div>
+                </td>
 
-                  <td>
-                    {pedido.comprador_nome ||
-                      "Comprador não identificado"}
-                  </td>
+                <td>
+                  <strong className="compras-card-modal-fornecedor">
+                    {pedido.fornecedor_nome || "Fornecedor não identificado"}
+                  </strong>
+                </td>
 
-                  <td>
-                    {
-                      formatarData(
-                        pedido.data_previsao,
-                      )
-                    }
-                  </td>
+                <td>{pedido.comprador_nome || "Comprador não identificado"}</td>
 
-                  <td>
-                    <BadgeRecebimento
-                      situacao={
-                        pedido.situacao_recebimento
-                      }
-                    />
-                  </td>
+                <td>{formatarData(pedido.data_previsao)}</td>
 
-                  <td className="compras-card-modal-valor">
-                    {
-                      formatarMoeda(
-                        pedido.valorTotal,
-                      )
-                    }
-                  </td>
+                <td>
+                  <BadgeRecebimento situacao={pedido.situacao_recebimento} />
+                </td>
 
-                  <td className="compras-card-modal-valor compras-card-modal-valor--aberto">
-                    {
-                      formatarMoeda(
-                        pedido.valorEmAberto,
-                      )
-                    }
-                  </td>
-                </tr>
-              );
+                <td className="compras-card-modal-valor">{formatarMoeda(pedido.valorTotal)}</td>
 
-              if (
-                !expandido ||
-                todosItens.length ===
-                  0
-              ) {
-                return [
-                  linhaPrincipal,
-                ];
-              }
+                <td className="compras-card-modal-valor compras-card-modal-valor--aberto">
+                  {formatarMoeda(pedido.valorEmAberto)}
+                </td>
+              </tr>
+            );
 
-              const linhaItens = (
-                <tr
-                  key={`pedido-itens-${documentoId}`}
+            if (!expandido || todosItens.length === 0) {
+              return [linhaPrincipal];
+            }
+
+            const linhaItens = (
+              <tr key={`pedido-itens-${documentoId}`}>
+                <td
+                  colSpan={7}
+                  style={{
+                    padding: 0,
+                  }}
                 >
-                  <td
-                    colSpan={
-                      7
-                    }
-                    style={{
-                      padding:
-                        0,
-                    }}
-                  >
-                    <div className="compras-card-modal-tabela-wrapper">
-                      <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
-                        <thead>
-                          <tr>
-                            <th>
-                              Código
-                            </th>
+                  <div className="compras-card-modal-tabela-wrapper">
+                    <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
+                      <thead>
+                        <tr>
+                          <th>Código</th>
 
-                            <th className="compras-card-modal-col-produto">
-                              Produto
-                            </th>
+                          <th className="compras-card-modal-col-produto">Produto</th>
 
-                            <th className="compras-card-modal-col-numero">
-                              Qtd.
-                            </th>
+                          <th className="compras-card-modal-col-numero">Qtd.</th>
 
-                            <th className="compras-card-modal-col-numero">
-                              Recebido
-                            </th>
+                          <th className="compras-card-modal-col-numero">Recebido</th>
 
-                            <th className="compras-card-modal-col-numero">
-                              Saldo
-                            </th>
+                          <th className="compras-card-modal-col-numero">Saldo</th>
 
-                            <th>
-                              Un.
-                            </th>
+                          <th>Un.</th>
 
-                            <th className="compras-card-modal-col-valor">
-                              Valor item
-                            </th>
-                          </tr>
-                        </thead>
+                          <th className="compras-card-modal-col-valor">Valor item</th>
+                        </tr>
+                      </thead>
 
-                        <tbody>
-                          {todosItens.map(
-                            (
-                              item,
-                              indice,
-                            ) => {
-                              const quantidade =
-                                Number(
-                                  item
-                                    ?.quantidade ??
-                                    0,
-                                );
+                      <tbody>
+                        {todosItens.map((item, indice) => {
+                          const quantidade = Number(item?.quantidade ?? 0);
 
-                              const recebida =
-                                Math.min(
-                                  Number(
-                                    item
-                                      ?.quantidade_recebida ??
-                                      0,
-                                  ),
-                                  quantidade,
-                                );
+                          const recebida = Math.min(
+                            Number(item?.quantidade_recebida ?? 0),
+                            quantidade,
+                          );
 
-                              const saldo =
-                                Math.max(
-                                  quantidade -
-                                    recebida,
-                                  0,
-                                );
+                          const saldo = Math.max(quantidade - recebida, 0);
 
-                              return (
-                                <tr
-                                  key={`${documentoId}-${item?.codigo_item ?? indice}`}
-                                >
-                                  <td className="compras-card-modal-codigo">
-                                    {
-                                      obterCodigoProduto(
-                                        item,
-                                      )
-                                    }
-                                  </td>
+                          return (
+                            <tr key={`${documentoId}-${item?.codigo_item ?? indice}`}>
+                              <td className="compras-card-modal-codigo">
+                                {obterCodigoProduto(item)}
+                              </td>
 
-                                  <td className="compras-card-modal-produto">
-                                    <strong>
-                                      {
-                                        obterDescricaoProduto(
-                                          item,
-                                        )
-                                      }
-                                    </strong>
+                              <td className="compras-card-modal-produto">
+                                <strong>{obterDescricaoProduto(item)}</strong>
 
-                                    {item
-                                      ?.observacao && (
-                                      <span className="compras-card-modal-item-observacao">
-                                        {
-                                          item.observacao
-                                        }
-                                      </span>
-                                    )}
-                                  </td>
+                                {item?.observacao && (
+                                  <span className="compras-card-modal-item-observacao">
+                                    {item.observacao}
+                                  </span>
+                                )}
+                              </td>
 
-                                  <td className="compras-card-modal-numero">
-                                    {
-                                      formatarNumero(
-                                        quantidade,
-                                        2,
-                                      )
-                                    }
-                                  </td>
+                              <td className="compras-card-modal-numero">
+                                {formatarNumero(quantidade, 2)}
+                              </td>
 
-                                  <td className="compras-card-modal-numero">
-                                    {
-                                      formatarNumero(
-                                        recebida,
-                                        2,
-                                      )
-                                    }
-                                  </td>
+                              <td className="compras-card-modal-numero">
+                                {formatarNumero(recebida, 2)}
+                              </td>
 
-                                  <td className="compras-card-modal-numero">
-                                    {
-                                      formatarNumero(
-                                        saldo,
-                                        2,
-                                      )
-                                    }
-                                  </td>
+                              <td className="compras-card-modal-numero">
+                                {formatarNumero(saldo, 2)}
+                              </td>
 
-                                  <td>
-                                    {item
-                                      ?.unidade ||
-                                      "-"}
-                                  </td>
+                              <td>{item?.unidade || "-"}</td>
 
-                                  <td className="compras-card-modal-valor">
-                                    {
-                                      formatarMoeda(
-                                        obterValorItem(
-                                          item,
-                                        ),
-                                      )
-                                    }
-                                  </td>
-                                </tr>
-                              );
-                            },
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </td>
-                </tr>
-              );
+                              <td className="compras-card-modal-valor">
+                                {formatarMoeda(obterValorItem(item))}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            );
 
-              return [
-                linhaPrincipal,
-                linhaItens,
-              ];
-            },
-          )}
+            return [linhaPrincipal, linhaItens];
+          })}
         </tbody>
       </table>
     </div>
   );
 }
 
-function TabelaRequisicoes({
-  requisicoes,
-  documentosExpandidos,
-  onAlternarItens,
-}) {
+function TabelaRequisicoes({ requisicoes, documentosExpandidos, onAlternarItens }) {
   return (
     <div className="compras-card-modal-tabela-wrapper">
       <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
         <thead>
           <tr>
-            <th>
-              Requisição
-            </th>
+            <th>Requisição</th>
 
-            <th>
-              Categoria
-            </th>
+            <th>Categoria</th>
 
-            <th>
-              Previsão
-            </th>
+            <th>Previsão</th>
 
-            <th>
-              Código
-            </th>
+            <th>Código</th>
 
-            <th className="compras-card-modal-col-produto">
-              Produto
-            </th>
+            <th className="compras-card-modal-col-produto">Produto</th>
 
-            <th className="compras-card-modal-col-numero">
-              Qtd.
-            </th>
+            <th className="compras-card-modal-col-numero">Qtd.</th>
 
-            <th>
-              Un.
-            </th>
+            <th>Un.</th>
 
-            <th className="compras-card-modal-col-valor">
-              Preço Unit.
-            </th>
+            <th className="compras-card-modal-col-valor">Preço Unit.</th>
 
-            <th className="compras-card-modal-col-valor">
-              Valor Item
-            </th>
+            <th className="compras-card-modal-col-valor">Valor Item</th>
           </tr>
         </thead>
 
         <tbody>
-          {requisicoes.flatMap(
-            (
-              requisicao,
-            ) => {
-              const itens =
-                Array.isArray(
-                  requisicao
-                    ?.itens,
-                ) &&
-                requisicao
-                  .itens
-                  .length >
-                  0
-                  ? requisicao.itens
-                  : [
-                      {
-                        codigo_item:
-                          `sem-item-${requisicao.documento_id}`,
-                      },
-                    ];
+          {requisicoes.flatMap((requisicao) => {
+            const itens =
+              Array.isArray(requisicao?.itens) && requisicao.itens.length > 0
+                ? requisicao.itens
+                : [
+                    {
+                      codigo_item: `sem-item-${requisicao.documento_id}`,
+                    },
+                  ];
 
-              const documentoId =
-                obterDocumentoId(
-                  requisicao,
-                );
+            const documentoId = obterDocumentoId(requisicao);
 
-              const expandido =
-                documentosExpandidos.has(
-                  documentoId,
-                );
+            const expandido = documentosExpandidos.has(documentoId);
 
-              const possuiMaisItens =
-                itens.length >
-                1;
+            const possuiMaisItens = itens.length > 1;
 
-              const itensVisiveis =
-                expandido
-                  ? itens
-                  : itens.slice(
-                      0,
-                      1,
-                    );
+            const itensVisiveis = expandido ? itens : itens.slice(0, 1);
 
-              return itensVisiveis.map(
-                (
-                  item,
-                  indice,
-                ) => {
-                  const primeiro =
-                    indice ===
-                    0;
+            return itensVisiveis.map((item, indice) => {
+              const primeiro = indice === 0;
 
-                  const quantidade =
-                    Number(
-                      item
-                        ?.quantidade ??
-                        0,
-                    );
+              const quantidade = Number(item?.quantidade ?? 0);
 
-                  const precoUnitario =
-                    Number(
-                      item
-                        ?.preco_unitario ??
-                        0,
-                    );
+              const precoUnitario = Number(item?.preco_unitario ?? 0);
 
-                  const valorItem =
-                    Number.isFinite(
-                      Number(
-                        item
-                          ?.valor_total,
-                      ),
-                    )
-                      ? Number(
-                          item
-                            .valor_total,
-                        )
-                      : quantidade *
-                        precoUnitario;
+              const valorItem = Number.isFinite(Number(item?.valor_total))
+                ? Number(item.valor_total)
+                : quantidade * precoUnitario;
 
-                  return (
-                    <tr
-                      key={`${documentoId}-${item.codigo_item ?? indice}`}
-                      className={
-                        primeiro
-                          ? ""
-                          : "compras-card-modal-item-continuacao"
-                      }
-                    >
-                      {primeiro && (
-                        <>
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-card-modal-celula-grupo"
-                          >
-                            <div
-                              style={{
-                                display:
-                                  "flex",
-                                alignItems:
-                                  "flex-start",
-                                justifyContent:
-                                  "space-between",
-                                gap:
-                                  8,
-                              }}
-                            >
-                              <strong className="compras-card-modal-requisicao">
-                                {requisicao.numero_requisicao ||
-                                  requisicao.numero_documento ||
-                                  "-"}
-                              </strong>
+              return (
+                <tr
+                  key={`${documentoId}-${item.codigo_item ?? indice}`}
+                  className={primeiro ? "" : "compras-card-modal-item-continuacao"}
+                >
+                  {primeiro && (
+                    <>
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-card-modal-celula-grupo"
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            justifyContent: "space-between",
+                            gap: 8,
+                          }}
+                        >
+                          <strong className="compras-card-modal-requisicao">
+                            {requisicao.numero_requisicao || requisicao.numero_documento || "-"}
+                          </strong>
 
-                              {possuiMaisItens && (
-                                <BotaoItensModal
-                                  totalItens={
-                                    itens.length
-                                  }
-                                  expandido={
-                                    expandido
-                                  }
-                                  onClick={() =>
-                                    onAlternarItens(
-                                      documentoId,
-                                    )
-                                  }
-                                />
-                              )}
-                            </div>
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-card-modal-celula-grupo compras-card-modal-categoria"
-                          >
-                            {
-                              obterNomeCategoria(
-                                requisicao,
-                              )
-                            }
-                          </td>
-
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-card-modal-celula-grupo"
-                          >
-                            {
-                              formatarData(
-                                requisicao.data_previsao,
-                              )
-                            }
-                          </td>
-                        </>
-                      )}
-
-                      <td className="compras-card-modal-codigo">
-                        {
-                          obterCodigoProduto(
-                            item,
-                          )
-                        }
+                          {possuiMaisItens && (
+                            <BotaoItensModal
+                              totalItens={itens.length}
+                              expandido={expandido}
+                              onClick={() => onAlternarItens(documentoId)}
+                            />
+                          )}
+                        </div>
                       </td>
 
-                      <td className="compras-card-modal-produto">
-                        <strong>
-                          {
-                            obterDescricaoProduto(
-                              item,
-                            )
-                          }
-                        </strong>
-
-                        {item
-                          ?.observacao && (
-                          <span className="compras-card-modal-item-observacao">
-                            {
-                              item.observacao
-                            }
-                          </span>
-                        )}
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-card-modal-celula-grupo compras-card-modal-categoria"
+                      >
+                        {obterNomeCategoria(requisicao)}
                       </td>
 
-                      <td className="compras-card-modal-numero">
-                        {
-                          formatarNumero(
-                            quantidade,
-                            2,
-                          )
-                        }
+                      <td
+                        rowSpan={itensVisiveis.length}
+                        className="compras-card-modal-celula-grupo"
+                      >
+                        {formatarData(requisicao.data_previsao)}
                       </td>
+                    </>
+                  )}
 
-                      <td>
-                        {item
-                          ?.unidade ||
-                          "-"}
-                      </td>
+                  <td className="compras-card-modal-codigo">{obterCodigoProduto(item)}</td>
 
-                      <td className="compras-card-modal-valor">
-                        {
-                          formatarMoeda(
-                            precoUnitario,
-                          )
-                        }
-                      </td>
+                  <td className="compras-card-modal-produto">
+                    <strong>{obterDescricaoProduto(item)}</strong>
 
-                      <td className="compras-card-modal-valor compras-card-modal-valor--requisicao">
-                        {
-                          formatarMoeda(
-                            valorItem,
-                          )
-                        }
-                      </td>
-                    </tr>
-                  );
-                },
+                    {item?.observacao && (
+                      <span className="compras-card-modal-item-observacao">{item.observacao}</span>
+                    )}
+                  </td>
+
+                  <td className="compras-card-modal-numero">{formatarNumero(quantidade, 2)}</td>
+
+                  <td>{item?.unidade || "-"}</td>
+
+                  <td className="compras-card-modal-valor">{formatarMoeda(precoUnitario)}</td>
+
+                  <td className="compras-card-modal-valor compras-card-modal-valor--requisicao">
+                    {formatarMoeda(valorItem)}
+                  </td>
+                </tr>
               );
-            },
-          )}
+            });
+          })}
         </tbody>
       </table>
     </div>
@@ -957,112 +561,65 @@ function formatarDataHoraRecebimento(valor) {
     return "-";
   }
 
-  const data =
-    new Date(valor);
+  const data = new Date(valor);
 
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return "-";
   }
 
-  return new Intl.DateTimeFormat(
-    "pt-BR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  ).format(data);
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(data);
 }
 
-
 function formatarNomeUsuario(usuario) {
-  const texto =
-    String(
-      usuario ?? "",
-    ).trim();
+  const texto = String(usuario ?? "").trim();
 
   if (!texto) {
     return "-";
   }
 
-  const usuarioSemDominio =
-    texto.includes("@")
-      ? texto.split("@")[0]
-      : texto;
+  const usuarioSemDominio = texto.includes("@") ? texto.split("@")[0] : texto;
 
   return usuarioSemDominio
     .split(/[._-]+/)
     .filter(Boolean)
-    .map(
-      (parte) =>
-        parte.charAt(0).toUpperCase() +
-        parte.slice(1).toLowerCase(),
-    )
+    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1).toLowerCase())
     .join(" ");
 }
 
-function TabelaRecebimentosFisicos({
-  recebimentos,
-  documentosExpandidos,
-  onAlternarItens,
-}) {
-  const gruposPorPedido =
-    new Map();
+function TabelaRecebimentosFisicos({ recebimentos, documentosExpandidos, onAlternarItens }) {
+  const gruposPorPedido = new Map();
 
   for (const recebimento of recebimentos) {
     const chavePedido = String(
-      recebimento?.cod_ped_compra ??
-        recebimento?.numero_pedido ??
-        recebimento?.id ??
-        "",
+      recebimento?.cod_ped_compra ?? recebimento?.numero_pedido ?? recebimento?.id ?? "",
     );
 
     if (!gruposPorPedido.has(chavePedido)) {
-      gruposPorPedido.set(
-        chavePedido,
-        [],
-      );
+      gruposPorPedido.set(chavePedido, []);
     }
 
-    gruposPorPedido
-      .get(chavePedido)
-      .push(recebimento);
+    gruposPorPedido.get(chavePedido).push(recebimento);
   }
 
-  const grupos =
-    Array.from(
-      gruposPorPedido.entries(),
-    );
+  const grupos = Array.from(gruposPorPedido.entries());
 
   function renderizarLinhaRecebimento(
     recebimento,
-    {
-      mostrarPedido = true,
-      totalItens = 1,
-      expandido = false,
-      chavePedido = "",
-    } = {},
+    { mostrarPedido = true, totalItens = 1, expandido = false, chavePedido = "" } = {},
   ) {
     return (
       <tr
         key={
-          recebimento.id ??
-          `${chavePedido}-${recebimento.codigo_item}-${recebimento.registrado_em}`
+          recebimento.id ?? `${chavePedido}-${recebimento.codigo_item}-${recebimento.registrado_em}`
         }
       >
-        <td>
-          {
-            formatarDataHoraRecebimento(
-              recebimento.registrado_em,
-            )
-          }
-        </td>
+        <td>{formatarDataHoraRecebimento(recebimento.registrado_em)}</td>
 
         <td>
           {mostrarPedido ? (
@@ -1075,70 +632,36 @@ function TabelaRecebimentosFisicos({
               }}
             >
               <strong className="compras-card-modal-requisicao">
-                {recebimento.numero_pedido ||
-                  "-"}
+                {recebimento.numero_pedido || "-"}
               </strong>
 
               <BotaoItensModal
-                totalItens={
-                  totalItens
-                }
-                expandido={
-                  expandido
-                }
-                onClick={() =>
-                  onAlternarItens(
-                    chavePedido,
-                  )
-                }
+                totalItens={totalItens}
+                expandido={expandido}
+                onClick={() => onAlternarItens(chavePedido)}
               />
             </div>
           ) : (
-            <span className="compras-card-modal-sem-status">
-              -
-            </span>
+            <span className="compras-card-modal-sem-status">-</span>
           )}
         </td>
 
         <td className="compras-card-modal-codigo">
-          {recebimento.codigo_comercial ||
-            recebimento.codigo_produto ||
-            "-"}
+          {recebimento.codigo_comercial || recebimento.codigo_produto || "-"}
         </td>
 
         <td className="compras-card-modal-produto">
-          <strong>
-            {recebimento.descricao_produto ||
-              "Produto não identificado"}
-          </strong>
+          <strong>{recebimento.descricao_produto || "Produto não identificado"}</strong>
         </td>
 
         <td className="compras-card-modal-numero">
-          {
-            formatarNumero(
-              Number(
-                recebimento.quantidade_movimentada ??
-                  0,
-              ),
-              2,
-            )
-          }
+          {formatarNumero(Number(recebimento.quantidade_movimentada ?? 0), 2)}
         </td>
 
-        <td>
-          {recebimento.unidade ||
-            "-"}
-        </td>
+        <td>{recebimento.unidade || "-"}</td>
 
-        <td
-          title={
-            recebimento.usuario_nome ||
-            undefined
-          }
-        >
-          {formatarNomeUsuario(
-            recebimento.usuario_nome,
-          )}
+        <td title={recebimento.usuario_nome || undefined}>
+          {formatarNomeUsuario(recebimento.usuario_nome)}
         </td>
       </tr>
     );
@@ -1149,98 +672,54 @@ function TabelaRecebimentosFisicos({
       <table className="compras-card-modal-tabela compras-card-modal-tabela--requisicoes">
         <thead>
           <tr>
-            <th>
-              Data / hora
-            </th>
+            <th>Data / hora</th>
 
-            <th>
-              Pedido
-            </th>
+            <th>Pedido</th>
 
-            <th>
-              Código
-            </th>
+            <th>Código</th>
 
-            <th className="compras-card-modal-col-produto">
-              Produto
-            </th>
+            <th className="compras-card-modal-col-produto">Produto</th>
 
-            <th className="compras-card-modal-col-numero">
-              Qtd. recebida
-            </th>
+            <th className="compras-card-modal-col-numero">Qtd. recebida</th>
 
-            <th>
-              Un.
-            </th>
+            <th>Un.</th>
 
-            <th>
-              Recebido por
-            </th>
+            <th>Recebido por</th>
           </tr>
         </thead>
 
         <tbody>
-          {grupos.flatMap(
-            ([
+          {grupos.flatMap(([chavePedido, itensPedido]) => {
+            const primeiro = itensPedido[0];
+
+            if (!primeiro) {
+              return [];
+            }
+
+            const expandido = documentosExpandidos.has(chavePedido);
+
+            const linhaPrincipal = renderizarLinhaRecebimento(primeiro, {
+              mostrarPedido: true,
+              totalItens: itensPedido.length,
+              expandido,
               chavePedido,
-              itensPedido,
-            ]) => {
-              const primeiro =
-                itensPedido[0];
+            });
 
-              if (!primeiro) {
-                return [];
-              }
+            if (!expandido || itensPedido.length <= 1) {
+              return [linhaPrincipal];
+            }
 
-              const expandido =
-                documentosExpandidos.has(
-                  chavePedido,
-                );
+            const linhasAdicionais = itensPedido.slice(1).map((recebimento) =>
+              renderizarLinhaRecebimento(recebimento, {
+                mostrarPedido: false,
+                totalItens: itensPedido.length,
+                expandido,
+                chavePedido,
+              }),
+            );
 
-              const linhaPrincipal =
-                renderizarLinhaRecebimento(
-                  primeiro,
-                  {
-                    mostrarPedido: true,
-                    totalItens:
-                      itensPedido.length,
-                    expandido,
-                    chavePedido,
-                  },
-                );
-
-              if (
-                !expandido ||
-                itensPedido.length <= 1
-              ) {
-                return [
-                  linhaPrincipal,
-                ];
-              }
-
-              const linhasAdicionais =
-                itensPedido
-                  .slice(1)
-                  .map(
-                    (recebimento) =>
-                      renderizarLinhaRecebimento(
-                        recebimento,
-                        {
-                          mostrarPedido: false,
-                          totalItens:
-                            itensPedido.length,
-                          expandido,
-                          chavePedido,
-                        },
-                      ),
-                  );
-
-              return [
-                linhaPrincipal,
-                ...linhasAdicionais,
-              ];
-            },
-          )}
+            return [linhaPrincipal, ...linhasAdicionais];
+          })}
         </tbody>
       </table>
     </div>
@@ -1256,198 +735,90 @@ export default function PedidosCompraCardModal({
   tipoDocumento,
   onClose,
 }) {
-  const [
-    documentosExpandidos,
-    setDocumentosExpandidos,
-  ] =
-    useState(
-      () =>
-        new Set(),
-    );
+  const [documentosExpandidos, setDocumentosExpandidos] = useState(() => new Set());
 
-  const configuracao =
-    CONFIGURACOES[
-      cardId
-    ] ?? null;
+  const configuracao = CONFIGURACOES[cardId] ?? null;
 
-  const recebimentoFisico =
-    cardId ===
-    "recebimentos-fisicos-7-dias";
+  const recebimentoFisico = cardId === "recebimentos-fisicos-7-dias";
 
   const requisicao =
-    tipoDocumento ===
-      TIPOS_DOCUMENTO.REQUISICAO ||
-    configuracao
-      ?.documento ===
-      TIPOS_DOCUMENTO.REQUISICAO;
+    tipoDocumento === TIPOS_DOCUMENTO.REQUISICAO ||
+    configuracao?.documento === TIPOS_DOCUMENTO.REQUISICAO;
 
-  const resumo =
-    useMemo(
-      () =>
-        pedidos.reduce(
-          (
-            acc,
-            documento,
-          ) => {
-            acc.valorTotal +=
-              Number(
-                documento
-                  ?.valorTotal ??
-                  0,
-              );
+  const resumo = useMemo(
+    () =>
+      pedidos.reduce(
+        (acc, documento) => {
+          acc.valorTotal += Number(documento?.valorTotal ?? 0);
 
-            acc.valorEmAberto +=
-              Number(
-                documento
-                  ?.valorEmAberto ??
-                  0,
-              );
+          acc.valorEmAberto += Number(documento?.valorEmAberto ?? 0);
 
-            acc.itens +=
-              Number(
-                documento
-                  ?.quantidade_itens ??
-                  documento
-                    ?.itens
-                    ?.length ??
-                  0,
-              );
+          acc.itens += Number(documento?.quantidade_itens ?? documento?.itens?.length ?? 0);
 
-            return acc;
-          },
+          return acc;
+        },
 
-          {
-            valorTotal:
-              0,
+        {
+          valorTotal: 0,
 
-            valorEmAberto:
-              0,
+          valorEmAberto: 0,
 
-            itens:
-              0,
-          },
-        ),
+          itens: 0,
+        },
+      ),
 
-      [
-        pedidos,
-      ],
-    );
-
-  const resumoRecebimentoFisico =
-    useMemo(
-      () => {
-        const pedidosUnicos =
-          new Set();
-
-        const itensUnicos =
-          new Set();
-
-        for (const item of recebimentosFisicos) {
-          const codigoPedido =
-            Number(
-              item?.cod_ped_compra,
-            );
-
-          if (
-            Number.isFinite(
-              codigoPedido,
-            ) &&
-            codigoPedido > 0
-          ) {
-            pedidosUnicos.add(
-              codigoPedido,
-            );
-          }
-
-          itensUnicos.add(
-            `${
-              item?.cod_ped_compra ??
-              ""
-            }::${
-              item?.codigo_item ??
-              ""
-            }`,
-          );
-        }
-
-        return {
-          pedidos:
-            pedidosUnicos.size,
-
-          lancamentos:
-            recebimentosFisicos.length,
-
-          itens:
-            itensUnicos.size,
-        };
-      },
-      [
-        recebimentosFisicos,
-      ],
-    );
-
-  useEffect(
-    () => {
-      setDocumentosExpandidos(
-        new Set(),
-      );
-    },
-    [
-      aberto,
-      cardId,
-    ],
+    [pedidos],
   );
 
+  const resumoRecebimentoFisico = useMemo(() => {
+    const pedidosUnicos = new Set();
 
+    const itensUnicos = new Set();
 
-  if (
-    !aberto ||
-    !configuracao
-  ) {
+    for (const item of recebimentosFisicos) {
+      const codigoPedido = Number(item?.cod_ped_compra);
+
+      if (Number.isFinite(codigoPedido) && codigoPedido > 0) {
+        pedidosUnicos.add(codigoPedido);
+      }
+
+      itensUnicos.add(`${item?.cod_ped_compra ?? ""}::${item?.codigo_item ?? ""}`);
+    }
+
+    return {
+      pedidos: pedidosUnicos.size,
+
+      lancamentos: recebimentosFisicos.length,
+
+      itens: itensUnicos.size,
+    };
+  }, [recebimentosFisicos]);
+
+  useEffect(() => {
+    setDocumentosExpandidos(new Set());
+  }, [aberto, cardId]);
+
+  if (!aberto || !configuracao) {
     return null;
   }
 
-  const Icone =
-    configuracao.icone;
+  const Icone = configuracao.icone;
 
-  const valorPrincipal =
-    obterValorPrincipal(
-      cardId,
-      indicadores,
-    );
+  const valorPrincipal = obterValorPrincipal(cardId, indicadores);
 
-  function alternarItens(
-    documentoId,
-  ) {
-    setDocumentosExpandidos(
-      (
-        atual,
-      ) => {
-        const proximo =
-          new Set(
-            atual,
-          );
+  function alternarItens(documentoId) {
+    setDocumentosExpandidos((atual) => {
+      const proximo = new Set(atual);
 
-        if (
-          proximo.has(
-            documentoId,
-          )
-        ) {
-          proximo.delete(
-            documentoId,
-          );
-        } else {
-          proximo.add(
-            documentoId,
-          );
-        }
+      if (proximo.has(documentoId)) {
+        proximo.delete(documentoId);
+      } else {
+        proximo.add(documentoId);
+      }
 
-        return proximo;
-      },
-    );
+      return proximo;
+    });
   }
-
-
 
   return (
     <Modal
@@ -1459,11 +830,7 @@ export default function PedidosCompraCardModal({
       fecharAoClicarFora={true}
     >
       <section
-        className={`compras-card-modal${
-          requisicao
-            ? " compras-card-modal--requisicao"
-            : ""
-        }`}
+        className={`compras-card-modal${requisicao ? " compras-card-modal--requisicao" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="compras-card-modal-titulo"
@@ -1474,167 +841,90 @@ export default function PedidosCompraCardModal({
               className={`compras-card-modal-icon compras-card-modal-icon--${configuracao.tipo}`}
               data-modal-icone=""
             >
-              <Icone
-                size={
-                  23
-                }
-              />
+              <Icone size={23} />
             </div>
 
             <div>
-              <span className="compras-card-modal-eyebrow">
-                Detalhes do indicador
-              </span>
+              <span className="compras-card-modal-eyebrow">Detalhes do indicador</span>
 
               <ModalTitulo>
-                <h2 id="compras-card-modal-titulo">
-                  {
-                    configuracao.titulo
-                  }
-                </h2>
+                <h2 id="compras-card-modal-titulo">{configuracao.titulo}</h2>
               </ModalTitulo>
 
-              <p>
-                {
-                  configuracao.descricao
-                }
-              </p>
+              <p>{configuracao.descricao}</p>
             </div>
           </div>
 
           <button
             type="button"
             className="compras-card-modal-fechar"
-            onClick={
-              onClose
-            }
+            onClick={onClose}
             aria-label="Fechar detalhes"
             title="Fechar"
             data-modal-fechar=""
           >
-            <X
-              size={
-                21
-              }
-            />
+            <X size={21} />
           </button>
         </header>
 
         <div
           className={`compras-card-modal-resumo${
-            requisicao
-              ? " compras-card-modal-resumo--requisicao"
-              : ""
+            requisicao ? " compras-card-modal-resumo--requisicao" : ""
           }`}
         >
           {recebimentoFisico ? (
             <>
               <div className="compras-card-modal-resumo-destaque">
-                <span>
-                  Pedidos recebidos
-                </span>
+                <span>Pedidos recebidos</span>
 
-                <strong>
-                  {
-                    resumoRecebimentoFisico.pedidos
-                  }
-                </strong>
+                <strong>{resumoRecebimentoFisico.pedidos}</strong>
               </div>
 
               <div>
-                <span>
-                  Lançamentos
-                </span>
+                <span>Lançamentos</span>
 
-                <strong>
-                  {
-                    resumoRecebimentoFisico.lancamentos
-                  }
-                </strong>
+                <strong>{resumoRecebimentoFisico.lancamentos}</strong>
               </div>
 
               <div>
-                <span>
-                  Itens recebidos
-                </span>
+                <span>Itens recebidos</span>
 
-                <strong>
-                  {
-                    resumoRecebimentoFisico.itens
-                  }
-                </strong>
+                <strong>{resumoRecebimentoFisico.itens}</strong>
               </div>
 
               <div>
-                <span>
-                  Período
-                </span>
+                <span>Período</span>
 
-                <strong>
-                  Últimos 7 dias
-                </strong>
+                <strong>Últimos 7 dias</strong>
               </div>
             </>
           ) : (
             <>
               <div className="compras-card-modal-resumo-destaque">
-                <span>
-                  Indicador selecionado
-                </span>
+                <span>Indicador selecionado</span>
 
-                <strong>
-                  {
-                    valorPrincipal
-                  }
-                </strong>
+                <strong>{valorPrincipal}</strong>
               </div>
 
               <div>
-                <span>
-                  {requisicao
-                    ? "Requisições no indicador"
-                    : "Pedidos no indicador"}
-                </span>
+                <span>{requisicao ? "Requisições no indicador" : "Pedidos no indicador"}</span>
 
-                <strong>
-                  {
-                    pedidos.length
-                  }
-                </strong>
+                <strong>{pedidos.length}</strong>
               </div>
 
               <div>
-                <span>
-                  {requisicao
-                    ? "Valor requisitado"
-                    : "Valor dos pedidos"}
-                </span>
+                <span>{requisicao ? "Valor requisitado" : "Valor dos pedidos"}</span>
 
-                <strong>
-                  {
-                    formatarMoeda(
-                      resumo.valorTotal,
-                    )
-                  }
-                </strong>
+                <strong>{formatarMoeda(resumo.valorTotal)}</strong>
               </div>
 
               <div>
-                <span>
-                  {requisicao
-                    ? "Itens requisitados"
-                    : "Valor em aberto"}
-                </span>
+                <span>{requisicao ? "Itens requisitados" : "Valor em aberto"}</span>
 
                 <strong>
                   {requisicao
-                    ? formatarNumero(
-                        resumo.itens,
-                        0,
-                      )
-                    : formatarMoeda(
-                        resumo.valorEmAberto,
-                      )}
+                    ? formatarNumero(resumo.itens, 0)
+                    : formatarMoeda(resumo.valorEmAberto)}
                 </strong>
               </div>
             </>
@@ -1643,32 +933,20 @@ export default function PedidosCompraCardModal({
 
         <div className="compras-card-modal-body" data-modal-body="">
           {recebimentoFisico ? (
-            recebimentosFisicos.length ===
-            0 ? (
+            recebimentosFisicos.length === 0 ? (
               <div className="compras-card-modal-vazio">
-                <strong>
-                  Nenhum recebimento físico nos últimos 7 dias.
-                </strong>
+                <strong>Nenhum recebimento físico nos últimos 7 dias.</strong>
 
-                <span>
-                  O indicador considera os lançamentos físicos registrados no sistema.
-                </span>
+                <span>O indicador considera os lançamentos físicos registrados no sistema.</span>
               </div>
             ) : (
               <TabelaRecebimentosFisicos
-                recebimentos={
-                  recebimentosFisicos
-                }
-                documentosExpandidos={
-                  documentosExpandidos
-                }
-                onAlternarItens={
-                  alternarItens
-                }
+                recebimentos={recebimentosFisicos}
+                documentosExpandidos={documentosExpandidos}
+                onAlternarItens={alternarItens}
               />
             )
-          ) : pedidos.length ===
-          0 ? (
+          ) : pedidos.length === 0 ? (
             <div className="compras-card-modal-vazio">
               <strong>
                 {requisicao
@@ -1676,33 +954,19 @@ export default function PedidosCompraCardModal({
                   : "Nenhum pedido neste indicador."}
               </strong>
 
-              <span>
-                O resultado considera os filtros atualmente aplicados na tela.
-              </span>
+              <span>O resultado considera os filtros atualmente aplicados na tela.</span>
             </div>
           ) : requisicao ? (
             <TabelaRequisicoes
-              requisicoes={
-                pedidos
-              }
-              documentosExpandidos={
-                documentosExpandidos
-              }
-              onAlternarItens={
-                alternarItens
-              }
+              requisicoes={pedidos}
+              documentosExpandidos={documentosExpandidos}
+              onAlternarItens={alternarItens}
             />
           ) : (
             <TabelaPedidos
-              pedidos={
-                pedidos
-              }
-              documentosExpandidos={
-                documentosExpandidos
-              }
-              onAlternarItens={
-                alternarItens
-              }
+              pedidos={pedidos}
+              documentosExpandidos={documentosExpandidos}
+              onAlternarItens={alternarItens}
             />
           )}
         </div>
@@ -1717,9 +981,7 @@ export default function PedidosCompraCardModal({
           <button
             type="button"
             className="compras-card-modal-botao-fechar"
-            onClick={
-              onClose
-            }
+            onClick={onClose}
             data-modal-acao="primaria"
             data-modal-fechar=""
           >

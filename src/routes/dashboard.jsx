@@ -13,8 +13,7 @@ export const Route = createFileRoute("/dashboard")({
       },
       {
         name: "description",
-        content:
-          "Dashboard de produção e acompanhamento operacional Pedrasplast.",
+        content: "Dashboard de produção e acompanhamento operacional Pedrasplast.",
       },
     ],
   }),

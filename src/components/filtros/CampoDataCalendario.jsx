@@ -36,23 +36,13 @@ function CampoDataCalendario({
         aria-expanded={aberto}
         aria-haspopup="dialog"
       >
-        <strong
-          className={
-            possuiValor
-              ? "calendar-trigger-value"
-              : "calendar-trigger-placeholder"
-          }
-        >
+        <strong className={possuiValor ? "calendar-trigger-value" : "calendar-trigger-placeholder"}>
           {valorVisual || titulo}
         </strong>
       </button>
 
       {aberto && (
-        <div
-          className="calendar-popover"
-          role="dialog"
-          aria-label={`Selecionar ${titulo}`}
-        >
+        <div className="calendar-popover" role="dialog" aria-label={`Selecionar ${titulo}`}>
           <DayPicker
             mode="single"
             locale={ptBR}
@@ -69,9 +59,7 @@ function CampoDataCalendario({
             showOutsideDays={false}
           />
 
-          <small className="calendar-info">
-            Somente dias com dados podem ser selecionados.
-          </small>
+          <small className="calendar-info">Somente dias com dados podem ser selecionados.</small>
         </div>
       )}
     </div>

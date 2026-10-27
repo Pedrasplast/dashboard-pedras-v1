@@ -76,7 +76,9 @@ function descreverDias(campo) {
  * Ex.: "8-59/15 10-20 * * 1-5" → "seg a sex, das 07h às 17h, a cada 15 min".
  */
 export function descreverAgenda(agenda) {
-  const partes = String(agenda ?? "").trim().split(/\s+/);
+  const partes = String(agenda ?? "")
+    .trim()
+    .split(/\s+/);
   if (partes.length !== 5) return agenda ?? "";
 
   const [campoMin, campoHora, diaMes, mes, diaSemana] = partes;
@@ -85,9 +87,7 @@ export function descreverAgenda(agenda) {
 
   if (!minutos || !horasUtc || diaMes !== "*" || mes !== "*") return agenda;
 
-  const horas = horasUtc
-    .map((h) => (h + FUSO_HORAS + 24) % 24)
-    .sort((a, b) => a - b);
+  const horas = horasUtc.map((h) => (h + FUSO_HORAS + 24) % 24).sort((a, b) => a - b);
 
   const dias = descreverDias(diaSemana);
 
@@ -96,14 +96,14 @@ export function descreverAgenda(agenda) {
   }
 
   const contiguas = horas.every((h, i) => i === 0 || h - horas[i - 1] === 1);
-  const textoHoras = horas.length === 24
-    ? "o dia todo"
-    : contiguas && horas.length > 1
-      ? `das ${dois(horas[0])}h às ${dois(horas.at(-1))}h`
-      : `às ${horas.map((h) => `${dois(h)}h`).join(" e ")}`;
+  const textoHoras =
+    horas.length === 24
+      ? "o dia todo"
+      : contiguas && horas.length > 1
+        ? `das ${dois(horas[0])}h às ${dois(horas.at(-1))}h`
+        : `às ${horas.map((h) => `${dois(h)}h`).join(" e ")}`;
 
-  const textoMin = descreverMinutos(minutos)
-    ?? `de hora em hora, no minuto ${dois(minutos[0])}`;
+  const textoMin = descreverMinutos(minutos) ?? `de hora em hora, no minuto ${dois(minutos[0])}`;
 
   return `${dias}, ${textoHoras}, ${textoMin}`;
 }
@@ -150,9 +150,11 @@ export function prepararRotinas(lista) {
       mensagem_erro: mensagemErro(rotina),
       monitorada: !ROTINAS_SO_BANCO.has(rotina.rotina),
     }))
-    .sort((a, b) =>
-      ORDEM_SITUACAO[a.situacao] - ORDEM_SITUACAO[b.situacao]
-      || a.nome.localeCompare(b.nome, "pt-BR"));
+    .sort(
+      (a, b) =>
+        ORDEM_SITUACAO[a.situacao] - ORDEM_SITUACAO[b.situacao] ||
+        a.nome.localeCompare(b.nome, "pt-BR"),
+    );
 }
 
 /* ---------------------------------------------------------

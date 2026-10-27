@@ -39,7 +39,6 @@ export function obterPrecoReferencia(item, dias = 30) {
   return { valor: null, origem: "sem_preco" };
 }
 
-
 export function formatarPreco(valor) {
   if (valor == null || valor === "") {
     return "—";
@@ -58,7 +57,6 @@ export function formatarPreco(valor) {
     maximumFractionDigits: 2,
   });
 }
-
 
 export function formatarQuantidadePreco(valor) {
   if (valor === null || valor === undefined || valor === "") return "—";
@@ -82,7 +80,9 @@ export function formatarDataPreco(valor) {
 
 export function filtrarTabelaPrecos(dados, filtros = {}) {
   const dias = filtros.periodo ?? 30;
-  const termo = String(filtros.busca ?? "").trim().toLocaleLowerCase("pt-BR");
+  const termo = String(filtros.busca ?? "")
+    .trim()
+    .toLocaleLowerCase("pt-BR");
   const registros = (Array.isArray(dados) ? dados : []).filter((item) => {
     if (!termo) return true;
     const conteudo = [item.codigo_produto, item.codigo_produto_omie, item.descricao, item.unidade]
@@ -97,9 +97,15 @@ export function filtrarTabelaPrecos(dados, filtros = {}) {
       case "ultima_compra":
         return String(b.ultima_compra ?? "").localeCompare(String(a.ultima_compra ?? ""));
       case "maior_preco":
-        return numeroPreco(obterPrecoReferencia(b, dias).valor) - numeroPreco(obterPrecoReferencia(a, dias).valor);
+        return (
+          numeroPreco(obterPrecoReferencia(b, dias).valor) -
+          numeroPreco(obterPrecoReferencia(a, dias).valor)
+        );
       case "menor_preco":
-        return numeroPreco(obterPrecoReferencia(a, dias).valor) - numeroPreco(obterPrecoReferencia(b, dias).valor);
+        return (
+          numeroPreco(obterPrecoReferencia(a, dias).valor) -
+          numeroPreco(obterPrecoReferencia(b, dias).valor)
+        );
       default:
         return String(a.descricao ?? "").localeCompare(String(b.descricao ?? ""), "pt-BR");
     }

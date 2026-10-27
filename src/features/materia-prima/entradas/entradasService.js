@@ -1,9 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-import {
-  buscarFornecedores,
-} from "../fornecedores/fornecedoresService";
-
+import { buscarFornecedores } from "../fornecedores/fornecedoresService";
 
 /* =========================================================
    CAMPOS
@@ -39,332 +36,135 @@ const CAMPOS_ENTRADA = `
   observacao_financeira
 `;
 
-
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function numeroOuNull(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+function numeroOuNull(valor) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
   }
 
+  const numero = Number(valor);
 
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  return Number.isFinite(
-    numero,
-  )
-    ? numero
-    : null;
+  return Number.isFinite(numero) ? numero : null;
 }
-
 
 /* =========================================================
    BUSCAR ENTRADAS
 ========================================================= */
 
 export async function buscarEntradas() {
-  const [
-    fornecedores,
-    resultadoMateriais,
-    resultado,
-  ] =
-    await Promise.all([
-      buscarFornecedores(),
+  const [fornecedores, resultadoMateriais, resultado] = await Promise.all([
+    buscarFornecedores(),
 
-      supabase
-        .from(
-          "materia_prima_materiais",
-        )
-        .select(`
+    supabase.from("materia_prima_materiais").select(`
           id,
           nome,
           ativo
         `),
 
-      supabase
-        .from(
-          "materia_prima_compras_futuras",
-        )
-        .select(
-          CAMPOS_ENTRADA,
-        )
-        .eq(
-          "status",
-          "RECEBIDA",
-        )
-        .order(
-          "data_recebimento",
-          {
-            ascending: false,
-          },
-        )
-        .order(
-          "id",
-          {
-            ascending: false,
-          },
-        ),
-    ]);
-
+    supabase
+      .from("materia_prima_compras_futuras")
+      .select(CAMPOS_ENTRADA)
+      .eq("status", "RECEBIDA")
+      .order("data_recebimento", {
+        ascending: false,
+      })
+      .order("id", {
+        ascending: false,
+      }),
+  ]);
 
   if (resultadoMateriais.error) {
     throw resultadoMateriais.error;
   }
 
-
   if (resultado.error) {
     throw resultado.error;
   }
 
+  const fornecedoresPorId = new Map();
 
-  const fornecedoresPorId =
-    new Map();
+  fornecedores.forEach((fornecedor) => fornecedoresPorId.set(String(fornecedor.id), fornecedor));
 
+  const materiaisPorId = new Map();
 
-  fornecedores.forEach(
-    (
-      fornecedor,
-    ) =>
-      fornecedoresPorId.set(
-        String(
-          fornecedor.id,
-        ),
-        fornecedor,
-      ),
+  (Array.isArray(resultadoMateriais.data) ? resultadoMateriais.data : []).forEach((material) =>
+    materiaisPorId.set(String(material.id), material),
   );
 
+  const entradas = (Array.isArray(resultado.data) ? resultado.data : []).map((registro) => {
+    const fornecedor = fornecedoresPorId.get(String(registro.fornecedor_id));
 
-  const materiaisPorId =
-    new Map();
+    const material = materiaisPorId.get(String(registro.material_id));
 
+    return {
+      id: registro.id,
 
-  (
-    Array.isArray(
-      resultadoMateriais.data,
-    )
-      ? resultadoMateriais.data
-      : []
-  ).forEach(
-    (
-      material,
-    ) =>
-      materiaisPorId.set(
-        String(
-          material.id,
-        ),
-        material,
-      ),
-  );
+      data: registro.data_recebimento,
 
+      dataCompra: registro.data_compra,
 
-  const entradas =
-    (
-      Array.isArray(
-        resultado.data,
-      )
-        ? resultado.data
-        : []
-    ).map(
-      (
-        registro,
-      ) => {
-        const fornecedor =
-          fornecedoresPorId.get(
-            String(
-              registro
-                .fornecedor_id,
-            ),
-          );
+      dataPrevista: registro.data_prevista,
 
+      fornecedorId: registro.fornecedor_id,
 
-        const material =
-          materiaisPorId.get(
-            String(
-              registro
-                .material_id,
-            ),
-          );
+      fornecedorNome: fornecedor?.nome ?? "Fornecedor não encontrado",
 
+      fornecedorAtivo: fornecedor?.ativo !== false,
 
-        return {
-          id:
-            registro.id,
+      materialId: registro.material_id,
 
-          data:
-            registro
-              .data_recebimento,
+      materialNome: material?.nome ?? "Material não encontrado",
 
-          dataCompra:
-            registro
-              .data_compra,
+      materialAtivo: material?.ativo !== false,
 
-          dataPrevista:
-            registro
-              .data_prevista,
+      tipoClassificacao: registro.tipo_classificacao ?? "",
 
-          fornecedorId:
-            registro
-              .fornecedor_id,
+      quantidadeKg: Number(registro.quantidade_kg),
 
-          fornecedorNome:
-            fornecedor
-              ?.nome ??
-            "Fornecedor não encontrado",
+      numeroPedido: registro.numero_pedido ?? "",
 
-          fornecedorAtivo:
-            fornecedor
-              ?.ativo !==
-            false,
+      documento: registro.numero_pedido ?? "",
 
-          materialId:
-            registro
-              .material_id,
+      status: registro.status ?? "RECEBIDA",
 
-          materialNome:
-            material
-              ?.nome ??
-            "Material não encontrado",
+      observacao: registro.observacao ?? "",
 
-          materialAtivo:
-            material
-              ?.ativo !==
-            false,
+      ativo: registro.ativo !== false,
 
-          tipoClassificacao:
-            registro
-              .tipo_classificacao ??
-            "",
+      criadoEm: registro.criado_em ?? null,
 
-          quantidadeKg:
-            Number(
-              registro
-                .quantidade_kg,
-            ),
+      atualizadoEm: registro.atualizado_em ?? null,
 
-          numeroPedido:
-            registro
-              .numero_pedido ??
-            "",
+      precoUnitario: numeroOuNull(registro.preco_unitario),
 
-          documento:
-            registro
-              .numero_pedido ??
-            "",
+      subtotalProdutos: numeroOuNull(registro.subtotal_produtos),
 
-          status:
-            registro
-              .status ??
-            "RECEBIDA",
+      ipiPercentual: numeroOuNull(registro.ipi_percentual),
 
-          observacao:
-            registro
-              .observacao ??
-            "",
+      valorIpi: numeroOuNull(registro.valor_ipi),
 
-          ativo:
-            registro
-              .ativo !==
-            false,
+      valorFrete: numeroOuNull(registro.valor_frete),
 
-          criadoEm:
-            registro
-              .criado_em ??
-            null,
+      tipoFrete: registro.tipo_frete ?? "",
 
-          atualizadoEm:
-            registro
-              .atualizado_em ??
-            null,
+      valorDesconto: numeroOuNull(registro.valor_desconto),
 
-          precoUnitario:
-            numeroOuNull(
-              registro
-                .preco_unitario,
-            ),
+      outrasDespesas: numeroOuNull(registro.outras_despesas),
 
-          subtotalProdutos:
-            numeroOuNull(
-              registro
-                .subtotal_produtos,
-            ),
+      valorTotal: numeroOuNull(registro.valor_total),
 
-          ipiPercentual:
-            numeroOuNull(
-              registro
-                .ipi_percentual,
-            ),
+      custoEfetivoKg: numeroOuNull(registro.custo_efetivo_kg),
 
-          valorIpi:
-            numeroOuNull(
-              registro
-                .valor_ipi,
-            ),
+      numeroNf: registro.numero_nf ?? "",
 
-          valorFrete:
-            numeroOuNull(
-              registro
-                .valor_frete,
-            ),
+      condicaoPagamento: registro.condicao_pagamento ?? "",
 
-          tipoFrete:
-            registro
-              .tipo_frete ??
-            "",
-
-          valorDesconto:
-            numeroOuNull(
-              registro
-                .valor_desconto,
-            ),
-
-          outrasDespesas:
-            numeroOuNull(
-              registro
-                .outras_despesas,
-            ),
-
-          valorTotal:
-            numeroOuNull(
-              registro
-                .valor_total,
-            ),
-
-          custoEfetivoKg:
-            numeroOuNull(
-              registro
-                .custo_efetivo_kg,
-            ),
-
-          numeroNf:
-            registro
-              .numero_nf ??
-            "",
-
-          condicaoPagamento:
-            registro
-              .condicao_pagamento ??
-            "",
-
-          observacaoFinanceira:
-            registro
-              .observacao_financeira ??
-            "",
-        };
-      },
-    );
-
+      observacaoFinanceira: registro.observacao_financeira ?? "",
+    };
+  });
 
   return {
     entradas,

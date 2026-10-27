@@ -1,16 +1,9 @@
-
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
 
 import { useEffect, useState } from "react";
 
-import {
-  Boxes,
-  Save,
-  X,
-  TableProperties,
-  Calculator,
-} from "lucide-react";
+import { Boxes, Save, X, TableProperties, Calculator } from "lucide-react";
 
 import "../CadastroProdutoModal.css";
 
@@ -45,21 +38,13 @@ export default function CadastroMaterialModal({
 
   const [nome, setNome] = useState("");
 
-  const [codigoOmie, setCodigoOmie] =
-    useState("");
+  const [codigoOmie, setCodigoOmie] = useState("");
 
-  const [ativo, setAtivo] =
-    useState(true);
+  const [ativo, setAtivo] = useState(true);
 
-  const [
-    exibirTabelaPrecos,
-    setExibirTabelaPrecos,
-  ] = useState(false);
+  const [exibirTabelaPrecos, setExibirTabelaPrecos] = useState(false);
 
-  const [
-    exibirNecessidadeCompra,
-    setExibirNecessidadeCompra,
-  ] = useState(false);
+  const [exibirNecessidadeCompra, setExibirNecessidadeCompra] = useState(false);
 
   const [erro, setErro] = useState("");
 
@@ -81,24 +66,14 @@ export default function CadastroMaterialModal({
 
     setNome(item?.nome ?? "");
 
-    setCodigoOmie(
-      item?.codigoOmie ?? ""
-    );
+    setCodigoOmie(item?.codigoOmie ?? "");
 
-    setAtivo(
-      item?.ativo !== false
-    );
+    setAtivo(item?.ativo !== false);
 
-    setExibirTabelaPrecos(
-      item?.exibirTabelaPrecos ??
-      item?.exibir_tabela_precos ??
-      false
-    );
+    setExibirTabelaPrecos(item?.exibirTabelaPrecos ?? item?.exibir_tabela_precos ?? false);
 
     setExibirNecessidadeCompra(
-      item?.exibirNecessidadeCompra ??
-      item?.exibir_necessidade_compra ??
-      false
+      item?.exibirNecessidadeCompra ?? item?.exibir_necessidade_compra ?? false,
     );
 
     setErro("");
@@ -116,13 +91,9 @@ export default function CadastroMaterialModal({
 
     setErro("");
 
-    const nomeFinal = String(
-      nome ?? ""
-    ).trim();
+    const nomeFinal = String(nome ?? "").trim();
 
-    const codigoFinal = String(
-      codigoOmie ?? ""
-    )
+    const codigoFinal = String(codigoOmie ?? "")
       .trim()
       .toUpperCase();
 
@@ -131,13 +102,9 @@ export default function CadastroMaterialModal({
       return;
     }
 
-    if (
-      (exibirTabelaPrecos ||
-        exibirNecessidadeCompra) &&
-      !codigoFinal
-    ) {
+    if ((exibirTabelaPrecos || exibirNecessidadeCompra) && !codigoFinal) {
       setErro(
-        "Informe o código Omie para incluir o material na Tabela de Preços ou na Necessidade de Compra."
+        "Informe o código Omie para incluir o material na Tabela de Preços ou na Necessidade de Compra.",
       );
       return;
     }
@@ -152,17 +119,12 @@ export default function CadastroMaterialModal({
 
         ativo,
 
-        exibirTabelaPrecos:
-          exibirTabelaPrecos,
+        exibirTabelaPrecos: exibirTabelaPrecos,
 
-        exibirNecessidadeCompra:
-          exibirNecessidadeCompra,
+        exibirNecessidadeCompra: exibirNecessidadeCompra,
       });
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível salvar o material."
-      );
+      setErro(error?.message || "Não foi possível salvar o material.");
     }
   }
 
@@ -197,18 +159,9 @@ export default function CadastroMaterialModal({
             CABEÇALHO
         ========================================= */}
 
-        <div
-          className="produto-pp-modal-header"
-          data-modal-header=""
-        >
-          <div
-            className="produto-pp-modal-header-icone"
-            data-modal-icone=""
-          >
-            <Boxes
-              size={22}
-              aria-hidden="true"
-            />
+        <div className="produto-pp-modal-header" data-modal-header="">
+          <div className="produto-pp-modal-header-icone" data-modal-icone="">
+            <Boxes size={22} aria-hidden="true" />
           </div>
 
           <div className="produto-pp-modal-header-texto">
@@ -216,17 +169,11 @@ export default function CadastroMaterialModal({
 
             <ModalTitulo>
               <h3 id="cadastro-material-modal-titulo">
-                {item
-                  ? "Editar material"
-                  : "Cadastrar material"}
+                {item ? "Editar material" : "Cadastrar material"}
               </h3>
             </ModalTitulo>
 
-            <p>
-              Configure o material, seu código
-              Omie e sua participação nas
-              telas de compras.
-            </p>
+            <p>Configure o material, seu código Omie e sua participação nas telas de compras.</p>
           </div>
 
           <button
@@ -245,11 +192,7 @@ export default function CadastroMaterialModal({
             FORMULÁRIO
         ========================================= */}
 
-        <form
-          className="produto-pp-modal-form"
-          onSubmit={enviar}
-          data-modal-form=""
-        >
+        <form className="produto-pp-modal-form" onSubmit={enviar} data-modal-form="">
           {/* NOME */}
 
           <label className="produto-pp-modal-campo">
@@ -272,19 +215,14 @@ export default function CadastroMaterialModal({
           {/* CÓDIGO OMIE */}
 
           <label className="produto-pp-modal-campo">
-            <span>
-              Código Omie da matéria-prima
-              (manual)
-            </span>
+            <span>Código Omie da matéria-prima (manual)</span>
 
             <input
               type="text"
               value={codigoOmie}
               maxLength={80}
               onChange={(event) => {
-                setCodigoOmie(
-                  event.target.value.toUpperCase()
-                );
+                setCodigoOmie(event.target.value.toUpperCase());
 
                 setErro("");
               }}
@@ -294,10 +232,8 @@ export default function CadastroMaterialModal({
             />
 
             <small>
-              Um código por material. Você pode
-              preencher depois, desde que o material
-              não esteja habilitado nas telas
-              de planejamento.
+              Um código por material. Você pode preencher depois, desde que o material não esteja
+              habilitado nas telas de planejamento.
             </small>
           </label>
 
@@ -332,9 +268,7 @@ export default function CadastroMaterialModal({
                   lineHeight: 1.5,
                 }}
               >
-                Selecione em quais telas este
-                material deverá aparecer.
-                As opções são independentes.
+                Selecione em quais telas este material deverá aparecer. As opções são independentes.
               </small>
             </div>
 
@@ -345,9 +279,7 @@ export default function CadastroMaterialModal({
                 type="checkbox"
                 checked={exibirTabelaPrecos}
                 onChange={(event) => {
-                  setExibirTabelaPrecos(
-                    event.target.checked
-                  );
+                  setExibirTabelaPrecos(event.target.checked);
 
                   setErro("");
                 }}
@@ -362,19 +294,11 @@ export default function CadastroMaterialModal({
                     gap: 7,
                   }}
                 >
-                  <TableProperties
-                    size={17}
-                    aria-hidden="true"
-                  />
-
+                  <TableProperties size={17} aria-hidden="true" />
                   Exibir na Tabela de Preços
                 </strong>
 
-                <span>
-                  Incluir este material nas
-                  consultas de preços de
-                  compra do Omie.
-                </span>
+                <span>Incluir este material nas consultas de preços de compra do Omie.</span>
               </div>
             </label>
 
@@ -385,9 +309,7 @@ export default function CadastroMaterialModal({
                 type="checkbox"
                 checked={exibirNecessidadeCompra}
                 onChange={(event) => {
-                  setExibirNecessidadeCompra(
-                    event.target.checked
-                  );
+                  setExibirNecessidadeCompra(event.target.checked);
 
                   setErro("");
                 }}
@@ -402,19 +324,13 @@ export default function CadastroMaterialModal({
                     gap: 7,
                   }}
                 >
-                  <Calculator
-                    size={17}
-                    aria-hidden="true"
-                  />
-
+                  <Calculator size={17} aria-hidden="true" />
                   Exibir na Necessidade de Compra
                 </strong>
 
                 <span>
-                  Incluir este material no
-                  planejamento de consumo,
-                  estoque, compras futuras
-                  e necessidade.
+                  Incluir este material no planejamento de consumo, estoque, compras futuras e
+                  necessidade.
                 </span>
               </div>
             </label>
@@ -439,11 +355,8 @@ export default function CadastroMaterialModal({
               <strong>Material ativo</strong>
 
               <span>
-                Materiais inativos permanecem
-                no histórico, mas não ficam
-                disponíveis para novos
-                vínculos nem aparecem nas telas
-                de compras.
+                Materiais inativos permanecem no histórico, mas não ficam disponíveis para novos
+                vínculos nem aparecem nas telas de compras.
               </span>
             </div>
           </label>
@@ -453,10 +366,7 @@ export default function CadastroMaterialModal({
           ========================================= */}
 
           {erro && (
-            <div
-              className="produto-pp-modal-erro"
-              role="alert"
-            >
+            <div className="produto-pp-modal-erro" role="alert">
               {erro}
             </div>
           )}
@@ -465,10 +375,7 @@ export default function CadastroMaterialModal({
               AÇÕES
           ========================================= */}
 
-          <div
-            className="produto-pp-modal-acoes"
-            data-modal-footer=""
-          >
+          <div className="produto-pp-modal-acoes" data-modal-footer="">
             <button
               type="button"
               className="produto-pp-modal-cancelar"
@@ -487,9 +394,7 @@ export default function CadastroMaterialModal({
             >
               <Save size={17} />
 
-              {salvando
-                ? "Salvando..."
-                : "Salvar material"}
+              {salvando ? "Salvando..." : "Salvar material"}
             </button>
           </div>
         </form>

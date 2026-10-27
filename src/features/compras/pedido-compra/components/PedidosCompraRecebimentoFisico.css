@@ -97,9 +97,7 @@
   width: 100vw;
   height: 100dvh;
 
-  padding:
-    clamp(12px, 2vh, 24px)
-    clamp(12px, 2vw, 28px);
+  padding: clamp(12px, 2vh, 24px) clamp(12px, 2vw, 28px);
 
   background: rgba(15, 23, 42, 0.58);
 
@@ -661,8 +659,7 @@
   color: #198754;
 }
 
-.compras-rf-historico-item--estorno
-  .compras-rf-historico-icone {
+.compras-rf-historico-item--estorno .compras-rf-historico-icone {
   background: #fff0ee;
   color: #b42318;
 }
@@ -1003,10 +1000,7 @@
   }
 
   .compras-rf-conteudo {
-    padding:
-      14px
-      16px
-      calc(20px + env(safe-area-inset-bottom));
+    padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
   }
 
   .compras-rf-mensagem {
@@ -1047,8 +1041,7 @@
     flex-direction: column-reverse;
   }
 
-  .compras-rf-confirmacao-acoes
-    .compras-rf-btn {
+  .compras-rf-confirmacao-acoes .compras-rf-btn {
     width: 100%;
   }
 }
@@ -1107,8 +1100,7 @@
     flex-direction: column;
   }
 
-  .compras-rf-acoes-item
-    .compras-rf-btn {
+  .compras-rf-acoes-item .compras-rf-btn {
     width: 100%;
   }
 
@@ -1117,17 +1109,11 @@
   }
 
   .compras-rf-confirmacao-icone {
-    margin:
-      18px
-      18px
-      0;
+    margin: 18px 18px 0;
   }
 
   .compras-rf-confirmacao-conteudo {
-    padding:
-      12px
-      18px
-      4px;
+    padding: 12px 18px 4px;
   }
 
   .compras-rf-confirmacao-conteudo h3 {
@@ -1135,9 +1121,6 @@
   }
 
   .compras-rf-confirmacao-acoes {
-    padding:
-      14px
-      18px
-      18px;
+    padding: 14px 18px 18px;
   }
 }

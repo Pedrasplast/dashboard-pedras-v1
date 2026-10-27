@@ -42,9 +42,7 @@ const VALORES_PADRAO_FILTROS_PEDIDOS = Object.freeze({
 });
 
 function obterCodigoProduto(item) {
-  return String(
-    item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "",
-  ).trim();
+  return String(item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "").trim();
 }
 
 function obterNumeroPedidoVisual(item) {
@@ -86,9 +84,7 @@ function correspondeAosPedidos(item, pedidosFiltro) {
   return pedidosFiltro.some((numero) =>
     numero.includes("/")
       ? visual === numero
-      : original === numero ||
-        visual === numero ||
-        visual.startsWith(`${numero}/`),
+      : original === numero || visual === numero || visual.startsWith(`${numero}/`),
   );
 }
 
@@ -100,7 +96,12 @@ function correspondeAosPedidos(item, pedidosFiltro) {
    quando o status selecionado é "Pedido".
 ========================================================= */
 
-function filtrarPedidosParaProdutos(pedidos, filtros, relatorio, { ignorarCliente = false, filtrarProduto = false } = {}) {
+function filtrarPedidosParaProdutos(
+  pedidos,
+  filtros,
+  relatorio,
+  { ignorarCliente = false, filtrarProduto = false } = {},
+) {
   const numerosSelecionados = normalizarListaPedidosFiltro(filtros?.pedidos);
 
   return pedidos.filter((item) => {
@@ -170,19 +171,15 @@ function filtrarPedidosParaProdutos(pedidos, filtros, relatorio, { ignorarClient
   });
 }
 
-function FiltrosPedidosRelatorio({
-  filtros,
-  setFiltros,
-  pedidos = [],
-  relatorio,
-}) {
+function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio }) {
   /* Clientes disponíveis: mesmos filtros do relatório, exceto
      o próprio cliente; o produto selecionado também é considerado. */
   const pedidosElegiveisClientes = useMemo(
-    () => filtrarPedidosParaProdutos(pedidos, filtros, relatorio, {
-      ignorarCliente: true,
-      filtrarProduto: true,
-    }),
+    () =>
+      filtrarPedidosParaProdutos(pedidos, filtros, relatorio, {
+        ignorarCliente: true,
+        filtrarProduto: true,
+      }),
     [pedidos, filtros, relatorio],
   );
 
@@ -200,10 +197,13 @@ function FiltrosPedidosRelatorio({
 
   const vendedores = useMemo(
     () =>
-      valoresUnicosOrdenados(pedidos.map((item) => item?.vendedor), {
-        filtrar: (valor) => Boolean(valor && valor !== "-"),
-        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
-      }),
+      valoresUnicosOrdenados(
+        pedidos.map((item) => item?.vendedor),
+        {
+          filtrar: (valor) => Boolean(valor && valor !== "-"),
+          comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+        },
+      ),
     [pedidos],
   );
 
@@ -219,9 +219,7 @@ function FiltrosPedidosRelatorio({
       const codigo = obterCodigoProduto(item);
       if (!codigo || codigo === "-") continue;
 
-      const descricao = String(
-        item?.produto ?? item?.descricao_produto ?? "",
-      ).trim();
+      const descricao = String(item?.produto ?? item?.descricao_produto ?? "").trim();
 
       const existente = mapa.get(codigo);
       if (!existente) {
@@ -231,16 +229,17 @@ function FiltrosPedidosRelatorio({
       }
     }
 
-    return [...mapa.values()].sort((a, b) =>
-      compararPtBR(a.codigo, b.codigo, { numeric: true }),
-    );
+    return [...mapa.values()].sort((a, b) => compararPtBR(a.codigo, b.codigo, { numeric: true }));
   }, [pedidosElegiveis]);
 
   const statusDisponiveis = useMemo(
     () =>
-      valoresUnicosOrdenados(pedidos.map((item) => item?.status), {
-        comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
-      }),
+      valoresUnicosOrdenados(
+        pedidos.map((item) => item?.status),
+        {
+          comparar: (a, b) => compararPtBR(a, b, { numeric: false }),
+        },
+      ),
     [pedidos],
   );
 
@@ -271,16 +270,11 @@ function FiltrosPedidosRelatorio({
           </div>
 
           <div className="rel-pedidos-filtros-grid">
-            <CampoFiltro
-              titulo="Pedido(s)"
-              className="rel-pedidos-campo rel-pedidos-campo-pedidos"
-            >
+            <CampoFiltro titulo="Pedido(s)" className="rel-pedidos-campo rel-pedidos-campo-pedidos">
               <input
                 type="text"
                 value={filtros?.pedidos || ""}
-                onChange={(evento) =>
-                  alterar("pedidos", evento.target.value)
-                }
+                onChange={(evento) => alterar("pedidos", evento.target.value)}
                 placeholder="Ex.: 3105, 3106, 3107, 3105/1"
                 autoComplete="off"
               />
@@ -288,29 +282,19 @@ function FiltrosPedidosRelatorio({
 
             {relatorio?.filtros?.periodo && (
               <>
-                <CampoFiltro
-                  titulo="Previsão de faturamento — de"
-                  className="rel-pedidos-campo"
-                >
+                <CampoFiltro titulo="Previsão de faturamento — de" className="rel-pedidos-campo">
                   <input
                     type="date"
                     value={filtros?.dataInicio || ""}
-                    onChange={(evento) =>
-                      alterar("dataInicio", evento.target.value)
-                    }
+                    onChange={(evento) => alterar("dataInicio", evento.target.value)}
                   />
                 </CampoFiltro>
 
-                <CampoFiltro
-                  titulo="Previsão de faturamento — até"
-                  className="rel-pedidos-campo"
-                >
+                <CampoFiltro titulo="Previsão de faturamento — até" className="rel-pedidos-campo">
                   <input
                     type="date"
                     value={filtros?.dataFim || ""}
-                    onChange={(evento) =>
-                      alterar("dataFim", evento.target.value)
-                    }
+                    onChange={(evento) => alterar("dataFim", evento.target.value)}
                   />
                 </CampoFiltro>
               </>

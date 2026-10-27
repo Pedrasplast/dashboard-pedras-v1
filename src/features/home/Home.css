@@ -10,13 +10,7 @@
 
   margin-top: 50px;
 
-  background:
-    linear-gradient(
-      180deg,
-      #eef3f8 0%,
-      #f6f8fb 340px,
-      #f8fafc 100%
-    );
+  background: linear-gradient(180deg, #eef3f8 0%, #f6f8fb 340px, #f8fafc 100%);
 
   box-sizing: border-box;
 }
@@ -27,7 +21,6 @@
 
   margin: 70px auto;
 }
-
 
 /* =========================================================
    HOME PÚBLICA
@@ -100,12 +93,7 @@
 
   color: #0f172a;
 
-  font-size:
-    clamp(
-      2.5rem,
-      5vw,
-      4.1rem
-    );
+  font-size: clamp(2.5rem, 5vw, 4.1rem);
 
   line-height: 1.04;
 
@@ -122,7 +110,6 @@
   font-size: 1rem;
   line-height: 1.7;
 }
-
 
 /* =========================================================
    BENEFÍCIOS
@@ -168,7 +155,6 @@
   line-height: 1.5;
 }
 
-
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -183,9 +169,7 @@
   border: 1px solid #dce4ee;
   border-radius: 18px;
 
-  box-shadow:
-    0 22px 50px
-    rgba(15, 23, 42, 0.1);
+  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.1);
 
   box-sizing: border-box;
 }
@@ -281,9 +265,7 @@
 .home-login-field input:focus {
   border-color: #3b82f6;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(59, 130, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 .home-login-field input:disabled {
@@ -359,7 +341,6 @@
   font-size: 0.72rem;
 }
 
-
 /* =========================================================
    CABEÇALHO / BOAS-VINDAS
 ========================================================= */
@@ -377,22 +358,13 @@
 
   padding: 30px 32px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #0f172a 0%,
-      #172554 52%,
-      #1d4ed8 145%
-    );
+  background: linear-gradient(135deg, #0f172a 0%, #172554 52%, #1d4ed8 145%);
 
-  border: 1px solid
-    rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
   border-radius: 18px;
 
-  box-shadow:
-    0 16px 36px
-    rgba(15, 23, 42, 0.18);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
 }
 
 .home-welcome::after {
@@ -408,8 +380,7 @@
 
   border-radius: 50%;
 
-  background:
-    rgba(59, 130, 246, 0.13);
+  background: rgba(59, 130, 246, 0.13);
 
   pointer-events: none;
 }
@@ -433,12 +404,9 @@
   align-items: center;
   justify-content: center;
 
-  background:
-    rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.11);
 
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.13);
 
   border-radius: 14px;
 
@@ -489,12 +457,9 @@
 
   padding: 11px 15px;
 
-  background:
-    rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.09);
 
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.13);
 
   border-radius: 11px;
 
@@ -527,7 +492,6 @@
   font-size: 0.82rem;
 }
 
-
 /* =========================================================
    PAINÉIS / SEÇÕES
 ========================================================= */
@@ -547,7 +511,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    PRODUÇÃO
 ========================================================= */
@@ -558,74 +521,47 @@
   border: 1px solid #dce5ef;
   border-top: 4px solid #2563eb;
 
-  box-shadow:
-    0 8px 24px
-    rgba(15, 23, 42, 0.055);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.055);
 }
-
 
 /* =========================================================
    PEDIDOS
 ========================================================= */
 
 .home-summary-section {
-  background:
-    linear-gradient(
-      180deg,
-      #f8fbff 0%,
-      #ffffff 100%
-    );
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
 
   border: 1px solid #d9e5f3;
   border-top: 4px solid #3b82f6;
 
-  box-shadow:
-    0 8px 24px
-    rgba(15, 23, 42, 0.05);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
-
 
 /* =========================================================
    ATENÇÕES
 ========================================================= */
 
 .home-alerts-section {
-  background:
-    linear-gradient(
-      180deg,
-      #fffdfa 0%,
-      #ffffff 100%
-    );
+  background: linear-gradient(180deg, #fffdfa 0%, #ffffff 100%);
 
   border: 1px solid #eee3d5;
   border-top: 4px solid #f59e0b;
 
-  box-shadow:
-    0 8px 24px
-    rgba(15, 23, 42, 0.045);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
 }
-
 
 /* =========================================================
    ADMINISTRAÇÃO
 ========================================================= */
 
 .home-admin-section {
-  background:
-    linear-gradient(
-      180deg,
-      #fafbfc 0%,
-      #ffffff 100%
-    );
+  background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
 
   border: 1px solid #dde3ea;
   border-top: 4px solid #64748b;
 
-  box-shadow:
-    0 8px 24px
-    rgba(15, 23, 42, 0.045);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
 }
-
 
 /* =========================================================
    TÍTULOS DAS SEÇÕES
@@ -666,10 +602,7 @@
   letter-spacing: 0.1em;
 }
 
-.home-alerts-section
-  .home-section-heading
-  > div
-  > span {
+.home-alerts-section .home-section-heading > div > span {
   background: #fff7ed;
 
   border-color: #fed7aa;
@@ -677,10 +610,7 @@
   color: #c2410c;
 }
 
-.home-admin-section
-  .home-section-heading
-  > div
-  > span {
+.home-admin-section .home-section-heading > div > span {
   background: #f1f5f9;
 
   border-color: #e2e8f0;
@@ -708,7 +638,6 @@
   line-height: 1.5;
 }
 
-
 /* =========================================================
    CARDS
 ========================================================= */
@@ -716,11 +645,7 @@
 .home-summary-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 14px;
 }
@@ -739,9 +664,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 13px;
 
-  box-shadow:
-    0 2px 6px
-    rgba(15, 23, 42, 0.025);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.025);
 
   box-sizing: border-box;
 
@@ -752,13 +675,11 @@
     background-color 0.2s ease;
 }
 
-.home-production-section
-  .home-summary-card {
+.home-production-section .home-summary-card {
   background: #f8fbff;
 }
 
-.home-summary-section
-  .home-summary-card {
+.home-summary-section .home-summary-card {
   background: #ffffff;
 }
 
@@ -769,18 +690,11 @@
 
   border-color: #c8d7e7;
 
-  box-shadow:
-    0 9px 20px
-    rgba(15, 23, 42, 0.07);
+  box-shadow: 0 9px 20px rgba(15, 23, 42, 0.07);
 }
 
 .home-summary-card-warning {
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #fffaf3
-    );
+  background: linear-gradient(145deg, #ffffff, #fffaf3);
 
   border-color: #fed7aa;
 }
@@ -872,18 +786,13 @@
   line-height: 1.45;
 }
 
-
 /* =========================================================
    FINANCEIRO - VALORES GRANDES NOS CARDS
    SOMENTE O RESUMO FINANCEIRO
 ========================================================= */
 
-.home-summary-card:has(
-  .home-summary-info > strong[style]
-),
-.home-summary-card:has(
-  .home-summary-icon[style]
-) {
+.home-summary-card:has(.home-summary-info > strong[style]),
+.home-summary-card:has(.home-summary-icon[style]) {
   min-width: 0;
 
   gap: 10px;
@@ -891,49 +800,23 @@
   padding: 18px 16px;
 }
 
-
-.home-summary-card:has(
-  .home-summary-info > strong[style]
-)
-.home-summary-icon,
-.home-summary-card:has(
-  .home-summary-icon[style]
-)
-.home-summary-icon {
+.home-summary-card:has(.home-summary-info > strong[style]) .home-summary-icon,
+.home-summary-card:has(.home-summary-icon[style]) .home-summary-icon {
   width: 40px;
   height: 40px;
 }
 
-
-.home-summary-card:has(
-  .home-summary-info > strong[style]
-)
-.home-summary-info,
-.home-summary-card:has(
-  .home-summary-icon[style]
-)
-.home-summary-info {
+.home-summary-card:has(.home-summary-info > strong[style]) .home-summary-info,
+.home-summary-card:has(.home-summary-icon[style]) .home-summary-info {
   min-width: 0;
 }
 
-
-.home-summary-card:has(
-  .home-summary-info > strong[style]
-)
-.home-summary-info > strong,
-.home-summary-card:has(
-  .home-summary-icon[style]
-)
-.home-summary-info > strong {
+.home-summary-card:has(.home-summary-info > strong[style]) .home-summary-info > strong,
+.home-summary-card:has(.home-summary-icon[style]) .home-summary-info > strong {
   width: 100%;
   max-width: 100%;
 
-  font-size:
-    clamp(
-      1.1rem,
-      1.25vw,
-      1.35rem
-    );
+  font-size: clamp(1.1rem, 1.25vw, 1.35rem);
 
   font-weight: 800;
 
@@ -945,7 +828,6 @@
 
   font-variant-numeric: tabular-nums;
 }
-
 
 /* =========================================================
    ERRO
@@ -986,7 +868,6 @@
   font-size: 0.76rem;
 }
 
-
 /* =========================================================
    ATENÇÕES
 ========================================================= */
@@ -999,9 +880,7 @@
   border: 1px solid #e7e1d7;
   border-radius: 12px;
 
-  box-shadow:
-    0 3px 10px
-    rgba(15, 23, 42, 0.03);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.03);
 }
 
 .home-alert-item {
@@ -1068,7 +947,6 @@
   background: #edf0f3;
 }
 
-
 /* =========================================================
    ADMINISTRAÇÃO
 ========================================================= */
@@ -1076,11 +954,7 @@
 .home-admin-actions {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 13px;
 
@@ -1103,9 +977,7 @@
 
   cursor: pointer;
 
-  box-shadow:
-    0 2px 7px
-    rgba(15, 23, 42, 0.025);
+  box-shadow: 0 2px 7px rgba(15, 23, 42, 0.025);
 
   transition:
     transform 0.2s ease,
@@ -1121,9 +993,7 @@
 
   border-color: #bfdbfe;
 
-  box-shadow:
-    0 9px 20px
-    rgba(15, 23, 42, 0.07);
+  box-shadow: 0 9px 20px rgba(15, 23, 42, 0.07);
 }
 
 .home-admin-action-icon {
@@ -1165,7 +1035,6 @@
   line-height: 1.4;
 }
 
-
 /* =========================================================
    RODAPÉ
 ========================================================= */
@@ -1194,33 +1063,20 @@
   color: #64748b;
 }
 
-
 /* =========================================================
    RESPONSIVO - 1100px
 ========================================================= */
 
 @media (max-width: 1100px) {
   .home-summary-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-
-  .home-summary-card:has(
-    .home-summary-info > strong[style]
-  )
-  .home-summary-info > strong,
-  .home-summary-card:has(
-    .home-summary-icon[style]
-  )
-  .home-summary-info > strong {
+  .home-summary-card:has(.home-summary-info > strong[style]) .home-summary-info > strong,
+  .home-summary-card:has(.home-summary-icon[style]) .home-summary-info > strong {
     font-size: 1.5rem;
   }
 }
-
 
 /* =========================================================
    RESPONSIVO - 900px
@@ -1237,7 +1093,6 @@
     max-width: 470px;
   }
 }
-
 
 /* =========================================================
    RESPONSIVO - 650px
@@ -1310,7 +1165,6 @@
     gap: 7px;
   }
 }
-
 
 /* =========================================================
    RESPONSIVO - 420px

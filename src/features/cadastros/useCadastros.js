@@ -1,11 +1,6 @@
-
 import { useMemo } from "react";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
 
@@ -20,21 +15,13 @@ import {
   salvarProdutoCadastro,
 } from "./cadastrosService";
 
-import {
-  buscarTabelaPrecos,
-} from "@/features/tabela-precos-materia-prima/services/tabelaPrecos.service";
+import { buscarTabelaPrecos } from "@/features/tabela-precos-materia-prima/services/tabelaPrecos.service";
 
-import {
-  TABELA_PRECOS,
-} from "@/features/tabela-precos-materia-prima/constants/tabelaPrecos.constants";
+import { TABELA_PRECOS } from "@/features/tabela-precos-materia-prima/constants/tabelaPrecos.constants";
 
-import {
-  buscarNecessidadeMateriaPrima,
-} from "@/features/necessidade-materia-prima/services/necessidadeMateriaPrima.service";
+import { buscarNecessidadeMateriaPrima } from "@/features/necessidade-materia-prima/services/necessidadeMateriaPrima.service";
 
-import {
-  QUERY_KEY_NECESSIDADE_MP,
-} from "@/features/necessidade-materia-prima/hooks/useNecessidadeMateriaPrima";
+import { QUERY_KEY_NECESSIDADE_MP } from "@/features/necessidade-materia-prima/hooks/useNecessidadeMateriaPrima";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -42,21 +29,15 @@ import {
 
 const CHAVE_PRODUTOS = ["cadastros-produtos"];
 
-const CHAVE_FORNECEDORES = [
-  "cadastros-fornecedores",
-];
+const CHAVE_FORNECEDORES = ["cadastros-fornecedores"];
 
 const CHAVE_MATERIAIS = ["cadastros-materiais"];
 
-const CHAVE_FORNECEDOR_MATERIAIS = [
-  "cadastros-fornecedor-materiais",
-];
+const CHAVE_FORNECEDOR_MATERIAIS = ["cadastros-fornecedor-materiais"];
 
-const CHAVE_DESCRICOES =
-  "cadastros-descricoes-estoque-omie";
+const CHAVE_DESCRICOES = "cadastros-descricoes-estoque-omie";
 
-const CHAVE_TABELA_PRECOS =
-  TABELA_PRECOS.QUERY_KEY;
+const CHAVE_TABELA_PRECOS = TABELA_PRECOS.QUERY_KEY;
 
 /* Mesma chave da tela de Necessidade (antes faltava o último
    item e a atualização não chegava na tela). */
@@ -79,9 +60,7 @@ function codigoValido(valor) {
 function descricaoValida(valor) {
   const descricao = String(valor ?? "").trim();
 
-  return descricao && descricao !== "-"
-    ? descricao
-    : "";
+  return descricao && descricao !== "-" ? descricao : "";
 }
 
 /* =====================================================
@@ -90,9 +69,7 @@ function descricaoValida(valor) {
    Mantém comportamento anterior.
 ===================================================== */
 
-export async function buscarDescricaoProdutoEstoque(
-  codigoProduto
-) {
+export async function buscarDescricaoProdutoEstoque(codigoProduto) {
   const codigo = codigoValido(codigoProduto);
 
   if (!codigo) {
@@ -127,15 +104,8 @@ export async function buscarDescricaoProdutoEstoque(
 async function buscarDescricoesCadastro(codigos) {
   const mapa = {};
 
-  for (
-    let indice = 0;
-    indice < codigos.length;
-    indice += TAMANHO_LOTE
-  ) {
-    const lote = codigos.slice(
-      indice,
-      indice + TAMANHO_LOTE
-    );
+  for (let indice = 0; indice < codigos.length; indice += TAMANHO_LOTE) {
+    const lote = codigos.slice(indice, indice + TAMANHO_LOTE);
 
     const { data, error } = await supabase
       .from("estoque_produto_acabado_omie")
@@ -151,19 +121,11 @@ async function buscarDescricoesCadastro(codigos) {
     }
 
     for (const registro of data ?? []) {
-      const codigo = codigoValido(
-        registro.codigo_produto
-      );
+      const codigo = codigoValido(registro.codigo_produto);
 
-      const descricao = descricaoValida(
-        registro.descricao
-      );
+      const descricao = descricaoValida(registro.descricao);
 
-      if (
-        codigo &&
-        descricao &&
-        !Object.hasOwn(mapa, codigo)
-      ) {
+      if (codigo && descricao && !Object.hasOwn(mapa, codigo)) {
         mapa[codigo] = descricao;
       }
     }
@@ -260,14 +222,12 @@ export default function useCadastros() {
       [
         ...new Set(
           (produtosQuery.data ?? [])
-            .map((produto) =>
-              codigoValido(produto.codigoProduto)
-            )
-            .filter(Boolean)
+            .map((produto) => codigoValido(produto.codigoProduto))
+            .filter(Boolean),
         ),
       ].sort(),
 
-    [produtosQuery.data]
+    [produtosQuery.data],
   );
 
   /* =================================================
@@ -277,12 +237,9 @@ export default function useCadastros() {
   const descricoesQuery = useQuery({
     queryKey: [CHAVE_DESCRICOES, codigos],
 
-    queryFn: () =>
-      buscarDescricoesCadastro(codigos),
+    queryFn: () => buscarDescricoesCadastro(codigos),
 
-    enabled:
-      produtosQuery.isSuccess &&
-      codigos.length > 0,
+    enabled: produtosQuery.isSuccess && codigos.length > 0,
 
     staleTime: UM_MINUTO,
 
@@ -291,8 +248,7 @@ export default function useCadastros() {
     retry: 1,
   });
 
-  const descricoesEstoque =
-    descricoesQuery.data ?? {};
+  const descricoesEstoque = descricoesQuery.data ?? {};
 
   /* =================================================
      ASSOCIAR DESCRIÇÕES
@@ -302,21 +258,13 @@ export default function useCadastros() {
 
   const produtos = useMemo(
     () =>
-      (produtosQuery.data ?? []).map(
-        (produto) => ({
-          ...produto,
+      (produtosQuery.data ?? []).map((produto) => ({
+        ...produto,
 
-          descricaoEstoque:
-            descricoesEstoque[
-              codigoValido(produto.codigoProduto)
-            ] ?? "",
-        })
-      ),
+        descricaoEstoque: descricoesEstoque[codigoValido(produto.codigoProduto)] ?? "",
+      })),
 
-    [
-      produtosQuery.data,
-      descricoesEstoque,
-    ]
+    [produtosQuery.data, descricoesEstoque],
   );
 
   /* =================================================
@@ -387,24 +335,16 @@ export default function useCadastros() {
      um salvamento bem-sucedido em falha.
 ================================================= */
 
-  function executarEmSegundoPlano(
-    operacoes,
-    contexto
-  ) {
-    void Promise.allSettled(
-      operacoes.map((operacao) =>
-        Promise.resolve().then(operacao)
-      )
-    ).then((resultados) => {
-      resultados.forEach((resultado, indice) => {
-        if (resultado.status === "rejected") {
-          console.error(
-            `[${contexto}] Erro na atualização ${indice + 1}:`,
-            resultado.reason
-          );
-        }
-      });
-    });
+  function executarEmSegundoPlano(operacoes, contexto) {
+    void Promise.allSettled(operacoes.map((operacao) => Promise.resolve().then(operacao))).then(
+      (resultados) => {
+        resultados.forEach((resultado, indice) => {
+          if (resultado.status === "rejected") {
+            console.error(`[${contexto}] Erro na atualização ${indice + 1}:`, resultado.reason);
+          }
+        });
+      },
+    );
   }
 
   /* =================================================
@@ -447,7 +387,7 @@ export default function useCadastros() {
 
           atualizarNecessidadeCompra,
         ],
-        "Cadastro de Produto"
+        "Cadastro de Produto",
       );
     },
   });
@@ -494,7 +434,7 @@ export default function useCadastros() {
 
           atualizarNecessidadeCompra,
         ],
-        "Cadastro de Material"
+        "Cadastro de Material",
       );
     },
   });
@@ -505,19 +445,17 @@ export default function useCadastros() {
      Mantido.
 ================================================= */
 
-  const salvarMateriaisFornecedorMutation =
-    useMutation({
-      mutationFn:
-        salvarMateriaisFornecedorCadastro,
+  const salvarMateriaisFornecedorMutation = useMutation({
+    mutationFn: salvarMateriaisFornecedorCadastro,
 
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: CHAVE_FORNECEDOR_MATERIAIS,
-        });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: CHAVE_FORNECEDOR_MATERIAIS,
+      });
 
-        await fornecedorMateriaisQuery.refetch();
-      },
-    });
+      await fornecedorMateriaisQuery.refetch();
+    },
+  });
 
   /* =================================================
      RECARREGAR CADASTROS
@@ -548,19 +486,15 @@ export default function useCadastros() {
   return {
     produtos,
 
-    fornecedores:
-      fornecedoresQuery.data ?? [],
+    fornecedores: fornecedoresQuery.data ?? [],
 
-    materiais:
-      materiaisQuery.data ?? [],
+    materiais: materiaisQuery.data ?? [],
 
-    fornecedorMateriais:
-      fornecedorMateriaisQuery.data ?? [],
+    fornecedorMateriais: fornecedorMateriaisQuery.data ?? [],
 
     descricoesEstoque,
 
-    buscarDescricaoEstoque:
-      buscarDescricaoProdutoEstoque,
+    buscarDescricaoEstoque: buscarDescricaoProdutoEstoque,
 
     carregando:
       produtosQuery.isLoading ||
@@ -575,20 +509,15 @@ export default function useCadastros() {
       fornecedorMateriaisQuery.isFetching ||
       descricoesQuery.isFetching,
 
-    buscandoDescricoesEstoque:
-      descricoesQuery.isFetching,
+    buscandoDescricoesEstoque: descricoesQuery.isFetching,
 
-    salvandoProduto:
-      salvarProdutoMutation.isPending,
+    salvandoProduto: salvarProdutoMutation.isPending,
 
-    salvandoFornecedor:
-      salvarFornecedorMutation.isPending,
+    salvandoFornecedor: salvarFornecedorMutation.isPending,
 
-    salvandoMaterial:
-      salvarMaterialMutation.isPending,
+    salvandoMaterial: salvarMaterialMutation.isPending,
 
-    salvandoMateriaisFornecedor:
-      salvarMateriaisFornecedorMutation.isPending,
+    salvandoMateriaisFornecedor: salvarMateriaisFornecedorMutation.isPending,
 
     erro:
       produtosQuery.error?.message ||
@@ -597,21 +526,16 @@ export default function useCadastros() {
       fornecedorMateriaisQuery.error?.message ||
       "",
 
-    erroDescricoesEstoque:
-      descricoesQuery.error?.message || "",
+    erroDescricoesEstoque: descricoesQuery.error?.message || "",
 
     recarregar,
 
-    salvarProduto:
-      salvarProdutoMutation.mutateAsync,
+    salvarProduto: salvarProdutoMutation.mutateAsync,
 
-    salvarFornecedor:
-      salvarFornecedorMutation.mutateAsync,
+    salvarFornecedor: salvarFornecedorMutation.mutateAsync,
 
-    salvarMaterial:
-      salvarMaterialMutation.mutateAsync,
+    salvarMaterial: salvarMaterialMutation.mutateAsync,
 
-    salvarMateriaisFornecedor:
-      salvarMateriaisFornecedorMutation.mutateAsync,
+    salvarMateriaisFornecedor: salvarMateriaisFornecedorMutation.mutateAsync,
   };
 }

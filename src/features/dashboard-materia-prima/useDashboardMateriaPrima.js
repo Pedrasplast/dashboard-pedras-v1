@@ -1,50 +1,28 @@
-import {
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import {
-  buscarFinanceiroMateriaPrima,
-} from "./financeiroMateriaPrimaService.js";
+import { buscarFinanceiroMateriaPrima } from "./financeiroMateriaPrimaService.js";
 
-import {
-  buscarFinanceiroMateriaPrimaOmie,
-} from "./financeiroMateriaPrimaOmieService.js";
+import { buscarFinanceiroMateriaPrimaOmie } from "./financeiroMateriaPrimaOmieService.js";
 
-import {
-  ORIGEM_OMIE,
-} from "./origemOmie.js";
+import { ORIGEM_OMIE } from "./origemOmie.js";
 
-
-function criarResultadoVazio({
-  dataInicial,
-  dataFinal,
-  tipoData,
-}) {
+function criarResultadoVazio({ dataInicial, dataFinal, tipoData }) {
   return {
     periodo: {
-      dataInicial:
-        dataInicial ||
-        null,
+      dataInicial: dataInicial || null,
 
-      dataFinal:
-        dataFinal ||
-        null,
+      dataFinal: dataFinal || null,
 
-      tipoData:
-        tipoData ||
-        "compra",
+      tipoData: tipoData || "compra",
     },
 
     financeiro: {
-      compras:
-        [],
+      compras: [],
 
-      recebimentos:
-        [],
+      recebimentos: [],
     },
   };
 }
-
 
 export default function useDashboardMateriaPrima({
   dataInicial,
@@ -55,57 +33,37 @@ export default function useDashboardMateriaPrima({
 }) {
   /* Origem dos dados: "manual" (tela de compras) ou "omie". */
   const buscar =
-    origem === ORIGEM_OMIE
-      ? buscarFinanceiroMateriaPrimaOmie
-      : buscarFinanceiroMateriaPrima;
+    origem === ORIGEM_OMIE ? buscarFinanceiroMateriaPrimaOmie : buscarFinanceiroMateriaPrima;
 
-  const consulta =
-    useQuery({
-      queryKey: [
-        "dashboard-materia-prima-financeiro",
+  const consulta = useQuery({
+    queryKey: ["dashboard-materia-prima-financeiro", dataInicial, dataFinal, tipoData, origem],
+
+    queryFn: async () => {
+      const financeiro = await buscar({
         dataInicial,
         dataFinal,
         tipoData,
-        origem,
-      ],
+      });
 
-      queryFn:
-        async () => {
-          const financeiro =
-            await buscar({
-              dataInicial,
-              dataFinal,
-              tipoData,
-            });
-
-          return {
-            periodo: {
-              dataInicial,
-              dataFinal,
-              tipoData,
-            },
-
-            financeiro,
-          };
+      return {
+        periodo: {
+          dataInicial,
+          dataFinal,
+          tipoData,
         },
 
-      enabled:
-        Boolean(
-          habilitado &&
-          dataInicial &&
-          dataFinal,
-        ),
+        financeiro,
+      };
+    },
 
-      staleTime:
-        30 *
-        1000,
+    enabled: Boolean(habilitado && dataInicial && dataFinal),
 
-      refetchOnWindowFocus:
-        true,
+    staleTime: 30 * 1000,
 
-      retry:
-        1,
-    });
+    refetchOnWindowFocus: true,
+
+    retry: 1,
+  });
 
   return {
     dados:
@@ -116,21 +74,14 @@ export default function useDashboardMateriaPrima({
         tipoData,
       }),
 
-    carregando:
-      consulta.isLoading,
+    carregando: consulta.isLoading,
 
-    atualizando:
-      consulta.isFetching &&
-      !consulta.isLoading,
+    atualizando: consulta.isFetching && !consulta.isLoading,
 
-    erro:
-      consulta.isError
-        ? consulta.error
-            ?.message ||
-          "Não foi possível carregar o financeiro de matéria-prima."
-        : "",
+    erro: consulta.isError
+      ? consulta.error?.message || "Não foi possível carregar o financeiro de matéria-prima."
+      : "",
 
-    recarregar:
-      consulta.refetch,
+    recarregar: consulta.refetch,
   };
 }

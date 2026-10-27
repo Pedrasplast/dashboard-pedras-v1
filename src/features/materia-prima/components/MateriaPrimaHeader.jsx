@@ -1,6 +1,4 @@
-import {
-  ClipboardList,
-} from "lucide-react";
+import { ClipboardList } from "lucide-react";
 
 import PageHeader from "@/components/layout/PageHeader";
 import "./MateriaPrimaHeader.css";

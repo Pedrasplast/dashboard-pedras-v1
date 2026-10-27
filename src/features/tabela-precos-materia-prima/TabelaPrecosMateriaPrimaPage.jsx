@@ -138,13 +138,14 @@ export default function TabelaPrecosMateriaPrimaPage() {
               <h2>Preço médio por material</h2>
 
               <p>
-                Valor total comprado ÷ quantidade comprada nos últimos <strong>{periodo} dias</strong>.
+                Valor total comprado ÷ quantidade comprada nos últimos{" "}
+                <strong>{periodo} dias</strong>.
               </p>
 
               <p className="tp-regra">
                 <Info size={14} aria-hidden="true" />
-                Pedidos aprovados do Suprimentos PP, pela data de inclusão. Com menos de 2 compras no
-                período, vale o preço da última compra.
+                Pedidos aprovados do Suprimentos PP, pela data de inclusão. Com menos de 2 compras
+                no período, vale o preço da última compra.
               </p>
             </div>
           </div>

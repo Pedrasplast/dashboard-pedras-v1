@@ -13,8 +13,7 @@ export const Route = createFileRoute("/importar")({
       },
       {
         name: "description",
-        content:
-          "Importação da carga de máquinas para o sistema Pedrasplast.",
+        content: "Importação da carga de máquinas para o sistema Pedrasplast.",
       },
     ],
   }),

@@ -8,10 +8,7 @@ export function compararPtBR(a, b, opcoes = {}) {
 export function valoresUnicos(
   valores,
   {
-    filtrar = (valor) =>
-      valor !== null &&
-      valor !== undefined &&
-      String(valor).trim() !== "",
+    filtrar = (valor) => valor !== null && valor !== undefined && String(valor).trim() !== "",
   } = {},
 ) {
   if (!Array.isArray(valores)) {
@@ -23,10 +20,7 @@ export function valoresUnicos(
 
 export function valoresUnicosOrdenados(
   valores,
-  {
-    filtrar,
-    comparar = (a, b) => compararPtBR(a, b, { numeric: true }),
-  } = {},
+  { filtrar, comparar = (a, b) => compararPtBR(a, b, { numeric: true }) } = {},
 ) {
   return valoresUnicos(valores, {
     ...(filtrar ? { filtrar } : {}),

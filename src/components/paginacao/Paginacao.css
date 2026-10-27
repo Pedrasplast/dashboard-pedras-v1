@@ -18,18 +18,12 @@
 
   gap: 18px;
 
-  padding:
-    12px
-    16px;
+  padding: 12px 16px;
 
-  border-top:
-    1px solid
-    #e2e8f0;
+  border-top: 1px solid #e2e8f0;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 }
-
 
 /* =========================================================
    INFORMACAO
@@ -50,7 +44,6 @@
   color: #334155;
 }
 
-
 /* =========================================================
    CONTROLES
 ========================================================= */
@@ -69,7 +62,6 @@
   gap: 5px;
 }
 
-
 /* =========================================================
    BOTOES
 ========================================================= */
@@ -81,27 +73,19 @@
   align-items: center;
   justify-content: center;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
-  border-radius:
-    7px;
+  border-radius: 7px;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  color:
-    #475569;
+  color: #475569;
 
-  font-size:
-    11px;
+  font-size: 11px;
 
-  font-weight:
-    600;
+  font-weight: 600;
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
     background 0.15s ease,
@@ -111,214 +95,146 @@
 }
 
 .paginacao-botao:hover:not(:disabled) {
-  border-color:
-    #cbd5e1;
+  border-color: #cbd5e1;
 
-  background:
-    #f8fafc;
+  background: #f8fafc;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 }
 
 .paginacao-botao:focus-visible {
-  outline:
-    none;
+  outline: none;
 
-  border-color:
-    #2563eb;
+  border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.1
-    );
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .paginacao-botao:disabled {
-  opacity:
-    0.45;
+  opacity: 0.45;
 
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
 }
-
 
 /* =========================================================
    NUMERO
 ========================================================= */
 
 .paginacao-numero {
-  min-width:
-    34px;
+  min-width: 34px;
 
-  padding:
-    0 9px;
+  padding: 0 9px;
 }
 
 .paginacao-numero.ativa {
-  border-color:
-    #2563eb;
+  border-color: #2563eb;
 
-  background:
-    #2563eb;
+  background: #2563eb;
 
-  color:
-    #ffffff;
+  color: #ffffff;
 
-  box-shadow:
-    0 1px 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.18
-    );
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.18);
 }
 
 .paginacao-numero.ativa:hover {
-  border-color:
-    #2563eb;
+  border-color: #2563eb;
 
-  background:
-    #2563eb;
+  background: #2563eb;
 
-  color:
-    #ffffff;
+  color: #ffffff;
 }
-
 
 /* =========================================================
    ANTERIOR / PROXIMA
 ========================================================= */
 
 .paginacao-navegacao {
-  gap:
-    5px;
+  gap: 5px;
 
-  padding:
-    0 10px;
+  padding: 0 10px;
 }
-
 
 /* =========================================================
    RETICENCIAS
 ========================================================= */
 
 .paginacao-reticencias {
-  min-width:
-    22px;
+  min-width: 22px;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  color:
-    #94a3b8;
+  color: #94a3b8;
 
-  font-size:
-    12px;
+  font-size: 12px;
 
-  user-select:
-    none;
+  user-select: none;
 }
-
 
 /* =========================================================
    RESPONSIVO - TABLET
 ========================================================= */
 
-@media (
-  max-width: 800px
-) {
-
+@media (max-width: 800px) {
   .paginacao {
-    flex-direction:
-      column;
+    flex-direction: column;
 
-    align-items:
-      stretch;
+    align-items: stretch;
 
-    gap:
-      11px;
+    gap: 11px;
 
-    padding:
-      12px;
+    padding: 12px;
   }
 
   .paginacao-info {
-    text-align:
-      center;
+    text-align: center;
   }
 
   .paginacao-controles {
-    justify-content:
-      center;
+    justify-content: center;
   }
 }
-
 
 /* =========================================================
    RESPONSIVO - MOBILE
 ========================================================= */
 
-@media (
-  max-width: 600px
-) {
-
+@media (max-width: 600px) {
   .paginacao {
-    padding:
-      11px
-      9px;
+    padding: 11px 9px;
   }
 
   .paginacao-controles {
-    width:
-      100%;
+    width: 100%;
 
-    justify-content:
-      space-between;
+    justify-content: space-between;
 
-    gap:
-      5px;
+    gap: 5px;
   }
 
   .paginacao-paginas {
-    gap:
-      3px;
+    gap: 3px;
   }
 
   .paginacao-numero {
-    min-width:
-      31px;
+    min-width: 31px;
 
-    height:
-      32px;
+    height: 32px;
 
-    padding:
-      0 7px;
+    padding: 0 7px;
   }
 
   .paginacao-navegacao {
-    width:
-      34px;
+    width: 34px;
 
-    min-width:
-      34px;
+    min-width: 34px;
 
-    height:
-      32px;
+    height: 32px;
 
-    padding:
-      0;
+    padding: 0;
   }
 
   /*
@@ -326,49 +242,36 @@
    * apenas as setas.
    */
   .paginacao-navegacao span {
-    display:
-      none;
+    display: none;
   }
 }
-
 
 /* =========================================================
    MOBILE PEQUENO
 ========================================================= */
 
-@media (
-  max-width: 420px
-) {
-
+@media (max-width: 420px) {
   .paginacao-info {
-    font-size:
-      10px;
+    font-size: 10px;
   }
 
   .paginacao-numero {
-    min-width:
-      29px;
+    min-width: 29px;
 
-    height:
-      30px;
+    height: 30px;
 
-    font-size:
-      10px;
+    font-size: 10px;
   }
 
   .paginacao-navegacao {
-    width:
-      31px;
+    width: 31px;
 
-    min-width:
-      31px;
+    min-width: 31px;
 
-    height:
-      30px;
+    height: 30px;
   }
 
   .paginacao-reticencias {
-    min-width:
-      16px;
+    min-width: 16px;
   }
 }
