@@ -1,0 +1,54 @@
+/* =========================================================
+   FORMATAÇÃO NUMÉRICA (pt-BR)
+   ---------------------------------------------------------
+   `numero.toLocaleString("pt-BR", opcoes)` cria um formatador
+   novo a cada chamada. Aqui o Intl.NumberFormat é criado uma
+   vez por combinação de opções e reaproveitado, com o mesmo
+   resultado (é exatamente o que toLocaleString usa por dentro).
+========================================================= */
+
+import { converterNumeroFlexivel } from "./numeros";
+
+const LOCALE = "pt-BR";
+const formatadores = new Map();
+
+function chaveOpcoes(opcoes) {
+  if (!opcoes) {
+    return "";
+  }
+
+  return Object.keys(opcoes)
+    .sort()
+    .map((chave) => `${chave}=${typeof opcoes[chave]}:${String(opcoes[chave])}`)
+    .join("|");
+}
+
+/** Intl.NumberFormat pt-BR reaproveitado para as mesmas opções. */
+export function obterFormatadorNumero(opcoes) {
+  const chave = chaveOpcoes(opcoes);
+  let formatador = formatadores.get(chave);
+
+  if (!formatador) {
+    formatador = new Intl.NumberFormat(LOCALE, opcoes);
+    formatadores.set(chave, formatador);
+  }
+
+  return formatador;
+}
+
+/** Equivale a `numero.toLocaleString("pt-BR", opcoes)` para um número. */
+export function formatarNumeroPtBR(numero, opcoes) {
+  return obterFormatadorNumero(opcoes).format(numero);
+}
+
+/** Valor em reais com o número de casas pedido (padrão do Intl: 2). */
+export function formatarReaisPtBR(numero, opcoes) {
+  return formatarNumeroPtBR(numero, { style: "currency", currency: "BRL", ...opcoes });
+}
+
+/** Converte com `converterNumeroFlexivel` e mostra até `casas` decimais. */
+export function formatarNumeroFlexivel(valor, casas = 2) {
+  return formatarNumeroPtBR(converterNumeroFlexivel(valor), {
+    maximumFractionDigits: casas,
+  });
+}

@@ -1,4 +1,4 @@
-import { converterNumeroDecimal } from "@/lib/numeros";
+import { converterNumeroDecimal } from "@/shared/lib/numeros";
 
 export const converterNumero = converterNumeroDecimal;
 

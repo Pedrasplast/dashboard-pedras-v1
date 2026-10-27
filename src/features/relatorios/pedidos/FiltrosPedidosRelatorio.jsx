@@ -3,8 +3,8 @@ import { FiFilter, FiX } from "react-icons/fi";
 
 import CampoFiltro from "@/components/filtros/CampoFiltro";
 import Filtros from "@/components/filtros/Filtros";
-import { compararPtBR, valoresUnicosOrdenados } from "@/lib/colecoes";
-import { normalizarTexto } from "@/lib/texto";
+import { compararPtBR, valoresUnicosOrdenados } from "@/shared/lib/colecoes";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import { obterDataPedidoRelatorio } from "./PedidosRelatorios";
 

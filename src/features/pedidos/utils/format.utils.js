@@ -1,4 +1,4 @@
-export { normalizarTexto } from "@/lib/texto";
+export { normalizarTexto } from "@/shared/lib/texto";
 
 export function formatarNumero(valor) {
   const numero = Number(valor);

@@ -1,4 +1,4 @@
-import { normalizarTexto } from "@/lib/texto";
+import { normalizarTextoCompacto } from "@/shared/lib/texto";
 
 import {
   extrairDataISORegistro,
@@ -111,9 +111,7 @@ function textoOuPadrao(valor, padrao) {
 }
 
 function chaveTexto(valor) {
-  return normalizarTexto(valor, {
-    compactarEspacos: true,
-  });
+  return normalizarTextoCompacto(valor);
 }
 
 function criarGrupoMapa(mapa, chave, criador) {

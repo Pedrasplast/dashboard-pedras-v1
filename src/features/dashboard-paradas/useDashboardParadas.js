@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { valoresUnicosOrdenados } from "@/lib/colecoes";
+import { valoresUnicosOrdenados } from "@/shared/lib/colecoes";
 import { useCargaMaquina } from "@/lib/cargaMaquina";
 
 import {
