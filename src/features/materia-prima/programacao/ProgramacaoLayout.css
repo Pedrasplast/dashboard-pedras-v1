@@ -319,8 +319,8 @@
   width: 100%;
   margin: 0;
   padding: 9px 16px 11px;
-  border-top: 1px solid #e2e8f0;
-  background: #ffffff;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
   box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
 }
 .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
@@ -632,7 +632,7 @@
     position: relative !important;
     bottom: auto;
     padding: 8px 10px max(12px, env(safe-area-inset-bottom));
-    background: #ffffff;
+    background: var(--color-surface);
   }
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
     .programacao-modal-form
@@ -933,7 +933,7 @@
   display: block !important;
   margin: 0;
   overflow: hidden;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 6px;
   font-weight: 800;
   line-height: 1;

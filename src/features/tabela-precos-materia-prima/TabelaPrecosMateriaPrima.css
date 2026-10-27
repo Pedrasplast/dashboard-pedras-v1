@@ -4,7 +4,7 @@
 
 .tp-page {
   min-height: 100%;
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .tp-container {
@@ -22,7 +22,7 @@
 .tp-card {
   margin-top: 24px;
   padding: 22px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid #dbe7f3;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
@@ -38,7 +38,7 @@
 
 .tp-card-cabecalho h2 {
   margin: 0 0 8px;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 18px;
   font-weight: 800;
   line-height: 1.2;
@@ -46,7 +46,7 @@
 
 .tp-card-cabecalho p {
   margin: 0;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 14px;
   line-height: 1.5;
   max-width: 1100px;
@@ -56,9 +56,9 @@
   flex: 0 0 auto;
   min-width: 96px;
   padding: 10px 14px;
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--blue-100);
   border-radius: 999px;
-  background: #eff6ff;
+  background: var(--color-primary-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,14 +66,14 @@
 }
 
 .tp-total strong {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 24px;
   line-height: 1.1;
   font-weight: 800;
 }
 
 .tp-total span {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 600;
 }
@@ -235,7 +235,7 @@
 /* Estado ativo do botão limpar */
 .tp-page .filtros-compartilhados-limpar.filtros-limpar-ativo {
   color: var(--color-danger-hover);
-  border-color: #fecaca;
+  border-color: var(--red-200);
   background: var(--color-danger-soft);
 }
 
@@ -248,7 +248,7 @@
   overflow-x: auto;
   border: 1px solid #dbe7f3;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .tp-tabela {
@@ -259,13 +259,13 @@
 }
 
 .tp-tabela thead {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 }
 
 .tp-tabela th {
   padding: 15px 14px;
   text-align: left;
-  color: #334155;
+  color: var(--color-text-strong);
   font-size: 13px;
   font-weight: 800;
   border-bottom: 1px solid #d5e1ee;
@@ -274,7 +274,7 @@
 
 .tp-tabela td {
   padding: 15px 14px;
-  color: #475569;
+  color: var(--color-text-secondary);
   border-bottom: 1px solid #e5edf6;
   white-space: nowrap;
   vertical-align: middle;
@@ -291,17 +291,17 @@
 .tp-codigo {
   font-family: inherit;
   font-weight: 700;
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .tp-material {
   font-weight: 700;
-  color: #0f172a !important;
+  color: var(--color-text) !important;
 }
 
 .tp-numero {
   font-variant-numeric: tabular-nums;
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .tp-preco {
@@ -317,7 +317,7 @@
 }
 
 .tp-referencia-info small {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 12px;
   font-weight: 500;
   white-space: normal;
@@ -331,16 +331,16 @@
 .tp-vazio {
   padding: 52px 16px;
   text-align: center;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 14px;
 }
 
 .tp-erro {
   margin-top: 8px;
   padding: 18px 20px;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-200);
   border-radius: 14px;
-  background: #fef2f2;
+  background: var(--color-danger-soft);
   color: #991b1b;
 }
 
@@ -365,12 +365,12 @@
   align-items: center;
   gap: 12px;
   padding-top: 16px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 12px;
 }
 
 .tp-atualizacao {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 12px;
 }
 

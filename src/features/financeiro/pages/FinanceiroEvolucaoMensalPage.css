@@ -12,7 +12,7 @@
 
   background: var(--color-page, #f6f8fb);
 
-  color: var(--color-text, #0f172a);
+  color: var(--color-text, var(--color-text));
 }
 
 /* =========================================================
@@ -52,7 +52,7 @@
 
   background: #1f4f8f;
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   box-shadow: 0 5px 14px rgba(31, 79, 143, 0.18);
 }
@@ -67,7 +67,7 @@
 
   margin-bottom: 2px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.62rem;
   font-weight: 800;
@@ -80,7 +80,7 @@
 .financeiro-evolucao-cabecalho h1 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 1.18rem;
   font-weight: 800;
@@ -89,7 +89,7 @@
 .financeiro-evolucao-cabecalho p {
   margin: 3px 0 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.72rem;
   font-weight: 500;
@@ -108,12 +108,12 @@
 
   padding: 0 13px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-family: inherit;
   font-size: 0.7rem;
@@ -123,11 +123,11 @@
 }
 
 .financeiro-evolucao-atualizar:hover:not(:disabled) {
-  border-color: #93c5fd;
+  border-color: var(--blue-300);
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
 }
 
 .financeiro-evolucao-atualizar:disabled {
@@ -155,9 +155,9 @@
 
   padding: 14px 16px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
@@ -187,15 +187,15 @@
 
   border-radius: 8px;
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .financeiro-evolucao-filtros-titulo h2 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -204,7 +204,7 @@
 .financeiro-evolucao-filtros-titulo p {
   margin: 2px 0 0;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 0.64rem;
 }
@@ -229,7 +229,7 @@
 }
 
 .financeiro-evolucao-filtros label > span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
   font-weight: 700;
@@ -241,14 +241,14 @@
 
   padding: 0 10px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
   outline: none;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-family: inherit;
   font-size: 0.75rem;
@@ -257,7 +257,7 @@
 }
 
 .financeiro-evolucao-filtros select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
@@ -275,23 +275,23 @@
 
   padding: 18px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.75rem;
   font-weight: 650;
 }
 
 .financeiro-evolucao-status-erro {
-  border-color: #fecaca;
+  border-color: var(--red-200);
 
   background: #fff7f7;
 
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -313,49 +313,49 @@
 
   padding: 16px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e2e8f0;
-  border-top: 3px solid #2563eb;
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
   border-radius: 10px;
 
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 
 .financeiro-evolucao-kpi-receita {
-  border-top-color: #059669;
+  border-top-color: var(--color-success);
 }
 
 .financeiro-evolucao-kpi-despesa {
-  border-top-color: #dc2626;
+  border-top-color: var(--color-danger);
 }
 
 .financeiro-evolucao-kpi-resultado-positivo {
-  border-top-color: #2563eb;
+  border-top-color: var(--color-primary);
 }
 
 .financeiro-evolucao-kpi-resultado-negativo {
-  border-top-color: #dc2626;
+  border-top-color: var(--color-danger);
 }
 
 .financeiro-evolucao-kpi-margem {
-  border-top-color: #7c3aed;
+  border-top-color: var(--violet-600);
 }
 
 .financeiro-evolucao-kpi-margem-positiva {
-  border-top-color: #059669;
+  border-top-color: var(--color-success);
 }
 
 .financeiro-evolucao-kpi-margem-negativa {
-  border-top-color: #dc2626;
+  border-top-color: var(--color-danger);
 }
 
 .financeiro-margem-positiva {
-  color: #059669 !important;
+  color: var(--color-success) !important;
 }
 
 .financeiro-margem-negativa {
-  color: #dc2626 !important;
+  color: var(--color-danger) !important;
 }
 
 .financeiro-evolucao-kpi-topo {
@@ -367,7 +367,7 @@
 
   margin-bottom: 10px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .financeiro-evolucao-kpi-topo span {
@@ -393,7 +393,7 @@
 
   overflow: hidden;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: clamp(1rem, 1.35vw, 1.28rem);
 
@@ -403,11 +403,11 @@
 }
 
 .financeiro-evolucao-kpi-resultado-negativo > strong {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .financeiro-evolucao-kpi small {
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 0.65rem;
   font-weight: 600;
@@ -422,9 +422,9 @@
 
   overflow: hidden;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
 
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
@@ -439,15 +439,15 @@
 
   padding: 14px 16px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .financeiro-evolucao-painel-header h2 {
   margin: 2px 0 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.88rem;
   font-weight: 800;
@@ -457,13 +457,13 @@
   width: 19px;
   height: 19px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .financeiro-evolucao-eyebrow {
   display: block;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 0.58rem;
   font-weight: 800;
@@ -488,7 +488,7 @@
 
   padding: 15px 16px;
 
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--color-border);
 }
 
 .financeiro-evolucao-insights article:last-child {
@@ -500,7 +500,7 @@
 
   margin-bottom: 5px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 0.61rem;
   font-weight: 700;
@@ -513,25 +513,25 @@
 
   margin-bottom: 4px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.9rem;
   font-weight: 800;
 }
 
 .financeiro-evolucao-insights small {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
   font-weight: 600;
 }
 
 .financeiro-insight-positivo {
-  color: #059669 !important;
+  color: var(--color-success) !important;
 }
 
 .financeiro-insight-negativo {
-  color: #dc2626 !important;
+  color: var(--color-danger) !important;
 }
 
 /* =========================================================
@@ -550,7 +550,7 @@
 
   padding-left: 14px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.65rem;
   font-weight: 700;
@@ -573,11 +573,11 @@
 }
 
 .financeiro-legenda-receita::before {
-  background: #059669;
+  background: var(--color-success);
 }
 
 .financeiro-legenda-despesa::before {
-  background: #dc2626;
+  background: var(--color-danger);
 }
 
 /* =========================================================
@@ -653,11 +653,11 @@
 }
 
 .financeiro-evolucao-valor-receita {
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .financeiro-evolucao-valor-despesa {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .financeiro-evolucao-barras-verticais {
@@ -672,7 +672,7 @@
 
   padding: 0 6px;
 
-  border-bottom: 1px solid #cbd5e1;
+  border-bottom: 1px solid var(--color-border-strong);
 }
 
 .financeiro-evolucao-barra-vertical {
@@ -696,13 +696,13 @@
 }
 
 .financeiro-evolucao-barra-vertical-receita {
-  background: linear-gradient(180deg, #10b981, #047857);
+  background: linear-gradient(180deg, #10b981, var(--color-success-hover));
 
   box-shadow: 0 4px 10px rgba(5, 150, 105, 0.16);
 }
 
 .financeiro-evolucao-barra-vertical-despesa {
-  background: linear-gradient(180deg, #ef4444, #b91c1c);
+  background: linear-gradient(180deg, var(--red-500), var(--color-danger-hover));
 
   box-shadow: 0 4px 10px rgba(220, 38, 38, 0.14);
 }
@@ -710,7 +710,7 @@
 .financeiro-evolucao-mes-label {
   overflow: hidden;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.66rem;
   font-weight: 800;
@@ -734,11 +734,11 @@
 }
 
 .financeiro-resultado-positivo {
-  color: #059669 !important;
+  color: var(--color-success) !important;
 }
 
 .financeiro-resultado-negativo {
-  color: #dc2626 !important;
+  color: var(--color-danger) !important;
 }
 
 /* =========================================================
@@ -798,11 +798,11 @@
 .financeiro-evolucao-tabela th {
   padding: 10px 12px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.61rem;
   font-weight: 800;
@@ -823,7 +823,7 @@
 
   border-bottom: 1px solid #edf2f7;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 0.69rem;
   font-weight: 600;
@@ -834,7 +834,7 @@
 }
 
 .financeiro-evolucao-tabela td:first-child {
-  color: #0f172a;
+  color: var(--color-text);
 
   text-align: left;
 }
@@ -865,7 +865,7 @@
   }
 
   .financeiro-evolucao-insights article {
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--color-border);
   }
 }
 

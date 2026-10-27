@@ -170,4 +170,35 @@
   --transition-fast: 120ms ease;
   --transition-base: 180ms ease;
   --transition-slow: 250ms ease;
+
+  /* =======================================================
+     PALETA BASE
+     -------------------------------------------------------
+     Tons usados em vários pontos que não têm papel semântico
+     próprio (fundos de destaque, bordas de alerta, gráficos).
+     Prefira os tokens semânticos acima; use estes só quando
+     nenhum deles servir.
+  ======================================================= */
+
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-500: #ef4444;
+
+  --green-50: #f0fdf4;
+  --green-200: #bbf7d0;
+
+  --orange-50: #fff7ed;
+  --orange-200: #fed7aa;
+
+  --amber-800: #92400e;
+
+  --slate-800: #1e293b;
+
+  --violet-600: #7c3aed;
 }

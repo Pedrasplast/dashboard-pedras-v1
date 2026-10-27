@@ -88,7 +88,7 @@
 
   padding: 6px 10px;
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--blue-200);
 
   border-radius: var(--radius-pill);
 

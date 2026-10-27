@@ -359,7 +359,7 @@
 
   background-color: var(--color-primary-soft);
 
-  border-color: #bfdbfe;
+  border-color: var(--blue-200);
 }
 
 /* =========================================================
@@ -513,7 +513,7 @@
 
   background-color: var(--color-primary-soft);
 
-  border: 1px solid #93c5fd;
+  border: 1px solid var(--blue-300);
 
   font-weight: var(--font-weight-bold);
 }
@@ -533,7 +533,7 @@
 :where(.calendar-popover) .calendar-day-has-data .rdp-day_button:hover {
   color: var(--color-primary-hover);
 
-  background-color: #dbeafe;
+  background-color: var(--blue-100);
 }
 
 :where(.calendar-popover) .calendar-day-has-data .rdp-day_button::after {

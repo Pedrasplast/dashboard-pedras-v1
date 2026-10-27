@@ -3,7 +3,7 @@
 ========================================================= */
 
 .despesas-acima-previsto-icone {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .despesas-acima-previsto-filtros-card {
@@ -46,7 +46,7 @@
 }
 
 .despesas-acima-previsto-filtros label > span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
   font-weight: 700;
@@ -59,10 +59,10 @@
 
   box-sizing: border-box;
 
-  color: #334155;
-  background: #ffffff;
+  color: var(--color-text-strong);
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
   font-family: inherit;
@@ -86,12 +86,12 @@
 
 .despesas-acima-previsto-filtros select:hover,
 .despesas-acima-previsto-filtros input:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 }
 
 .despesas-acima-previsto-filtros select:focus,
 .despesas-acima-previsto-filtros input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
@@ -115,7 +115,7 @@
   width: 15px;
   height: 15px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   transform: translateY(-50%);
 
@@ -127,7 +127,7 @@
 }
 
 .despesas-acima-previsto-busca-campo input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .despesas-acima-previsto-filtros-wrapper > .filtros-compartilhados-limpar {
@@ -140,7 +140,7 @@
 
   gap: 7px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.68rem;
   font-weight: 700;

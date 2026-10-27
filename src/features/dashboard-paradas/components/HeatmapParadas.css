@@ -33,7 +33,7 @@
 
   padding: 8px 10px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid #edf2f7;
 
@@ -107,9 +107,9 @@
 
   overflow: hidden;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid #edf2f7;
 
@@ -131,7 +131,7 @@
 
   padding-left: 9px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 /* =========================================================
@@ -237,9 +237,9 @@
 ========================================================= */
 
 .dp-heatmap__cell.nivel-0 {
-  color: #94a3b8;
+  color: var(--color-text-light);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border-color: #edf2f7;
 }
@@ -248,7 +248,7 @@
 .dp-heatmap__legend-scale .nivel-1 {
   color: #9a3412;
 
-  background: #fff7ed;
+  background: var(--orange-50);
 
   border-color: #ffedd5;
 }
@@ -259,21 +259,21 @@
 
   background: #ffedd5;
 
-  border-color: #fed7aa;
+  border-color: var(--orange-200);
 }
 
 .dp-heatmap__cell.nivel-3,
 .dp-heatmap__legend-scale .nivel-3 {
   color: #9a3412;
 
-  background: #fed7aa;
+  background: var(--orange-200);
 
   border-color: #fdba74;
 }
 
 .dp-heatmap__cell.nivel-4,
 .dp-heatmap__legend-scale .nivel-4 {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: #f97316;
 
@@ -282,11 +282,11 @@
 
 .dp-heatmap__cell.nivel-5,
 .dp-heatmap__legend-scale .nivel-5 {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
-  background: #dc2626;
+  background: var(--color-danger);
 
-  border-color: #b91c1c;
+  border-color: var(--color-danger-hover);
 }
 
 /* =========================================================

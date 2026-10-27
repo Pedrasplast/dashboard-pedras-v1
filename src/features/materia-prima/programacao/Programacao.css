@@ -19,9 +19,9 @@
 
   padding: 14px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .programacao-pp-indicadores {
@@ -36,16 +36,16 @@
 
   padding: 8px 11px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .programacao-pp-indicadores span {
   display: block;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
   font-weight: 700;
@@ -58,7 +58,7 @@
 
   margin-top: 2px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 16px;
 }
@@ -85,12 +85,12 @@
 
   padding: 0 10px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .programacao-pp-busca input {
@@ -101,14 +101,14 @@
 
   background: transparent;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font: inherit;
   font-size: 11px;
 }
 
 .programacao-pp-busca:focus-within {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 }
 
 .programacao-pp-data {
@@ -116,12 +116,12 @@
 
   padding: 0 9px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font: inherit;
   font-size: 10px;
@@ -151,19 +151,19 @@
 }
 
 .programacao-pp-atualizar {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
 .programacao-pp-novo {
-  border: 1px solid #2563eb;
+  border: 1px solid var(--color-primary);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 .programacao-pp-atualizar:disabled,
@@ -204,11 +204,11 @@
 .programacao-pp-tabela th {
   padding: 10px 12px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
   font-weight: 750;
@@ -222,9 +222,9 @@
 .programacao-pp-tabela td {
   padding: 11px 12px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 10px;
 
@@ -232,7 +232,7 @@
 }
 
 .programacao-pp-tabela tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .programacao-pp-data-coluna,
@@ -249,7 +249,7 @@
 .programacao-pp-produto strong {
   display: block;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 10px;
 }
@@ -259,14 +259,14 @@
 
   margin-top: 4px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 8px;
   line-height: 1.4;
 }
 
 .programacao-pp-consumo {
-  color: #2563eb !important;
+  color: var(--color-primary) !important;
 
   font-weight: 750;
 
@@ -294,15 +294,15 @@
 }
 
 .programacao-pp-receita.ok {
-  background: #ecfdf5;
+  background: var(--color-success-soft);
 
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .programacao-pp-receita.pendente {
-  background: #fffbeb;
+  background: var(--color-warning-soft);
 
-  color: #b45309;
+  color: var(--color-warning-hover);
 }
 
 /* =========================================================
@@ -321,15 +321,15 @@
 }
 
 .programacao-pp-status.ativo {
-  background: #ecfdf5;
+  background: var(--color-success-soft);
 
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .programacao-pp-status.inativo {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -346,12 +346,12 @@
 
   padding: 0 9px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 7px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font: inherit;
   font-size: 9px;
@@ -361,11 +361,11 @@
 }
 
 .programacao-pp-editar:hover:not(:disabled) {
-  border-color: #93c5fd;
+  border-color: var(--blue-300);
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 /* =========================================================
@@ -375,17 +375,17 @@
 .programacao-pp-rodape {
   padding: 10px 13px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
 }
 
 .programacao-pp-rodape strong {
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -406,14 +406,14 @@
 
   padding: 35px 20px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   text-align: center;
 }
 
 .programacao-pp-estado strong,
 .programacao-pp-sem-resultado strong {
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 13px;
 }
@@ -431,8 +431,8 @@
   width: 26px;
   height: 26px;
 
-  border: 2px solid #e2e8f0;
-  border-top-color: #2563eb;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
 
   border-radius: 50%;
 
@@ -446,7 +446,7 @@
 }
 
 .programacao-pp-erro {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .programacao-pp-vazio-novo {
@@ -461,12 +461,12 @@
 
   padding: 0 12px;
 
-  border: 1px solid #2563eb;
+  border: 1px solid var(--color-primary);
   border-radius: 8px;
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font: inherit;
   font-size: 10px;

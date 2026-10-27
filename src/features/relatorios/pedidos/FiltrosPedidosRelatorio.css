@@ -22,7 +22,7 @@
 
   gap: 8px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -35,7 +35,7 @@
   width: 16px;
   height: 16px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 /* =========================================================
@@ -64,7 +64,7 @@
 }
 
 .rel-pedidos-campo > span {
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 0.72rem;
   font-weight: 800;
@@ -83,11 +83,11 @@
 
   box-sizing: border-box;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
   border-radius: 9px;
 
@@ -106,7 +106,7 @@
 
 .rel-pedidos-campo input:focus,
 .rel-pedidos-campo select:focus {
-  border-color: #3b82f6;
+  border-color: var(--blue-500);
 
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
@@ -140,9 +140,9 @@
 
   padding: 0 12px;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   border: 1px solid #dbe3ec;
 
@@ -163,11 +163,11 @@
 }
 
 .rel-pedidos-limpar:hover {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 
   background: #fff7f7;
 
-  border-color: #fecaca;
+  border-color: var(--red-200);
 }
 
 /* =========================================================

@@ -8,9 +8,9 @@
   justify-content: space-between;
   gap: 20px;
   padding: 18px 22px;
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
   border-radius: 12px;
-  background: var(--color-surface, #ffffff);
+  background: var(--color-surface, var(--color-surface));
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   min-width: 0;
 }
@@ -22,7 +22,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary, var(--color-primary));
 }
 
 .materia-prima-header h1 {
@@ -30,7 +30,7 @@
   font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--color-text, #0f172a);
+  color: var(--color-text, var(--color-text));
 }
 
 .materia-prima-header p {
@@ -38,7 +38,7 @@
   max-width: 560px;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--color-text-muted, #64748b);
+  color: var(--color-text-muted, var(--color-text-muted));
 }
 
 .materia-prima-header-icone {
@@ -49,8 +49,8 @@
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  background: var(--color-primary-soft, #eff6ff);
-  color: var(--color-primary, #2563eb);
+  background: var(--color-primary-soft, var(--color-primary-soft));
+  color: var(--color-primary, var(--color-primary));
 }
 
 /* =========================================================

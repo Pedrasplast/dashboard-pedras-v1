@@ -43,9 +43,9 @@
 ========================================================= */
 
 .limpar-filtros-button.is-disabled {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   color: #b6c0cf;
 
@@ -63,7 +63,7 @@
 .limpar-filtros-button.is-active {
   border: 1px solid #ff4365;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   color: #f43f5e;
 

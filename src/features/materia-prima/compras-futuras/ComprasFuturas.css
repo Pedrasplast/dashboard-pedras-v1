@@ -19,9 +19,9 @@
 
   padding: 12px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .compras-futuras-nova {
@@ -35,12 +35,12 @@
 
   padding: 0 11px;
 
-  border: 1px solid #2563eb;
+  border: 1px solid var(--color-primary);
   border-radius: 8px;
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font-size: 10px;
   font-weight: 700;
@@ -67,9 +67,9 @@
 
   padding: 10px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 /* =========================================================
@@ -90,16 +90,16 @@
 
   padding: 8px 11px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .compras-futuras-indicadores span {
   display: block;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
   font-weight: 700;
@@ -114,7 +114,7 @@
 
   margin-top: 2px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 15px;
 
@@ -152,7 +152,7 @@
 
   margin: 0 0 5px 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
   font-weight: 700;
@@ -166,14 +166,14 @@
 
   padding: 0 30px 0 10px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
   outline: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font: inherit;
   font-size: 10px;
@@ -182,7 +182,7 @@
 }
 
 .compras-futuras-filtro-campo select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
@@ -209,11 +209,11 @@
 .compras-futuras-tabela th {
   padding: 9px 8px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 10px;
   font-weight: 750;
@@ -227,9 +227,9 @@
 .compras-futuras-tabela td {
   padding: 10px 8px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 11px;
 
@@ -237,7 +237,7 @@
 }
 
 .compras-futuras-tabela tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
@@ -245,7 +245,7 @@
 ========================================================= */
 
 .compras-futuras-quantidade {
-  color: #2563eb !important;
+  color: var(--color-primary) !important;
 
   font-weight: 750;
 
@@ -269,13 +269,13 @@
 
   margin-top: 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
 }
 
 .compras-futuras-total {
-  color: #0f172a !important;
+  color: var(--color-text) !important;
 
   font-weight: 800;
 
@@ -303,27 +303,27 @@
 }
 
 .compras-futuras-status.prevista {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
 .compras-futuras-status.confirmada {
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .compras-futuras-status.recebida {
-  background: #ecfdf5;
+  background: var(--color-success-soft);
 
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .compras-futuras-status.cancelada {
-  background: #fef2f2;
+  background: var(--color-danger-soft);
 
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -350,12 +350,12 @@
 
   padding: 0 7px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 7px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 9px;
   font-weight: 700;
@@ -377,9 +377,9 @@
   border: 1px solid #a7f3d0;
   border-radius: 7px;
 
-  background: #ecfdf5;
+  background: var(--color-success-soft);
 
-  color: #047857;
+  color: var(--color-success-hover);
 
   font-size: 9px;
   font-weight: 750;
@@ -396,9 +396,9 @@
 }
 
 .compras-futuras-excluir {
-  border-color: #fecaca;
+  border-color: var(--red-200);
 
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .compras-futuras-editar:disabled,
@@ -424,13 +424,13 @@
 
   padding: 24px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   text-align: center;
 }
 
 .compras-futuras-estado strong {
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .compras-futuras-estado p {
@@ -440,7 +440,7 @@
 }
 
 .compras-futuras-erro {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -451,8 +451,8 @@
   width: 26px;
   height: 26px;
 
-  border: 2px solid #e2e8f0;
-  border-top-color: #2563eb;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
 
   border-radius: 50%;
 

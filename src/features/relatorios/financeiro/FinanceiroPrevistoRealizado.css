@@ -60,7 +60,7 @@
 }
 
 .financeiro-relatorio-filtros label > span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
   font-weight: 700;
@@ -77,11 +77,11 @@
 
   box-sizing: border-box;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
   font-family: inherit;
@@ -106,12 +106,12 @@
 
 .financeiro-relatorio-filtros select:hover,
 .financeiro-relatorio-filtros input:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 }
 
 .financeiro-relatorio-filtros select:focus,
 .financeiro-relatorio-filtros input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
@@ -157,7 +157,7 @@
   width: 15px;
   height: 15px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   transform: translateY(-50%);
 
@@ -169,7 +169,7 @@
 }
 
 .financeiro-relatorio-busca-categoria-campo input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 /* =========================================================
@@ -202,7 +202,7 @@
 
   gap: 7px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.68rem;
   font-weight: 700;
@@ -247,10 +247,10 @@
 
   padding: 11px 14px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  border: 1px solid #e2e8f0;
-  border-left: 4px solid #2563eb;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
   border-radius: 8px;
 }
 
@@ -263,7 +263,7 @@
 
   margin-bottom: 2px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   font-size: 0.6rem;
   font-weight: 800;
@@ -276,7 +276,7 @@
 .financeiro-relatorio-grupo-titulo h4 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.82rem;
   font-weight: 800;
@@ -287,22 +287,22 @@
 .financeiro-relatorio-grupo-titulo strong {
   flex: 0 0 auto;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.7rem;
   font-weight: 700;
 }
 
 .financeiro-relatorio-grupo-receitas .financeiro-relatorio-grupo-titulo {
-  border-left-color: #059669;
+  border-left-color: var(--color-success);
 }
 
 .financeiro-relatorio-grupo-despesas .financeiro-relatorio-grupo-titulo {
-  border-left-color: #dc2626;
+  border-left-color: var(--color-danger);
 }
 
 .financeiro-relatorio-grupo .relatorio-visualizacao-tabela-wrapper {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 8px;
 
@@ -340,11 +340,11 @@
 }
 
 .financeiro-relatorio-tabela tbody td {
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .financeiro-relatorio-tabela .financeiro-valor-positivo {
-  color: #047857;
+  color: var(--color-success-hover);
 
   font-weight: 750;
 }
@@ -356,7 +356,7 @@
 }
 
 .financeiro-relatorio-tabela .financeiro-valor-neutro {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -369,16 +369,16 @@
 .financeiro-linha-cabecalho-grupo td {
   font-weight: 800;
 
-  background: #f1f5f9 !important;
+  background: var(--color-surface-muted) !important;
 
-  border-top: 2px solid #cbd5e1;
+  border-top: 2px solid var(--color-border-strong);
 
-  border-bottom: 2px solid #cbd5e1;
+  border-bottom: 2px solid var(--color-border-strong);
 }
 
 .financeiro-linha-cabecalho-grupo td:first-child,
 .financeiro-linha-cabecalho-grupo td:nth-child(2) {
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================

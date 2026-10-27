@@ -35,7 +35,7 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  color: #f8fafc;
+  color: var(--color-surface-subtle);
 
   background: linear-gradient(180deg, #112d59 0%, #0c2448 52%, #081b36 100%);
 
@@ -87,7 +87,7 @@
   margin: 0;
   padding: 2px 4px 20px;
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font-size: 1.3rem;
   font-weight: 800;
@@ -110,7 +110,7 @@
   width: 52px;
   height: 3px;
 
-  background: linear-gradient(90deg, #60a5fa, #93c5fd);
+  background: linear-gradient(90deg, var(--blue-400), var(--blue-300));
 
   border-radius: 999px;
 
@@ -140,7 +140,7 @@
 .sidebar h5 {
   margin-top: 0;
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font-weight: 750;
   line-height: 1.3;
@@ -172,7 +172,7 @@
 
   margin: 9px 5px 5px;
 
-  color: #dbeafe;
+  color: var(--blue-100);
 
   font-size: 0.72rem;
   font-weight: 800;
@@ -189,7 +189,7 @@
 
   flex-shrink: 0;
 
-  background: #60a5fa;
+  background: var(--blue-400);
 
   border-radius: 999px;
 }
@@ -206,7 +206,7 @@
 }
 
 .sidebar small {
-  color: #bfdbfe;
+  color: var(--blue-200);
 
   font-size: 0.7rem;
   line-height: 1.4;
@@ -241,7 +241,7 @@
 
   padding: 0 13px;
 
-  color: #dbeafe;
+  color: var(--blue-100);
 
   background: transparent;
 
@@ -266,7 +266,7 @@
 }
 
 .sidebar-menu-item:hover {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: rgba(255, 255, 255, 0.09);
 
@@ -276,14 +276,14 @@
 }
 
 .sidebar-menu-item.active {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: linear-gradient(90deg, rgba(37, 99, 235, 0.38), rgba(59, 130, 246, 0.18));
 
   border-color: rgba(147, 197, 253, 0.34);
 
   box-shadow:
-    inset 3px 0 0 #93c5fd,
+    inset 3px 0 0 var(--blue-300),
     0 5px 14px rgba(2, 6, 23, 0.12);
 }
 
@@ -293,11 +293,11 @@
 
   flex-shrink: 0;
 
-  color: #93c5fd;
+  color: var(--blue-300);
 }
 
 .sidebar-menu-item.active svg {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 /* =====================================================
@@ -343,10 +343,10 @@
 
   padding: 0 11px;
 
-  color: #0f172a;
-  background: #ffffff;
+  color: var(--color-text);
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
   font-family: inherit;
@@ -362,12 +362,12 @@
 
 .sidebar-card select:hover,
 .sidebar-card input:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 }
 
 .sidebar-card select:focus,
 .sidebar-card input:focus {
-  border-color: #60a5fa;
+  border-color: var(--blue-400);
 
   outline: none;
 
@@ -385,13 +385,13 @@
 }
 
 .sidebar input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .sidebar select option {
-  color: #0f172a;
+  color: var(--color-text);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 /* =====================================================

@@ -26,7 +26,7 @@
 
   padding: 18px 22px 32px;
 
-  color: var(--color-text, #0f172a);
+  color: var(--color-text, var(--color-text));
 }
 
 @media (max-width: 1200px) {
@@ -70,9 +70,9 @@
 
   border-radius: 8px;
 
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary, var(--color-primary));
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font: inherit;
   font-size: 11px;
@@ -102,11 +102,11 @@
 
   padding: 10px 12px;
 
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
 
   border-radius: 9px;
 
-  background: var(--color-surface, #ffffff);
+  background: var(--color-surface, var(--color-surface));
 
   font-size: 11px;
   font-weight: 650;
@@ -115,15 +115,15 @@
 .alert-message.sucesso {
   border-color: rgba(5, 150, 105, 0.2);
 
-  background: #ecfdf5;
-  color: #047857;
+  background: var(--color-success-soft);
+  color: var(--color-success-hover);
 }
 
 .alert-message.erro {
   border-color: rgba(220, 38, 38, 0.18);
 
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -136,13 +136,13 @@
   display: grid;
   place-items: center;
 
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
 
   border-radius: 12px;
 
-  background: var(--color-surface, #ffffff);
+  background: var(--color-surface, var(--color-surface));
 
-  color: var(--color-text-muted, #64748b);
+  color: var(--color-text-muted, var(--color-text-muted));
 
   font-size: 12px;
   font-weight: 600;
@@ -157,11 +157,11 @@
 
   overflow-x: auto;
 
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
 
   border-radius: 12px;
 
-  background: var(--color-surface, #ffffff);
+  background: var(--color-surface, var(--color-surface));
 
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
 
@@ -208,11 +208,11 @@
 .usuarios-table th {
   padding: 10px 13px;
 
-  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  border-bottom: 1px solid var(--color-border, var(--color-border));
 
-  background: var(--color-surface-subtle, #f8fafc);
+  background: var(--color-surface-subtle, var(--color-surface-subtle));
 
-  color: var(--color-text-secondary, #475569);
+  color: var(--color-text-secondary, var(--color-text-secondary));
 
   font-size: 9.5px;
   font-weight: 800;
@@ -230,9 +230,9 @@
 
   border-bottom: 1px solid #edf1f5;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: var(--color-text-secondary, #334155);
+  color: var(--color-text-secondary, var(--color-text-strong));
 
   vertical-align: middle;
 }
@@ -248,7 +248,7 @@
 .user-email-col {
   min-width: 0;
 
-  color: var(--color-text, #0f172a) !important;
+  color: var(--color-text, var(--color-text)) !important;
 
   font-weight: 650;
 
@@ -263,7 +263,7 @@
 .tabela-vazia {
   padding: 40px 20px !important;
 
-  color: var(--color-text-muted, #64748b) !important;
+  color: var(--color-text-muted, var(--color-text-muted)) !important;
 
   text-align: center !important;
 }
@@ -281,7 +281,7 @@
 
   padding: 5px 9px;
 
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
 
   border-radius: 999px;
 
@@ -296,15 +296,15 @@
 .badge-role.admin {
   border-color: rgba(37, 99, 235, 0.16);
 
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
 }
 
 .badge-role.operador {
   border-color: rgba(100, 116, 139, 0.16);
 
-  background: #f8fafc;
-  color: #475569;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
 }
 
 /* =========================================================
@@ -325,8 +325,8 @@
 
   border-radius: 8px;
 
-  background: #ecfdf5;
-  color: #047857;
+  background: var(--color-success-soft);
+  color: var(--color-success-hover);
 
   font-size: 9.5px;
   font-weight: 750;
@@ -351,8 +351,8 @@
 
   border-radius: 8px;
 
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
 
   font: inherit;
   font-size: 9.5px;
@@ -366,8 +366,8 @@
 }
 
 .btn-gerenciar-permissoes:hover {
-  border-color: #93c5fd;
-  background: #dbeafe;
+  border-color: var(--blue-300);
+  background: var(--blue-100);
 }
 
 .contador-permissoes {
@@ -379,7 +379,7 @@
 
   background: rgba(37, 99, 235, 0.1);
 
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
 
   font-size: 8.5px;
   font-weight: 800;
@@ -413,22 +413,22 @@
 .btn-change-role.adm {
   border: 1px solid rgba(37, 99, 235, 0.18);
 
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
 }
 
 .btn-change-role.op {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  background: #f8fafc;
-  color: #475569;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
 }
 
 .btn-delete-user {
   border: 1px solid rgba(220, 38, 38, 0.16);
 
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .btn-change-role:hover,
@@ -478,15 +478,15 @@
 
   overflow: auto;
 
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--color-border, var(--color-border));
 
   border-radius: 14px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
 
-  color: var(--color-text, #0f172a);
+  color: var(--color-text, var(--color-text));
 
   text-align: center;
 
@@ -523,7 +523,7 @@
 
   margin-bottom: 12px;
 
-  color: #d97706;
+  color: var(--color-warning);
 
   font-size: 32px;
 }
@@ -558,15 +558,15 @@
 
   padding: 16px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .modal-novo-usuario-header h3 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 16px;
   font-weight: 750;
@@ -575,7 +575,7 @@
 .modal-novo-usuario-header p {
   margin: 3px 0 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 10px;
 
@@ -600,8 +600,8 @@
 
   border-radius: 10px;
 
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 
   font-size: 18px;
 }
@@ -619,12 +619,12 @@
 
   padding: 0;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 8px;
 
-  background: #ffffff;
-  color: #64748b;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
 
   cursor: pointer;
 
@@ -635,10 +635,10 @@
 }
 
 .btn-fechar-modal-usuario:hover:not(:disabled) {
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
 
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--color-surface-subtle);
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -659,7 +659,7 @@
 }
 
 .campo-novo-usuario > span {
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 10px;
   font-weight: 700;
@@ -673,12 +673,12 @@
 
   padding: 0 11px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
   border-radius: 8px;
 
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
 
   font: inherit;
   font-size: 11px;
@@ -692,7 +692,7 @@
 
 .campo-novo-usuario input:focus,
 .bloco-link-primeiro-acesso input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
@@ -704,7 +704,7 @@
 .usuario-criado-sucesso > strong {
   display: block;
 
-  color: #047857;
+  color: var(--color-success-hover);
 
   font-size: 14px;
 }
@@ -714,7 +714,7 @@
 
   margin-top: 4px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 11px;
   font-weight: 650;
@@ -723,7 +723,7 @@
 .usuario-criado-sucesso > p {
   margin: 12px 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 10px;
 
@@ -759,8 +759,8 @@
 
   border-radius: 8px;
 
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
 
   font: inherit;
   font-size: 9.5px;
@@ -774,9 +774,9 @@
 }
 
 .bloco-link-primeiro-acesso button:hover {
-  border-color: #93c5fd;
+  border-color: var(--blue-300);
 
-  background: #dbeafe;
+  background: var(--blue-100);
 }
 
 /* =========================================================
@@ -815,28 +815,28 @@
 }
 
 .btn-modal-cancelar {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
-  background: #ffffff;
-  color: #475569;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
 }
 
 .btn-modal-salvar-permissoes {
-  border: 1px solid #2563eb;
+  border: 1px solid var(--color-primary);
 
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 .btn-modal-confirmar {
-  border: 1px solid #dc2626;
+  border: 1px solid var(--color-danger);
 
-  background: #dc2626;
-  color: #ffffff;
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
 }
 
 .btn-modal-cancelar:hover:not(:disabled) {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .btn-modal-salvar-permissoes:hover:not(:disabled),
@@ -955,14 +955,14 @@
     display: grid;
     width: 100%;
     overflow: hidden;
-    border: 1px solid var(--color-border, #e2e8f0);
+    border: 1px solid var(--color-border, var(--color-border));
     border-radius: 12px;
-    background: #ffffff;
+    background: var(--color-surface);
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
   }
 
   .usuarios-table tbody tr:hover td {
-    background: #ffffff;
+    background: var(--color-surface);
   }
 
   .usuarios-table td,
@@ -988,7 +988,7 @@
   }
 
   .usuarios-table td::before {
-    color: var(--color-text-muted, #64748b);
+    color: var(--color-text-muted, var(--color-text-muted));
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.04em;

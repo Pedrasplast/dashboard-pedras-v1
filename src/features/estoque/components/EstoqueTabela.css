@@ -27,7 +27,7 @@
 
   background: rgba(254, 226, 226, 0.65);
 
-  color: #dc2626;
+  color: var(--color-danger);
 
   font-weight: 700;
 
@@ -43,9 +43,9 @@
 .estoque-tabela tbody tr:hover .estoque-valor--negativo {
   border-color: rgba(220, 38, 38, 0.28);
 
-  background: #fee2e2;
+  background: var(--red-100);
 
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================

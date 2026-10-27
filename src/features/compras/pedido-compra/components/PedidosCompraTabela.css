@@ -245,7 +245,7 @@
 ========================================================= */
 
 .compras-categoria-requisicao {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 
@@ -262,7 +262,7 @@
   min-width: 210px;
   max-width: 290px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 }
@@ -272,7 +272,7 @@
 ========================================================= */
 
 .compras-previsao {
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .compras-previsao-conteudo {
@@ -285,7 +285,7 @@
 }
 
 .compras-previsao-conteudo > strong {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 10.5px;
   font-weight: var(--font-weight-bold);
@@ -305,7 +305,7 @@
 .compras-codigo {
   min-width: 105px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: var(--font-weight-bold);
 
@@ -321,7 +321,7 @@
 ========================================================= */
 
 .compras-produto {
-  color: #334155;
+  color: var(--color-text-strong);
 
   line-height: 1.35;
 
@@ -364,7 +364,7 @@
 
   padding: 3px 7px;
 
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--blue-100);
 
   border-radius: var(--radius-pill);
 
@@ -398,7 +398,7 @@
 .compras-btn-itens:hover {
   transform: translateY(-1px);
 
-  border-color: #93c5fd;
+  border-color: var(--blue-300);
 
   background: var(--color-primary-soft);
 
@@ -493,7 +493,7 @@
   min-width: 120px;
   max-width: 180px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-micro);
   font-weight: var(--font-weight-bold);
@@ -511,7 +511,7 @@
   min-width: 130px;
   max-width: 200px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-micro);
   font-weight: 650;
@@ -594,13 +594,13 @@
 
   padding: 3px var(--space-2);
 
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-200);
 
   border-radius: var(--radius-pill);
 
   background: #fff1f2;
 
-  color: #ef4444;
+  color: var(--red-500);
 
   font-size: 9px;
   font-weight: var(--font-weight-bold);
@@ -995,7 +995,7 @@
   .compras-mobile-card h3 {
     margin: 12px 0;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     font-size: var(--font-size-caption);
   }
@@ -1084,7 +1084,7 @@
   }
 
   .compras-mobile-item strong {
-    color: #334155;
+    color: var(--color-text-strong);
 
     font-size: 9px;
   }

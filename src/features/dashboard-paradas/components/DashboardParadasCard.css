@@ -27,7 +27,7 @@
 }
 
 .dp-card:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
 
   box-shadow: var(--dp-shadow-hover);
 }
@@ -169,7 +169,7 @@
 
   color: var(--dp-muted-light);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border-radius: 50%;
 }

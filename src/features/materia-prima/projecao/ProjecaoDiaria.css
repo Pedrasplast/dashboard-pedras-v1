@@ -1,6 +1,6 @@
 .projecao-diaria {
   width: 100%;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 /* =========================================================
@@ -16,7 +16,7 @@
   gap: 12px;
   padding: 16px 18px;
   border-bottom: 1px solid #dfe7f1;
-  background: linear-gradient(180deg, #fbfdff 0%, #f8fafc 100%);
+  background: linear-gradient(180deg, #fbfdff 0%, var(--color-surface-subtle) 100%);
 }
 
 .projecao-diaria-periodo {
@@ -26,10 +26,10 @@
   align-items: end;
   gap: 9px;
   padding: 10px 11px;
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--blue-100);
   border-radius: 10px;
-  background: #ffffff;
-  color: #2563eb;
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 .projecao-diaria-periodo > svg {
@@ -47,7 +47,7 @@
 
 .projecao-diaria-periodo label > span,
 .projecao-diaria-material > span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -60,11 +60,11 @@
   width: 100%;
   height: 41px;
   padding: 0 11px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
   outline: 0;
-  background: #ffffff;
-  color: #334155;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
   font: inherit;
   font-size: 10px;
   font-weight: 650;
@@ -76,13 +76,13 @@
 
 .projecao-diaria-periodo input:focus,
 .projecao-diaria-material select:focus {
-  border-color: #60a5fa;
+  border-color: var(--blue-400);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 .projecao-diaria-material small {
   margin-top: 1px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   line-height: 1.35;
 }
@@ -94,7 +94,7 @@
   display: inline-block;
   margin-right: 6px;
   border-radius: 999px;
-  background: #2563eb;
+  background: var(--color-primary);
   vertical-align: middle;
 }
 
@@ -107,8 +107,8 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   padding: 16px 18px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .projecao-diaria-indicadores > div {
@@ -116,9 +116,9 @@
   min-width: 0;
   overflow: hidden;
   padding: 13px 14px 12px 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 7px rgba(15, 23, 42, 0.035);
 }
 
@@ -129,24 +129,24 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: #2563eb;
+  background: var(--color-primary);
 }
 
 .projecao-diaria-indicadores > div:nth-child(2)::before {
-  background: #059669;
+  background: var(--color-success);
 }
 
 .projecao-diaria-indicadores > div:nth-child(3)::before {
-  background: #7c3aed;
+  background: var(--violet-600);
 }
 
 .projecao-diaria-indicadores > div:nth-child(4)::before {
-  background: #d97706;
+  background: var(--color-warning);
 }
 
 .projecao-diaria-indicadores span {
   display: block;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.035em;
@@ -157,7 +157,7 @@
   display: block;
   margin-top: 5px;
   overflow: hidden;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 17px;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -166,7 +166,7 @@
 }
 
 .projecao-diaria-indicadores strong.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -181,14 +181,14 @@
   padding: 12px 14px;
   border: 1px solid #fde68a;
   border-radius: 11px;
-  background: #fffbeb;
-  color: #92400e;
+  background: var(--color-warning-soft);
+  color: var(--amber-800);
 }
 
 .projecao-diaria-alerta.negativo {
-  border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  border-color: var(--red-200);
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-alerta strong {
@@ -219,7 +219,7 @@
   overflow: hidden;
   border: 1px solid #dbe3ec;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
 }
 
@@ -230,7 +230,7 @@
   gap: 16px;
   padding: 14px 16px;
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div {
@@ -244,7 +244,7 @@
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div > span {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -253,7 +253,7 @@
 
 .projecao-diaria-fornecedor-navegador-topo > div > strong {
   margin-top: 3px;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 900;
 }
@@ -261,7 +261,7 @@
 .projecao-diaria-fornecedor-navegador-topo > div > small {
   max-width: 720px;
   margin-top: 4px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   line-height: 1.45;
 }
@@ -274,7 +274,7 @@
 }
 
 .projecao-diaria-fornecedor-select > span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.05em;
@@ -285,11 +285,11 @@
   width: 100%;
   height: 42px;
   padding: 0 11px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
   outline: 0;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
   font-size: 10px;
   font-weight: 750;
@@ -299,7 +299,7 @@
 }
 
 .projecao-diaria-fornecedor-select select:focus {
-  border-color: #60a5fa;
+  border-color: var(--blue-400);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
@@ -312,7 +312,7 @@
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
   gap: 10px;
   padding: 12px;
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .projecao-diaria-fornecedor-aba {
@@ -324,8 +324,8 @@
   padding: 11px 12px;
   border: 1px solid #dbe3ec;
   border-radius: 11px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   text-align: left;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
@@ -338,24 +338,24 @@
 
 .projecao-diaria-fornecedor-aba:hover {
   transform: translateY(-1px);
-  border-color: #93c5fd;
+  border-color: var(--blue-300);
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
 }
 
 .projecao-diaria-fornecedor-aba.ativo {
-  border-color: #60a5fa;
-  background: #eff6ff;
+  border-color: var(--blue-400);
+  background: var(--color-primary-soft);
   box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
 }
 
 .projecao-diaria-fornecedor-aba.negativo {
-  border-color: #fecaca;
+  border-color: var(--red-200);
 }
 
 .projecao-diaria-fornecedor-aba > span {
   width: 100%;
   overflow: hidden;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 10px;
   font-weight: 900;
   text-overflow: ellipsis;
@@ -363,17 +363,17 @@
 }
 
 .projecao-diaria-fornecedor-aba > strong {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 11px;
   font-weight: 900;
 }
 
 .projecao-diaria-fornecedor-aba.negativo > strong {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-fornecedor-aba > small {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 700;
 }
@@ -387,19 +387,19 @@
   overflow: hidden;
   border: 1px solid #dbe3ec;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
 }
 
 .projecao-diaria-fornecedor-bloco.negativo {
-  border-color: #fecaca;
+  border-color: var(--red-200);
 }
 
 .projecao-diaria-fornecedor-header {
   display: grid;
   grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.75fr);
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 }
 
 .projecao-diaria-fornecedor-identificacao {
@@ -415,7 +415,7 @@
 }
 
 .projecao-diaria-fornecedor-identificacao > span {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -424,14 +424,14 @@
 
 .projecao-diaria-fornecedor-identificacao > strong {
   margin-top: 4px;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 950;
 }
 
 .projecao-diaria-fornecedor-identificacao > small {
   margin-top: 4px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
 }
 
@@ -456,7 +456,7 @@
 }
 
 .projecao-diaria-fornecedor-resumo span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 850;
   letter-spacing: 0.04em;
@@ -473,7 +473,7 @@
 }
 
 .projecao-diaria-fornecedor-resumo strong.entrada {
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .projecao-diaria-fornecedor-resumo strong.futura {
@@ -481,15 +481,15 @@
 }
 
 .projecao-diaria-fornecedor-resumo strong.consumo {
-  color: #b45309;
+  color: var(--color-warning-hover);
 }
 
 .projecao-diaria-fornecedor-resumo .saldo-final strong {
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .projecao-diaria-fornecedor-resumo .saldo-final strong.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-fornecedor-sem-base {
@@ -497,8 +497,8 @@
   align-items: center;
   gap: 7px;
   padding: 10px 14px;
-  border-bottom: 1px solid #fee2e2;
-  background: #fff7ed;
+  border-bottom: 1px solid var(--red-100);
+  background: var(--orange-50);
   color: #9a3412;
   font-size: 9px;
   font-weight: 700;
@@ -526,8 +526,8 @@
   z-index: 2;
   padding: 10px 12px;
   border-bottom: 1px solid #dbe3ec;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 850;
   letter-spacing: 0.04em;
@@ -543,7 +543,7 @@
 .projecao-diaria-tabela td {
   padding: 11px 12px;
   border-bottom: 1px solid #edf1f5;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 10px;
   font-weight: 700;
   vertical-align: middle;
@@ -568,20 +568,20 @@
 }
 
 .projecao-diaria-data strong {
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 10px;
   font-weight: 850;
 }
 
 .projecao-diaria-data small {
   margin-top: 2px;
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 800;
 }
 
 .projecao-diaria-entrada {
-  color: #047857 !important;
+  color: var(--color-success-hover) !important;
 }
 
 .projecao-diaria-futura {
@@ -589,16 +589,16 @@
 }
 
 .projecao-diaria-consumo {
-  color: #b45309 !important;
+  color: var(--color-warning-hover) !important;
 }
 
 .projecao-diaria-saldo {
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 850;
 }
 
 .projecao-diaria-saldo.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -612,15 +612,15 @@
   gap: 8px;
   margin: 16px 18px 18px;
   padding: 34px 20px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--color-border-strong);
   border-radius: 11px;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
   text-align: center;
 }
 
 .projecao-diaria-estado strong {
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 13px;
   font-weight: 850;
 }
@@ -633,16 +633,16 @@
 }
 
 .projecao-diaria-erro {
-  border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  border-color: var(--red-200);
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-loading {
   width: 28px;
   height: 28px;
   border: 2px solid #dbe3ec;
-  border-top-color: #2563eb;
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: projecao-diaria-loading 0.75s linear infinite;
 }
@@ -668,7 +668,7 @@
 
   .projecao-diaria-fornecedor-identificacao {
     border-right: 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--color-border);
   }
 }
 

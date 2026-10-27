@@ -36,9 +36,9 @@
 
   place-items: center;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
   border-radius: 8px;
 
@@ -48,9 +48,9 @@
 }
 
 .dp-top-paradas__item:first-child .dp-top-paradas__rank {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 
-  background: #fef2f2;
+  background: var(--color-danger-soft);
 }
 
 /* =========================================================
@@ -136,7 +136,7 @@
 }
 
 .dp-top-paradas__reason > strong {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.68rem;
 }
@@ -144,9 +144,9 @@
 .dp-top-paradas__tipo {
   padding: 2px 6px;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
   border-radius: 999px;
 

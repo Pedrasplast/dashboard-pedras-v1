@@ -392,10 +392,10 @@
 
   padding: 5px 9px;
 
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--color-primary-hover);
+  background: var(--color-primary-soft);
 
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--blue-100);
 
   border-radius: 999px;
 
@@ -547,11 +547,11 @@
 
 .dp-page .recharts-cartesian-axis-line,
 .dp-page .recharts-cartesian-axis-tick-line {
-  stroke: #cbd5e1;
+  stroke: var(--color-border-strong);
 }
 
 .dp-page .recharts-cartesian-axis-tick-value {
-  fill: #64748b;
+  fill: var(--color-text-muted);
   font-weight: 600;
 }
 
@@ -624,23 +624,23 @@
 
   padding: 22px 20px;
 
-  color: #64748b;
-  background: #ffffff;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
 
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--color-border-strong);
 
   border-radius: 12px;
 }
 
 .dp-empty-page > svg {
   flex: 0 0 auto;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .dp-empty-page strong {
   display: block;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.8rem;
 }
@@ -844,9 +844,9 @@
 
   padding-top: 7px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.67rem;
   font-weight: 700;
@@ -855,7 +855,7 @@
 .dp-drilldown__clique {
   margin-top: 7px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.66rem;
   font-weight: 700;
@@ -904,9 +904,9 @@
 
   color: var(--dp-primary);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--blue-200);
 
   border-radius: 8px;
 
@@ -928,7 +928,7 @@
 }
 
 .dp-refresh-button:hover:not(:disabled) {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: var(--dp-primary);
 

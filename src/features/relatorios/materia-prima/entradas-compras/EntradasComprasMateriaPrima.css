@@ -23,7 +23,7 @@
 }
 
 .entradas-compras-filtros label > span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.68rem;
   font-weight: 700;
 }
@@ -33,10 +33,10 @@
   width: 100%;
   min-height: 39px;
   padding: 0 10px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
-  background: #ffffff;
-  color: #334155;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
   font: inherit;
   font-size: 0.75rem;
   outline: none;
@@ -44,7 +44,7 @@
 
 .entradas-compras-filtros input:focus,
 .entradas-compras-filtros select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
@@ -61,7 +61,7 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--color-text-light);
   pointer-events: none;
 }
 
@@ -74,8 +74,8 @@
   padding: 0 12px;
   border: 1px solid #dbe3ec;
   border-radius: 8px;
-  background: #ffffff;
-  color: #475569;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font: inherit;
   font-size: 0.7rem;
   font-weight: 750;
@@ -83,8 +83,8 @@
 }
 
 .entradas-compras-limpar:hover {
-  border-color: #94a3b8;
-  background: #f8fafc;
+  border-color: var(--color-text-light);
+  background: var(--color-surface-subtle);
 }
 
 .entradas-compras-atualizando {
@@ -92,7 +92,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.69rem;
   font-weight: 700;
 }
@@ -117,10 +117,10 @@
   gap: 8px;
   margin-top: 12px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 9px;
-  background: #f8fafc;
-  color: #475569;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
   font-size: 0.72rem;
   line-height: 1.45;
 }
@@ -132,8 +132,8 @@
 
 .entradas-compras-mensagem-erro {
   border-color: rgba(220, 38, 38, 0.18);
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -205,7 +205,7 @@
 }
 
 .entradas-compras-pedido {
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -226,8 +226,8 @@
   align-items: center;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
   font-size: 0.68rem;
   font-weight: 700;
   white-space: nowrap;
@@ -238,8 +238,8 @@
   align-items: center;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 700;
   white-space: nowrap;

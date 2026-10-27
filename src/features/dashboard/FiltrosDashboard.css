@@ -38,7 +38,7 @@
 
   margin: 14px 0 0;
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
   font-size: 0.7rem;
   font-weight: 800;
   line-height: 1.2;
@@ -64,7 +64,7 @@
   border: 1px solid transparent;
   border-radius: 7px;
 
-  color: #ef4444;
+  color: var(--red-500);
   font-family: inherit;
   font-size: 0.67rem;
   font-weight: 800;
@@ -122,11 +122,11 @@
 
   padding: 10px 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid #dbe3ee;
   border-radius: 10px;
 
-  color: #0f172a;
+  color: var(--color-text);
   font-family: inherit;
   text-align: left;
 
@@ -142,23 +142,23 @@
 }
 
 .calendar-trigger:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: var(--color-surface-subtle);
+  border-color: var(--color-text-light);
 
   transform: translateY(-1px);
 }
 
 .calendar-trigger:focus-visible {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--blue-500);
 
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .calendar-trigger:disabled {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  color: #94a3b8;
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+  color: var(--color-text-light);
 
   cursor: not-allowed;
   box-shadow: none;
@@ -169,7 +169,7 @@
 
   overflow: hidden;
 
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 0.91rem;
   font-weight: 700;
   line-height: 1.25;
@@ -179,12 +179,12 @@
 }
 
 .calendar-trigger strong.calendar-trigger-placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-weight: 500;
 }
 
 .calendar-trigger:disabled strong {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 /* =====================================================
@@ -204,7 +204,7 @@
 
   padding: 10px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid #dbe3ee;
   border-radius: 14px;
 
@@ -251,7 +251,7 @@
 
   margin: 0;
 
-  color: #1e293b;
+  color: var(--slate-800);
   font-size: 0.8rem;
 }
 
@@ -289,7 +289,7 @@
 .calendar-popover .rdp-caption_label {
   min-width: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 0.9rem;
   font-weight: 800;
   line-height: 1.2;
@@ -331,11 +331,11 @@
   align-items: center;
   justify-content: center;
 
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   cursor: pointer;
   pointer-events: auto;
@@ -349,9 +349,9 @@
 
 .calendar-popover .rdp-button_previous:hover:not(:disabled),
 .calendar-popover .rdp-button_next:hover:not(:disabled) {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  border-color: var(--blue-200);
+  color: var(--color-primary-hover);
 }
 
 .calendar-popover .rdp-button_previous:focus-visible,
@@ -380,7 +380,7 @@
 
   padding: 5px 0;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.61rem;
   font-weight: 800;
   line-height: 1.1;
@@ -417,7 +417,7 @@
   border: none;
   border-radius: 9px;
 
-  color: #334155;
+  color: var(--color-text-strong);
   font-family: inherit;
   font-size: 0.76rem;
   font-weight: 600;
@@ -433,8 +433,8 @@
 }
 
 .calendar-popover .rdp-day_button:hover:not(:disabled) {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
 
   transform: scale(1.04);
 }
@@ -449,8 +449,8 @@
 ===================================================== */
 
 .calendar-popover .rdp-selected .rdp-day_button {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 
   font-weight: 800;
 
@@ -463,9 +463,9 @@
 
 .calendar-popover .rdp-today:not(.rdp-selected) .rdp-day_button {
   background: #f8fbff;
-  border: 1px solid #93c5fd;
+  border: 1px solid var(--blue-300);
 
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
   font-weight: 800;
 }
 
@@ -474,15 +474,15 @@
 ===================================================== */
 
 .calendar-popover .calendar-day-has-data .rdp-day_button {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 700;
 }
 
 .calendar-popover .calendar-day-has-data .rdp-day_button:hover {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--blue-100);
+  color: var(--color-primary-hover);
 }
 
 .calendar-popover .calendar-day-has-data .rdp-day_button::after {
@@ -491,8 +491,8 @@
 }
 
 .calendar-popover .rdp-selected.calendar-day-has-data .rdp-day_button {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 /* =====================================================
@@ -506,7 +506,7 @@
 .calendar-popover .rdp-disabled .rdp-day_button {
   background: transparent;
 
-  color: #cbd5e1;
+  color: var(--color-border-strong);
 
   cursor: not-allowed;
   pointer-events: none;
@@ -531,9 +531,9 @@
   margin-top: 10px;
   padding-top: 9px;
 
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-surface-muted);
 
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.63rem;
   line-height: 1.4;
   text-align: center;
@@ -549,11 +549,11 @@
   margin-top: 4px;
   padding: 8px 10px;
 
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-danger-soft);
+  border: 1px solid var(--red-200);
   border-radius: 8px;
 
-  color: #dc2626;
+  color: var(--color-danger);
   font-size: 0.7rem;
   line-height: 1.35;
 }
@@ -569,11 +569,11 @@
 
   padding: 10px 38px 10px 12px;
 
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border: 1px solid #dbe3ee;
   border-radius: 10px;
 
-  color: #1e293b;
+  color: var(--slate-800);
   font-family: inherit;
   font-size: 0.88rem;
   font-weight: 500;
@@ -593,21 +593,21 @@
 }
 
 .filter-section select:hover:not(:disabled) {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-text-light);
 }
 
 .filter-section select:focus-visible {
-  border-color: #3b82f6;
+  border-color: var(--blue-500);
 
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .filter-section select:disabled {
-  background-color: #cbd5e1;
-  border-color: #cbd5e1;
+  background-color: var(--color-border-strong);
+  border-color: var(--color-border-strong);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   cursor: not-allowed;
   box-shadow: none;
@@ -652,7 +652,7 @@
   border: 1px solid transparent;
   border-radius: 9px;
 
-  color: #dbeafe;
+  color: var(--blue-100);
   font-size: 0.82rem;
   font-weight: 650;
   line-height: 1.2;
@@ -671,7 +671,7 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(191, 219, 254, 0.16);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   transform: translateX(2px);
 }
@@ -680,7 +680,7 @@
   background: rgba(37, 99, 235, 0.28);
   border-color: rgba(147, 197, 253, 0.32);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 .filter-section .checkbox-label input[type="checkbox"] {
@@ -690,7 +690,7 @@
   height: 17px;
   margin: 0;
 
-  accent-color: #2563eb;
+  accent-color: var(--color-primary);
 
   cursor: pointer;
 }
@@ -1035,7 +1035,7 @@
   margin: 0;
   padding: 0;
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
   background: rgba(96, 165, 250, 0.2);
 
   border: 1px solid rgba(147, 197, 253, 0.32);
@@ -1050,7 +1050,7 @@
   flex: 1;
   min-width: 0;
 
-  color: #dbeafe;
+  color: var(--blue-100);
   font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.3;
@@ -1062,12 +1062,12 @@
 
 .filter-section .tipo-checkbox-label:has(input:checked) .tipo-label-numero {
   color: #0b1f5e;
-  background: #ffffff;
-  border-color: #ffffff;
+  background: var(--color-surface);
+  border-color: var(--color-surface);
 }
 
 .filter-section .tipo-checkbox-label:has(input:checked) .tipo-label-descricao {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 /* =====================================================
@@ -1152,7 +1152,7 @@
   border: 1px solid #d9e2ec;
   border-radius: 7px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-sizing: border-box;
 
@@ -1212,7 +1212,7 @@
 
   background: #eef4ff;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 11px;
   font-weight: 800;
@@ -1242,7 +1242,7 @@
 .relatorio-filtros-card .tipo-checkbox-label:hover {
   border-color: #aebdcd;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 /* =====================================================
@@ -1260,15 +1260,15 @@
 .relatorio-filtros-card
   .tipo-checkbox-label:has(input[type="checkbox"]:checked)
   .tipo-label-numero {
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 .relatorio-filtros-card
   .tipo-checkbox-label:has(input[type="checkbox"]:checked)
   .tipo-label-descricao {
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
 
   font-weight: 700;
 }

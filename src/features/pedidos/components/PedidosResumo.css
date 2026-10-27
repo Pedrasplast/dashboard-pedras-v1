@@ -178,7 +178,7 @@
 ========================================================= */
 
 .pedidos-card--atrasados {
-  border-color: #fecaca;
+  border-color: var(--red-200);
 
   background: linear-gradient(
     135deg,
@@ -213,7 +213,7 @@
 ========================================================= */
 
 .pedidos-card--atrasados .pedidos-card-icon {
-  background: #fee2e2;
+  background: var(--red-100);
 
   color: var(--color-danger);
 }
@@ -241,7 +241,7 @@
 .pedidos-card--quantidade .pedidos-card-icon {
   background: #f5f3ff;
 
-  color: #7c3aed;
+  color: var(--violet-600);
 }
 
 /* =========================================================

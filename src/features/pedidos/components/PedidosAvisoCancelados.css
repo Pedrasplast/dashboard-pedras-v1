@@ -13,7 +13,7 @@
 
   background: #fff7f7;
 
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-200);
   border-left: 4px solid var(--color-danger);
 
   border-radius: 9px;

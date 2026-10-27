@@ -46,7 +46,7 @@
 
   border-radius: 16px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
 
@@ -71,9 +71,9 @@
 
   padding: 21px 22px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fafcff 100%);
 }
 
 /* =========================================================
@@ -90,13 +90,13 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--blue-200);
 
   border-radius: 12px;
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 22px;
 }
@@ -114,7 +114,7 @@
 
   margin-bottom: 4px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.63rem;
 
@@ -128,7 +128,7 @@
 .importacao-confirmacao-titulo h3 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 1.2rem;
 
@@ -142,7 +142,7 @@
 .importacao-confirmacao-titulo p {
   margin: 5px 0 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.78rem;
 
@@ -169,7 +169,7 @@
 
   background: transparent;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 18px;
 
@@ -182,11 +182,11 @@
 }
 
 .importacao-confirmacao-fechar:hover {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -215,7 +215,7 @@
 
   border-radius: 11px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .importacao-confirmacao-arquivo-icone {
@@ -230,11 +230,11 @@
 
   border-radius: 9px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 18px;
 }
@@ -249,7 +249,7 @@
 }
 
 .importacao-confirmacao-arquivo span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.66rem;
 
@@ -267,7 +267,7 @@
 
   overflow: hidden;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.84rem;
 
@@ -302,15 +302,15 @@
 
   padding: 12px 13px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 9px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .importacao-confirmacao-detalhes span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
 
@@ -322,7 +322,7 @@
 }
 
 .importacao-confirmacao-detalhes strong {
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.82rem;
 
@@ -344,7 +344,7 @@
 
   padding: 13px 14px;
 
-  border: 1px solid #fed7aa;
+  border: 1px solid var(--orange-200);
 
   border-radius: 10px;
 
@@ -405,9 +405,9 @@
 
   padding: 15px 22px 18px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
@@ -419,13 +419,13 @@
 
   padding: 0 16px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
   border-radius: 8px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-family: inherit;
 
@@ -442,11 +442,11 @@
 }
 
 .importacao-confirmacao-cancelar:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -466,13 +466,13 @@
 
   padding: 0 17px;
 
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary-hover);
 
   border-radius: 8px;
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font-family: inherit;
 
@@ -492,9 +492,9 @@
 }
 
 .importacao-confirmacao-importar:hover {
-  border-color: #1e40af;
+  border-color: var(--color-primary-active);
 
-  background: #1d4ed8;
+  background: var(--color-primary-hover);
 
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22);
 }

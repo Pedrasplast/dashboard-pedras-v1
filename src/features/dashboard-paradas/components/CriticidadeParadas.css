@@ -43,7 +43,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: 0.68rem;
   font-weight: 800;
 }
@@ -51,14 +51,14 @@
 .dp-criticidade-quadrante-card > b {
   display: block;
   margin-top: 2px;
-  color: #1e293b;
+  color: var(--slate-800);
   font-size: 0.72rem;
 }
 
 .dp-criticidade-quadrante-card > small {
   display: block;
   margin-top: 1px;
-  color: #64748b;
+  color: var(--color-text-muted);
   line-height: 1.25;
   font-size: 0.65rem;
 }
@@ -73,7 +73,7 @@
 }
 
 .dp-chart--criticidade .recharts-reference-line-line {
-  stroke: #94a3b8;
+  stroke: var(--color-text-light);
 }
 
 .dp-criticidade-scatter {
@@ -94,17 +94,17 @@
   gap: 5px;
   flex-wrap: wrap;
   margin-top: 8px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.72rem;
 }
 
 .dp-criticidade__footer strong {
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .dp-criticidade__footer-clique {
   margin-left: auto;
-  color: #2563eb;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -127,15 +127,15 @@
 }
 
 .dp-criticidade-tooltip-prioridade span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.67rem;
 }
 
 .dp-criticidade-tooltip-clique {
   margin-top: 8px;
   padding-top: 7px;
-  border-top: 1px solid #e2e8f0;
-  color: #2563eb;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-primary);
   font-size: 0.67rem;
   font-weight: 700;
 }

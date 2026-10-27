@@ -87,7 +87,7 @@
   color: var(--color-success);
 }
 .mon-resumo__item--erro {
-  border-color: #fecaca;
+  border-color: var(--red-200);
   background: var(--color-danger-soft);
 }
 .mon-resumo__item--erro strong {
@@ -122,7 +122,7 @@
 }
 .mon-banco--alerta,
 .mon-banco--critico {
-  border-color: #fecaca;
+  border-color: var(--red-200);
   background: var(--color-danger-soft);
 }
 .mon-banco--alerta strong,

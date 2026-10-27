@@ -26,10 +26,10 @@
   box-sizing: border-box;
   overflow: hidden;
 
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fbfdff 100%);
 
   border: 1px solid var(--dp-border);
-  border-top: 3px solid #94a3b8;
+  border-top: 3px solid var(--color-text-light);
   border-radius: 13px;
 
   box-shadow: var(--dp-shadow);
@@ -54,7 +54,7 @@
 
 .dp-kpi:hover {
   transform: translateY(-2px);
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
   box-shadow: var(--dp-shadow-hover);
 }
 
@@ -63,11 +63,11 @@
 ========================================================= */
 
 .dp-kpi--danger {
-  border-top-color: #dc2626;
+  border-top-color: var(--color-danger);
 }
 
 .dp-kpi--warning {
-  border-top-color: #d97706;
+  border-top-color: var(--color-warning);
 }
 
 .dp-kpi--primary {
@@ -75,7 +75,7 @@
 }
 
 .dp-kpi--neutral {
-  border-top-color: #64748b;
+  border-top-color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -121,26 +121,26 @@
   color: var(--dp-primary);
   background: var(--dp-primary-soft);
 
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--blue-100);
   border-radius: 9px;
 }
 
 .dp-kpi--danger .dp-kpi__icon {
-  color: #dc2626;
-  background: #fef2f2;
-  border-color: #fee2e2;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: var(--red-100);
 }
 
 .dp-kpi--warning .dp-kpi__icon {
-  color: #d97706;
-  background: #fffbeb;
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
   border-color: #fef3c7;
 }
 
 .dp-kpi--neutral .dp-kpi__icon {
-  color: #475569;
-  background: #f1f5f9;
-  border-color: #e2e8f0;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
 }
 
 /* =========================================================
@@ -224,17 +224,17 @@
 
   padding: 4px 7px;
 
-  color: #475569;
-  background: #f1f5f9;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-muted);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 7px;
 
   white-space: nowrap;
 }
 
 .dp-kpi-duration__numero-secundario {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.82rem;
   font-weight: 850;
@@ -242,7 +242,7 @@
 }
 
 .dp-kpi-duration__unidade-secundaria {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.58rem;
   font-weight: 750;

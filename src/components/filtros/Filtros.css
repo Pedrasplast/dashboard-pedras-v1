@@ -72,7 +72,7 @@
 
   background: var(--color-danger-soft);
 
-  border-color: #fecaca;
+  border-color: var(--red-200);
 }
 
 /* =========================================================

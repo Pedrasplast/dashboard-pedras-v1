@@ -23,7 +23,7 @@
 
   padding: 8px 10px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid #edf2f7;
 
@@ -59,7 +59,7 @@
 }
 
 .dp-chart--duracao .recharts-bar-rectangle path {
-  fill: #1d4ed8;
+  fill: var(--color-primary-hover);
 }
 
 /* =========================================================
@@ -85,9 +85,9 @@
 
   padding-top: 7px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.67rem;
 
@@ -97,7 +97,7 @@
 .dp-distribuicao__clique {
   margin-top: 7px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.66rem;
 

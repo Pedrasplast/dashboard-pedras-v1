@@ -189,7 +189,7 @@
 
   padding: 3px 7px;
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--blue-200);
   border-radius: 999px;
 
   background: var(--color-primary-soft);
@@ -346,7 +346,7 @@
 
   padding: 4px 7px;
 
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-200);
   border-radius: 999px;
 
   background: var(--color-danger-soft);
@@ -381,7 +381,7 @@
 
 .pedidos-inicio-grupo.pedido-linha-atrasada > td:first-child {
   box-shadow:
-    inset 3px 0 0 #ef4444,
+    inset 3px 0 0 var(--red-500),
     4px 0 8px rgba(15, 23, 42, 0.04);
 }
 
@@ -410,7 +410,7 @@
 }
 
 .pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada) > td {
-  background: #fff7ed;
+  background: var(--orange-50);
 }
 
 .pedido-linha-nova:not(.pedido-linha-atrasada):not(.pedido-linha-cancelada):hover > td {
@@ -433,7 +433,7 @@
 
 .pedido-celula-alterada {
   box-shadow:
-    inset 4px 0 0 #7c3aed,
+    inset 4px 0 0 var(--violet-600),
     4px 0 8px rgba(15, 23, 42, 0.04);
 }
 
@@ -475,9 +475,9 @@
 }
 
 .pedido-alterado-badge {
-  border: 1px solid #7c3aed;
+  border: 1px solid var(--violet-600);
 
-  background: #7c3aed;
+  background: var(--violet-600);
 
   box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
 }
@@ -763,17 +763,17 @@
   .pedidos-mobile-card--novo {
     border-left: 4px solid #f97316;
 
-    background: #fff7ed;
+    background: var(--orange-50);
   }
 
   .pedidos-mobile-card--alterado {
-    border-left: 4px solid #7c3aed;
+    border-left: 4px solid var(--violet-600);
 
     background: #faf5ff;
   }
 
   .pedidos-mobile-card--atrasado {
-    border-left: 4px solid #ef4444;
+    border-left: 4px solid var(--red-500);
 
     background: #fffafa;
   }

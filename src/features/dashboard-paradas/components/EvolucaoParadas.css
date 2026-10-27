@@ -25,11 +25,11 @@
 .dp-evolucao-granularidade {
   padding: 4px 8px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 999px;
 
@@ -49,9 +49,9 @@
 
   padding: 3px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 8px;
 }
@@ -61,7 +61,7 @@
 
   padding: 0 9px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   background: transparent;
 
@@ -88,7 +88,7 @@
 }
 
 .dp-chart-toggle__btn.active {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: var(--dp-primary);
 

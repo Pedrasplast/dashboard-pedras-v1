@@ -25,7 +25,7 @@
 
   padding: 12px 18px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--pr-borda);
   border-bottom: 3px solid var(--pr-verde);
   border-radius: 12px;
@@ -67,19 +67,19 @@
 
   padding: 0 14px;
 
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
 }
 
 .pr-busca:focus-within {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .pr-busca svg {
   flex-shrink: 0;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .pr-busca input {
@@ -100,7 +100,7 @@
   flex-shrink: 0;
   padding: 3px 10px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
   border-radius: 999px;
 
   color: var(--pr-texto-2);
@@ -121,7 +121,7 @@
   align-items: center;
   gap: 6px;
 
-  color: #475569;
+  color: var(--color-text-secondary);
   font-size: 0.76rem;
   font-weight: 800;
 }
@@ -134,7 +134,7 @@
   min-height: 34px;
   padding: 0 12px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--pr-borda);
   border-radius: 10px;
 
@@ -147,14 +147,14 @@
 }
 
 .pr-recente small {
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.68rem;
   font-weight: 600;
 }
 
 .pr-recente:hover {
   border-color: #86efac;
-  background: #f0fdf4;
+  background: var(--green-50);
 }
 
 /* Corpo: categorias + lista */
@@ -172,7 +172,7 @@
 
   padding: 10px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--pr-borda);
   border-radius: 12px;
 }
@@ -180,7 +180,7 @@
 .pr-categorias h2 {
   margin: 4px 8px 8px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.64rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -200,7 +200,7 @@
   border: 0;
   border-radius: 9px;
 
-  color: #334155;
+  color: var(--color-text-strong);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
@@ -210,7 +210,7 @@
 }
 
 .pr-categoria:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .pr-categoria-nome {
@@ -221,7 +221,7 @@
 .pr-categoria b {
   padding: 1px 8px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
   border-radius: 999px;
 
   color: var(--pr-texto-2);
@@ -239,7 +239,7 @@
 
 .pr-categoria-ativa b {
   background: var(--pr-azul);
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 .pr-icone {
@@ -273,7 +273,7 @@
 .pr-lista {
   min-width: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--pr-borda);
   border-radius: 12px;
 
@@ -292,7 +292,7 @@
 }
 
 .pr-lista-topo h2 span {
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -304,7 +304,7 @@
 }
 
 .pr-lista li + li {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-surface-muted);
 }
 
 .pr-item {
@@ -317,7 +317,7 @@
 
   padding: 11px 16px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 0;
 
   color: inherit;
@@ -328,11 +328,11 @@
 }
 
 .pr-item:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .pr-item:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--color-primary);
   outline-offset: -2px;
 }
 
@@ -374,7 +374,7 @@
   min-height: 32px;
   padding: 0 12px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
 
   color: var(--pr-azul);
@@ -385,12 +385,12 @@
 
 .pr-item:hover .pr-item-abrir {
   border-color: #86efac;
-  background: #f0fdf4;
+  background: var(--green-50);
 }
 
 .pr-item-seta {
   display: none;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .pr-vazio {
@@ -462,8 +462,8 @@
     gap: 6px;
     padding: 0 12px;
 
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
     border-radius: 999px;
 
     white-space: nowrap;
@@ -473,7 +473,7 @@
   .pr-categoria-ativa:hover {
     background: var(--pr-azul);
     border-color: var(--pr-azul);
-    color: #ffffff;
+    color: var(--color-text-inverse);
   }
 
   .pr-categoria-ativa b {
@@ -596,11 +596,11 @@
   }
 
   .pr-lista li {
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--color-surface-muted);
   }
 
   .pr-lista li:nth-child(odd) {
-    border-right: 1px solid #f1f5f9;
+    border-right: 1px solid var(--color-surface-muted);
   }
 
   .pr-item {

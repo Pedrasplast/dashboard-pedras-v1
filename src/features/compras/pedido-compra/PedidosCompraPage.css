@@ -126,7 +126,7 @@
 
   padding: 0 10px;
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--blue-200);
 
   border-radius: var(--radius-pill);
 
@@ -170,7 +170,7 @@
 
   padding: 9px 11px;
 
-  border: 1px solid #fecaca;
+  border: 1px solid var(--red-200);
 
   border-radius: var(--radius-md);
 
@@ -254,7 +254,7 @@
 ========================================================= */
 
 .compras-estado strong {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-body);
 }

@@ -11,7 +11,7 @@
 ========================================================= */
 
 .dp-chart--pareto .recharts-bar-rectangle path {
-  fill: #2563eb;
+  fill: var(--color-primary);
 }
 
 /* =========================================================
@@ -19,15 +19,15 @@
 ========================================================= */
 
 .dp-chart--pareto .recharts-line-curve {
-  stroke: #059669;
+  stroke: var(--color-success);
 
   stroke-width: 2.5;
 }
 
 .dp-chart--pareto .recharts-line-dot {
-  fill: #059669;
+  fill: var(--color-success);
 
-  stroke: #ffffff;
+  stroke: var(--color-surface);
 }
 
 /* =========================================================
@@ -35,7 +35,7 @@
 ========================================================= */
 
 .dp-chart--pareto .recharts-reference-line-line {
-  stroke: #94a3b8;
+  stroke: var(--color-text-light);
 }
 
 /* =========================================================
