@@ -104,8 +104,8 @@
 
 .rl-filtros-corpo select,
 .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]) {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   min-height: 38px;
 
   border-radius: 8px;
@@ -143,13 +143,13 @@
 /* Grades internas dos filtros customizados: uma coluna. */
 .rl-filtros-corpo [class*="filtros-grid"],
 .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-  grid-template-columns: 1fr !important;
+  grid-template-columns: 1fr;
 }
 
 .rl-filtros-corpo [class*="busca"],
 .rl-filtros-corpo [class*="periodo-grupo"],
 .rl-filtros-corpo [class*="-campo"] {
-  grid-column: auto !important;
+  grid-column: auto;
 }
 
 /* Botões do próprio filtro (ex.: Limpar) no padrão. */
@@ -387,11 +387,11 @@
 }
 
 .rl .relatorio-visualizacao-tabela thead th {
-  color: var(--rl-azul) !important;
+  color: var(--rl-azul);
   background: var(--rl-azul-claro) !important;
 
-  border-right: 0 !important;
-  border-bottom: 1px solid #d6def0 !important;
+  border-right: 0;
+  border-bottom: 1px solid #d6def0;
 }
 
 .rl .relatorio-visualizacao-tabela tbody td {
@@ -769,7 +769,7 @@
 
 /* Na coluna, nenhum campo ocupa mais de uma coluna. */
 .rl-filtros-corpo [class*="-filtros"] > * {
-  grid-column: auto !important;
+  grid-column: auto;
 }
 
 /* A rolagem da tabela/filtros não "vaza" para a página atrás. */
@@ -818,35 +818,35 @@
 .rl .rl-filtros-corpo,
 .rl .rl-filtros-corpo [class*="filtros-grid"],
 .rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-  gap: 8px !important;
+  gap: 8px;
 }
 
 .rl .rl-filtros-corpo label,
 .rl .rl-filtros-corpo .filter-section {
-  gap: 4px !important;
-  margin: 0 !important;
+  gap: 4px;
+  margin: 0;
 }
 
 .rl .rl-filtros-corpo .filter-section > label {
-  margin: 0 !important;
+  margin: 0;
 }
 
 .rl .rl-filtros-corpo label > span,
 .rl .rl-filtros-corpo .campo-filtro__label,
 .rl .rl-filtros-corpo .periodo-relatorio-label,
 .rl .rl-filtros-corpo .filter-section > label {
-  font-size: 0.66rem !important;
+  font-size: 0.66rem;
   line-height: 1.25;
 }
 
 .rl .rl-filtros-corpo select,
 .rl .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]),
 .rl .rl-filtros-corpo .calendar-trigger {
-  height: 34px !important;
-  min-height: 34px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  font-size: 0.76rem !important;
+  height: 34px;
+  min-height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 0.76rem;
   box-sizing: border-box;
 }
 
@@ -868,7 +868,7 @@
 }
 
 .rl .rl-filtros-corpo .date-inputs-container {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rl .rl-filtros-corpo .calendar-trigger {
@@ -878,8 +878,8 @@
 }
 
 .rl .rl-filtros-corpo input[type="date"] {
-  padding-left: 8px !important;
-  padding-right: 6px !important;
+  padding-left: 8px;
+  padding-right: 6px;
 }
 
 /* Botões */
@@ -951,18 +951,18 @@
 ========================================================= */
 
 .rl .rl-filtros-corpo .filter-section {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
-  gap: 4px !important;
+  gap: 4px;
 }
 
 /* Rótulos (PERÍODO, INJETORA, TIPO...) iguais aos demais */
 .rl .rl-filtros-corpo .filter-section > label,
 .rl .rl-filtros-corpo .periodo-relatorio-label {
   margin: 6px 0 0 !important;
-  color: var(--rl-texto-2) !important;
-  font-size: 0.66rem !important;
-  font-weight: 700 !important;
+  color: var(--rl-texto-2);
+  font-size: 0.66rem;
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 
@@ -1042,8 +1042,8 @@
 
 /* Campos de data (botão que abre o calendário) */
 .rl .rl-filtros-corpo .calendar-field {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -1051,8 +1051,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  flex-direction: row !important;
-  justify-content: flex-start !important;
+  flex-direction: row;
+  justify-content: flex-start;
 
   background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
@@ -1073,7 +1073,7 @@
   white-space: nowrap;
 
   color: var(--rl-texto);
-  font-size: 0.76rem !important;
+  font-size: 0.76rem;
   font-weight: 600;
 }
 
@@ -1095,15 +1095,15 @@
 
 /* Tipo: opções legíveis, uma por linha */
 .rl .rl-filtros-corpo .tipo-checkbox-group {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 5px !important;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
   width: 100%;
-  margin: 0 !important;
+  margin: 0;
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label {
-  display: flex !important;
+  display: flex;
   align-items: center;
   gap: 8px !important;
 
@@ -1111,10 +1111,10 @@
   min-width: 0;
   min-height: 34px;
   margin: 0;
-  padding: 5px 9px !important;
+  padding: 5px 9px;
 
-  background: var(--color-surface) !important;
-  border: 1px solid var(--rl-borda) !important;
+  background: var(--color-surface);
+  border: 1px solid var(--rl-borda);
   border-radius: 8px;
   box-sizing: border-box;
 
@@ -1136,36 +1136,36 @@
 }
 
 .rl .rl-filtros-corpo .tipo-label-conteudo {
-  display: flex !important;
+  display: flex;
   align-items: center;
   gap: 7px;
   min-width: 0;
 }
 
 .rl .rl-filtros-corpo .tipo-label-numero {
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
 
-  width: 20px !important;
-  height: 20px !important;
+  width: 20px;
+  height: 20px;
 
   background: var(--color-primary-soft) !important;
   border-radius: 5px;
 
-  color: var(--color-primary) !important;
-  font-size: 0.66rem !important;
+  color: var(--color-primary);
+  font-size: 0.66rem;
   font-weight: 800;
   line-height: 1;
 }
 
 .rl .rl-filtros-corpo .tipo-label-descricao {
-  color: var(--color-text-strong) !important;
-  font-size: 0.72rem !important;
-  font-weight: 600 !important;
+  color: var(--color-text-strong);
+  font-size: 0.72rem;
+  font-weight: 600;
   line-height: 1.25;
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) {
@@ -1184,8 +1184,8 @@
 
 /* Select desabilitado com aparência de desabilitado, sem bloco cinza escuro */
 .rl .rl-filtros-corpo select:disabled {
-  background: var(--color-surface-subtle) !important;
-  color: var(--color-text-light) !important;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-light);
   border-color: var(--rl-borda) !important;
 }
 
@@ -1194,23 +1194,23 @@
    O .calendar-field "some" do layout para o botão e o calendário
    virarem itens da linha de datas. */
 .rl .rl-filtros-corpo .periodo-relatorio-area .date-inputs-container {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
-  gap: 8px !important;
+  gap: 8px;
 }
 
 .rl .rl-filtros-corpo .periodo-relatorio-area .calendar-field {
-  display: contents !important;
+  display: contents;
 }
 
 .rl .rl-filtros-corpo .periodo-relatorio-area .calendar-trigger {
-  flex: 1 1 0 !important;
-  width: auto !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  margin: 0 !important;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
 }
 
 .rl .rl-filtros-corpo .periodo-relatorio-area .calendar-popover {
@@ -1275,10 +1275,10 @@
 .rl .rl-filtros-corpo .calendar-trigger strong {
   display: block;
   width: 100%;
-  margin: 0 !important;
-  padding: 0 !important;
+  margin: 0;
+  padding: 0;
   text-align: left;
-  line-height: 1 !important;
+  line-height: 1;
 }
 
 /* =========================================================
@@ -1292,7 +1292,7 @@
   .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
   .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
   .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
-    padding-top: 0 !important;
+    padding-top: 0;
     scroll-padding-top: 0;
   }
 

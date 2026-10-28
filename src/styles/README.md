@@ -46,10 +46,12 @@ abertas lado a lado (antes/depois).
    `--color-border-subtle`. Restam ~307 usos de hex fixo: ~74 com ΔE entre 2 e 4
    (sutil) e ~233 com ΔE ≥ 4 (cores próprias de cada tela).
    Ferramentas: `cores-proximas.mjs` (inventário) e `aplicar-cores.mjs`.
-3. **`!important` (246, eram 299 antes da remoção do CSS morto).** Concentrados
-   em `relatorios/components/LayoutRelatorio.css` (100). Remover exige resolver
-   antes as regras que eles estão vencendo (`avaliar-important.mjs` testa cada um
-   no navegador).
+3. **`!important` (150; eram 299 antes da remoção do CSS morto e 246 depois).**
+   Saíram os 96 que `avaliar-important.mjs` provou não mudar nada no navegador
+   (`aplicar-important.mjs`). Dos que restam, 56 vencem outra regra (é preciso
+   resolver a regra concorrente antes), 67 estão em elementos que não aparecem
+   sem interação (modais, hover) e 13 não foram avaliados. O maior grupo segue em
+   `relatorios/components/LayoutRelatorio.css` (35).
 4. **Breakpoints.** Mais de 20 larguras diferentes em `@media`; padronizar em
    480 / 768 / 1024 / 1280 px muda o ponto em que o layout quebra.
 5. **CSS Modules.** Migrar o CSS de cada tela para `*.module.css` elimina as

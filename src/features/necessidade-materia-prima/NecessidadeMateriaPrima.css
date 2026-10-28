@@ -442,7 +442,7 @@
 }
 
 .necessidade-coluna-numero {
-  text-align: right !important;
+  text-align: right;
 }
 
 /* ============================================================
@@ -578,8 +578,8 @@
   min-height: 38px !important;
   border: 1.5px solid var(--blue-300) !important;
   border-radius: 10px !important;
-  background: var(--color-surface) !important;
-  text-align: center !important;
+  background: var(--color-surface);
+  text-align: center;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
@@ -596,7 +596,7 @@
 }
 
 .necessidade-negativo {
-  color: var(--color-danger) !important;
+  color: var(--color-danger);
   font-weight: 800;
 }
 
@@ -829,8 +829,8 @@
 
 /* Estoque negativo */
 .necessidade-page .necessidade-estoque-negativo {
-  color: var(--color-danger) !important;
-  font-weight: 800 !important;
+  color: var(--color-danger);
+  font-weight: 800;
 }
 
 /* Destaque opcional do campo negativo */

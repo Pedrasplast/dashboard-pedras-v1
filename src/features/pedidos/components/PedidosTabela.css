@@ -56,7 +56,7 @@
 
   background: var(--color-surface-subtle);
 
-  text-align: left !important;
+  text-align: left;
 
   font-size: 10px;
   font-weight: 750;
@@ -74,7 +74,7 @@
 
   border-bottom: 1px solid var(--color-border-subtle);
 
-  text-align: left !important;
+  text-align: left;
 
   vertical-align: top;
 
@@ -132,7 +132,7 @@
 }
 
 .pedidos-item-continuacao {
-  background: var(--color-surface) !important;
+  background: var(--color-surface);
 }
 
 .pedidos-item-continuacao td {
@@ -145,7 +145,7 @@
 }
 
 .pedidos-celula-agrupada {
-  vertical-align: top !important;
+  vertical-align: top;
 
   background: var(--color-surface);
 

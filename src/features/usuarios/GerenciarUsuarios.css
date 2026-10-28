@@ -265,7 +265,7 @@
 
   color: var(--color-text-muted, var(--color-text-muted)) !important;
 
-  text-align: center !important;
+  text-align: center;
 }
 
 /* =========================================================
