@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useNavigate } from "@/lib/navegacao";
 import { supabase } from "@/lib/supabaseClient";

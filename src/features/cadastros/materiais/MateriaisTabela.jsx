@@ -1,5 +1,4 @@
 import { Pencil } from "lucide-react";
-import { formatarNumero } from "../utils/cadastrosFormatadores";
 
 export default function MateriaisTabela({ registrosPagina, carregando, abrirEdicaoMaterial }) {
   return (

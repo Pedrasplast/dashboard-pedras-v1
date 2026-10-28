@@ -1,5 +1,4 @@
 import {
-  FiActivity,
   FiAlertTriangle,
   FiBarChart2,
   FiCalendar,

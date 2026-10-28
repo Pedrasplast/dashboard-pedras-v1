@@ -1,8 +1,7 @@
 import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
 import { paraNumero } from "@/shared/lib/numeros";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { obterHoje, converterDataLocal, formatarHora, formatarDataHora } from "@/shared/lib/datas";
-import { formatarNumeroPtBR, formatarNumeroCasasFixas } from "@/shared/lib/formatar";
+import { obterHoje, converterDataLocal } from "@/shared/lib/datas";
+import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 export function formatarData(valor) {
   const data = converterDataLocal(valor);

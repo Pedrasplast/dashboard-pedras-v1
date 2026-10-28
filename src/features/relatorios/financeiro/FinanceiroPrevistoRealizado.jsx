@@ -1,14 +1,6 @@
 import { useMemo, useState } from "react";
 
-import {
-  FiDollarSign,
-  FiDownload,
-  FiEye,
-  FiFileText,
-  FiRefreshCw,
-  FiSearch,
-  FiX,
-} from "react-icons/fi";
+import { FiFileText, FiRefreshCw, FiSearch, FiX } from "react-icons/fi";
 
 import Filtros from "@/components/filtros/Filtros";
 

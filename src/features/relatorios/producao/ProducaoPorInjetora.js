@@ -1,5 +1,3 @@
-import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/Duracao";
-
 import { converterNumero } from "../utils/Numeros";
 
 /* =====================================================

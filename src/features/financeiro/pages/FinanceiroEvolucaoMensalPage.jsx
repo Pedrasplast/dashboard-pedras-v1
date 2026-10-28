@@ -6,7 +6,6 @@ import {
   FiArrowUpRight,
   FiBarChart2,
   FiCalendar,
-  FiRefreshCw,
   FiTarget,
   FiTrendingDown,
   FiTrendingUp,
@@ -139,11 +138,7 @@ export default function FinanceiroEvolucaoMensalPage() {
 
     isLoading,
 
-    isFetching,
-
     error,
-
-    refetch,
   } = useQuery({
     queryKey: ["financeiro-evolucao-mensal", ano, mesInicial, mesFinal],
 

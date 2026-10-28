@@ -782,7 +782,7 @@ export function criarComprasMensais(financeiro) {
    INSIGHTS GERENCIAIS
 ========================================================= */
 
-export function criarInsightsGerenciais({ resumo, porMaterial, porFornecedor }) {
+export function criarInsightsGerenciais({ porMaterial, porFornecedor }) {
   const insights = [];
 
   const maiorMaterial = porMaterial?.[0] || null;

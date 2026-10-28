@@ -1,14 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import {
-  FiArrowLeft,
-  FiChevronRight,
-  FiDownload,
-  FiEye,
-  FiFileText,
-  FiSearch,
-  FiX,
-} from "react-icons/fi";
+import { FiArrowLeft, FiChevronRight, FiFileText, FiX } from "react-icons/fi";
 
 import { useCargaMaquina, useDescricoesProdutos } from "@/lib/cargaMaquina";
 
@@ -171,9 +163,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return conteudo.includes(termo);
     });
   }, [buscaRelatorios, categoriaSelecionada, relatoriosDisponiveis, relatoriosPorCategoria]);
-
-  const tituloCatalogo =
-    categoriaSelecionada === "Todos" ? "Todos os relatórios" : categoriaSelecionada;
 
   useEffect(() => {
     if (categoriaSelecionada !== "Todos" && !categorias.includes(categoriaSelecionada)) {

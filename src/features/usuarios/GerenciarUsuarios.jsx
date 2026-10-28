@@ -1,7 +1,6 @@
-import { FiArrowLeft, FiSettings, FiUserPlus } from "react-icons/fi";
+import { FiSettings, FiUserPlus } from "react-icons/fi";
 
 import PageHeader from "@/components/layout/PageHeader";
-import { useNavigate } from "@/lib/navegacao";
 
 import ExcluirUsuarioModal from "./components/ExcluirUsuarioModal.jsx";
 
@@ -16,8 +15,6 @@ import useGerenciarUsuarios from "./hooks/useGerenciarUsuarios.js";
 import "./GerenciarUsuarios.css";
 
 export default function GerenciarUsuarios() {
-  const navigate = useNavigate();
-
   const {
     usuarios,
     loading,
