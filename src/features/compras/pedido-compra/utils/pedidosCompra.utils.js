@@ -326,13 +326,6 @@ export function obterSituacaoRecebimento(
     return SITUACOES_RECEBIMENTO.RECEBIDO;
   }
 
-  if (
-    resumo.recebida > 0 &&
-    resumo.saldo > 0
-  ) {
-    return SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE;
-  }
-
   const previsao =
     converterDataLocal(
       pedido?.data_previsao,
@@ -341,12 +334,23 @@ export function obterSituacaoRecebimento(
   const hoje =
     obterHojeLocal();
 
+  /*
+   * Saldo pendente com previsão vencida é atraso,
+   * mesmo que parte do pedido já tenha sido recebida.
+   */
   if (
     resumo.saldo > 0 &&
     previsao &&
     previsao < hoje
   ) {
     return SITUACOES_RECEBIMENTO.EM_ATRASO;
+  }
+
+  if (
+    resumo.recebida > 0 &&
+    resumo.saldo > 0
+  ) {
+    return SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE;
   }
 
   return SITUACOES_RECEBIMENTO.EM_ABERTO;
