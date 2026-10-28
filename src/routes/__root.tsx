@@ -9,7 +9,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuthContext } from "../lib/auth-context";
@@ -53,10 +53,14 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
 
-  const erroNormalizado =
-    error instanceof Error
-      ? error
-      : new Error(typeof error === "string" ? error : "Erro desconhecido");
+  // Memorizado: um Error novo a cada render faria o useEffect abaixo reportar o mesmo erro de novo.
+  const erroNormalizado = useMemo(
+    () =>
+      error instanceof Error
+        ? error
+        : new Error(typeof error === "string" ? error : "Erro desconhecido"),
+    [error],
+  );
 
   useEffect(() => {
     console.error(error);

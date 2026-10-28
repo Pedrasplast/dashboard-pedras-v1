@@ -245,7 +245,7 @@ export default function useCadastros() {
     retry: 1,
   });
 
-  const descricoesEstoque = descricoesQuery.data ?? {};
+  const descricoesEstoque = useMemo(() => descricoesQuery.data ?? {}, [descricoesQuery.data]);
 
   /* =================================================
      ASSOCIAR DESCRIÇÕES

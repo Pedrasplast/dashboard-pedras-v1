@@ -198,11 +198,15 @@ export default function DashboardMateriaPrima() {
     habilitado: !periodoInvalido,
   });
 
-  const financeiro = dados?.financeiro || {
-    compras: [],
+  const financeiro = useMemo(
+    () =>
+      dados?.financeiro || {
+        compras: [],
 
-    recebimentos: [],
-  };
+        recebimentos: [],
+      },
+    [dados?.financeiro],
+  );
 
   /* =======================================================
      FILTROS DISPONÍVEIS

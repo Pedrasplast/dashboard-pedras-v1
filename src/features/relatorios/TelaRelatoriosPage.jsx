@@ -446,13 +446,17 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      FONTE DOS DADOS
   ===================================================== */
 
-  const dadosBrutos = relatorioEhCustom
-    ? []
-    : fonteEhPedidos
-      ? pedidosBrutos
-      : Array.isArray(dadosProducaoBrutos)
-        ? dadosProducaoBrutos
-        : [];
+  const dadosBrutos = useMemo(
+    () =>
+      relatorioEhCustom
+        ? []
+        : fonteEhPedidos
+          ? pedidosBrutos
+          : Array.isArray(dadosProducaoBrutos)
+            ? dadosProducaoBrutos
+            : [],
+    [relatorioEhCustom, fonteEhPedidos, pedidosBrutos, dadosProducaoBrutos],
+  );
 
   const loading = relatorioEhCustom
     ? false

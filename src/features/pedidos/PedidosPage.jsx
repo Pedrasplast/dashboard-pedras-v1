@@ -49,9 +49,10 @@ export default function PedidosPage() {
     notificacoesPorPedido,
   });
 
-  const pedidosOperacionaisUnicos = Array.isArray(vm.pedidosOperacionaisUnicos)
-    ? vm.pedidosOperacionaisUnicos
-    : [];
+  const pedidosOperacionaisUnicos = useMemo(
+    () => (Array.isArray(vm.pedidosOperacionaisUnicos) ? vm.pedidosOperacionaisUnicos : []),
+    [vm.pedidosOperacionaisUnicos],
+  );
 
   /* =======================================================
      PEDIDOS ATRASADOS

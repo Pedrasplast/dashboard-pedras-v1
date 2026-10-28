@@ -64,9 +64,12 @@ function HeatmapParadas({ dados }) {
 
   const dias = Array.isArray(dados?.dias) ? dados.dias : [];
 
-  const faixas = Array.isArray(dados?.faixas) ? dados.faixas : [];
+  const faixas = useMemo(() => (Array.isArray(dados?.faixas) ? dados.faixas : []), [dados?.faixas]);
 
-  const celulas = Array.isArray(dados?.celulas) ? dados.celulas : [];
+  const celulas = useMemo(
+    () => (Array.isArray(dados?.celulas) ? dados.celulas : []),
+    [dados?.celulas],
+  );
 
   const maxOcorrencias = Number(dados?.maxOcorrencias || 0);
 
