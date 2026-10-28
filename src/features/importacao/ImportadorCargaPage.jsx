@@ -340,6 +340,15 @@ function lerAbaBanco(conteudo) {
     throw new Error("Não foi possível acessar a aba Banco.");
   }
 
+  // A partir da 0.20, o sheet_to_json converte sozinho em Date toda célula com formato de data
+  // (inclusive textos e vazias). As funções acima esperam o valor cru, como o Excel guarda
+  // (número serial para datas), então o formato é descartado antes da leitura.
+  for (const endereco of Object.keys(sheet)) {
+    if (endereco[0] !== "!") {
+      delete sheet[endereco].z;
+    }
+  }
+
   const rows = XLSX.utils.sheet_to_json(sheet, {
     defval: "",
     raw: true,
