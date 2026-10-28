@@ -47,6 +47,22 @@
 
 
 /* =========================================================
+   GRID COM PEDIDOS (6 CARDS: inclui "Parciais em atraso")
+========================================================= */
+
+.compras-resumo--pedidos {
+  grid-template-columns:
+    repeat(
+      6,
+      minmax(
+        0,
+        1fr
+      )
+    );
+}
+
+
+/* =========================================================
    CARD
 ========================================================= */
 
@@ -398,6 +414,28 @@
       );
   }
 
+  .compras-resumo--pedidos:not(.compras-resumo--completo) {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .compras-resumo--completo.compras-resumo--pedidos {
+    grid-template-columns:
+      repeat(
+        6,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
   .compras-resumo--completo
     .compras-resumo-card {
     min-height: 76px;
@@ -412,7 +450,8 @@
 ========================================================= */
 
 @media (max-width: 1200px) {
-  .compras-resumo--completo {
+  .compras-resumo--completo,
+  .compras-resumo--completo.compras-resumo--pedidos {
     grid-template-columns:
       repeat(
         4,
@@ -431,7 +470,9 @@
 
 @media (max-width: 950px) {
   .compras-resumo,
-  .compras-resumo--completo {
+  .compras-resumo--completo,
+  .compras-resumo--pedidos:not(.compras-resumo--completo),
+  .compras-resumo--completo.compras-resumo--pedidos {
     grid-template-columns:
       repeat(
         2,
@@ -450,7 +491,9 @@
 
 @media (max-width: 560px) {
   .compras-resumo,
-  .compras-resumo--completo {
+  .compras-resumo--completo,
+  .compras-resumo--pedidos:not(.compras-resumo--completo),
+  .compras-resumo--completo.compras-resumo--pedidos {
     grid-template-columns: 1fr;
   }
 

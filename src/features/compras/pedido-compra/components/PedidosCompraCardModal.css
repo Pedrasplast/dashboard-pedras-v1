@@ -1074,6 +1074,19 @@
 
 
 /* =========================================================
+   BADGE - PARCIAL EM ATRASO
+========================================================= */
+
+.compras-card-modal-badge--parcial-em-atraso {
+  border-color: #fdba74;
+
+  background: #fff1f2;
+
+  color: var(--color-danger-hover);
+}
+
+
+/* =========================================================
    BADGE - RECEBIDO PARCIALMENTE
 ========================================================= */
 

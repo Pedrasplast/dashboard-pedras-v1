@@ -44,6 +44,7 @@ import {
 import {
   atendeFiltroRecebimento,
   converterDataLocal,
+  estaEmAtraso,
   normalizarTexto,
   obterHojeLocal,
 } from "./utils/pedidosCompra.utils";
@@ -81,6 +82,9 @@ const CARDS_RESUMO =
 
     ATRASADOS:
       "atrasados",
+
+    PARCIAIS_ATRASADOS:
+      "parciais-atrasados",
 
     VALOR_ABERTO:
       "valor-aberto",
@@ -218,6 +222,13 @@ function documentoAtendeCard(
           documento
             ?.situacao_recebimento ===
           SITUACOES_RECEBIMENTO.EM_ATRASO
+        );
+
+      case CARDS_RESUMO.PARCIAIS_ATRASADOS:
+        return (
+          documento
+            ?.situacao_recebimento ===
+          SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO
         );
 
       case CARDS_RESUMO.PROXIMOS_7_DIAS:
@@ -872,6 +883,15 @@ export default function PedidosCompraPage() {
             }
 
             if (
+              pedido
+                .situacao_recebimento ===
+              SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO
+            ) {
+              acc.parciaisAtrasados +=
+                1;
+            }
+
+            if (
               estaEntreHojeE7Dias(
                 pedido,
                 hoje,
@@ -897,6 +917,7 @@ export default function PedidosCompraPage() {
           {
             abertos: 0,
             atrasados: 0,
+            parciaisAtrasados: 0,
             valorEmAberto: 0,
             proximos7Dias: 0,
             hoje: 0,
@@ -1096,12 +1117,14 @@ export default function PedidosCompraPage() {
               b,
             ) => {
               const atrasadoA =
-                a?.situacao_recebimento ===
-                SITUACOES_RECEBIMENTO.EM_ATRASO;
+                estaEmAtraso(
+                  a?.situacao_recebimento,
+                );
 
               const atrasadoB =
-                b?.situacao_recebimento ===
-                SITUACOES_RECEBIMENTO.EM_ATRASO;
+                estaEmAtraso(
+                  b?.situacao_recebimento,
+                );
 
               if (
                 atrasadoA &&

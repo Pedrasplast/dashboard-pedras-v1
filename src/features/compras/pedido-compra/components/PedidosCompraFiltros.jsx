@@ -228,6 +228,14 @@ export default function PedidosCompraFiltros({
 
               <option
                 value={
+                  SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO
+                }
+              >
+                Parcial em atraso
+              </option>
+
+              <option
+                value={
                   SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE
                 }
               >
