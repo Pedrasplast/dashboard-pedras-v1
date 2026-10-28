@@ -42,6 +42,7 @@ import {
 } from "./hooks/useRecebimentosFisicosUltimos7Dias";
 
 import {
+  atendeFiltroRecebimento,
   converterDataLocal,
   normalizarTexto,
   obterHojeLocal,
@@ -721,13 +722,11 @@ export default function PedidosCompraPage() {
 
             const recebimento =
               somenteRequisicoes ||
-              filtros
-                .recebimento ===
-                SITUACOES_RECEBIMENTO.TODOS ||
-              pedido
-                .situacao_recebimento ===
+              atendeFiltroRecebimento(
+                pedido,
                 filtros
-                  .recebimento;
+                  .recebimento,
+              );
 
             const periodo =
               documentoEstaNoPeriodo(
