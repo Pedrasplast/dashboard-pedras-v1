@@ -112,15 +112,11 @@ Deno.serve(async (req) => {
     const cadastrados = (materiais || []).filter((m) => normalizar(m.codigo_omie));
     if (!cadastrados.length) throw new Error("Nenhuma matéria-prima com código Omie");
 
-    const { data: itens, error: erroItens } = await db
-      .from("materiais_compra_omie")
-      .select("codigo_produto_omie,codigo_produto,descricao,unidade,categoria");
-    if (erroItens) throw erroItens;
-    const porCodigo = new Map(
-      (itens || []).map((i) => [normalizar(i.codigo_produto), i]),
-    );
+    // O código e a descrição vêm da própria posição de estoque do Omie
+    // (cCodigo / cDescricao). Antes eram buscados na view materiais_compra_omie,
+    // que abre o JSON de todos os pedidos de compra (~6.800) e chegou a estourar
+    // o limite de 8 s da API (28/10/2026). Conferido lado a lado: mesmo resultado.
     const porCodigoManual = new Map(cadastrados.map(m => [normalizar(m.codigo_omie), m]));
-    const mapa = new Map((itens || []).filter(i => porCodigoManual.has(normalizar(i.codigo_produto))).map(i => [String(i.codigo_produto_omie), i]));
     const data = dataBrasil();
     const primeira = await paginaOmie(1, data, appKey, appSecret);
     const total = numeroObrigatorio(primeira.nTotPaginas, "nTotPaginas");
@@ -133,7 +129,7 @@ Deno.serve(async (req) => {
       posicoes.push(...pagina.produtos);
     }
 
-    const selecionadas = posicoes.filter(p => Number(p?.codigo_local_estoque) === LOCAL && (porCodigoManual.has(normalizar(p?.cCodigo)) || mapa.has(String(p?.nCodProd))));
+    const selecionadas = posicoes.filter(p => Number(p?.codigo_local_estoque) === LOCAL && porCodigoManual.has(normalizar(p?.cCodigo)));
     if (!selecionadas.length) {
       return resposta(422, {
         sucesso: false,
@@ -145,13 +141,12 @@ Deno.serve(async (req) => {
     const agora = new Date().toISOString();
     const [dia, mes, ano] = data.split("/");
     const linhas = selecionadas.map((p) => {
-      const produto = mapa.get(String(p.nCodProd));
-      const codigo = produto?.codigo_produto ?? String(p.cCodigo ?? "").trim();
+      const codigo = String(p.cCodigo ?? "").trim();
       if (!porCodigoManual.has(normalizar(codigo))) throw new Error("Código retornado não corresponde ao cadastro manual");
       return {
         codigo_produto_omie: numeroObrigatorio(p.nCodProd, "nCodProd"),
         codigo_produto: codigo,
-        descricao: produto?.descricao ?? String(p.cDescricao ?? '').trim(),
+        descricao: String(p.cDescricao ?? '').trim(),
         categoria: "2.01.03",
         unidade: "KG",
         codigo_local_estoque: LOCAL,

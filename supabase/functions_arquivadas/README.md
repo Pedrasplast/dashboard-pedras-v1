@@ -32,3 +32,8 @@ Para reativar uma delas, publique de novo a pasta correspondente
   pedidos abertos da coluna (85, em 2 páginas), inclusive os que entram na Aprovação
   sem "alteração" registrada (invisíveis para `lApenasAlterados`). Base da conferência
   rápida em `cron-pedidos-compra-omie`. Publicada como stub 410.
+- `probe-estoque-mp-temp` (28/10): leu, somente leitura, as posições de estoque do
+  local de matéria-prima para comparar a rotina `sincronizar-estoque-materia-prima-omie`
+  com e sem a view `materiais_compra_omie`. Resultado idêntico (5 materiais, mesmo
+  código, descrição, ID e saldo); a view foi retirada da rotina. Publicada como stub 410.
+  Usa `omie-retentativa.mjs` da rotina original.
