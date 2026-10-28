@@ -10,11 +10,7 @@ import {
   FiX,
 } from "react-icons/fi";
 
-import {
-  useCargaMaquina,
-  useDescricoesProdutos,
-  normalizarCodigoProduto,
-} from "@/lib/cargaMaquina";
+import { useCargaMaquina, useDescricoesProdutos } from "@/lib/cargaMaquina";
 
 import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
 import { usePermissoes } from "@/hooks/usePermissoes";
@@ -25,26 +21,26 @@ import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 import Paginacao from "@/components/paginacao/Paginacao";
 
 import { RELATORIOS } from "./config/Relatorio.config";
-import { obterDataDoRegistro } from "./utils/Data";
+
+import { obterValorVisualizacao } from "./utils/Visualizacao";
 
 import {
-  COLUNAS_NUMERICAS,
-  TITULOS_COLUNAS_VISUALIZACAO,
-  criarTituloAutomatico,
-  obterValorVisualizacao,
-} from "./utils/Visualizacao";
+  associarDescricaoProduto,
+  contarRegistrosRelatorio,
+  criarFiltrosIniciais,
+  filtrarDadosRelatorio,
+  listarMpsDisponiveis,
+  listarProdutosDisponiveis,
+  listarTiposDisponiveis,
+  montarColunasVisualizacao,
+  normalizarListaPedidosFiltro,
+} from "./utils/filtrosRelatorio";
 
-import { obterDataPedidoRelatorio } from "./pedidos/PedidosRelatorios";
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
 import LayoutRelatorio from "./components/LayoutRelatorio";
 import PainelRelatorios from "./components/PainelRelatorios";
 
 import "./TelaRelatorios.css";
-import {
-  obterNumeroPedidoVisual,
-  obterNumeroPedidoOriginal,
-} from "@/features/relatorios/utils/Pedidos";
-import { valoresUnicos } from "@/shared/lib/colecoes";
 import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =====================================================
@@ -52,93 +48,6 @@ import { normalizarTexto } from "@/shared/lib/texto";
 ===================================================== */
 
 const LINHAS_POR_PAGINA = 8;
-
-/* =====================================================
-   FILTROS INICIAIS
-===================================================== */
-
-const criarFiltrosIniciais = (fonteDados = "producao") => ({
-  dataInicio: "",
-  dataFim: "",
-  injetora: "Todos",
-  cod_prod: "Todos",
-  mp: "Todos",
-  tipo: [],
-  status: fonteDados === "pedidos" ? "Pedido" : "todos",
-  cliente: "todos",
-  vendedor: "todos",
-  pedidos: "",
-});
-
-/* =====================================================
-   FILTRO POR UM OU VÁRIOS PEDIDOS
-===================================================== */
-
-function normalizarListaPedidosFiltro(valor) {
-  return String(valor ?? "")
-    .split(/[;,\n\r\t ]+/)
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((item) => normalizarTexto(item));
-}
-
-function pedidoCorrespondeAoFiltro(item, filtroPedidos) {
-  const pedidosFiltro = normalizarListaPedidosFiltro(filtroPedidos);
-
-  if (pedidosFiltro.length === 0) {
-    return true;
-  }
-
-  const numeroVisual = normalizarTexto(obterNumeroPedidoVisual(item));
-
-  const numeroOriginal = normalizarTexto(obterNumeroPedidoOriginal(item));
-
-  return pedidosFiltro.some((numeroFiltro) => {
-    if (numeroFiltro.includes("/")) {
-      return numeroVisual === numeroFiltro;
-    }
-
-    return (
-      numeroOriginal === numeroFiltro ||
-      numeroVisual === numeroFiltro ||
-      numeroVisual.startsWith(`${numeroFiltro}/`)
-    );
-  });
-}
-
-/* =====================================================
-   CONTAGEM DE REGISTROS
-
-   Pedidos em aberto:
-   contabiliza números únicos.
-
-   Demais relatórios:
-   contabiliza linhas.
-===================================================== */
-
-function contarRegistrosRelatorio(relatorio, dados = []) {
-  if (!Array.isArray(dados)) {
-    return 0;
-  }
-
-  if (relatorio?.id !== "pedidos-abertos") {
-    return dados.length;
-  }
-
-  const pedidosUnicos = new Set();
-
-  for (const item of dados) {
-    const numeroPedido = String(
-      item?.pedido ?? item?.numero_pedido ?? item?.codigoPedido ?? item?.codigo_pedido ?? "",
-    ).trim();
-
-    if (numeroPedido) {
-      pedidosUnicos.add(numeroPedido);
-    }
-  }
-
-  return pedidosUnicos.size;
-}
 
 /* =====================================================
    COMPONENTE PRINCIPAL
@@ -383,35 +292,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      COLUNAS DA VISUALIZAÇÃO
   ===================================================== */
 
-  const colunasVisualizacao = useMemo(() => {
-    if (
-      relatorioEhCustom ||
-      !relatorioSelecionado ||
-      !Array.isArray(relatorioSelecionado.colunas)
-    ) {
-      return [];
-    }
-
-    const chaves = [...relatorioSelecionado.colunas];
-
-    /* PRODUÇÃO POR PRODUTO */
-
-    if (relatorioSelecionado.id === "producao-produto") {
-      const indiceProduto = chaves.indexOf("produto");
-
-      if (indiceProduto !== -1 && !chaves.includes("descricao_produto")) {
-        chaves.splice(indiceProduto + 1, 0, "descricao_produto");
-      }
-    }
-
-    return chaves.map((chave) => ({
-      chave,
-
-      titulo: TITULOS_COLUNAS_VISUALIZACAO[chave] || criarTituloAutomatico(chave),
-
-      numerica: COLUNAS_NUMERICAS.has(chave),
-    }));
-  }, [relatorioEhCustom, relatorioSelecionado]);
+  const colunasVisualizacao = useMemo(
+    () => (relatorioEhCustom ? [] : montarColunasVisualizacao(relatorioSelecionado)),
+    [relatorioEhCustom, relatorioSelecionado],
+  );
 
   /* =====================================================
      PRODUTOS DISPONÍVEIS
@@ -422,15 +306,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    let lista = Array.isArray(dadosBrutos) ? dadosBrutos : [];
-
-    if (filtros.injetora && filtros.injetora !== "Todos") {
-      lista = lista.filter(
-        (item) => String(item.injetora || "").trim() === String(filtros.injetora).trim(),
-      );
-    }
-
-    return valoresUnicos(lista.map((item) => item.cod_prod || item.produto));
+    return listarProdutosDisponiveis(dadosBrutos, filtros.injetora);
   }, [dadosBrutos, filtros.injetora, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
@@ -442,7 +318,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    return valoresUnicos(dadosBrutos.map((item) => item.mp || item.materia_prima));
+    return listarMpsDisponiveis(dadosBrutos);
   }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
@@ -454,196 +330,18 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return [];
     }
 
-    return [
-      ...new Set(
-        dadosBrutos
-          .map((item) => String(item.tipo ?? "").trim())
-          .filter((tipo) => ["1", "2", "3"].includes(tipo)),
-      ),
-    ].sort((a, b) => Number(a) - Number(b));
+    return listarTiposDisponiveis(dadosBrutos);
   }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
 
   /* =====================================================
      FILTRAGEM DOS DADOS
   ===================================================== */
 
-  const dadosFiltrados = useMemo(() => {
-    if (relatorioEhCustom || !Array.isArray(dadosBrutos) || !relatorioSelecionado) {
-      return [];
-    }
-
-    /* =================================================
-       FILTROS DOS PEDIDOS
-    ================================================= */
-
-    if (fonteEhPedidos) {
-      return dadosBrutos.filter((item) => {
-        /* FILTRO FIXO */
-
-        if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
-          return false;
-        }
-
-        /* PEDIDO(S) */
-
-        if (filtros.pedidos && !pedidoCorrespondeAoFiltro(item, filtros.pedidos)) {
-          return false;
-        }
-
-        /* STATUS */
-
-        if (relatorioSelecionado.filtros.status && filtros.status && filtros.status !== "todos") {
-          if (normalizarTexto(item.status) !== normalizarTexto(filtros.status)) {
-            return false;
-          }
-        }
-
-        /* PERÍODO */
-
-        if (relatorioSelecionado.filtros.periodo) {
-          const dataRegistro = obterDataPedidoRelatorio(item);
-
-          if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
-            return false;
-          }
-
-          if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
-            return false;
-          }
-
-          if (filtros.dataFim && dataRegistro > filtros.dataFim) {
-            return false;
-          }
-        }
-
-        /* CLIENTE */
-
-        if (
-          relatorioSelecionado.filtros.cliente &&
-          filtros.cliente &&
-          filtros.cliente !== "todos"
-        ) {
-          if (String(item.cliente || "").trim() !== String(filtros.cliente).trim()) {
-            return false;
-          }
-        }
-
-        /* VENDEDOR */
-
-        if (
-          relatorioSelecionado.filtros.vendedor &&
-          filtros.vendedor &&
-          filtros.vendedor !== "todos"
-        ) {
-          if (String(item.vendedor || "").trim() !== String(filtros.vendedor).trim()) {
-            return false;
-          }
-        }
-
-        /* PRODUTO */
-
-        if (
-          relatorioSelecionado.filtros.produto &&
-          filtros.cod_prod &&
-          filtros.cod_prod !== "Todos"
-        ) {
-          const codigo = String(
-            item.codigoProduto ?? item.codigo_produto ?? item.codigo ?? "",
-          ).trim();
-
-          if (codigo !== String(filtros.cod_prod).trim()) {
-            return false;
-          }
-        }
-
-        return true;
-      });
-    }
-
-    /* =================================================
-       FILTROS DA PRODUÇÃO E PARADAS
-    ================================================= */
-
-    return dadosBrutos.filter((item) => {
-      /* FILTRO FIXO */
-
-      if (relatorioSelecionado.filtroFixo && !relatorioSelecionado.filtroFixo(item)) {
-        return false;
-      }
-
-      /* PERÍODO */
-
-      if (relatorioSelecionado.filtros.periodo) {
-        const dataRegistro = obterDataDoRegistro(item);
-
-        if ((filtros.dataInicio || filtros.dataFim) && !dataRegistro) {
-          return false;
-        }
-
-        if (filtros.dataInicio && dataRegistro < filtros.dataInicio) {
-          return false;
-        }
-
-        if (filtros.dataFim && dataRegistro > filtros.dataFim) {
-          return false;
-        }
-      }
-
-      /* INJETORA */
-
-      if (
-        relatorioSelecionado.filtros.injetora &&
-        filtros.injetora &&
-        filtros.injetora !== "Todos"
-      ) {
-        if (String(item.injetora || "").trim() !== String(filtros.injetora).trim()) {
-          return false;
-        }
-      }
-
-      /* PRODUTO */
-
-      if (
-        relatorioSelecionado.filtros.produto &&
-        filtros.cod_prod &&
-        filtros.cod_prod !== "Todos"
-      ) {
-        const produto = String(item.cod_prod || item.produto || "").trim();
-
-        if (produto !== String(filtros.cod_prod).trim()) {
-          return false;
-        }
-      }
-
-      /* MATÉRIA-PRIMA */
-
-      if (relatorioSelecionado.filtros.mp && filtros.mp && filtros.mp !== "Todos") {
-        const mp = String(item.mp || item.materia_prima || "").trim();
-
-        if (mp !== String(filtros.mp).trim()) {
-          return false;
-        }
-      }
-
-      /* TIPO */
-
-      if (
-        relatorioSelecionado.filtros.tipo &&
-        Array.isArray(filtros.tipo) &&
-        filtros.tipo.length > 0
-      ) {
-        const tipo = String(item.tipo || "").trim();
-
-        const selecionados = filtros.tipo.map((valor) => String(valor).trim());
-
-        if (!selecionados.includes(tipo)) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [dadosBrutos, filtros, fonteEhPedidos, relatorioEhCustom, relatorioSelecionado]);
+  const dadosFiltrados = useMemo(
+    () =>
+      relatorioEhCustom ? [] : filtrarDadosRelatorio(dadosBrutos, relatorioSelecionado, filtros),
+    [dadosBrutos, filtros, relatorioEhCustom, relatorioSelecionado],
+  );
 
   /* =====================================================
      TRANSFORMAR DADOS
@@ -674,26 +372,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return dadosRelatorio;
     }
 
-    return dadosRelatorio.map((item) => {
-      const codigo = normalizarCodigoProduto(
-        item.produto || item.cod_prod || item.codigo_produto || "",
-      );
-
-      const descricaoCadastrada =
-        descricoesProdutos instanceof Map
-          ? descricoesProdutos.get(codigo)
-          : descricoesProdutos?.[codigo];
-
-      const descricaoExistente = String(item.descricao_produto ?? "").trim();
-
-      return {
-        ...item,
-
-        descricao_produto:
-          descricaoCadastrada ||
-          (descricaoExistente && descricaoExistente !== "-" ? descricaoExistente : "-"),
-      };
-    });
+    return associarDescricaoProduto(dadosRelatorio, descricoesProdutos);
   }, [dadosRelatorio, descricoesProdutos, relatorioEhCustom, relatorioSelecionado]);
 
   /* =====================================================
