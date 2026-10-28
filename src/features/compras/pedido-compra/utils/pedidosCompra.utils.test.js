@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
-import { obterSituacaoRecebimento } from "./pedidosCompra.utils";
+import {
+  atendeFiltroRecebimento,
+  calcularResumoItens,
+  obterSituacaoRecebimento,
+} from "./pedidosCompra.utils";
 
 function dataBr(deslocamentoDias) {
   const data = new Date();
@@ -40,5 +44,36 @@ describe("obterSituacaoRecebimento", () => {
 
   it("requisição não tem situação de recebimento", () => {
     expect(obterSituacaoRecebimento({ tipo_documento: "REQUISICAO", itens: [] })).toBeNull();
+  });
+});
+
+function enriquecido(quantidade, recebida, deslocamentoDias) {
+  const p = pedido(quantidade, recebida, deslocamentoDias);
+  return { ...p, situacao_recebimento: obterSituacaoRecebimento(p), ...calcularResumoItens(p.itens) };
+}
+
+describe("atendeFiltroRecebimento", () => {
+  const parcialAtrasado = enriquecido(10, 4, -1);
+  const parcialNoPrazo = enriquecido(10, 4, 2);
+  const atrasadoSemRecebimento = enriquecido(10, 0, -1);
+  const recebido = enriquecido(10, 10, -1);
+
+  it("filtro Recebido parcialmente traz parciais, inclusive os atrasados", () => {
+    const filtro = SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE;
+    expect(atendeFiltroRecebimento(parcialAtrasado, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(parcialNoPrazo, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(atrasadoSemRecebimento, filtro)).toBe(false);
+    expect(atendeFiltroRecebimento(recebido, filtro)).toBe(false);
+  });
+
+  it("filtro Em atraso traz o parcial atrasado e o atrasado sem recebimento", () => {
+    const filtro = SITUACOES_RECEBIMENTO.EM_ATRASO;
+    expect(atendeFiltroRecebimento(parcialAtrasado, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(atrasadoSemRecebimento, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(parcialNoPrazo, filtro)).toBe(false);
+  });
+
+  it("filtro Todos traz tudo", () => {
+    expect(atendeFiltroRecebimento(recebido, SITUACOES_RECEBIMENTO.TODOS)).toBe(true);
   });
 });

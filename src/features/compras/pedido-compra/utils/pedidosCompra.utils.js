@@ -356,6 +356,48 @@ export function obterSituacaoRecebimento(
   return SITUACOES_RECEBIMENTO.EM_ABERTO;
 }
 
+/*
+ * Filtro de situação de recebimento da tela.
+ *
+ * "Recebido parcialmente" traz todo pedido com parte recebida e
+ * saldo pendente — inclusive os que já estão em atraso, que
+ * aparecem também no filtro "Em atraso".
+ */
+export function atendeFiltroRecebimento(
+  pedido,
+  filtro,
+) {
+  if (
+    !filtro ||
+    filtro ===
+      SITUACOES_RECEBIMENTO.TODOS
+  ) {
+    return true;
+  }
+
+  if (
+    filtro ===
+    SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE
+  ) {
+    return (
+      pedido?.tipo_documento !==
+        "REQUISICAO" &&
+      numeroSeguro(
+        pedido?.recebida,
+      ) > 0 &&
+      numeroSeguro(
+        pedido?.saldo,
+      ) > 0
+    );
+  }
+
+  return (
+    pedido
+      ?.situacao_recebimento ===
+    filtro
+  );
+}
+
 export function obterRotuloSituacaoRecebimento(
   situacao,
 ) {
