@@ -17,7 +17,7 @@ import {
 } from "@/lib/cargaMaquina";
 
 import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
-import { supabase } from "@/lib/supabaseClient";
+import { usePermissoes } from "@/hooks/usePermissoes";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
 
@@ -170,130 +170,26 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   const [buscaRelatorios, setBuscaRelatorios] = useState("");
 
   /* =====================================================
-     ESTADOS DAS PERMISSÕES
+     PERMISSÕES DOS RELATÓRIOS
   ===================================================== */
 
-  const [permissoesRelatoriosCarregadas, setPermissoesRelatoriosCarregadas] = useState(false);
+  const { podeAcessarRelatorio, loadingPermissoes, erroPermissoes } = usePermissoes();
 
-  const [relatoriosPermitidosIds, setRelatoriosPermitidosIds] = useState(() => new Set());
+  const permissoesRelatoriosCarregadas = !loadingPermissoes;
 
-  const [erroPermissoesRelatorios, setErroPermissoesRelatorios] = useState("");
+  const relatoriosPermitidosIds = useMemo(
+    () =>
+      new Set(
+        RELATORIOS.filter((relatorio) => podeAcessarRelatorio(relatorio.id)).map(
+          (relatorio) => relatorio.id,
+        ),
+      ),
+    [podeAcessarRelatorio],
+  );
 
-  /* =====================================================
-     CARREGAR PERMISSÕES DOS RELATÓRIOS
-  ===================================================== */
-
-  useEffect(() => {
-    let ativo = true;
-
-    async function carregarPermissoesRelatorios() {
-      try {
-        if (ativo) {
-          setPermissoesRelatoriosCarregadas(false);
-          setErroPermissoesRelatorios("");
-        }
-
-        const { data: dadosUsuario, error: erroUsuario } = await supabase.auth.getUser();
-
-        if (erroUsuario) {
-          throw erroUsuario;
-        }
-
-        const usuario = dadosUsuario?.user;
-
-        if (!usuario?.id) {
-          if (ativo) {
-            setRelatoriosPermitidosIds(new Set());
-          }
-
-          return;
-        }
-
-        /* PERFIL */
-
-        const { data: perfil, error: erroPerfil } = await supabase
-          .from("perfis")
-          .select("regra")
-          .eq("id", usuario.id)
-          .maybeSingle();
-
-        if (erroPerfil) {
-          throw erroPerfil;
-        }
-
-        /* ADMINISTRADOR */
-
-        if (perfil?.regra === "admin") {
-          if (ativo) {
-            setRelatoriosPermitidosIds(new Set(RELATORIOS.map((relatorio) => relatorio.id)));
-          }
-
-          return;
-        }
-
-        /* PERMISSÕES DOS DEMAIS USUÁRIOS */
-
-        const [respostaRelatorios, respostaPermissoes] = await Promise.all([
-          supabase.from("relatorios_sistema").select("id, chave, ativo").eq("ativo", true),
-
-          supabase
-            .from("usuario_relatorio_permissoes")
-            .select("relatorio_id, permitido")
-            .eq("usuario_id", usuario.id)
-            .eq("permitido", true),
-        ]);
-
-        if (respostaRelatorios.error) {
-          throw respostaRelatorios.error;
-        }
-
-        if (respostaPermissoes.error) {
-          throw respostaPermissoes.error;
-        }
-
-        const idsPermitidos = new Set(
-          (respostaPermissoes.data || []).map((permissao) => String(permissao.relatorio_id)),
-        );
-
-        const chavesPermitidas = new Set(
-          (respostaRelatorios.data || [])
-            .filter((relatorio) => idsPermitidos.has(String(relatorio.id)))
-            .map((relatorio) => String(relatorio.chave || "").trim())
-            .filter(Boolean),
-        );
-
-        if (ativo) {
-          setRelatoriosPermitidosIds(
-            new Set(
-              RELATORIOS.filter((relatorio) => chavesPermitidas.has(relatorio.id)).map(
-                (relatorio) => relatorio.id,
-              ),
-            ),
-          );
-        }
-      } catch (error) {
-        console.error("Erro ao carregar permissões dos relatórios:", error);
-
-        if (ativo) {
-          setRelatoriosPermitidosIds(new Set());
-
-          setErroPermissoesRelatorios(
-            error?.message || "Não foi possível verificar as permissões dos relatórios.",
-          );
-        }
-      } finally {
-        if (ativo) {
-          setPermissoesRelatoriosCarregadas(true);
-        }
-      }
-    }
-
-    carregarPermissoesRelatorios();
-
-    return () => {
-      ativo = false;
-    };
-  }, []);
+  const erroPermissoesRelatorios = erroPermissoes
+    ? erroPermissoes.message || "Não foi possível verificar as permissões dos relatórios."
+    : "";
 
   /* =====================================================
      RELATÓRIOS DISPONÍVEIS AO USUÁRIO

@@ -1,155 +1,64 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+
+import { useQuery } from "@tanstack/react-query";
 
 import { useAuthContext } from "@/lib/auth-context";
-import { supabase } from "@/lib/supabaseClient";
+import { buscarPermissoesUsuario } from "@/lib/permissoesService";
 
+const SEM_PERMISSOES = {
+  telas: new Set(),
+  relatorios: new Set(),
+};
+
+/*
+ * Permissões do usuário logado.
+ *
+ * Navbar, RotaProtegida, Home e Central de Relatórios usam este hook ao
+ * mesmo tempo; o React Query faz uma única consulta e compartilha o
+ * resultado. A cada 30 s, a próxima tela aberta confere de novo.
+ */
 export function usePermissoes() {
   const { user, isAdmin, loadingAuth, loadingPerfil } = useAuthContext();
 
-  const [telasPermitidas, setTelasPermitidas] = useState(new Set());
+  /*
+   * ADMIN possui acesso total.
+   * Não precisamos consultar permissões individuais.
+   */
+  const precisaConsultar = Boolean(!loadingAuth && !loadingPerfil && user && !isAdmin);
 
-  const [relatoriosPermitidos, setRelatoriosPermitidos] = useState(new Set());
+  const permissoesQuery = useQuery({
+    queryKey: ["permissoes-usuario", user?.id],
 
-  const [loadingPermissoes, setLoadingPermissoes] = useState(true);
+    queryFn: () => buscarPermissoesUsuario(user.id),
 
-  const [erroPermissoes, setErroPermissoes] = useState(null);
+    enabled: precisaConsultar,
 
-  const carregarPermissoes = useCallback(async () => {
-    if (loadingAuth || loadingPerfil) {
-      return;
-    }
+    staleTime: 30 * 1000,
 
-    if (!user) {
-      setTelasPermitidas(new Set());
-      setRelatoriosPermitidos(new Set());
-      setErroPermissoes(null);
-      setLoadingPermissoes(false);
+    refetchOnWindowFocus: false,
 
-      return;
-    }
+    retry: false,
 
-    /*
-     * ADMIN possui acesso total.
-     * Não precisamos consultar permissões individuais.
-     */
-    if (isAdmin) {
-      setTelasPermitidas(new Set());
-      setRelatoriosPermitidos(new Set());
-      setErroPermissoes(null);
-      setLoadingPermissoes(false);
-
-      return;
-    }
-
-    try {
-      setLoadingPermissoes(true);
-      setErroPermissoes(null);
-
-      const [
-        respostaTelas,
-        respostaPermissoesTelas,
-        respostaRelatorios,
-        respostaPermissoesRelatorios,
-      ] = await Promise.all([
-        supabase.from("telas_sistema").select("id, chave, ativo").eq("ativo", true),
-
-        supabase.from("usuario_permissoes").select("tela_id, permitido").eq("usuario_id", user.id),
-
-        supabase.from("relatorios_sistema").select("id, chave, ativo").eq("ativo", true),
-
-        supabase
-          .from("usuario_relatorio_permissoes")
-          .select("relatorio_id, permitido")
-          .eq("usuario_id", user.id),
-      ]);
-
-      if (respostaTelas.error) {
-        throw respostaTelas.error;
-      }
-
-      if (respostaPermissoesTelas.error) {
-        throw respostaPermissoesTelas.error;
-      }
-
-      if (respostaRelatorios.error) {
-        throw respostaRelatorios.error;
-      }
-
-      if (respostaPermissoesRelatorios.error) {
-        throw respostaPermissoesRelatorios.error;
-      }
-
-      /* =============================================
-           TELAS
-        ============================================= */
-
-      const telasPorId = new Map();
-
-      for (const tela of respostaTelas.data || []) {
-        telasPorId.set(String(tela.id), tela.chave);
-      }
-
-      const novasTelasPermitidas = new Set();
-
-      for (const permissao of respostaPermissoesTelas.data || []) {
-        if (!permissao.permitido) {
-          continue;
-        }
-
-        const chave = telasPorId.get(String(permissao.tela_id));
-
-        if (chave) {
-          novasTelasPermitidas.add(chave);
-        }
-      }
-
-      /* =============================================
-           RELATÓRIOS
-        ============================================= */
-
-      const relatoriosPorId = new Map();
-
-      for (const relatorio of respostaRelatorios.data || []) {
-        relatoriosPorId.set(String(relatorio.id), relatorio.chave);
-      }
-
-      const novosRelatoriosPermitidos = new Set();
-
-      for (const permissao of respostaPermissoesRelatorios.data || []) {
-        if (!permissao.permitido) {
-          continue;
-        }
-
-        const chave = relatoriosPorId.get(String(permissao.relatorio_id));
-
-        if (chave) {
-          novosRelatoriosPermitidos.add(chave);
-        }
-      }
-
-      setTelasPermitidas(novasTelasPermitidas);
-
-      setRelatoriosPermitidos(novosRelatoriosPermitidos);
-    } catch (error) {
-      console.error("Erro ao carregar permissões:", error);
-
-      /*
-       * Segurança:
-       * em caso de erro, OPERADOR não recebe
-       * acesso automaticamente.
-       */
-      setTelasPermitidas(new Set());
-      setRelatoriosPermitidos(new Set());
-
-      setErroPermissoes(error);
-    } finally {
-      setLoadingPermissoes(false);
-    }
-  }, [user, isAdmin, loadingAuth, loadingPerfil]);
+    // Sets não passam pelo compartilhamento estrutural do React Query.
+    structuralSharing: false,
+  });
 
   useEffect(() => {
-    carregarPermissoes();
-  }, [carregarPermissoes]);
+    if (permissoesQuery.error) {
+      console.error("Erro ao carregar permissões:", permissoesQuery.error);
+    }
+  }, [permissoesQuery.error]);
+
+  /*
+   * Segurança:
+   * em caso de erro, OPERADOR não recebe
+   * acesso automaticamente.
+   */
+  const permissoes =
+    precisaConsultar && permissoesQuery.data ? permissoesQuery.data : SEM_PERMISSOES;
+
+  const loadingPermissoes =
+    loadingAuth || loadingPerfil || (precisaConsultar && permissoesQuery.isPending);
 
   const podeAcessarTela = useCallback(
     (chave) => {
@@ -165,9 +74,9 @@ export function usePermissoes() {
         return true;
       }
 
-      return telasPermitidas.has(chave);
+      return permissoes.telas.has(chave);
     },
-    [user, isAdmin, telasPermitidas],
+    [user, isAdmin, permissoes],
   );
 
   const podeAcessarRelatorio = useCallback(
@@ -184,28 +93,35 @@ export function usePermissoes() {
         return false;
       }
 
-      return relatoriosPermitidos.has(chave);
+      return permissoes.relatorios.has(chave);
     },
-    [user, isAdmin, relatoriosPermitidos],
+    [user, isAdmin, permissoes],
   );
 
-  const permissoes = useMemo(
+  const { refetch } = permissoesQuery;
+
+  const recarregarPermissoes = useCallback(() => refetch(), [refetch]);
+
+  return useMemo(
     () => ({
-      telas: telasPermitidas,
-      relatorios: relatoriosPermitidos,
+      permissoes,
+
+      podeAcessarTela,
+      podeAcessarRelatorio,
+
+      loadingPermissoes,
+      erroPermissoes: precisaConsultar ? permissoesQuery.error : null,
+
+      recarregarPermissoes,
     }),
-    [telasPermitidas, relatoriosPermitidos],
+    [
+      permissoes,
+      podeAcessarTela,
+      podeAcessarRelatorio,
+      loadingPermissoes,
+      precisaConsultar,
+      permissoesQuery.error,
+      recarregarPermissoes,
+    ],
   );
-
-  return {
-    permissoes,
-
-    podeAcessarTela,
-    podeAcessarRelatorio,
-
-    loadingPermissoes,
-    erroPermissoes,
-
-    recarregarPermissoes: carregarPermissoes,
-  };
 }
