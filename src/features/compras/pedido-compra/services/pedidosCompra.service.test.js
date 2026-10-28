@@ -87,10 +87,10 @@ describe("buscarPedidosCompra (economia de egress)", () => {
     consultas.length = 0;
   });
 
-  it("nao baixa o JSON snapshot e pede a coluna solicitante", () => {
+  it("nao baixa o JSON snapshot nem a coluna solicitante", () => {
     const colunas = COLUNAS_DOCUMENTOS_COMPRA.split(",");
     expect(colunas).not.toContain("snapshot");
-    expect(colunas).toContain("solicitante");
+    expect(colunas).not.toContain("solicitante");
   });
 
   it("nenhuma consulta da tela pede snapshot ou select=*", async () => {
@@ -107,7 +107,6 @@ describe("buscarPedidosCompra (economia de egress)", () => {
     const { pedidos, atualizadoEm } = await buscarPedidosCompra();
 
     const pedido = pedidos.find((p) => p.documento_id === "P-100");
-    expect(pedido.solicitante).toBe("Maria Compras");
     expect(pedido.fornecedor_nome).toBe("Berlimplast");
     expect(pedido.itens).toHaveLength(1);
 

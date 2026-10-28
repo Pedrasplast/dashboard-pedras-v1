@@ -130,13 +130,12 @@ async function buscarEstadoSincronizacao() {
  * Colunas lidas da view de documentos.
  *
  * IMPORTANTE: o JSON "snapshot" NAO e lido aqui. Ele representava
- * cerca de 70% do volume baixado (11 MB de 16 MB por carga) e a tela
- * so usava o campo "contato", que a view ja entrega pronto na coluna
- * "solicitante" (snapshot ->> 'contato'). Mesmo resultado na tela,
- * fracao do trafego (egress) no Supabase.
+ * cerca de 70% do volume baixado (11 MB de 16 MB por carga).
+ * A coluna "solicitante" tambem deixou de ser lida (28/10/2026):
+ * saiu da tabela da tela.
  */
 export const COLUNAS_DOCUMENTOS_COMPRA =
-  "documento_id,tipo_documento,numero_documento,cod_ped_compra,cod_req_compra,numero_pedido,numero_requisicao,codigo_fornecedor,codigo_comprador,categoria,categoria_nome,centro_custo,condicao_pagamento,data_previsao,data_inclusao,observacoes,observacoes_internas,quantidade_itens,primeira_sincronizacao_em,ultima_sincronizacao_em,solicitante";
+  "documento_id,tipo_documento,numero_documento,cod_ped_compra,cod_req_compra,numero_pedido,numero_requisicao,codigo_fornecedor,codigo_comprador,categoria,categoria_nome,centro_custo,condicao_pagamento,data_previsao,data_inclusao,observacoes,observacoes_internas,quantidade_itens,primeira_sincronizacao_em,ultima_sincronizacao_em";
 
 async function buscarDocumentosAtuais() {
   return buscarTodos(

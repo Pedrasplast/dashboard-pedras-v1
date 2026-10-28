@@ -47,16 +47,6 @@ function obterNomeCategoria(pedido) {
   );
 }
 
-function obterSolicitante(pedido) {
-  const valor =
-    pedido?.solicitante ??
-    pedido?.contato ??
-    pedido?.snapshot?.contato ??
-    "";
-
-  return String(valor).trim() || "-";
-}
-
 function obterCodigoItem(item) {
   const codigo =
     String(
@@ -839,10 +829,6 @@ function TabelaPedidos({
               Un.
             </th>
 
-            <th className="compras-col-solicitante">
-              Solicitante
-            </th>
-
             <th>
               Comprador
             </th>
@@ -1155,19 +1141,6 @@ function TabelaPedidos({
 
                       {primeiro && (
                         <>
-                          <td
-                            rowSpan={
-                              itensVisiveis.length
-                            }
-                            className="compras-celula-grupo compras-solicitante"
-                          >
-                            {
-                              obterSolicitante(
-                                pedido,
-                              )
-                            }
-                          </td>
-
                           <td
                             rowSpan={
                               itensVisiveis.length
@@ -1764,20 +1737,6 @@ export default function PedidosCompraTabela({
                       {
                         formatarMoeda(
                           pedido.valorTotal,
-                        )
-                      }
-                    </strong>
-                  </span>
-
-                  <span>
-                    <small>
-                      Solicitante
-                    </small>
-
-                    <strong>
-                      {
-                        obterSolicitante(
-                          pedido,
                         )
                       }
                     </strong>
