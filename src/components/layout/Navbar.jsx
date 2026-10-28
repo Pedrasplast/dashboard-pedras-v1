@@ -4,31 +4,14 @@ import { useRouterState } from "@tanstack/react-router";
 
 import {
   Activity,
-  ArrowDownToLine,
-  Bell,
-  Boxes,
-  Calculator,
   ChevronDown,
-  CirclePause,
-  ClipboardList,
-  DollarSign,
-  Factory,
-  FileText,
-  FlaskConical,
-  Gauge,
   Home,
-  LayoutDashboard,
   LogIn,
   LogOut,
   Menu,
-  ShoppingBag,
-  ShoppingCart,
   ShieldCheck,
-  TableProperties,
   Upload,
   Users,
-  Warehouse,
-  X,
 } from "lucide-react";
 
 import { usePermissoes } from "@/hooks/usePermissoes";
@@ -37,288 +20,18 @@ import { useNotificacoesPedidos } from "@/features/pedidos/hooks/useNotificacoes
 import { useNavigate } from "@/lib/navegacao";
 import { supabase } from "@/lib/supabaseClient";
 
+import {
+  NAVIGATION_GROUPS,
+  formatarBadgePedidos,
+  normalizarCaminho,
+  obterIniciais,
+  obterNomeUsuario,
+} from "./navegacao.config";
+
+import AlertaPedido from "./AlertaPedido";
+import NavbarMenuMobile from "./NavbarMenuMobile";
+
 import "./Navbar.css";
-
-/* =========================================================
-   NAVEGAÇÃO POR MÓDULOS
-========================================================= */
-
-const NAVIGATION_GROUPS = Object.freeze([
-  {
-    type: "link",
-    id: "inicio",
-    label: "Início",
-    path: "/",
-    icon: Home,
-    permissao: null,
-  },
-
-  /* =====================================================
-     CADASTRO
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "cadastro",
-    label: "Cadastro",
-    icon: ClipboardList,
-    children: [
-      {
-        type: "link",
-        id: "cadastro-produto",
-        label: "Produto",
-        path: "/cadastro-produto",
-        icon: ClipboardList,
-        permissao: "cadastro_produto",
-      },
-      {
-        type: "link",
-        id: "cadastro-fornecedor",
-        label: "Fornecedor",
-        path: "/cadastro-fornecedor",
-        icon: Users,
-        permissao: "cadastro_fornecedor",
-      },
-      {
-        type: "link",
-        id: "cadastro-material",
-        label: "Material",
-        path: "/cadastro-material",
-        icon: Boxes,
-        permissao: "cadastro_material",
-      },
-      {
-        type: "link",
-        id: "cadastro-receita",
-        label: "Receita",
-        path: "/cadastro-receita",
-        icon: FlaskConical,
-        permissao: "cadastro_receita",
-      },
-    ],
-  },
-
-  /* =====================================================
-     DASHBOARDS
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "dashboards",
-    label: "Dashboards",
-    icon: LayoutDashboard,
-    children: [
-      {
-        label: "Dashboard-Produção",
-        path: "/dashboard",
-        icon: Factory,
-        permissao: "dashboard",
-      },
-      {
-        label: "Dashboard-Paradas",
-        path: "/dashboard-paradas",
-        icon: CirclePause,
-        permissao: "dashboard_paradas",
-      },
-      {
-        label: "Dashboard-Matéria-Prima",
-        path: "/dashboard-materia-prima",
-        icon: Gauge,
-        permissao: "dashboard_materia_prima",
-      },
-    ],
-  },
-
-  /* =====================================================
-     PRODUÇÃO
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "producao",
-    label: "Produção",
-    icon: Factory,
-    children: [
-      {
-        type: "link",
-        id: "materia-prima",
-        label: "Matéria-Prima",
-        path: "/materia-prima",
-        icon: Boxes,
-        permissao: "materia_prima",
-      },
-      {
-        type: "link",
-        id: "estoque",
-        label: "Estoque Produto Acabado",
-        path: "/estoque",
-        icon: Warehouse,
-        permissao: "estoque",
-      },
-    ],
-  },
-
-  /* =====================================================
-     COMPRAS
-     Novas telas integradas ao grupo existente
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "compras",
-    label: "Compras",
-    icon: ShoppingBag,
-    children: [
-      {
-        type: "link",
-        id: "pedidos-compra",
-        label: "Pedidos de Compra",
-        path: "/pedidos-compra",
-        icon: ShoppingBag,
-        permissao: "pedidos_compra",
-      },
-      {
-        type: "link",
-        id: "compras-futuras",
-        label: "Compras Futuras",
-        path: "/compras-futuras",
-        icon: ShoppingBag,
-        permissao: "compras_futuras",
-      },
-      {
-        type: "link",
-        id: "entradas-materia-prima",
-        label: "Entradas",
-        path: "/entradas-materia-prima",
-        icon: ArrowDownToLine,
-        permissao: "entradas_materia_prima",
-      },
-
-      /* NOVA TELA: NECESSIDADE */
-
-      {
-        type: "link",
-        id: "necessidade-materia-prima",
-        label: "Nec. Compra MP",
-        path: "/necessidade-materia-prima",
-        icon: Calculator,
-        permissao: "necessidade_materia_prima",
-      },
-
-      /* NOVA TELA: TABELA DE PREÇOS */
-
-      {
-        type: "link",
-        id: "tabela-precos-materia-prima",
-        label: "Tabela de Preços",
-        path: "/tabela-precos-materia-prima",
-        icon: TableProperties,
-        permissao: "tabela_precos_materia_prima",
-      },
-    ],
-  },
-
-  /* =====================================================
-     PEDIDOS
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "pedidos",
-    label: "Pedidos",
-    icon: ShoppingCart,
-    children: [
-      {
-        label: "Pedidos",
-        path: "/pedidos",
-        icon: ShoppingCart,
-        permissao: "pedidos",
-        notificationKey: "pedidos",
-      },
-    ],
-  },
-
-  /* =====================================================
-     FINANCEIRO
-  ===================================================== */
-
-  {
-    type: "group",
-    id: "financeiro",
-    label: "Financeiro",
-    icon: DollarSign,
-    children: [
-      {
-        label: "Visão Geral",
-        path: "/financeiro",
-        icon: DollarSign,
-        permissao: "financeiro",
-      },
-      {
-        label: "Evolução Mensal",
-        path: "/financeiro-evolucao-mensal",
-        icon: DollarSign,
-        permissao: "financeiro_evolucao_mensal",
-      },
-    ],
-  },
-
-  /* =====================================================
-     RELATÓRIOS
-  ===================================================== */
-
-  {
-    type: "link",
-    id: "relatorios",
-    label: "Relatórios",
-    path: "/relatorios",
-    icon: FileText,
-    permissao: "relatorios",
-  },
-]);
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function normalizarCaminho(path) {
-  const caminho = String(path || "/").trim();
-
-  return caminho === "/" ? "/" : caminho.replace(/\/+$/, "");
-}
-
-function obterNomeUsuario(email) {
-  if (!email) return "";
-
-  return String(email)
-    .split("@")[0]
-    .replace(/[._-]+/g, " ")
-    .replace(/\b\w/g, (letra) => letra.toUpperCase());
-}
-
-function obterIniciais(nome) {
-  if (!nome) return "US";
-
-  const palavras = String(nome).trim().split(/\s+/).filter(Boolean);
-
-  if (palavras.length === 0) return "US";
-
-  if (palavras.length === 1) {
-    return palavras[0].slice(0, 2).toUpperCase();
-  }
-
-  return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
-}
-
-function formatarBadgePedidos(quantidade) {
-  const numero = Number(quantidade || 0);
-
-  if (!Number.isFinite(numero) || numero <= 0) {
-    return null;
-  }
-
-  return numero > 99 ? "99+" : String(numero);
-}
 
 /* =========================================================
    NAVBAR
@@ -865,209 +578,22 @@ function Navbar({ user, isAdmin }) {
       ===================================================== */}
 
       {user && mobileMenuOpen && (
-        <>
-          <button
-            type="button"
-            className="navbar-mobile-overlay"
-            onClick={fecharMenuMobile}
-            aria-label="Fechar menu principal"
-          />
-
-          <aside
-            id="navbar-mobile-drawer"
-            className="navbar-mobile-drawer"
-            aria-label="Menu principal"
-          >
-            <div className="navbar-mobile-header">
-              <div>
-                <span className="navbar-mobile-eyebrow">Navegação</span>
-
-                <strong>Menu</strong>
-              </div>
-
-              <button
-                type="button"
-                className="navbar-mobile-close"
-                onClick={fecharMenuMobile}
-                aria-label="Fechar menu"
-              >
-                <X size={20} aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="navbar-mobile-user">
-              <span className="navbar-mobile-avatar">{userInitials}</span>
-
-              <div>
-                <strong>{userName}</strong>
-
-                <span>{isAdmin ? "Administrador" : "Operador"}</span>
-              </div>
-            </div>
-
-            <nav className="navbar-mobile-nav" aria-label="Navegação mobile">
-              {navigationGroupsVisiveis.map((item) => {
-                const Icon = item.icon;
-
-                if (item.type === "link") {
-                  const active = caminhoAtivo(item.path);
-
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={active ? "navbar-mobile-link active" : "navbar-mobile-link"}
-                      onClick={() => goTo(item.path)}
-                    >
-                      <span className="navbar-mobile-link-icon">
-                        <Icon size={19} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-mobile-link-label">{item.label}</span>
-                    </button>
-                  );
-                }
-
-                const active = grupoAtivo(item);
-
-                const aberto = mobileGroupOpen === item.id;
-
-                const ehPedidos = item.id === "pedidos";
-
-                return (
-                  <div key={item.id} className="navbar-mobile-group">
-                    <button
-                      type="button"
-                      className={
-                        active
-                          ? "navbar-mobile-group-trigger active"
-                          : "navbar-mobile-group-trigger"
-                      }
-                      onClick={() => toggleMobileGroup(item.id)}
-                      aria-expanded={aberto}
-                    >
-                      <span className="navbar-mobile-link-icon">
-                        <Icon size={19} strokeWidth={2} aria-hidden="true" />
-                      </span>
-
-                      <span className="navbar-mobile-link-label">{item.label}</span>
-
-                      {ehPedidos && badgePedidos && (
-                        <span className="navbar-mobile-count">{badgePedidos}</span>
-                      )}
-
-                      <ChevronDown
-                        size={17}
-                        strokeWidth={2.2}
-                        className={aberto ? "navbar-mobile-chevron open" : "navbar-mobile-chevron"}
-                        aria-hidden="true"
-                      />
-                    </button>
-
-                    {aberto && (
-                      <div className="navbar-mobile-submenu">
-                        {item.children.map((child) => {
-                          const ChildIcon = child.icon;
-
-                          const childActive = caminhoAtivo(child.path);
-
-                          const childPedidos = child.notificationKey === "pedidos";
-
-                          return (
-                            <button
-                              key={child.path}
-                              type="button"
-                              className={
-                                childActive
-                                  ? "navbar-mobile-submenu-item active"
-                                  : "navbar-mobile-submenu-item"
-                              }
-                              onClick={() => goTo(child.path)}
-                            >
-                              <ChildIcon size={17} strokeWidth={2} aria-hidden="true" />
-
-                              <span>{child.label}</span>
-
-                              {childPedidos && badgePedidos && (
-                                <span className="navbar-mobile-count">{badgePedidos}</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </nav>
-
-            {/* ADMINISTRAÇÃO MOBILE */}
-
-            {(podeImportar || isAdmin) && (
-              <div className="navbar-mobile-admin">
-                <span className="navbar-mobile-section-label">Administração</span>
-
-                {podeImportar && (
-                  <button
-                    type="button"
-                    className="navbar-mobile-admin-link"
-                    onClick={() => goTo("/importar")}
-                  >
-                    <Upload size={18} aria-hidden="true" />
-
-                    <span>Importar dados</span>
-                  </button>
-                )}
-
-                {isAdmin && (
-                  <>
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() => goTo("/administracao")}
-                    >
-                      <ShieldCheck size={18} aria-hidden="true" />
-
-                      <span>Administração</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() => goTo("/usuarios")}
-                    >
-                      <Users size={18} aria-hidden="true" />
-
-                      <span>Gerenciar usuários</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="navbar-mobile-admin-link"
-                      onClick={() => goTo("/monitoramento")}
-                    >
-                      <Activity size={18} aria-hidden="true" />
-
-                      <span>Monitoramento</span>
-
-                      {badgeMonitoramento && (
-                        <span className="navbar-mobile-count">{badgeMonitoramento}</span>
-                      )}
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-
-            <div className="navbar-mobile-footer">
-              <button type="button" className="navbar-mobile-logout" onClick={handleLogout}>
-                <LogOut size={18} aria-hidden="true" />
-
-                <span>Sair</span>
-              </button>
-            </div>
-          </aside>
-        </>
+        <NavbarMenuMobile
+          userName={userName}
+          userInitials={userInitials}
+          isAdmin={isAdmin}
+          podeImportar={podeImportar}
+          navigationGroupsVisiveis={navigationGroupsVisiveis}
+          caminhoAtivo={caminhoAtivo}
+          grupoAtivo={grupoAtivo}
+          mobileGroupOpen={mobileGroupOpen}
+          toggleMobileGroup={toggleMobileGroup}
+          badgePedidos={badgePedidos}
+          badgeMonitoramento={badgeMonitoramento}
+          goTo={goTo}
+          handleLogout={handleLogout}
+          fecharMenuMobile={fecharMenuMobile}
+        />
       )}
 
       {/* =====================================================
@@ -1075,52 +601,12 @@ function Navbar({ user, isAdmin }) {
       ===================================================== */}
 
       {mostrarAlertaPedido && ultimaNotificacaoPedido && (
-        <div
-          className={[
-            "novo-pedido-alerta",
-            alertaPedidoAlterado ? "novo-pedido-alerta-alterado" : "novo-pedido-alerta-novo",
-          ].join(" ")}
-          role="status"
-        >
-          <button
-            type="button"
-            className="novo-pedido-alerta-conteudo"
-            onClick={abrirPedidosPeloAlerta}
-          >
-            <span className="novo-pedido-alerta-icone">
-              <Bell size={20} strokeWidth={2.2} aria-hidden="true" />
-            </span>
-
-            <span className="novo-pedido-alerta-textos">
-              <strong>{alertaPedidoAlterado ? "Pedido alterado" : "Novo pedido recebido"}</strong>
-
-              <span>
-                Pedido{" "}
-                <b>
-                  {ultimaNotificacaoPedido.numeroPedido || ultimaNotificacaoPedido.codigoPedidoOmie}
-                </b>
-                {ultimaNotificacaoPedido.cliente ? ` • ${ultimaNotificacaoPedido.cliente}` : ""}
-              </span>
-
-              {alertaPedidoAlterado && ultimaNotificacaoPedido.resumo && (
-                <small className="novo-pedido-alerta-resumo">
-                  {ultimaNotificacaoPedido.resumo}
-                </small>
-              )}
-
-              <small>Clique para abrir Pedidos</small>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="novo-pedido-alerta-fechar"
-            onClick={fecharAlertaPedido}
-            aria-label="Fechar aviso"
-          >
-            <X size={16} aria-hidden="true" />
-          </button>
-        </div>
+        <AlertaPedido
+          ultimaNotificacaoPedido={ultimaNotificacaoPedido}
+          alertaPedidoAlterado={alertaPedidoAlterado}
+          abrirPedidosPeloAlerta={abrirPedidosPeloAlerta}
+          fecharAlertaPedido={fecharAlertaPedido}
+        />
       )}
     </>
   );
