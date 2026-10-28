@@ -335,15 +335,20 @@ export function obterSituacaoRecebimento(
     obterHojeLocal();
 
   /*
-   * Saldo pendente com previsão vencida é atraso,
-   * mesmo que parte do pedido já tenha sido recebida.
+   * Saldo pendente com previsão vencida é atraso.
+   * Se parte já foi recebida, é "parcial em atraso"
+   * (no Omie: "Recebido Parcialmente"), contado em
+   * card próprio para "Pedidos atrasados" bater com
+   * "Previsão de entrega atrasada" do Omie.
    */
   if (
     resumo.saldo > 0 &&
     previsao &&
     previsao < hoje
   ) {
-    return SITUACOES_RECEBIMENTO.EM_ATRASO;
+    return resumo.recebida > 0
+      ? SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO
+      : SITUACOES_RECEBIMENTO.EM_ATRASO;
   }
 
   if (
@@ -360,8 +365,8 @@ export function obterSituacaoRecebimento(
  * Filtro de situação de recebimento da tela.
  *
  * "Recebido parcialmente" traz todo pedido com parte recebida e
- * saldo pendente — inclusive os que já estão em atraso, que
- * aparecem também no filtro "Em atraso".
+ * saldo pendente — inclusive os "Parcial em atraso", que têm
+ * também filtro próprio. "Em atraso" traz só os sem recebimento.
  */
 export function atendeFiltroRecebimento(
   pedido,
@@ -398,6 +403,21 @@ export function atendeFiltroRecebimento(
   );
 }
 
+/*
+ * Atrasado com ou sem recebimento parcial
+ * (usado para destacar a linha e mostrar dias de atraso).
+ */
+export function estaEmAtraso(
+  situacao,
+) {
+  return (
+    situacao ===
+      SITUACOES_RECEBIMENTO.EM_ATRASO ||
+    situacao ===
+      SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO
+  );
+}
+
 export function obterRotuloSituacaoRecebimento(
   situacao,
 ) {
@@ -412,6 +432,9 @@ export function obterRotuloSituacaoRecebimento(
   ) {
     case SITUACOES_RECEBIMENTO.EM_ATRASO:
       return "Em atraso";
+
+    case SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO:
+      return "Parcial em atraso";
 
     case SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE:
       return "Recebido parcialmente";
@@ -527,6 +550,9 @@ export function ordenarPedidos(
 ) {
   const pesoSituacao = {
     [SITUACOES_RECEBIMENTO.EM_ATRASO]:
+      0,
+
+    [SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO]:
       0,
 
     [SITUACOES_RECEBIMENTO.EM_ABERTO]:

@@ -17,13 +17,13 @@ import {
   ListChecks,
   PackageCheck,
   PackageSearch,
+  PackageX,
   ShoppingBag,
   WalletCards,
   X,
 } from "lucide-react";
 
 import {
-  SITUACOES_RECEBIMENTO,
   TIPOS_DOCUMENTO,
 } from "../constants/pedidosCompra.constants";
 
@@ -32,6 +32,7 @@ import {
   formatarData,
   formatarMoeda,
   formatarNumero,
+  estaEmAtraso,
   obterRotuloSituacaoRecebimento,
 } from "../utils/pedidosCompra.utils";
 
@@ -48,8 +49,16 @@ const CONFIGURACOES = Object.freeze({
 
   atrasados: {
     titulo: "Pedidos atrasados",
-    descricao: "Pedidos com saldo pendente e previsão de recebimento já vencida.",
+    descricao: "Pedidos sem nenhum recebimento e com previsão de entrega já vencida.",
     icone: AlertTriangle,
+    tipo: "atrasados",
+    documento: TIPOS_DOCUMENTO.PEDIDO,
+  },
+
+  "parciais-atrasados": {
+    titulo: "Parciais em atraso",
+    descricao: "Pedidos recebidos parcialmente, com saldo pendente e previsão de entrega já vencida.",
+    icone: PackageX,
     tipo: "atrasados",
     documento: TIPOS_DOCUMENTO.PEDIDO,
   },
@@ -126,6 +135,9 @@ function obterValorPrincipal(cardId, indicadores) {
 
     case "atrasados":
       return String(indicadores?.atrasados ?? 0);
+
+    case "parciais-atrasados":
+      return String(indicadores?.parciaisAtrasados ?? 0);
 
     case "valor-aberto":
       return formatarMoeda(indicadores?.valorEmAberto ?? 0);
@@ -346,9 +358,10 @@ function TabelaPedidos({
               pedido,
             ) => {
               const atrasado =
-                pedido
-                  .situacao_recebimento ===
-                SITUACOES_RECEBIMENTO.EM_ATRASO;
+                estaEmAtraso(
+                  pedido
+                    .situacao_recebimento,
+                );
 
               const diasAtraso =
                 atrasado

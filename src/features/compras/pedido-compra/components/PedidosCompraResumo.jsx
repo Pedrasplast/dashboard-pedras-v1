@@ -7,6 +7,7 @@ import {
   ListChecks,
   PackageCheck,
   PackageSearch,
+  PackageX,
   ShoppingBag,
   WalletCards,
 } from "lucide-react";
@@ -168,6 +169,10 @@ export default function PedidosCompraResumo({
         exibindoAmbos
           ? " compras-resumo--completo"
           : ""
+      }${
+        mostrarPedidos
+          ? " compras-resumo--pedidos"
+          : ""
       }`}
     >
       {mostrarPedidos && (
@@ -215,6 +220,34 @@ export default function PedidosCompraResumo({
             ativo={
               cardAtivo ===
               "atrasados"
+            }
+            clicavel
+            compacto={
+              exibindoAmbos
+            }
+            onClick={
+              onCardClick
+            }
+          />
+
+          <CardResumo
+            id="parciais-atrasados"
+            titulo="Parciais em atraso"
+            valor={
+              indicadores
+                .parciaisAtrasados ??
+              0
+            }
+            icon={
+              PackageX
+            }
+            variante="danger"
+            loading={
+              loading
+            }
+            ativo={
+              cardAtivo ===
+              "parciais-atrasados"
             }
             clicavel
             compacto={

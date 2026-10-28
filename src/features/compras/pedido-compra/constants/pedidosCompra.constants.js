@@ -22,6 +22,13 @@ export const SITUACOES_RECEBIMENTO =
 
     EM_ATRASO: "EM_ATRASO",
 
+    /*
+     * Parte já recebida, saldo pendente e previsão vencida.
+     * No Omie aparece como "Recebido Parcialmente".
+     */
+    PARCIAL_EM_ATRASO:
+      "PARCIAL_EM_ATRASO",
+
     RECEBIDO_PARCIALMENTE:
       "RECEBIDO_PARCIALMENTE",
 

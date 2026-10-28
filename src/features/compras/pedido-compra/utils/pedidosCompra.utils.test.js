@@ -4,6 +4,7 @@ import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
 import {
   atendeFiltroRecebimento,
   calcularResumoItens,
+  estaEmAtraso,
   obterSituacaoRecebimento,
 } from "./pedidosCompra.utils";
 
@@ -24,8 +25,8 @@ function pedido(quantidade, recebida, deslocamentoDias) {
 }
 
 describe("obterSituacaoRecebimento", () => {
-  it("recebido parcialmente com previsão vencida conta como atraso", () => {
-    expect(obterSituacaoRecebimento(pedido(10, 4, -1))).toBe(SITUACOES_RECEBIMENTO.EM_ATRASO);
+  it("recebido parcialmente com previsão vencida é parcial em atraso", () => {
+    expect(obterSituacaoRecebimento(pedido(10, 4, -1))).toBe(SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO);
   });
 
   it("recebido parcialmente dentro do prazo continua parcial", () => {
@@ -66,14 +67,30 @@ describe("atendeFiltroRecebimento", () => {
     expect(atendeFiltroRecebimento(recebido, filtro)).toBe(false);
   });
 
-  it("filtro Em atraso traz o parcial atrasado e o atrasado sem recebimento", () => {
+  it("filtro Em atraso traz só o atrasado sem recebimento (igual ao Omie)", () => {
     const filtro = SITUACOES_RECEBIMENTO.EM_ATRASO;
-    expect(atendeFiltroRecebimento(parcialAtrasado, filtro)).toBe(true);
     expect(atendeFiltroRecebimento(atrasadoSemRecebimento, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(parcialAtrasado, filtro)).toBe(false);
     expect(atendeFiltroRecebimento(parcialNoPrazo, filtro)).toBe(false);
+  });
+
+  it("filtro Parcial em atraso traz só o parcial com previsão vencida", () => {
+    const filtro = SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO;
+    expect(atendeFiltroRecebimento(parcialAtrasado, filtro)).toBe(true);
+    expect(atendeFiltroRecebimento(parcialNoPrazo, filtro)).toBe(false);
+    expect(atendeFiltroRecebimento(atrasadoSemRecebimento, filtro)).toBe(false);
   });
 
   it("filtro Todos traz tudo", () => {
     expect(atendeFiltroRecebimento(recebido, SITUACOES_RECEBIMENTO.TODOS)).toBe(true);
+  });
+});
+
+describe("estaEmAtraso", () => {
+  it("vale para atrasado com e sem recebimento parcial", () => {
+    expect(estaEmAtraso(SITUACOES_RECEBIMENTO.EM_ATRASO)).toBe(true);
+    expect(estaEmAtraso(SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO)).toBe(true);
+    expect(estaEmAtraso(SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE)).toBe(false);
+    expect(estaEmAtraso(SITUACOES_RECEBIMENTO.EM_ABERTO)).toBe(false);
   });
 });

@@ -22,6 +22,7 @@ import {
   formatarData,
   formatarMoeda,
   formatarNumero,
+  estaEmAtraso,
   obterRotuloSituacaoRecebimento,
 } from "../utils/pedidosCompra.utils";
 
@@ -369,8 +370,9 @@ function PrevisaoRecebimento({
   }
 
   const atrasado =
-    pedido.situacao_recebimento ===
-    "EM_ATRASO";
+    estaEmAtraso(
+      pedido.situacao_recebimento,
+    );
 
   const diasAtraso =
     atrasado
@@ -893,9 +895,10 @@ function TabelaPedidos({
                     );
 
               const atrasado =
-                pedido
-                  .situacao_recebimento ===
-                "EM_ATRASO";
+                estaEmAtraso(
+      pedido
+                  .situacao_recebimento,
+    );
 
               const codigoPedidoCompra =
                 obterCodigoPedidoCompra(
@@ -1623,8 +1626,9 @@ export default function PedidosCompraTabela({
         {pedidos.map(
           (pedido) => {
             const atrasado =
-              pedido.situacao_recebimento ===
-              "EM_ATRASO";
+              estaEmAtraso(
+      pedido.situacao_recebimento,
+    );
 
             const diasAtraso =
               atrasado
