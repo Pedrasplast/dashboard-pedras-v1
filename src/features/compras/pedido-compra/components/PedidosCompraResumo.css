@@ -63,6 +63,37 @@
 
 
 /* =========================================================
+   GRID COMPLETO COM PEDIDOS (PEDIDOS + REQUISIÇÕES)
+   ---------------------------------------------------------
+   6 cards de pedido em cima e 5 de requisição embaixo.
+   Grade de 30 colunas: pedido ocupa 5 (6 x 5 = 30) e
+   requisição ocupa 6 (5 x 6 = 30); as duas linhas
+   preenchem a largura toda, sem espaço vazio.
+========================================================= */
+
+.compras-resumo--completo.compras-resumo--pedidos {
+  grid-template-columns:
+    repeat(
+      30,
+      minmax(
+        0,
+        1fr
+      )
+    );
+}
+
+.compras-resumo--completo.compras-resumo--pedidos
+  > .compras-resumo-card {
+  grid-column: span 5;
+}
+
+.compras-resumo--completo.compras-resumo--pedidos
+  > [class*="compras-resumo-card--requisicao"] {
+  grid-column: span 6;
+}
+
+
+/* =========================================================
    CARD
 ========================================================= */
 
@@ -428,7 +459,7 @@
   .compras-resumo--completo.compras-resumo--pedidos {
     grid-template-columns:
       repeat(
-        6,
+        30,
         minmax(
           0,
           1fr
@@ -450,8 +481,34 @@
 ========================================================= */
 
 @media (max-width: 1200px) {
-  .compras-resumo--completo,
+  /*
+   * 12 colunas: pedidos 3 por linha (span 4, duas linhas) e
+   * requisições 3 + 2 (as duas últimas com span 6).
+   */
   .compras-resumo--completo.compras-resumo--pedidos {
+    grid-template-columns:
+      repeat(
+        12,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .compras-resumo--completo.compras-resumo--pedidos
+    > .compras-resumo-card,
+  .compras-resumo--completo.compras-resumo--pedidos
+    > [class*="compras-resumo-card--requisicao"] {
+    grid-column: span 4;
+  }
+
+  .compras-resumo--completo.compras-resumo--pedidos
+    > .compras-resumo-card:nth-last-child(-n + 2) {
+    grid-column: span 6;
+  }
+
+  .compras-resumo--completo {
     grid-template-columns:
       repeat(
         4,
@@ -469,6 +526,20 @@
 ========================================================= */
 
 @media (max-width: 950px) {
+  .compras-resumo--completo.compras-resumo--pedidos
+    > .compras-resumo-card,
+  .compras-resumo--completo.compras-resumo--pedidos
+    > [class*="compras-resumo-card--requisicao"],
+  .compras-resumo--completo.compras-resumo--pedidos
+    > .compras-resumo-card:nth-last-child(-n + 2) {
+    grid-column: auto;
+  }
+
+  .compras-resumo--completo.compras-resumo--pedidos
+    > .compras-resumo-card:last-child {
+    grid-column: 1 / -1;
+  }
+
   .compras-resumo,
   .compras-resumo--completo,
   .compras-resumo--pedidos:not(.compras-resumo--completo),
