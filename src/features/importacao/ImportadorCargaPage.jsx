@@ -8,7 +8,7 @@ import { formatISO, isValid, parse } from "date-fns";
 
 import { FiAlertTriangle, FiArrowLeft, FiFileText, FiUploadCloud, FiX } from "react-icons/fi";
 
-import { supabase } from "@/lib/supabaseClient";
+import { inserirLoteImportacao } from "./importacao.service";
 import PageHeader from "@/components/layout/PageHeader";
 
 import "./ImportadorCarga.css";
@@ -658,9 +658,9 @@ export default function ImportadorCarga() {
             for (let indice = 0; indice < registrosValidos.length; indice += TAMANHO_LOTE) {
               const lote = registrosValidos.slice(indice, indice + TAMANHO_LOTE);
 
-              const { error: insertError } = await supabase.from(tabelaDestino).insert(lote);
-
-              if (insertError) {
+              try {
+                await inserirLoteImportacao(tabelaDestino, lote);
+              } catch (insertError) {
                 const primeiraLinha = lote[0]?.__linhaExcel;
 
                 throw new Error(
