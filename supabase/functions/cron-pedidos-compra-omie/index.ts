@@ -69,6 +69,106 @@ async function pesquisarOmie(page:number,key:string,secret:string,incremental:bo
 
   throw Error(ultimoErro||'Falha desconhecida ao consultar Omie');
 }
+
+// ---------------------------------------------------------------------------
+// Conferência rápida da coluna "Aprovação" (etapa 15).
+//
+// A incremental (lApenasAlterados) não enxerga pedidos que entram na Aprovação
+// sem "alteração" registrada no Omie, nem os que saem por encerramento,
+// cancelamento ou exclusão. Por isso, a cada execução incremental:
+//   1. Pedidos RECEBIDOS alterados nos últimos 7 dias são gravados
+//      (o saldo zera e eles continuam na tela como "Recebido").
+//   2. Todos os pedidos ABERTOS no Omie (pendentes, faturados e parciais;
+//      sem recebidos, cancelados e encerrados) são gravados. Hoje são ~90
+//      pedidos, 2 páginas.
+//   3. conciliar_rapida_pedidos_compra_aprovacao esconde da tela os pedidos
+//      com saldo no Supabase que não estão mais abertos no Omie. A conferência
+//      completa diária confirma e remove (ou devolve, se ainda estiverem na coluna).
+// ---------------------------------------------------------------------------
+const FILTRO_ABERTOS={
+  lExibirPedidosPendentes:'S',lExibirPedidosFaturados:'S',lExibirPedidosRecebidos:'N',
+  lExibirPedidosCancelados:'N',lExibirPedidosEncerrados:'N',
+  lExibirPedidosRecParciais:'S',lExibirPedidosFatParciais:'S'
+};
+const FILTRO_RECEBIDOS={
+  lExibirPedidosPendentes:'N',lExibirPedidosFaturados:'N',lExibirPedidosRecebidos:'S',
+  lExibirPedidosCancelados:'N',lExibirPedidosEncerrados:'N',
+  lExibirPedidosRecParciais:'N',lExibirPedidosFatParciais:'N'
+};
+const MAX_PAGINAS_CONFERENCIA=10;
+
+async function pesquisarComFiltro(page:number,key:string,secret:string,filtros:Record<string,unknown>){
+  const param={nPagina:page,nRegsPorPagina:50,lApenasImportadoApi:'N',...filtros};
+  let ultimoErro='';
+  for(let tentativa=1;tentativa<=3;tentativa++){
+    const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),20000);
+    try{
+      const response=await fetch('https://app.omie.com.br/api/v1/produtos/pedidocompra/',{
+        method:'POST',headers:{'Content-Type':'application/json'},signal:ctl.signal,
+        body:JSON.stringify({call:'PesquisarPedCompra',app_key:key,app_secret:secret,param:[param]})
+      });
+      const data=await response.json();
+      if(response.ok&&!data.faultstring&&!data.faultcode)return data;
+      ultimoErro=str(data.faultstring||data.message||data.faultcode||response.status);
+      if(page===1&&semRegistros(ultimoErro))return {nPagina:1,nTotalPaginas:0,nTotalRegistros:0,pedidos_pesquisa:[]};
+      const redundant=ultimoErro.toLowerCase().includes('redundant')||ultimoErro.toLowerCase().includes('redundante');
+      if(!redundant)throw Error(ultimoErro);
+      if(tentativa<3){await new Promise(r=>setTimeout(r,tentativa===1?1200:2200));continue;}
+      throw Error(ultimoErro);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw Error(ultimoErro||'Falha desconhecida ao consultar Omie');
+}
+
+// Lê todas as páginas de um filtro e grava os pedidos. Devolve os códigos
+// dos pedidos que estão na etapa 15. Falha se a paginação vier inconsistente.
+async function lerEGravar(db:any,key:string,secret:string,filtros:Record<string,unknown>){
+  const codigos15:number[]=[];
+  let page=1,pages=1,novas=0,alteradas=0,registros=0;
+  do{
+    const data=await pesquisarComFiltro(page,key,secret,filtros);
+    const total=Math.max(0,Number(data.nTotalPaginas??0));
+    const raw=Array.isArray(data.pedidos_pesquisa)?data.pedidos_pesquisa:[];
+    if(total===0)break;
+    if(page>1&&total!==pages)throw Error('Paginação inconsistente na conferência rápida.');
+    if(total>MAX_PAGINAS_CONFERENCIA)throw Error('Conferência rápida acima de '+MAX_PAGINAS_CONFERENCIA+' páginas ('+total+').');
+    if(!raw.length)throw Error('Página '+page+' vazia na conferência rápida.');
+    pages=total;
+    const records=raw.map(normalize);
+    const saved=await db.rpc('registrar_lote_pedidos_compra_omie',{p_pedidos:records});
+    if(saved.error)throw saved.error;
+    novas+=n(saved.data?.novas); alteradas+=n(saved.data?.alteradas); registros+=records.length;
+    for(const r of records)if(r.snapshot.etapa==='15')codigos15.push(r.codigo);
+    page++;
+  }while(page<=pages);
+  return {codigos15,novas,alteradas,registros};
+}
+
+async function conferenciaRapida(db:any,key:string,secret:string){
+  const hoje=new Date();
+  const recebidos=await lerEGravar(db,key,secret,{
+    ...FILTRO_RECEBIDOS,
+    dDataInicial:dataBr(new Date(hoje.getTime()-7*24*60*60*1000)),
+    dDataFinal:dataBr(hoje),
+    lApenasAlterados:true
+  });
+  const abertos=await lerEGravar(db,key,secret,FILTRO_ABERTOS);
+  if(!abertos.codigos15.length){
+    return {ok:false,motivo:'Omie não devolveu pedidos abertos; conciliação não executada.'};
+  }
+  const conc=await db.rpc('conciliar_rapida_pedidos_compra_aprovacao',{p_codigos:abertos.codigos15});
+  if(conc.error)throw conc.error;
+  return {
+    ok:conc.data?.revisao_necessaria!==true,
+    abertos_omie:abertos.codigos15.length,
+    novas:abertos.novas+recebidos.novas,
+    alteradas:abertos.alteradas+recebidos.alteradas,
+    recebidos_conferidos:recebidos.registros,
+    conciliacao:conc.data
+  };
+}
 Deno.serve(async req=>{
   if(req.method!=='POST')return answer({erro:'Método não permitido'},405);
   const url=Deno.env.get('SUPABASE_URL'),service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),key=Deno.env.get('OMIE_APP_KEY'),secret=Deno.env.get('OMIE_APP_SECRET');
@@ -163,14 +263,33 @@ Deno.serve(async req=>{
         novas+=n(saved.data?.novas); alteradas+=n(saved.data?.alteradas); iguais+=n(saved.data?.iguais);
         processed++; if(page>=pages)break; page++;
       }
+
+      // Conferência rápida da coluna Aprovação. Uma falha aqui não invalida a
+      // incremental já gravada: fica registrada na mensagem e tenta de novo no
+      // próximo ciclo (5 min).
+      let conferencia:any=null,textoConferencia='';
+      if(Date.now()-begin<35000){
+        try{
+          conferencia=await conferenciaRapida(db,key,secret);
+          const c=conferencia.conciliacao??{};
+          textoConferencia=conferencia.ok
+            ? ' Coluna Aprovação: '+conferencia.abertos_omie+' abertos no Omie; '+n(c.escondidos)+' saíram da tela'+(n(c.escondidos)?' ('+(c.numeros_escondidos??[]).join(', ')+')':'')+'.'
+            : ' Conferência da coluna NÃO aplicada: '+str(conferencia.motivo||c.motivo)+(c.numeros?' ('+c.numeros.join(', ')+')':'');
+        }catch(e){
+          const msg=e instanceof Error?e.message:(typeof e==='object'&&e!==null?JSON.stringify(e):String(e));
+          conferencia={ok:false,erro:msg};
+          textoConferencia=' Conferência da coluna adiada: '+msg.slice(0,300);
+        }
+      }
+
       const end=new Date().toISOString();
       const upd=await db.from('sincronizacao_pedidos_compra_omie').update({
         status:'sucesso',finalizado_em:end,atualizado_em:end,ultima_conciliacao_em:end,proxima_tentativa_em:null,
         ultima_incremental_sucesso_em:end,
-        mensagem:'Incremental concluído: '+totalRegs+' alterados no período; '+novas+' novos; '+alteradas+' atualizados.'
+        mensagem:('Incremental concluído: '+totalRegs+' alterados no período; '+novas+' novos; '+alteradas+' atualizados.'+textoConferencia).slice(0,900)
       }).eq('id',1);
       if(upd.error)throw upd.error;
-      return answer({sucesso:true,modo:'incremental',registros_periodo:totalRegs,paginas_processadas:processed,novas,alteradas,iguais});
+      return answer({sucesso:true,modo:'incremental',registros_periodo:totalRegs,paginas_processadas:processed,novas,alteradas,iguais,conferencia});
     }catch(e){
       const message=e instanceof Error?e.message:(typeof e==='object'&&e!==null?JSON.stringify(e):String(e));
       const end=new Date().toISOString();
