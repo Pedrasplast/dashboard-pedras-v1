@@ -45,6 +45,18 @@ export async function buscarAnosFinanceiro() {
   return data.map((registro) => Number(registro?.ano)).filter((ano) => Number.isInteger(ano));
 }
 
+/*
+ * Anos sem repetição, do mais recente para o mais antigo (o primeiro é o
+ * ano padrão dos filtros). Substitui a leitura da coluna "ano" da tabela
+ * financeiro_omie_resumo inteira, que o Supabase corta em 1000 linhas:
+ * com um ano mais recente acima disso, os anteriores sumiam do filtro.
+ */
+export async function buscarAnosFinanceiroDoMaisRecente() {
+  const anos = await buscarAnosFinanceiro();
+
+  return [...new Set(anos)].sort((anoA, anoB) => anoB - anoA);
+}
+
 /* =========================================================
    RESUMO FINANCEIRO
 ========================================================= */
@@ -136,6 +148,27 @@ export async function buscarDetalhesFinanceiro({ ano, mes, codigoCategoria }) {
 
   if (error) {
     throw new Error(`Erro ao carregar detalhes financeiros: ${error.message}`);
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+/* =========================================================
+   EVOLUÇÃO MENSAL
+========================================================= */
+
+export async function buscarEvolucaoMensalFinanceiro({ ano, mesInicial, mesFinal }) {
+  const { data, error } = await supabase.rpc("listar_relatorio_financeiro_evolucao_mensal", {
+    p_ano: Number(ano),
+
+    p_mes_inicial: Number(mesInicial),
+
+    p_mes_final: Number(mesFinal),
+  });
+
+  // A tela mostra a mensagem original do Supabase.
+  if (error) {
+    throw error;
   }
 
   return Array.isArray(data) ? data : [];

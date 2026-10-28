@@ -14,7 +14,10 @@ import {
 
 import { useQuery } from "@tanstack/react-query";
 
-import { supabase } from "@/lib/supabaseClient";
+import {
+  buscarAnosFinanceiroDoMaisRecente,
+  buscarEvolucaoMensalFinanceiro,
+} from "@/features/financeiro/services/financeiro.service";
 import PageHeader from "@/components/layout/PageHeader";
 import { paraNumero } from "@/shared/lib/numeros";
 import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
@@ -106,20 +109,7 @@ export default function FinanceiroEvolucaoMensalPage() {
   } = useQuery({
     queryKey: ["financeiro-evolucao-mensal-anos"],
 
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("financeiro_omie_resumo")
-        .select("ano")
-        .order("ano", {
-          ascending: false,
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      return [...new Set((data || []).map((item) => Number(item.ano)).filter(Number.isFinite))];
-    },
+    queryFn: buscarAnosFinanceiroDoMaisRecente,
 
     staleTime: 5 * 60 * 1000,
 
@@ -157,24 +147,7 @@ export default function FinanceiroEvolucaoMensalPage() {
   } = useQuery({
     queryKey: ["financeiro-evolucao-mensal", ano, mesInicial, mesFinal],
 
-    queryFn: async () => {
-      const { data, error: erroRpc } = await supabase.rpc(
-        "listar_relatorio_financeiro_evolucao_mensal",
-        {
-          p_ano: Number(ano),
-
-          p_mes_inicial: Number(mesInicial),
-
-          p_mes_final: Number(mesFinal),
-        },
-      );
-
-      if (erroRpc) {
-        throw erroRpc;
-      }
-
-      return Array.isArray(data) ? data : [];
-    },
+    queryFn: () => buscarEvolucaoMensalFinanceiro({ ano, mesInicial, mesFinal }),
 
     enabled: Boolean(ano && mesInicial && mesFinal),
 

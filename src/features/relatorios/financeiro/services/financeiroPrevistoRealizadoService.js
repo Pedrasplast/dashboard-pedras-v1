@@ -34,18 +34,6 @@ function normalizarRegistroFinanceiro(registro) {
   };
 }
 
-export async function buscarAnosFinanceiros() {
-  const { data, error } = await supabase.from("financeiro_omie_resumo").select("ano").order("ano", {
-    ascending: false,
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  return [...new Set((data || []).map((item) => Number(item.ano)).filter(Number.isFinite))];
-}
-
 export async function buscarPrevistoRealizadoFinanceiro({ ano, mes, tipo }) {
   const { data, error } = await supabase.rpc("listar_relatorio_financeiro_previsto_realizado", {
     p_ano: Number(ano),
