@@ -8,7 +8,7 @@ import {
   calcularResumoFinanceiroCompra,
   TIPOS_CLASSIFICACAO,
   TIPOS_FRETE,
-} from "./comprasFuturasService";
+} from "./comprasFuturas.regras";
 import { converterNumeroBrOuNull, numeroParaCampo } from "@/shared/lib/numeros";
 import { obterHojeISO } from "@/shared/lib/datas";
 import { formatarNumeroPtBR } from "@/shared/lib/formatar";
