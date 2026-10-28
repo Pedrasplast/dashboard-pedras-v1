@@ -1,4 +1,4 @@
-/* Sidebar de Produ??o: mesmo padr?o visual e breakpoints de Paradas. */
+/* Sidebar de Produção: mesmo padrão visual e breakpoints de Paradas. */
 .dashboard-container.producao-page {
   --producao-sidebar-altura: calc(100dvh - 76px - 16px);
   margin-top: 70px;
