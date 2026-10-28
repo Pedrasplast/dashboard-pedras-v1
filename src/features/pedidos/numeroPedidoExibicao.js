@@ -10,7 +10,12 @@ export function obterTimestampCriacao(valor) {
   return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
 }
 
-export function criarMapaNumeroPedidoExibicao(registros) {
+/*
+ * Pedidos desdobrados no Omie mantêm o mesmo número. O mais antigo
+ * fica com o número original e os seguintes recebem /1, /2...
+ * (desempate pelo código do pedido).
+ */
+export function criarMapaMetadadosPedidoExibicao(registros) {
   const pedidosPorCodigo = new Map();
 
   for (const registro of registros ?? []) {
@@ -26,9 +31,10 @@ export function criarMapaNumeroPedidoExibicao(registros) {
       continue;
     }
 
-    const criadoEm = obterTimestampCriacao(
-      registro?.criado_em ?? registro?.criadoEm ?? registro?.data_pedido ?? registro?.data,
-    );
+    const criadoEmOriginal =
+      registro?.criado_em ?? registro?.criadoEm ?? registro?.data_pedido ?? registro?.data ?? null;
+
+    const criadoEm = obterTimestampCriacao(criadoEmOriginal);
 
     const existente = pedidosPorCodigo.get(codigo);
 
@@ -37,6 +43,7 @@ export function criarMapaNumeroPedidoExibicao(registros) {
         codigo,
         numeroPedido,
         criadoEm,
+        criadoEmOriginal,
       });
     }
   }
@@ -51,7 +58,7 @@ export function criarMapaNumeroPedidoExibicao(registros) {
     gruposPorNumero.get(pedido.numeroPedido).push(pedido);
   }
 
-  const mapaExibicao = new Map();
+  const mapaMetadados = new Map();
 
   for (const [numeroPedido, grupo] of gruposPorNumero.entries()) {
     grupo.sort((pedidoA, pedidoB) => {
@@ -62,15 +69,46 @@ export function criarMapaNumeroPedidoExibicao(registros) {
       return pedidoA.codigo - pedidoB.codigo;
     });
 
+    const total = grupo.length;
+
+    const partes = grupo.map((pedido, indice) => ({
+      codigo_pedido_omie: pedido.codigo,
+      numero_pedido: numeroPedido,
+      numero_exibicao: indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`,
+      indice,
+      criado_em: pedido.criadoEmOriginal,
+    }));
+
     grupo.forEach((pedido, indice) => {
-      mapaExibicao.set(pedido.codigo, indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`);
+      mapaMetadados.set(pedido.codigo, {
+        codigoPedidoOmie: pedido.codigo,
+        numeroOriginal: numeroPedido,
+        numeroExibicao: partes[indice].numero_exibicao,
+        indice,
+        total,
+        desdobrado: total > 1,
+        ehOriginal: indice === 0,
+        quantidadeDerivados: Math.max(0, total - 1),
+        partes,
+      });
     });
+  }
+
+  return mapaMetadados;
+}
+
+// Código do pedido -> número exibido ("123", "123/1"...).
+export function criarMapaNumeroPedidoExibicao(registros) {
+  const mapaExibicao = new Map();
+
+  for (const [codigo, metadados] of criarMapaMetadadosPedidoExibicao(registros)) {
+    mapaExibicao.set(codigo, metadados.numeroExibicao);
   }
 
   return mapaExibicao;
 }
 
-export async function carregarMapaNumeroPedidoExibicao(supabase) {
+async function buscarRegistrosNumeracaoPedidos(supabase) {
   const registros = [];
   let inicio = 0;
 
@@ -97,5 +135,13 @@ export async function carregarMapaNumeroPedidoExibicao(supabase) {
     inicio += TAMANHO_PAGINA_NUMERACAO;
   }
 
-  return criarMapaNumeroPedidoExibicao(registros);
+  return registros;
+}
+
+export async function carregarMapaNumeroPedidoExibicao(supabase) {
+  return criarMapaNumeroPedidoExibicao(await buscarRegistrosNumeracaoPedidos(supabase));
+}
+
+export async function carregarMapaMetadadosPedidoExibicao(supabase) {
+  return criarMapaMetadadosPedidoExibicao(await buscarRegistrosNumeracaoPedidos(supabase));
 }

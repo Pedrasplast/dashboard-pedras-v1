@@ -13,7 +13,13 @@ import {
 
 import Paginacao from "@/components/paginacao/Paginacao";
 import LayoutRelatorio from "../components/LayoutRelatorio";
-import { supabase } from "@/lib/supabaseClient";
+import {
+  buscarItensPedidosCompra,
+  buscarLocaisEstoquePedidosCompra,
+  buscarNomesFornecedoresPedidosCompra,
+  buscarPedidosCompraAlterados,
+  buscarSincronizacaoPedidosCompra,
+} from "../services/relatoriosAlterados.service";
 
 import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
@@ -48,145 +54,6 @@ function dataHoje() {
 
 function dataBR(valor) {
   return valor ? valor.split("-").reverse().join("/") : "Sem limite";
-}
-
-/* =========================================================
-   CONSULTAR HISTÓRICO
-========================================================= */
-
-async function buscarHistorico(inicial, final) {
-  const { data, error } = await supabase.rpc("listar_relatorio_pedidos_compra_alterados", {
-    p_data_inicial: inicial || null,
-    p_data_final: final || null,
-    p_limite: 2000,
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  return Array.isArray(data) ? data : [];
-}
-
-/* =========================================================
-   CONSULTAR SINCRONIZAÇÃO
-========================================================= */
-
-async function buscarSincronizacao() {
-  const { data, error } = await supabase
-    .from("sincronizacao_pedidos_compra_omie")
-    .select(["status", "finalizado_em", "atualizado_em", "pagina_proxima", "mensagem"].join(","))
-    .eq("id", 1)
-    .maybeSingle();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-/* =========================================================
-   CONSULTAR NOMES DOS FORNECEDORES
-========================================================= */
-
-async function buscarNomesFornecedores() {
-  const { data, error } = await supabase.functions.invoke("nomes-fornecedores-pedidos-compra", {
-    body: {},
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  if (
-    !data ||
-    !data.fornecedores ||
-    typeof data.fornecedores !== "object" ||
-    Array.isArray(data.fornecedores)
-  ) {
-    throw new Error("A consulta não retornou os nomes dos fornecedores.");
-  }
-
-  return {
-    nomes: data.fornecedores,
-
-    pendentes: Number(data.pendentes || 0),
-
-    falhaOmie: data.consulta_omie_falhou === true,
-  };
-}
-
-/* =========================================================
-   LOCAIS DE ESTOQUE
-========================================================= */
-
-async function buscarLocais() {
-  const { data, error } = await supabase
-    .from("locais_estoque_omie")
-    .select("codigo_local_estoque,descricao,codigo");
-
-  if (error) {
-    console.warn("Locais de estoque indisponíveis:", error.message);
-
-    return {};
-  }
-
-  return Object.fromEntries(
-    (data || []).map((local) => [
-      String(local.codigo_local_estoque),
-
-      local.descricao || local.codigo || "Local sem descrição",
-    ]),
-  );
-}
-
-/* =========================================================
-   REFERÊNCIAS DOS PRODUTOS
-========================================================= */
-
-async function buscarItens() {
-  const porPedido = {};
-  const lote = 500;
-
-  try {
-    for (let inicio = 0; inicio < 10000; inicio += lote) {
-      const { data, error } = await supabase
-        .from("pedidos_compra_itens_front")
-        .select("cod_ped_compra,codigo_item,codigo_comercial,descricao,unidade")
-        .order("cod_ped_compra", {
-          ascending: true,
-        })
-        .order("codigo_item", {
-          ascending: true,
-        })
-        .range(inicio, inicio + lote - 1);
-
-      if (error) {
-        throw error;
-      }
-
-      for (const item of data || []) {
-        const codigo = String(item.cod_ped_compra);
-
-        if (!porPedido[codigo]) {
-          porPedido[codigo] = {};
-        }
-
-        porPedido[codigo][String(item.codigo_item)] = item;
-      }
-
-      if ((data || []).length < lote) {
-        return porPedido;
-      }
-    }
-
-    console.warn("Limite de referências de produto alcançado.");
-  } catch (error) {
-    console.warn("Referências de produtos indisponíveis:", error.message);
-  }
-
-  return porPedido;
 }
 
 /* =========================================================
@@ -474,7 +341,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   const historico = useQuery({
     queryKey: ["relatorio-pedidos-compra-alterados", dataInicial, dataFinal],
 
-    queryFn: () => buscarHistorico(dataInicial, dataFinal),
+    queryFn: () => buscarPedidosCompraAlterados(dataInicial, dataFinal),
 
     enabled: periodoValido,
 
@@ -494,7 +361,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   const sincronizacao = useQuery({
     queryKey: ["sincronizacao-pedidos-compra-status"],
 
-    queryFn: buscarSincronizacao,
+    queryFn: buscarSincronizacaoPedidosCompra,
 
     staleTime: 10000,
 
@@ -510,7 +377,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   const fornecedoresQuery = useQuery({
     queryKey: ["nomes-fornecedores-pedidos-compra"],
 
-    queryFn: buscarNomesFornecedores,
+    queryFn: buscarNomesFornecedoresPedidosCompra,
 
     staleTime: 30 * 60 * 1000,
 
@@ -528,7 +395,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   const locais = useQuery({
     queryKey: ["locais-estoque-omie-relatorio-compras"],
 
-    queryFn: buscarLocais,
+    queryFn: buscarLocaisEstoquePedidosCompra,
 
     staleTime: 300000,
 
@@ -542,7 +409,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
   const itens = useQuery({
     queryKey: ["referencias-itens-pedidos-compra"],
 
-    queryFn: buscarItens,
+    queryFn: buscarItensPedidosCompra,
 
     staleTime: 300000,
 

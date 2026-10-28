@@ -11,7 +11,10 @@ import {
 
 import { useQuery } from "@tanstack/react-query";
 
-import { supabase } from "@/lib/supabaseClient";
+import {
+  buscarMetadadosDesdobramentoPedidos,
+  buscarPedidosAlterados,
+} from "../services/relatoriosAlterados.service";
 
 // Paginação padrão já utilizada no sistema.
 import Paginacao from "@/components/paginacao/Paginacao";
@@ -19,7 +22,6 @@ import Paginacao from "@/components/paginacao/Paginacao";
 import LayoutRelatorio from "../components/LayoutRelatorio";
 
 import "./PedidosAlteradosRelatorio.css";
-import { obterTimestampCriacao } from "@/features/pedidos/numeroPedidoExibicao";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { formatarDataISOLocal, formatarDataHora } from "@/shared/lib/datas";
 
@@ -28,118 +30,6 @@ import { formatarDataISOLocal, formatarDataHora } from "@/shared/lib/datas";
 ===================================================== */
 
 const ITENS_POR_PAGINA = 8;
-
-/* =====================================================
-   DESDOBRAMENTO / NUMERAÇÃO VISUAL
-
-   Mantido neste arquivo para que seja necessário alterar
-   somente PedidosAlteradosRelatorio.jsx.
-===================================================== */
-
-const TAMANHO_PAGINA_NUMERACAO = 1000;
-
-function criarMapaMetadadosPedidoExibicao(registros) {
-  const pedidosPorCodigo = new Map();
-
-  for (const registro of registros ?? []) {
-    const codigo = Number(registro?.codigo_pedido_omie);
-    const numeroPedido = String(registro?.numero_pedido ?? "").trim();
-
-    if (!Number.isFinite(codigo) || codigo <= 0 || !numeroPedido) {
-      continue;
-    }
-
-    const criadoEmOriginal = registro?.criado_em ?? null;
-    const criadoEm = obterTimestampCriacao(criadoEmOriginal);
-    const existente = pedidosPorCodigo.get(codigo);
-
-    if (!existente || criadoEm < existente.criadoEm) {
-      pedidosPorCodigo.set(codigo, {
-        codigo,
-        numeroPedido,
-        criadoEm,
-        criadoEmOriginal,
-      });
-    }
-  }
-
-  const gruposPorNumero = new Map();
-
-  for (const pedido of pedidosPorCodigo.values()) {
-    if (!gruposPorNumero.has(pedido.numeroPedido)) {
-      gruposPorNumero.set(pedido.numeroPedido, []);
-    }
-
-    gruposPorNumero.get(pedido.numeroPedido).push(pedido);
-  }
-
-  const mapaMetadados = new Map();
-
-  for (const [numeroPedido, grupo] of gruposPorNumero.entries()) {
-    grupo.sort((pedidoA, pedidoB) => {
-      if (pedidoA.criadoEm !== pedidoB.criadoEm) {
-        return pedidoA.criadoEm - pedidoB.criadoEm;
-      }
-
-      return pedidoA.codigo - pedidoB.codigo;
-    });
-
-    const total = grupo.length;
-
-    const partes = grupo.map((pedido, indice) => ({
-      codigo_pedido_omie: pedido.codigo,
-      numero_pedido: numeroPedido,
-      numero_exibicao: indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`,
-      indice,
-      criado_em: pedido.criadoEmOriginal,
-    }));
-
-    grupo.forEach((pedido, indice) => {
-      mapaMetadados.set(pedido.codigo, {
-        codigoPedidoOmie: pedido.codigo,
-        numeroOriginal: numeroPedido,
-        numeroExibicao: indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`,
-        indice,
-        total,
-        desdobrado: total > 1,
-        ehOriginal: indice === 0,
-        quantidadeDerivados: Math.max(0, total - 1),
-        partes,
-      });
-    });
-  }
-
-  return mapaMetadados;
-}
-
-async function carregarMapaMetadadosPedidoExibicao() {
-  const registros = [];
-  let inicio = 0;
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("pedidos_omie")
-      .select("codigo_pedido_omie,numero_pedido,criado_em")
-      .order("criado_em", { ascending: true })
-      .order("codigo_pedido_omie", { ascending: true })
-      .range(inicio, inicio + TAMANHO_PAGINA_NUMERACAO - 1);
-
-    if (error) {
-      throw error;
-    }
-
-    const pagina = Array.isArray(data) ? data : [];
-    registros.push(...pagina);
-
-    if (pagina.length < TAMANHO_PAGINA_NUMERACAO) {
-      break;
-    }
-
-    inicio += TAMANHO_PAGINA_NUMERACAO;
-  }
-
-  return criarMapaMetadadosPedidoExibicao(registros);
-}
 
 const ESTILOS_DESDOBRAMENTO = `
 .pedidos-alterados-pedido-identificacao {
@@ -471,19 +361,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
   } = useQuery({
     queryKey: ["relatorio-pedidos-alterados", dataInicial, dataFinal],
 
-    queryFn: async () => {
-      const { data, error: erroRpc } = await supabase.rpc("listar_relatorio_pedidos_alterados", {
-        p_data_inicial: dataInicial || null,
-        p_data_final: dataFinal || null,
-        p_limite: 2000,
-      });
-
-      if (erroRpc) {
-        throw erroRpc;
-      }
-
-      return Array.isArray(data) ? data : [];
-    },
+    queryFn: () => buscarPedidosAlterados(dataInicial, dataFinal),
 
     staleTime: 30 * 1000,
     refetchOnWindowFocus: true,
@@ -504,7 +382,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
     queryFn: async () => {
       try {
-        return await carregarMapaMetadadosPedidoExibicao();
+        return await buscarMetadadosDesdobramentoPedidos();
       } catch (erro) {
         console.warn("Não foi possível carregar os metadados de desdobramento dos pedidos:", erro);
 
