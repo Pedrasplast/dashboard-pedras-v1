@@ -21,9 +21,15 @@ import Paginacao from "@/components/paginacao/Paginacao";
 
 import LayoutRelatorio from "../components/LayoutRelatorio";
 
+import {
+  aplicarDesdobramentoPedidos,
+  extrairMudancas,
+  obterPeriodoPadrao,
+  pesquisarPedidosAlterados,
+} from "./formatadoresPedidosAlterados";
+
 import "./PedidosAlteradosRelatorio.css";
-import { normalizarTexto } from "@/shared/lib/texto";
-import { formatarDataISOLocal, formatarDataHora } from "@/shared/lib/datas";
+import { formatarDataHora } from "@/shared/lib/datas";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -31,279 +37,8 @@ import { formatarDataISOLocal, formatarDataHora } from "@/shared/lib/datas";
 
 const ITENS_POR_PAGINA = 8;
 
-const ESTILOS_DESDOBRAMENTO = `
-.pedidos-alterados-pedido-identificacao {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-}
-
-.pedidos-alterados-desdobramento-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  font-size: 0.56rem;
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.pedidos-alterados-desdobramento-badge svg {
-  width: 11px;
-  height: 11px;
-}
-
-.pedidos-alterados-desdobramento-badge.original {
-  color: #7c3aed;
-  background: #f5f3ff;
-  border: 1px solid #ddd6fe;
-}
-
-.pedidos-alterados-desdobramento-badge.derivado {
-  color: #0369a1;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-}
-
-.pedidos-alterados-desdobramento-aviso {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 11px 12px;
-  color: #334155;
-  background: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-left: 3px solid #6366f1;
-  border-radius: 8px;
-}
-
-.pedidos-alterados-desdobramento-aviso > svg {
-  flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  margin-top: 1px;
-  color: #4f46e5;
-}
-
-.pedidos-alterados-desdobramento-aviso > div {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.pedidos-alterados-desdobramento-aviso strong {
-  color: #1e293b;
-  font-size: 0.72rem;
-}
-
-.pedidos-alterados-desdobramento-aviso > div > span {
-  color: #64748b;
-  font-size: 0.64rem;
-  line-height: 1.45;
-}
-
-.pedidos-alterados-desdobramento-partes {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 5px;
-}
-
-.pedidos-alterados-desdobramento-partes small {
-  color: #94a3b8;
-  font-size: 0.58rem;
-  font-weight: 700;
-}
-
-.pedidos-alterados-desdobramento-partes > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.pedidos-alterados-desdobramento-partes > div > span {
-  display: inline-flex;
-  padding: 3px 7px;
-  color: #475569;
-  background: #ffffff;
-  border: 1px solid #dbe3ee;
-  border-radius: 999px;
-  font-size: 0.59rem;
-  font-weight: 800;
-}
-
-.pedidos-alterados-desdobramento-partes > div > span.atual {
-  color: #4338ca;
-  background: #eef2ff;
-  border-color: #c7d2fe;
-}
-`;
-
 /* =====================================================
-   FORMATAR DATA E HORA
-===================================================== */
 
-function formatarDataSemFuso(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  const texto = String(valor).trim();
-
-  // Data no formato YYYY-MM-DD: não converter para UTC.
-  const correspondencia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(texto);
-
-  if (correspondencia) {
-    const [, ano, mes, dia] = correspondencia;
-
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  // Data que já está no formato brasileiro.
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
-    return texto;
-  }
-
-  return texto;
-}
-
-/* =====================================================
-   PERÍODO PADRÃO
-
-   Primeiro dia do mês até hoje.
-===================================================== */
-
-function obterPeriodoPadrao() {
-  const hoje = new Date();
-
-  const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-
-  return {
-    inicio: formatarDataISOLocal(inicio),
-    fim: formatarDataISOLocal(hoje),
-  };
-}
-
-/* =====================================================
-   RÓTULOS DOS CAMPOS
-===================================================== */
-
-const ROTULOS_DETALHES = Object.freeze({
-  numero_pedido: "Número do pedido",
-  cliente: "Cliente",
-  data_pedido: "Data do pedido",
-  previsao: "Previsão de faturamento",
-  codigo_produto: "Código do produto",
-  produto: "Produto",
-  quantidade: "Quantidade",
-  unidade: "Unidade",
-  vendedor: "Vendedor",
-  valor: "Valor",
-  item_adicionado: "Item adicionado",
-});
-
-function obterRotuloCampo(chave) {
-  return (
-    ROTULOS_DETALHES[chave] ||
-    String(chave ?? "")
-      .replace(/_/g, " ")
-      .replace(/^\w/, (letra) => letra.toUpperCase())
-  );
-}
-
-/* =====================================================
-   FORMATAR VALORES DO HISTÓRICO
-===================================================== */
-
-function formatarValorGenerico(valor, chave = "") {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  const chaveNormalizada = normalizarTexto(chave);
-
-  // Somente campos realmente identificados como data podem ser formatados como data.
-  // Isso evita que números como 20240, 10120 ou 20000 sejam interpretados pelo
-  // JavaScript como anos (01/01/20240, 01/01/10120, etc.).
-  if (chaveNormalizada.includes("data") || chaveNormalizada.includes("previsao")) {
-    return formatarDataSemFuso(valor);
-  }
-
-  if (chaveNormalizada === "valor" && Number.isFinite(Number(valor))) {
-    return Number(valor).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
-
-  if (chaveNormalizada === "quantidade" && Number.isFinite(Number(valor))) {
-    return Number(valor).toLocaleString("pt-BR", {
-      maximumFractionDigits: 3,
-    });
-  }
-
-  if (typeof valor === "object") {
-    return JSON.stringify(valor);
-  }
-
-  return String(valor);
-}
-
-/* =====================================================
-   EXTRAIR ALTERAÇÕES DE UMA OCORRÊNCIA
-===================================================== */
-
-function extrairMudancas(ocorrencia) {
-  const detalhes = ocorrencia?.detalhes;
-
-  if (!detalhes || typeof detalhes !== "object") {
-    return [];
-  }
-
-  return Object.entries(detalhes).map(([chave, valor]) => {
-    /* ITEM ADICIONADO */
-
-    if (chave === "item_adicionado" && valor && typeof valor === "object") {
-      const descricao = [
-        valor.codigo_produto,
-
-        valor.produto,
-
-        valor.quantidade !== undefined ? `${valor.quantidade} ${valor.unidade || ""}`.trim() : null,
-      ]
-        .filter(Boolean)
-        .join(" • ");
-
-      return {
-        chave,
-        campo: "Item adicionado",
-        anterior: "-",
-        novo: descricao || "Novo item incluído",
-      };
-    }
-
-    /* ALTERAÇÃO NORMAL */
-
-    const anterior = valor && typeof valor === "object" ? valor.anterior : null;
-
-    const novo = valor && typeof valor === "object" ? valor.novo : valor;
-
-    return {
-      chave,
-
-      campo: obterRotuloCampo(chave),
-
-      anterior: formatarValorGenerico(anterior, chave),
-
-      novo: formatarValorGenerico(novo, chave),
-    };
-  });
-}
 
 /* =====================================================
    COMPONENTE PRINCIPAL
@@ -404,76 +139,19 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
      nunca fica vazio aguardando a consulta de desdobramento.
   ================================================= */
 
-  const relatorio = useMemo(() => {
-    const mapa =
-      mapaMetadadosPedidoExibicao instanceof Map ? mapaMetadadosPedidoExibicao : new Map();
-
-    return relatorioBase.map((pedido) => {
-      const codigoPedidoOmie = Number(pedido?.codigo_pedido_omie);
-
-      const numeroOriginal = String(pedido?.numero_pedido ?? codigoPedidoOmie ?? "").trim();
-
-      const metadadosDesdobramento = mapa.get(codigoPedidoOmie);
-
-      const numeroExibicao = metadadosDesdobramento?.numeroExibicao ?? numeroOriginal;
-
-      return {
-        ...pedido,
-
-        numero_pedido_original: numeroOriginal,
-
-        // A troca acontece somente no objeto em memória do relatório.
-        // O Supabase e o Omie continuam com o número original.
-        numero_pedido: numeroExibicao,
-
-        // Metadados visuais do desdobramento.
-        // Isso NÃO aumenta a contagem de alterações.
-        pedido_desdobrado: Boolean(metadadosDesdobramento?.desdobrado),
-
-        pedido_desdobramento_original: Boolean(metadadosDesdobramento?.ehOriginal),
-
-        pedido_desdobramento_indice: Number(metadadosDesdobramento?.indice ?? 0),
-
-        pedido_desdobramento_total: Number(metadadosDesdobramento?.total ?? 1),
-
-        pedido_desdobramento_quantidade_derivados: Number(
-          metadadosDesdobramento?.quantidadeDerivados ?? 0,
-        ),
-
-        pedido_desdobramento_partes: Array.isArray(metadadosDesdobramento?.partes)
-          ? metadadosDesdobramento.partes
-          : [],
-      };
-    });
-  }, [relatorioBase, mapaMetadadosPedidoExibicao]);
+  const relatorio = useMemo(
+    () => aplicarDesdobramentoPedidos(relatorioBase, mapaMetadadosPedidoExibicao),
+    [relatorioBase, mapaMetadadosPedidoExibicao],
+  );
 
   /* =================================================
      FILTRAGEM LOCAL
   ================================================= */
 
-  const pedidosFiltrados = useMemo(() => {
-    const termo = normalizarTexto(pesquisa);
-
-    if (!termo) {
-      return relatorio;
-    }
-
-    return relatorio.filter((pedido) => {
-      const campos = Array.isArray(pedido?.campos_alterados)
-        ? pedido.campos_alterados.join(" ")
-        : "";
-
-      return [
-        pedido?.numero_pedido,
-        pedido?.numero_pedido_original,
-        pedido?.pedido_desdobrado ? "desdobrado desdobramento" : "",
-        pedido?.cliente,
-        pedido?.vendedor,
-        campos,
-        pedido?.ultimo_resumo,
-      ].some((valor) => normalizarTexto(valor).includes(termo));
-    });
-  }, [relatorio, pesquisa]);
+  const pedidosFiltrados = useMemo(
+    () => pesquisarPedidosAlterados(relatorio, pesquisa),
+    [relatorio, pesquisa],
+  );
 
   /* =================================================
      TOTAL DE ALTERAÇÕES
@@ -673,8 +351,6 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
   return (
     <>
-      <style>{ESTILOS_DESDOBRAMENTO}</style>
-
       <LayoutRelatorio
         relatorio={relatorioConfig}
         categoria="Pedidos"

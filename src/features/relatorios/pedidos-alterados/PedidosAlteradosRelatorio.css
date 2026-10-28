@@ -437,3 +437,118 @@
     grid-column: auto;
   }
 }
+
+/* =====================================================
+   DESDOBRAMENTO (/1, /2...)
+   Antes injetado por uma tag <style> no componente.
+===================================================== */
+.pedidos-alterados-pedido-identificacao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.pedidos-alterados-desdobramento-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 0.56rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pedidos-alterados-desdobramento-badge svg {
+  width: 11px;
+  height: 11px;
+}
+
+.pedidos-alterados-desdobramento-badge.original {
+  color: #7c3aed;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+}
+
+.pedidos-alterados-desdobramento-badge.derivado {
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.pedidos-alterados-desdobramento-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 11px 12px;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #dbeafe;
+  border-left: 3px solid #6366f1;
+  border-radius: 8px;
+}
+
+.pedidos-alterados-desdobramento-aviso > svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: #4f46e5;
+}
+
+.pedidos-alterados-desdobramento-aviso > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pedidos-alterados-desdobramento-aviso strong {
+  color: #1e293b;
+  font-size: 0.72rem;
+}
+
+.pedidos-alterados-desdobramento-aviso > div > span {
+  color: #64748b;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+
+.pedidos-alterados-desdobramento-partes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.pedidos-alterados-desdobramento-partes small {
+  color: #94a3b8;
+  font-size: 0.58rem;
+  font-weight: 700;
+}
+
+.pedidos-alterados-desdobramento-partes > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pedidos-alterados-desdobramento-partes > div > span {
+  display: inline-flex;
+  padding: 3px 7px;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 999px;
+  font-size: 0.59rem;
+  font-weight: 800;
+}
+
+.pedidos-alterados-desdobramento-partes > div > span.atual {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
