@@ -113,9 +113,20 @@ export async function marcarPedidoComoVisualizado(codigoPedido) {
   return data === true;
 }
 
-export function assinarNotificacoesPedidos({ onChange }) {
+export async function contarNotificacoesPedidosNaoLidas() {
+  const { data, error } = await supabase.rpc("contar_notificacoes_pedidos_nao_lidas");
+
+  if (error) throw error;
+
+  const quantidade = Number(data ?? 0);
+
+  return Number.isFinite(quantidade) ? quantidade : 0;
+}
+
+// Cada assinante precisa de um nome de canal próprio (a tela de Pedidos e a Navbar ficam abertas juntas).
+export function assinarNotificacoesPedidos({ onChange, nomeCanal = "pedidos-page-notificacoes" }) {
   const canal = supabase
-    .channel("pedidos-page-notificacoes")
+    .channel(nomeCanal)
     .on(
       "postgres_changes",
       {

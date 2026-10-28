@@ -33,6 +33,7 @@ import {
 
 import { usePermissoes } from "@/hooks/usePermissoes";
 import { useAvisosMonitoramento } from "@/features/monitoramento/hooks/useMonitoramento";
+import { useNotificacoesPedidos } from "@/features/pedidos/hooks/useNotificacoesPedidos";
 import { useNavigate } from "@/lib/navegacao";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -309,14 +310,6 @@ function obterIniciais(nome) {
   return `${palavras[0][0]}${palavras.at(-1)[0]}`.toUpperCase();
 }
 
-function obterTipoNotificacao(notificacao) {
-  const tipo = String(notificacao?.tipo_ultima_ocorrencia ?? notificacao?.tipo ?? "novo")
-    .trim()
-    .toLowerCase();
-
-  return tipo === "alterado" ? "alterado" : "novo";
-}
-
 function formatarBadgePedidos(quantidade) {
   const numero = Number(quantidade || 0);
 
@@ -336,7 +329,6 @@ function Navbar({ user, isAdmin }) {
 
   const menuRef = useRef(null);
   const navigationRef = useRef(null);
-  const alertaTimeoutRef = useRef(null);
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -345,12 +337,6 @@ function Navbar({ user, isAdmin }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [mobileGroupOpen, setMobileGroupOpen] = useState(null);
-
-  const [pedidosNaoLidos, setPedidosNaoLidos] = useState(0);
-
-  const [ultimaNotificacaoPedido, setUltimaNotificacaoPedido] = useState(null);
-
-  const [mostrarAlertaPedido, setMostrarAlertaPedido] = useState(false);
 
   const { podeAcessarTela, loadingPermissoes } = usePermissoes();
 
@@ -428,177 +414,24 @@ function Navbar({ user, isAdmin }) {
     [caminhoAtivo],
   );
 
+  /* =====================================================
+     NOTIFICAÇÕES DE PEDIDOS
+  ===================================================== */
+
+  const {
+    pedidosNaoLidos,
+    ultimaNotificacaoPedido,
+    mostrarAlertaPedido,
+    ocultarAlertaPedido,
+    fecharAlertaPedido,
+  } = useNotificacoesPedidos({ user, podeAcessarPedidos });
+
   const badgePedidos = useMemo(() => formatarBadgePedidos(pedidosNaoLidos), [pedidosNaoLidos]);
 
   /* Aviso de rotinas com erro (só administradores; ver Monitoramento). */
   const { data: avisosMonitoramento = 0 } = useAvisosMonitoramento(Boolean(user) && isAdmin);
   const badgeMonitoramento =
     avisosMonitoramento > 0 ? formatarBadgePedidos(avisosMonitoramento) : null;
-
-  /* =====================================================
-     NOTIFICAÇÕES DE PEDIDOS
-  ===================================================== */
-
-  const atualizarQuantidadePedidosNovos = useCallback(async () => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.rpc("contar_notificacoes_pedidos_nao_lidas");
-
-      if (error) {
-        console.error("Erro ao consultar notificações de pedidos:", error);
-        return;
-      }
-
-      const quantidade = Number(data ?? 0);
-
-      setPedidosNaoLidos(Number.isFinite(quantidade) ? quantidade : 0);
-    } catch (error) {
-      console.error("Erro inesperado ao consultar notificações de pedidos:", error);
-    }
-  }, [user, podeAcessarPedidos]);
-
-  /* Primeira consulta */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      setPedidosNaoLidos(0);
-      return undefined;
-    }
-
-    void atualizarQuantidadePedidosNovos();
-
-    return undefined;
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  /* Realtime */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const canal = supabase
-      .channel(`navbar-pedidos-${user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "pedidos_notificacoes",
-        },
-        (payload) => {
-          const notificacao = payload?.new;
-
-          if (!notificacao || notificacao.notificar !== true) {
-            void atualizarQuantidadePedidosNovos();
-            return;
-          }
-
-          const tipo = obterTipoNotificacao(notificacao);
-
-          void atualizarQuantidadePedidosNovos();
-
-          setUltimaNotificacaoPedido({
-            id: notificacao.id,
-            codigoPedidoOmie: notificacao.codigo_pedido_omie,
-            numeroPedido: notificacao.numero_pedido,
-            cliente: notificacao.cliente,
-            vendedor: notificacao.vendedor,
-            tipo,
-            resumo:
-              notificacao.resumo ||
-              (tipo === "alterado" ? "Pedido alterado" : "Novo pedido recebido"),
-            camposAlterados: Array.isArray(notificacao.campos_alterados)
-              ? notificacao.campos_alterados
-              : [],
-          });
-
-          setMostrarAlertaPedido(true);
-
-          if (alertaTimeoutRef.current) {
-            window.clearTimeout(alertaTimeoutRef.current);
-          }
-
-          alertaTimeoutRef.current = window.setTimeout(() => {
-            setMostrarAlertaPedido(false);
-          }, 10000);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      if (alertaTimeoutRef.current) {
-        window.clearTimeout(alertaTimeoutRef.current);
-
-        alertaTimeoutRef.current = null;
-      }
-
-      supabase.removeChannel(canal);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  /* Eventos internos de atualização */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const atualizarContador = () => {
-      void atualizarQuantidadePedidosNovos();
-    };
-
-    window.addEventListener("pedidos-notificacoes-atualizadas", atualizarContador);
-
-    return () => {
-      window.removeEventListener("pedidos-notificacoes-atualizadas", atualizarContador);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  /* Verificação periódica */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    /*
-     * O contador já é atualizado na hora pelo tempo real (canal em
-     * pedidos_notificacoes) e ao voltar para a aba. A verificação periódica
-     * fica só como rede de segurança: 5 min (antes 60 s).
-     */
-    const intervalo = window.setInterval(() => {
-      void atualizarQuantidadePedidosNovos();
-    }, 5 * 60_000);
-
-    return () => {
-      window.clearInterval(intervalo);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
-
-  /* Atualização ao voltar para a aba */
-
-  useEffect(() => {
-    if (!user || !podeAcessarPedidos) {
-      return undefined;
-    }
-
-    const verificarAoVoltar = () => {
-      if (document.visibilityState === "visible") {
-        void atualizarQuantidadePedidosNovos();
-      }
-    };
-
-    document.addEventListener("visibilitychange", verificarAoVoltar);
-
-    return () => {
-      document.removeEventListener("visibilitychange", verificarAoVoltar);
-    };
-  }, [user, podeAcessarPedidos, atualizarQuantidadePedidosNovos]);
 
   /* =====================================================
      NAVEGAÇÃO
@@ -649,21 +482,9 @@ function Navbar({ user, isAdmin }) {
   ===================================================== */
 
   const abrirPedidosPeloAlerta = useCallback(() => {
-    setMostrarAlertaPedido(false);
+    ocultarAlertaPedido();
     goTo("/pedidos");
-  }, [goTo]);
-
-  const fecharAlertaPedido = useCallback((event) => {
-    event?.stopPropagation?.();
-
-    setMostrarAlertaPedido(false);
-
-    if (alertaTimeoutRef.current) {
-      window.clearTimeout(alertaTimeoutRef.current);
-
-      alertaTimeoutRef.current = null;
-    }
-  }, []);
+  }, [ocultarAlertaPedido, goTo]);
 
   /* =====================================================
      LOGOUT
