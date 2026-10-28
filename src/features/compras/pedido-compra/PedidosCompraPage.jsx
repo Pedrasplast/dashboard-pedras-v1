@@ -849,10 +849,15 @@ export default function PedidosCompraPage() {
               acc.abertos +=
                 1;
 
+              /*
+               * Igual ao Omie: soma o valor total do
+               * pedido (valor total dos itens, com frete,
+               * despesas e descontos), não só o saldo.
+               */
               acc.valorEmAberto +=
                 Number(
                   pedido
-                    .valorEmAberto ??
+                    .valorTotal ??
                     0,
                 );
             }
