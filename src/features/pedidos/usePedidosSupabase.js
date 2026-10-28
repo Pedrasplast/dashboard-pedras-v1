@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { obterTokenAcesso } from "@/lib/sessao";
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarPedidosOmie } from "./omie.functions";
@@ -12,17 +13,7 @@ export const CHAVE_PEDIDOS_SUPABASE = Object.freeze([
 ]);
 
 async function consultarPedidosSupabase() {
-  const { data: sessaoData, error: sessaoErro } = await supabase.auth.getSession();
-
-  if (sessaoErro) {
-    throw new Error("Não foi possível validar sua sessão.");
-  }
-
-  const accessToken = sessaoData?.session?.access_token;
-
-  if (!accessToken) {
-    throw new Error("Sua sessão expirou. Entre novamente no sistema.");
-  }
+  const accessToken = await obterTokenAcesso();
 
   const [respostaPedidos, mapaNumeroPedidoExibicao] = await Promise.all([
     buscarPedidosOmie({

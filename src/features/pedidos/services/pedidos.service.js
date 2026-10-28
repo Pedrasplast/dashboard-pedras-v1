@@ -1,4 +1,6 @@
+import { obterTokenAcesso } from "@/lib/sessao";
 import { supabase } from "@/lib/supabaseClient";
+import { buscarPedidosOmie } from "../omie.functions";
 import { carregarMapaNumeroPedidoExibicao } from "../numeroPedidoExibicao";
 
 export async function buscarPedidosDiretoSupabase() {
@@ -92,6 +94,15 @@ export async function buscarPedidosDiretoSupabase() {
     statusSincronizacao: sincronizacao?.status ?? "aguardando",
     mensagemSincronizacao: sincronizacao?.mensagem ?? "",
   };
+}
+
+// Pedidos do Omie como a server function devolve (sem a numeração de desdobramento).
+export async function buscarPedidosOmieDaSessao() {
+  return buscarPedidosOmie({
+    data: {
+      accessToken: await obterTokenAcesso(),
+    },
+  });
 }
 
 export async function buscarNotificacoesPendentes() {
