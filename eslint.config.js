@@ -72,8 +72,9 @@ export default tseslint.config(
     },
   },
   {
-    // Server functions do TanStack Start rodam no Node (usam process.env).
-    files: ["**/*.functions.{js,ts}"],
+    // Server functions do TanStack Start rodam no Node (usam process.env), assim como os
+    // módulos só de servidor que elas importam (pedidos/omie).
+    files: ["**/*.functions.{js,ts}", "src/features/pedidos/omie/**/*.js"],
     languageOptions: {
       globals: globals.node,
     },
