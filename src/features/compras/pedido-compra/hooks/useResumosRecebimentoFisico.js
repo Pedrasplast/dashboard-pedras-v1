@@ -8,6 +8,9 @@ const TEMPO_DADOS_FRESCOS = 30 * 1000;
 
 const TEMPO_CACHE_MEMORIA = 30 * 60 * 1000;
 
+// Mesmo objeto vazio em todo render, para não invalidar os useMemo de quem consome.
+const SEM_RESUMOS = {};
+
 function normalizarCodigos(codigosPedidos = []) {
   return [
     ...new Set(
@@ -66,6 +69,6 @@ export function useResumosRecebimentoFisico(codigosPedidos = [], { enabled = tru
   return {
     ...query,
 
-    resumos: query.data ?? {},
+    resumos: query.data ?? SEM_RESUMOS,
   };
 }
