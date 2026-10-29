@@ -338,3 +338,79 @@ export function contarRegistrosRelatorio(relatorio, dados = []) {
 
   return pedidosUnicos.size;
 }
+
+/* =====================================================
+   TEXTO DOS FILTROS
+
+   Usado nos indicadores, na pré-visualização e no
+   cabeçalho do PDF e do Excel.
+===================================================== */
+
+function dataParaTexto(dataISO) {
+  return dataISO.split("-").reverse().join("/");
+}
+
+export function montarTextoFiltrosRelatorio({
+  relatorio,
+  filtros,
+  fonteEhPedidos,
+  relatorioEhCustom,
+}) {
+  if (relatorioEhCustom) {
+    return "Filtros internos do relatório";
+  }
+
+  const lista = [];
+
+  if (fonteEhPedidos) {
+    if (filtros.pedidos) {
+      const pedidosSelecionados = normalizarListaPedidosFiltro(filtros.pedidos);
+
+      if (pedidosSelecionados.length > 0) {
+        lista.push(`Pedidos: ${pedidosSelecionados.join(", ")}`);
+      }
+    }
+
+    if (filtros.cliente && filtros.cliente !== "todos") {
+      lista.push(`Cliente: ${filtros.cliente}`);
+    }
+
+    if (filtros.vendedor && filtros.vendedor !== "todos") {
+      lista.push(`Vendedor: ${filtros.vendedor}`);
+    }
+
+    if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
+      lista.push(`Produto: ${filtros.cod_prod}`);
+    }
+
+    if (relatorio?.filtros?.status && filtros.status && filtros.status !== "todos") {
+      lista.push(`Status: ${filtros.status}`);
+    }
+  } else {
+    if (filtros.injetora && filtros.injetora !== "Todos") {
+      lista.push(`Injetora: ${filtros.injetora}`);
+    }
+
+    if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
+      lista.push(`Produto: ${filtros.cod_prod}`);
+    }
+
+    if (filtros.mp && filtros.mp !== "Todos") {
+      lista.push(`MP: ${filtros.mp}`);
+    }
+  }
+
+  if (filtros.dataInicio) {
+    lista.push(`De: ${dataParaTexto(filtros.dataInicio)}`);
+  }
+
+  if (filtros.dataFim) {
+    lista.push(`Até: ${dataParaTexto(filtros.dataFim)}`);
+  }
+
+  return lista.length > 0
+    ? lista.join(" | ")
+    : fonteEhPedidos
+      ? "Status Pedido"
+      : "Sem filtros adicionais";
+}

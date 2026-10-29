@@ -1,39 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { FiArrowLeft, FiChevronRight, FiFileText, FiX } from "react-icons/fi";
-
-import { useCargaMaquina, useDescricoesProdutos } from "@/lib/cargaMaquina";
-
-import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
-import { usePermissoes } from "@/hooks/usePermissoes";
-
+/*
+ * ATENÇÃO À ORDEM DOS IMPORTS: ela define a ordem do CSS na página.
+ * useCatalogoRelatorios traz o Relatorio.config (e com ele o LayoutRelatorio.css)
+ * e precisa vir ANTES de FiltrosPedidosRelatorio: as regras de mesma
+ * especificidade do .css dos filtros têm de ficar por último.
+ */
+import { useDadosRelatorio } from "./hooks/useDadosRelatorio";
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";
+import PreVisualizacaoRelatorio from "./components/PreVisualizacaoRelatorio";
+import { useCatalogoRelatorios } from "./hooks/useCatalogoRelatorios";
 
-// Componente padrão já utilizado na tela de Pedidos.
-import Paginacao from "@/components/paginacao/Paginacao";
-
-import { RELATORIOS } from "./config/Relatorio.config";
-
-import { obterValorVisualizacao } from "./utils/Visualizacao";
-
-import {
-  associarDescricaoProduto,
-  contarRegistrosRelatorio,
-  criarFiltrosIniciais,
-  filtrarDadosRelatorio,
-  listarMpsDisponiveis,
-  listarProdutosDisponiveis,
-  listarTiposDisponiveis,
-  montarColunasVisualizacao,
-  normalizarListaPedidosFiltro,
-} from "./utils/filtrosRelatorio";
+import { criarFiltrosIniciais, montarTextoFiltrosRelatorio } from "./utils/filtrosRelatorio";
 
 import FiltrosPedidosRelatorio from "./pedidos/FiltrosPedidosRelatorio";
 import LayoutRelatorio from "./components/LayoutRelatorio";
+import NavegacaoRelatorio, { CarregandoRelatorios } from "./components/NavegacaoRelatorio";
 import PainelRelatorios from "./components/PainelRelatorios";
 
 import "./TelaRelatorios.css";
-import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =====================================================
    CONFIGURAÇÃO DA PAGINAÇÃO
@@ -46,129 +31,17 @@ const LINHAS_POR_PAGINA = 8;
 ===================================================== */
 
 function TelaRelatorios({ dadosBrutos: dadosExternos }) {
-  /* =====================================================
-     ESTADOS
-  ===================================================== */
-
   const [relatorioSelecionadoId, setRelatorioSelecionadoId] = useState(null);
 
   const [filtros, setFiltros] = useState(() => criarFiltrosIniciais());
 
   const [visualizacaoAberta, setVisualizacaoAberta] = useState(false);
 
-  /* =====================================================
-     ESTADO DA PAGINAÇÃO
-  ===================================================== */
-
   const [paginaAtual, setPaginaAtual] = useState(1);
 
-  /* =====================================================
-     ESTADOS DO CATÁLOGO DE RELATÓRIOS
-  ===================================================== */
+  const catalogo = useCatalogoRelatorios();
 
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
-
-  const [buscaRelatorios, setBuscaRelatorios] = useState("");
-
-  /* =====================================================
-     PERMISSÕES DOS RELATÓRIOS
-  ===================================================== */
-
-  const { podeAcessarRelatorio, loadingPermissoes, erroPermissoes } = usePermissoes();
-
-  const permissoesRelatoriosCarregadas = !loadingPermissoes;
-
-  const relatoriosPermitidosIds = useMemo(
-    () =>
-      new Set(
-        RELATORIOS.filter((relatorio) => podeAcessarRelatorio(relatorio.id)).map(
-          (relatorio) => relatorio.id,
-        ),
-      ),
-    [podeAcessarRelatorio],
-  );
-
-  const erroPermissoesRelatorios = erroPermissoes
-    ? erroPermissoes.message || "Não foi possível verificar as permissões dos relatórios."
-    : "";
-
-  /* =====================================================
-     RELATÓRIOS DISPONÍVEIS AO USUÁRIO
-  ===================================================== */
-
-  const relatoriosDisponiveis = useMemo(
-    () => RELATORIOS.filter((relatorio) => relatoriosPermitidosIds.has(relatorio.id)),
-    [relatoriosPermitidosIds],
-  );
-
-  /* =====================================================
-     AGRUPAR RELATÓRIOS POR CATEGORIA
-  ===================================================== */
-
-  const relatoriosPorCategoria = useMemo(() => {
-    const mapa = new Map();
-
-    for (const relatorio of relatoriosDisponiveis) {
-      if (!mapa.has(relatorio.categoria)) {
-        mapa.set(relatorio.categoria, []);
-      }
-
-      mapa.get(relatorio.categoria).push(relatorio);
-    }
-
-    return mapa;
-  }, [relatoriosDisponiveis]);
-
-  const categorias = useMemo(() => [...relatoriosPorCategoria.keys()], [relatoriosPorCategoria]);
-
-  /* =====================================================
-     CATÁLOGO DE RELATÓRIOS
-
-     As categorias e contagens são derivadas apenas dos
-     relatórios que o usuário possui permissão para acessar.
-  ===================================================== */
-
-  const categoriasCatalogo = useMemo(
-    () => [
-      {
-        nome: "Todos",
-        quantidade: relatoriosDisponiveis.length,
-      },
-
-      ...categorias.map((categoria) => ({
-        nome: categoria,
-        quantidade: relatoriosPorCategoria.get(categoria)?.length || 0,
-      })),
-    ],
-    [categorias, relatoriosDisponiveis.length, relatoriosPorCategoria],
-  );
-
-  const relatoriosCatalogo = useMemo(() => {
-    const listaBase =
-      categoriaSelecionada === "Todos"
-        ? relatoriosDisponiveis
-        : relatoriosPorCategoria.get(categoriaSelecionada) || [];
-
-    const termo = normalizarTexto(buscaRelatorios).trim();
-
-    if (!termo) {
-      return listaBase;
-    }
-
-    return listaBase.filter((relatorio) => {
-      const conteudo = normalizarTexto(
-        [relatorio.categoria, relatorio.titulo, relatorio.descricao].join(" "),
-      );
-
-      return conteudo.includes(termo);
-    });
-  }, [buscaRelatorios, categoriaSelecionada, relatoriosDisponiveis, relatoriosPorCategoria]);
-
-  useEffect(() => {
-    if (categoriaSelecionada !== "Todos" && !categorias.includes(categoriaSelecionada)) {
-      setCategoriaSelecionada("Todos");
-    }
-  }, [categoriaSelecionada, categorias]);
+  const { permissoesCarregadas, relatoriosPermitidosIds, relatoriosDisponiveis } = catalogo;
 
   /* =====================================================
      RELATÓRIO SELECIONADO
@@ -183,22 +56,68 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   // Neste relatório o total aparece exclusivamente no PDF.
   const relatorioProdutosPorData = relatorioSelecionado?.id === "pedidos-produto-data";
 
-  const fonteEhPedidos = relatorioSelecionado?.fonteDados === "pedidos";
-
-  const relatorioEhCustom =
-    relatorioSelecionado?.tipoRelatorio === "custom" ||
-    relatorioSelecionado?.fonteDados === "custom";
+  const {
+    fonteEhPedidos,
+    relatorioEhCustom,
+    dadosBrutos,
+    pedidosBrutos,
+    erroPedidos,
+    erroDescricoes,
+    carregandoRelatorio,
+    colunasVisualizacao,
+    produtosDisponiveis,
+    mpsDisponiveis,
+    tiposDisponiveis,
+    dadosRelatorioFinal,
+    totalRegistrosRelatorio,
+  } = useDadosRelatorio({ relatorioSelecionado, relatorioSelecionadoId, dadosExternos, filtros });
 
   const ComponenteCustomizado = relatorioEhCustom
     ? relatorioSelecionado?.componenteCustomizado
     : null;
 
+  const textoFiltros = useMemo(
+    () =>
+      montarTextoFiltrosRelatorio({
+        relatorio: relatorioSelecionado,
+        filtros,
+        fonteEhPedidos,
+        relatorioEhCustom,
+      }),
+    [relatorioSelecionado, filtros, fonteEhPedidos, relatorioEhCustom],
+  );
+
   /* =====================================================
-     PROTEÇÃO CONTRA REMOÇÃO DE PERMISSÃO
+     ABRIR, VOLTAR E PROTEÇÃO CONTRA REMOÇÃO DE PERMISSÃO
   ===================================================== */
 
+  function abrirRelatorio(id, fonteDados) {
+    setRelatorioSelecionadoId(id);
+
+    setFiltros(criarFiltrosIniciais(fonteDados));
+
+    setVisualizacaoAberta(false);
+
+    setPaginaAtual(1);
+  }
+
+  const selecionarRelatorio = (id) => {
+    const relatorio = relatoriosDisponiveis.find((item) => item.id === id);
+
+    if (!relatorio) {
+      return;
+    }
+
+    abrirRelatorio(id, relatorio?.fonteDados || "producao");
+
+    // Abre sempre do topo (não fica por baixo da navbar).
+    window.scrollTo({ top: 0 });
+  };
+
+  const voltarListaRelatorios = () => abrirRelatorio(null);
+
   useEffect(() => {
-    if (!permissoesRelatoriosCarregadas || !relatorioSelecionadoId) {
+    if (!permissoesCarregadas || !relatorioSelecionadoId) {
       return;
     }
 
@@ -208,170 +127,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       setVisualizacaoAberta(false);
       setPaginaAtual(1);
     }
-  }, [permissoesRelatoriosCarregadas, relatorioSelecionadoId, relatoriosPermitidosIds]);
-
-  /* =====================================================
-     DADOS DE PRODUÇÃO
-  ===================================================== */
-
-  const temDadosExternos = Array.isArray(dadosExternos) && dadosExternos.length > 0;
-
-  const { dados: dadosProducao, loading: carregandoProducao } = useCargaMaquina({
-    enabled:
-      Boolean(relatorioSelecionado) && !temDadosExternos && !fonteEhPedidos && !relatorioEhCustom,
-  });
-
-  const dadosProducaoBrutos = temDadosExternos ? dadosExternos : dadosProducao;
-
-  /* =====================================================
-     DADOS DOS PEDIDOS
-  ===================================================== */
-
-  const {
-    pedidos: pedidosBrutos,
-    error: erroPedidos,
-    isLoading: carregandoPedidos,
-  } = usePedidosSupabase({
-    enabled: fonteEhPedidos,
-    staleTime: 30 * 1000,
-  });
-
-  /* =====================================================
-     FONTE DOS DADOS
-  ===================================================== */
-
-  const dadosBrutos = useMemo(
-    () =>
-      relatorioEhCustom
-        ? []
-        : fonteEhPedidos
-          ? pedidosBrutos
-          : Array.isArray(dadosProducaoBrutos)
-            ? dadosProducaoBrutos
-            : [],
-    [relatorioEhCustom, fonteEhPedidos, pedidosBrutos, dadosProducaoBrutos],
-  );
-
-  const loading = relatorioEhCustom
-    ? false
-    : fonteEhPedidos
-      ? carregandoPedidos
-      : relatorioSelecionado
-        ? carregandoProducao
-        : false;
-
-  /* =====================================================
-     DESCRIÇÕES DOS PRODUTOS
-
-     Estoque OMIE + Parâmetros.
-  ===================================================== */
-
-  const { descricoesProdutos, loadingDescricoes, erroDescricoes } = useDescricoesProdutos({
-    enabled: !relatorioEhCustom && relatorioSelecionadoId === "producao-produto",
-  });
-
-  /* =====================================================
-     CARREGAMENTO GERAL
-  ===================================================== */
-
-  const carregandoRelatorio =
-    loading || (relatorioSelecionadoId === "producao-produto" && loadingDescricoes);
-
-  /* =====================================================
-     COLUNAS DA VISUALIZAÇÃO
-  ===================================================== */
-
-  const colunasVisualizacao = useMemo(
-    () => (relatorioEhCustom ? [] : montarColunasVisualizacao(relatorioSelecionado)),
-    [relatorioEhCustom, relatorioSelecionado],
-  );
-
-  /* =====================================================
-     PRODUTOS DISPONÍVEIS
-  ===================================================== */
-
-  const produtosDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || relatorioEhCustom) {
-      return [];
-    }
-
-    return listarProdutosDisponiveis(dadosBrutos, filtros.injetora);
-  }, [dadosBrutos, filtros.injetora, fonteEhPedidos, relatorioEhCustom]);
-
-  /* =====================================================
-     MATÉRIAS-PRIMAS DISPONÍVEIS
-  ===================================================== */
-
-  const mpsDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
-      return [];
-    }
-
-    return listarMpsDisponiveis(dadosBrutos);
-  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
-
-  /* =====================================================
-     TIPOS DISPONÍVEIS
-  ===================================================== */
-
-  const tiposDisponiveis = useMemo(() => {
-    if (fonteEhPedidos || relatorioEhCustom || !Array.isArray(dadosBrutos)) {
-      return [];
-    }
-
-    return listarTiposDisponiveis(dadosBrutos);
-  }, [dadosBrutos, fonteEhPedidos, relatorioEhCustom]);
-
-  /* =====================================================
-     FILTRAGEM DOS DADOS
-  ===================================================== */
-
-  const dadosFiltrados = useMemo(
-    () =>
-      relatorioEhCustom ? [] : filtrarDadosRelatorio(dadosBrutos, relatorioSelecionado, filtros),
-    [dadosBrutos, filtros, relatorioEhCustom, relatorioSelecionado],
-  );
-
-  /* =====================================================
-     TRANSFORMAR DADOS
-  ===================================================== */
-
-  const dadosRelatorio = useMemo(() => {
-    if (!relatorioSelecionado || relatorioEhCustom) {
-      return [];
-    }
-
-    if (typeof relatorioSelecionado.transformarDados === "function") {
-      return relatorioSelecionado.transformarDados(dadosFiltrados);
-    }
-
-    return dadosFiltrados;
-  }, [dadosFiltrados, relatorioEhCustom, relatorioSelecionado]);
-
-  /* =====================================================
-     ASSOCIAÇÃO DA DESCRIÇÃO DO PRODUTO
-  ===================================================== */
-
-  const dadosRelatorioFinal = useMemo(() => {
-    if (relatorioEhCustom) {
-      return [];
-    }
-
-    if (relatorioSelecionado?.id !== "producao-produto") {
-      return dadosRelatorio;
-    }
-
-    return associarDescricaoProduto(dadosRelatorio, descricoesProdutos);
-  }, [dadosRelatorio, descricoesProdutos, relatorioEhCustom, relatorioSelecionado]);
+  }, [permissoesCarregadas, relatorioSelecionadoId, relatoriosPermitidosIds]);
 
   /* =====================================================
      PAGINAÇÃO DA PRÉ-VISUALIZAÇÃO
-
-     IMPORTANTE:
-
-     A paginação é aplicada somente na tabela.
-
-     PDF e Excel continuam usando dadosRelatorioFinal.
   ===================================================== */
 
   const totalPaginasVisualizacao = Math.max(
@@ -380,30 +139,11 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   );
 
   /* Página válida mesmo se a quantidade de dados diminuir. */
-
   const paginaVisualizacao = Math.min(paginaAtual, totalPaginasVisualizacao);
-
-  /* =====================================================
-     DADOS EXIBIDOS NA PÁGINA ATUAL
-  ===================================================== */
-
-  const dadosPaginaVisualizacao = useMemo(() => {
-    const inicio = (paginaVisualizacao - 1) * LINHAS_POR_PAGINA;
-
-    return dadosRelatorioFinal.slice(inicio, inicio + LINHAS_POR_PAGINA);
-  }, [dadosRelatorioFinal, paginaVisualizacao]);
-
-  /* =====================================================
-     REINICIAR PAGINAÇÃO QUANDO FILTROS MUDAREM
-  ===================================================== */
 
   useEffect(() => {
     setPaginaAtual(1);
   }, [filtros, relatorioSelecionadoId]);
-
-  /* =====================================================
-     IMPEDIR PÁGINA FORA DO INTERVALO
-  ===================================================== */
 
   useEffect(() => {
     if (paginaAtual > totalPaginasVisualizacao) {
@@ -412,141 +152,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
   }, [paginaAtual, totalPaginasVisualizacao]);
 
   /* =====================================================
-     INTERVALO DE REGISTROS EXIBIDOS
-  ===================================================== */
-
-  const inicioVisualizacao =
-    dadosRelatorioFinal.length > 0 ? (paginaVisualizacao - 1) * LINHAS_POR_PAGINA + 1 : 0;
-
-  const fimVisualizacao = Math.min(
-    paginaVisualizacao * LINHAS_POR_PAGINA,
-    dadosRelatorioFinal.length,
-  );
-
-  /* =====================================================
-     TOTAL DE REGISTROS
-
-     Mantém a contagem original.
-  ===================================================== */
-
-  const totalRegistrosRelatorio = useMemo(
-    () => contarRegistrosRelatorio(relatorioSelecionado, dadosRelatorioFinal),
-    [relatorioSelecionado, dadosRelatorioFinal],
-  );
-
-  /* =====================================================
-     SELECIONAR RELATÓRIO
-  ===================================================== */
-
-  const selecionarRelatorio = (id) => {
-    const relatorio = relatoriosDisponiveis.find((item) => item.id === id);
-
-    if (!relatorio) {
-      return;
-    }
-
-    setRelatorioSelecionadoId(id);
-
-    setFiltros(criarFiltrosIniciais(relatorio?.fonteDados || "producao"));
-
-    setVisualizacaoAberta(false);
-
-    setPaginaAtual(1);
-
-    // Abre sempre do topo (não fica por baixo da navbar).
-    window.scrollTo({ top: 0 });
-  };
-
-  /* =====================================================
-     VOLTAR PARA A LISTA
-  ===================================================== */
-
-  const voltarListaRelatorios = () => {
-    setRelatorioSelecionadoId(null);
-
-    setFiltros(criarFiltrosIniciais());
-
-    setVisualizacaoAberta(false);
-
-    setPaginaAtual(1);
-  };
-
-  /* =====================================================
-     TEXTO DOS FILTROS
-  ===================================================== */
-
-  const montarTextoFiltros = () => {
-    if (relatorioEhCustom) {
-      return "Filtros internos do relatório";
-    }
-
-    const lista = [];
-
-    /* PEDIDOS */
-
-    if (fonteEhPedidos) {
-      if (filtros.pedidos) {
-        const pedidosSelecionados = normalizarListaPedidosFiltro(filtros.pedidos);
-
-        if (pedidosSelecionados.length > 0) {
-          lista.push(`Pedidos: ${pedidosSelecionados.join(", ")}`);
-        }
-      }
-
-      if (filtros.cliente && filtros.cliente !== "todos") {
-        lista.push(`Cliente: ${filtros.cliente}`);
-      }
-
-      if (filtros.vendedor && filtros.vendedor !== "todos") {
-        lista.push(`Vendedor: ${filtros.vendedor}`);
-      }
-
-      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
-        lista.push(`Produto: ${filtros.cod_prod}`);
-      }
-
-      if (relatorioSelecionado?.filtros?.status && filtros.status && filtros.status !== "todos") {
-        lista.push(`Status: ${filtros.status}`);
-      }
-    } else {
-      /* PRODUÇÃO */
-
-      if (filtros.injetora && filtros.injetora !== "Todos") {
-        lista.push(`Injetora: ${filtros.injetora}`);
-      }
-
-      if (filtros.cod_prod && filtros.cod_prod !== "Todos") {
-        lista.push(`Produto: ${filtros.cod_prod}`);
-      }
-
-      if (filtros.mp && filtros.mp !== "Todos") {
-        lista.push(`MP: ${filtros.mp}`);
-      }
-    }
-
-    /* DATA INICIAL */
-
-    if (filtros.dataInicio) {
-      lista.push(`De: ${filtros.dataInicio.split("-").reverse().join("/")}`);
-    }
-
-    /* DATA FINAL */
-
-    if (filtros.dataFim) {
-      lista.push(`Até: ${filtros.dataFim.split("-").reverse().join("/")}`);
-    }
-
-    return lista.length > 0
-      ? lista.join(" | ")
-      : fonteEhPedidos
-        ? "Status Pedido"
-        : "Sem filtros adicionais";
-  };
-
-  /* =====================================================
-     EXPORTAÇÃO PDF
-
-     SEM PAGINAÇÃO NA FONTE DOS DADOS.
+     EXPORTAÇÃO (todos os registros filtrados, sem paginação)
   ===================================================== */
 
   const handleGerarPDF = async () => {
@@ -558,19 +164,10 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     gerarPdfRelatorio({
       relatorio: relatorioSelecionado,
-
-      // Exporta todos os registros filtrados.
       dados: dadosRelatorioFinal,
-
-      textoFiltros: montarTextoFiltros(),
+      textoFiltros,
     });
   };
-
-  /* =====================================================
-     EXPORTAÇÃO EXCEL
-
-     SEM PAGINAÇÃO NA FONTE DOS DADOS.
-  ===================================================== */
 
   const handleGerarExcel = async () => {
     if (relatorioEhCustom) {
@@ -581,44 +178,21 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
 
     await gerarExcelRelatorio({
       relatorio: relatorioSelecionado,
-
-      // Exporta todos os registros filtrados.
       dados: dadosRelatorioFinal,
-
-      textoFiltros: montarTextoFiltros(),
+      textoFiltros,
     });
   };
 
   /* =====================================================
-     CARREGANDO PERMISSÕES
+     CARREGANDO
   ===================================================== */
 
-  if (!permissoesRelatoriosCarregadas) {
-    return (
-      <div className="relatorios-loading">
-        <div className="relatorios-loading-card">
-          <div className="relatorios-spinner" />
-
-          <p>Verificando permissões dos relatórios...</p>
-        </div>
-      </div>
-    );
+  if (!permissoesCarregadas) {
+    return <CarregandoRelatorios mensagem="Verificando permissões dos relatórios..." />;
   }
 
-  /* =====================================================
-     CARREGANDO DADOS
-  ===================================================== */
-
   if (carregandoRelatorio && relatorioSelecionado) {
-    return (
-      <div className="relatorios-loading">
-        <div className="relatorios-loading-card">
-          <div className="relatorios-spinner" />
-
-          <p>Carregando dados do relatório...</p>
-        </div>
-      </div>
-    );
+    return <CarregandoRelatorios mensagem="Carregando dados do relatório..." />;
   }
 
   /* =====================================================
@@ -631,92 +205,41 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
         relatorioSelecionado ? "relatorios-container--aberto" : ""
       }`}
     >
-      {/* ===============================================
-          VOLTAR
-      =============================================== */}
-
       {relatorioSelecionado && (
-        <div className="relatorios-navegacao-topo">
-          <button type="button" className="btn-voltar-topo" onClick={voltarListaRelatorios}>
-            <FiArrowLeft />
-
-            <span>Voltar aos relatórios</span>
-          </button>
-
-          <nav className="relatorios-trilha" aria-label="Você está em">
-            <span>Relatórios</span>
-            {relatorioSelecionado.categoria && (
-              <>
-                <FiChevronRight aria-hidden="true" />
-                <span>{relatorioSelecionado.categoria}</span>
-              </>
-            )}
-            <FiChevronRight aria-hidden="true" />
-            <strong>{relatorioSelecionado.titulo}</strong>
-          </nav>
-        </div>
+        <NavegacaoRelatorio relatorio={relatorioSelecionado} onVoltar={voltarListaRelatorios} />
       )}
 
-      {/* ===============================================
-          CABEÇALHO PRINCIPAL
-      =============================================== */}
-
-      {/* ===============================================
-          ERRO DE PERMISSÕES
-      =============================================== */}
-
-      {!relatorioSelecionado && erroPermissoesRelatorios && (
-        <div className="relatorios-erro">{erroPermissoesRelatorios}</div>
+      {!relatorioSelecionado && catalogo.erroPermissoesRelatorios && (
+        <div className="relatorios-erro">{catalogo.erroPermissoesRelatorios}</div>
       )}
 
-      {/* ===============================================
-          SEM RELATÓRIOS LIBERADOS
-      =============================================== */}
-
-      {!relatorioSelecionado && !erroPermissoesRelatorios && relatoriosDisponiveis.length === 0 && (
-        <div className="relatorios-erro">
-          Você não possui relatórios liberados. Solicite a um administrador a permissão necessária.
-        </div>
-      )}
-
-      {/* ===============================================
-          CATÁLOGO DOS RELATÓRIOS
-      =============================================== */}
+      {!relatorioSelecionado &&
+        !catalogo.erroPermissoesRelatorios &&
+        relatoriosDisponiveis.length === 0 && (
+          <div className="relatorios-erro">
+            Você não possui relatórios liberados. Solicite a um administrador a permissão
+            necessária.
+          </div>
+        )}
 
       {!relatorioSelecionado && relatoriosDisponiveis.length > 0 && (
         <PainelRelatorios
           relatoriosDisponiveis={relatoriosDisponiveis}
-          relatoriosCatalogo={relatoriosCatalogo}
-          categoriasCatalogo={categoriasCatalogo}
-          categoriaSelecionada={categoriaSelecionada}
-          onCategoria={setCategoriaSelecionada}
-          busca={buscaRelatorios}
-          onBusca={setBuscaRelatorios}
+          relatoriosCatalogo={catalogo.relatoriosCatalogo}
+          categoriasCatalogo={catalogo.categoriasCatalogo}
+          categoriaSelecionada={catalogo.categoriaSelecionada}
+          onCategoria={catalogo.setCategoriaSelecionada}
+          busca={catalogo.buscaRelatorios}
+          onBusca={catalogo.setBuscaRelatorios}
           onAbrir={selecionarRelatorio}
         />
       )}
 
-      {/* ===============================================
-          RELATÓRIO SELECIONADO
-      =============================================== */}
-
       {relatorioSelecionado && (
         <div className="relatorio-selecionado">
-          {/* ===========================================
-              CABEÇALHO DO RELATÓRIO
-          =========================================== */}
-
-          {/* ===========================================
-              RELATÓRIO CUSTOMIZADO
-          =========================================== */}
-
           {relatorioEhCustom && ComponenteCustomizado && (
             <ComponenteCustomizado relatorio={relatorioSelecionado} />
           )}
-
-          {/* ===========================================
-              ERRO DOS PEDIDOS
-          =========================================== */}
 
           {fonteEhPedidos && erroPedidos && (
             <div className="relatorios-erro">
@@ -724,20 +247,12 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
             </div>
           )}
 
-          {/* ===========================================
-              ERRO DAS DESCRIÇÕES
-          =========================================== */}
-
           {relatorioSelecionadoId === "producao-produto" && erroDescricoes && (
             <div className="relatorios-erro">
               {erroDescricoes} A produção permanece disponível, mas algumas descrições podem
               aparecer como "-".
             </div>
           )}
-
-          {/* ===========================================
-              AÇÕES DO RELATÓRIO
-          =========================================== */}
 
           {!relatorioEhCustom && (
             <>
@@ -790,160 +305,24 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                   },
                   {
                     rotulo: "Filtros aplicados",
-                    valor: montarTextoFiltros(),
+                    valor: textoFiltros,
                     texto: true,
                   },
                 ]}
               >
-                {/* =====================================
-                  PRÉ-VISUALIZAÇÃO
-              ===================================== */}
-
                 {visualizacaoAberta && (
-                  <section className="relatorio-visualizacao">
-                    {/* CABEÇALHO */}
-
-                    <div className="relatorio-visualizacao-header">
-                      <div>
-                        <span className="relatorio-visualizacao-eyebrow">Pré-visualização</span>
-
-                        <h3>{relatorioSelecionado.titulo}</h3>
-                      </div>
-
-                      <button
-                        type="button"
-                        className="relatorio-visualizacao-fechar"
-                        onClick={() => setVisualizacaoAberta(false)}
-                        aria-label="Fechar visualização"
-                      >
-                        <FiX />
-                      </button>
-                    </div>
-
-                    {/* =================================
-                      INFORMAÇÕES DO RELATÓRIO
-                  ================================= */}
-
-                    <div className="relatorio-visualizacao-info">
-                      <div className="relatorio-visualizacao-info-item">
-                        <span>Filtros</span>
-
-                        <strong>{montarTextoFiltros()}</strong>
-                      </div>
-
-                      {/* Sem total ou contagem na pré-visualização deste relatório. */}
-                      {!relatorioProdutosPorData && (
-                        <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-                          <span>Registros</span>
-                          <strong>{totalRegistrosRelatorio}</strong>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* =================================
-                      TABELA COM PAGINAÇÃO
-                  ================================= */}
-
-                    {dadosRelatorioFinal.length > 0 ? (
-                      <div className="relatorio-visualizacao-tabela-wrapper">
-                        <table className="relatorio-visualizacao-tabela">
-                          {/* CABEÇALHO DA TABELA */}
-
-                          <thead>
-                            <tr>
-                              {colunasVisualizacao.map((coluna) => (
-                                <th
-                                  key={coluna.chave}
-                                  className={coluna.numerica ? "coluna-numerica" : ""}
-                                >
-                                  {coluna.titulo}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-
-                          {/* =================================
-                            CORPO DA TABELA
-
-                            ALTERAÇÃO PRINCIPAL:
-                            usa dadosPaginaVisualizacao.
-                        ================================= */}
-
-                          <tbody>
-                            {dadosPaginaVisualizacao.map((item, indice) => (
-                              <tr
-                                className={
-                                  Object.values(item || {}).some(
-                                    (valor) =>
-                                      String(valor ?? "")
-                                        .trim()
-                                        .toUpperCase() === "TOTAL GERAL",
-                                  )
-                                    ? "linha-total"
-                                    : undefined
-                                }
-                                key={`${relatorioSelecionado.id}-${
-                                  (paginaVisualizacao - 1) * LINHAS_POR_PAGINA + indice
-                                }`}
-                              >
-                                {colunasVisualizacao.map((coluna) => (
-                                  <td
-                                    key={coluna.chave}
-                                    className={coluna.numerica ? "coluna-numerica" : ""}
-                                  >
-                                    {obterValorVisualizacao(item, coluna.chave)}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      /* =================================
-                       SEM REGISTROS
-                    ================================= */
-
-                      <div className="relatorio-visualizacao-vazia">
-                        <FiFileText />
-
-                        <strong>Nenhum registro encontrado</strong>
-
-                        <span>Ajuste os filtros para visualizar os dados.</span>
-                      </div>
-                    )}
-
-                    {/* =================================
-                      RODAPÉ DA PRÉ-VISUALIZAÇÃO
-
-                      Mostra intervalo e total real.
-                  ================================= */}
-
-                    <div className="relatorio-visualizacao-footer">
-                      <span>
-                        Exibindo {inicioVisualizacao} a {fimVisualizacao} de{" "}
-                        {dadosRelatorioFinal.length} linha(s)
-                      </span>
-
-                      <span>Visualização atualizada conforme os filtros</span>
-                    </div>
-
-                    {/* =================================
-                      PAGINAÇÃO PADRÃO DO SISTEMA
-
-                      Exibida somente quando há
-                      mais de uma página.
-                  ================================= */}
-
-                    {dadosRelatorioFinal.length > LINHAS_POR_PAGINA && (
-                      <Paginacao
-                        paginaAtual={paginaVisualizacao}
-                        totalItens={dadosRelatorioFinal.length}
-                        itensPorPagina={LINHAS_POR_PAGINA}
-                        onChangePagina={setPaginaAtual}
-                      />
-                    )}
-                  </section>
+                  <PreVisualizacaoRelatorio
+                    relatorio={relatorioSelecionado}
+                    textoFiltros={textoFiltros}
+                    mostrarTotal={!relatorioProdutosPorData}
+                    totalRegistros={totalRegistrosRelatorio}
+                    colunas={colunasVisualizacao}
+                    dados={dadosRelatorioFinal}
+                    pagina={paginaVisualizacao}
+                    linhasPorPagina={LINHAS_POR_PAGINA}
+                    onMudarPagina={setPaginaAtual}
+                    onFechar={() => setVisualizacaoAberta(false)}
+                  />
                 )}
 
                 {!visualizacaoAberta && (

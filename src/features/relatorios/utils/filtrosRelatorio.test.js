@@ -8,6 +8,7 @@ import {
   listarProdutosDisponiveis,
   listarTiposDisponiveis,
   montarColunasVisualizacao,
+  montarTextoFiltrosRelatorio,
 } from "./filtrosRelatorio";
 
 const relatorioPedidos = {
@@ -144,5 +145,52 @@ describe("contarRegistrosRelatorio", () => {
 
     expect(contarRegistrosRelatorio({ id: "pedidos-abertos" }, dados)).toBe(2);
     expect(contarRegistrosRelatorio({ id: "outro" }, dados)).toBe(3);
+  });
+});
+
+describe("montarTextoFiltrosRelatorio", () => {
+  it("pedidos: lista pedidos, cliente e status; sem filtros mostra 'Status Pedido'", () => {
+    expect(
+      montarTextoFiltrosRelatorio({
+        relatorio: relatorioPedidos,
+        filtros: {
+          ...criarFiltrosIniciais("pedidos"),
+          pedidos: "100, 200/1",
+          cliente: "ACME",
+          dataInicio: "2026-10-01",
+        },
+        fonteEhPedidos: true,
+        relatorioEhCustom: false,
+      }),
+    ).toBe("Pedidos: 100, 200/1 | Cliente: ACME | Status: Pedido | De: 01/10/2026");
+
+    expect(
+      montarTextoFiltrosRelatorio({
+        relatorio: { ...relatorioPedidos, filtros: {} },
+        filtros: criarFiltrosIniciais("pedidos"),
+        fonteEhPedidos: true,
+        relatorioEhCustom: false,
+      }),
+    ).toBe("Status Pedido");
+  });
+
+  it("produção e relatórios customizados", () => {
+    expect(
+      montarTextoFiltrosRelatorio({
+        relatorio: relatorioProducao,
+        filtros: { ...criarFiltrosIniciais(), injetora: "3", dataFim: "2026-10-31" },
+        fonteEhPedidos: false,
+        relatorioEhCustom: false,
+      }),
+    ).toBe("Injetora: 3 | Até: 31/10/2026");
+
+    expect(
+      montarTextoFiltrosRelatorio({
+        relatorio: relatorioProducao,
+        filtros: criarFiltrosIniciais(),
+        fonteEhPedidos: false,
+        relatorioEhCustom: true,
+      }),
+    ).toBe("Filtros internos do relatório");
   });
 });
