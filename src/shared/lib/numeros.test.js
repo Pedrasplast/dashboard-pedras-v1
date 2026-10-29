@@ -82,9 +82,24 @@ describe("converterNumeroFlexivel", () => {
 });
 
 describe("converterNumeroBrOuNull", () => {
-  it("com vírgula, pontos são milhar; sem vírgula, lê como está", () => {
+  it("com vírgula, pontos são milhar", () => {
     expect(converterNumeroBrOuNull("1.234,5")).toBe(1234.5);
-    expect(converterNumeroBrOuNull("1.234")).toBe(1.234);
+    expect(converterNumeroBrOuNull("1.000,0")).toBe(1000);
+  });
+
+  it("sem vírgula, ponto com grupos de 3 dígitos é milhar; senão é decimal", () => {
+    expect(converterNumeroBrOuNull("1.000")).toBe(1000);
+    expect(converterNumeroBrOuNull("1.234")).toBe(1234);
+    expect(converterNumeroBrOuNull("12.500.000")).toBe(12500000);
+    expect(converterNumeroBrOuNull("-1.000")).toBe(-1000);
+    expect(converterNumeroBrOuNull("8.5")).toBe(8.5);
+    expect(converterNumeroBrOuNull("8.50")).toBe(8.5);
+    expect(converterNumeroBrOuNull("1.2345")).toBe(1.2345);
+    expect(converterNumeroBrOuNull("0.125")).toBe(0.125);
+    expect(converterNumeroBrOuNull("1000")).toBe(1000);
+  });
+
+  it("vazio ou inválido vira null", () => {
     expect(converterNumeroBrOuNull("")).toBe(null);
     expect(converterNumeroBrOuNull(NaN)).toBe(null);
   });

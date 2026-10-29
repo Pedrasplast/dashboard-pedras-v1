@@ -80,8 +80,9 @@ export function converterNumeroFlexivelOuNull(valor) {
 
 /**
  * Formato brasileiro estrito: se houver vírgula, ela é o decimal e os pontos são milhar
- * ("1.234,5" → 1234.5); sem vírgula, o texto é lido como está ("1.234" → 1.234).
- * Vazio ou inválido vira `null`.
+ * ("1.234,5" → 1234.5). Sem vírgula, pontos seguidos de grupos de exatamente 3 dígitos
+ * também são milhar ("1.000" → 1000, "12.500.000" → 12500000); fora isso, o ponto é
+ * decimal ("8.5" → 8.5, "0.125" → 0.125, "1.2345" → 1.2345). Vazio ou inválido vira `null`.
  */
 export function converterNumeroBrOuNull(valor) {
   if (valor === null || valor === undefined || valor === "") {
@@ -98,7 +99,8 @@ export function converterNumeroBrOuNull(valor) {
     return null;
   }
 
-  const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
+  const pontosSaoMilhar = texto.includes(",") || /^-?[1-9]\d{0,2}(\.\d{3})+$/.test(texto);
+  const normalizado = pontosSaoMilhar ? texto.replace(/\./g, "").replace(",", ".") : texto;
   const numero = Number(normalizado);
   return Number.isFinite(numero) ? numero : null;
 }
