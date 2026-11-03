@@ -11,7 +11,7 @@ ou componente dentro de `features/`, procure aqui.
 | `texto.js`    | `paraTexto`, `normalizarTexto`, `normalizarTextoCompacto`, `normalizarTextoSemAparar`, `normalizarCodigo`, `ordenarTexto`                                                                                                                                                                                                   |
 | `datas.js`    | `obterHoje`, `obterHojeISO`, `formatarDataISOLocal`, `obterAnoAtual`, `obterMesAtual`, `converterData`, `converterDataLocal`, `formatarDataBR`, `formatarHora`, `formatarDataHora` ("27/10/2026 08:05"), `formatarDataHoraFrase` ("… às 08:05"), `formatarDataHoraComSegundos`, `FUSO_BRASILIA` (só para regras de negócio) |
 | `formatar.js` | `formatarNumeroPtBR` / `formatarReaisPtBR` (Intl em cache), `formatarNumeroCasasFixas`, `formatarNumeroFlexivel`                                                                                                                                                                                                            |
-| `colecoes.js` | `valoresUnicos`, `valoresUnicosOrdenados`, `compararPtBR`                                                                                                                                                                                                                                                                   |
+| `colecoes.js` | `valoresUnicos`, `valoresUnicosOrdenados`, `compararPtBR`, `alternarNoConjunto`                                                                                                                                                                                                                                                                 |
 
 ## Regras
 

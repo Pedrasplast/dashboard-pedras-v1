@@ -1,3 +1,4 @@
 export { default as CampoDataCalendario } from "./CampoDataCalendario";
 export { default as CampoFiltro } from "./CampoFiltro";
+export { default as FiltroSelect } from "./FiltroSelect";
 export { default as Filtros, possuiFiltrosAtivos } from "./Filtros";

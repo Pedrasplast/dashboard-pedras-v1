@@ -18,6 +18,7 @@ import "./PedidosCompraTabela.css";
 import "./PedidosCompraRecebimentoFisico.css";
 import { obterCodigoPedidoCompra } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { calcularResumoRecebimentoFisicoVisual } from "@/features/compras/pedido-compra/utils/pedidosCompraTabela.utils";
+import { alternarNoConjunto } from "@/shared/lib/colecoes";
 
 export default function PedidosCompraTabela({ pedidos, tipoDocumento }) {
   const [documentosExpandidos, setDocumentosExpandidos] = useState(() => new Set());
@@ -83,17 +84,7 @@ export default function PedidosCompraTabela({ pedidos, tipoDocumento }) {
   }, [pedidos, resumosFisicos, somenteRequisicoes]);
 
   function alternarItens(documentoId) {
-    setDocumentosExpandidos((atual) => {
-      const proximo = new Set(atual);
-
-      if (proximo.has(documentoId)) {
-        proximo.delete(documentoId);
-      } else {
-        proximo.add(documentoId);
-      }
-
-      return proximo;
-    });
+    setDocumentosExpandidos((atual) => alternarNoConjunto(atual, documentoId));
   }
 
   function entrarDocumento(documentoId) {

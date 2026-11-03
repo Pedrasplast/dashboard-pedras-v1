@@ -1,4 +1,4 @@
-import FiltroSelect from "./FiltroSelect";
+import FiltroSelect from "@/components/filtros/FiltroSelect";
 
 export default function EntradasFiltros({ filtros, opcoes, onChange }) {
   return (

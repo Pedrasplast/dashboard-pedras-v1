@@ -1,4 +1,4 @@
-import FiltroSelect from "./FiltroSelect";
+import FiltroSelect from "@/components/filtros/FiltroSelect";
 
 const CLASSE_CAMPO = "compras-futuras-filtro-campo";
 

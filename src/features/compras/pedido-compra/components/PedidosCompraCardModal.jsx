@@ -20,6 +20,7 @@ import TabelaRequisicoesModal from "./card-modal/TabelaRequisicoesModal";
 
 import "./PedidosCompraCardModal.css";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";
+import { alternarNoConjunto } from "@/shared/lib/colecoes";
 
 export default function PedidosCompraCardModal({
   aberto,
@@ -60,17 +61,7 @@ export default function PedidosCompraCardModal({
   const valorPrincipal = obterValorPrincipal(cardId, indicadores);
 
   function alternarItens(documentoId) {
-    setDocumentosExpandidos((atual) => {
-      const proximo = new Set(atual);
-
-      if (proximo.has(documentoId)) {
-        proximo.delete(documentoId);
-      } else {
-        proximo.add(documentoId);
-      }
-
-      return proximo;
-    });
+    setDocumentosExpandidos((atual) => alternarNoConjunto(atual, documentoId));
   }
 
   return (

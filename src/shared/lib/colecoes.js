@@ -26,3 +26,16 @@ export function valoresUnicosOrdenados(
     ...(filtrar ? { filtrar } : {}),
   }).sort(comparar);
 }
+
+/** Novo Set com `valor` adicionado (se não estava) ou removido (se estava). */
+export function alternarNoConjunto(conjunto, valor) {
+  const proximo = new Set(conjunto);
+
+  if (proximo.has(valor)) {
+    proximo.delete(valor);
+  } else {
+    proximo.add(valor);
+  }
+
+  return proximo;
+}
