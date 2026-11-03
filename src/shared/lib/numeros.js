@@ -54,3 +54,38 @@ export function numeroOuNull(valor) {
   const numero = Number(valor);
   return Number.isFinite(numero) ? numero : null;
 }
+
+/**
+ * Como converterNumeroFlexivel ("1.234,56" → 1234.56), mas devolve null
+ * para vazio ou inválido em vez de 0. Usado em campos de formulário.
+ */
+export function numeroFlexivelOuNull(valor) {
+  if (valor === null || valor === undefined) {
+    return null;
+  }
+
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : null;
+  }
+
+  let texto = String(valor).trim().replace(/\s/g, "");
+
+  if (!texto) {
+    return null;
+  }
+
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
+  } else {
+    texto = texto.replace(",", ".");
+  }
+
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+/** Number(valor) quando finito; senão 0. Não interpreta vírgula decimal. */
+export function numeroOuZero(valor) {
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : 0;
+}
