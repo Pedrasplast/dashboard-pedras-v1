@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { obterTokenAcesso } from "@/lib/sessao";
-import { supabase } from "@/lib/supabaseClient";
 
 import { buscarPedidosOmie } from "./omie.functions";
 import { PEDIDOS_VAZIOS } from "./constants/pedidos.constants";
-import { carregarMapaNumeroPedidoExibicao } from "./numeroPedidoExibicao";
 
 export const CHAVE_PEDIDOS_SUPABASE = Object.freeze([
   "pedidos-supabase-relatorios",
@@ -15,30 +13,20 @@ export const CHAVE_PEDIDOS_SUPABASE = Object.freeze([
 async function consultarPedidosSupabase() {
   const accessToken = await obterTokenAcesso();
 
-  const [respostaPedidos, mapaNumeroPedidoExibicao] = await Promise.all([
-    buscarPedidosOmie({
-      data: { accessToken },
-    }),
-
-    carregarMapaNumeroPedidoExibicao(supabase),
-  ]);
+  // A função de servidor já calcula a numeração visual (/1, /2...) a partir de
+  // todo o histórico; não é preciso ler o histórico de novo no navegador.
+  const respostaPedidos = await buscarPedidosOmie({
+    data: { accessToken },
+  });
 
   const pedidosOriginais = Array.isArray(respostaPedidos?.pedidos) ? respostaPedidos.pedidos : [];
 
   const pedidos = pedidosOriginais.map((pedido) => {
-    const codigoPedidoOmie = Number(
-      pedido?.codigoPedidoOmie ??
-        pedido?.codigoPedido ??
-        pedido?.codigo_pedido_omie ??
-        pedido?.codigo_pedido,
-    );
-
     const numeroOriginal = String(
       pedido?.pedidoOriginal ?? pedido?.pedido ?? pedido?.numero_pedido ?? "",
     ).trim();
 
-    const numeroExibicao =
-      mapaNumeroPedidoExibicao.get(codigoPedidoOmie) ?? pedido?.pedidoExibicao ?? numeroOriginal;
+    const numeroExibicao = pedido?.pedidoExibicao ?? numeroOriginal;
 
     return {
       ...pedido,

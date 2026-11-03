@@ -5,62 +5,27 @@
    Supabase, com a sessão do usuário.
 ========================================================= */
 
-import { criarMapaNumeroPedidoExibicao } from "../numeroPedidoExibicao";
+import { carregarMapaNumeroPedidoExibicao } from "../numeroPedidoExibicao";
 import { mapearPedidoParaTela } from "./pedidosOmie.regras";
 import { criarClienteSupabaseUsuario } from "./supabaseServidor";
 
 /*
- * Numeração visual de pedidos parciais: consulta todo o histórico em
- * páginas para que /1, /2... continue estável mesmo quando o pedido
- * original deixar de estar ativo.
+ * Numeração visual de pedidos parciais: usa todo o histórico para que
+ * /1, /2... continue estável mesmo quando o pedido original deixar de
+ * estar ativo.
  */
-async function buscarRegistrosNumeracaoPedidos(supabase) {
-  const registros = [];
-
-  const tamanhoPagina = 1000;
-
-  let inicio = 0;
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("pedidos_omie")
-      .select(
-        `
-            codigo_pedido_omie,
-            numero_pedido,
-            criado_em
-          `,
-      )
-      .order("criado_em", {
-        ascending: true,
-      })
-      .order("codigo_pedido_omie", {
-        ascending: true,
-      })
-      .range(inicio, inicio + tamanhoPagina - 1);
-
-    if (error) {
-      throw new Error(`Erro ao calcular a numeração visual dos pedidos: ${error.message}`);
-    }
-
-    const pagina = Array.isArray(data) ? data : [];
-
-    registros.push(...pagina);
-
-    if (pagina.length < tamanhoPagina) {
-      break;
-    }
-
-    inicio += tamanhoPagina;
+async function carregarNumeracaoVisual(supabase) {
+  try {
+    return await carregarMapaNumeroPedidoExibicao(supabase);
+  } catch (error) {
+    throw new Error(`Erro ao calcular a numeração visual dos pedidos: ${error?.message}`);
   }
-
-  return registros;
 }
 
 export async function buscarPedidosParaTela(accessToken) {
   const supabase = criarClienteSupabaseUsuario(accessToken);
 
-  const [resultadoPedidos, registrosNumeracaoPedidos, resultadoSincronizacao] = await Promise.all([
+  const [resultadoPedidos, mapaNumeroPedidoExibicao, resultadoSincronizacao] = await Promise.all([
     supabase
       .from("pedidos_omie")
       .select(
@@ -91,7 +56,7 @@ export async function buscarPedidosParaTela(accessToken) {
         ascending: true,
       }),
 
-    buscarRegistrosNumeracaoPedidos(supabase),
+    carregarNumeracaoVisual(supabase),
 
     supabase
       .from("sincronizacao_omie")
@@ -116,8 +81,6 @@ export async function buscarPedidosParaTela(accessToken) {
   if (resultadoSincronizacao.error) {
     throw new Error(`Erro ao consultar sincronização: ${resultadoSincronizacao.error.message}`);
   }
-
-  const mapaNumeroPedidoExibicao = criarMapaNumeroPedidoExibicao(registrosNumeracaoPedidos);
 
   const registros = Array.isArray(resultadoPedidos.data) ? resultadoPedidos.data : [];
 
