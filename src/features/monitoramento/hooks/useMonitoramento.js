@@ -13,7 +13,7 @@ import {
   QUERY_KEY_ROTINAS,
   QUERY_KEY_BANCO,
   QUERY_KEY_RESUMO,
-  queryKeyHistorico,
+  chaveConsultaHistorico,
 } from "../constants/monitoramento.constants";
 
 export function useRotinas() {
@@ -31,7 +31,7 @@ export function useRotinas() {
 /* Histórico só é buscado quando o usuário abre a rotina. */
 export function useHistoricoRotina(rotina, aberto) {
   return useQuery({
-    queryKey: queryKeyHistorico(rotina),
+    queryKey: chaveConsultaHistorico(rotina),
     queryFn: () => buscarHistorico(rotina),
     enabled: Boolean(rotina) && aberto,
     staleTime: TEMPO_DADOS_FRESCOS,

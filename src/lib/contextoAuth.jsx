@@ -16,11 +16,11 @@ const ContextoAuth = createContext({
  * consulta de perfil. Aqui existe um listener e uma consulta
  * por sessão, compartilhados por toda a árvore.
  */
-export function AuthProvider({ children }) {
+export function ProvedorAuth({ children }) {
   const [usuario, setUsuario] = useState(null);
-  const [carregandoAuth, setLoadingAuth] = useState(true);
+  const [carregandoAuth, setCarregandoAuth] = useState(true);
   const [perfil, setPerfil] = useState(null);
-  const [carregandoPerfil, setLoadingPerfil] = useState(true);
+  const [carregandoPerfil, setCarregandoPerfil] = useState(true);
 
   useEffect(() => {
     let ativo = true;
@@ -28,14 +28,14 @@ export function AuthProvider({ children }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!ativo) return;
       setUsuario(session?.user ?? null);
-      setLoadingAuth(false);
+      setCarregandoAuth(false);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_evento, session) => {
       setUsuario(session?.user ?? null);
-      setLoadingAuth(false);
+      setCarregandoAuth(false);
     });
 
     return () => {
@@ -51,13 +51,13 @@ export function AuthProvider({ children }) {
 
     if (!idUsuario) {
       setPerfil(null);
-      setLoadingPerfil(false);
+      setCarregandoPerfil(false);
       return () => {
         ativo = false;
       };
     }
 
-    setLoadingPerfil(true);
+    setCarregandoPerfil(true);
 
     supabase
       .from("perfis")
@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
           setPerfil(data);
         }
 
-        setLoadingPerfil(false);
+        setCarregandoPerfil(false);
       });
 
     return () => {
@@ -96,6 +96,6 @@ export function AuthProvider({ children }) {
   return <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>;
 }
 
-export function useAuthContext() {
+export function useContextoAuth() {
   return useContext(ContextoAuth);
 }

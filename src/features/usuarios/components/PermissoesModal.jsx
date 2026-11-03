@@ -14,7 +14,7 @@ import {
 
 import "./PermissoesModal.css";
 
-function TogglePermissao({ ativo, disabled = false, onChange, ariaLabel }) {
+function AlternadorPermissao({ ativo, disabled = false, onChange, ariaLabel }) {
   return (
     <button
       type="button"
@@ -56,7 +56,7 @@ function TelaItem({ tela, ativo, salvando, onAlternar }) {
         <span>{tela.rota}</span>
       </div>
 
-      <TogglePermissao
+      <AlternadorPermissao
         ativo={ativo}
         disabled={salvando}
         ariaLabel={`${ativo ? "Bloquear" : "Liberar"} ${tela.nome}`}
@@ -128,7 +128,7 @@ function RelatorioItem({ relatorio, ativo, disabled, salvando, onAlternar }) {
         <strong>{relatorio.nome}</strong>
       </div>
 
-      <TogglePermissao
+      <AlternadorPermissao
         ativo={ativo}
         disabled={salvando || disabled}
         ariaLabel={`${ativo ? "Bloquear" : "Liberar"} relatório ${relatorio.nome}`}
@@ -407,7 +407,7 @@ export default function PermissoesModal({
                     {relatoriosLiberados ? "Liberada" : "Bloqueada"}
                   </span>
 
-                  <TogglePermissao
+                  <AlternadorPermissao
                     ativo={relatoriosLiberados}
                     disabled={salvando || !telaCentralRelatorios}
                     ariaLabel="Alterar acesso à Central de Relatórios"

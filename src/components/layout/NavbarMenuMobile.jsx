@@ -12,10 +12,10 @@ export default function NavbarMenuMobile({
   iniciaisUsuario,
   ehAdmin,
   podeImportar,
-  navigationGroupsVisiveis,
+  gruposNavegacaoVisiveis,
   caminhoAtivo,
   grupoAtivo,
-  mobileGroupOpen,
+  grupoMobileAberto,
   alternarGrupoMobile,
   badgePedidos,
   badgeMonitoramento,
@@ -61,7 +61,7 @@ export default function NavbarMenuMobile({
         </div>
 
         <nav className="navbar-mobile-nav" aria-label="Navegação mobile">
-          {navigationGroupsVisiveis.map((item) => {
+          {gruposNavegacaoVisiveis.map((item) => {
             const Icon = item.icon;
 
             if (item.type === "link") {
@@ -85,7 +85,7 @@ export default function NavbarMenuMobile({
 
             const active = grupoAtivo(item);
 
-            const aberto = mobileGroupOpen === item.id;
+            const aberto = grupoMobileAberto === item.id;
 
             const ehPedidos = item.id === "pedidos";
 
@@ -122,16 +122,16 @@ export default function NavbarMenuMobile({
                     {item.children.map((child) => {
                       const ChildIcon = child.icon;
 
-                      const childActive = caminhoAtivo(child.path);
+                      const filhoAtivo = caminhoAtivo(child.path);
 
-                      const childPedidos = child.notificationKey === "pedidos";
+                      const childPedidos = child.chaveNotificacao === "pedidos";
 
                       return (
                         <button
                           key={child.path}
                           type="button"
                           className={
-                            childActive
+                            filhoAtivo
                               ? "navbar-mobile-submenu-item active"
                               : "navbar-mobile-submenu-item"
                           }

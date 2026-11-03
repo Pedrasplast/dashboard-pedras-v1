@@ -147,7 +147,7 @@ function GraficoMensal({ tipo, mensal, titulo, descricao, totalTitulo, total, me
               <CartesianGrid strokeDasharray="3 7" vertical={false} stroke="#e8eef5" />
 
               <XAxis
-                dataKey="mesLabel"
+                dataKey="rotuloMes"
                 axisLine={false}
                 tickLine={false}
                 interval={0}
@@ -226,7 +226,7 @@ export default function GraficosMensaisMateriaPrima({ mensal }) {
 
   const periodo =
     quantidadeMeses > 0
-      ? `${dados[0].mesLabel} → ${dados[quantidadeMeses - 1].mesLabel}/${dados[0].ano}`
+      ? `${dados[0].rotuloMes} → ${dados[quantidadeMeses - 1].rotuloMes}/${dados[0].ano}`
       : "-";
 
   return (

@@ -62,7 +62,7 @@ export default function Filtros({
 
   mostrarBotaoLimpar = false,
   textoLimpar = "Limpar filtros",
-  classNameBotaoLimpar = "filtros-compartilhados-limpar",
+  classeBotaoLimpar = "filtros-compartilhados-limpar",
   iconeLimpar = null,
 
   renderizarBotaoLimpar,
@@ -143,7 +143,7 @@ export default function Filtros({
         ) : (
           <button
             type="button"
-            className={classNameBotaoLimpar}
+            className={classeBotaoLimpar}
             onClick={limpar}
             title="Limpar todos os filtros"
           >

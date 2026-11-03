@@ -31,9 +31,9 @@ function DashboardParadasCard({
 
   empty = false,
 
-  emptyTitle = "Sem dados para exibir",
+  tituloVazio = "Sem dados para exibir",
 
-  emptyMessage = "Não existem registros para os filtros selecionados.",
+  mensagemVazio = "Não existem registros para os filtros selecionados.",
 }) {
   return (
     <section className={["dp-card", className].filter(Boolean).join(" ")}>
@@ -70,9 +70,9 @@ function DashboardParadasCard({
               <AlertCircle size={24} strokeWidth={1.8} aria-hidden="true" />
             </span>
 
-            <strong>{emptyTitle}</strong>
+            <strong>{tituloVazio}</strong>
 
-            <p>{emptyMessage}</p>
+            <p>{mensagemVazio}</p>
           </div>
         ) : (
           children

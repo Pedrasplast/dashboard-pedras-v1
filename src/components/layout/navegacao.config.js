@@ -212,7 +212,7 @@ export const NAVIGATION_GROUPS = Object.freeze([
         path: "/pedidos",
         icon: ShoppingCart,
         permissao: "pedidos",
-        notificationKey: "pedidos",
+        chaveNotificacao: "pedidos",
       },
     ],
   },

@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, type ReactNode } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AuthProvider, useAuthContext } from "../lib/contextoAuth";
+import { ProvedorAuth, useContextoAuth } from "../lib/contextoAuth";
 import { normalizarCamposMaiusculos } from "../lib/camposMaiusculos";
 import Navbar from "../components/layout/Navbar";
 
@@ -189,7 +189,7 @@ function RootShell({ children }: { children: ReactNode }) {
 ========================================================= */
 
 function LayoutAplicacao() {
-  const { usuario, ehAdmin } = useAuthContext();
+  const { usuario, ehAdmin } = useContextoAuth();
 
   return (
     <div className="app-layout" onChangeCapture={normalizarCamposMaiusculos}>
@@ -220,9 +220,9 @@ function RootComponent() {
           <Outlet />
         </main>
       ) : (
-        <AuthProvider>
+        <ProvedorAuth>
           <LayoutAplicacao />
-        </AuthProvider>
+        </ProvedorAuth>
       )}
     </QueryClientProvider>
   );

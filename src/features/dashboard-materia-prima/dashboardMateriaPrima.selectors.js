@@ -619,7 +619,7 @@ export function criarEvolucaoFinanceira(financeiro) {
     const atual = mapa.get(item.dataCompra) || {
       data: item.dataCompra,
 
-      dataLabel: formatarDataCurta(item.dataCompra),
+      rotuloData: formatarDataCurta(item.dataCompra),
 
       quantidadeComPrecoKg: 0,
 
@@ -747,7 +747,7 @@ export function criarComprasMensais(financeiro) {
 
       mes,
 
-      mesLabel: nomesMeses[mes - 1],
+      rotuloMes: nomesMeses[mes - 1],
 
       valorComprado: 0,
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useAuthContext } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/contextoAuth";
 import { useNavigate } from "@/lib/navegacao";
 import { usePermissoes } from "@/hooks/usePermissoes";
 
@@ -25,7 +25,7 @@ import { usePermissoes } from "@/hooks/usePermissoes";
  *   como Gerenciar Usuários.
  */
 export default function RotaProtegida({ children, exigirAdmin = false, permissao = null }) {
-  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useAuthContext();
+  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useContextoAuth();
 
   const { podeAcessarTela, carregandoPermissoes } = usePermissoes();
 

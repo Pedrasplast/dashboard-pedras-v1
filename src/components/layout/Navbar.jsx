@@ -41,15 +41,15 @@ function Navbar({ usuario, ehAdmin }) {
   const navigate = useNavigate();
 
   const menuRef = useRef(null);
-  const navigationRef = useRef(null);
+  const navegacaoRef = useRef(null);
 
   const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
 
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(null);
+  const [menuDesktopAberto, setMenuDesktopAberto] = useState(null);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuMobileAberto, setMenuMobileAberto] = useState(false);
 
-  const [mobileGroupOpen, setMobileGroupOpen] = useState(null);
+  const [grupoMobileAberto, setGrupoMobileAberto] = useState(null);
 
   const { podeAcessarTela, carregandoPermissoes } = usePermissoes();
 
@@ -94,7 +94,7 @@ function Navbar({ usuario, ehAdmin }) {
     [ehAdmin, carregandoPermissoes, podeAcessarTela],
   );
 
-  const navigationGroupsVisiveis = useMemo(() => {
+  const gruposNavegacaoVisiveis = useMemo(() => {
     if (!usuario) return [];
 
     return NAVIGATION_GROUPS.map((item) => {
@@ -153,9 +153,9 @@ function Navbar({ usuario, ehAdmin }) {
   const goTo = useCallback(
     (path) => {
       setMenuUsuarioAberto(false);
-      setDesktopMenuOpen(null);
-      setMobileMenuOpen(false);
-      setMobileGroupOpen(null);
+      setMenuDesktopAberto(null);
+      setMenuMobileAberto(false);
+      setGrupoMobileAberto(null);
 
       navigate(normalizarCaminho(path));
     },
@@ -165,29 +165,29 @@ function Navbar({ usuario, ehAdmin }) {
   const alternarMenuDesktop = useCallback((id) => {
     setMenuUsuarioAberto(false);
 
-    setDesktopMenuOpen((atual) => (atual === id ? null : id));
+    setMenuDesktopAberto((atual) => (atual === id ? null : id));
   }, []);
 
   const abrirMenuMobile = useCallback(() => {
-    const grupoAtual = navigationGroupsVisiveis.find(
+    const grupoAtual = gruposNavegacaoVisiveis.find(
       (item) => item.type === "group" && grupoAtivo(item),
     );
 
     setMenuUsuarioAberto(false);
-    setDesktopMenuOpen(null);
+    setMenuDesktopAberto(null);
 
-    setMobileGroupOpen(grupoAtual?.id || null);
+    setGrupoMobileAberto(grupoAtual?.id || null);
 
-    setMobileMenuOpen(true);
-  }, [navigationGroupsVisiveis, grupoAtivo]);
+    setMenuMobileAberto(true);
+  }, [gruposNavegacaoVisiveis, grupoAtivo]);
 
   const fecharMenuMobile = useCallback(() => {
-    setMobileMenuOpen(false);
-    setMobileGroupOpen(null);
+    setMenuMobileAberto(false);
+    setGrupoMobileAberto(null);
   }, []);
 
   const alternarGrupoMobile = useCallback((id) => {
-    setMobileGroupOpen((atual) => (atual === id ? null : id));
+    setGrupoMobileAberto((atual) => (atual === id ? null : id));
   }, []);
 
   /* =====================================================
@@ -205,9 +205,9 @@ function Navbar({ usuario, ehAdmin }) {
 
   const sair = useCallback(async () => {
     setMenuUsuarioAberto(false);
-    setDesktopMenuOpen(null);
-    setMobileMenuOpen(false);
-    setMobileGroupOpen(null);
+    setMenuDesktopAberto(null);
+    setMenuMobileAberto(false);
+    setGrupoMobileAberto(null);
 
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("expiracao_login");
@@ -227,7 +227,7 @@ function Navbar({ usuario, ehAdmin }) {
   }, [navigate]);
 
   const alternarMenuUsuario = useCallback(() => {
-    setDesktopMenuOpen(null);
+    setMenuDesktopAberto(null);
 
     setMenuUsuarioAberto((aberto) => !aberto);
   }, []);
@@ -243,11 +243,11 @@ function Navbar({ usuario, ehAdmin }) {
       }
 
       if (
-        desktopMenuOpen &&
-        navigationRef.current &&
-        !navigationRef.current.contains(event.target)
+        menuDesktopAberto &&
+        navegacaoRef.current &&
+        !navegacaoRef.current.contains(event.target)
       ) {
-        setDesktopMenuOpen(null);
+        setMenuDesktopAberto(null);
       }
     };
 
@@ -256,16 +256,16 @@ function Navbar({ usuario, ehAdmin }) {
     return () => {
       document.removeEventListener("mousedown", fecharAoClicarFora);
     };
-  }, [menuUsuarioAberto, desktopMenuOpen]);
+  }, [menuUsuarioAberto, menuDesktopAberto]);
 
   useEffect(() => {
     const fecharComEscape = (event) => {
       if (event.key !== "Escape") return;
 
       setMenuUsuarioAberto(false);
-      setDesktopMenuOpen(null);
-      setMobileMenuOpen(false);
-      setMobileGroupOpen(null);
+      setMenuDesktopAberto(null);
+      setMenuMobileAberto(false);
+      setGrupoMobileAberto(null);
     };
 
     document.addEventListener("keydown", fecharComEscape);
@@ -276,7 +276,7 @@ function Navbar({ usuario, ehAdmin }) {
   }, []);
 
   useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
+    if (!menuMobileAberto) return undefined;
 
     const overflowAnterior = document.body.style.overflow;
 
@@ -285,7 +285,7 @@ function Navbar({ usuario, ehAdmin }) {
     return () => {
       document.body.style.overflow = overflowAnterior;
     };
-  }, [mobileMenuOpen]);
+  }, [menuMobileAberto]);
 
   const alertaPedidoAlterado = ultimaNotificacaoPedido?.tipo === "alterado";
 
@@ -312,11 +312,11 @@ function Navbar({ usuario, ehAdmin }) {
 
           {usuario && (
             <nav
-              ref={navigationRef}
+              ref={navegacaoRef}
               className="navbar-navigation navbar-navigation-modulos"
               aria-label="Navegação principal"
             >
-              {navigationGroupsVisiveis.map((item) => {
+              {gruposNavegacaoVisiveis.map((item) => {
                 const Icon = item.icon;
 
                 if (item.type === "link") {
@@ -343,7 +343,7 @@ function Navbar({ usuario, ehAdmin }) {
 
                 const active = grupoAtivo(item);
 
-                const aberto = desktopMenuOpen === item.id;
+                const aberto = menuDesktopAberto === item.id;
 
                 const ehPedidos = item.id === "pedidos";
 
@@ -385,16 +385,16 @@ function Navbar({ usuario, ehAdmin }) {
                         {item.children.map((child) => {
                           const ChildIcon = child.icon;
 
-                          const childActive = caminhoAtivo(child.path);
+                          const filhoAtivo = caminhoAtivo(child.path);
 
-                          const childPedidos = child.notificationKey === "pedidos";
+                          const childPedidos = child.chaveNotificacao === "pedidos";
 
                           return (
                             <button
                               key={child.path}
                               type="button"
                               className={
-                                childActive
+                                filhoAtivo
                                   ? "navbar-modulo-dropdown-item active"
                                   : "navbar-modulo-dropdown-item"
                               }
@@ -430,7 +430,7 @@ function Navbar({ usuario, ehAdmin }) {
                   type="button"
                   className="navbar-hamburger"
                   onClick={abrirMenuMobile}
-                  aria-expanded={mobileMenuOpen}
+                  aria-expanded={menuMobileAberto}
                   aria-controls="navbar-mobile-drawer"
                   aria-label="Abrir menu principal"
                 >
@@ -577,16 +577,16 @@ function Navbar({ usuario, ehAdmin }) {
           MENU MOBILE
       ===================================================== */}
 
-      {usuario && mobileMenuOpen && (
+      {usuario && menuMobileAberto && (
         <NavbarMenuMobile
           nomeUsuario={nomeUsuario}
           iniciaisUsuario={iniciaisUsuario}
           ehAdmin={ehAdmin}
           podeImportar={podeImportar}
-          navigationGroupsVisiveis={navigationGroupsVisiveis}
+          gruposNavegacaoVisiveis={gruposNavegacaoVisiveis}
           caminhoAtivo={caminhoAtivo}
           grupoAtivo={grupoAtivo}
-          mobileGroupOpen={mobileGroupOpen}
+          grupoMobileAberto={grupoMobileAberto}
           alternarGrupoMobile={alternarGrupoMobile}
           badgePedidos={badgePedidos}
           badgeMonitoramento={badgeMonitoramento}

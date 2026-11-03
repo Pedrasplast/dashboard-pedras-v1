@@ -26,7 +26,7 @@ function obterSupabaseUrl() {
   return url;
 }
 
-function obterSupabasePublicKey() {
+function obterChavePublicaSupabase() {
   const chave =
     process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     process.env.VITE_SUPABASE_ANON_KEY ||
@@ -42,7 +42,7 @@ function obterSupabasePublicKey() {
 
 /** Cliente com a sessão do usuário: respeita RLS. */
 export function criarClienteSupabaseUsuario(accessToken) {
-  return createClient(obterSupabaseUrl(), obterSupabasePublicKey(), {
+  return createClient(obterSupabaseUrl(), obterChavePublicaSupabase(), {
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,

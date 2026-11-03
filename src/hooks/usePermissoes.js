@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useAuthContext } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/contextoAuth";
 import { buscarPermissoesUsuario } from "@/lib/permissoes.service";
 
 const SEM_PERMISSOES = {
@@ -18,7 +18,7 @@ const SEM_PERMISSOES = {
  * resultado. A cada 30 s, a próxima tela aberta confere de novo.
  */
 export function usePermissoes() {
-  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useAuthContext();
+  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useContextoAuth();
 
   /*
    * ADMIN possui acesso total.

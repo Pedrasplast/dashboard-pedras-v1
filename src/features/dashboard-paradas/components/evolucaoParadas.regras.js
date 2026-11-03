@@ -135,7 +135,7 @@ export function agruparEvolucao(dados) {
 
     let label = formatarDataCurta(dataISO);
 
-    let labelCompleto = label;
+    let rotuloCompleto = label;
 
     let dataInicio = dataISO;
 
@@ -156,7 +156,7 @@ export function agruparEvolucao(dados) {
 
       label = formatarDataCurta(inicioSemana);
 
-      labelCompleto = `Semana de ${label}`;
+      rotuloCompleto = `Semana de ${label}`;
     }
 
     /* =====================================================
@@ -174,7 +174,7 @@ export function agruparEvolucao(dados) {
 
       label = `${mes}/${String(ano).slice(-2)}`;
 
-      labelCompleto = `${mes}/${ano}`;
+      rotuloCompleto = `${mes}/${ano}`;
     }
 
     if (!mapa.has(chave)) {
@@ -183,7 +183,7 @@ export function agruparEvolucao(dados) {
 
         label,
 
-        labelCompleto,
+        rotuloCompleto,
 
         dataInicio,
 

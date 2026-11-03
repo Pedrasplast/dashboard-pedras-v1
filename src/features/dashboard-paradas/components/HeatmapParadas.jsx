@@ -168,9 +168,9 @@ function HeatmapParadas({ dados }) {
       return "";
     }
 
-    const faixaLabel = celulaSelecionada.faixa?.label || celulaSelecionada.faixa?.id || "";
+    const rotuloFaixa = celulaSelecionada.faixa?.label || celulaSelecionada.faixa?.id || "";
 
-    return `${celulaSelecionada.dia}` + (faixaLabel ? ` • ${faixaLabel}` : "");
+    return `${celulaSelecionada.dia}` + (rotuloFaixa ? ` • ${rotuloFaixa}` : "");
   }, [celulaSelecionada]);
 
   const vazio = celulas.length === 0 || maxOcorrencias <= 0;

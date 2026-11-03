@@ -9,7 +9,7 @@ export const TEMPO_DADOS_FRESCOS = 2 * 60 * 1000;
 export const QUERY_KEY_ROTINAS = ["monitoramento", "rotinas"];
 export const QUERY_KEY_BANCO = ["monitoramento", "banco"];
 export const QUERY_KEY_RESUMO = ["monitoramento", "resumo"];
-export const queryKeyHistorico = (rotina) => ["monitoramento", "historico", rotina];
+export const chaveConsultaHistorico = (rotina) => ["monitoramento", "historico", rotina];
 
 export const LIMITE_HISTORICO = 30;
 

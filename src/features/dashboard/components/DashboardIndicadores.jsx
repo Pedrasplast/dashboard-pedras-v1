@@ -60,7 +60,7 @@ export const MotivosParada = memo(function MotivosParada({ motivos = [] }) {
             <div key={item.name} className="motivo-bar">
               <div className="label-row">
                 <span>{item.name}</span>
-                <span>{item.formattedValue}</span>
+                <span>{item.valorFormatado}</span>
               </div>
 
               <div className="progress-bg">

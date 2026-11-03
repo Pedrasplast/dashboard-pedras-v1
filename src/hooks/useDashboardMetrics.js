@@ -433,7 +433,7 @@ export const useDashboardMetrics = (dados, tiposSelecionados = []) => {
 
           value,
 
-          formattedValue: formatarHorasParaHHMMSS(value),
+          valorFormatado: formatarHorasParaHHMMSS(value),
         }))
         .sort((a, b) => b.value - a.value),
     };

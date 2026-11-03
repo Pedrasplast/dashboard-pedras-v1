@@ -4,7 +4,7 @@ import RotaProtegida from "@/components/layout/RotaProtegida";
 
 import ComprasMateriaPrimaPage from "@/features/compras-materia-prima/ComprasMateriaPrimaPage";
 
-import { useAuthContext } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/contextoAuth";
 
 export const Route = createFileRoute("/compras-futuras")({
   ssr: false,
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/compras-futuras")({
 });
 
 function ComprasFuturasRoute() {
-  const { ehAdmin } = useAuthContext();
+  const { ehAdmin } = useContextoAuth();
 
   return (
     <RotaProtegida permissao="compras_futuras">

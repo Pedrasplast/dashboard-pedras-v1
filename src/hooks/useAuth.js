@@ -1,9 +1,9 @@
-import { useAuthContext } from "../lib/contextoAuth";
+import { useContextoAuth } from "../lib/contextoAuth";
 
 /*
  * Sessão atual do usuário, vinda do provedor global.
  */
 export function useAuth() {
-  const { usuario, carregandoAuth } = useAuthContext();
+  const { usuario, carregandoAuth } = useContextoAuth();
   return { usuario, carregandoAuth };
 }

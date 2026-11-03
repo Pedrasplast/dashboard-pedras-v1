@@ -45,7 +45,7 @@ function EvolucaoTooltip({ active, payload, modo }) {
 
   return (
     <div className="dp-chart-tooltip">
-      <strong>{item.labelCompleto}</strong>
+      <strong>{item.rotuloCompleto}</strong>
 
       {modo === MODO_TEMPO ? (
         <>
@@ -127,7 +127,7 @@ function EvolucaoParadas({ dados = [], ocorrencias = [] }) {
      GRANULARIDADE
   ======================================================= */
 
-  const granularidadeLabel = useMemo(() => {
+  const rotuloGranularidade = useMemo(() => {
     if (agrupamento.granularidade === "mes") {
       return "Visão mensal";
     }
@@ -191,7 +191,7 @@ function EvolucaoParadas({ dados = [], ocorrencias = [] }) {
     }
 
     if (agrupamento.granularidade === "mes") {
-      return `Mês: ${periodoSelecionado.labelCompleto}`;
+      return `Mês: ${periodoSelecionado.rotuloCompleto}`;
     }
 
     if (agrupamento.granularidade === "semana") {
@@ -211,7 +211,7 @@ function EvolucaoParadas({ dados = [], ocorrencias = [] }) {
 
   const actions = (
     <div className="dp-evolucao-actions">
-      <span className="dp-evolucao-granularidade">{granularidadeLabel}</span>
+      <span className="dp-evolucao-granularidade">{rotuloGranularidade}</span>
 
       <div className="dp-chart-toggle" role="group" aria-label="Visualização da evolução">
         <button

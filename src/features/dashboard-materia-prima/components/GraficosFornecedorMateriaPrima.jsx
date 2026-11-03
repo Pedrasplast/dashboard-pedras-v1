@@ -497,7 +497,7 @@ export default function GraficosFornecedorMateriaPrima({
                 <CartesianGrid strokeDasharray="3 5" vertical={false} stroke="#e8eef5" />
 
                 <XAxis
-                  dataKey="dataLabel"
+                  dataKey="rotuloData"
                   minTickGap={18}
                   axisLine={false}
                   tickLine={false}

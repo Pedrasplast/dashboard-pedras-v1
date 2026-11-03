@@ -15,17 +15,17 @@ export default function HomePublica() {
 
   const [password, setPassword] = useState("");
 
-  const [carregandoLogin, setLoadingLogin] = useState(false);
+  const [carregandoLogin, setCarregandoLogin] = useState(false);
 
-  const [loginError, setLoginError] = useState("");
+  const [erroLogin, setErroLogin] = useState("");
 
   const entrar = useCallback(
     async (event) => {
       event.preventDefault();
 
-      setLoadingLogin(true);
+      setCarregandoLogin(true);
 
-      setLoginError("");
+      setErroLogin("");
 
       try {
         const { error } = await supabase.auth.signInWithPassword({
@@ -35,7 +35,7 @@ export default function HomePublica() {
         });
 
         if (error) {
-          setLoginError(
+          setErroLogin(
             error.message === "Invalid login credentials"
               ? "E-mail ou senha incorretos."
               : error.message,
@@ -50,11 +50,11 @@ export default function HomePublica() {
       } catch (error) {
         console.error("Erro ao realizar login:", error);
 
-        setLoginError("Não foi possível realizar o login. Tente novamente.");
+        setErroLogin("Não foi possível realizar o login. Tente novamente.");
 
         setPassword("");
       } finally {
-        setLoadingLogin(false);
+        setCarregandoLogin(false);
       }
     },
     [email, password],
@@ -130,7 +130,7 @@ export default function HomePublica() {
             <p>Entre com suas credenciais para acessar a plataforma de gestão.</p>
           </div>
 
-          {loginError && <div className="home-login-error">{loginError}</div>}
+          {erroLogin && <div className="home-login-error">{erroLogin}</div>}
 
           <form className="home-login-form" onSubmit={entrar} autoComplete="off">
             <div className="home-login-field">

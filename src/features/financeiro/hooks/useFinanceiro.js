@@ -19,7 +19,7 @@ const UMA_HORA = 60 * 60 * 1000;
    QUERY KEYS
 ========================================================= */
 
-export const financeiroQueryKeys = {
+export const chavesConsultaFinanceiro = {
   todos: ["financeiro"],
 
   anos: ["financeiro", "anos"],
@@ -102,7 +102,7 @@ function normalizarDetalhes(registros) {
 
 export function useFinanceiroAnos() {
   return useQuery({
-    queryKey: financeiroQueryKeys.anos,
+    queryKey: chavesConsultaFinanceiro.anos,
 
     queryFn: buscarAnosFinanceiro,
 
@@ -136,7 +136,7 @@ export function useFinanceiroResumo(ano, mes) {
     mesNumero <= 12;
 
   return useQuery({
-    queryKey: financeiroQueryKeys.resumo(anoNumero, mesNumero),
+    queryKey: chavesConsultaFinanceiro.resumo(anoNumero, mesNumero),
 
     queryFn: async () => {
       const registros = await buscarResumoFinanceiro(anoNumero, mesNumero);
@@ -180,7 +180,7 @@ export function useFinanceiroDetalhes({ ano, mes, codigoCategoria, habilitado = 
     Boolean(codigo);
 
   return useQuery({
-    queryKey: financeiroQueryKeys.detalhes(anoNumero, mesNumero, codigo),
+    queryKey: chavesConsultaFinanceiro.detalhes(anoNumero, mesNumero, codigo),
 
     queryFn: async () => {
       const registros = await buscarDetalhesFinanceiro({
@@ -214,7 +214,7 @@ export function useFinanceiroDetalhes({ ano, mes, codigoCategoria, habilitado = 
 
 export function useFinanceiroSincronizacao() {
   return useQuery({
-    queryKey: financeiroQueryKeys.sincronizacao,
+    queryKey: chavesConsultaFinanceiro.sincronizacao,
 
     queryFn: buscarStatusSincronizacaoFinanceiro,
 

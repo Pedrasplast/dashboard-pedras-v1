@@ -25,7 +25,7 @@ export default function ImportadorCarga() {
   const [carregando, setCarregando] = useState(false);
   const [status, setStatus] = useState("");
   const [porcentagem, setPorcentagem] = useState(0);
-  const [isDragActive, setIsDragActive] = useState(false);
+  const [arrastandoArquivo, setArrastandoArquivo] = useState(false);
 
   const [tabelaDestino, setTabelaDestino] = useState("carga_maquina");
 
@@ -43,7 +43,7 @@ export default function ImportadorCarga() {
     erro: "",
   });
 
-  const fileInputRef = useRef(null);
+  const campoArquivoRef = useRef(null);
 
   // Impede que uma prévia cancelada atualize o modal.
   const previaRequisicaoRef = useRef(0);
@@ -99,8 +99,8 @@ export default function ImportadorCarga() {
 
         setCarregando(false);
 
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
+        if (campoArquivoRef.current) {
+          campoArquivoRef.current.value = "";
         }
       };
 
@@ -131,13 +131,13 @@ export default function ImportadorCarga() {
 
               try {
                 await inserirLoteImportacao(tabelaDestino, lote);
-              } catch (insertError) {
+              } catch (erroInsercao) {
                 const primeiraLinha = lote[0]?.__linhaExcel;
 
                 throw new Error(
                   primeiraLinha
-                    ? `Falha no lote iniciado na linha ${primeiraLinha} da aba Banco: ${insertError.message}`
-                    : insertError.message,
+                    ? `Falha no lote iniciado na linha ${primeiraLinha} da aba Banco: ${erroInsercao.message}`
+                    : erroInsercao.message,
                 );
               }
 
@@ -156,8 +156,8 @@ export default function ImportadorCarga() {
           } finally {
             setCarregando(false);
 
-            if (fileInputRef.current) {
-              fileInputRef.current.value = "";
+            if (campoArquivoRef.current) {
+              campoArquivoRef.current.value = "";
             }
           }
         }, 50);
@@ -201,8 +201,8 @@ export default function ImportadorCarga() {
       if (!["xlsx", "xls", "xlsm"].includes(extensao)) {
         setStatus("❌ Erro: selecione um arquivo Excel .xlsx, .xls ou .xlsm.");
 
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
+        if (campoArquivoRef.current) {
+          campoArquivoRef.current.value = "";
         }
 
         return;
@@ -268,8 +268,8 @@ export default function ImportadorCarga() {
       erro: "",
     });
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (campoArquivoRef.current) {
+      campoArquivoRef.current.value = "";
     }
   }, []);
 
@@ -343,21 +343,21 @@ export default function ImportadorCarga() {
 
   const aoEntrarArrasto = useCallback((evento) => {
     evento.preventDefault();
-    setIsDragActive(true);
+    setArrastandoArquivo(true);
   }, []);
 
   const aoSairArrasto = useCallback((evento) => {
     evento.preventDefault();
 
     if (!evento.currentTarget.contains(evento.relatedTarget)) {
-      setIsDragActive(false);
+      setArrastandoArquivo(false);
     }
   }, []);
 
   const aoSoltarArquivo = useCallback(
     (evento) => {
       evento.preventDefault();
-      setIsDragActive(false);
+      setArrastandoArquivo(false);
 
       const arquivo = evento.dataTransfer.files?.[0];
 
@@ -373,8 +373,8 @@ export default function ImportadorCarga() {
   ===================================================== */
 
   const aoClicarDropzone = useCallback(() => {
-    if (!carregando && !confirmacaoAberta && fileInputRef.current) {
-      fileInputRef.current.click();
+    if (!carregando && !confirmacaoAberta && campoArquivoRef.current) {
+      campoArquivoRef.current.click();
     }
   }, [carregando, confirmacaoAberta]);
 
@@ -462,7 +462,7 @@ export default function ImportadorCarga() {
         <div
           className={[
             "upload-dropzone",
-            isDragActive ? "drag-active" : "",
+            arrastandoArquivo ? "drag-active" : "",
             carregando ? "disabled" : "",
           ]
             .filter(Boolean)
@@ -478,7 +478,7 @@ export default function ImportadorCarga() {
           onKeyDown={aoTeclarDropzone}
         >
           <input
-            ref={fileInputRef}
+            ref={campoArquivoRef}
             type="file"
             accept=".xlsx,.xls,.xlsm"
             onChange={aoEscolherArquivo}

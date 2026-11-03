@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/features/home/HomePage";
-import { useAuthContext } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/contextoAuth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +22,6 @@ export const Route = createFileRoute("/")({
 });
 
 function PaginaInicial() {
-  const { usuario, ehAdmin } = useAuthContext();
+  const { usuario, ehAdmin } = useContextoAuth();
   return <HomePage usuario={usuario} ehAdmin={ehAdmin} />;
 }

@@ -164,7 +164,7 @@ function ParetoTooltip({ active, payload }) {
    LABEL DAS BARRAS
 ========================================================= */
 
-function HorasLabel({ x, y, width, value }) {
+function RotuloHoras({ x, y, width, value }) {
   if (!Number.isFinite(Number(value)) || Number(value) <= 0) {
     return null;
   }
@@ -394,7 +394,7 @@ function ParetoParadas({ dados = [], ocorrencias = [] }) {
                   />
                 ))}
 
-                <LabelList dataKey="horas" content={<HorasLabel />} />
+                <LabelList dataKey="horas" content={<RotuloHoras />} />
               </Bar>
 
               <Line
