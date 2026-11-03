@@ -14,6 +14,10 @@ jobs:
   validar:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Valores fictícios: testes e build só precisam que existam (nenhum acessa o Supabase).
+    env:
+      VITE_SUPABASE_URL: https://exemplo.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: chave-de-exemplo-para-ci
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +42,3 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          VITE_SUPABASE_URL: https://exemplo.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: chave-de-exemplo-para-build
