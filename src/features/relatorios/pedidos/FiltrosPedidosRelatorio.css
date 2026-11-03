@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
 
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 /* =========================================================
@@ -20,9 +20,9 @@
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: var(--space-2);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -35,7 +35,7 @@
   width: 16px;
   height: 16px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 /* =========================================================
@@ -64,7 +64,7 @@
 }
 
 .rel-pedidos-campo > span {
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 0.72rem;
   font-weight: 800;
@@ -83,11 +83,11 @@
 
   box-sizing: border-box;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
   border-radius: 9px;
 
@@ -97,7 +97,7 @@
 
   font-size: 0.8rem;
 
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 
   transition:
     border-color 0.18s ease,
@@ -138,15 +138,15 @@
 
   min-height: 36px;
 
-  padding: 0 12px;
+  padding: 0 var(--space-3);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   border: 1px solid #dbe3ec;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   cursor: pointer;
 
@@ -154,7 +154,7 @@
 
   font-size: 0.76rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   transition:
     background-color 0.18s ease,
@@ -163,7 +163,7 @@
 }
 
 .rel-pedidos-limpar:hover {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 
   background: #fff7f7;
 

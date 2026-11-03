@@ -25,9 +25,9 @@
 
   align-self: start;
 
-  margin-top: 12px;
+  margin-top: var(--space-3);
 
-  padding-left: 16px;
+  padding-left: var(--space-4);
 
   box-sizing: border-box;
 
@@ -58,11 +58,11 @@
 
 @media (min-width: 761px) {
   .producao-sidebar-shell .filter-section {
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .producao-sidebar-shell .filter-section .filter-header-row {
-    gap: 8px;
+    gap: var(--space-2);
 
     margin-top: 0;
   }
@@ -127,7 +127,7 @@
 
     gap: 6px;
 
-    padding: 4px 5px;
+    padding: var(--space-1) 5px;
   }
 
   .producao-sidebar-shell .filter-section .tipo-checkbox-label input[type="checkbox"] {
@@ -177,7 +177,7 @@
   .producao-sidebar-shell .filter-section .tipo-checkbox-label {
     min-height: 29px;
 
-    padding: 3px 4px;
+    padding: 3px var(--space-1);
   }
 
   .producao-sidebar-shell .filter-section .tipo-label-numero {
@@ -204,7 +204,7 @@
 
     margin-top: 10px;
 
-    padding-left: 12px;
+    padding-left: var(--space-3);
   }
 }
 
@@ -235,9 +235,9 @@
   .producao-sidebar-shell {
     height: calc(var(--producao-sidebar-altura) - 16px);
 
-    margin-top: 8px;
+    margin-top: var(--space-2);
 
-    padding-left: 8px;
+    padding-left: var(--space-2);
   }
 }
 

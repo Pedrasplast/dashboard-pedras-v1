@@ -3,7 +3,7 @@
 ========================================================= */
 
 .dp-heatmap-card-content {
-  padding: 12px 14px 16px;
+  padding: var(--space-3) 14px var(--space-4);
 }
 
 .dp-heatmap {
@@ -27,17 +27,17 @@
 
   flex-wrap: wrap;
 
-  gap: 4px 8px;
+  gap: var(--space-1) var(--space-2);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 
-  padding: 8px 10px;
+  padding: var(--space-2) 10px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid #edf2f7;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .dp-heatmap__insight span {
@@ -107,13 +107,13 @@
 
   overflow: hidden;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border: 1px solid #edf2f7;
 
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   font-size: 0.6rem;
 
@@ -131,7 +131,7 @@
 
   padding-left: 9px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 /* =========================================================
@@ -237,9 +237,9 @@
 ========================================================= */
 
 .dp-heatmap__cell.nivel-0 {
-  color: #94a3b8;
+  color: var(--color-text-light);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   border-color: #edf2f7;
 }
@@ -273,7 +273,7 @@
 
 .dp-heatmap__cell.nivel-4,
 .dp-heatmap__legend-scale .nivel-4 {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: #f97316;
 
@@ -282,11 +282,11 @@
 
 .dp-heatmap__cell.nivel-5,
 .dp-heatmap__legend-scale .nivel-5 {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
-  background: #dc2626;
+  background: var(--color-danger);
 
-  border-color: #b91c1c;
+  border-color: var(--color-danger-hover);
 }
 
 /* =========================================================
@@ -343,7 +343,7 @@
 
     margin-bottom: 9px;
 
-    padding: 7px 8px;
+    padding: 7px var(--space-2);
   }
 
   .dp-heatmap__insight span,
@@ -360,7 +360,7 @@
       58px
       repeat(var(--dp-heatmap-columns, 6), minmax(0, 1fr));
 
-    gap: 4px;
+    gap: var(--space-1);
   }
 
   .dp-heatmap__corner,
@@ -380,7 +380,7 @@
   .dp-heatmap__cell {
     min-height: 43px;
 
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
   }
 
   .dp-heatmap__cell strong {
@@ -394,7 +394,7 @@
   .dp-heatmap__legend {
     gap: 5px;
 
-    margin-top: 8px;
+    margin-top: var(--space-2);
 
     font-size: 0.52rem;
   }
@@ -419,7 +419,7 @@
     600px
 ) {
   .dp-heatmap-card-content {
-    padding: 8px 8px 11px;
+    padding: var(--space-2) var(--space-2) 11px;
   }
 
   .dp-heatmap__insight {

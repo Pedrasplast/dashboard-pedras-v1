@@ -1,44 +1,44 @@
 /* Layout Geral */
 .importador-container {
   max-width: 600px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: var(--space-10) auto;
+  padding: 0 var(--space-5);
 }
 
 .importador-card {
-  background: #ffffff;
-  padding: 32px;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .importador-header h3 {
-  margin: 0 0 24px 0;
-  color: #0f172a;
+  margin: 0 0 var(--space-6) 0;
+  color: var(--color-text);
   font-size: 1.25rem;
 }
 
 /* Área de Upload (Drag and Drop) */
 .upload-dropzone {
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  padding: 40px 20px;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10) var(--space-5);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
 }
 
 .upload-dropzone:hover {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #1e40af;
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-active);
 }
 
 .upload-dropzone.drag-active {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   background: #dbeafe;
 }
 
@@ -49,37 +49,37 @@
 
 /* Status e Progresso */
 .status-container {
-  margin-top: 24px;
-  padding: 16px;
-  background: #f1f5f9;
-  border-radius: 8px;
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
-  color: #334155;
-  font-weight: 500;
+  color: var(--color-text-strong);
+  font-weight: var(--font-weight-medium);
 }
 
 .progress-bar-fill {
   height: 6px;
-  background: #2563eb;
+  background: var(--color-primary);
   border-radius: 3px;
-  margin-top: 12px;
+  margin-top: var(--space-3);
   transition: width 0.3s ease;
 }
 
 .back-importador-btn {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   color: #4a5568;
-  border: 1px solid #e2e8f0;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
+  border: 1px solid var(--color-border);
+  padding: 10px var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: var(--space-2);
+  font-size: var(--font-size-md);
 }
 
 .back-importador-btn:hover {
@@ -96,22 +96,22 @@
 .select-tabela {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   margin-bottom: 25px;
   width: 100%;
 }
 
 .select-tabela label {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: #333;
 }
 
 .select-tabela select {
-  padding: 12px;
-  border-radius: 8px;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
   border: 1px solid #ccc;
-  background-color: #fff;
+  background-color: var(--color-surface);
   font-size: 1rem;
   cursor: pointer;
   transition: border-color 0.2s ease;

@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 24px 24px;
+  padding: 18px var(--space-6) var(--space-6);
   background: rgb(15 23 42 / 0.58);
   backdrop-filter: blur(5px);
   animation: sistema-modal-fundo-in 180ms ease-out;
@@ -32,8 +32,8 @@
   text-align: left;
   border: 1px solid rgb(203 213 225 / 0.9);
   border-radius: 20px;
-  background: var(--color-surface, #fff);
-  color: var(--color-text, #0f172a);
+  background: var(--color-surface);
+  color: var(--color-text);
   font-family: var(--font-family-sans, sans-serif);
   box-shadow:
     0 32px 80px rgb(15 23 42 / 0.28),
@@ -55,7 +55,7 @@
   inset: 0 0 auto;
   z-index: 5;
   height: 3px;
-  background: linear-gradient(90deg, var(--color-primary, #2563eb), #6366f1 48%, #8b5cf6);
+  background: linear-gradient(90deg, var(--color-primary), #6366f1 48%, #8b5cf6);
   pointer-events: none;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
@@ -66,9 +66,9 @@
   justify-content: space-between;
   gap: 22px;
   margin: 0;
-  padding: 24px 28px 21px;
-  border-bottom: 1px solid var(--color-border, #e2e8f0);
-  background: linear-gradient(135deg, var(--color-surface, #fff), #f8fbff 55%, #f5f7ff);
+  padding: var(--space-6) 28px 21px;
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(135deg, var(--color-surface), #f8fbff 55%, #f5f7ff);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] > div {
   min-width: 0;
@@ -76,7 +76,7 @@
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] h2,
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] h3 {
   margin: 0;
-  color: var(--color-text, #0f172a);
+  color: var(--color-text);
   font-size: 22px;
   line-height: 1.25;
   font-weight: 750;
@@ -84,8 +84,8 @@
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] p {
   margin: 6px 0 0;
-  color: var(--color-text-muted, #64748b);
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
   line-height: 1.5;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-icone] {
@@ -97,8 +97,8 @@
   margin: 0;
   border: 1px solid #dbeafe;
   border-radius: 14px;
-  background: #eff6ff;
-  color: var(--color-primary, #2563eb);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-header] [data-modal-fechar] {
   width: 36px;
@@ -112,7 +112,7 @@
   border: 1px solid #dbe3ee;
   border-radius: 11px;
   background: rgb(255 255 255 / 0.85);
-  color: var(--color-text-muted, #64748b);
+  color: var(--color-text-muted);
   cursor: pointer;
   box-shadow: 0 2px 6px rgb(15 23 42 / 0.04);
   transition:
@@ -125,13 +125,13 @@
   [data-modal-fechar]:hover:not(:disabled) {
   transform: none;
   background: var(--color-surface-subtle, #f1f5f9);
-  border-color: var(--color-border-strong, #cbd5e1);
-  color: var(--color-text, #0f172a);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-body] {
   min-height: 0;
   overflow: auto;
-  padding: 20px 28px;
+  padding: var(--space-5) 28px;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
   min-height: 0;
@@ -143,44 +143,44 @@
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
   margin: 0;
   padding: 13px 28px;
-  border-top: 1px solid var(--color-border, #e2e8f0);
-  background: var(--color-page-background, #f8fafc);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-page-background);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] > span {
   margin-right: auto;
-  color: var(--color-text-muted, #64748b);
-  font-size: 11px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] button {
   min-width: 92px;
   min-height: 36px;
-  padding: 8px 16px;
+  padding: var(--space-2) var(--space-4);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 8px;
-  background: var(--color-surface, #fff);
-  color: var(--color-text, #0f172a);
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   font-weight: 750;
   cursor: pointer;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="primaria"] {
-  border-color: var(--color-primary, #2563eb);
-  background: var(--color-primary, #2563eb);
-  color: #fff;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
   box-shadow: 0 4px 10px rgb(37 99 235 / 0.16);
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="perigo"] {
-  border-color: var(--color-danger, #dc2626);
-  background: var(--color-danger, #dc2626);
-  color: #fff;
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
 }
 .sistema-modal.sistema-modal.sistema-modal button:disabled {
   opacity: 0.55;
@@ -188,7 +188,7 @@
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-fechar]:focus-visible,
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] button:focus-visible {
-  outline: 2px solid var(--color-primary, #2563eb);
+  outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
 @keyframes sistema-modal-fundo-in {
@@ -222,7 +222,7 @@
   .sistema-modal-overlay.sistema-modal-overlay {
     inset: 64px 0 0;
     align-items: flex-end;
-    padding: 12px;
+    padding: var(--space-3);
   }
   .sistema-modal.sistema-modal.sistema-modal {
     width: 100%;
@@ -238,7 +238,7 @@
   }
   .sistema-modal.sistema-modal.sistema-modal [data-modal-body],
   .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] {
-    padding: 12px 18px;
+    padding: var(--space-3) 18px;
   }
 }
 @media (max-width: 560px) {
@@ -252,11 +252,11 @@
   }
   .sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
     gap: 10px;
-    padding: 16px 14px 13px;
+    padding: var(--space-4) 14px 13px;
   }
   .sistema-modal.sistema-modal.sistema-modal [data-modal-body],
   .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] {
-    padding: 12px 14px;
+    padding: var(--space-3) 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -268,14 +268,14 @@
 
 /* Formularios preservam suas regras, com espacamento e rodape comuns. */
 .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
-  padding: 20px 28px;
+  padding: var(--space-5) 28px;
 }
 .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
   margin: 0 -28px -20px;
 }
 @media (max-width: 900px) {
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
-    padding: 12px 18px;
+    padding: var(--space-3) 18px;
   }
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -18px -12px;
@@ -283,7 +283,7 @@
 }
 @media (max-width: 560px) {
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
-    padding: 12px 14px;
+    padding: var(--space-3) 14px;
   }
   .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -14px -12px;
@@ -292,9 +292,9 @@
 
 /* O botao Fechar do rodape mantem sua cor em todos os modais. */
 .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-fechar] {
-  background: var(--color-primary, #2563eb);
-  border-color: var(--color-primary, #2563eb);
-  color: var(--color-text-inverse, #fff);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
   transform: none;
   transition:
     background-color 150ms,
@@ -303,9 +303,9 @@
 .sistema-modal.sistema-modal.sistema-modal
   [data-modal-footer]
   [data-modal-fechar]:hover:not(:disabled) {
-  background: var(--color-primary-hover, #1d4ed8);
-  border-color: var(--color-primary-hover, #1d4ed8);
-  color: var(--color-text-inverse, #fff);
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-text-inverse);
   transform: none;
   box-shadow: 0 4px 10px rgb(37 99 235 / 0.16);
 }

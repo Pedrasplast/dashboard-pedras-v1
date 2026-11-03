@@ -3,7 +3,7 @@
 ========================================================= */
 
 .dp-justificativas-card-content {
-  padding: 0 0 4px;
+  padding: 0 0 var(--space-1);
 }
 
 .dp-justificativas {
@@ -23,7 +23,7 @@
 
   scrollbar-width: thin;
 
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 
 .dp-justificativas__table-wrapper::-webkit-scrollbar {
@@ -31,9 +31,9 @@
 }
 
 .dp-justificativas__table-wrapper::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-border-strong);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .dp-justificativas__table {
@@ -46,11 +46,11 @@
 
 .dp-justificativas__table th,
 .dp-justificativas__table td {
-  padding: 11px 12px;
+  padding: 11px var(--space-3);
 
   border-bottom: 1px solid #edf2f7;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 0.69rem;
 
@@ -60,9 +60,9 @@
 }
 
 .dp-justificativas__table th {
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   font-size: 0.6rem;
 
@@ -100,11 +100,11 @@
 
   place-items: center;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   font-size: 0.62rem;
 
@@ -128,7 +128,7 @@
 
   overflow: hidden;
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   text-overflow: ellipsis;
 
@@ -148,13 +148,13 @@
 
   min-width: 52px;
 
-  padding: 4px 7px;
+  padding: var(--space-1) 7px;
 
-  color: #1d4ed8;
+  color: var(--color-primary-hover);
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   font-size: 0.63rem;
 

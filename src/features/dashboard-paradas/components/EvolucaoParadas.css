@@ -19,19 +19,19 @@
 
   flex-wrap: wrap;
 
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .dp-evolucao-granularidade {
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   font-size: 0.59rem;
 
@@ -49,11 +49,11 @@
 
   padding: 3px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .dp-chart-toggle__btn {
@@ -61,19 +61,19 @@
 
   padding: 0 9px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   background: transparent;
 
   border: 0;
 
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   font-family: inherit;
 
   font-size: 0.62rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   cursor: pointer;
 
@@ -88,7 +88,7 @@
 }
 
 .dp-chart-toggle__btn.active {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   background: var(--dp-primary);
 

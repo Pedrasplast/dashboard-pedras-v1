@@ -3,29 +3,29 @@
   height: min(960px, calc(100dvh - 114px));
 }
 .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] [data-modal-header] {
-  padding: 12px 22px;
+  padding: var(--space-3) 22px;
 }
 .financeiro-detalhes-painel .financeiro-detalhes-codigo {
-  margin-bottom: 4px;
-  padding: 3px 8px;
+  margin-bottom: var(--space-1);
+  padding: 3px var(--space-2);
 }
 .financeiro-detalhes-painel .financeiro-detalhes-periodo {
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 .financeiro-detalhes-painel .financeiro-detalhes-principais {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
   padding: 10px 22px 6px;
 }
 .financeiro-detalhes-painel .financeiro-detalhes-resumo {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
   padding: 0 22px 10px;
 }
 .financeiro-detalhes-painel .financeiro-detalhes-indicador,
 .financeiro-detalhes-painel .financeiro-detalhes-principais .financeiro-detalhes-indicador {
   min-height: 58px;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   gap: 10px;
 }
 .financeiro-detalhes-painel .financeiro-detalhes-indicador-icone,
@@ -41,11 +41,11 @@
   .financeiro-detalhes-principais
   .financeiro-detalhes-indicador-conteudo
   > strong {
-  font-size: 18px;
+  font-size: var(--font-size-xl);
 }
 .financeiro-detalhes-painel .financeiro-detalhes-filtros {
   padding: 7px 22px;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .financeiro-detalhes-painel .financeiro-detalhes-busca {
   height: 34px;
@@ -77,16 +77,16 @@
     font-size: 17px;
   }
   .financeiro-detalhes-painel .financeiro-detalhes-principais {
-    padding: 8px 14px 6px;
+    padding: var(--space-2) 14px 6px;
   }
   .financeiro-detalhes-painel .financeiro-detalhes-resumo {
-    padding: 0 14px 8px;
+    padding: 0 14px var(--space-2);
     gap: 6px;
   }
   .financeiro-detalhes-painel .financeiro-detalhes-indicador,
   .financeiro-detalhes-painel .financeiro-detalhes-principais .financeiro-detalhes-indicador {
     min-height: 54px;
-    padding: 7px 8px;
+    padding: 7px var(--space-2);
     gap: 6px;
   }
   .financeiro-detalhes-painel .financeiro-detalhes-resumo .financeiro-detalhes-indicador-icone {
@@ -97,7 +97,7 @@
     .financeiro-detalhes-principais
     .financeiro-detalhes-indicador-conteudo
     > strong {
-    font-size: 14px;
+    font-size: var(--font-size-md);
   }
   .financeiro-detalhes-painel .financeiro-detalhes-filtros {
     padding: 7px 14px;
