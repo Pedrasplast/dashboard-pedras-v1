@@ -1,4 +1,3 @@
-
 export const CHAVE_TELA_USUARIOS = "usuarios";
 
 export const CHAVE_TELA_RELATORIOS = "relatorios";
@@ -245,22 +244,19 @@ const MODULOS = Object.freeze([
   {
     id: "cadastro",
     nome: "Cadastro",
-    descricao:
-      "Cadastros mestres utilizados nas rotinas do sistema.",
+    descricao: "Cadastros mestres utilizados nas rotinas do sistema.",
   },
 
   {
     id: "dashboards",
     nome: "Dashboards",
-    descricao:
-      "Painéis gerenciais e indicadores da operação.",
+    descricao: "Painéis gerenciais e indicadores da operação.",
   },
 
   {
     id: "producao",
     nome: "Produção",
-    descricao:
-      "Operação e planejamento dos processos produtivos.",
+    descricao: "Operação e planejamento dos processos produtivos.",
   },
 
   {
@@ -273,29 +269,25 @@ const MODULOS = Object.freeze([
   {
     id: "pedidos",
     nome: "Pedidos",
-    descricao:
-      "Consulta e acompanhamento dos pedidos.",
+    descricao: "Consulta e acompanhamento dos pedidos.",
   },
 
   {
     id: "financeiro",
     nome: "Financeiro",
-    descricao:
-      "Painéis e análises financeiras.",
+    descricao: "Painéis e análises financeiras.",
   },
 
   {
     id: "relatorios",
     nome: "Relatórios",
-    descricao:
-      "Central de relatórios e permissões específicas.",
+    descricao: "Central de relatórios e permissões específicas.",
   },
 
   {
     id: "administracao",
     nome: "Administração",
-    descricao:
-      "Funções administrativas disponíveis para operadores.",
+    descricao: "Funções administrativas disponíveis para operadores.",
   },
 ]);
 
@@ -313,13 +305,9 @@ export const MODULOS_PERMISSOES = Object.freeze(
     ...modulo,
 
     chaves: TELAS_SISTEMA.filter(
-      (tela) =>
-        tela.modulo === modulo.id &&
-        tela.gerenciavel !== false
+      (tela) => tela.modulo === modulo.id && tela.gerenciavel !== false,
     ).map((tela) => tela.chave),
-  })).filter(
-    (modulo) => modulo.chaves.length > 0
-  )
+  })).filter((modulo) => modulo.chaves.length > 0),
 );
 
 /* =========================================================
@@ -327,9 +315,5 @@ export const MODULOS_PERMISSOES = Object.freeze(
 ========================================================= */
 
 export function obterTelaSistema(chave) {
-  return (
-    TELAS_SISTEMA.find(
-      (tela) => tela.chave === chave
-    ) || null
-  );
+  return TELAS_SISTEMA.find((tela) => tela.chave === chave) || null;
 }

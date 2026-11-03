@@ -6,7 +6,6 @@
   width: 100%;
 }
 
-
 /* =========================================================
    AÇÃO SUPERIOR
 ========================================================= */
@@ -24,7 +23,6 @@
 
   background: #f8fafc;
 }
-
 
 .compras-futuras-nova {
   height: 36px;
@@ -50,13 +48,11 @@
   cursor: pointer;
 }
 
-
 .compras-futuras-nova:disabled {
   opacity: 0.5;
 
   cursor: not-allowed;
 }
-
 
 /* =========================================================
    RESUMO + FILTROS
@@ -76,7 +72,6 @@
   background: #ffffff;
 }
 
-
 /* =========================================================
    INDICADORES
 ========================================================= */
@@ -90,7 +85,6 @@
   flex-wrap: nowrap;
 }
 
-
 .compras-futuras-indicadores > div {
   min-width: 125px;
 
@@ -101,7 +95,6 @@
 
   background: #ffffff;
 }
-
 
 .compras-futuras-indicadores span {
   display: block;
@@ -116,7 +109,6 @@
   white-space: nowrap;
 }
 
-
 .compras-futuras-indicadores strong {
   display: block;
 
@@ -128,7 +120,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    FILTROS
@@ -144,7 +135,6 @@
   margin-left: auto;
 }
 
-
 /* =========================================================
    CAMPOS DE FILTRO
 ========================================================= */
@@ -153,11 +143,9 @@
   min-width: 180px;
 }
 
-
 .compras-futuras-filtro-tipo {
   min-width: 140px;
 }
-
 
 .compras-futuras-filtro-campo > span {
   display: block;
@@ -171,7 +159,6 @@
 
   text-transform: uppercase;
 }
-
 
 .compras-futuras-filtro-campo select {
   width: 100%;
@@ -194,20 +181,11 @@
   cursor: pointer;
 }
 
-
 .compras-futuras-filtro-campo select:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    TABELA
@@ -219,7 +197,6 @@
   overflow-x: auto;
 }
 
-
 .compras-futuras-tabela {
   width: 100%;
   min-width: 0;
@@ -228,7 +205,6 @@
 
   table-layout: auto;
 }
-
 
 .compras-futuras-tabela th {
   padding: 9px 8px;
@@ -248,7 +224,6 @@
   white-space: nowrap;
 }
 
-
 .compras-futuras-tabela td {
   padding: 10px 8px;
 
@@ -261,11 +236,9 @@
   vertical-align: middle;
 }
 
-
 .compras-futuras-tabela tbody tr:hover {
   background: #f8fafc;
 }
-
 
 /* =========================================================
    QUANTIDADE
@@ -279,7 +252,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    FINANCEIRO
 ========================================================= */
@@ -288,11 +260,9 @@
   white-space: nowrap;
 }
 
-
 .compras-futuras-financeiro > span {
   display: block;
 }
-
 
 .compras-futuras-financeiro > small {
   display: block;
@@ -304,7 +274,6 @@
   font-size: 9px;
 }
 
-
 .compras-futuras-total {
   color: #0f172a !important;
 
@@ -312,7 +281,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    STATUS
@@ -334,13 +302,11 @@
   white-space: nowrap;
 }
 
-
 .compras-futuras-status.prevista {
   background: #f1f5f9;
 
   color: #475569;
 }
-
 
 .compras-futuras-status.confirmada {
   background: #eff6ff;
@@ -348,20 +314,17 @@
   color: #2563eb;
 }
 
-
 .compras-futuras-status.recebida {
   background: #ecfdf5;
 
   color: #047857;
 }
 
-
 .compras-futuras-status.cancelada {
   background: #fef2f2;
 
   color: #b91c1c;
 }
-
 
 /* =========================================================
    AÇÕES
@@ -375,7 +338,6 @@
 
   white-space: nowrap;
 }
-
 
 .compras-futuras-editar {
   height: 29px;
@@ -400,7 +362,6 @@
 
   cursor: pointer;
 }
-
 
 .compras-futuras-confirmar-chegada {
   height: 29px;
@@ -428,13 +389,11 @@
   cursor: pointer;
 }
 
-
 .compras-futuras-confirmar-chegada:hover:not(:disabled) {
   border-color: #6ee7b7;
 
   background: #d1fae5;
 }
-
 
 .compras-futuras-excluir {
   border-color: #fecaca;
@@ -442,14 +401,12 @@
   color: #dc2626;
 }
 
-
 .compras-futuras-editar:disabled,
 .compras-futuras-confirmar-chegada:disabled {
   opacity: 0.5;
 
   cursor: not-allowed;
 }
-
 
 /* =========================================================
    ESTADOS
@@ -472,11 +429,9 @@
   text-align: center;
 }
 
-
 .compras-futuras-estado strong {
   color: #0f172a;
 }
-
 
 .compras-futuras-estado p {
   margin: 0;
@@ -484,11 +439,9 @@
   font-size: 10px;
 }
 
-
 .compras-futuras-erro {
   color: #b91c1c;
 }
-
 
 /* =========================================================
    LOADING
@@ -503,35 +456,25 @@
 
   border-radius: 50%;
 
-  animation:
-    compras-futuras-loading
-    0.75s
-    linear
-    infinite;
+  animation: compras-futuras-loading 0.75s linear infinite;
 }
-
 
 @keyframes compras-futuras-loading {
   to {
-    transform: rotate(
-      360deg
-    );
+    transform: rotate(360deg);
   }
 }
-
 
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
 @media (max-width: 1150px) {
-
   .compras-futuras-resumo-filtros {
     align-items: stretch;
 
     flex-direction: column;
   }
-
 
   .compras-futuras-filtros {
     width: 100%;
@@ -539,25 +482,19 @@
     margin-left: 0;
   }
 
-
   .compras-futuras-filtro-campo {
     flex: 1;
   }
-
 }
 
-
 @media (max-width: 800px) {
-
   .compras-futuras-toolbar {
     min-height: 0;
   }
 
-
   .compras-futuras-nova {
     width: 100%;
   }
-
 
   .compras-futuras-indicadores {
     display: grid;
@@ -567,11 +504,9 @@
     width: 100%;
   }
 
-
   .compras-futuras-indicadores > div {
     min-width: 0;
   }
-
 
   .compras-futuras-filtros {
     align-items: stretch;
@@ -579,11 +514,9 @@
     flex-direction: column;
   }
 
-
   .compras-futuras-filtro-campo,
   .compras-futuras-filtro-tipo {
     width: 100%;
     min-width: 0;
   }
-
 }

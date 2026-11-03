@@ -11,11 +11,7 @@ import {
   formatarMegabytes,
   tempoDecorrido,
 } from "./utils/monitoramento.utils";
-import {
-  ROTULO_NIVEL_BANCO,
-  ROTULO_SITUACAO,
-  SITUACAO,
-} from "./constants/monitoramento.constants";
+import { ROTULO_NIVEL_BANCO, ROTULO_SITUACAO, SITUACAO } from "./constants/monitoramento.constants";
 
 import "./Monitoramento.css";
 
@@ -24,17 +20,28 @@ import "./Monitoramento.css";
 ========================================================= */
 
 export default function MonitoramentoPage() {
-  const { data: rotinas = [], isLoading, isError, error, refetch, isFetching, dataUpdatedAt } = useRotinas();
+  const {
+    data: rotinas = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+    dataUpdatedAt,
+  } = useRotinas();
   const { data: banco } = useBancoDados();
   const [soProblemas, setSoProblemas] = useState(false);
   const [aberta, setAberta] = useState(null);
 
-  const resumo = useMemo(() => ({
-    total: rotinas.length,
-    comErro: rotinas.filter((r) => r.situacao === SITUACAO.ERRO).length,
-    falhas24h: rotinas.reduce((soma, r) => soma + Number(r.falhas_24h ?? 0), 0),
-    chamadas24h: rotinas.reduce((soma, r) => soma + Number(r.chamadas_24h ?? 0), 0),
-  }), [rotinas]);
+  const resumo = useMemo(
+    () => ({
+      total: rotinas.length,
+      comErro: rotinas.filter((r) => r.situacao === SITUACAO.ERRO).length,
+      falhas24h: rotinas.reduce((soma, r) => soma + Number(r.falhas_24h ?? 0), 0),
+      chamadas24h: rotinas.reduce((soma, r) => soma + Number(r.chamadas_24h ?? 0), 0),
+    }),
+    [rotinas],
+  );
 
   const visiveis = soProblemas
     ? rotinas.filter((r) => r.situacao === SITUACAO.ERRO || Number(r.falhas_24h) > 0)
@@ -48,7 +55,7 @@ export default function MonitoramentoPage() {
           title="Monitoramento das rotinas"
           description="Rotinas automáticas que buscam dados do Omie e mantêm o sistema. Atualiza sozinha a cada 5 minutos."
           icon={Activity}
-          actions={(
+          actions={
             <button
               type="button"
               className="mon-botao"
@@ -58,11 +65,13 @@ export default function MonitoramentoPage() {
               <RefreshCw size={16} aria-hidden="true" className={isFetching ? "mon-girando" : ""} />
               {isFetching ? "Atualizando…" : "Atualizar agora"}
             </button>
-          )}
+          }
         />
 
         <section className="mon-resumo" aria-label="Resumo">
-          <div className={`mon-resumo__item ${resumo.comErro ? "mon-resumo__item--erro" : "mon-resumo__item--ok"}`}>
+          <div
+            className={`mon-resumo__item ${resumo.comErro ? "mon-resumo__item--erro" : "mon-resumo__item--ok"}`}
+          >
             <strong>{resumo.comErro}</strong>
             <span>{resumo.comErro === 1 ? "rotina com erro agora" : "rotinas com erro agora"}</span>
           </div>
@@ -83,13 +92,18 @@ export default function MonitoramentoPage() {
               className={`mon-resumo__item mon-banco mon-banco--${String(banco.nivel).toLowerCase()}`}
               title={`Medido ${formatarDataHora(banco.atualizado_em)}. Limite do plano free: ${formatarMegabytes(banco.limite_bytes)}.`}
             >
-              <strong>{Number(banco.percentual).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%</strong>
+              <strong>
+                {Number(banco.percentual).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%
+              </strong>
               <span>
-                do banco usado · {formatarMegabytes(banco.tamanho_bytes)} de {formatarMegabytes(banco.limite_bytes)}
+                do banco usado · {formatarMegabytes(banco.tamanho_bytes)} de{" "}
+                {formatarMegabytes(banco.limite_bytes)}
                 {banco.nivel !== "OK" && ` · ${ROTULO_NIVEL_BANCO[banco.nivel] ?? banco.nivel}`}
               </span>
               <span className="mon-banco__barra" aria-hidden="true">
-                <span style={{ width: `${Math.min(100, Math.max(0, Number(banco.percentual) || 0))}%` }} />
+                <span
+                  style={{ width: `${Math.min(100, Math.max(0, Number(banco.percentual) || 0))}%` }}
+                />
               </span>
             </div>
           )}
@@ -148,9 +162,7 @@ export default function MonitoramentoPage() {
                     <span className="mon-rotina__falhas">
                       <small>Falhas 24 h</small>
                       <strong className={Number(rotina.falhas_24h) > 0 ? "mon-texto-erro" : ""}>
-                        {rotina.monitorada
-                          ? `${rotina.falhas_24h} de ${rotina.chamadas_24h}`
-                          : "—"}
+                        {rotina.monitorada ? `${rotina.falhas_24h} de ${rotina.chamadas_24h}` : "—"}
                       </strong>
                     </span>
 
@@ -161,14 +173,20 @@ export default function MonitoramentoPage() {
                     <p className="mon-rotina__erro">
                       <strong>Erro:</strong> {rotina.mensagem_erro}
                       {rotina.ultimo_sucesso_em && (
-                        <span> · último sucesso {formatarDataHora(rotina.ultimo_sucesso_em)} ({tempoDecorrido(rotina.ultimo_sucesso_em)})</span>
+                        <span>
+                          {" "}
+                          · último sucesso {formatarDataHora(rotina.ultimo_sucesso_em)} (
+                          {tempoDecorrido(rotina.ultimo_sucesso_em)})
+                        </span>
                       )}
                     </p>
                   )}
 
                   {estaAberta && (
                     <div className="mon-rotina__detalhe">
-                      {rotina.descricao && <p className="mon-rotina__descricao">{rotina.descricao}</p>}
+                      {rotina.descricao && (
+                        <p className="mon-rotina__descricao">{rotina.descricao}</p>
+                      )}
                       <HistoricoRotina rotina={rotina.rotina} monitorada={rotina.monitorada} />
                     </div>
                   )}

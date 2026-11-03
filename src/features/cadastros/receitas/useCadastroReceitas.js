@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   alterarStatusCadastroReceita,
@@ -10,59 +6,46 @@ import {
   salvarCadastroReceita,
 } from "./cadastroReceitasService";
 
-
-const CHAVE_CADASTRO_RECEITAS =
-  ["cadastro-receitas"];
-
+const CHAVE_CADASTRO_RECEITAS = ["cadastro-receitas"];
 
 /* =========================================================
    HOOK
 ========================================================= */
 
 export default function useCadastroReceitas() {
-  const queryClient =
-    useQueryClient();
-
+  const queryClient = useQueryClient();
 
   /* =======================================================
      CONSULTA
   ======================================================= */
 
-  const cadastroQuery =
-    useQuery({
-      queryKey:
-        CHAVE_CADASTRO_RECEITAS,
+  const cadastroQuery = useQuery({
+    queryKey: CHAVE_CADASTRO_RECEITAS,
 
-      queryFn:
-        buscarCadastroReceitas,
+    queryFn: buscarCadastroReceitas,
 
-      /*
-       * A tela sempre confere os dados novamente
-       * quando for aberta.
-       */
-      staleTime: 0,
+    /*
+     * A tela sempre confere os dados novamente
+     * quando for aberta.
+     */
+    staleTime: 0,
 
-      refetchOnMount:
-        "always",
+    refetchOnMount: "always",
 
-      /*
-       * Ao voltar para a janela/aba do sistema,
-       * os dados são conferidos automaticamente.
-       */
-      refetchOnWindowFocus:
-        true,
+    /*
+     * Ao voltar para a janela/aba do sistema,
+     * os dados são conferidos automaticamente.
+     */
+    refetchOnWindowFocus: true,
 
-      /*
-       * Se a conexão cair e retornar,
-       * as receitas são recarregadas.
-       */
-      refetchOnReconnect:
-        true,
+    /*
+     * Se a conexão cair e retornar,
+     * as receitas são recarregadas.
+     */
+    refetchOnReconnect: true,
 
-      retry:
-        1,
-    });
-
+    retry: 1,
+  });
 
   /* =======================================================
      ATUALIZAÇÃO AUTOMÁTICA
@@ -77,76 +60,53 @@ export default function useCadastroReceitas() {
      * manualmente e gerar duas requisições.
      */
     await queryClient.invalidateQueries({
-      queryKey:
-        CHAVE_CADASTRO_RECEITAS,
+      queryKey: CHAVE_CADASTRO_RECEITAS,
 
-      refetchType:
-        "active",
+      refetchType: "active",
     });
   }
-
 
   /* =======================================================
      SALVAR
   ======================================================= */
 
-  const salvarMutation =
-    useMutation({
-      mutationFn:
-        salvarCadastroReceita,
+  const salvarMutation = useMutation({
+    mutationFn: salvarCadastroReceita,
 
-      onSuccess:
-        atualizarDados,
-    });
-
+    onSuccess: atualizarDados,
+  });
 
   /* =======================================================
      ALTERAR STATUS
   ======================================================= */
 
-  const alterarStatusMutation =
-    useMutation({
-      mutationFn:
-        alterarStatusCadastroReceita,
+  const alterarStatusMutation = useMutation({
+    mutationFn: alterarStatusCadastroReceita,
 
-      onSuccess:
-        atualizarDados,
-    });
-
+    onSuccess: atualizarDados,
+  });
 
   /* =======================================================
      RETORNO
   ======================================================= */
 
   return {
-    receitas:
-      cadastroQuery.data?.receitas ??
-      [],
+    receitas: cadastroQuery.data?.receitas ?? [],
 
-    fornecedores:
-      cadastroQuery.data?.fornecedores ??
-      [],
+    fornecedores: cadastroQuery.data?.fornecedores ?? [],
 
-    carregando:
-      cadastroQuery.isLoading,
+    carregando: cadastroQuery.isLoading,
 
-    atualizando:
-      cadastroQuery.isFetching,
+    atualizando: cadastroQuery.isFetching,
 
-    erro:
-      cadastroQuery.error?.message ??
-      "",
+    erro: cadastroQuery.error?.message ?? "",
 
-    salvando:
-      salvarMutation.isPending,
+    salvando: salvarMutation.isPending,
 
-    alterandoStatus:
-      alterarStatusMutation.isPending,
+    alterandoStatus: alterarStatusMutation.isPending,
 
-    salvarReceita:
-      salvarMutation.mutateAsync,
+    salvarReceita: salvarMutation.mutateAsync,
 
-    alterarStatusReceita:
-      alterarStatusMutation.mutateAsync,
+    alterarStatusReceita: alterarStatusMutation.mutateAsync,
   };
 }

@@ -17,31 +17,17 @@ const decimal = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 4,
 });
 
-const obj = (x) =>
-  x && typeof x === "object" && !Array.isArray(x)
-    ? x
-    : {};
+const obj = (x) => (x && typeof x === "object" && !Array.isArray(x) ? x : {});
 
-const definido = (x) =>
-  x !== undefined && x !== null && x !== "";
+const definido = (x) => x !== undefined && x !== null && x !== "";
 
-const n = (x) =>
-  definido(x) && Number.isFinite(Number(x))
-    ? Number(x)
-    : null;
+const n = (x) => (definido(x) && Number.isFinite(Number(x)) ? Number(x) : null);
 
-const dinheiro = (x) =>
-  n(x) === null
-    ? "Não informado"
-    : brl.format(n(x));
+const dinheiro = (x) => (n(x) === null ? "Não informado" : brl.format(n(x)));
 
-const quant = (x) =>
-  n(x) === null
-    ? "Não informado"
-    : decimal.format(n(x));
+const quant = (x) => (n(x) === null ? "Não informado" : decimal.format(n(x)));
 
-const iguais = (a, b) =>
-  JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+const iguais = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 
 /* =========================================================
    PROTEÇÃO DE DADOS DE PAGAMENTO
@@ -77,28 +63,23 @@ export function protegerDadosPagamento(valor) {
   return String(valor)
     .replace(
       /\b((?:n[uú]mero\s+(?:do\s+)?cart[aã]o|cart[aã]o\s*(?:n[uú]mero|n[ºo])?|card\s*(?:number|no\.?))\s*[:=#-]?\s*)((?:\d[ -]?){12,19})/gi,
-      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`,
     )
     .replace(
       /\b((?:n[uú]mero|number)\s*[:=#-]\s*)((?:\d[ -]?){12,19})/gi,
-      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[NÚMERO PROTEGIDO]`,
     )
     .replace(
       /\b((?:cvv|cvc|c[oó]digo\s+de\s+seguran[cç]a)\s*[:=#-]?\s*)\d{3,4}\b/gi,
-      (_trecho, rotulo) => `${rotulo}[PROTEGIDO]`
+      (_trecho, rotulo) => `${rotulo}[PROTEGIDO]`,
     )
-    .replace(
-      /\b(?:\d[ -]?){12,18}\d\b/g,
-      (trecho) => {
-        const digitos = trecho.replace(/\D/g, "");
+    .replace(/\b(?:\d[ -]?){12,18}\d\b/g, (trecho) => {
+      const digitos = trecho.replace(/\D/g, "");
 
-        return digitos.length >= 13 &&
-          digitos.length <= 19 &&
-          luhn(digitos)
-          ? "[NÚMERO PROTEGIDO]"
-          : trecho;
-      }
-    );
+      return digitos.length >= 13 && digitos.length <= 19 && luhn(digitos)
+        ? "[NÚMERO PROTEGIDO]"
+        : trecho;
+    });
 }
 
 /* =========================================================
@@ -186,22 +167,14 @@ function referencia(valor, mapa, rotulo) {
   const chave = String(valor);
   const nome = mapa?.[chave];
 
-  return protegerDadosPagamento(
-    nome
-      ? `${nome} (código ${chave})`
-      : `${rotulo}: ${chave}`
-  );
+  return protegerDadosPagamento(nome ? `${nome} (código ${chave})` : `${rotulo}: ${chave}`);
 }
 
 /* =========================================================
    FORMATAR VALORES
 ========================================================= */
 
-export function formatarValorCompra(
-  valor,
-  campo = "",
-  referencias = {}
-) {
+export function formatarValorCompra(valor, campo = "", referencias = {}) {
   if (!definido(valor)) {
     return "Não informado";
   }
@@ -222,25 +195,16 @@ export function formatarValorCompra(
     return `${quant(valor)}%`;
   }
 
-  if (
-    campo === "data_previsao" ||
-    campo === "data_inclusao" ||
-    campo === "dVencto"
-  ) {
+  if (campo === "data_previsao" || campo === "data_inclusao" || campo === "dVencto") {
     const str = String(valor);
 
-    const iso =
-      /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+    const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
 
-    return iso
-      ? `${iso[3]}/${iso[2]}/${iso[1]}`
-      : protegerDadosPagamento(str);
+    return iso ? `${iso[3]}/${iso[2]}/${iso[1]}` : protegerDadosPagamento(str);
   }
 
   if (campo === "cTipoDoc") {
-    return protegerDadosPagamento(
-      DOCUMENTOS[valor] || String(valor)
-    );
+    return protegerDadosPagamento(DOCUMENTOS[valor] || String(valor));
   }
 
   /* =====================================================
@@ -260,32 +224,20 @@ export function formatarValorCompra(
     return protegerDadosPagamento(
       nome && String(nome).trim()
         ? String(nome).trim()
-        : `Fornecedor não identificado (código ${codigo})`
+        : `Fornecedor não identificado (código ${codigo})`,
     );
   }
 
   if (campo === "comprador") {
-    return referencia(
-      valor,
-      referencias.compradores,
-      "Comprador Omie"
-    );
+    return referencia(valor, referencias.compradores, "Comprador Omie");
   }
 
   if (campo === "local_estoque") {
-    return referencia(
-      valor,
-      referencias.locais,
-      "Local Omie"
-    );
+    return referencia(valor, referencias.locais, "Local Omie");
   }
 
   if (campo === "cCodDepto") {
-    return referencia(
-      valor,
-      referencias.departamentos,
-      "Departamento Omie"
-    );
+    return referencia(valor, referencias.departamentos, "Departamento Omie");
   }
 
   if (typeof valor === "boolean") {
@@ -298,11 +250,7 @@ export function formatarValorCompra(
 
   if (Array.isArray(valor)) {
     return valor.length
-      ? valor
-          .map((item) =>
-            formatarValorCompra(item, "", referencias)
-          )
-          .join("\n")
+      ? valor.map((item) => formatarValorCompra(item, "", referencias)).join("\n")
       : "Nenhum registro";
   }
 
@@ -310,14 +258,11 @@ export function formatarValorCompra(
     return Object.entries(valor)
       .map(
         ([chave, dado]) =>
-          `${
-            NOMES[chave] ||
-            protegerDadosPagamento(chave)
-          }: ${formatarValorCompra(
+          `${NOMES[chave] || protegerDadosPagamento(chave)}: ${formatarValorCompra(
             dado,
             chave,
-            referencias
-          )}`
+            referencias,
+          )}`,
       )
       .join(" • ");
   }
@@ -329,12 +274,7 @@ export function formatarValorCompra(
    VARIAÇÃO DE VALORES
 ========================================================= */
 
-function variacao(
-  antes,
-  depois,
-  campo,
-  unidade = ""
-) {
+function variacao(antes, depois, campo, unidade = "") {
   const a = n(antes);
   const b = n(depois);
 
@@ -347,25 +287,19 @@ function variacao(
   if (MONETARIOS.has(campo)) {
     return (
       `${direcao} de ${dinheiro(Math.abs(b - a))}` +
-      (campo === "preco_unitario"
-        ? " por unidade"
-        : "")
+      (campo === "preco_unitario" ? " por unidade" : "")
     );
   }
 
   if (QUANTIDADES.has(campo)) {
     return (
       `${direcao} de ${quant(Math.abs(b - a))}` +
-      (unidade
-        ? ` ${protegerDadosPagamento(unidade)}`
-        : "")
+      (unidade ? ` ${protegerDadosPagamento(unidade)}` : "")
     );
   }
 
   if (campo === "nDias") {
-    return `${direcao} de ${quant(
-      Math.abs(b - a)
-    )} dias`;
+    return `${direcao} de ${quant(Math.abs(b - a))} dias`;
   }
 
   return "";
@@ -375,14 +309,8 @@ function variacao(
    IDENTIFICAÇÃO DO PRODUTO
 ========================================================= */
 
-function identificarProduto(
-  codigoItem,
-  mudanca,
-  referencias
-) {
-  const atual = obj(
-    referencias.itens?.[String(codigoItem)]
-  );
+function identificarProduto(codigoItem, mudanca, referencias) {
+  const atual = obj(referencias.itens?.[String(codigoItem)]);
 
   const anterior = obj(mudanca.anterior);
   const novo = obj(mudanca.novo);
@@ -396,20 +324,11 @@ function identificarProduto(
   return {
     codigoItem: String(codigoItem),
 
-    descricao: protegerDadosPagamento(
-      item.descricao ||
-        "Produto sem descrição disponível"
-    ),
+    descricao: protegerDadosPagamento(item.descricao || "Produto sem descrição disponível"),
 
-    codigoComercial: protegerDadosPagamento(
-      item.codigo_comercial ||
-        item.codigoComercial ||
-        ""
-    ),
+    codigoComercial: protegerDadosPagamento(item.codigo_comercial || item.codigoComercial || ""),
 
-    unidade: protegerDadosPagamento(
-      item.unidade || ""
-    ),
+    unidade: protegerDadosPagamento(item.unidade || ""),
   };
 }
 
@@ -418,57 +337,26 @@ function nomeProduto(produto) {
     return "";
   }
 
-  return (
-    produto.descricao +
-    (produto.codigoComercial
-      ? ` — cód. ${produto.codigoComercial}`
-      : "")
-  );
+  return produto.descricao + (produto.codigoComercial ? ` — cód. ${produto.codigoComercial}` : "");
 }
 
 /* =========================================================
    CRIAR MUDANÇA
 ========================================================= */
 
-function criarMudanca(
-  titulo,
-  anterior,
-  novo,
-  campo,
-  referencias,
-  produto = null
-) {
+function criarMudanca(titulo, anterior, novo, campo, referencias, produto = null) {
   return {
-    campo: protegerDadosPagamento(
-      produto
-        ? `${titulo} • ${nomeProduto(produto)}`
-        : titulo
-    ),
+    campo: protegerDadosPagamento(produto ? `${titulo} • ${nomeProduto(produto)}` : titulo),
 
     tituloCurto: protegerDadosPagamento(titulo),
 
     produto,
 
-    anterior: formatarValorCompra(
-      anterior,
-      campo,
-      referencias
-    ),
+    anterior: formatarValorCompra(anterior, campo, referencias),
 
-    novo: formatarValorCompra(
-      novo,
-      campo,
-      referencias
-    ),
+    novo: formatarValorCompra(novo, campo, referencias),
 
-    variacao: protegerDadosPagamento(
-      variacao(
-        anterior,
-        novo,
-        campo,
-        produto?.unidade
-      )
-    ),
+    variacao: protegerDadosPagamento(variacao(anterior, novo, campo, produto?.unidade)),
   };
 }
 
@@ -489,95 +377,43 @@ const DEPARTAMENTO = [
   ["nValor", "Valor do rateio"],
 ];
 
-function compararListas(
-  mudanca,
-  tipo,
-  referencias
-) {
-  const antes = Array.isArray(mudanca.anterior)
-    ? mudanca.anterior
-    : [];
+function compararListas(mudanca, tipo, referencias) {
+  const antes = Array.isArray(mudanca.anterior) ? mudanca.anterior : [];
 
-  const depois = Array.isArray(mudanca.novo)
-    ? mudanca.novo
-    : [];
+  const depois = Array.isArray(mudanca.novo) ? mudanca.novo : [];
 
   const parcelas = tipo === "parcelas";
 
-  const idCampo = parcelas
-    ? "nParcela"
-    : "cCodDepto";
+  const idCampo = parcelas ? "nParcela" : "cCodDepto";
 
-  const campos = parcelas
-    ? PARCELA
-    : DEPARTAMENTO;
+  const campos = parcelas ? PARCELA : DEPARTAMENTO;
 
-  const a = new Map(
-    antes.map((v, i) => [
-      String(v?.[idCampo] ?? i),
-      obj(v),
-    ])
-  );
+  const a = new Map(antes.map((v, i) => [String(v?.[idCampo] ?? i), obj(v)]));
 
-  const b = new Map(
-    depois.map((v, i) => [
-      String(v?.[idCampo] ?? i),
-      obj(v),
-    ])
-  );
+  const b = new Map(depois.map((v, i) => [String(v?.[idCampo] ?? i), obj(v)]));
 
   const saida = [];
 
-  for (
-    const id of new Set([
-      ...a.keys(),
-      ...b.keys(),
-    ])
-  ) {
+  for (const id of new Set([...a.keys(), ...b.keys()])) {
     const anterior = a.get(id);
     const novo = b.get(id);
 
     const titulo = parcelas
       ? `Parcela ${id}`
-      : referencia(
-          id,
-          referencias.departamentos,
-          "Departamento Omie"
-        );
+      : referencia(id, referencias.departamentos, "Departamento Omie");
 
     if (!anterior || !novo) {
-      const rotulo =
-        `${titulo} ` +
-        (novo ? "adicionada" : "removida");
+      const rotulo = `${titulo} ` + (novo ? "adicionada" : "removida");
 
-      saida.push(
-        criarMudanca(
-          rotulo,
-          anterior ?? null,
-          novo ?? null,
-          "",
-          referencias
-        )
-      );
+      saida.push(criarMudanca(rotulo, anterior ?? null, novo ?? null, "", referencias));
 
       continue;
     }
 
     for (const [campo, nome] of campos) {
-      if (
-        !iguais(
-          anterior[campo],
-          novo[campo]
-        )
-      ) {
+      if (!iguais(anterior[campo], novo[campo])) {
         saida.push(
-          criarMudanca(
-            `${titulo} • ${nome}`,
-            anterior[campo],
-            novo[campo],
-            campo,
-            referencias
-          )
+          criarMudanca(`${titulo} • ${nome}`, anterior[campo], novo[campo], campo, referencias),
         );
       }
     }
@@ -605,10 +441,7 @@ const FRETE = {
    EXTRAIR ALTERAÇÕES
 ========================================================= */
 
-export function extrairMudancasCompra(
-  evento,
-  referencias = {}
-) {
+export function extrairMudancasCompra(evento, referencias = {}) {
   const saida = [];
   const detalhes = obj(evento?.detalhes);
 
@@ -624,36 +457,22 @@ export function extrairMudancasCompra(
 
   const categoriaGeral = obj(detalhes.categoria);
 
-  const categoriasProdutos = Object.entries(detalhes)
-    .filter(([chave, entrada]) =>
-      /^item_\d+_categoria$/.test(chave) &&
-      !iguais(
-        obj(entrada).anterior,
-        obj(entrada).novo
-      )
-    );
+  const categoriasProdutos = Object.entries(detalhes).filter(
+    ([chave, entrada]) =>
+      /^item_\d+_categoria$/.test(chave) && !iguais(obj(entrada).anterior, obj(entrada).novo),
+  );
 
   const categoriaProdutoUnico =
-    categoriasProdutos.length === 1
-      ? obj(categoriasProdutos[0][1])
-      : null;
+    categoriasProdutos.length === 1 ? obj(categoriasProdutos[0][1]) : null;
 
   const categoriaGeralRedundante =
     Object.prototype.hasOwnProperty.call(detalhes, "categoria") &&
     !iguais(categoriaGeral.anterior, categoriaGeral.novo) &&
     categoriaProdutoUnico !== null &&
-    iguais(
-      categoriaGeral.anterior,
-      categoriaProdutoUnico.anterior
-    ) &&
-    iguais(
-      categoriaGeral.novo,
-      categoriaProdutoUnico.novo
-    );
+    iguais(categoriaGeral.anterior, categoriaProdutoUnico.anterior) &&
+    iguais(categoriaGeral.novo, categoriaProdutoUnico.novo);
 
-  for (
-    const [chave, entrada] of Object.entries(detalhes)
-  ) {
+  for (const [chave, entrada] of Object.entries(detalhes)) {
     const mudanca = obj(entrada);
 
     // Evita repetir a mesma transição de categoria do produto.
@@ -664,36 +483,18 @@ export function extrairMudancasCompra(
 
     // Identificadores técnicos não são mudanças comerciais.
 
-    if (
-      chave === "etapa" ||
-      chave === "codigo" ||
-      chave === "codigo_integracao"
-    ) {
+    if (chave === "etapa" || chave === "codigo" || chave === "codigo_integracao") {
       continue;
     }
 
-    if (
-      iguais(
-        mudanca.anterior,
-        mudanca.novo
-      )
-    ) {
+    if (iguais(mudanca.anterior, mudanca.novo)) {
       continue;
     }
 
     // PARCELAS E DEPARTAMENTOS
 
-    if (
-      chave === "parcelas" ||
-      chave === "departamentos"
-    ) {
-      saida.push(
-        ...compararListas(
-          mudanca,
-          chave,
-          referencias
-        )
-      );
+    if (chave === "parcelas" || chave === "departamentos") {
+      saida.push(...compararListas(mudanca, chave, referencias));
 
       continue;
     }
@@ -704,27 +505,16 @@ export function extrairMudancasCompra(
       const anterior = obj(mudanca.anterior);
       const novo = obj(mudanca.novo);
 
-      for (
-        const campo of new Set([
-          ...Object.keys(anterior),
-          ...Object.keys(novo),
-        ])
-      ) {
-        if (
-          !iguais(
-            anterior[campo],
-            novo[campo]
-          )
-        ) {
+      for (const campo of new Set([...Object.keys(anterior), ...Object.keys(novo)])) {
+        if (!iguais(anterior[campo], novo[campo])) {
           saida.push(
             criarMudanca(
-              FRETE[campo] ||
-                `Frete • ${campo}`,
+              FRETE[campo] || `Frete • ${campo}`,
               anterior[campo],
               novo[campo],
               campo,
-              referencias
-            )
+              referencias,
+            ),
           );
         }
       }
@@ -734,62 +524,37 @@ export function extrairMudancasCompra(
 
     // ITEM ADICIONADO OU REMOVIDO
 
-    const addRm =
-      /^(adicionado|removido)_(\d+)$/.exec(chave);
+    const addRm = /^(adicionado|removido)_(\d+)$/.exec(chave);
 
     if (addRm) {
-      const adicionado =
-        addRm[1] === "adicionado";
+      const adicionado = addRm[1] === "adicionado";
 
-      const produto = identificarProduto(
-        addRm[2],
-        mudanca,
-        referencias
-      );
+      const produto = identificarProduto(addRm[2], mudanca, referencias);
 
-      const dados = obj(
-        adicionado
-          ? mudanca.novo
-          : mudanca.anterior
-      );
+      const dados = obj(adicionado ? mudanca.novo : mudanca.anterior);
 
       const resumo = [
         nomeProduto(produto),
 
-        `Quantidade: ${quant(
-          dados.quantidade
-        )} ${produto.unidade}`,
+        `Quantidade: ${quant(dados.quantidade)} ${produto.unidade}`,
 
-        `Preço unitário: ${dinheiro(
-          dados.preco_unitario
-        )}`,
+        `Preço unitário: ${dinheiro(dados.preco_unitario)}`,
 
-        `Valor do item: ${dinheiro(
-          dados.valor_total
-        )}`,
+        `Valor do item: ${dinheiro(dados.valor_total)}`,
       ].join("\n");
 
       saida.push({
-        campo:
-          `${
-            adicionado
-              ? "Produto adicionado"
-              : "Produto removido"
-          } • ${nomeProduto(produto)}`,
+        campo: `${
+          adicionado ? "Produto adicionado" : "Produto removido"
+        } • ${nomeProduto(produto)}`,
 
-        tituloCurto: adicionado
-          ? "Produto adicionado"
-          : "Produto removido",
+        tituloCurto: adicionado ? "Produto adicionado" : "Produto removido",
 
         produto,
 
-        anterior: adicionado
-          ? "Não constava no pedido"
-          : protegerDadosPagamento(resumo),
+        anterior: adicionado ? "Não constava no pedido" : protegerDadosPagamento(resumo),
 
-        novo: adicionado
-          ? protegerDadosPagamento(resumo)
-          : "Removido do pedido",
+        novo: adicionado ? protegerDadosPagamento(resumo) : "Removido do pedido",
 
         variacao: "",
       });
@@ -799,63 +564,28 @@ export function extrairMudancasCompra(
 
     // ALTERAÇÃO DE ITEM EXISTENTE
 
-    const item =
-      /^item_(\d+)_(.+)$/.exec(chave);
+    const item = /^item_(\d+)_(.+)$/.exec(chave);
 
     if (item) {
-      const produto = identificarProduto(
-        item[1],
-        mudanca,
-        referencias
-      );
+      const produto = identificarProduto(item[1], mudanca, referencias);
 
-      const nome =
-        NOMES[item[2]] ||
-        mudanca.campo ||
-        item[2].replaceAll("_", " ");
+      const nome = NOMES[item[2]] || mudanca.campo || item[2].replaceAll("_", " ");
 
-      saida.push(
-        criarMudanca(
-          nome,
-          mudanca.anterior,
-          mudanca.novo,
-          item[2],
-          referencias,
-          produto
-        )
-      );
+      saida.push(criarMudanca(nome, mudanca.anterior, mudanca.novo, item[2], referencias, produto));
 
       continue;
     }
 
     // INFORMAÇÕES GERAIS
 
-    const nome =
-      NOMES[chave] ||
-      mudanca.campo ||
-      chave.replaceAll("_", " ");
+    const nome = NOMES[chave] || mudanca.campo || chave.replaceAll("_", " ");
 
-    saida.push(
-      criarMudanca(
-        nome,
-        mudanca.anterior,
-        mudanca.novo,
-        chave,
-        referencias
-      )
-    );
+    saida.push(criarMudanca(nome, mudanca.anterior, mudanca.novo, chave, referencias));
   }
 
   function importante(mudanca) {
-    return /preço|valor|quantidade|vencimento|prazo/i.test(
-      mudanca.tituloCurto
-    )
-      ? 0
-      : 1;
+    return /preço|valor|quantidade|vencimento|prazo/i.test(mudanca.tituloCurto) ? 0 : 1;
   }
 
-  return saida.sort(
-    (a, b) =>
-      importante(a) - importante(b)
-  );
+  return saida.sort((a, b) => importante(a) - importante(b));
 }

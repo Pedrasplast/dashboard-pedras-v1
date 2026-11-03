@@ -8,10 +8,7 @@ export function PedidosErro({ erro }) {
       </div>
 
       <h3>Não foi possível carregar os pedidos</h3>
-      <p>
-        {erro?.message ||
-          "Ocorreu um erro ao consultar os pedidos armazenados."}
-      </p>
+      <p>{erro?.message || "Ocorreu um erro ao consultar os pedidos armazenados."}</p>
     </div>
   );
 }
@@ -42,9 +39,7 @@ export function PedidosVazio({
       </div>
 
       <h3>
-        {visualizandoCancelados
-          ? "Nenhum pedido cancelado encontrado"
-          : "Nenhum pedido encontrado"}
+        {visualizandoCancelados ? "Nenhum pedido cancelado encontrado" : "Nenhum pedido encontrado"}
       </h3>
 
       <p>
@@ -58,11 +53,7 @@ export function PedidosVazio({
       </p>
 
       {possuiFiltro && !visualizandoCancelados && (
-        <button
-          type="button"
-          className="pedidos-btn-limpar-vazio"
-          onClick={onLimparFiltros}
-        >
+        <button type="button" className="pedidos-btn-limpar-vazio" onClick={onLimparFiltros}>
           Limpar filtros
         </button>
       )}

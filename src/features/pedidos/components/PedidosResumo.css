@@ -12,7 +12,6 @@
    - cores especificas de cards mantidas localmente.
 ========================================================= */
 
-
 /* =========================================================
    GRID PRINCIPAL
 ========================================================= */
@@ -20,20 +19,12 @@
 .pedidos-resumo {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      5,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 
   gap: 15px;
 
   margin-bottom: var(--space-5);
 }
-
 
 /* =========================================================
    CARD
@@ -51,26 +42,17 @@
 
   gap: 14px;
 
-  padding:
-    18px
-    19px;
+  padding: 18px 19px;
 
   overflow: hidden;
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-lg);
 
   background: var(--color-surface);
 
-  box-shadow:
-    0
-    2px
-    8px
-    rgb(15 23 42 / 0.035);
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.035);
 
   font: inherit;
 
@@ -86,35 +68,25 @@
     border-color var(--transition-base);
 }
 
-
 /* =========================================================
    CARD - HOVER
 ========================================================= */
 
 .pedidos-card:hover:not(:disabled) {
-  transform:
-    translateY(-2px);
+  transform: translateY(-2px);
 
-  border-color:
-    var(--color-border-strong);
+  border-color: var(--color-border-strong);
 
-  box-shadow:
-    0
-    7px
-    20px
-    rgb(15 23 42 / 0.09);
+  box-shadow: 0 7px 20px rgb(15 23 42 / 0.09);
 }
-
 
 /* =========================================================
    CARD - ACTIVE
 ========================================================= */
 
 .pedidos-card:active:not(:disabled) {
-  transform:
-    translateY(0);
+  transform: translateY(0);
 }
-
 
 /* =========================================================
    CARD - FOCO
@@ -123,17 +95,10 @@
 .pedidos-card:focus-visible {
   outline: 0;
 
-  border-color:
-    var(--color-primary);
+  border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    CARD - DISABLED
@@ -143,7 +108,6 @@
   cursor: default;
 }
 
-
 /* =========================================================
    ICONE
 ========================================================= */
@@ -152,10 +116,7 @@
   width: 46px;
   height: 46px;
 
-  flex:
-    0
-    0
-    46px;
+  flex: 0 0 46px;
 
   display: flex;
   align-items: center;
@@ -163,13 +124,10 @@
 
   border-radius: 11px;
 
-  background:
-    var(--color-primary-soft);
+  background: var(--color-primary-soft);
 
-  color:
-    var(--color-primary);
+  color: var(--color-primary);
 }
-
 
 /* =========================================================
    CONTEUDO
@@ -185,21 +143,17 @@
   gap: 5px;
 }
 
-
 /* =========================================================
    LABEL
 ========================================================= */
 
 .pedidos-card-label {
-  color:
-    var(--color-text-muted);
+  color: var(--color-text-muted);
 
-  font-size:
-    var(--font-size-caption);
+  font-size: var(--font-size-caption);
 
   font-weight: 550;
 }
-
 
 /* =========================================================
    VALOR
@@ -208,8 +162,7 @@
 .pedidos-card strong {
   overflow: hidden;
 
-  color:
-    var(--color-text);
+  color: var(--color-text);
 
   font-size: 21px;
 
@@ -220,30 +173,22 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    PEDIDOS ATRASADOS
 ========================================================= */
 
 .pedidos-card--atrasados {
-  border-color:
-    #fecaca;
+  border-color: #fecaca;
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--color-surface) 0%,
-      #fffafa 55%,
-      var(--color-danger-soft) 100%
-    );
+  background: linear-gradient(
+    135deg,
+    var(--color-surface) 0%,
+    #fffafa 55%,
+    var(--color-danger-soft) 100%
+  );
 
-  box-shadow:
-    0
-    3px
-    12px
-    rgb(220 38 38 / 0.06);
+  box-shadow: 0 3px 12px rgb(220 38 38 / 0.06);
 }
-
 
 /* =========================================================
    LINHA LATERAL - ATRASADOS
@@ -260,128 +205,90 @@
 
   width: 4px;
 
-  background:
-    var(--color-danger);
+  background: var(--color-danger);
 }
-
 
 /* =========================================================
    ICONE - ATRASADOS
 ========================================================= */
 
-.pedidos-card--atrasados
-  .pedidos-card-icon {
-  background:
-    #fee2e2;
+.pedidos-card--atrasados .pedidos-card-icon {
+  background: #fee2e2;
 
-  color:
-    var(--color-danger);
+  color: var(--color-danger);
 }
-
 
 /* =========================================================
    LABEL - ATRASADOS
 ========================================================= */
 
-.pedidos-card--atrasados
-  .pedidos-card-label {
-  color:
-    var(--color-danger-hover);
+.pedidos-card--atrasados .pedidos-card-label {
+  color: var(--color-danger-hover);
 }
-
 
 /* =========================================================
    VALOR - ATRASADOS
 ========================================================= */
 
-.pedidos-card--atrasados
-  strong {
-  color:
-    var(--color-danger);
+.pedidos-card--atrasados strong {
+  color: var(--color-danger);
 }
-
 
 /* =========================================================
    QUANTIDADE
 ========================================================= */
 
-.pedidos-card--quantidade
-  .pedidos-card-icon {
-  background:
-    #f5f3ff;
+.pedidos-card--quantidade .pedidos-card-icon {
+  background: #f5f3ff;
 
-  color:
-    #7c3aed;
+  color: #7c3aed;
 }
-
 
 /* =========================================================
    PROXIMOS 7 DIAS
 ========================================================= */
 
-.pedidos-card--proximos
-  .pedidos-card-icon {
-  background:
-    var(--color-success-soft);
+.pedidos-card--proximos .pedidos-card-icon {
+  background: var(--color-success-soft);
 
-  color:
-    var(--color-success);
+  color: var(--color-success);
 }
-
 
 /* =========================================================
    FATURAMENTO DO DIA
 ========================================================= */
 
 .pedidos-card--hoje {
-  border-color:
-    #bae6fd;
+  border-color: #bae6fd;
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--color-surface) 0%,
-      #f8fdff 55%,
-      #f0f9ff 100%
-    );
+  background: linear-gradient(135deg, var(--color-surface) 0%, #f8fdff 55%, #f0f9ff 100%);
 }
-
 
 /* =========================================================
    ICONE - FATURAMENTO DO DIA
 ========================================================= */
 
-.pedidos-card--hoje
-  .pedidos-card-icon {
-  background:
-    #e0f2fe;
+.pedidos-card--hoje .pedidos-card-icon {
+  background: #e0f2fe;
 
-  color:
-    #0284c7;
+  color: #0284c7;
 }
-
 
 /* =========================================================
    LABEL - FATURAMENTO DO DIA
 ========================================================= */
 
-.pedidos-card--hoje
-  .pedidos-card-label {
-  color:
-    #0369a1;
+.pedidos-card--hoje .pedidos-card-label {
+  color: #0369a1;
 }
-
 
 /* =========================================================
    VALOR - FATURAMENTO DO DIA
 ========================================================= */
 
-.pedidos-card--hoje
-  strong {
-  color:
-    #0369a1;
+.pedidos-card--hoje strong {
+  color: #0369a1;
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 1350px
@@ -389,17 +296,9 @@
 
 @media (max-width: 1350px) {
   .pedidos-resumo {
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 900px
@@ -407,17 +306,9 @@
 
 @media (max-width: 900px) {
   .pedidos-resumo {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 520px
@@ -425,7 +316,6 @@
 
 @media (max-width: 520px) {
   .pedidos-resumo {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
 }

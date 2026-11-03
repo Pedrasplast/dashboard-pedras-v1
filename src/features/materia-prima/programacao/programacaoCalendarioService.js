@@ -1,16 +1,10 @@
 import { supabase } from "@/lib/supabaseClient";
 
-import {
-  buscarCadastroReceitas,
-} from "@/features/cadastros/receitas/cadastroReceitasService";
+import { buscarCadastroReceitas } from "@/features/cadastros/receitas/cadastroReceitasService";
 
-import {
-  buscarProdutosPP,
-} from "../produtos/produtosPPService";
+import { buscarProdutosPP } from "../produtos/produtosPPService";
 
-import {
-  buscarProgramacaoAgrupada,
-} from "./programacaoDiariaService";
+import { buscarProgramacaoAgrupada } from "./programacaoDiariaService";
 
 /* =========================================================
    UTILITÁRIOS
@@ -19,34 +13,20 @@ import {
 function numero(valor, fallback = 0) {
   const convertido = Number(valor);
 
-  return Number.isFinite(convertido)
-    ? convertido
-    : fallback;
+  return Number.isFinite(convertido) ? convertido : fallback;
 }
 
 function montarProdutos(produtos = []) {
   return (Array.isArray(produtos) ? produtos : [])
     .filter((produto) => produto?.ativo !== false)
     .map((produto) => {
-      const codigo = String(
-        produto?.codigoProduto ?? produto?.codigo ?? "",
-      ).trim();
+      const codigo = String(produto?.codigoProduto ?? produto?.codigo ?? "").trim();
 
       return {
         codigo,
-        descricao:
-          produto?.nomeProduto ??
-          produto?.descricao ??
-          "Sem descrição",
-        materialId:
-          produto?.materialId ??
-          produto?.material_id ??
-          null,
-        materialNome: String(
-          produto?.materialNome ??
-          produto?.material_nome ??
-          "",
-        ).trim(),
+        descricao: produto?.nomeProduto ?? produto?.descricao ?? "Sem descrição",
+        materialId: produto?.materialId ?? produto?.material_id ?? null,
+        materialNome: String(produto?.materialNome ?? produto?.material_nome ?? "").trim(),
         pesoKg: numero(produto?.pesoKg, null),
         cicloSegundos: numero(produto?.cicloSegundos, null),
         cavidadeMolde: numero(produto?.cavidadeMolde, null),
@@ -63,11 +43,7 @@ function montarProdutos(produtos = []) {
 
 function montarReceitas(receitas = []) {
   return (Array.isArray(receitas) ? receitas : [])
-    .filter(
-      (receita) =>
-        receita?.ativo === true &&
-        receita?.configurada === true,
-    )
+    .filter((receita) => receita?.ativo === true && receita?.configurada === true)
     .map((receita) => ({
       id: receita.id,
       nome: String(receita?.nome ?? "").trim(),
@@ -75,15 +51,11 @@ function montarReceitas(receitas = []) {
       percentualTotal: numero(receita?.percentualTotal),
       configurada: receita?.configurada === true,
       ativo: receita?.ativo === true,
-      itens: (Array.isArray(receita?.itens) ? receita.itens : []).map(
-        (item) => ({
-          fornecedorId: item?.fornecedorId ?? null,
-          fornecedorNome: String(
-            item?.fornecedorNome ?? "Fornecedor",
-          ).trim(),
-          percentual: numero(item?.percentual),
-        }),
-      ),
+      itens: (Array.isArray(receita?.itens) ? receita.itens : []).map((item) => ({
+        fornecedorId: item?.fornecedorId ?? null,
+        fornecedorNome: String(item?.fornecedorNome ?? "Fornecedor").trim(),
+        percentual: numero(item?.percentual),
+      })),
     }))
     .filter((receita) => receita.id && receita.nome)
     .sort((a, b) =>
@@ -109,20 +81,10 @@ export async function buscarProgramacaoComCalendario() {
 
   const produtos = montarProdutos(produtosBrutos);
 
-  const produtosPorCodigo = new Map(
-    produtos.map((produto) => [
-      String(produto.codigo),
-      produto,
-    ]),
-  );
+  const produtosPorCodigo = new Map(produtos.map((produto) => [String(produto.codigo), produto]));
 
-  const programacao = (Array.isArray(programacaoBruta)
-    ? programacaoBruta
-    : []
-  ).map((item) => {
-    const produto = produtosPorCodigo.get(
-      String(item?.codigoProduto ?? ""),
-    );
+  const programacao = (Array.isArray(programacaoBruta) ? programacaoBruta : []).map((item) => {
+    const produto = produtosPorCodigo.get(String(item?.codigoProduto ?? ""));
 
     return {
       ...item,
@@ -143,9 +105,7 @@ export async function buscarProgramacaoComCalendario() {
 ========================================================= */
 
 export async function listarPeriodosProgramacao() {
-  const { data, error } = await supabase.rpc(
-    "listar_periodos_programacao",
-  );
+  const { data, error } = await supabase.rpc("listar_periodos_programacao");
 
   if (error) {
     throw error;
@@ -160,9 +120,7 @@ export async function listarPeriodosProgramacao() {
     periodoOrdem: numero(registro?.periodo_ordem),
     horaInicio: String(registro?.hora_inicio ?? "").slice(0, 5),
     horaFim: String(registro?.hora_fim ?? "").slice(0, 5),
-    descontoIntervaloMinutos: numero(
-      registro?.desconto_intervalo_minutos,
-    ),
+    descontoIntervaloMinutos: numero(registro?.desconto_intervalo_minutos),
     duracaoMinutos: numero(registro?.duracao_minutos),
   }));
 }
@@ -179,36 +137,25 @@ export async function salvarProgramacaoCalendario({
   quantidade,
   dias,
 }) {
-  const diasNormalizados = (Array.isArray(dias) ? dias : []).map(
-    (dia) => ({
-      data: String(dia?.data ?? "").trim(),
-      perfil_horas: String(dia?.perfilHoras ?? "").trim(),
-      minutos_solicitados: Math.trunc(
-        numero(dia?.minutosSolicitados),
-      ),
-      minutos_descontados: Math.trunc(
-        numero(dia?.minutosDescontados),
-      ),
-      receita_id:
-        dia?.receitaId === null ||
-        dia?.receitaId === undefined ||
-        dia?.receitaId === ""
-          ? null
-          : Number(dia.receitaId),
-    }),
-  );
+  const diasNormalizados = (Array.isArray(dias) ? dias : []).map((dia) => ({
+    data: String(dia?.data ?? "").trim(),
+    perfil_horas: String(dia?.perfilHoras ?? "").trim(),
+    minutos_solicitados: Math.trunc(numero(dia?.minutosSolicitados)),
+    minutos_descontados: Math.trunc(numero(dia?.minutosDescontados)),
+    receita_id:
+      dia?.receitaId === null || dia?.receitaId === undefined || dia?.receitaId === ""
+        ? null
+        : Number(dia.receitaId),
+  }));
 
-  const { data, error } = await supabase.rpc(
-    "salvar_programacao_calendario_v3",
-    {
-      p_id: id,
-      p_codigo_produto: String(codigoProduto ?? "").trim(),
-      p_injetora: String(injetora ?? "").trim(),
-      p_ativo: Boolean(ativo),
-      p_quantidade: Math.max(1, Math.trunc(numero(quantidade, 1))),
-      p_dias: diasNormalizados,
-    },
-  );
+  const { data, error } = await supabase.rpc("salvar_programacao_calendario_v3", {
+    p_id: id,
+    p_codigo_produto: String(codigoProduto ?? "").trim(),
+    p_injetora: String(injetora ?? "").trim(),
+    p_ativo: Boolean(ativo),
+    p_quantidade: Math.max(1, Math.trunc(numero(quantidade, 1))),
+    p_dias: diasNormalizados,
+  });
 
   if (error) {
     throw error;

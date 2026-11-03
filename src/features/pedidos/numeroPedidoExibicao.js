@@ -7,9 +7,7 @@ function obterTimestampCriacao(valor) {
 
   const timestamp = new Date(valor).getTime();
 
-  return Number.isFinite(timestamp)
-    ? timestamp
-    : Number.POSITIVE_INFINITY;
+  return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
 }
 
 export function criarMapaNumeroPedidoExibicao(registros) {
@@ -17,31 +15,19 @@ export function criarMapaNumeroPedidoExibicao(registros) {
 
   for (const registro of registros ?? []) {
     const codigo = Number(
-      registro?.codigo_pedido_omie ??
-        registro?.codigoPedidoOmie ??
-        registro?.codigoPedido,
+      registro?.codigo_pedido_omie ?? registro?.codigoPedidoOmie ?? registro?.codigoPedido,
     );
 
     const numeroPedido = String(
-      registro?.numero_pedido ??
-        registro?.pedidoOriginal ??
-        registro?.pedido ??
-        "",
+      registro?.numero_pedido ?? registro?.pedidoOriginal ?? registro?.pedido ?? "",
     ).trim();
 
-    if (
-      !Number.isFinite(codigo) ||
-      codigo <= 0 ||
-      !numeroPedido
-    ) {
+    if (!Number.isFinite(codigo) || codigo <= 0 || !numeroPedido) {
       continue;
     }
 
     const criadoEm = obterTimestampCriacao(
-      registro?.criado_em ??
-        registro?.criadoEm ??
-        registro?.data_pedido ??
-        registro?.data,
+      registro?.criado_em ?? registro?.criadoEm ?? registro?.data_pedido ?? registro?.data,
     );
 
     const existente = pedidosPorCodigo.get(codigo);
@@ -77,12 +63,7 @@ export function criarMapaNumeroPedidoExibicao(registros) {
     });
 
     grupo.forEach((pedido, indice) => {
-      mapaExibicao.set(
-        pedido.codigo,
-        indice === 0
-          ? numeroPedido
-          : `${numeroPedido}/${indice}`,
-      );
+      mapaExibicao.set(pedido.codigo, indice === 0 ? numeroPedido : `${numeroPedido}/${indice}`);
     });
   }
 
@@ -99,10 +80,7 @@ export async function carregarMapaNumeroPedidoExibicao(supabase) {
       .select("codigo_pedido_omie,numero_pedido,criado_em")
       .order("criado_em", { ascending: true })
       .order("codigo_pedido_omie", { ascending: true })
-      .range(
-        inicio,
-        inicio + TAMANHO_PAGINA_NUMERACAO - 1,
-      );
+      .range(inicio, inicio + TAMANHO_PAGINA_NUMERACAO - 1);
 
     if (error) {
       throw error;

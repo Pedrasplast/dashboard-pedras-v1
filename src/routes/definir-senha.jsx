@@ -1,14 +1,7 @@
-import {
-  createFileRoute,
-} from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-import DefinirSenhaPage
-  from "@/features/auth/DefinirSenhaPage";
+import DefinirSenhaPage from "@/features/auth/DefinirSenhaPage";
 
-export const Route =
-  createFileRoute(
-    "/definir-senha",
-  )({
-    component:
-      DefinirSenhaPage,
-  });
+export const Route = createFileRoute("/definir-senha")({
+  component: DefinirSenhaPage,
+});

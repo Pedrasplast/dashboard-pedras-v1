@@ -21,13 +21,11 @@
   color: var(--color-danger-hover);
 }
 
-
 .pedidos-consulta-cancelados > svg {
   flex: 0 0 auto;
 
   margin-top: 1px;
 }
-
 
 .pedidos-consulta-cancelados > div {
   display: flex;
@@ -35,14 +33,12 @@
   gap: 3px;
 }
 
-
 .pedidos-consulta-cancelados strong {
   color: #991b1b;
 
   font-size: 12px;
   font-weight: 800;
 }
-
 
 .pedidos-consulta-cancelados span {
   color: #b45353;

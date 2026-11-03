@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
 
-
 export const SITUACOES_ENTRADAS_COMPRAS = [
   {
     valor: "TODAS",
@@ -20,7 +19,6 @@ export const SITUACOES_ENTRADAS_COMPRAS = [
   },
 ];
 
-
 export const DATAS_REFERENCIA_ENTRADAS_COMPRAS = [
   {
     valor: "EMISSAO",
@@ -35,7 +33,6 @@ export const DATAS_REFERENCIA_ENTRADAS_COMPRAS = [
     nome: "Recebimento",
   },
 ];
-
 
 /* =========================================================
    ORIGEM: OMIE (23/10)
@@ -72,32 +69,21 @@ function texto(valor) {
   return String(valor ?? "").trim();
 }
 
-
 function numero(valor, padrao = 0) {
   const convertido = Number(valor);
 
-  return Number.isFinite(convertido)
-    ? convertido
-    : padrao;
+  return Number.isFinite(convertido) ? convertido : padrao;
 }
 
-
 function numeroOpcional(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
   }
 
   const convertido = Number(valor);
 
-  return Number.isFinite(convertido)
-    ? convertido
-    : null;
+  return Number.isFinite(convertido) ? convertido : null;
 }
-
 
 /**
  * Converte um item de pedido do Omie em linhas do relatório:
@@ -116,9 +102,10 @@ export function normalizarItemOmie(registro) {
   const total = numero(registro.valor_total);
   const chave = `${registro.cod_ped_compra}-${registro.codigo_item}`;
   const fornecedorId = texto(registro.codigo_fornecedor) || "sem-fornecedor";
-  const materialId = registro.material_id != null
-    ? String(registro.material_id)
-    : `omie-${texto(registro.codigo_produto) || "sem-codigo"}`;
+  const materialId =
+    registro.material_id != null
+      ? String(registro.material_id)
+      : `omie-${texto(registro.codigo_produto) || "sem-codigo"}`;
 
   const base = {
     pedido: texto(registro.numero_pedido),
@@ -127,7 +114,8 @@ export function normalizarItemOmie(registro) {
     fornecedorId,
     fornecedor: texto(registro.fornecedor_nome) || "Fornecedor não encontrado",
     materialId,
-    material: texto(registro.material_nome) || texto(registro.descricao) || "Material não encontrado",
+    material:
+      texto(registro.material_nome) || texto(registro.descricao) || "Material não encontrado",
     preco: numeroOpcional(registro.preco_unitario),
     ipiPercentual: numeroOpcional(registro.ipi_percentual),
   };
@@ -161,47 +149,29 @@ export function normalizarItemOmie(registro) {
   return linhas;
 }
 
-function criarOpcoesUnicas(
-  registros,
-  campoId,
-  campoNome,
-) {
+function criarOpcoesUnicas(registros, campoId, campoNome) {
   const mapa = new Map();
 
   registros.forEach((registro) => {
     const id = registro?.[campoId];
     const nome = texto(registro?.[campoNome]);
 
-    if (
-      id === null ||
-      id === undefined ||
-      id === "" ||
-      !nome
-    ) {
+    if (id === null || id === undefined || id === "" || !nome) {
       return;
     }
 
-    mapa.set(
-      String(id),
-      {
-        id,
-        nome,
-      },
-    );
+    mapa.set(String(id), {
+      id,
+      nome,
+    });
   });
 
-  return [...mapa.values()].sort(
-    (a, b) =>
-      a.nome.localeCompare(
-        b.nome,
-        "pt-BR",
-        {
-          sensitivity: "base",
-        },
-      ),
+  return [...mapa.values()].sort((a, b) =>
+    a.nome.localeCompare(b.nome, "pt-BR", {
+      sensitivity: "base",
+    }),
   );
 }
-
 
 export function criarResultadoEntradasComprasVazio() {
   return {
@@ -210,7 +180,6 @@ export function criarResultadoEntradasComprasVazio() {
     materiais: [],
   };
 }
-
 
 /* =========================================================
    CONSULTA
@@ -235,25 +204,15 @@ export async function buscarRelatorioEntradasComprasMateriaPrima() {
     if (pagina.length < TAMANHO_PAGINA) break;
   }
 
-  const registros = itens
-    .flatMap(normalizarItemOmie)
-    .sort((a, b) => {
-      const dataA = a.recebido || a.previsaoRecebimento || a.emissao || "";
-      const dataB = b.recebido || b.previsaoRecebimento || b.emissao || "";
-      return dataB.localeCompare(dataA) || String(b.id).localeCompare(String(a.id));
-    });
+  const registros = itens.flatMap(normalizarItemOmie).sort((a, b) => {
+    const dataA = a.recebido || a.previsaoRecebimento || a.emissao || "";
+    const dataB = b.recebido || b.previsaoRecebimento || b.emissao || "";
+    return dataB.localeCompare(dataA) || String(b.id).localeCompare(String(a.id));
+  });
 
-  const fornecedoresFiltro = criarOpcoesUnicas(
-    registros,
-    "fornecedorId",
-    "fornecedor",
-  );
+  const fornecedoresFiltro = criarOpcoesUnicas(registros, "fornecedorId", "fornecedor");
 
-  const materiaisFiltro = criarOpcoesUnicas(
-    registros,
-    "materialId",
-    "material",
-  );
+  const materiaisFiltro = criarOpcoesUnicas(registros, "materialId", "material");
 
   return {
     registros,

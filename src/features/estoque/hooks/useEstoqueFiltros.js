@@ -1,8 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   CODIGO_LOCAL_ESTOQUE_MATRIZ,
@@ -10,85 +6,44 @@ import {
   SITUACAO_ESTOQUE,
 } from "../constants/estoque.constants";
 
-
 /* =========================================================
    DESCOBRIR LOCAL PADRÃO
 ========================================================= */
 
-function obterCodigoLocalPadrao(
-  locais,
-) {
-  if (
-    !Array.isArray(
-      locais,
-    ) ||
-    locais.length === 0
-  ) {
+function obterCodigoLocalPadrao(locais) {
+  if (!Array.isArray(locais) || locais.length === 0) {
     return "";
   }
-
 
   /* =======================================================
      1. LOCAL MARCADO COMO PADRÃO
   ======================================================= */
 
-  const localPadrao =
-    locais.find(
-      (local) =>
-        local.padrao,
-    );
+  const localPadrao = locais.find((local) => local.padrao);
 
-
-  if (
-    localPadrao
-      ?.codigoLocalEstoque
-  ) {
-    return String(
-      localPadrao
-        .codigoLocalEstoque,
-    );
+  if (localPadrao?.codigoLocalEstoque) {
+    return String(localPadrao.codigoLocalEstoque);
   }
-
 
   /* =======================================================
      2. MATRIZ CONFIGURADA
   ======================================================= */
 
-  const matriz =
-    locais.find(
-      (local) =>
-        String(
-          local.codigoLocalEstoque,
-        ) ===
-        CODIGO_LOCAL_ESTOQUE_MATRIZ,
-    );
+  const matriz = locais.find(
+    (local) => String(local.codigoLocalEstoque) === CODIGO_LOCAL_ESTOQUE_MATRIZ,
+  );
 
-
-  if (
-    matriz
-      ?.codigoLocalEstoque
-  ) {
-    return String(
-      matriz
-        .codigoLocalEstoque,
-    );
+  if (matriz?.codigoLocalEstoque) {
+    return String(matriz.codigoLocalEstoque);
   }
-
 
   /* =======================================================
      3. PRIMEIRO LOCAL DISPONÍVEL
   ======================================================= */
 
-  if (
-    locais[0]
-      ?.codigoLocalEstoque
-  ) {
-    return String(
-      locais[0]
-        .codigoLocalEstoque,
-    );
+  if (locais[0]?.codigoLocalEstoque) {
+    return String(locais[0].codigoLocalEstoque);
   }
-
 
   /* =======================================================
      4. TODOS
@@ -97,78 +52,34 @@ function obterCodigoLocalPadrao(
   return LOCAL_TODOS;
 }
 
-
 /* =========================================================
    HOOK
 ========================================================= */
 
-export default function useEstoqueFiltros({
-  locais = [],
-}) {
-  const [
-    localSelecionado,
-    setLocalSelecionado,
-  ] =
-    useState("");
+export default function useEstoqueFiltros({ locais = [] }) {
+  const [localSelecionado, setLocalSelecionado] = useState("");
 
+  const [pesquisa, setPesquisa] = useState("");
 
-  const [
-    pesquisa,
-    setPesquisa,
-  ] =
-    useState("");
-
-
-  const [
-    situacao,
-    setSituacao,
-  ] =
-    useState(
-      SITUACAO_ESTOQUE
-        .TODOS,
-    );
-
+  const [situacao, setSituacao] = useState(SITUACAO_ESTOQUE.TODOS);
 
   /* =======================================================
      LOCAL PADRÃO
   ======================================================= */
 
-  const codigoLocalPadrao =
-    useMemo(
-      () =>
-        obterCodigoLocalPadrao(
-          locais,
-        ),
-      [
-        locais,
-      ],
-    );
-
+  const codigoLocalPadrao = useMemo(() => obterCodigoLocalPadrao(locais), [locais]);
 
   /* =======================================================
      DEFINIR LOCAL INICIAL
   ======================================================= */
 
-  useEffect(
-    () => {
-      if (
-        localSelecionado ||
-        !codigoLocalPadrao
-      ) {
-        return;
-      }
+  useEffect(() => {
+    if (localSelecionado || !codigoLocalPadrao) {
+      return;
+    }
 
-
-      setLocalSelecionado(
-        codigoLocalPadrao,
-      );
-    },
-    [
-      codigoLocalPadrao,
-      localSelecionado,
-    ],
-  );
-
+    setLocalSelecionado(codigoLocalPadrao);
+  }, [codigoLocalPadrao, localSelecionado]);
 
   /* =======================================================
      VERIFICAR FILTROS ATIVOS
@@ -177,76 +88,34 @@ export default function useEstoqueFiltros({
      local padrão NÃO conta como filtro.
   ======================================================= */
 
-  const possuiFiltrosAtivos =
-    useMemo(
-      () => {
-        const localAlterado =
-          Boolean(
-            localSelecionado,
-          ) &&
-          Boolean(
-            codigoLocalPadrao,
-          ) &&
-          localSelecionado !==
-            codigoLocalPadrao;
+  const possuiFiltrosAtivos = useMemo(() => {
+    const localAlterado =
+      Boolean(localSelecionado) &&
+      Boolean(codigoLocalPadrao) &&
+      localSelecionado !== codigoLocalPadrao;
 
+    const pesquisaAtiva = Boolean(pesquisa.trim());
 
-        const pesquisaAtiva =
-          Boolean(
-            pesquisa.trim(),
-          );
+    const situacaoAlterada = situacao !== SITUACAO_ESTOQUE.TODOS;
 
-
-        const situacaoAlterada =
-          situacao !==
-          SITUACAO_ESTOQUE
-            .TODOS;
-
-
-        return (
-          localAlterado ||
-          pesquisaAtiva ||
-          situacaoAlterada
-        );
-      },
-      [
-        localSelecionado,
-        codigoLocalPadrao,
-        pesquisa,
-        situacao,
-      ],
-    );
-
+    return localAlterado || pesquisaAtiva || situacaoAlterada;
+  }, [localSelecionado, codigoLocalPadrao, pesquisa, situacao]);
 
   /* =======================================================
      LIMPAR FILTROS
   ======================================================= */
 
   function limparFiltros() {
-    if (
-      !possuiFiltrosAtivos
-    ) {
+    if (!possuiFiltrosAtivos) {
       return;
     }
 
+    setLocalSelecionado(codigoLocalPadrao || LOCAL_TODOS);
 
-    setLocalSelecionado(
-      codigoLocalPadrao ||
-        LOCAL_TODOS,
-    );
+    setPesquisa("");
 
-
-    setPesquisa(
-      "",
-    );
-
-
-    setSituacao(
-      SITUACAO_ESTOQUE
-        .TODOS,
-    );
+    setSituacao(SITUACAO_ESTOQUE.TODOS);
   }
-
 
   /* =======================================================
      RETORNO

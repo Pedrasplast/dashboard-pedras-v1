@@ -41,25 +41,16 @@ export const FILTROS_INICIAIS_PARADAS = Object.freeze({
 ========================================================= */
 
 function normalizarFiltros(filtros) {
-  const origem =
-    filtros &&
-    typeof filtros === "object"
-      ? filtros
-      : {};
+  const origem = filtros && typeof filtros === "object" ? filtros : {};
 
   return {
     ...FILTROS_INICIAIS_PARADAS,
 
     ...origem,
 
-    tipo:
-      Array.isArray(origem.tipo)
-        ? origem.tipo
-            .map((tipo) =>
-              String(tipo).trim(),
-            )
-            .filter(Boolean)
-        : [],
+    tipo: Array.isArray(origem.tipo)
+      ? origem.tipo.map((tipo) => String(tipo).trim()).filter(Boolean)
+      : [],
   };
 }
 
@@ -67,9 +58,7 @@ function normalizarFiltros(filtros) {
    MOTIVOS DISPONÍVEIS
 ========================================================= */
 
-function obterMotivosDisponiveis(
-  registros,
-) {
+function obterMotivosDisponiveis(registros) {
   if (!Array.isArray(registros)) {
     return [];
   }
@@ -78,9 +67,7 @@ function obterMotivosDisponiveis(
     registros
       .filter(ehRegistroParada)
       .map((registro) => {
-        const motivo = String(
-          registro?.motivo ?? "",
-        ).trim();
+        const motivo = String(registro?.motivo ?? "").trim();
 
         return motivo;
       })
@@ -92,9 +79,7 @@ function obterMotivosDisponiveis(
    TIPOS DISPONÍVEIS
 ========================================================= */
 
-function obterTiposDisponiveis(
-  registros,
-) {
+function obterTiposDisponiveis(registros) {
   if (!Array.isArray(registros)) {
     return [];
   }
@@ -102,11 +87,7 @@ function obterTiposDisponiveis(
   return valoresUnicosOrdenados(
     registros
       .filter(ehRegistroParada)
-      .map((registro) =>
-        String(
-          registro?.tipo ?? "",
-        ).trim(),
-      )
+      .map((registro) => String(registro?.tipo ?? "").trim())
       .filter(Boolean),
   );
 }
@@ -115,9 +96,7 @@ function obterTiposDisponiveis(
    HOOK PRINCIPAL
 ========================================================= */
 
-export default function useDashboardParadas(
-  filtros,
-) {
+export default function useDashboardParadas(filtros) {
   /* =======================================================
      DADOS
 
@@ -147,66 +126,30 @@ export default function useDashboardParadas(
      FILTROS NORMALIZADOS
   ======================================================= */
 
-  const filtrosNormalizados =
-    useMemo(
-      () =>
-        normalizarFiltros(
-          filtros,
-        ),
-      [filtros],
-    );
+  const filtrosNormalizados = useMemo(() => normalizarFiltros(filtros), [filtros]);
 
   /* =======================================================
      OPÇÕES DOS FILTROS
   ======================================================= */
 
-  const tiposDisponiveis =
-    useMemo(
-      () =>
-        obterTiposDisponiveis(
-          rawDados,
-        ),
-      [rawDados],
-    );
+  const tiposDisponiveis = useMemo(() => obterTiposDisponiveis(rawDados), [rawDados]);
 
-  const motivosDisponiveis =
-    useMemo(
-      () =>
-        obterMotivosDisponiveis(
-          rawDados,
-        ),
-      [rawDados],
-    );
+  const motivosDisponiveis = useMemo(() => obterMotivosDisponiveis(rawDados), [rawDados]);
 
   /* =======================================================
      DADOS DO PERÍODO ATUAL
   ======================================================= */
 
-  const dadosFiltrados =
-    useMemo(
-      () =>
-        filtrarParadas(
-          rawDados,
-          filtrosNormalizados,
-        ),
-      [
-        rawDados,
-        filtrosNormalizados,
-      ],
-    );
+  const dadosFiltrados = useMemo(
+    () => filtrarParadas(rawDados, filtrosNormalizados),
+    [rawDados, filtrosNormalizados],
+  );
 
   /* =======================================================
      CONSOLIDAÇÃO DO PERÍODO ATUAL
   ======================================================= */
 
-  const atual =
-    useMemo(
-      () =>
-        consolidarParadas(
-          dadosFiltrados,
-        ),
-      [dadosFiltrados],
-    );
+  const atual = useMemo(() => consolidarParadas(dadosFiltrados), [dadosFiltrados]);
 
   /* =======================================================
      PERÍODO ANTERIOR
@@ -223,96 +166,60 @@ export default function useDashboardParadas(
      Apenas compara dois intervalos de mesma duração.
   ======================================================= */
 
-  const periodoAnterior =
-    useMemo(
-      () =>
-        obterPeriodoAnterior(
-          filtrosNormalizados,
-        ),
-      [filtrosNormalizados],
-    );
+  const periodoAnterior = useMemo(
+    () => obterPeriodoAnterior(filtrosNormalizados),
+    [filtrosNormalizados],
+  );
 
   /* =======================================================
      DADOS DO PERÍODO ANTERIOR
   ======================================================= */
 
-  const dadosPeriodoAnterior =
-    useMemo(() => {
-      if (!periodoAnterior) {
-        return [];
-      }
+  const dadosPeriodoAnterior = useMemo(() => {
+    if (!periodoAnterior) {
+      return [];
+    }
 
-      const filtrosAnteriores = {
-        ...filtrosNormalizados,
+    const filtrosAnteriores = {
+      ...filtrosNormalizados,
 
-        dataInicio:
-          periodoAnterior.dataInicio,
+      dataInicio: periodoAnterior.dataInicio,
 
-        dataFim:
-          periodoAnterior.dataFim,
-      };
+      dataFim: periodoAnterior.dataFim,
+    };
 
-      return filtrarParadas(
-        rawDados,
-        filtrosAnteriores,
-      );
-    }, [
-      rawDados,
-      filtrosNormalizados,
-      periodoAnterior,
-    ]);
+    return filtrarParadas(rawDados, filtrosAnteriores);
+  }, [rawDados, filtrosNormalizados, periodoAnterior]);
 
   /* =======================================================
      CONSOLIDAÇÃO DO PERÍODO ANTERIOR
   ======================================================= */
 
-  const anterior =
-    useMemo(() => {
-      if (!periodoAnterior) {
-        return null;
-      }
+  const anterior = useMemo(() => {
+    if (!periodoAnterior) {
+      return null;
+    }
 
-      return consolidarParadas(
-        dadosPeriodoAnterior,
-      );
-    }, [
-      periodoAnterior,
-      dadosPeriodoAnterior,
-    ]);
+    return consolidarParadas(dadosPeriodoAnterior);
+  }, [periodoAnterior, dadosPeriodoAnterior]);
 
   /* =======================================================
      COMPARATIVOS
   ======================================================= */
 
-  const comparativo =
-    useMemo(() => {
-      if (!anterior) {
-        return null;
-      }
+  const comparativo = useMemo(() => {
+    if (!anterior) {
+      return null;
+    }
 
-      return {
-        tempoTotal:
-          calcularVariacaoPercentual(
-            atual.tempoTotalSegundos,
-            anterior.tempoTotalSegundos,
-          ),
+    return {
+      tempoTotal: calcularVariacaoPercentual(atual.tempoTotalSegundos, anterior.tempoTotalSegundos),
 
-        totalParadas:
-          calcularVariacaoPercentual(
-            atual.totalParadas,
-            anterior.totalParadas,
-          ),
+      totalParadas: calcularVariacaoPercentual(atual.totalParadas, anterior.totalParadas),
 
-        tempoMedio:
-          calcularVariacaoPercentual(
-            atual.tempoMedioSegundos,
-            anterior.tempoMedioSegundos,
-          ),
-      };
-    }, [
-      atual,
-      anterior,
-    ]);
+      tempoMedio: calcularVariacaoPercentual(atual.tempoMedioSegundos, anterior.tempoMedioSegundos),
+    };
+  }, [atual, anterior]);
 
   /* =======================================================
      RETORNO
@@ -372,10 +279,7 @@ export default function useDashboardParadas(
        COMPARAÇÃO
     ----------------------------------------------------- */
 
-    comparativoDisponivel:
-      Boolean(
-        periodoAnterior,
-      ),
+    comparativoDisponivel: Boolean(periodoAnterior),
 
     periodoAnterior,
 

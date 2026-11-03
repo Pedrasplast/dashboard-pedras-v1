@@ -1,17 +1,10 @@
 import { memo } from "react";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import "./Paginacao.css";
 
-
-function criarPaginas(
-  paginaAtual,
-  totalPaginas,
-) {
+function criarPaginas(paginaAtual, totalPaginas) {
   /*
    * Poucas páginas:
    * mostra todas.
@@ -21,11 +14,9 @@ function criarPaginas(
       {
         length: totalPaginas,
       },
-      (_, indice) =>
-        indice + 1,
+      (_, indice) => indice + 1,
     );
   }
-
 
   /*
    * Muitas páginas:
@@ -36,22 +27,10 @@ function criarPaginas(
    */
 
   if (paginaAtual <= 4) {
-    return [
-      1,
-      2,
-      3,
-      4,
-      5,
-      "...",
-      totalPaginas,
-    ];
+    return [1, 2, 3, 4, 5, "...", totalPaginas];
   }
 
-
-  if (
-    paginaAtual >=
-    totalPaginas - 3
-  ) {
+  if (paginaAtual >= totalPaginas - 3) {
     return [
       1,
       "...",
@@ -63,259 +42,113 @@ function criarPaginas(
     ];
   }
 
-
-  return [
-    1,
-    "...",
-    paginaAtual - 1,
-    paginaAtual,
-    paginaAtual + 1,
-    "...",
-    totalPaginas,
-  ];
+  return [1, "...", paginaAtual - 1, paginaAtual, paginaAtual + 1, "...", totalPaginas];
 }
 
-
-function Paginacao({
-  paginaAtual = 1,
-  totalItens = 0,
-  itensPorPagina = 10,
-  onChangePagina,
-}) {
-  const totalPaginas =
-    Math.max(
-      1,
-      Math.ceil(
-        totalItens /
-          itensPorPagina,
-      ),
-    );
-
+function Paginacao({ paginaAtual = 1, totalItens = 0, itensPorPagina = 10, onChangePagina }) {
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / itensPorPagina));
 
   /*
    * Se não há itens,
    * não mostramos paginação.
    */
-  if (
-    totalItens <= 0
-  ) {
+  if (totalItens <= 0) {
     return null;
   }
 
+  const paginas = criarPaginas(paginaAtual, totalPaginas);
 
-  const paginas =
-    criarPaginas(
-      paginaAtual,
-      totalPaginas,
-    );
+  const primeiroItem = (paginaAtual - 1) * itensPorPagina + 1;
 
+  const ultimoItem = Math.min(paginaAtual * itensPorPagina, totalItens);
 
-  const primeiroItem =
-    (
-      paginaAtual - 1
-    ) *
-      itensPorPagina +
-    1;
-
-
-  const ultimoItem =
-    Math.min(
-      paginaAtual *
-        itensPorPagina,
-      totalItens,
-    );
-
-
-  function irParaPagina(
-    pagina,
-  ) {
-    if (
-      typeof pagina !==
-      "number"
-    ) {
+  function irParaPagina(pagina) {
+    if (typeof pagina !== "number") {
       return;
     }
 
-
-    if (
-      pagina < 1 ||
-      pagina >
-        totalPaginas ||
-      pagina ===
-        paginaAtual
-    ) {
+    if (pagina < 1 || pagina > totalPaginas || pagina === paginaAtual) {
       return;
     }
 
-
-    onChangePagina?.(
-      pagina,
-    );
+    onChangePagina?.(pagina);
   }
-
 
   return (
     <div className="paginacao">
-
       {/* ===============================================
           INFORMACAO
       =============================================== */}
 
       <div className="paginacao-info">
-
-        Mostrando{" "}
-
-        <strong>
-          {primeiroItem}
-        </strong>
-
-        {" "}a{" "}
-
-        <strong>
-          {ultimoItem}
-        </strong>
-
-        {" "}de{" "}
-
-        <strong>
-          {totalItens}
-        </strong>
-
-        {" "}registros
-
+        Mostrando <strong>{primeiroItem}</strong> a <strong>{ultimoItem}</strong> de{" "}
+        <strong>{totalItens}</strong> registros
       </div>
-
 
       {/* ===============================================
           CONTROLES
       =============================================== */}
 
       <div className="paginacao-controles">
-
         {/* ANTERIOR */}
 
         <button
           type="button"
           className="paginacao-botao paginacao-navegacao"
-          onClick={() =>
-            irParaPagina(
-              paginaAtual - 1,
-            )
-          }
-          disabled={
-            paginaAtual <= 1
-          }
+          onClick={() => irParaPagina(paginaAtual - 1)}
+          disabled={paginaAtual <= 1}
           aria-label="Página anterior"
           title="Página anterior"
         >
+          <ChevronLeft size={17} />
 
-          <ChevronLeft
-            size={17}
-          />
-
-          <span>
-            Anterior
-          </span>
-
+          <span>Anterior</span>
         </button>
-
 
         {/* PAGINAS */}
 
         <div className="paginacao-paginas">
-
-          {paginas.map(
-            (
-              pagina,
-              indice,
-            ) => {
-
-              if (
-                pagina ===
-                "..."
-              ) {
-                return (
-                  <span
-                    key={`reticencias-${indice}`}
-                    className="paginacao-reticencias"
-                  >
-                    ...
-                  </span>
-                );
-              }
-
-
-              const ativa =
-                pagina ===
-                paginaAtual;
-
-
+          {paginas.map((pagina, indice) => {
+            if (pagina === "...") {
               return (
-                <button
-                  key={
-                    pagina
-                  }
-                  type="button"
-                  className={
-                    `paginacao-botao paginacao-numero ${
-                      ativa
-                        ? "ativa"
-                        : ""
-                    }`
-                  }
-                  onClick={() =>
-                    irParaPagina(
-                      pagina,
-                    )
-                  }
-                  aria-current={
-                    ativa
-                      ? "page"
-                      : undefined
-                  }
-                  title={
-                    `Página ${pagina}`
-                  }
-                >
-                  {pagina}
-                </button>
+                <span key={`reticencias-${indice}`} className="paginacao-reticencias">
+                  ...
+                </span>
               );
-            },
-          )}
+            }
 
+            const ativa = pagina === paginaAtual;
+
+            return (
+              <button
+                key={pagina}
+                type="button"
+                className={`paginacao-botao paginacao-numero ${ativa ? "ativa" : ""}`}
+                onClick={() => irParaPagina(pagina)}
+                aria-current={ativa ? "page" : undefined}
+                title={`Página ${pagina}`}
+              >
+                {pagina}
+              </button>
+            );
+          })}
         </div>
-
 
         {/* PROXIMA */}
 
         <button
           type="button"
           className="paginacao-botao paginacao-navegacao"
-          onClick={() =>
-            irParaPagina(
-              paginaAtual + 1,
-            )
-          }
-          disabled={
-            paginaAtual >=
-            totalPaginas
-          }
+          onClick={() => irParaPagina(paginaAtual + 1)}
+          disabled={paginaAtual >= totalPaginas}
           aria-label="Próxima página"
           title="Próxima página"
         >
+          <span>Próxima</span>
 
-          <span>
-            Próxima
-          </span>
-
-          <ChevronRight
-            size={17}
-          />
-
+          <ChevronRight size={17} />
         </button>
-
       </div>
-
     </div>
   );
 }

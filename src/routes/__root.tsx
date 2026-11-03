@@ -33,9 +33,7 @@ function NotFoundComponent() {
 
         <h2 className="pagina-aviso__titulo">Página não encontrada</h2>
 
-        <p className="pagina-aviso__texto">
-          A página que você procura não existe ou foi movida.
-        </p>
+        <p className="pagina-aviso__texto">A página que você procura não existe ou foi movida.</p>
 
         <div className="pagina-aviso__acoes">
           <Link to="/" className="pagina-aviso__botao">
@@ -51,20 +49,13 @@ function NotFoundComponent() {
    ERRO GLOBAL
 ========================================================= */
 
-function ErrorComponent({
-  error,
-  reset,
-}: ErrorComponentProps) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
 
   const erroNormalizado =
     error instanceof Error
       ? error
-      : new Error(
-          typeof error === "string"
-            ? error
-            : "Erro desconhecido",
-        );
+      : new Error(typeof error === "string" ? error : "Erro desconhecido");
 
   useEffect(() => {
     console.error(error);
@@ -95,10 +86,7 @@ function ErrorComponent({
             Tentar novamente
           </button>
 
-          <a
-            href="/"
-            className="pagina-aviso__botao pagina-aviso__botao--secundario"
-          >
+          <a href="/" className="pagina-aviso__botao pagina-aviso__botao--secundario">
             Voltar ao início
           </a>
         </div>
@@ -111,78 +99,71 @@ function ErrorComponent({
    ROOT ROUTE
 ========================================================= */
 
-export const Route =
-  createRootRouteWithContext<{
-    queryClient: QueryClient;
-  }>()({
-    head: () => ({
-      meta: [
-        {
-          charSet: "utf-8",
-        },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1",
-        },
-        {
-          title: "Painel de Produção Pedrasplast",
-        },
-        {
-          name: "description",
-          content:
-            "Painel de produção Pedrasplast: eficiência das injetoras, paradas e relatórios.",
-        },
-        {
-          name: "author",
-          content: "Pedrasplast",
-        },
-        {
-          property: "og:title",
-          content: "Painel de Produção Pedrasplast",
-        },
-        {
-          property: "og:description",
-          content:
-            "Eficiência das injetoras, paradas e relatórios de produção.",
-        },
-        {
-          property: "og:type",
-          content: "website",
-        },
-        {
-          name: "twitter:card",
-          content: "summary_large_image",
-        },
-        {
-          name: "twitter:site",
-          content: "@Lovable",
-        },
-      ],
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        title: "Painel de Produção Pedrasplast",
+      },
+      {
+        name: "description",
+        content: "Painel de produção Pedrasplast: eficiência das injetoras, paradas e relatórios.",
+      },
+      {
+        name: "author",
+        content: "Pedrasplast",
+      },
+      {
+        property: "og:title",
+        content: "Painel de Produção Pedrasplast",
+      },
+      {
+        property: "og:description",
+        content: "Eficiência das injetoras, paradas e relatórios de produção.",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:site",
+        content: "@Lovable",
+      },
+    ],
 
-      links: [
-        {
-          rel: "icon",
-          href: "/Logo_pedras.png",
-          type: "image/x-icon",
-        },
-      ],
-    }),
+    links: [
+      {
+        rel: "icon",
+        href: "/Logo_pedras.png",
+        type: "image/x-icon",
+      },
+    ],
+  }),
 
-    shellComponent: RootShell,
-    component: RootComponent,
-    notFoundComponent: NotFoundComponent,
-    errorComponent: ErrorComponent,
-  });
+  shellComponent: RootShell,
+  component: RootComponent,
+  notFoundComponent: NotFoundComponent,
+  errorComponent: ErrorComponent,
+});
 
 /* =========================================================
    HTML SHELL
 ========================================================= */
 
-function RootShell({
-  children,
-}: {
-  children: ReactNode;
-}) {
+function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <head>
@@ -203,20 +184,11 @@ function RootShell({
 ========================================================= */
 
 function LayoutAplicacao() {
-  const {
-    user,
-    isAdmin,
-  } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
 
   return (
-    <div
-      className="app-layout"
-      onChangeCapture={normalizarCamposMaiusculos}
-    >
-      <Navbar
-        user={user}
-        isAdmin={isAdmin}
-      />
+    <div className="app-layout" onChangeCapture={normalizarCamposMaiusculos}>
+      <Navbar user={user} isAdmin={isAdmin} />
 
       <main className="main-content">
         <Outlet />
@@ -230,14 +202,10 @@ function LayoutAplicacao() {
 ========================================================= */
 
 function RootComponent() {
-  const {
-    queryClient,
-  } = Route.useRouteContext();
+  const { queryClient } = Route.useRouteContext();
 
   const primeiroAcesso = useRouterState({
-    select: (state) =>
-      state.location.pathname.replace(/\/$/, "") ===
-      "/definir-senha",
+    select: (state) => state.location.pathname.replace(/\/$/, "") === "/definir-senha",
   });
 
   return (

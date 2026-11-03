@@ -802,7 +802,6 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
 
       let saldoBaseAplicado = null;
 
-     
       if (base) {
         possuiSaldoBase = true;
 

@@ -17,9 +17,7 @@ const TIPOS_INPUT_PRESERVAR = new Set([
   "hidden",
 ]);
 
-function devePreservarCaixa(
-  elemento: HTMLInputElement | HTMLTextAreaElement,
-): boolean {
+function devePreservarCaixa(elemento: HTMLInputElement | HTMLTextAreaElement): boolean {
   if (elemento.getAttribute("data-preservar-caixa") === "true") {
     return true;
   }
@@ -33,9 +31,7 @@ function devePreservarCaixa(
   return TIPOS_INPUT_PRESERVAR.has(tipo);
 }
 
-function converterValorParaMaiusculo(
-  elemento: HTMLInputElement | HTMLTextAreaElement,
-): void {
+function converterValorParaMaiusculo(elemento: HTMLInputElement | HTMLTextAreaElement): void {
   if (devePreservarCaixa(elemento)) {
     return;
   }
@@ -58,11 +54,7 @@ function converterValorParaMaiusculo(
     fimSelecao !== null &&
     typeof elemento.setSelectionRange === "function"
   ) {
-    elemento.setSelectionRange(
-      inicioSelecao,
-      fimSelecao,
-      direcaoSelecao ?? undefined,
-    );
+    elemento.setSelectionRange(inicioSelecao, fimSelecao, direcaoSelecao ?? undefined);
   }
 }
 
@@ -83,15 +75,10 @@ function converterValorParaMaiusculo(
  *
  * data-preservar-caixa="true"
  */
-export function normalizarCamposMaiusculos(evento: {
-  target: EventTarget | null;
-}): void {
+export function normalizarCamposMaiusculos(evento: { target: EventTarget | null }): void {
   const alvo = evento.target;
 
-  if (
-    alvo instanceof HTMLInputElement ||
-    alvo instanceof HTMLTextAreaElement
-  ) {
+  if (alvo instanceof HTMLInputElement || alvo instanceof HTMLTextAreaElement) {
     converterValorParaMaiusculo(alvo);
   }
 }

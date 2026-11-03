@@ -13,7 +13,6 @@
   backdrop-filter: blur(3px);
 }
 
-
 .confirmacao-exclusao {
   width: 100%;
   max-width: 440px;
@@ -25,11 +24,8 @@
 
   background: #ffffff;
 
-  box-shadow:
-    0 24px 60px
-    rgba(15, 23, 42, 0.22);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
 }
-
 
 /* =========================================================
    CABEÇALHO
@@ -44,7 +40,6 @@
 
   border-bottom: 1px solid #e2e8f0;
 }
-
 
 .confirmacao-exclusao-icone {
   width: 42px;
@@ -62,12 +57,10 @@
   color: #dc2626;
 }
 
-
 .confirmacao-exclusao-header-texto {
   flex: 1;
   min-width: 0;
 }
-
 
 .confirmacao-exclusao-header-texto > span {
   display: block;
@@ -83,7 +76,6 @@
   text-transform: uppercase;
 }
 
-
 .confirmacao-exclusao-header-texto h3 {
   margin: 0;
 
@@ -93,7 +85,6 @@
   font-weight: 750;
 }
 
-
 .confirmacao-exclusao-header-texto p {
   margin: 6px 0 0;
 
@@ -102,7 +93,6 @@
   font-size: 12px;
   line-height: 1.5;
 }
-
 
 .confirmacao-exclusao-fechar {
   width: 32px;
@@ -127,12 +117,10 @@
     color 0.15s ease;
 }
 
-
 .confirmacao-exclusao-fechar:hover:not(:disabled) {
   background: #f1f5f9;
   color: #0f172a;
 }
-
 
 /* =========================================================
    CONTEÚDO
@@ -141,7 +129,6 @@
 .confirmacao-exclusao-conteudo {
   padding: 18px 20px;
 }
-
 
 .confirmacao-exclusao-item {
   padding: 13px 14px;
@@ -152,7 +139,6 @@
   background: #f8fafc;
 }
 
-
 .confirmacao-exclusao-item strong {
   display: block;
 
@@ -161,7 +147,6 @@
   font-size: 13px;
   font-weight: 750;
 }
-
 
 .confirmacao-exclusao-item span {
   display: block;
@@ -173,20 +158,14 @@
   font-size: 11px;
 }
 
-
 .confirmacao-exclusao-detalhes {
   display: grid;
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 8px;
 
   margin-top: 10px;
 }
-
 
 .confirmacao-exclusao-detalhes > div {
   min-width: 0;
@@ -199,7 +178,6 @@
   background: #ffffff;
 }
 
-
 .confirmacao-exclusao-detalhes span {
   display: block;
 
@@ -211,7 +189,6 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-
 
 .confirmacao-exclusao-detalhes strong {
   display: block;
@@ -228,7 +205,6 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
 
 .confirmacao-exclusao-erro {
   display: flex;
@@ -248,13 +224,11 @@
   line-height: 1.45;
 }
 
-
 .confirmacao-exclusao-erro svg {
   flex: 0 0 auto;
 
   margin-top: 1px;
 }
-
 
 /* =========================================================
    AÇÕES
@@ -271,7 +245,6 @@
 
   background: #f8fafc;
 }
-
 
 .confirmacao-exclusao-cancelar,
 .confirmacao-exclusao-confirmar {
@@ -298,7 +271,6 @@
     opacity 0.15s ease;
 }
 
-
 .confirmacao-exclusao-cancelar {
   border: 1px solid #cbd5e1;
 
@@ -306,11 +278,9 @@
   color: #475569;
 }
 
-
 .confirmacao-exclusao-cancelar:hover:not(:disabled) {
   background: #f1f5f9;
 }
-
 
 .confirmacao-exclusao-confirmar {
   border: 1px solid #dc2626;
@@ -319,34 +289,28 @@
   color: #ffffff;
 }
 
-
 .confirmacao-exclusao-confirmar:hover:not(:disabled) {
   background: #b91c1c;
   border-color: #b91c1c;
 }
-
 
 .confirmacao-exclusao button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-
 @media (max-width: 520px) {
   .confirmacao-exclusao-overlay {
     padding: 12px;
   }
 
-
   .confirmacao-exclusao-detalhes {
     grid-template-columns: 1fr;
   }
 
-
   .confirmacao-exclusao-acoes {
     flex-direction: column-reverse;
   }
-
 
   .confirmacao-exclusao-cancelar,
   .confirmacao-exclusao-confirmar {

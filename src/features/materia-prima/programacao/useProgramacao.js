@@ -1,8 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   buscarProgramacaoComCalendario,
@@ -10,9 +6,7 @@ import {
   salvarProgramacaoCalendario,
 } from "./programacaoCalendarioService";
 
-export default function useProgramacao({
-  carregar = true,
-} = {}) {
+export default function useProgramacao({ carregar = true } = {}) {
   const [programacao, setProgramacao] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [receitas, setReceitas] = useState([]);
@@ -32,42 +26,23 @@ export default function useProgramacao({
     setErro("");
 
     try {
-      const resultado =
-        await buscarProgramacaoComCalendario();
+      const resultado = await buscarProgramacaoComCalendario();
 
-      setProgramacao(
-        Array.isArray(resultado?.programacao)
-          ? resultado.programacao
-          : [],
-      );
+      setProgramacao(Array.isArray(resultado?.programacao) ? resultado.programacao : []);
 
-      setProdutos(
-        Array.isArray(resultado?.produtos)
-          ? resultado.produtos
-          : [],
-      );
+      setProdutos(Array.isArray(resultado?.produtos) ? resultado.produtos : []);
 
-      setReceitas(
-        Array.isArray(resultado?.receitas)
-          ? resultado.receitas
-          : [],
-      );
+      setReceitas(Array.isArray(resultado?.receitas) ? resultado.receitas : []);
 
       setCarregado(true);
     } catch (error) {
-      console.error(
-        "Erro ao carregar programação de matéria-prima:",
-        error,
-      );
+      console.error("Erro ao carregar programação de matéria-prima:", error);
 
       setProgramacao([]);
       setProdutos([]);
       setReceitas([]);
 
-      setErro(
-        error?.message ||
-          "Não foi possível carregar a programação de matéria-prima.",
-      );
+      setErro(error?.message || "Não foi possível carregar a programação de matéria-prima.");
 
       setCarregado(true);
     } finally {
@@ -76,151 +51,94 @@ export default function useProgramacao({
   }, []);
 
   useEffect(() => {
-    if (
-      !carregar ||
-      carregado ||
-      carregando
-    ) {
+    if (!carregar || carregado || carregando) {
       return;
     }
 
     void carregarProgramacao();
-  }, [
-    carregar,
-    carregado,
-    carregando,
-    carregarProgramacao,
-  ]);
+  }, [carregar, carregado, carregando, carregarProgramacao]);
 
-  const recarregar =
-    useCallback(async () => {
-      await carregarProgramacao();
-    }, [
-      carregarProgramacao,
-    ]);
+  const recarregar = useCallback(async () => {
+    await carregarProgramacao();
+  }, [carregarProgramacao]);
 
-  const salvarProgramacao =
-    useCallback(
-      async (dados) => {
-        const id =
-          dados?.id ?? null;
+  const salvarProgramacao = useCallback(
+    async (dados) => {
+      const id = dados?.id ?? null;
 
-        setSalvando(true);
-        setSalvandoId(id);
+      setSalvando(true);
+      setSalvandoId(id);
 
-        try {
-          const resultado =
-            await salvarProgramacaoCalendario(
-              dados,
-            );
+      try {
+        const resultado = await salvarProgramacaoCalendario(dados);
 
-          await carregarProgramacao();
+        await carregarProgramacao();
 
-          return resultado;
-        } catch (error) {
-          console.error(
-            "Erro ao salvar programação:",
-            error,
-          );
+        return resultado;
+      } catch (error) {
+        console.error("Erro ao salvar programação:", error);
 
-          throw error;
-        } finally {
-          setSalvando(false);
-          setSalvandoId(null);
-        }
-      },
-      [
-        carregarProgramacao,
-      ],
-    );
+        throw error;
+      } finally {
+        setSalvando(false);
+        setSalvandoId(null);
+      }
+    },
+    [carregarProgramacao],
+  );
 
-  const excluirProgramacao =
-    useCallback(
-      async (id) => {
-        if (
-          id === null ||
-          id === undefined
-        ) {
-          throw new Error(
-            "Programação não informada.",
-          );
-        }
+  const excluirProgramacao = useCallback(
+    async (id) => {
+      if (id === null || id === undefined) {
+        throw new Error("Programação não informada.");
+      }
 
-        setExcluindo(true);
-        setExcluindoId(id);
+      setExcluindo(true);
+      setExcluindoId(id);
 
-        try {
-          const resultado =
-            await excluirProgramacaoService(
-              id,
-            );
+      try {
+        const resultado = await excluirProgramacaoService(id);
 
-          await carregarProgramacao();
+        await carregarProgramacao();
 
-          return resultado;
-        } catch (error) {
-          console.error(
-            "Erro ao excluir programação:",
-            error,
-          );
+        return resultado;
+      } catch (error) {
+        console.error("Erro ao excluir programação:", error);
 
-          throw error;
-        } finally {
-          setExcluindo(false);
-          setExcluindoId(null);
-        }
-      },
-      [
-        carregarProgramacao,
-      ],
-    );
+        throw error;
+      } finally {
+        setExcluindo(false);
+        setExcluindoId(null);
+      }
+    },
+    [carregarProgramacao],
+  );
 
-  const itemEstaSalvando =
-    useCallback(
-      (id) => {
-        if (!salvando) {
-          return false;
-        }
+  const itemEstaSalvando = useCallback(
+    (id) => {
+      if (!salvando) {
+        return false;
+      }
 
-        if (
-          id === null ||
-          id === undefined
-        ) {
-          return salvandoId === null;
-        }
+      if (id === null || id === undefined) {
+        return salvandoId === null;
+      }
 
-        return (
-          String(id) ===
-          String(salvandoId)
-        );
-      },
-      [
-        salvando,
-        salvandoId,
-      ],
-    );
+      return String(id) === String(salvandoId);
+    },
+    [salvando, salvandoId],
+  );
 
-  const itemEstaExcluindo =
-    useCallback(
-      (id) => {
-        if (
-          !excluindo ||
-          id === null ||
-          id === undefined
-        ) {
-          return false;
-        }
+  const itemEstaExcluindo = useCallback(
+    (id) => {
+      if (!excluindo || id === null || id === undefined) {
+        return false;
+      }
 
-        return (
-          String(id) ===
-          String(excluindoId)
-        );
-      },
-      [
-        excluindo,
-        excluindoId,
-      ],
-    );
+      return String(id) === String(excluindoId);
+    },
+    [excluindo, excluindoId],
+  );
 
   return {
     programacao,

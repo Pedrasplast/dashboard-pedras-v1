@@ -21,14 +21,8 @@ export default function Modal({
     focoAnterior.current = document.activeElement;
   }
   estavaAberto.current = Boolean(aberto);
-  const conteudo = asChild ? (
-    children
-  ) : (
-    <section className={className}>{children}</section>
-  );
-  const classes = ["sistema-modal", conteudo.props.className]
-    .filter(Boolean)
-    .join(" ");
+  const conteudo = asChild ? children : <section className={className}>{children}</section>;
+  const classes = ["sistema-modal", conteudo.props.className].filter(Boolean).join(" ");
   return (
     <Dialog.Root
       open={Boolean(aberto)}
@@ -38,15 +32,9 @@ export default function Modal({
     >
       <Dialog.Portal>
         <Dialog.Overlay
-          className={["sistema-modal-overlay", overlayClassName]
-            .filter(Boolean)
-            .join(" ")}
+          className={["sistema-modal-overlay", overlayClassName].filter(Boolean).join(" ")}
           onMouseDown={(evento) => {
-            if (
-              evento.target === evento.currentTarget &&
-              fecharAoClicarFora &&
-              !bloqueado
-            )
+            if (evento.target === evento.currentTarget && fecharAoClicarFora && !bloqueado)
               onFechar?.();
           }}
         >

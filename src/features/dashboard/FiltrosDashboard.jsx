@@ -83,10 +83,7 @@ function FiltrosDashboard({
     [rawDados],
   );
 
-  const datasOrdenadas = useMemo(
-    () => [...datasComDados].sort(),
-    [datasComDados],
-  );
+  const datasOrdenadas = useMemo(() => [...datasComDados].sort(), [datasComDados]);
 
   const primeiraDataDisponivel = datasOrdenadas[0] || null;
 
@@ -117,16 +114,8 @@ function FiltrosDashboard({
   );
 
   const mesInicialCalendario = useMemo(
-    () =>
-      dataInicioSelecionada ||
-      dataFimSelecionada ||
-      ultimaDataCalendario ||
-      new Date(),
-    [
-      dataInicioSelecionada,
-      dataFimSelecionada,
-      ultimaDataCalendario,
-    ],
+    () => dataInicioSelecionada || dataFimSelecionada || ultimaDataCalendario || new Date(),
+    [dataInicioSelecionada, dataFimSelecionada, ultimaDataCalendario],
   );
 
   /* =======================================================
@@ -134,10 +123,7 @@ function FiltrosDashboard({
   ======================================================= */
 
   const injetorasDisponiveis = useMemo(
-    () =>
-      valoresUnicosOrdenados(
-        rawDados.map((registro) => registro.injetora),
-      ),
+    () => valoresUnicosOrdenados(rawDados.map((registro) => registro.injetora)),
     [rawDados],
   );
 
@@ -148,17 +134,13 @@ function FiltrosDashboard({
   const toggleTipo = useCallback(
     (tipo) => {
       setFiltros((anterior) => {
-        const tiposAtuais = Array.isArray(anterior.tipo)
-          ? anterior.tipo
-          : [];
+        const tiposAtuais = Array.isArray(anterior.tipo) ? anterior.tipo : [];
 
         return {
           ...anterior,
 
           tipo: tiposAtuais.includes(tipo)
-            ? tiposAtuais.filter(
-                (tipoAtual) => tipoAtual !== tipo,
-              )
+            ? tiposAtuais.filter((tipoAtual) => tipoAtual !== tipo)
             : [...tiposAtuais, tipo],
         };
       });
@@ -184,29 +166,14 @@ function FiltrosDashboard({
   ======================================================= */
 
   const desabilitarDataInicio = useCallback(
-    (data) =>
-      !dataPossuiRegistro(data) ||
-      Boolean(
-        dataFimSelecionada &&
-          data > dataFimSelecionada,
-      ),
-    [
-      dataPossuiRegistro,
-      dataFimSelecionada,
-    ],
+    (data) => !dataPossuiRegistro(data) || Boolean(dataFimSelecionada && data > dataFimSelecionada),
+    [dataPossuiRegistro, dataFimSelecionada],
   );
 
   const desabilitarDataFim = useCallback(
     (data) =>
-      !dataPossuiRegistro(data) ||
-      Boolean(
-        dataInicioSelecionada &&
-          data < dataInicioSelecionada,
-      ),
-    [
-      dataPossuiRegistro,
-      dataInicioSelecionada,
-    ],
+      !dataPossuiRegistro(data) || Boolean(dataInicioSelecionada && data < dataInicioSelecionada),
+    [dataPossuiRegistro, dataInicioSelecionada],
   );
 
   /* =======================================================
@@ -226,19 +193,12 @@ function FiltrosDashboard({
 
         dataInicio: novaDataInicio,
 
-        dataFim:
-          anterior.dataFim &&
-          anterior.dataFim < novaDataInicio
-            ? ""
-            : anterior.dataFim,
+        dataFim: anterior.dataFim && anterior.dataFim < novaDataInicio ? "" : anterior.dataFim,
       }));
 
       setCalendarioAberto(null);
     },
-    [
-      dataPossuiRegistro,
-      setFiltros,
-    ],
+    [dataPossuiRegistro, setFiltros],
   );
 
   /* =======================================================
@@ -253,10 +213,7 @@ function FiltrosDashboard({
 
       const novaDataFim = formatarDataISO(data);
 
-      if (
-        filtros.dataInicio &&
-        novaDataFim < filtros.dataInicio
-      ) {
+      if (filtros.dataInicio && novaDataFim < filtros.dataInicio) {
         return;
       }
 
@@ -268,11 +225,7 @@ function FiltrosDashboard({
 
       setCalendarioAberto(null);
     },
-    [
-      dataPossuiRegistro,
-      filtros.dataInicio,
-      setFiltros,
-    ],
+    [dataPossuiRegistro, filtros.dataInicio, setFiltros],
   );
 
   /* =======================================================
@@ -301,25 +254,17 @@ function FiltrosDashboard({
 
           {exibirPeriodo && modoRelatorio && (
             <div className="periodo-relatorio-area">
-              <label className="periodo-relatorio-label">
-                PERÍODO
-              </label>
+              <label className="periodo-relatorio-label">PERÍODO</label>
 
               <div className="periodo-relatorio-linha">
                 <div className="date-inputs-container">
                   <CampoDataCalendario
                     titulo="Data inicial"
-                    valorVisual={formatarDataVisual(
-                      filtros.dataInicio,
-                    )}
+                    valorVisual={formatarDataVisual(filtros.dataInicio)}
                     aberto={calendarioAberto === "inicio"}
                     desabilitado={semDatas}
                     onAlternar={() =>
-                      setCalendarioAberto((atual) =>
-                        atual === "inicio"
-                          ? null
-                          : "inicio",
-                      )
+                      setCalendarioAberto((atual) => (atual === "inicio" ? null : "inicio"))
                     }
                     dataSelecionada={dataInicioSelecionada}
                     onSelecionar={selecionarDataInicio}
@@ -332,17 +277,11 @@ function FiltrosDashboard({
 
                   <CampoDataCalendario
                     titulo="Data final"
-                    valorVisual={formatarDataVisual(
-                      filtros.dataFim,
-                    )}
+                    valorVisual={formatarDataVisual(filtros.dataFim)}
                     aberto={calendarioAberto === "fim"}
                     desabilitado={semDatas}
                     onAlternar={() =>
-                      setCalendarioAberto((atual) =>
-                        atual === "fim"
-                          ? null
-                          : "fim",
-                      )
+                      setCalendarioAberto((atual) => (atual === "fim" ? null : "fim"))
                     }
                     dataSelecionada={dataFimSelecionada}
                     onSelecionar={selecionarDataFim}
@@ -355,22 +294,20 @@ function FiltrosDashboard({
                 </div>
 
                 {!limparNoLayout && (
-                <button
-                  type="button"
-                  className="clear-date-btn clear-date-btn-relatorio"
-                  onClick={limpar}
-                  disabled={!possuiFiltroAtivo}
-                  title="Limpar todos os filtros"
-                >
-                  ✕ LIMPAR
-                </button>
+                  <button
+                    type="button"
+                    className="clear-date-btn clear-date-btn-relatorio"
+                    onClick={limpar}
+                    disabled={!possuiFiltroAtivo}
+                    title="Limpar todos os filtros"
+                  >
+                    ✕ LIMPAR
+                  </button>
                 )}
               </div>
 
               {semDatas && (
-                <small className="calendar-empty">
-                  Nenhuma data encontrada na base.
-                </small>
+                <small className="calendar-empty">Nenhuma data encontrada na base.</small>
               )}
             </div>
           )}
@@ -398,17 +335,11 @@ function FiltrosDashboard({
               <div className="date-inputs-container">
                 <CampoDataCalendario
                   titulo="Data inicial"
-                  valorVisual={formatarDataVisual(
-                    filtros.dataInicio,
-                  )}
+                  valorVisual={formatarDataVisual(filtros.dataInicio)}
                   aberto={calendarioAberto === "inicio"}
                   desabilitado={semDatas}
                   onAlternar={() =>
-                    setCalendarioAberto((atual) =>
-                      atual === "inicio"
-                        ? null
-                        : "inicio",
-                    )
+                    setCalendarioAberto((atual) => (atual === "inicio" ? null : "inicio"))
                   }
                   dataSelecionada={dataInicioSelecionada}
                   onSelecionar={selecionarDataInicio}
@@ -421,17 +352,11 @@ function FiltrosDashboard({
 
                 <CampoDataCalendario
                   titulo="Data final"
-                  valorVisual={formatarDataVisual(
-                    filtros.dataFim,
-                  )}
+                  valorVisual={formatarDataVisual(filtros.dataFim)}
                   aberto={calendarioAberto === "fim"}
                   desabilitado={semDatas}
                   onAlternar={() =>
-                    setCalendarioAberto((atual) =>
-                      atual === "fim"
-                        ? null
-                        : "fim",
-                    )
+                    setCalendarioAberto((atual) => (atual === "fim" ? null : "fim"))
                   }
                   dataSelecionada={dataFimSelecionada}
                   onSelecionar={selecionarDataFim}
@@ -444,9 +369,7 @@ function FiltrosDashboard({
               </div>
 
               {semDatas && (
-                <small className="calendar-empty">
-                  Nenhuma data encontrada na base.
-                </small>
+                <small className="calendar-empty">Nenhuma data encontrada na base.</small>
               )}
             </>
           )}
@@ -462,24 +385,15 @@ function FiltrosDashboard({
               <select
                 value={filtros.injetora || "Todos"}
                 onChange={(evento) =>
-                  alterar(
-                    "injetora",
-                    evento.target.value,
-                    {
-                      cod_prod: "Todos",
-                    },
-                  )
+                  alterar("injetora", evento.target.value, {
+                    cod_prod: "Todos",
+                  })
                 }
               >
-                <option value="Todos">
-                  Todas
-                </option>
+                <option value="Todos">Todas</option>
 
                 {injetorasDisponiveis.map((injetora) => (
-                  <option
-                    key={injetora}
-                    value={injetora}
-                  >
+                  <option key={injetora} value={injetora}>
                     {injetora}
                   </option>
                 ))}
@@ -497,22 +411,12 @@ function FiltrosDashboard({
 
               <select
                 value={filtros.turno || "Todos"}
-                onChange={(evento) =>
-                  alterar(
-                    "turno",
-                    evento.target.value,
-                  )
-                }
+                onChange={(evento) => alterar("turno", evento.target.value)}
               >
-                <option value="Todos">
-                  Todos os turnos
-                </option>
+                <option value="Todos">Todos os turnos</option>
 
                 {TURNOS_DISPONIVEIS.map((turno) => (
-                  <option
-                    key={turno}
-                    value={turno}
-                  >
+                  <option key={turno} value={turno}>
                     {turno}
                   </option>
                 ))}
@@ -532,22 +436,12 @@ function FiltrosDashboard({
 
               <select
                 value={filtros.motivo || "Todos"}
-                onChange={(evento) =>
-                  alterar(
-                    "motivo",
-                    evento.target.value,
-                  )
-                }
+                onChange={(evento) => alterar("motivo", evento.target.value)}
               >
-                <option value="Todos">
-                  Todos os motivos
-                </option>
+                <option value="Todos">Todos os motivos</option>
 
                 {motivosDisponiveis.map((motivo) => (
-                  <option
-                    key={motivo}
-                    value={motivo}
-                  >
+                  <option key={motivo} value={motivo}>
                     {motivo}
                   </option>
                 ))}
@@ -565,26 +459,13 @@ function FiltrosDashboard({
 
               <select
                 value={filtros.cod_prod || "Todos"}
-                disabled={
-                  exibirInjetora &&
-                  filtros.injetora === "Todos"
-                }
-                onChange={(evento) =>
-                  alterar(
-                    "cod_prod",
-                    evento.target.value,
-                  )
-                }
+                disabled={exibirInjetora && filtros.injetora === "Todos"}
+                onChange={(evento) => alterar("cod_prod", evento.target.value)}
               >
-                <option value="Todos">
-                  Todos
-                </option>
+                <option value="Todos">Todos</option>
 
                 {produtosDisponiveis.map((produto) => (
-                  <option
-                    key={produto}
-                    value={produto}
-                  >
+                  <option key={produto} value={produto}>
                     {produto}
                   </option>
                 ))}
@@ -602,22 +483,12 @@ function FiltrosDashboard({
 
               <select
                 value={filtros.mp || "Todos"}
-                onChange={(evento) =>
-                  alterar(
-                    "mp",
-                    evento.target.value,
-                  )
-                }
+                onChange={(evento) => alterar("mp", evento.target.value)}
               >
-                <option value="Todos">
-                  Todas
-                </option>
+                <option value="Todos">Todas</option>
 
                 {mpsDisponiveis.map((mp) => (
-                  <option
-                    key={mp}
-                    value={mp}
-                  >
+                  <option key={mp} value={mp}>
                     {mp}
                   </option>
                 ))}
@@ -629,41 +500,29 @@ function FiltrosDashboard({
               TIPO
           ================================================= */}
 
-          {exibirTipo &&
-            tiposDisponiveis.length > 0 && (
-              <>
-                <label>TIPO</label>
+          {exibirTipo && tiposDisponiveis.length > 0 && (
+            <>
+              <label>TIPO</label>
 
-                <div className="checkbox-group tipo-checkbox-group">
-                  {tiposDisponiveis.map((tipo) => (
-                    <label
-                      key={tipo}
-                      className="checkbox-label tipo-checkbox-label"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={(
-                          filtros.tipo || []
-                        ).includes(tipo)}
-                        onChange={() =>
-                          toggleTipo(tipo)
-                        }
-                      />
+              <div className="checkbox-group tipo-checkbox-group">
+                {tiposDisponiveis.map((tipo) => (
+                  <label key={tipo} className="checkbox-label tipo-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={(filtros.tipo || []).includes(tipo)}
+                      onChange={() => toggleTipo(tipo)}
+                    />
 
-                      <div className="tipo-label-conteudo">
-                        <strong className="tipo-label-numero">
-                          {tipo}
-                        </strong>
+                    <div className="tipo-label-conteudo">
+                      <strong className="tipo-label-numero">{tipo}</strong>
 
-                        <span className="tipo-label-descricao">
-                          {obterDescricaoTipo(tipo)}
-                        </span>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </>
-            )}
+                      <span className="tipo-label-descricao">{obterDescricaoTipo(tipo)}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* =================================================
               MOTIVO
@@ -675,22 +534,12 @@ function FiltrosDashboard({
 
               <select
                 value={filtros.motivo || "Todos"}
-                onChange={(evento) =>
-                  alterar(
-                    "motivo",
-                    evento.target.value,
-                  )
-                }
+                onChange={(evento) => alterar("motivo", evento.target.value)}
               >
-                <option value="Todos">
-                  Todos os motivos
-                </option>
+                <option value="Todos">Todos os motivos</option>
 
                 {motivosDisponiveis.map((motivo) => (
-                  <option
-                    key={motivo}
-                    value={motivo}
-                  >
+                  <option key={motivo} value={motivo}>
                     {motivo}
                   </option>
                 ))}

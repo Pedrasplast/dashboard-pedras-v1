@@ -1,7 +1,4 @@
-import {
-  converterDuracaoParaSegundos,
-  formatarSegundosComoDuracao,
-} from "../utils/Duracao";
+import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/Duracao";
 
 /* =====================================================
    PARADAS POR MOTIVO E JUSTIFICATIVA
@@ -20,9 +17,7 @@ import {
    dividido pelo tempo total parado filtrado
 ===================================================== */
 
-export function agruparMotivoJustificativa(
-  dados,
-) {
+export function agruparMotivoJustificativa(dados) {
   if (!Array.isArray(dados)) {
     return [];
   }
@@ -30,18 +25,12 @@ export function agruparMotivoJustificativa(
   const agrupado = new Map();
 
   dados.forEach((item) => {
-    const tipo = String(
-      item.tipo ?? "",
-    ).trim();
+    const tipo = String(item.tipo ?? "").trim();
 
     /*
      * Somente registros de parada.
      */
-    if (
-      tipo !== "1" &&
-      tipo !== "2" &&
-      tipo !== "3"
-    ) {
+    if (tipo !== "1" && tipo !== "2" && tipo !== "3") {
       return;
     }
 
@@ -49,23 +38,14 @@ export function agruparMotivoJustificativa(
        MOTIVO
     ================================================= */
 
-    const motivo =
-      String(
-        item.motivo ||
-          "SEM MOTIVO INFORMADO",
-      ).trim() ||
-      "SEM MOTIVO INFORMADO";
+    const motivo = String(item.motivo || "SEM MOTIVO INFORMADO").trim() || "SEM MOTIVO INFORMADO";
 
     /* =================================================
        JUSTIFICATIVA
     ================================================= */
 
     const justificativa =
-      String(
-        item.justificativa ||
-          "SEM JUSTIFICATIVA",
-      ).trim() ||
-      "SEM JUSTIFICATIVA";
+      String(item.justificativa || "SEM JUSTIFICATIVA").trim() || "SEM JUSTIFICATIVA";
 
     /* =================================================
        DURAÇÃO
@@ -73,10 +53,7 @@ export function agruparMotivoJustificativa(
        Usa somente a coluna oficial duracao.
     ================================================= */
 
-    const duracaoSegundos =
-      converterDuracaoParaSegundos(
-        item.duracao,
-      );
+    const duracaoSegundos = converterDuracaoParaSegundos(item.duracao);
 
     /* =================================================
        CHAVE
@@ -85,18 +62,11 @@ export function agruparMotivoJustificativa(
        = uma única linha.
     ================================================= */
 
-    const chaveMotivo =
-      motivo.toLocaleUpperCase(
-        "pt-BR",
-      );
+    const chaveMotivo = motivo.toLocaleUpperCase("pt-BR");
 
-    const chaveJustificativa =
-      justificativa.toLocaleUpperCase(
-        "pt-BR",
-      );
+    const chaveJustificativa = justificativa.toLocaleUpperCase("pt-BR");
 
-    const chave =
-      `${chaveMotivo}|||${chaveJustificativa}`;
+    const chave = `${chaveMotivo}|||${chaveJustificativa}`;
 
     if (!agrupado.has(chave)) {
       agrupado.set(chave, {
@@ -109,19 +79,14 @@ export function agruparMotivoJustificativa(
       });
     }
 
-    const registro =
-      agrupado.get(chave);
+    const registro = agrupado.get(chave);
 
     registro.ocorrencias += 1;
 
-    registro.duracao_segundos +=
-      duracaoSegundos;
+    registro.duracao_segundos += duracaoSegundos;
   });
 
-  let resultado =
-    Array.from(
-      agrupado.values(),
-    );
+  let resultado = Array.from(agrupado.values());
 
   /* =====================================================
      TEMPO TOTAL PARADO
@@ -129,71 +94,38 @@ export function agruparMotivoJustificativa(
      Representa 100% do período já filtrado.
   ===================================================== */
 
-  const tempoTotalParado =
-    resultado.reduce(
-      (total, item) =>
-        total +
-        item.duracao_segundos,
-      0,
-    );
+  const tempoTotalParado = resultado.reduce((total, item) => total + item.duracao_segundos, 0);
 
   /* =====================================================
      ORDENA PELO MAIOR IMPACTO
   ===================================================== */
 
-  resultado.sort(
-    (a, b) =>
-      b.duracao_segundos -
-      a.duracao_segundos,
-  );
+  resultado.sort((a, b) => b.duracao_segundos - a.duracao_segundos);
 
   /* =====================================================
      INDICADORES
   ===================================================== */
 
-  return resultado.map(
-    (item) => {
-      const tempoMedioSegundos =
-        item.ocorrencias > 0
-          ? item.duracao_segundos /
-            item.ocorrencias
-          : 0;
+  return resultado.map((item) => {
+    const tempoMedioSegundos = item.ocorrencias > 0 ? item.duracao_segundos / item.ocorrencias : 0;
 
-      const percentualImpacto =
-        tempoTotalParado > 0
-          ? (
-              item.duracao_segundos /
-              tempoTotalParado
-            ) *
-            100
-          : 0;
+    const percentualImpacto =
+      tempoTotalParado > 0 ? (item.duracao_segundos / tempoTotalParado) * 100 : 0;
 
-      return {
-        motivo:
-          item.motivo,
+    return {
+      motivo: item.motivo,
 
-        justificativa:
-          item.justificativa,
+      justificativa: item.justificativa,
 
-        ocorrencias:
-          item.ocorrencias,
+      ocorrencias: item.ocorrencias,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            item.duracao_segundos,
-          ),
+      tempo_total: formatarSegundosComoDuracao(item.duracao_segundos),
 
-        tempo_medio:
-          formatarSegundosComoDuracao(
-            tempoMedioSegundos,
-          ),
+      tempo_medio: formatarSegundosComoDuracao(tempoMedioSegundos),
 
-        percentual_impacto:
-          percentualImpacto,
+      percentual_impacto: percentualImpacto,
 
-        duracao_segundos:
-          item.duracao_segundos,
-      };
-    },
-  );
+      duracao_segundos: item.duracao_segundos,
+    };
+  });
 }

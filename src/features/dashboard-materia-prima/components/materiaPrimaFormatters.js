@@ -1,70 +1,32 @@
-import {
-  formatarKg,
-  formatarMoeda,
-  formatarNumero,
-} from "../dashboardMateriaPrimaUtils.js";
-
+import { formatarKg, formatarMoeda, formatarNumero } from "../dashboardMateriaPrimaUtils.js";
 
 /* =========================================================
    PERCENTUAL
 ========================================================= */
 
-export function formatarPercentual(
-  valor,
-  casas = 1,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    !Number.isFinite(
-      Number(
-        valor,
-      ),
-    )
-  ) {
+export function formatarPercentual(valor, casas = 1) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
     return "-";
   }
 
-  return `${Number(
-    valor,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
+  return `${Number(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: casas,
 
-      maximumFractionDigits:
-        casas,
-    },
-  )}%`;
+    maximumFractionDigits: casas,
+  })}%`;
 }
-
 
 /* =========================================================
    DIAS
 ========================================================= */
 
-export function formatarDias(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    !Number.isFinite(
-      Number(
-        valor,
-      ),
-    )
-  ) {
+export function formatarDias(valor) {
+  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
     return "-";
   }
 
-  return `${formatarNumero(
-    valor,
-    1,
-  )} dias`;
+  return `${formatarNumero(valor, 1)} dias`;
 }
-
 
 /* =========================================================
    MOEDA COMPACTA
@@ -72,62 +34,31 @@ export function formatarDias(
    Utilizada nos rankings onde existe pouco espaço.
 ========================================================= */
 
-export function formatarMoedaCompacta(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
+export function formatarMoedaCompacta(valor) {
+  const numero = Number(valor);
 
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "R$ 0";
   }
 
-  if (
-    Math.abs(
-      numero,
-    ) >= 1000000
-  ) {
-    return `R$ ${(numero / 1000000).toLocaleString(
-      "pt-BR",
-      {
-        minimumFractionDigits:
-          1,
+  if (Math.abs(numero) >= 1000000) {
+    return `R$ ${(numero / 1000000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
 
-        maximumFractionDigits:
-          1,
-      },
-    )} mi`;
+      maximumFractionDigits: 1,
+    })} mi`;
   }
 
-  if (
-    Math.abs(
-      numero,
-    ) >= 1000
-  ) {
-    return `R$ ${(numero / 1000).toLocaleString(
-      "pt-BR",
-      {
-        minimumFractionDigits:
-          0,
+  if (Math.abs(numero) >= 1000) {
+    return `R$ ${(numero / 1000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 0,
 
-        maximumFractionDigits:
-          1,
-      },
-    )} mil`;
+      maximumFractionDigits: 1,
+    })} mil`;
   }
 
-  return formatarMoeda(
-    numero,
-    0,
-  );
+  return formatarMoeda(numero, 0);
 }
-
 
 /* =========================================================
    MOEDA COMPLETA
@@ -143,41 +74,23 @@ export function formatarMoedaCompacta(
    mi
 ========================================================= */
 
-export function formatarMoedaCompleta(
-  valor,
-  casas = 0,
-) {
-  const numero =
-    Number(
-      valor,
-    );
+export function formatarMoedaCompleta(valor, casas = 0) {
+  const numero = Number(valor);
 
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "R$ 0";
   }
 
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      style:
-        "currency",
+  return numero.toLocaleString("pt-BR", {
+    style: "currency",
 
-      currency:
-        "BRL",
+    currency: "BRL",
 
-      minimumFractionDigits:
-        casas,
+    minimumFractionDigits: casas,
 
-      maximumFractionDigits:
-        casas,
-    },
-  );
+    maximumFractionDigits: casas,
+  });
 }
-
 
 /* =========================================================
    KG COMPACTO
@@ -185,62 +98,31 @@ export function formatarMoedaCompleta(
    Utilizado nos rankings por fornecedor.
 ========================================================= */
 
-export function formatarKgCompacto(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
+export function formatarKgCompacto(valor) {
+  const numero = Number(valor);
 
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0 kg";
   }
 
-  if (
-    Math.abs(
-      numero,
-    ) >= 1000000
-  ) {
-    return `${(numero / 1000000).toLocaleString(
-      "pt-BR",
-      {
-        minimumFractionDigits:
-          1,
+  if (Math.abs(numero) >= 1000000) {
+    return `${(numero / 1000000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
 
-        maximumFractionDigits:
-          1,
-      },
-    )} mi kg`;
+      maximumFractionDigits: 1,
+    })} mi kg`;
   }
 
-  if (
-    Math.abs(
-      numero,
-    ) >= 1000
-  ) {
-    return `${(numero / 1000).toLocaleString(
-      "pt-BR",
-      {
-        minimumFractionDigits:
-          0,
+  if (Math.abs(numero) >= 1000) {
+    return `${(numero / 1000).toLocaleString("pt-BR", {
+      minimumFractionDigits: 0,
 
-        maximumFractionDigits:
-          1,
-      },
-    )} mil kg`;
+      maximumFractionDigits: 1,
+    })} mil kg`;
   }
 
-  return formatarKg(
-    numero,
-    0,
-  );
+  return formatarKg(numero, 0);
 }
-
 
 /* =========================================================
    KG COMPLETO
@@ -252,30 +134,16 @@ export function formatarKgCompacto(
    204.580 kg
 ========================================================= */
 
-export function formatarKgCompleto(
-  valor,
-) {
-  const numero =
-    Number(
-      valor,
-    );
+export function formatarKgCompleto(valor) {
+  const numero = Number(valor);
 
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
+  if (!Number.isFinite(numero)) {
     return "0 kg";
   }
 
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        0,
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 0,
 
-      maximumFractionDigits:
-        0,
-    },
-  )} kg`;
+    maximumFractionDigits: 0,
+  })} kg`;
 }

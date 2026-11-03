@@ -1,10 +1,11 @@
 import { COR_PDF, desenharCabecalhoPdf, desenharRodapePdf } from "../exportacao/padraoPdf";
-import { escreverTituloExcel, estilizarCabecalhoExcel, estilizarLinhasExcel } from "../exportacao/padraoExcel";
-
 import {
-  extrairMudancasCompra,
-  protegerDadosPagamento,
-} from "./formatarHistoricoCompras";
+  escreverTituloExcel,
+  estilizarCabecalhoExcel,
+  estilizarLinhasExcel,
+} from "../exportacao/padraoExcel";
+
+import { extrairMudancasCompra, protegerDadosPagamento } from "./formatarHistoricoCompras";
 
 const FUSO = "America/Sao_Paulo";
 
@@ -19,11 +20,7 @@ function dataHora(valor) {
 
   const data = new Date(valor);
 
-  if (
-    Number.isNaN(
-      data.getTime()
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return "-";
   }
 
@@ -42,21 +39,15 @@ function dataHora(valor) {
 }
 
 function nomeArquivo(extensao) {
-  const partes = new Intl.DateTimeFormat(
-    "en-US",
-    {
-      timeZone: FUSO,
+  const partes = new Intl.DateTimeFormat("en-US", {
+    timeZone: FUSO,
 
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }
-  ).formatToParts(new Date());
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
 
-  const pegar = (tipo) =>
-    partes.find(
-      (p) => p.type === tipo
-    )?.value || "00";
+  const pegar = (tipo) => partes.find((p) => p.type === tipo)?.value || "00";
 
   return (
     "Pedidos_de_Compra_Alterados_" +
@@ -72,79 +63,46 @@ function nomeArquivo(extensao) {
 ========================================================= */
 
 function textoSeguro(valor) {
-  return protegerDadosPagamento(
-    String(valor ?? "-")
-  ).replace(
+  return protegerDadosPagamento(String(valor ?? "-")).replace(
     /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,
-    " "
+    " ",
   );
 }
 
 function celulaTexto(valor) {
-  const conteudo =
-    textoSeguro(valor);
+  const conteudo = textoSeguro(valor);
 
-  return (
-    conteudo !== "-" &&
-    /^[\s]*[=+@\-]/.test(conteudo)
-  )
-    ? `'${conteudo}`
-    : conteudo;
+  return conteudo !== "-" && /^[\s]*[=+@\-]/.test(conteudo) ? `'${conteudo}` : conteudo;
 }
 
 /* =========================================================
    MUDANÇAS DE UM EVENTO
 ========================================================= */
 
-function mudancasEvento(
-  evento,
-  pedido,
-  referencias
-) {
-  if (
-    Array.isArray(
-      evento.mudancas
-    )
-  ) {
+function mudancasEvento(evento, pedido, referencias) {
+  if (Array.isArray(evento.mudancas)) {
     return evento.mudancas;
   }
 
   const refsPedido = {
     ...referencias,
 
-    itens:
-      referencias.itensPorPedido?.[
-        String(
-          pedido.cod_ped_compra
-        )
-      ] || {},
+    itens: referencias.itensPorPedido?.[String(pedido.cod_ped_compra)] || {},
   };
 
-  return extrairMudancasCompra(
-    evento,
-    refsPedido
-  );
+  return extrairMudancasCompra(evento, refsPedido);
 }
 
 /* =========================================================
    PDF
 ========================================================= */
 
-export async function exportarPdfPedidosCompraAlterados(
-  pedidos,
-  periodo,
-  referencias = {}
-) {
-  if (
-    !Array.isArray(pedidos) ||
-    pedidos.length === 0
-  ) {
+export async function exportarPdfPedidosCompraAlterados(pedidos, periodo, referencias = {}) {
+  if (!Array.isArray(pedidos) || pedidos.length === 0) {
     return;
   }
 
-  const { default: jsPDF } = await import(
-    "jspdf"
-  );
+  const { default: jsPDF } = await import("jspdf");
 
   const doc = new jsPDF({
     orientation: "landscape",
@@ -154,11 +112,9 @@ export async function exportarPdfPedidosCompraAlterados(
     format: "a4",
   });
 
-  const largura =
-    doc.internal.pageSize.getWidth();
+  const largura = doc.internal.pageSize.getWidth();
 
-  const altura =
-    doc.internal.pageSize.getHeight();
+  const altura = doc.internal.pageSize.getHeight();
 
   const margem = 12;
 
@@ -167,10 +123,7 @@ export async function exportarPdfPedidosCompraAlterados(
   /* CONTROLE DE PÁGINA */
 
   function espaco(mm) {
-    if (
-      y + mm >
-      altura - 15
-    ) {
+    if (y + mm > altura - 15) {
       doc.addPage();
 
       y = margem;
@@ -179,39 +132,18 @@ export async function exportarPdfPedidosCompraAlterados(
 
   /* ESCREVER TEXTO */
 
-  function escrever(
-    valor,
-    {
-      negrito = false,
-      tamanho = 9,
-      recuo = 0,
-    } = {}
-  ) {
-    doc.setFont(
-      "helvetica",
-      negrito
-        ? "bold"
-        : "normal"
+  function escrever(valor, { negrito = false, tamanho = 9, recuo = 0 } = {}) {
+    doc.setFont("helvetica", negrito ? "bold" : "normal");
+
+    doc.setFontSize(tamanho);
+
+    const texto = textoSeguro(valor);
+
+    const linhas = doc.splitTextToSize(
+      texto,
+
+      Math.max(25, largura - 2 * margem - recuo),
     );
-
-    doc.setFontSize(
-      tamanho
-    );
-
-    const texto =
-      textoSeguro(valor);
-
-    const linhas =
-      doc.splitTextToSize(
-        texto,
-
-        Math.max(
-          25,
-          largura -
-            2 * margem -
-            recuo
-        )
-      );
 
     for (const linha of linhas) {
       espaco(5);
@@ -221,7 +153,7 @@ export async function exportarPdfPedidosCompraAlterados(
 
         margem + recuo,
 
-        y
+        y,
       );
 
       y += 4.5;
@@ -248,29 +180,15 @@ export async function exportarPdfPedidosCompraAlterados(
     doc.setDrawColor(...COR_PDF.bordaAzul);
     doc.roundedRect(margem, y - 4.5, largura - 2 * margem, 7.5, 1.5, 1.5, "FD");
     doc.setTextColor(...COR_PDF.azul);
-    escrever(
-      `PEDIDO DE COMPRA ${
-        pedido.numero_pedido ||
-        pedido.cod_ped_compra
-      }`,
-      {
-        negrito: true,
-        tamanho: 10.5,
-        recuo: 3,
-      }
-    );
+    escrever(`PEDIDO DE COMPRA ${pedido.numero_pedido || pedido.cod_ped_compra}`, {
+      negrito: true,
+      tamanho: 10.5,
+      recuo: 3,
+    });
     doc.setTextColor(...COR_PDF.texto);
     y += 1.5;
-    for (
-      const evento of
-      pedido.detalhes_alteracoes || []
-    ) {
-      const mudancas =
-        mudancasEvento(
-          evento,
-          pedido,
-          referencias
-        );
+    for (const evento of pedido.detalhes_alteracoes || []) {
+      const mudancas = mudancasEvento(evento, pedido, referencias);
 
       if (!mudancas.length) {
         continue;
@@ -279,23 +197,16 @@ export async function exportarPdfPedidosCompraAlterados(
       y += 2;
 
       escrever(
-        `Alteração #${
-          evento.numeroAlteracao ||
-          "-"
-        } — ${dataHora(
-          evento.detectado_em
-        )}`,
+        `Alteração #${evento.numeroAlteracao || "-"} — ${dataHora(evento.detectado_em)}`,
 
         {
           negrito: true,
           tamanho: 9,
           recuo: 4,
-        }
+        },
       );
 
-      for (
-        const mudanca of mudancas
-      ) {
+      for (const mudanca of mudancas) {
         espaco(12);
 
         escrever(
@@ -305,7 +216,7 @@ export async function exportarPdfPedidosCompraAlterados(
             negrito: true,
             tamanho: 8,
             recuo: 8,
-          }
+          },
         );
 
         doc.setTextColor(...COR_PDF.texto2);
@@ -315,7 +226,7 @@ export async function exportarPdfPedidosCompraAlterados(
           {
             tamanho: 8,
             recuo: 12,
-          }
+          },
         );
 
         escrever(
@@ -324,7 +235,7 @@ export async function exportarPdfPedidosCompraAlterados(
           {
             tamanho: 8,
             recuo: 12,
-          }
+          },
         );
 
         if (mudanca.variacao) {
@@ -335,7 +246,7 @@ export async function exportarPdfPedidosCompraAlterados(
               negrito: true,
               tamanho: 8,
               recuo: 12,
-            }
+            },
           );
         }
 
@@ -348,45 +259,36 @@ export async function exportarPdfPedidosCompraAlterados(
 
   /* RODAPÉ (padrão dos relatórios) */
   desenharRodapePdf(doc, { titulo: "Pedidos de Compra Alterados", margem });
-  doc.save(
-    nomeArquivo("pdf")
-  );
+  doc.save(nomeArquivo("pdf"));
 }
 
 /* =========================================================
    EXCEL
 ========================================================= */
 
-export async function exportarExcelPedidosCompraAlterados(
-  pedidos,
-  periodo,
-  referencias = {}
-) {
-  if (
-    !Array.isArray(pedidos) ||
-    pedidos.length === 0
-  ) {
+export async function exportarExcelPedidosCompraAlterados(pedidos, periodo, referencias = {}) {
+  if (!Array.isArray(pedidos) || pedidos.length === 0) {
     return;
   }
 
-  const modulo = await import(
-    "exceljs"
-  );
+  const modulo = await import("exceljs");
 
-  const ExcelJS =
-    modulo.default ||
-    modulo;
+  const ExcelJS = modulo.default || modulo;
 
-  const workbook =
-    new ExcelJS.Workbook();
+  const workbook = new ExcelJS.Workbook();
 
-  workbook.creator =
-    "Pedrasplast";
+  workbook.creator = "Pedrasplast";
 
   /* =====================================================
      ABA RESUMO (padrão dos relatórios)
   ===================================================== */
-  const COLUNAS_RESUMO = ["Pedido de compra", "Primeira detecção", "Última alteração", "Nº alterações", "O que foi alterado"];
+  const COLUNAS_RESUMO = [
+    "Pedido de compra",
+    "Primeira detecção",
+    "Última alteração",
+    "Nº alterações",
+    "O que foi alterado",
+  ];
   const resumo = workbook.addWorksheet("Resumo");
   resumo.columns = [22, 23, 23, 18, 65].map((width) => ({ width }));
   const linhaCabecalhoResumo = escreverTituloExcel(resumo, {
@@ -402,7 +304,17 @@ export async function exportarExcelPedidosCompraAlterados(
   /* =====================================================
      ABA HISTÓRICO
   ===================================================== */
-  const COLUNAS_HISTORICO = ["Pedido de compra", "Alteração", "Detectado em", "Produto", "Código do produto", "O que mudou", "Antes", "Depois", "Diferença"];
+  const COLUNAS_HISTORICO = [
+    "Pedido de compra",
+    "Alteração",
+    "Detectado em",
+    "Produto",
+    "Código do produto",
+    "O que mudou",
+    "Antes",
+    "Depois",
+    "Diferença",
+  ];
   const historico = workbook.addWorksheet("Histórico Expandido");
   historico.columns = [20, 12, 20, 42, 20, 28, 36, 36, 18].map((width) => ({ width }));
   const linhaCabecalhoHistorico = escreverTituloExcel(historico, {
@@ -421,86 +333,37 @@ export async function exportarExcelPedidosCompraAlterados(
 
   for (const pedido of pedidos) {
     resumo.addRow([
-      celulaTexto(
-        pedido.numero_pedido ||
-          pedido.cod_ped_compra
-      ),
+      celulaTexto(pedido.numero_pedido || pedido.cod_ped_compra),
 
-      dataHora(
-        pedido.primeira_alteracao
-      ),
+      dataHora(pedido.primeira_alteracao),
 
-      dataHora(
-        pedido.ultima_alteracao
-      ),
+      dataHora(pedido.ultima_alteracao),
 
-      Number(
-        pedido.quantidade_alteracoes ||
-          0
-      ),
+      Number(pedido.quantidade_alteracoes || 0),
 
-      celulaTexto(
-        (
-          pedido.campos_alterados ||
-          []
-        ).join(", ")
-      ),
+      celulaTexto((pedido.campos_alterados || []).join(", ")),
     ]);
 
-    for (
-      const evento of
-      pedido.detalhes_alteracoes || []
-    ) {
-      for (
-        const mudanca of
-        mudancasEvento(
-          evento,
-          pedido,
-          referencias
-        )
-      ) {
+    for (const evento of pedido.detalhes_alteracoes || []) {
+      for (const mudanca of mudancasEvento(evento, pedido, referencias)) {
         historico.addRow([
-          celulaTexto(
-            pedido.numero_pedido ||
-              pedido.cod_ped_compra
-          ),
+          celulaTexto(pedido.numero_pedido || pedido.cod_ped_compra),
 
-          celulaTexto(
-            evento.numeroAlteracao ||
-              "-"
-          ),
+          celulaTexto(evento.numeroAlteracao || "-"),
 
-          dataHora(
-            evento.detectado_em
-          ),
+          dataHora(evento.detectado_em),
 
-          celulaTexto(
-            mudanca.produto?.descricao ||
-              "Informação geral do pedido"
-          ),
+          celulaTexto(mudanca.produto?.descricao || "Informação geral do pedido"),
 
-          celulaTexto(
-            mudanca.produto?.codigoComercial ||
-              "-"
-          ),
+          celulaTexto(mudanca.produto?.codigoComercial || "-"),
 
-          celulaTexto(
-            mudanca.tituloCurto ||
-              mudanca.campo
-          ),
+          celulaTexto(mudanca.tituloCurto || mudanca.campo),
 
-          celulaTexto(
-            mudanca.anterior
-          ),
+          celulaTexto(mudanca.anterior),
 
-          celulaTexto(
-            mudanca.novo
-          ),
+          celulaTexto(mudanca.novo),
 
-          celulaTexto(
-            mudanca.variacao ||
-              "-"
-          ),
+          celulaTexto(mudanca.variacao || "-"),
         ]);
       }
     }
@@ -518,48 +381,46 @@ export async function exportarExcelPedidosCompraAlterados(
     to: { row: linhaCabecalhoHistorico, column: COLUNAS_HISTORICO.length },
   };
   estilizarLinhasExcel(resumo, linhaCabecalhoResumo + 1, resumo.rowCount, COLUNAS_RESUMO.length);
-  estilizarLinhasExcel(historico, linhaCabecalhoHistorico + 1, historico.rowCount, COLUNAS_HISTORICO.length);
+  estilizarLinhasExcel(
+    historico,
+    linhaCabecalhoHistorico + 1,
+    historico.rowCount,
+    COLUNAS_HISTORICO.length,
+  );
 
   /* =====================================================
      GERAR ARQUIVO
   ===================================================== */
 
-  const buffer =
-    await workbook.xlsx.writeBuffer();
+  const buffer = await workbook.xlsx.writeBuffer();
 
   const blob = new Blob(
     [buffer],
 
     {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    }
+    },
   );
 
-  const url =
-    URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
   try {
-    const link =
-      document.createElement("a");
+    const link = document.createElement("a");
 
     link.href = url;
 
-    link.download =
-      nomeArquivo("xlsx");
+    link.download = nomeArquivo("xlsx");
 
-    document.body.appendChild(
-      link
-    );
+    document.body.appendChild(link);
 
     link.click();
 
     link.remove();
   } finally {
     setTimeout(
-      () =>
-        URL.revokeObjectURL(url),
+      () => URL.revokeObjectURL(url),
 
-      15000
+      15000,
     );
   }
 }

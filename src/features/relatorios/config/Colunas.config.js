@@ -1,8 +1,6 @@
 import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
 
-import {
-  COLUNAS_FINANCEIRO,
-} from "../financeiro/config/financeiroColunas";
+import { COLUNAS_FINANCEIRO } from "../financeiro/config/financeiroColunas";
 
 const converterNumero = converterNumeroFlexivel;
 const formatarNumero = formatarNumeroFlexivel;
@@ -31,21 +29,13 @@ function converterDataExcel(valor) {
   const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
   if (iso) {
-    return new Date(
-      Number(iso[1]),
-      Number(iso[2]) - 1,
-      Number(iso[3]),
-    );
+    return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
   }
 
   const br = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
 
   if (br) {
-    return new Date(
-      Number(br[3]),
-      Number(br[2]) - 1,
-      Number(br[1]),
-    );
+    return new Date(Number(br[3]), Number(br[2]) - 1, Number(br[1]));
   }
 
   return texto;
@@ -138,8 +128,7 @@ export const COLUNAS_RELATORIO = {
   descricao: {
     titulo: "Descrição",
     larguraPdf: 48,
-    valor: (item) =>
-      item.descricao || item.justificativa || item.natureza || item.motivo || "-",
+    valor: (item) => item.descricao || item.justificativa || item.natureza || item.motivo || "-",
   },
   pedidos_atendidos: {
     titulo: "Pedidos Atendidos",
@@ -217,7 +206,6 @@ export const COLUNAS_RELATORIO = {
       }),
   },
 
-
   /* ENTRADAS E COMPRAS DE MATÉRIA-PRIMA */
   recebido: {
     titulo: "Recebido",
@@ -261,8 +249,7 @@ export const COLUNAS_RELATORIO = {
     titulo: "Quantidade",
     larguraPdf: 25,
     larguraExcel: 17,
-    valor: (item) =>
-      `${formatarNumero(item.quantidade_kg, 3)} kg`,
+    valor: (item) => `${formatarNumero(item.quantidade_kg, 3)} kg`,
     valorExcel: (item) => converterNumero(item.quantidade_kg),
     formatoExcel: "#,##0",
   },
@@ -399,9 +386,7 @@ export function obterColunasRelatorio(relatorio) {
       larguraPdf: 30,
       valor: (item) => {
         const valor = item?.[chave];
-        return valor === null || valor === undefined || valor === ""
-          ? "-"
-          : String(valor);
+        return valor === null || valor === undefined || valor === "" ? "-" : String(valor);
       },
     };
   });

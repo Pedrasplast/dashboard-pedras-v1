@@ -5,7 +5,10 @@ import Paginacao from "@/components/paginacao/Paginacao";
 import { useAuth } from "@/hooks/useAuth";
 import { formatarPesoKgUn } from "../utils/formatadoresNecessidade";
 import { QUERY_KEY_NECESSIDADE_MP } from "../hooks/useNecessidadeMateriaPrima";
-import { decidirPesoSuspeito, desfazerDecisaoPeso } from "../services/necessidadeMateriaPrima.service";
+import {
+  decidirPesoSuspeito,
+  desfazerDecisaoPeso,
+} from "../services/necessidadeMateriaPrima.service";
 
 const PENDENCIAS_POR_PAGINA = 8;
 
@@ -35,7 +38,13 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
     mutationFn: ({ acao, codigo, peso }) =>
       acao === "DESFAZER"
         ? desfazerDecisaoPeso({ codigoProduto: codigo, codigoMp: peso.codigoMp })
-        : decidirPesoSuspeito({ codigoProduto: codigo, codigoMp: peso.codigoMp, quantidade: peso.quantidade, decisao: acao, usuario: user }),
+        : decidirPesoSuspeito({
+            codigoProduto: codigo,
+            codigoMp: peso.codigoMp,
+            quantidade: peso.quantidade,
+            decisao: acao,
+            usuario: user,
+          }),
     onMutate: () => setErro(""),
     onError: (e) => setErro(e?.message || "Não foi possível gravar."),
     onSettled: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY_NECESSIDADE_MP }),
@@ -49,10 +58,12 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
   const inicio = (paginaValida - 1) * PENDENCIAS_POR_PAGINA;
   const pendenciasPagina = useMemo(
     () => pendencias.slice(inicio, inicio + PENDENCIAS_POR_PAGINA),
-    [pendencias, inicio]
+    [pendencias, inicio],
   );
 
-  const suspeitos = pendencias.filter((p) => p.motivos.some((m) => m.tipo === "PESO_SUSPEITO")).length;
+  const suspeitos = pendencias.filter((p) =>
+    p.motivos.some((m) => m.tipo === "PESO_SUSPEITO"),
+  ).length;
 
   if (pendencias.length === 0 && pesosAceitos.length === 0) {
     return null;
@@ -79,13 +90,25 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
           aria-expanded={expandido}
           onClick={() => setExpandido((anterior) => !anterior)}
         >
-          {expandido ? (<><ChevronUp size={16} /> Ocultar pendências</>) : (<><ChevronDown size={16} /> Ver pendências</>)}
+          {expandido ? (
+            <>
+              <ChevronUp size={16} /> Ocultar pendências
+            </>
+          ) : (
+            <>
+              <ChevronDown size={16} /> Ver pendências
+            </>
+          )}
         </button>
       </div>
 
       {expandido && (
         <div className="necessidade-pendencias-conteudo">
-          {erro && <p className="necessidade-pendencias-erro" role="alert">{erro}</p>}
+          {erro && (
+            <p className="necessidade-pendencias-erro" role="alert">
+              {erro}
+            </p>
+          )}
 
           {pendencias.length > 0 && (
             <>
@@ -102,32 +125,74 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
                   <tbody>
                     {pendenciasPagina.map((item) => (
                       <tr key={item.codigo}>
-                        <td><strong>{item.codigo}</strong></td>
+                        <td>
+                          <strong>{item.codigo}</strong>
+                        </td>
                         <td>{item.produto}</td>
                         <td>
                           <ul className="necessidade-motivos">
                             {item.motivos.map((m, i) => (
-                              <li key={`${m.tipo}-${i}`} className={`necessidade-motivo necessidade-motivo-${m.tipo.toLowerCase()}`} title={m.tipo === "PESO_RECUSADO" ? autoria(m.peso?.decisao) : m.detalhe}>
+                              <li
+                                key={`${m.tipo}-${i}`}
+                                className={`necessidade-motivo necessidade-motivo-${m.tipo.toLowerCase()}`}
+                                title={
+                                  m.tipo === "PESO_RECUSADO" ? autoria(m.peso?.decisao) : m.detalhe
+                                }
+                              >
                                 {m.tipo === "PESO_SUSPEITO" ? (
                                   <>
-                                    <span>{m.texto}: {textoPeso(m.peso)}</span>
+                                    <span>
+                                      {m.texto}: {textoPeso(m.peso)}
+                                    </span>
                                     <span className="necessidade-motivo-acoes">
-                                      <button type="button" className="necessidade-btn-aceitar" disabled={ocupado}
-                                        onClick={() => acao({ acao: "ACEITO", codigo: item.codigo, peso: m.peso })}>
+                                      <button
+                                        type="button"
+                                        className="necessidade-btn-aceitar"
+                                        disabled={ocupado}
+                                        onClick={() =>
+                                          acao({
+                                            acao: "ACEITO",
+                                            codigo: item.codigo,
+                                            peso: m.peso,
+                                          })
+                                        }
+                                      >
                                         <Check size={13} aria-hidden="true" /> Aceitar
                                       </button>
-                                      <button type="button" className="necessidade-btn-recusar" disabled={ocupado}
-                                        onClick={() => acao({ acao: "RECUSADO", codigo: item.codigo, peso: m.peso })}>
+                                      <button
+                                        type="button"
+                                        className="necessidade-btn-recusar"
+                                        disabled={ocupado}
+                                        onClick={() =>
+                                          acao({
+                                            acao: "RECUSADO",
+                                            codigo: item.codigo,
+                                            peso: m.peso,
+                                          })
+                                        }
+                                      >
                                         <X size={13} aria-hidden="true" /> Recusar
                                       </button>
                                     </span>
                                   </>
                                 ) : m.tipo === "PESO_RECUSADO" ? (
                                   <>
-                                    <span>{m.texto} ({textoPeso(m.peso)})</span>
+                                    <span>
+                                      {m.texto} ({textoPeso(m.peso)})
+                                    </span>
                                     <span className="necessidade-motivo-acoes">
-                                      <button type="button" className="necessidade-btn-desfazer" disabled={ocupado}
-                                        onClick={() => acao({ acao: "DESFAZER", codigo: item.codigo, peso: m.peso })}>
+                                      <button
+                                        type="button"
+                                        className="necessidade-btn-desfazer"
+                                        disabled={ocupado}
+                                        onClick={() =>
+                                          acao({
+                                            acao: "DESFAZER",
+                                            codigo: item.codigo,
+                                            peso: m.peso,
+                                          })
+                                        }
+                                      >
                                         <RotateCcw size={13} aria-hidden="true" /> Desfazer
                                       </button>
                                     </span>
@@ -160,9 +225,15 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
               <ul>
                 {pesosAceitos.map((p) => (
                   <li key={`${p.codigo}-${p.codigoMp}`} title={autoria(p.decisao)}>
-                    <span><strong>{p.codigo}</strong> – {p.produto}: {textoPeso(p)}</span>
-                    <button type="button" className="necessidade-btn-desfazer" disabled={ocupado}
-                      onClick={() => acao({ acao: "DESFAZER", codigo: p.codigo, peso: p })}>
+                    <span>
+                      <strong>{p.codigo}</strong> – {p.produto}: {textoPeso(p)}
+                    </span>
+                    <button
+                      type="button"
+                      className="necessidade-btn-desfazer"
+                      disabled={ocupado}
+                      onClick={() => acao({ acao: "DESFAZER", codigo: p.codigo, peso: p })}
+                    >
                       <RotateCcw size={13} aria-hidden="true" /> Desfazer
                     </button>
                   </li>

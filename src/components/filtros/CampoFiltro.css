@@ -13,7 +13,6 @@
    fazemos a migracao gradualmente.
 ========================================================= */
 
-
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -30,7 +29,6 @@
 
   font-family: var(--font-family-sans);
 }
-
 
 /* =========================================================
    LABEL
@@ -49,7 +47,6 @@
   line-height: var(--line-height-tight);
 }
 
-
 /* =========================================================
    INPUT
 ========================================================= */
@@ -59,18 +56,13 @@
   min-width: 0;
   height: var(--control-height-md);
 
-  padding:
-    0
-    var(--space-3);
+  padding: 0 var(--space-3);
 
   color: var(--color-text);
 
   background-color: var(--color-surface);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -88,7 +80,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    SELECT
 ========================================================= */
@@ -98,20 +89,13 @@
   min-width: 0;
   height: var(--control-height-md);
 
-  padding:
-    0
-    34px
-    0
-    var(--space-3);
+  padding: 0 34px 0 var(--space-3);
 
   color: var(--color-text);
 
   background-color: var(--color-surface);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -131,7 +115,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    TEXTAREA
 ========================================================= */
@@ -142,8 +125,7 @@
 
   min-height: 84px;
 
-  padding:
-    var(--space-3);
+  padding: var(--space-3);
 
   resize: vertical;
 
@@ -151,10 +133,7 @@
 
   background-color: var(--color-surface);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -172,7 +151,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    HOVER
 ========================================================= */
@@ -183,7 +161,6 @@
   border-color: var(--color-border-strong);
 }
 
-
 /* =========================================================
    FOCO
 ========================================================= */
@@ -193,14 +170,8 @@
 :where(.campo-filtro) > textarea:focus {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    PLACEHOLDER
@@ -212,7 +183,6 @@
 
   opacity: 1;
 }
-
 
 /* =========================================================
    DISABLED
@@ -230,7 +200,6 @@
   opacity: 0.72;
 }
 
-
 /* =========================================================
    READONLY
 ========================================================= */
@@ -239,7 +208,6 @@
 :where(.campo-filtro) > textarea:read-only {
   background-color: var(--color-surface-subtle);
 }
-
 
 /* =========================================================
    INVALIDO
@@ -250,7 +218,6 @@
 :where(.campo-filtro) > textarea[aria-invalid="true"] {
   border-color: var(--color-danger);
 }
-
 
 /* =========================================================
    RESPONSIVIDADE

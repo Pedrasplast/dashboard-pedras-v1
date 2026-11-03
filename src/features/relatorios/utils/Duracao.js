@@ -32,11 +32,7 @@ export function converterDuracaoParaSegundos(duracao) {
   if (partes.length === 3) {
     const [horas, minutos, segundos] = partes;
 
-    return (
-      horas * 3600 +
-      minutos * 60 +
-      segundos
-    );
+    return horas * 3600 + minutos * 60 + segundos;
   }
 
   if (partes.length === 2) {
@@ -66,25 +62,14 @@ export function converterDuracaoParaSegundos(duracao) {
  * Também aceita mais de 24 horas.
  */
 
-export function formatarSegundosComoDuracao(
-  totalSegundos,
-) {
-  const segundosValidos = Math.max(
-    0,
-    Number(totalSegundos) || 0,
-  );
+export function formatarSegundosComoDuracao(totalSegundos) {
+  const segundosValidos = Math.max(0, Number(totalSegundos) || 0);
 
-  const horas = Math.floor(
-    segundosValidos / 3600,
-  );
+  const horas = Math.floor(segundosValidos / 3600);
 
-  const minutos = Math.floor(
-    (segundosValidos % 3600) / 60,
-  );
+  const minutos = Math.floor((segundosValidos % 3600) / 60);
 
-  const segundos = Math.floor(
-    segundosValidos % 60,
-  );
+  const segundos = Math.floor(segundosValidos % 60);
 
   return [
     String(horas).padStart(2, "0"),

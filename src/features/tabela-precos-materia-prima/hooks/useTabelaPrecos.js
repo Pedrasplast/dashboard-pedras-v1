@@ -1,12 +1,9 @@
-
 import { useQuery } from "@tanstack/react-query";
 
 import { buscarTabelaPrecos } from "../services/tabelaPrecos.service";
 import { useAtualizarAoAlterarMateriais } from "@/features/cadastros/materiais/hooks/useAtualizarAoAlterarMateriais";
 
-import {
-  TABELA_PRECOS,
-} from "../constants/tabelaPrecos.constants";
+import { TABELA_PRECOS } from "../constants/tabelaPrecos.constants";
 
 /* =========================================================
    CONSULTA REATIVA — TABELA DE PREÇOS
@@ -64,8 +61,7 @@ export function useTabelaPrecos() {
        para a Tabela de Preços.
     ===================================================== */
 
-    refetchInterval:
-      TABELA_PRECOS.REFRESH_INTERVAL,
+    refetchInterval: TABELA_PRECOS.REFRESH_INTERVAL,
 
     /* =====================================================
        REDE E TENTATIVAS

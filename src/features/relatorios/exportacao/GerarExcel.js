@@ -4,7 +4,6 @@ import { saveAs } from "file-saver";
 import { obterColunasExportacao } from "./ColunasExportacao";
 import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
 
-
 /* =========================================================
    CORES
 ========================================================= */
@@ -27,10 +26,12 @@ const CORES = {
 
 function linhaEhTotalGeral(item) {
   return Object.values(item || {}).some(
-    (valor) => String(valor ?? "").trim().toUpperCase() === "TOTAL GERAL",
+    (valor) =>
+      String(valor ?? "")
+        .trim()
+        .toUpperCase() === "TOTAL GERAL",
   );
 }
-
 
 /* =========================================================
    ALINHAMENTOS
@@ -50,7 +51,6 @@ const COLUNAS_ALINHADAS_DIREITA = new Set([
   "total",
 ]);
 
-
 const COLUNAS_LARGAS = new Set([
   "descricao",
   "descricao_produto",
@@ -62,105 +62,59 @@ const COLUNAS_LARGAS = new Set([
   "pedidos_atendidos",
 ]);
 
-
 /* =========================================================
    AUXILIARES
 ========================================================= */
 
 function obterDataHoraEmissao() {
-  return new Date().toLocaleString(
-    "pt-BR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+  return new Date().toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
 
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  );
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
-
 
 function calcularLarguraColuna(coluna) {
   if (coluna.larguraExcel) {
-    return Number(
-      coluna.larguraExcel,
-    );
+    return Number(coluna.larguraExcel);
   }
 
-  if (
-    COLUNAS_LARGAS.has(
-      coluna.chave,
-    )
-  ) {
+  if (COLUNAS_LARGAS.has(coluna.chave)) {
     return 38;
   }
 
-  const titulo = String(
-    coluna.titulo ||
-    coluna.chave ||
-    "",
-  );
+  const titulo = String(coluna.titulo || coluna.chave || "");
 
-  return Math.max(
-    14,
-    Math.min(
-      32,
-      titulo.length + 10,
-    ),
-  );
+  return Math.max(14, Math.min(32, titulo.length + 10));
 }
 
-
-function obterValorCelula(
-  coluna,
-  item,
-) {
-  if (
-    typeof coluna.valorExcel ===
-    "function"
-  ) {
-    return coluna.valorExcel(
-      item,
-    );
+function obterValorCelula(coluna, item) {
+  if (typeof coluna.valorExcel === "function") {
+    return coluna.valorExcel(item);
   }
 
-  if (
-    typeof coluna.valor ===
-    "function"
-  ) {
-    return coluna.valor(
-      item,
-    );
+  if (typeof coluna.valor === "function") {
+    return coluna.valor(item);
   }
 
   return "";
 }
 
-
 /* =========================================================
    FORMATAÇÃO DAS CÉLULAS DO EXCEL
 ========================================================= */
 
-function aplicarFormatoExcel(
-  cell,
-  coluna,
-  valor,
-) {
+function aplicarFormatoExcel(cell, coluna, valor) {
   if (!coluna?.formatoExcel) {
     return;
   }
 
-  const ehNumero =
-    typeof valor === "number" &&
-    Number.isFinite(valor);
+  const ehNumero = typeof valor === "number" && Number.isFinite(valor);
 
-  const ehData =
-    valor instanceof Date &&
-    !Number.isNaN(
-      valor.getTime(),
-    );
+  const ehData = valor instanceof Date && !Number.isNaN(valor.getTime());
 
   /*
    * Só aplica numFmt quando a célula possui um valor
@@ -171,52 +125,29 @@ function aplicarFormatoExcel(
    * Recebido = Date       -> dd/mm/yyyy
    * Recebido = A receber  -> texto normal
    */
-  if (
-    !ehNumero &&
-    !ehData
-  ) {
+  if (!ehNumero && !ehData) {
     return;
   }
 
-  cell.numFmt =
-    coluna.formatoExcel;
+  cell.numFmt = coluna.formatoExcel;
 }
-
 
 /* =========================================================
    CABEÇALHO DO RELATÓRIO
 ========================================================= */
 
-function criarCabecalhoRelatorio({
-  worksheet,
-  relatorio,
-  textoFiltros,
-  totalColunas,
-}) {
-  const ultimaColuna =
-    worksheet
-      .getColumn(
-        totalColunas,
-      )
-      .letter;
-
+function criarCabecalhoRelatorio({ worksheet, relatorio, textoFiltros, totalColunas }) {
+  const ultimaColuna = worksheet.getColumn(totalColunas).letter;
 
   /* =======================================================
      TÍTULO
   ======================================================= */
 
-  worksheet.mergeCells(
-    `A1:${ultimaColuna}1`,
-  );
+  worksheet.mergeCells(`A1:${ultimaColuna}1`);
 
-  const tituloCell =
-    worksheet.getCell(
-      "A1",
-    );
+  const tituloCell = worksheet.getCell("A1");
 
-  tituloCell.value =
-    relatorio?.titulo ||
-    "Relatório";
+  tituloCell.value = relatorio?.titulo || "Relatório";
 
   tituloCell.font = {
     bold: true,
@@ -225,36 +156,22 @@ function criarCabecalhoRelatorio({
   };
 
   tituloCell.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
   };
 
-  worksheet.getRow(
-    1,
-  ).height = 28;
-
+  worksheet.getRow(1).height = 28;
 
   /* =======================================================
      FAIXA DA CATEGORIA
   ======================================================= */
 
-  worksheet.mergeCells(
-    `A2:${ultimaColuna}2`,
-  );
+  worksheet.mergeCells(`A2:${ultimaColuna}2`);
 
-  const faixa =
-    worksheet.getCell(
-      "A2",
-    );
+  const faixa = worksheet.getCell("A2");
 
-  faixa.value =
-    String(
-      relatorio?.categoria ||
-      "Relatório",
-    ).toUpperCase();
+  faixa.value = String(relatorio?.categoria || "Relatório").toUpperCase();
 
   faixa.font = {
     bold: true,
@@ -267,661 +184,387 @@ function criarCabecalhoRelatorio({
   };
 
   faixa.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
   };
 
-  worksheet.getRow(
-    2,
-  ).height = 21;
-
+  worksheet.getRow(2).height = 21;
 
   /* =======================================================
      INFORMAÇÕES
   ======================================================= */
 
-  worksheet.mergeCells(
-    `A3:${ultimaColuna}3`,
-  );
+  worksheet.mergeCells(`A3:${ultimaColuna}3`);
 
-  const info =
-    worksheet.getCell(
-      "A3",
-    );
+  const info = worksheet.getCell("A3");
 
-  info.value =
-    `Filtros: ${
-      textoFiltros ||
-      "Sem filtros adicionais"
-    }   •   Emitido em: ${
-      obterDataHoraEmissao()
-    }`;
+  info.value = `Filtros: ${
+    textoFiltros || "Sem filtros adicionais"
+  }   •   Emitido em: ${obterDataHoraEmissao()}`;
 
   info.font = {
     size: 9,
     bold: true,
 
     color: {
-      argb:
-        CORES.cinzaTexto,
+      argb: CORES.cinzaTexto,
     },
   };
 
   info.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
 
-    wrapText:
-      true,
+    wrapText: true,
   };
 
-  worksheet.getRow(
-    3,
-  ).height = 21;
+  worksheet.getRow(3).height = 21;
 
-  worksheet.getRow(
-    4,
-  ).height = 8;
-
+  worksheet.getRow(4).height = 8;
 
   return 5;
 }
-
 
 /* =========================================================
    CABEÇALHO DA TABELA
 ========================================================= */
 
-function escreverCabecalhoTabela({
-  worksheet,
-  linha,
-  colunas,
-}) {
-  colunas.forEach(
-    (
-      coluna,
-      indice,
-    ) => {
-      const cell =
-        worksheet.getCell(
-          linha,
-          indice + 1,
-        );
+function escreverCabecalhoTabela({ worksheet, linha, colunas }) {
+  colunas.forEach((coluna, indice) => {
+    const cell = worksheet.getCell(linha, indice + 1);
 
-      cell.value =
-        coluna.titulo ||
-        coluna.chave;
+    cell.value = coluna.titulo || coluna.chave;
 
-      cell.fill = {
-        type:
-          "pattern",
+    cell.fill = {
+      type: "pattern",
 
-        pattern:
-          "solid",
+      pattern: "solid",
 
-        fgColor: { argb: CORES.azulCabecalho },
-      };
+      fgColor: { argb: CORES.azulCabecalho },
+    };
 
-      cell.font = {
-        bold: true,
-        size: 10,
-        color: { argb: CORES.azul },
-      };
+    cell.font = {
+      bold: true,
+      size: 10,
+      color: { argb: CORES.azul },
+    };
 
-      cell.alignment = {
-        vertical:
-          "middle",
+    cell.alignment = {
+      vertical: "middle",
 
-        horizontal:
-          COLUNAS_ALINHADAS_DIREITA.has(
-            coluna.chave,
-          )
-            ? "right"
-            : "left",
+      horizontal: COLUNAS_ALINHADAS_DIREITA.has(coluna.chave) ? "right" : "left",
 
-        wrapText:
-          true,
-      };
+      wrapText: true,
+    };
 
-      cell.border = {
-        bottom: {
-          style:
-            "thin",
+    cell.border = {
+      bottom: {
+        style: "thin",
 
-          color: {
-            argb: "FFD6DEF0",
-          },
+        color: {
+          argb: "FFD6DEF0",
         },
-      };
-    },
-  );
+      },
+    };
+  });
 
-  worksheet.getRow(
-    linha,
-  ).height = 24;
+  worksheet.getRow(linha).height = 24;
 }
-
 
 /* =========================================================
    LINHAS DE DADOS
 ========================================================= */
 
-function escreverLinhasDados({
-  worksheet,
-  linhaInicial,
-  colunas,
-  dados,
-}) {
-  let linhaAtual =
-    linhaInicial;
+function escreverLinhasDados({ worksheet, linhaInicial, colunas, dados }) {
+  let linhaAtual = linhaInicial;
 
+  dados.forEach((item, indice) => {
+    colunas.forEach((coluna, indiceColuna) => {
+      const cell = worksheet.getCell(linhaAtual, indiceColuna + 1);
 
-  dados.forEach(
-    (
-      item,
-      indice,
-    ) => {
-      colunas.forEach(
-        (
-          coluna,
-          indiceColuna,
-        ) => {
-          const cell =
-            worksheet.getCell(
-              linhaAtual,
-              indiceColuna + 1,
-            );
+      const valorCelula = obterValorCelula(coluna, item);
 
+      cell.value = valorCelula;
 
-          const valorCelula =
-            obterValorCelula(
-              coluna,
-              item,
-            );
+      aplicarFormatoExcel(cell, coluna, valorCelula);
 
+      cell.font = {
+        size: 9.5,
 
-          cell.value =
-            valorCelula;
-
-
-          aplicarFormatoExcel(
-            cell,
-            coluna,
-            valorCelula,
-          );
-
-
-          cell.font = {
-            size:
-              9.5,
-
-            color: {
-              argb:
-                CORES.texto,
-            },
-          };
-
-
-          cell.alignment = {
-            vertical:
-              "middle",
-
-            horizontal:
-              COLUNAS_ALINHADAS_DIREITA.has(
-                coluna.chave,
-              )
-                ? "right"
-                : "left",
-          };
-
-
-          cell.border = {
-            bottom: {
-              style:
-                "thin",
-
-              color: {
-                argb:
-                  CORES.cinzaBorda,
-              },
-            },
-          };
-
-
-          if (
-            indice % 2 === 1
-          ) {
-            cell.fill = {
-              type:
-                "pattern",
-
-              pattern:
-                "solid",
-
-              fgColor: {
-                argb:
-                  CORES.cinzaMuitoClaro,
-              },
-            };
-          }
+        color: {
+          argb: CORES.texto,
         },
-      );
+      };
 
+      cell.alignment = {
+        vertical: "middle",
 
-      if (linhaEhTotalGeral(item)) {
-        colunas.forEach((_, indiceColuna) => {
-          const cell = worksheet.getCell(linhaAtual, indiceColuna + 1);
-          cell.font = { ...cell.font, bold: true, color: { argb: CORES.verdeTexto } };
-          cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.verdeFundo } };
-          cell.border = { top: { style: "medium", color: { argb: CORES.verde } } };
-        });
+        horizontal: COLUNAS_ALINHADAS_DIREITA.has(coluna.chave) ? "right" : "left",
+      };
+
+      cell.border = {
+        bottom: {
+          style: "thin",
+
+          color: {
+            argb: CORES.cinzaBorda,
+          },
+        },
+      };
+
+      if (indice % 2 === 1) {
+        cell.fill = {
+          type: "pattern",
+
+          pattern: "solid",
+
+          fgColor: {
+            argb: CORES.cinzaMuitoClaro,
+          },
+        };
       }
+    });
 
-      worksheet.getRow(linhaAtual).height = 20;
+    if (linhaEhTotalGeral(item)) {
+      colunas.forEach((_, indiceColuna) => {
+        const cell = worksheet.getCell(linhaAtual, indiceColuna + 1);
+        cell.font = { ...cell.font, bold: true, color: { argb: CORES.verdeTexto } };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: CORES.verdeFundo } };
+        cell.border = { top: { style: "medium", color: { argb: CORES.verde } } };
+      });
+    }
 
-      linhaAtual += 1;
-    },
-  );
+    worksheet.getRow(linhaAtual).height = 20;
 
+    linhaAtual += 1;
+  });
 
   return linhaAtual;
 }
-
 
 /* =========================================================
    FAIXA DE GRUPO
 ========================================================= */
 
-function escreverFaixaGrupo({
-  worksheet,
-  linha,
-  titulo,
-  quantidade,
-  totalColunas,
-}) {
-  const ultimaColuna =
-    worksheet
-      .getColumn(
-        totalColunas,
-      )
-      .letter;
+function escreverFaixaGrupo({ worksheet, linha, titulo, quantidade, totalColunas }) {
+  const ultimaColuna = worksheet.getColumn(totalColunas).letter;
 
+  worksheet.mergeCells(`A${linha}:${ultimaColuna}${linha}`);
 
-  worksheet.mergeCells(
-    `A${linha}:${ultimaColuna}${linha}`,
-  );
+  const cell = worksheet.getCell(`A${linha}`);
 
-
-  const cell =
-    worksheet.getCell(
-      `A${linha}`,
-    );
-
-
-  cell.value =
-    `${String(
-      titulo || "",
-    ).toUpperCase()}  (${
-      quantidade
-    } registro${
-      quantidade === 1
-        ? ""
-        : "s"
-    })`;
-
+  cell.value = `${String(titulo || "").toUpperCase()}  (${quantidade} registro${
+    quantidade === 1 ? "" : "s"
+  })`;
 
   cell.fill = {
-    type:
-      "pattern",
+    type: "pattern",
 
-    pattern:
-      "solid",
+    pattern: "solid",
 
     fgColor: {
-      argb:
-        CORES.azulClaro,
+      argb: CORES.azulClaro,
     },
   };
-
 
   cell.font = {
-    bold:
-      true,
+    bold: true,
 
-    size:
-      10,
+    size: 10,
 
     color: {
-      argb:
-        CORES.azul,
+      argb: CORES.azul,
     },
   };
 
-
   cell.alignment = {
-    vertical:
-      "middle",
+    vertical: "middle",
 
-    horizontal:
-      "left",
+    horizontal: "left",
   };
 
-
-  worksheet.getRow(
-    linha,
-  ).height = 22;
+  worksheet.getRow(linha).height = 22;
 }
-
 
 /* =========================================================
    GERADOR DE EXCEL
 ========================================================= */
 
-export async function gerarExcelRelatorio({
-  relatorio,
-  dados,
-  textoFiltros,
-  grupos,
-}) {
+export async function gerarExcelRelatorio({ relatorio, dados, textoFiltros, grupos }) {
   if (!relatorio) {
     return;
   }
 
-
-  if (
-    !Array.isArray(
-      dados,
-    ) ||
-    dados.length === 0
-  ) {
-    alert(
-      "Nenhum dado encontrado com os filtros selecionados.",
-    );
+  if (!Array.isArray(dados) || dados.length === 0) {
+    alert("Nenhum dado encontrado com os filtros selecionados.");
 
     return;
   }
 
-
   try {
-    const colunas =
-      obterColunasExportacao(
-        relatorio,
-        "excel",
-      );
+    const colunas = obterColunasExportacao(relatorio, "excel");
 
-
-    if (
-      colunas.length === 0
-    ) {
-      alert(
-        "Nenhuma coluna configurada para este relatório.",
-      );
+    if (colunas.length === 0) {
+      alert("Nenhuma coluna configurada para este relatório.");
 
       return;
     }
 
+    const workbook = new ExcelJS.Workbook();
 
-    const workbook =
-      new ExcelJS.Workbook();
+    workbook.creator = "Pedrasplast";
 
+    workbook.company = "Pedrasplast";
 
-    workbook.creator =
-      "Pedrasplast";
+    workbook.subject = relatorio.titulo;
 
-    workbook.company =
-      "Pedrasplast";
+    workbook.title = relatorio.titulo;
 
-    workbook.subject =
-      relatorio.titulo;
+    workbook.created = new Date();
 
-    workbook.title =
-      relatorio.titulo;
-
-    workbook.created =
-      new Date();
-
-
-    const worksheet =
-      workbook.addWorksheet(
-        "Relatório",
+    const worksheet = workbook.addWorksheet("Relatório", {
+      views: [
         {
-          views: [
-            {
-              showGridLines:
-                false,
-            },
-          ],
+          showGridLines: false,
         },
-      );
+      ],
+    });
 
+    worksheet.columns = colunas.map((coluna) => ({
+      width: calcularLarguraColuna(coluna),
+    }));
 
-    worksheet.columns =
-      colunas.map(
-        (coluna) => ({
-          width:
-            calcularLarguraColuna(
-              coluna,
-            ),
-        }),
-      );
+    const linhaCabecalhoTabela = criarCabecalhoRelatorio({
+      worksheet,
+      relatorio,
+      textoFiltros,
 
-
-    const linhaCabecalhoTabela =
-      criarCabecalhoRelatorio({
-        worksheet,
-        relatorio,
-        textoFiltros,
-
-        totalColunas:
-          colunas.length,
-      });
-
+      totalColunas: colunas.length,
+    });
 
     /* =====================================================
        GRUPOS
     ===================================================== */
 
-    const gruposValidos =
-      Array.isArray(
-        grupos,
-      )
-        ? grupos.filter(
-            (grupo) =>
-              Array.isArray(
-                grupo?.dados,
-              ) &&
-              grupo.dados.length > 0,
-          )
-        : [];
+    const gruposValidos = Array.isArray(grupos)
+      ? grupos.filter((grupo) => Array.isArray(grupo?.dados) && grupo.dados.length > 0)
+      : [];
 
+    if (gruposValidos.length > 0) {
+      let linhaAtual = linhaCabecalhoTabela;
 
-    if (
-      gruposValidos.length > 0
-    ) {
-      let linhaAtual =
-        linhaCabecalhoTabela;
+      gruposValidos.forEach((grupo) => {
+        escreverFaixaGrupo({
+          worksheet,
 
+          linha: linhaAtual,
 
-      gruposValidos.forEach(
-        (grupo) => {
-          escreverFaixaGrupo({
-            worksheet,
+          titulo: grupo.titulo,
 
-            linha:
-              linhaAtual,
+          quantidade: grupo.dados.length,
 
-            titulo:
-              grupo.titulo,
+          totalColunas: colunas.length,
+        });
 
-            quantidade:
-              grupo.dados.length,
+        linhaAtual += 1;
 
-            totalColunas:
-              colunas.length,
-          });
+        escreverCabecalhoTabela({
+          worksheet,
 
+          linha: linhaAtual,
 
-          linhaAtual += 1;
+          colunas,
+        });
 
+        linhaAtual += 1;
 
-          escreverCabecalhoTabela({
-            worksheet,
+        linhaAtual = escreverLinhasDados({
+          worksheet,
 
-            linha:
-              linhaAtual,
+          linhaInicial: linhaAtual,
 
-            colunas,
-          });
+          colunas,
 
+          dados: grupo.dados,
+        });
 
-          linhaAtual += 1;
+        worksheet.getRow(linhaAtual).height = 10;
 
-
-          linhaAtual =
-            escreverLinhasDados({
-              worksheet,
-
-              linhaInicial:
-                linhaAtual,
-
-              colunas,
-
-              dados:
-                grupo.dados,
-            });
-
-
-          worksheet.getRow(
-            linhaAtual,
-          ).height = 10;
-
-
-          linhaAtual += 1;
-        },
-      );
-
+        linhaAtual += 1;
+      });
 
       worksheet.views = [
         {
-          state:
-            "frozen",
+          state: "frozen",
 
-          ySplit:
-            linhaCabecalhoTabela -
-            1,
+          ySplit: linhaCabecalhoTabela - 1,
 
-          showGridLines:
-            false,
+          showGridLines: false,
         },
       ];
     } else {
       escreverCabecalhoTabela({
         worksheet,
 
-        linha:
-          linhaCabecalhoTabela,
+        linha: linhaCabecalhoTabela,
 
         colunas,
       });
-
 
       const ultimaLinha =
         escreverLinhasDados({
           worksheet,
 
-          linhaInicial:
-            linhaCabecalhoTabela +
-            1,
+          linhaInicial: linhaCabecalhoTabela + 1,
 
           colunas,
 
           dados,
         }) - 1;
 
-
       worksheet.autoFilter = {
         from: {
-          row:
-            linhaCabecalhoTabela,
+          row: linhaCabecalhoTabela,
 
-          column:
-            1,
+          column: 1,
         },
 
         to: {
-          row:
-            ultimaLinha,
+          row: ultimaLinha,
 
-          column:
-            colunas.length,
+          column: colunas.length,
         },
       };
 
-
       worksheet.views = [
         {
-          state:
-            "frozen",
+          state: "frozen",
 
-          ySplit:
-            linhaCabecalhoTabela,
+          ySplit: linhaCabecalhoTabela,
 
-          showGridLines:
-            false,
+          showGridLines: false,
         },
       ];
     }
-
 
     /* =====================================================
        DOWNLOAD
     ===================================================== */
 
-    const buffer =
-      await workbook.xlsx.writeBuffer();
+    const buffer = await workbook.xlsx.writeBuffer();
 
+    const nomeArquivo = `${relatorio.id}_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-    const nomeArquivo =
-      `${relatorio.id}_${
-        new Date()
-          .toISOString()
-          .slice(
-            0,
-            10,
-          )
-      }.xlsx`;
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
 
-
-    const blob =
-      new Blob(
-        [
-          buffer,
-        ],
-        {
-          type:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        },
-      );
-
-
-    saveAs(
-      blob,
-      nomeArquivo,
-    );
+    saveAs(blob, nomeArquivo);
   } catch (erro) {
-    console.error(
-      "Erro ao gerar Excel:",
-      erro,
-    );
+    console.error("Erro ao gerar Excel:", erro);
 
-    alert(
-      "Não foi possível gerar o arquivo Excel.",
-    );
+    alert("Não foi possível gerar o arquivo Excel.");
   }
 }

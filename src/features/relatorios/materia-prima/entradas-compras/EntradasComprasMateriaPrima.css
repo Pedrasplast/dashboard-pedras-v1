@@ -107,7 +107,6 @@
   }
 }
 
-
 /* =========================================================
    ESTADOS
 ========================================================= */
@@ -137,7 +136,6 @@
   color: #b91c1c;
 }
 
-
 /* =========================================================
    RESUMO
 ========================================================= */
@@ -149,7 +147,6 @@
 .entradas-compras-resumo-total {
   color: #15803d !important;
 }
-
 
 /* =========================================================
    VISUALIZAÇÃO
@@ -253,22 +250,19 @@
   flex-wrap: wrap;
 }
 
-
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
 @media (max-width: 1280px) {
   .entradas-compras-filtros {
-    grid-template-columns:
-      repeat(4, minmax(150px, 1fr));
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
   }
 }
 
 @media (max-width: 820px) {
   .entradas-compras-filtros {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .entradas-compras-busca {
@@ -276,8 +270,7 @@
   }
 
   .entradas-compras-visualizacao-info {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

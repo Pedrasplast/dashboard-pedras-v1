@@ -26,10 +26,7 @@ export default function PedidosFiltros({
         />
       </div>
 
-      <select
-        value={vendedor}
-        onChange={(evento) => onVendedorChange(evento.target.value)}
-      >
+      <select value={vendedor} onChange={(evento) => onVendedorChange(evento.target.value)}>
         <option value="todos">Todos os vendedores</option>
 
         {vendedores.map((nome) => (
@@ -39,10 +36,7 @@ export default function PedidosFiltros({
         ))}
       </select>
 
-      <select
-        value={status}
-        onChange={(evento) => onStatusChange(evento.target.value)}
-      >
+      <select value={status} onChange={(evento) => onStatusChange(evento.target.value)}>
         <option value="Pedido">Pedido</option>
         <option value="todos">Todos os status</option>
         <option value="Cancelado">Cancelados</option>
@@ -50,10 +44,7 @@ export default function PedidosFiltros({
         {statusDisponiveis
           .filter((nomeStatus) => {
             const statusNormalizado = normalizarTexto(nomeStatus);
-            return (
-              statusNormalizado !== "pedido" &&
-              statusNormalizado !== "cancelado"
-            );
+            return statusNormalizado !== "pedido" && statusNormalizado !== "cancelado";
           })
           .map((nomeStatus) => (
             <option key={nomeStatus} value={nomeStatus}>
@@ -63,11 +54,7 @@ export default function PedidosFiltros({
       </select>
 
       {possuiFiltro && (
-        <button
-          type="button"
-          className="pedidos-btn-limpar"
-          onClick={onLimpar}
-        >
+        <button type="button" className="pedidos-btn-limpar" onClick={onLimpar}>
           <X size={16} />
           Limpar
         </button>

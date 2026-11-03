@@ -12,7 +12,6 @@
    - foco e transicoes padronizados.
 ========================================================= */
 
-
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -28,22 +27,14 @@
 
   margin-bottom: var(--space-5);
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-lg);
 
   background: var(--color-surface);
 
-  box-shadow:
-    0
-    1px
-    3px
-    rgb(15 23 42 / 0.025);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.025);
 }
-
 
 /* =========================================================
    PESQUISA
@@ -61,14 +52,9 @@
 
   gap: 9px;
 
-  padding:
-    0
-    var(--space-3);
+  padding: 0 var(--space-3);
 
-  border:
-    1px
-    solid
-    var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
 
   border-radius: var(--radius-md);
 
@@ -82,7 +68,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    PESQUISA - FOCO
 ========================================================= */
@@ -90,26 +75,16 @@
 .pedidos-pesquisa:focus-within {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    PESQUISA - ICONE
 ========================================================= */
 
 .pedidos-pesquisa svg {
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 }
-
 
 /* =========================================================
    PESQUISA - INPUT
@@ -132,7 +107,6 @@
   font-size: var(--font-size-body);
 }
 
-
 /* =========================================================
    PESQUISA - PLACEHOLDER
 ========================================================= */
@@ -143,7 +117,6 @@
   opacity: 1;
 }
 
-
 /* =========================================================
    SELECTS
 ========================================================= */
@@ -153,16 +126,9 @@
 
   height: var(--control-height-lg);
 
-  padding:
-    0
-    34px
-    0
-    var(--space-3);
+  padding: 0 34px 0 var(--space-3);
 
-  border:
-    1px
-    solid
-    var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
 
   border-radius: var(--radius-md);
 
@@ -183,7 +149,6 @@
     background-color var(--transition-base);
 }
 
-
 /* =========================================================
    SELECTS - HOVER
 ========================================================= */
@@ -192,7 +157,6 @@
   border-color: var(--color-text-light);
 }
 
-
 /* =========================================================
    SELECTS - FOCO
 ========================================================= */
@@ -200,14 +164,8 @@
 .pedidos-filtros select:focus {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    LIMPAR FILTROS
@@ -223,14 +181,9 @@
 
   gap: 6px;
 
-  padding:
-    0
-    13px;
+  padding: 0 13px;
 
-  border:
-    1px
-    solid
-    var(--color-border);
+  border: 1px solid var(--color-border);
 
   border-radius: var(--radius-md);
 
@@ -252,7 +205,6 @@
     transform var(--transition-fast);
 }
 
-
 /* =========================================================
    LIMPAR - HOVER
 ========================================================= */
@@ -263,7 +215,6 @@
   color: var(--color-text-secondary);
 }
 
-
 /* =========================================================
    LIMPAR - ACTIVE
 ========================================================= */
@@ -271,7 +222,6 @@
 .pedidos-btn-limpar:active {
   transform: translateY(1px);
 }
-
 
 /* =========================================================
    LIMPAR - FOCO
@@ -281,18 +231,11 @@
   outline: none;
 }
 
-
 .pedidos-btn-limpar:focus-visible {
   border-color: var(--color-primary);
 
-  box-shadow:
-    0
-    0
-    0
-    var(--focus-ring-width)
-    var(--focus-ring-color);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 850px
@@ -307,13 +250,10 @@
       1fr;
   }
 
-
   .pedidos-pesquisa {
-    grid-column:
-      1 / -1;
+    grid-column: 1 / -1;
   }
 }
-
 
 /* =========================================================
    RESPONSIVIDADE - 520px
@@ -321,15 +261,12 @@
 
 @media (max-width: 520px) {
   .pedidos-filtros {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .pedidos-pesquisa {
     grid-column: auto;
   }
-
 
   .pedidos-filtros select,
   .pedidos-btn-limpar {

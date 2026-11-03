@@ -3,234 +3,160 @@
 ========================================================= */
 
 .dp-justificativas-card-content {
-  padding:
-    0
-    0
-    4px;
+  padding: 0 0 4px;
 }
 
 .dp-justificativas {
-  width:
-    100%;
+  width: 100%;
 
-  min-width:
-    0;
+  min-width: 0;
 }
-
 
 /* =========================================================
    TABELA
 ========================================================= */
 
 .dp-justificativas__table-wrapper {
-  width:
-    100%;
+  width: 100%;
 
-  overflow-x:
-    auto;
+  overflow-x: auto;
 
-  scrollbar-width:
-    thin;
+  scrollbar-width: thin;
 
-  scrollbar-color:
-    #cbd5e1
-    transparent;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
 .dp-justificativas__table-wrapper::-webkit-scrollbar {
-  height:
-    6px;
+  height: 6px;
 }
 
 .dp-justificativas__table-wrapper::-webkit-scrollbar-thumb {
-  background:
-    #cbd5e1;
+  background: #cbd5e1;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 }
 
 .dp-justificativas__table {
-  width:
-    100%;
+  width: 100%;
 
-  min-width:
-    1050px;
+  min-width: 1050px;
 
-  border-collapse:
-    collapse;
+  border-collapse: collapse;
 }
 
 .dp-justificativas__table th,
 .dp-justificativas__table td {
-  padding:
-    11px
-    12px;
+  padding: 11px 12px;
 
-  border-bottom:
-    1px solid
-    #edf2f7;
+  border-bottom: 1px solid #edf2f7;
 
-  color:
-    #475569;
+  color: #475569;
 
-  font-size:
-    0.69rem;
+  font-size: 0.69rem;
 
-  vertical-align:
-    middle;
+  vertical-align: middle;
 
-  text-align:
-    left;
+  text-align: left;
 }
 
 .dp-justificativas__table th {
-  color:
-    #64748b;
+  color: #64748b;
 
-  background:
-    #f8fafc;
+  background: #f8fafc;
 
-  font-size:
-    0.6rem;
+  font-size: 0.6rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    0.045em;
+  letter-spacing: 0.045em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
-.dp-justificativas__table
-tbody
-tr {
-  transition:
-    background-color
-    0.14s ease;
+.dp-justificativas__table tbody tr {
+  transition: background-color 0.14s ease;
 }
 
-.dp-justificativas__table
-tbody
-tr:hover {
-  background:
-    #f8fbff;
+.dp-justificativas__table tbody tr:hover {
+  background: #f8fbff;
 }
 
-.dp-justificativas__table
-tbody
-tr:last-child
-td {
-  border-bottom:
-    0;
+.dp-justificativas__table tbody tr:last-child td {
+  border-bottom: 0;
 }
-
 
 /* =========================================================
    POSIÇÃO
 ========================================================= */
 
 .dp-justificativas__position {
-  width:
-    24px;
+  width: 24px;
 
-  height:
-    24px;
+  height: 24px;
 
-  display:
-    inline-grid;
+  display: inline-grid;
 
-  place-items:
-    center;
+  place-items: center;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  background:
-    #f1f5f9;
+  background: #f1f5f9;
 
-  border-radius:
-    6px;
+  border-radius: 6px;
 
-  font-size:
-    0.62rem;
+  font-size: 0.62rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 }
-
 
 /* =========================================================
    CONTEÚDO
 ========================================================= */
 
 .dp-justificativas__motivo {
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
-  font-size:
-    0.68rem;
+  font-size: 0.68rem;
 }
 
 .dp-justificativas__texto {
-  display:
-    block;
+  display: block;
 
-  max-width:
-    360px;
+  max-width: 360px;
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  color:
-    #475569;
+  color: #475569;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
-
 
 /* =========================================================
    IMPACTO
 ========================================================= */
 
 .dp-justificativas__impacto {
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  min-width:
-    52px;
+  min-width: 52px;
 
-  padding:
-    4px
-    7px;
+  padding: 4px 7px;
 
-  color:
-    #1d4ed8;
+  color: #1d4ed8;
 
-  background:
-    #eff6ff;
+  background: #eff6ff;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
-  font-size:
-    0.63rem;
+  font-size: 0.63rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 }
