@@ -1,4 +1,4 @@
-import { formatarData, formatarKg, formatarMoeda } from "./formatadores";
+import { formatarData, formatarKg, formatarMoeda } from "../../utils/formatadores";
 
 /* =========================================================
    CONSTANTES
