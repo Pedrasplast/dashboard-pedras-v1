@@ -88,7 +88,7 @@ export default function FornecedoresPage() {
      SALVAR FORNECEDOR
   ================================================= */
 
-  async function handleSalvarFornecedor(dados) {
+  async function aoSalvarFornecedor(dados) {
     const { materialIds, materialPadraoId, ...dadosFornecedor } = dados;
 
     const resultado = await salvarFornecedor(dadosFornecedor);
@@ -162,7 +162,7 @@ export default function FornecedoresPage() {
         vinculosMateriais={fornecedorEdicao ? materiaisDoFornecedor(fornecedorEdicao.id) : []}
         salvando={salvandoFornecedor || salvandoMateriaisFornecedor}
         onCancelar={fecharModalFornecedor}
-        onSalvar={handleSalvarFornecedor}
+        onSalvar={aoSalvarFornecedor}
       />
     </>
   );

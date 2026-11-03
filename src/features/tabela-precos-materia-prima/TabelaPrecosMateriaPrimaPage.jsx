@@ -154,11 +154,11 @@ export default function TabelaPrecosMateriaPrimaPage() {
 
           <TabelaPrecosFiltros
             busca={busca}
-            onBuscaChange={alterarBusca}
+            onAlterarBusca={alterarBusca}
             ordenacao={ordenacao}
-            onOrdenacaoChange={alterarOrdenacao}
+            onAlterarOrdenacao={alterarOrdenacao}
             periodo={periodo}
-            onPeriodoChange={alterarPeriodo}
+            onAlterarPeriodo={alterarPeriodo}
             onLimpar={limparFiltros}
           />
 
@@ -185,7 +185,7 @@ export default function TabelaPrecosMateriaPrimaPage() {
                   paginaAtual={paginaValida}
                   totalItens={totalItens}
                   itensPorPagina={ITENS_POR_PAGINA}
-                  onChangePagina={setPaginaAtual}
+                  onMudarPagina={setPaginaAtual}
                 />
               )}
             </>

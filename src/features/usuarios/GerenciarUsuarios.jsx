@@ -17,7 +17,7 @@ import "./GerenciarUsuarios.css";
 export default function GerenciarUsuarios() {
   const {
     usuarios,
-    loading,
+    carregando,
     mensagem,
 
     telasGerenciaveis,
@@ -90,7 +90,7 @@ export default function GerenciarUsuarios() {
         </div>
       )}
 
-      {loading ? (
+      {carregando ? (
         <div className="loading-state">Carregando usuários...</div>
       ) : (
         <UsuariosTable
@@ -110,7 +110,7 @@ export default function GerenciarUsuarios() {
         linkPrimeiroAcesso={linkPrimeiroAcesso}
         emailUsuarioCriado={emailUsuarioCriado}
         linkCopiado={linkCopiado}
-        onEmailChange={setEmailNovoUsuario}
+        onAlterarEmail={setEmailNovoUsuario}
         onSubmit={cadastrarNovoUsuario}
         onCopiarLink={copiarLinkPrimeiroAcesso}
         onFechar={fecharNovoUsuario}
@@ -130,8 +130,8 @@ export default function GerenciarUsuarios() {
         onDesmarcarTodasTelas={desmarcarTodasTelas}
         onObterStatusModulo={obterStatusModulo}
         onDefinirModulo={definirPermissaoModulo}
-        onToggleTela={alterarPermissaoTemporaria}
-        onToggleRelatorio={alterarPermissaoRelatorio}
+        onAlternarTela={alterarPermissaoTemporaria}
+        onAlternarRelatorio={alterarPermissaoRelatorio}
         onMarcarTodosRelatorios={marcarTodosRelatorios}
         onDesmarcarTodosRelatorios={desmarcarTodosRelatorios}
         onSalvar={salvarPermissoes}

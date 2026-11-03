@@ -25,7 +25,7 @@ const SECOES = Object.freeze({
   },
 });
 
-export default function ComprasMateriaPrimaPage({ secao, isAdmin = false }) {
+export default function ComprasMateriaPrimaPage({ secao, ehAdmin = false }) {
   const configuracao = SECOES[secao] ?? SECOES["compras-futuras"];
 
   const Conteudo = configuracao.componente;
@@ -42,7 +42,7 @@ export default function ComprasMateriaPrimaPage({ secao, isAdmin = false }) {
         />
 
         <section className="compras-materia-prima-conteudo">
-          <Conteudo isAdmin={isAdmin} />
+          <Conteudo ehAdmin={ehAdmin} />
         </section>
       </div>
     </main>

@@ -47,7 +47,7 @@ function BadgeStatus({ completo, parcial }) {
   return <span className="pu-status pu-status-blocked">Bloqueado</span>;
 }
 
-function TelaItem({ tela, ativo, salvando, onToggle }) {
+function TelaItem({ tela, ativo, salvando, onAlternar }) {
   return (
     <div className={`pu-item ${ativo ? "is-active" : ""}`}>
       <div className="pu-item-info">
@@ -60,13 +60,13 @@ function TelaItem({ tela, ativo, salvando, onToggle }) {
         ativo={ativo}
         disabled={salvando}
         ariaLabel={`${ativo ? "Bloquear" : "Liberar"} ${tela.nome}`}
-        onChange={() => onToggle(tela.id)}
+        onChange={() => onAlternar(tela.id)}
       />
     </div>
   );
 }
 
-function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo, onToggleTela }) {
+function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo, onAlternarTela }) {
   const classeStatus = status.completo ? "is-active" : status.parcial ? "is-partial" : "";
 
   return (
@@ -108,7 +108,7 @@ function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo
               tela={tela}
               ativo={ativo}
               salvando={salvando}
-              onToggle={onToggleTela}
+              onAlternar={onAlternarTela}
             />
           );
         })}
@@ -117,7 +117,7 @@ function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo
   );
 }
 
-function RelatorioItem({ relatorio, ativo, disabled, salvando, onToggle }) {
+function RelatorioItem({ relatorio, ativo, disabled, salvando, onAlternar }) {
   return (
     <div className={`pu-report-item ${ativo ? "is-active" : ""} ${disabled ? "is-disabled" : ""}`}>
       <div className="pu-report-icon">
@@ -132,7 +132,7 @@ function RelatorioItem({ relatorio, ativo, disabled, salvando, onToggle }) {
         ativo={ativo}
         disabled={salvando || disabled}
         ariaLabel={`${ativo ? "Bloquear" : "Liberar"} relatório ${relatorio.nome}`}
-        onChange={() => onToggle(relatorio.id)}
+        onChange={() => onAlternar(relatorio.id)}
       />
     </div>
   );
@@ -161,9 +161,9 @@ export default function PermissoesModal({
 
   onDefinirModulo,
 
-  onToggleTela,
+  onAlternarTela,
 
-  onToggleRelatorio,
+  onAlternarRelatorio,
 
   onMarcarTodosRelatorios,
 
@@ -214,7 +214,7 @@ export default function PermissoesModal({
       return;
     }
 
-    onToggleTela(telaCentralRelatorios.id);
+    onAlternarTela(telaCentralRelatorios.id);
   };
 
   if (!usuario) {
@@ -375,7 +375,7 @@ export default function PermissoesModal({
                     permissoesTelas={permissoesTelas}
                     salvando={salvando}
                     onDefinirModulo={onDefinirModulo}
-                    onToggleTela={onToggleTela}
+                    onAlternarTela={onAlternarTela}
                   />
                 ))}
               </div>
@@ -484,7 +484,7 @@ export default function PermissoesModal({
                             ativo={Boolean(permissoesRelatorios[String(relatorio.id)])}
                             disabled={!relatoriosLiberados}
                             salvando={salvando}
-                            onToggle={onToggleRelatorio}
+                            onAlternar={onAlternarRelatorio}
                           />
                         ))}
                       </div>

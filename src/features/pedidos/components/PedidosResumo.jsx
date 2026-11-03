@@ -37,7 +37,7 @@ export default function PedidosResumo({
   quantidadeTotal,
   entregasProximos7Dias,
   faturamentosHoje,
-  onCardClick,
+  onClicarCard,
 }) {
   const carregando = isLoading ? "-" : null;
 
@@ -49,7 +49,7 @@ export default function PedidosResumo({
         valor={carregando ?? quantidadePedidos}
         tipo="abertos"
         isLoading={isLoading}
-        onClick={onCardClick}
+        onClick={onClicarCard}
       />
 
       <CardResumo
@@ -58,7 +58,7 @@ export default function PedidosResumo({
         valor={carregando ?? pedidosAtrasados}
         tipo="atrasados"
         isLoading={isLoading}
-        onClick={onCardClick}
+        onClick={onClicarCard}
       />
 
       <CardResumo
@@ -67,7 +67,7 @@ export default function PedidosResumo({
         valor={carregando ?? formatarNumero(quantidadeTotal)}
         tipo="quantidade"
         isLoading={isLoading}
-        onClick={onCardClick}
+        onClick={onClicarCard}
       />
 
       <CardResumo
@@ -76,7 +76,7 @@ export default function PedidosResumo({
         valor={carregando ?? entregasProximos7Dias}
         tipo="proximos"
         isLoading={isLoading}
-        onClick={onCardClick}
+        onClick={onClicarCard}
       />
 
       <CardResumo
@@ -85,7 +85,7 @@ export default function PedidosResumo({
         valor={carregando ?? faturamentosHoje}
         tipo="hoje"
         isLoading={isLoading}
-        onClick={onCardClick}
+        onClick={onClicarCard}
       />
     </section>
   );

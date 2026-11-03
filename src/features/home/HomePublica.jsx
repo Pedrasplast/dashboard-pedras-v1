@@ -15,11 +15,11 @@ export default function HomePublica() {
 
   const [password, setPassword] = useState("");
 
-  const [loadingLogin, setLoadingLogin] = useState(false);
+  const [carregandoLogin, setLoadingLogin] = useState(false);
 
   const [loginError, setLoginError] = useState("");
 
-  const handleLogin = useCallback(
+  const entrar = useCallback(
     async (event) => {
       event.preventDefault();
 
@@ -132,7 +132,7 @@ export default function HomePublica() {
 
           {loginError && <div className="home-login-error">{loginError}</div>}
 
-          <form className="home-login-form" onSubmit={handleLogin} autoComplete="off">
+          <form className="home-login-form" onSubmit={entrar} autoComplete="off">
             <div className="home-login-field">
               <label htmlFor="home-email">E-mail</label>
 
@@ -143,7 +143,7 @@ export default function HomePublica() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="nome@empresa.com"
                 autoComplete="username"
-                disabled={loadingLogin}
+                disabled={carregandoLogin}
                 required
               />
             </div>
@@ -159,13 +159,13 @@ export default function HomePublica() {
                 placeholder="Digite sua senha"
                 autoComplete="new-password"
                 name="senha-acesso-home"
-                disabled={loadingLogin}
+                disabled={carregandoLogin}
                 required
               />
             </div>
 
-            <button type="submit" className="home-login-button" disabled={loadingLogin}>
-              {loadingLogin ? "Autenticando..." : "Entrar no sistema"}
+            <button type="submit" className="home-login-button" disabled={carregandoLogin}>
+              {carregandoLogin ? "Autenticando..." : "Entrar no sistema"}
             </button>
           </form>
 

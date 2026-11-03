@@ -22,7 +22,7 @@ import {
 
 import "./ComprasFuturas.css";
 
-export default function ComprasFuturas({ isAdmin = false }) {
+export default function ComprasFuturas({ ehAdmin = false }) {
   const dados = useComprasFuturas();
 
   const {
@@ -100,7 +100,7 @@ export default function ComprasFuturas({ isAdmin = false }) {
             onConfirmarChegada={chegada.solicitar}
             onEditar={modal.editar}
             onExcluir={exclusao.solicitar}
-            isAdmin={isAdmin}
+            ehAdmin={ehAdmin}
           />
         )}
 

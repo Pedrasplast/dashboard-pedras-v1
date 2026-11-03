@@ -39,7 +39,7 @@ function Login() {
     return "Não foi possível entrar. Verifique seu e-mail e senha.";
   }, []);
 
-  const handleLogin = useCallback(
+  const entrar = useCallback(
     async (event) => {
       event.preventDefault();
 
@@ -72,7 +72,7 @@ function Login() {
     [email, senha, navigate, traduzirErroSupabase],
   );
 
-  const handleVoltar = useCallback(() => {
+  const voltar = useCallback(() => {
     navigate("/");
   }, [navigate]);
 
@@ -85,7 +85,7 @@ function Login() {
           <p>Utilize o e-mail cadastrado pelo administrador e sua senha.</p>
         </div>
 
-        <form onSubmit={handleLogin} autoComplete="off" className="login-form">
+        <form onSubmit={entrar} autoComplete="off" className="login-form">
           <div className="login-form-group">
             <label htmlFor="login-email" className="login-label">
               E-mail:
@@ -128,7 +128,7 @@ function Login() {
           <button
             type="button"
             className="login-back-button"
-            onClick={handleVoltar}
+            onClick={voltar}
             disabled={carregando}
           >
             Pagina inicial

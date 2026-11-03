@@ -17,7 +17,7 @@ export default function PedidosConteudo({
   isLoading,
   isFetching,
   paginaAtual,
-  onPaginaChange,
+  onMudarPagina,
   onLimparFiltros,
   onVisualizarPedido,
 }) {
@@ -65,7 +65,7 @@ export default function PedidosConteudo({
             paginaAtual={paginaAtual}
             totalItens={pedidosUnicos.length}
             itensPorPagina={PEDIDOS_POR_PAGINA}
-            onChangePagina={onPaginaChange}
+            onMudarPagina={onMudarPagina}
           />
         </>
       )}

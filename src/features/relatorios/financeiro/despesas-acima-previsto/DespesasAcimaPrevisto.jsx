@@ -165,7 +165,7 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
     );
   }, [ano, mes, categoria, buscaCategoria, categoriasDisponiveis]);
 
-  async function handleGerarPDF() {
+  async function gerarPdf() {
     if (dadosFiltrados.length === 0 || exportando) {
       return;
     }
@@ -180,8 +180,8 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
 
         textoFiltros,
       });
-    } catch (errorExportacao) {
-      console.error("Erro ao gerar PDF de despesas acima do previsto:", errorExportacao);
+    } catch (erroExportacao) {
+      console.error("Erro ao gerar PDF de despesas acima do previsto:", erroExportacao);
 
       window.alert("Não foi possível gerar o PDF.");
     } finally {
@@ -189,7 +189,7 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
     }
   }
 
-  async function handleGerarExcel() {
+  async function gerarExcel() {
     if (dadosFiltrados.length === 0 || exportando) {
       return;
     }
@@ -204,8 +204,8 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
 
         textoFiltros,
       });
-    } catch (errorExportacao) {
-      console.error("Erro ao gerar Excel de despesas acima do previsto:", errorExportacao);
+    } catch (erroExportacao) {
+      console.error("Erro ao gerar Excel de despesas acima do previsto:", erroExportacao);
 
       window.alert("Não foi possível gerar o Excel.");
     } finally {
@@ -344,8 +344,8 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
           setPaginaAtual(1);
           setVisualizacaoAberta(true);
         },
-        onPdf: handleGerarPDF,
-        onExcel: handleGerarExcel,
+        onPdf: gerarPdf,
+        onExcel: gerarExcel,
         desabilitado: dadosFiltrados.length === 0 || Boolean(exportando),
         gerandoPdf: exportando === "pdf",
         gerandoExcel: exportando === "excel",
@@ -449,7 +449,7 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
               paginaAtual={paginaValida}
               totalItens={totalItens}
               itensPorPagina={ITENS_POR_PAGINA}
-              onChangePagina={setPaginaAtual}
+              onMudarPagina={setPaginaAtual}
             />
           )}
         </section>

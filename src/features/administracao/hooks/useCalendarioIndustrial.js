@@ -15,7 +15,7 @@ import {
 export default function useCalendarioIndustrial() {
   const [ano, setAno] = useState(obterAnoAtual());
   const [calendario, setCalendario] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [carregando, setCarregando] = useState(true);
   const [sincronizando, setSincronizando] = useState(false);
   const [mensagem, setMensagem] = useState({ tipo: "", texto: "" });
 
@@ -45,7 +45,7 @@ export default function useCalendarioIndustrial() {
     const ehAtual = () => consulta === ultimaConsultaRef.current;
 
     try {
-      setLoading(true);
+      setCarregando(true);
 
       const dados = await listarCalendarioIndustrialAno(ano);
 
@@ -64,7 +64,7 @@ export default function useCalendarioIndustrial() {
       });
     } finally {
       if (ehAtual()) {
-        setLoading(false);
+        setCarregando(false);
       }
     }
   }, [ano]);
@@ -77,7 +77,7 @@ export default function useCalendarioIndustrial() {
     const anoAtual = obterAnoAtual();
 
     if (
-      loading ||
+      carregando ||
       calendario.length === 0 ||
       ano < anoAtual ||
       ano > anoAtual + 1 ||
@@ -127,18 +127,18 @@ export default function useCalendarioIndustrial() {
     return () => {
       cancelado = true;
     };
-  }, [ano, calendario, loading, carregarCalendario]);
+  }, [ano, calendario, carregando, carregarCalendario]);
 
   useEffect(() => {
     if (!mensagem.texto) {
       return undefined;
     }
 
-    const timer = window.setTimeout(() => {
+    const temporizador = window.setTimeout(() => {
       setMensagem({ tipo: "", texto: "" });
     }, 5000);
 
-    return () => window.clearTimeout(timer);
+    return () => window.clearTimeout(temporizador);
   }, [mensagem]);
 
   const sincronizarFeriados = useCallback(async () => {
@@ -170,7 +170,7 @@ export default function useCalendarioIndustrial() {
   return {
     ano,
     setAno,
-    loading,
+    carregando,
     sincronizando,
     mensagem,
     setMensagem,

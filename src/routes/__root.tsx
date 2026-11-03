@@ -189,11 +189,11 @@ function RootShell({ children }: { children: ReactNode }) {
 ========================================================= */
 
 function LayoutAplicacao() {
-  const { user, isAdmin } = useAuthContext();
+  const { usuario, ehAdmin } = useAuthContext();
 
   return (
     <div className="app-layout" onChangeCapture={normalizarCamposMaiusculos}>
-      <Navbar user={user} isAdmin={isAdmin} />
+      <Navbar usuario={usuario} ehAdmin={ehAdmin} />
 
       <main className="main-content">
         <Outlet />

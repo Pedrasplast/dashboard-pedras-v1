@@ -25,7 +25,7 @@ export default function CompraFuturaLinha({
   onConfirmarChegada,
   onEditar,
   onExcluir,
-  isAdmin = false,
+  ehAdmin = false,
 }) {
   return (
     <tr>
@@ -82,7 +82,7 @@ export default function CompraFuturaLinha({
             </button>
           )}
 
-          {isAdmin && (
+          {ehAdmin && (
             <>
               <button
                 type="button"

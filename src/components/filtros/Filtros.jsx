@@ -65,7 +65,7 @@ export default function Filtros({
   classNameBotaoLimpar = "filtros-compartilhados-limpar",
   iconeLimpar = null,
 
-  renderBotaoLimpar,
+  renderizarBotaoLimpar,
 }) {
   const possuiFiltroAtivo = useMemo(
     () => possuiFiltrosAtivos(filtros, valoresPadrao),
@@ -138,8 +138,8 @@ export default function Filtros({
       {mostrarBotaoLimpar &&
         !limparNoLayout &&
         possuiFiltroAtivo &&
-        (typeof renderBotaoLimpar === "function" ? (
-          renderBotaoLimpar(apiFiltros)
+        (typeof renderizarBotaoLimpar === "function" ? (
+          renderizarBotaoLimpar(apiFiltros)
         ) : (
           <button
             type="button"

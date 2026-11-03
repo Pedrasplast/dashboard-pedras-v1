@@ -125,7 +125,7 @@ export default function CadastroReceitaModal({
     );
   }
 
-  async function handleSubmit(evento) {
+  async function enviar(evento) {
     evento.preventDefault();
 
     setErro("");
@@ -200,7 +200,7 @@ export default function CadastroReceitaModal({
     >
       <form
         className="cadastro-receita-modal"
-        onSubmit={handleSubmit}
+        onSubmit={enviar}
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadastro-receita-modal-titulo"

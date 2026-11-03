@@ -37,13 +37,13 @@ import "./Navbar.css";
    NAVBAR
 ========================================================= */
 
-function Navbar({ user, isAdmin }) {
+function Navbar({ usuario, ehAdmin }) {
   const navigate = useNavigate();
 
   const menuRef = useRef(null);
   const navigationRef = useRef(null);
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
 
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(null);
 
@@ -51,51 +51,51 @@ function Navbar({ user, isAdmin }) {
 
   const [mobileGroupOpen, setMobileGroupOpen] = useState(null);
 
-  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
+  const { podeAcessarTela, carregandoPermissoes } = usePermissoes();
 
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
 
-  const currentPath = useMemo(() => normalizarCaminho(pathname), [pathname]);
+  const caminhoAtual = useMemo(() => normalizarCaminho(pathname), [pathname]);
 
-  const userName = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
+  const nomeUsuario = useMemo(() => obterNomeUsuario(usuario?.email), [usuario?.email]);
 
-  const userInitials = useMemo(() => obterIniciais(userName), [userName]);
+  const iniciaisUsuario = useMemo(() => obterIniciais(nomeUsuario), [nomeUsuario]);
 
   /* =====================================================
      PERMISSÕES
   ===================================================== */
 
   const podeAcessarPedidos = useMemo(() => {
-    if (!user) return false;
-    if (isAdmin) return true;
-    if (loadingPermissoes) return false;
+    if (!usuario) return false;
+    if (ehAdmin) return true;
+    if (carregandoPermissoes) return false;
 
     return podeAcessarTela("pedidos");
-  }, [user, isAdmin, loadingPermissoes, podeAcessarTela]);
+  }, [usuario, ehAdmin, carregandoPermissoes, podeAcessarTela]);
 
   const podeImportar = useMemo(() => {
-    if (!user) return false;
-    if (isAdmin) return true;
-    if (loadingPermissoes) return false;
+    if (!usuario) return false;
+    if (ehAdmin) return true;
+    if (carregandoPermissoes) return false;
 
     return podeAcessarTela("importar");
-  }, [user, isAdmin, loadingPermissoes, podeAcessarTela]);
+  }, [usuario, ehAdmin, carregandoPermissoes, podeAcessarTela]);
 
   const podeVerItem = useCallback(
     (item) => {
       if (!item?.permissao) return true;
-      if (isAdmin) return true;
-      if (loadingPermissoes) return false;
+      if (ehAdmin) return true;
+      if (carregandoPermissoes) return false;
 
       return podeAcessarTela(item.permissao);
     },
-    [isAdmin, loadingPermissoes, podeAcessarTela],
+    [ehAdmin, carregandoPermissoes, podeAcessarTela],
   );
 
   const navigationGroupsVisiveis = useMemo(() => {
-    if (!user) return [];
+    if (!usuario) return [];
 
     return NAVIGATION_GROUPS.map((item) => {
       if (item.type === "link") {
@@ -111,15 +111,15 @@ function Navbar({ user, isAdmin }) {
         children,
       };
     }).filter(Boolean);
-  }, [user, podeVerItem]);
+  }, [usuario, podeVerItem]);
 
   /* =====================================================
      ESTADOS DE NAVEGAÇÃO
   ===================================================== */
 
   const caminhoAtivo = useCallback(
-    (path) => currentPath === normalizarCaminho(path),
-    [currentPath],
+    (path) => caminhoAtual === normalizarCaminho(path),
+    [caminhoAtual],
   );
 
   const grupoAtivo = useCallback(
@@ -137,12 +137,12 @@ function Navbar({ user, isAdmin }) {
     mostrarAlertaPedido,
     ocultarAlertaPedido,
     fecharAlertaPedido,
-  } = useNotificacoesPedidos({ user, podeAcessarPedidos });
+  } = useNotificacoesPedidos({ usuario, podeAcessarPedidos });
 
   const badgePedidos = useMemo(() => formatarBadgePedidos(pedidosNaoLidos), [pedidosNaoLidos]);
 
   /* Aviso de rotinas com erro (só administradores; ver Monitoramento). */
-  const { data: avisosMonitoramento = 0 } = useAvisosMonitoramento(Boolean(user) && isAdmin);
+  const { data: avisosMonitoramento = 0 } = useAvisosMonitoramento(Boolean(usuario) && ehAdmin);
   const badgeMonitoramento =
     avisosMonitoramento > 0 ? formatarBadgePedidos(avisosMonitoramento) : null;
 
@@ -152,7 +152,7 @@ function Navbar({ user, isAdmin }) {
 
   const goTo = useCallback(
     (path) => {
-      setUserMenuOpen(false);
+      setMenuUsuarioAberto(false);
       setDesktopMenuOpen(null);
       setMobileMenuOpen(false);
       setMobileGroupOpen(null);
@@ -162,8 +162,8 @@ function Navbar({ user, isAdmin }) {
     [navigate],
   );
 
-  const toggleDesktopMenu = useCallback((id) => {
-    setUserMenuOpen(false);
+  const alternarMenuDesktop = useCallback((id) => {
+    setMenuUsuarioAberto(false);
 
     setDesktopMenuOpen((atual) => (atual === id ? null : id));
   }, []);
@@ -173,7 +173,7 @@ function Navbar({ user, isAdmin }) {
       (item) => item.type === "group" && grupoAtivo(item),
     );
 
-    setUserMenuOpen(false);
+    setMenuUsuarioAberto(false);
     setDesktopMenuOpen(null);
 
     setMobileGroupOpen(grupoAtual?.id || null);
@@ -186,7 +186,7 @@ function Navbar({ user, isAdmin }) {
     setMobileGroupOpen(null);
   }, []);
 
-  const toggleMobileGroup = useCallback((id) => {
+  const alternarGrupoMobile = useCallback((id) => {
     setMobileGroupOpen((atual) => (atual === id ? null : id));
   }, []);
 
@@ -203,8 +203,8 @@ function Navbar({ user, isAdmin }) {
      LOGOUT
   ===================================================== */
 
-  const handleLogout = useCallback(async () => {
-    setUserMenuOpen(false);
+  const sair = useCallback(async () => {
+    setMenuUsuarioAberto(false);
     setDesktopMenuOpen(null);
     setMobileMenuOpen(false);
     setMobileGroupOpen(null);
@@ -226,10 +226,10 @@ function Navbar({ user, isAdmin }) {
     }
   }, [navigate]);
 
-  const toggleUserMenu = useCallback(() => {
+  const alternarMenuUsuario = useCallback(() => {
     setDesktopMenuOpen(null);
 
-    setUserMenuOpen((aberto) => !aberto);
+    setMenuUsuarioAberto((aberto) => !aberto);
   }, []);
 
   /* =====================================================
@@ -238,8 +238,8 @@ function Navbar({ user, isAdmin }) {
 
   useEffect(() => {
     const fecharAoClicarFora = (event) => {
-      if (userMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
+      if (menuUsuarioAberto && menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuUsuarioAberto(false);
       }
 
       if (
@@ -256,13 +256,13 @@ function Navbar({ user, isAdmin }) {
     return () => {
       document.removeEventListener("mousedown", fecharAoClicarFora);
     };
-  }, [userMenuOpen, desktopMenuOpen]);
+  }, [menuUsuarioAberto, desktopMenuOpen]);
 
   useEffect(() => {
     const fecharComEscape = (event) => {
       if (event.key !== "Escape") return;
 
-      setUserMenuOpen(false);
+      setMenuUsuarioAberto(false);
       setDesktopMenuOpen(null);
       setMobileMenuOpen(false);
       setMobileGroupOpen(null);
@@ -310,7 +310,7 @@ function Navbar({ user, isAdmin }) {
 
           {/* NAVEGAÇÃO DESKTOP */}
 
-          {user && (
+          {usuario && (
             <nav
               ref={navigationRef}
               className="navbar-navigation navbar-navigation-modulos"
@@ -356,7 +356,7 @@ function Navbar({ user, isAdmin }) {
                           ? "navbar-navigation-link navbar-modulo-trigger active"
                           : "navbar-navigation-link navbar-modulo-trigger"
                       }
-                      onClick={() => toggleDesktopMenu(item.id)}
+                      onClick={() => alternarMenuDesktop(item.id)}
                       aria-expanded={aberto}
                       aria-haspopup="menu"
                     >
@@ -424,7 +424,7 @@ function Navbar({ user, isAdmin }) {
           {/* CONTROLES DE USUÁRIO */}
 
           <div className="navbar-auth-section">
-            {user ? (
+            {usuario ? (
               <>
                 <button
                   type="button"
@@ -443,14 +443,14 @@ function Navbar({ user, isAdmin }) {
                   <div ref={menuRef} className="navbar-user-area">
                     <button
                       type="button"
-                      className={userMenuOpen ? "navbar-user-trigger open" : "navbar-user-trigger"}
-                      onClick={toggleUserMenu}
-                      aria-expanded={userMenuOpen}
+                      className={menuUsuarioAberto ? "navbar-user-trigger open" : "navbar-user-trigger"}
+                      onClick={alternarMenuUsuario}
+                      aria-expanded={menuUsuarioAberto}
                       aria-haspopup="menu"
                       aria-label="Abrir menu do usuário"
                     >
                       <span className="user-avatar">
-                        {userInitials}
+                        {iniciaisUsuario}
                         {badgeMonitoramento && (
                           <span
                             className="navbar-avatar-badge"
@@ -462,28 +462,28 @@ function Navbar({ user, isAdmin }) {
                       </span>
 
                       <span className="user-information">
-                        <strong className="user-name">{userName}</strong>
+                        <strong className="user-name">{nomeUsuario}</strong>
 
-                        <span className="user-role">{isAdmin ? "Administrador" : "Operador"}</span>
+                        <span className="user-role">{ehAdmin ? "Administrador" : "Operador"}</span>
                       </span>
 
                       <ChevronDown
                         size={17}
                         strokeWidth={2}
-                        className={userMenuOpen ? "user-menu-arrow open" : "user-menu-arrow"}
+                        className={menuUsuarioAberto ? "user-menu-arrow open" : "user-menu-arrow"}
                         aria-hidden="true"
                       />
                     </button>
 
-                    {userMenuOpen && (
+                    {menuUsuarioAberto && (
                       <div className="navbar-user-menu" role="menu">
                         <div className="user-menu-header">
-                          <span className="user-menu-avatar">{userInitials}</span>
+                          <span className="user-menu-avatar">{iniciaisUsuario}</span>
 
                           <div>
-                            <strong>{userName}</strong>
+                            <strong>{nomeUsuario}</strong>
 
-                            <span>{user.email}</span>
+                            <span>{usuario.email}</span>
                           </div>
                         </div>
 
@@ -511,7 +511,7 @@ function Navbar({ user, isAdmin }) {
                           </button>
                         )}
 
-                        {isAdmin && (
+                        {ehAdmin && (
                           <>
                             <button
                               type="button"
@@ -554,7 +554,7 @@ function Navbar({ user, isAdmin }) {
                   <button
                     type="button"
                     className="navbar-logout-button"
-                    onClick={handleLogout}
+                    onClick={sair}
                     aria-label="Sair da conta"
                   >
                     <LogOut size={17} strokeWidth={2} aria-hidden="true" />
@@ -577,21 +577,21 @@ function Navbar({ user, isAdmin }) {
           MENU MOBILE
       ===================================================== */}
 
-      {user && mobileMenuOpen && (
+      {usuario && mobileMenuOpen && (
         <NavbarMenuMobile
-          userName={userName}
-          userInitials={userInitials}
-          isAdmin={isAdmin}
+          nomeUsuario={nomeUsuario}
+          iniciaisUsuario={iniciaisUsuario}
+          ehAdmin={ehAdmin}
           podeImportar={podeImportar}
           navigationGroupsVisiveis={navigationGroupsVisiveis}
           caminhoAtivo={caminhoAtivo}
           grupoAtivo={grupoAtivo}
           mobileGroupOpen={mobileGroupOpen}
-          toggleMobileGroup={toggleMobileGroup}
+          alternarGrupoMobile={alternarGrupoMobile}
           badgePedidos={badgePedidos}
           badgeMonitoramento={badgeMonitoramento}
           goTo={goTo}
-          handleLogout={handleLogout}
+          sair={sair}
           fecharMenuMobile={fecharMenuMobile}
         />
       )}

@@ -22,6 +22,6 @@ export const Route = createFileRoute("/")({
 });
 
 function PaginaInicial() {
-  const { user, isAdmin } = useAuthContext();
-  return <HomePage user={user} isAdmin={isAdmin} />;
+  const { usuario, ehAdmin } = useAuthContext();
+  return <HomePage usuario={usuario} ehAdmin={ehAdmin} />;
 }

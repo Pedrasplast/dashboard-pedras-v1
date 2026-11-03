@@ -39,7 +39,7 @@ export default function useGerenciarUsuarios() {
 
   const [permissoesRelatoriosPorUsuario, setPermissoesRelatoriosPorUsuario] = useState({});
 
-  const [loading, setLoading] = useState(true);
+  const [carregando, setCarregando] = useState(true);
 
   const [mensagem, setMensagem] = useState(MENSAGEM_INICIAL);
 
@@ -74,12 +74,12 @@ export default function useGerenciarUsuarios() {
       return undefined;
     }
 
-    const timer = window.setTimeout(() => {
+    const temporizador = window.setTimeout(() => {
       setMensagem(MENSAGEM_INICIAL);
     }, 3000);
 
     return () => {
-      window.clearTimeout(timer);
+      window.clearTimeout(temporizador);
     };
   }, [mensagem]);
 
@@ -89,7 +89,7 @@ export default function useGerenciarUsuarios() {
 
   const carregarUsuarios = useCallback(async () => {
     try {
-      setLoading(true);
+      setCarregando(true);
 
       const dados = await buscarDadosGerenciamento();
 
@@ -111,7 +111,7 @@ export default function useGerenciarUsuarios() {
         texto: "Erro ao buscar usuários: " + (error?.message || "erro desconhecido"),
       });
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   }, []);
 
@@ -285,8 +285,8 @@ export default function useGerenciarUsuarios() {
     try {
       await atualizarRegraUsuario(usuarioId, novaRegra);
 
-      setUsuarios((prev) =>
-        prev.map((usuario) =>
+      setUsuarios((anterior) =>
+        anterior.map((usuario) =>
           usuario.id === usuarioId
             ? {
                 ...usuario,
@@ -349,20 +349,20 @@ export default function useGerenciarUsuarios() {
   const alterarPermissaoTemporaria = useCallback((telaId) => {
     const chave = String(telaId);
 
-    setPermissoesTemporarias((prev) => ({
-      ...prev,
+    setPermissoesTemporarias((anterior) => ({
+      ...anterior,
 
-      [chave]: !prev[chave],
+      [chave]: !anterior[chave],
     }));
   }, []);
 
   const alterarPermissaoRelatorio = useCallback((relatorioId) => {
     const chave = String(relatorioId);
 
-    setPermissoesRelatoriosTemporarias((prev) => ({
-      ...prev,
+    setPermissoesRelatoriosTemporarias((anterior) => ({
+      ...anterior,
 
-      [chave]: !prev[chave],
+      [chave]: !anterior[chave],
     }));
   }, []);
 
@@ -372,9 +372,9 @@ export default function useGerenciarUsuarios() {
   );
 
   const definirPermissaoModulo = useCallback((modulo, permitido) => {
-    setPermissoesTemporarias((prev) => {
+    setPermissoesTemporarias((anterior) => {
       const proximo = {
-        ...prev,
+        ...anterior,
       };
 
       for (const tela of modulo.telas) {
@@ -386,9 +386,9 @@ export default function useGerenciarUsuarios() {
   }, []);
 
   const marcarTodasTelas = useCallback(() => {
-    setPermissoesTemporarias((prev) => {
+    setPermissoesTemporarias((anterior) => {
       const novasPermissoes = {
-        ...prev,
+        ...anterior,
       };
 
       for (const tela of telasGerenciaveis) {
@@ -400,9 +400,9 @@ export default function useGerenciarUsuarios() {
   }, [telasGerenciaveis]);
 
   const desmarcarTodasTelas = useCallback(() => {
-    setPermissoesTemporarias((prev) => {
+    setPermissoesTemporarias((anterior) => {
       const novasPermissoes = {
-        ...prev,
+        ...anterior,
       };
 
       for (const tela of telasGerenciaveis) {
@@ -457,16 +457,16 @@ export default function useGerenciarUsuarios() {
         permissoesRelatorios: permissoesRelatoriosTemporarias,
       });
 
-      setPermissoesPorUsuario((prev) => ({
-        ...prev,
+      setPermissoesPorUsuario((anterior) => ({
+        ...anterior,
 
         [usuarioPermissoes.id]: {
           ...permissoesTemporarias,
         },
       }));
 
-      setPermissoesRelatoriosPorUsuario((prev) => ({
-        ...prev,
+      setPermissoesRelatoriosPorUsuario((anterior) => ({
+        ...anterior,
 
         [usuarioPermissoes.id]: {
           ...permissoesRelatoriosTemporarias,
@@ -523,11 +523,11 @@ export default function useGerenciarUsuarios() {
     try {
       await excluirUsuarioCompleto(usuarioId);
 
-      setUsuarios((prev) => prev.filter((usuario) => usuario.id !== usuarioId));
+      setUsuarios((anterior) => anterior.filter((usuario) => usuario.id !== usuarioId));
 
-      setPermissoesPorUsuario((prev) => {
+      setPermissoesPorUsuario((anterior) => {
         const proximo = {
-          ...prev,
+          ...anterior,
         };
 
         delete proximo[usuarioId];
@@ -535,9 +535,9 @@ export default function useGerenciarUsuarios() {
         return proximo;
       });
 
-      setPermissoesRelatoriosPorUsuario((prev) => {
+      setPermissoesRelatoriosPorUsuario((anterior) => {
         const proximo = {
-          ...prev,
+          ...anterior,
         };
 
         delete proximo[usuarioId];
@@ -579,7 +579,7 @@ export default function useGerenciarUsuarios() {
 
   return {
     usuarios,
-    loading,
+    carregando,
     mensagem,
 
     telasGerenciaveis,

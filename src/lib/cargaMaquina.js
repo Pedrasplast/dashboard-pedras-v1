@@ -657,7 +657,7 @@ export function useDescricoesProdutos(opcoes = {}) {
   return {
     descricoesProdutos: consulta.data ?? DESCRICOES_VAZIAS,
 
-    loadingDescricoes: consulta.isPending,
+    carregandoDescricoes: consulta.isPending,
 
     atualizandoDescricoes: consulta.isFetching,
 
@@ -718,7 +718,7 @@ export function useCargaMaquina(opcoes = {}) {
   return {
     dados: consulta.data ?? DADOS_VAZIOS,
 
-    loading: consulta.isPending,
+    carregando: consulta.isPending,
 
     atualizando: consulta.isFetching,
 

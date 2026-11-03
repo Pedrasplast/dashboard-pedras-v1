@@ -18,18 +18,18 @@ const SEM_PERMISSOES = {
  * resultado. A cada 30 s, a próxima tela aberta confere de novo.
  */
 export function usePermissoes() {
-  const { user, isAdmin, loadingAuth, loadingPerfil } = useAuthContext();
+  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useAuthContext();
 
   /*
    * ADMIN possui acesso total.
    * Não precisamos consultar permissões individuais.
    */
-  const precisaConsultar = Boolean(!loadingAuth && !loadingPerfil && user && !isAdmin);
+  const precisaConsultar = Boolean(!carregandoAuth && !carregandoPerfil && usuario && !ehAdmin);
 
   const permissoesQuery = useQuery({
-    queryKey: ["permissoes-usuario", user?.id],
+    queryKey: ["permissoes-usuario", usuario?.id],
 
-    queryFn: () => buscarPermissoesUsuario(user.id),
+    queryFn: () => buscarPermissoesUsuario(usuario.id),
 
     enabled: precisaConsultar,
 
@@ -57,16 +57,16 @@ export function usePermissoes() {
   const permissoes =
     precisaConsultar && permissoesQuery.data ? permissoesQuery.data : SEM_PERMISSOES;
 
-  const loadingPermissoes =
-    loadingAuth || loadingPerfil || (precisaConsultar && permissoesQuery.isPending);
+  const carregandoPermissoes =
+    carregandoAuth || carregandoPerfil || (precisaConsultar && permissoesQuery.isPending);
 
   const podeAcessarTela = useCallback(
     (chave) => {
-      if (!user) {
+      if (!usuario) {
         return false;
       }
 
-      if (isAdmin) {
+      if (ehAdmin) {
         return true;
       }
 
@@ -76,16 +76,16 @@ export function usePermissoes() {
 
       return permissoes.telas.has(chave);
     },
-    [user, isAdmin, permissoes],
+    [usuario, ehAdmin, permissoes],
   );
 
   const podeAcessarRelatorio = useCallback(
     (chave) => {
-      if (!user) {
+      if (!usuario) {
         return false;
       }
 
-      if (isAdmin) {
+      if (ehAdmin) {
         return true;
       }
 
@@ -95,7 +95,7 @@ export function usePermissoes() {
 
       return permissoes.relatorios.has(chave);
     },
-    [user, isAdmin, permissoes],
+    [usuario, ehAdmin, permissoes],
   );
 
   const { refetch } = permissoesQuery;
@@ -109,7 +109,7 @@ export function usePermissoes() {
       podeAcessarTela,
       podeAcessarRelatorio,
 
-      loadingPermissoes,
+      carregandoPermissoes,
       erroPermissoes: precisaConsultar ? permissoesQuery.error : null,
 
       recarregarPermissoes,
@@ -118,7 +118,7 @@ export function usePermissoes() {
       permissoes,
       podeAcessarTela,
       podeAcessarRelatorio,
-      loadingPermissoes,
+      carregandoPermissoes,
       precisaConsultar,
       permissoesQuery.error,
       recarregarPermissoes,

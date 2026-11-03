@@ -14,7 +14,7 @@ export function useCatalogoRelatorios() {
 
   const [buscaRelatorios, setBuscaRelatorios] = useState("");
 
-  const { podeAcessarRelatorio, loadingPermissoes, erroPermissoes } = usePermissoes();
+  const { podeAcessarRelatorio, carregandoPermissoes, erroPermissoes } = usePermissoes();
 
   const relatoriosPermitidosIds = useMemo(
     () =>
@@ -95,7 +95,7 @@ export function useCatalogoRelatorios() {
   }, [categoriaSelecionada, categorias]);
 
   return {
-    permissoesCarregadas: !loadingPermissoes,
+    permissoesCarregadas: !carregandoPermissoes,
     relatoriosPermitidosIds,
     erroPermissoesRelatorios,
     relatoriosDisponiveis,

@@ -115,7 +115,7 @@ export default function useDashboardParadas(filtros) {
 
   const {
     dados: rawDados,
-    loading,
+    carregando,
     atualizando,
     erro,
     recarregar,
@@ -230,7 +230,7 @@ export default function useDashboardParadas(filtros) {
        STATUS DA CONSULTA
     ----------------------------------------------------- */
 
-    loading,
+    carregando,
     atualizando,
     erro,
 

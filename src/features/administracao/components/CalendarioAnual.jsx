@@ -83,7 +83,7 @@ const MesCalendario = memo(function MesCalendario({
 export default function CalendarioAnual({
   ano,
   setAno,
-  loading,
+  carregando,
   mapaCalendario,
   hojeIso,
   onAbrirDia,
@@ -141,7 +141,7 @@ export default function CalendarioAnual({
         </span>
       </div>
 
-      {loading ? (
+      {carregando ? (
         <div className="administracao-loading">Carregando calendário industrial...</div>
       ) : (
         <div className="administracao-meses-grid">

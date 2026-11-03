@@ -177,7 +177,7 @@ export default function ResultadosPedidosCompra({
           paginaAtual={paginaAtual}
           totalItens={filtrados.length}
           itensPorPagina={porPagina}
-          onChangePagina={onMudarPagina}
+          onMudarPagina={onMudarPagina}
         />
       )}
     </section>

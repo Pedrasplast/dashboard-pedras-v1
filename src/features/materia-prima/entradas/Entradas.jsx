@@ -85,7 +85,7 @@ export default function Entradas() {
               paginaAtual={paginaAtual}
               totalItens={totalItens}
               itensPorPagina={ITENS_POR_PAGINA}
-              onChangePagina={setPaginaAtual}
+              onMudarPagina={setPaginaAtual}
             />
           )}
         </>

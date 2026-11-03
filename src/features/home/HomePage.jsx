@@ -113,36 +113,36 @@ function formatarDataHora(dataTexto) {
    HOME
 ========================================================= */
 
-function Home({ user, isAdmin }) {
+function Home({ usuario, ehAdmin }) {
   const navigate = useNavigate();
 
-  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
+  const { podeAcessarTela, carregandoPermissoes } = usePermissoes();
 
   /* =====================================================
      PERFIL
   ===================================================== */
 
-  const nomeUsuario = useMemo(() => obterNomeUsuario(user?.email), [user?.email]);
+  const nomeUsuario = useMemo(() => obterNomeUsuario(usuario?.email), [usuario?.email]);
 
-  const perfilUsuario = isAdmin ? "Administrador" : "Operador";
+  const perfilUsuario = ehAdmin ? "Administrador" : "Operador";
 
   /* =====================================================
      PERMISSÕES
   ===================================================== */
 
   const podeVerPedidos = Boolean(
-    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("pedidos"))),
+    usuario && (ehAdmin || (!carregandoPermissoes && podeAcessarTela("pedidos"))),
   );
 
   const podeVerFinanceiro = Boolean(
-    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("financeiro"))),
+    usuario && (ehAdmin || (!carregandoPermissoes && podeAcessarTela("financeiro"))),
   );
 
   const podeImportar = Boolean(
-    user && (isAdmin || (!loadingPermissoes && podeAcessarTela("importar"))),
+    usuario && (ehAdmin || (!carregandoPermissoes && podeAcessarTela("importar"))),
   );
 
-  const podeGerenciarUsuarios = Boolean(user && isAdmin);
+  const podeGerenciarUsuarios = Boolean(usuario && ehAdmin);
 
   const possuiAcoesAdministrativas = podeImportar || podeGerenciarUsuarios;
 
@@ -153,11 +153,11 @@ function Home({ user, isAdmin }) {
   const {
     dados: dadosProducao,
 
-    loading: carregandoProducao,
+    carregando: carregandoProducao,
 
     erro: erroProducao,
   } = useCargaMaquina({
-    enabled: Boolean(user),
+    enabled: Boolean(usuario),
   });
 
   /* =====================================================
@@ -330,7 +330,7 @@ function Home({ user, isAdmin }) {
      HOME PÚBLICA
   ===================================================== */
 
-  if (!user) {
+  if (!usuario) {
     return <HomePublica />;
   }
 

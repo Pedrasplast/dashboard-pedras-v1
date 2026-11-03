@@ -8,9 +8,9 @@ export default function PedidosFiltros({
   vendedores,
   statusDisponiveis,
   possuiFiltro,
-  onPesquisaChange,
-  onVendedorChange,
-  onStatusChange,
+  onAlterarPesquisa,
+  onAlterarVendedor,
+  onAlterarStatus,
   onLimpar,
 }) {
   return (
@@ -21,12 +21,12 @@ export default function PedidosFiltros({
         <input
           type="text"
           value={pesquisa}
-          onChange={(evento) => onPesquisaChange(evento.target.value)}
+          onChange={(evento) => onAlterarPesquisa(evento.target.value)}
           placeholder="Buscar pedido, cliente, código ou produto..."
         />
       </div>
 
-      <select value={vendedor} onChange={(evento) => onVendedorChange(evento.target.value)}>
+      <select value={vendedor} onChange={(evento) => onAlterarVendedor(evento.target.value)}>
         <option value="todos">Todos os vendedores</option>
 
         {vendedores.map((nome) => (
@@ -36,7 +36,7 @@ export default function PedidosFiltros({
         ))}
       </select>
 
-      <select value={status} onChange={(evento) => onStatusChange(evento.target.value)}>
+      <select value={status} onChange={(evento) => onAlterarStatus(evento.target.value)}>
         <option value="Pedido">Pedido</option>
         <option value="todos">Todos os status</option>
         <option value="Cancelado">Cancelados</option>

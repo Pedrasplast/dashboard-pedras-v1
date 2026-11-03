@@ -53,7 +53,7 @@ export default function ImportadorCarga() {
   ===================================================== */
 
   useEffect(() => {
-    const handleBeforeUnload = (evento) => {
+    const aoSairDaPagina = (evento) => {
       if (!carregando) {
         return;
       }
@@ -62,10 +62,10 @@ export default function ImportadorCarga() {
       evento.returnValue = "";
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", aoSairDaPagina);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", aoSairDaPagina);
     };
   }, [carregando]);
 
@@ -321,13 +321,13 @@ export default function ImportadorCarga() {
      VOLTAR
   ===================================================== */
 
-  const handleVoltar = useCallback(() => navigate("/"), [navigate]);
+  const voltar = useCallback(() => navigate("/"), [navigate]);
 
   /* =====================================================
      ALTERAR TABELA
   ===================================================== */
 
-  const handleTabelaChange = useCallback((evento) => {
+  const aoMudarTabela = useCallback((evento) => {
     setTabelaDestino(evento.target.value);
     setStatus("");
     setPorcentagem(0);
@@ -337,16 +337,16 @@ export default function ImportadorCarga() {
      DRAG AND DROP
   ===================================================== */
 
-  const handleDragOver = useCallback((evento) => {
+  const aoArrastarSobre = useCallback((evento) => {
     evento.preventDefault();
   }, []);
 
-  const handleDragEnter = useCallback((evento) => {
+  const aoEntrarArrasto = useCallback((evento) => {
     evento.preventDefault();
     setIsDragActive(true);
   }, []);
 
-  const handleDragLeave = useCallback((evento) => {
+  const aoSairArrasto = useCallback((evento) => {
     evento.preventDefault();
 
     if (!evento.currentTarget.contains(evento.relatedTarget)) {
@@ -354,7 +354,7 @@ export default function ImportadorCarga() {
     }
   }, []);
 
-  const handleDrop = useCallback(
+  const aoSoltarArquivo = useCallback(
     (evento) => {
       evento.preventDefault();
       setIsDragActive(false);
@@ -372,7 +372,7 @@ export default function ImportadorCarga() {
      CLICK NA ÁREA DE UPLOAD
   ===================================================== */
 
-  const handleDropzoneClick = useCallback(() => {
+  const aoClicarDropzone = useCallback(() => {
     if (!carregando && !confirmacaoAberta && fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -382,7 +382,7 @@ export default function ImportadorCarga() {
      SELECIONAR ARQUIVO
   ===================================================== */
 
-  const handleFileChange = useCallback(
+  const aoEscolherArquivo = useCallback(
     (evento) => {
       const arquivo = evento.target.files?.[0];
 
@@ -397,14 +397,14 @@ export default function ImportadorCarga() {
      TECLADO
   ===================================================== */
 
-  const handleDropzoneKeyDown = useCallback(
+  const aoTeclarDropzone = useCallback(
     (evento) => {
       if (evento.key === "Enter" || evento.key === " ") {
         evento.preventDefault();
-        handleDropzoneClick();
+        aoClicarDropzone();
       }
     },
-    [handleDropzoneClick],
+    [aoClicarDropzone],
   );
 
   /* =====================================================
@@ -418,7 +418,7 @@ export default function ImportadorCarga() {
       <button
         type="button"
         className="back-importador-btn"
-        onClick={handleVoltar}
+        onClick={voltar}
         disabled={carregando}
       >
         <FiArrowLeft />
@@ -448,7 +448,7 @@ export default function ImportadorCarga() {
           <select
             id="tabela-destino"
             value={tabelaDestino}
-            onChange={handleTabelaChange}
+            onChange={aoMudarTabela}
             disabled={carregando || confirmacaoAberta}
           >
             <option value="carga_maquina">Carga Máquina</option>
@@ -470,18 +470,18 @@ export default function ImportadorCarga() {
           role="button"
           tabIndex={carregando ? -1 : 0}
           aria-disabled={carregando}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onClick={handleDropzoneClick}
-          onKeyDown={handleDropzoneKeyDown}
+          onDragEnter={aoEntrarArrasto}
+          onDragLeave={aoSairArrasto}
+          onDragOver={aoArrastarSobre}
+          onDrop={aoSoltarArquivo}
+          onClick={aoClicarDropzone}
+          onKeyDown={aoTeclarDropzone}
         >
           <input
             ref={fileInputRef}
             type="file"
             accept=".xlsx,.xls,.xlsm"
-            onChange={handleFileChange}
+            onChange={aoEscolherArquivo}
             disabled={carregando}
             style={{
               display: "none",

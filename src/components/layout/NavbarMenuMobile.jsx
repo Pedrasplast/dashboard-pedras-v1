@@ -8,19 +8,19 @@ import { Activity, ChevronDown, LogOut, ShieldCheck, Upload, Users, X } from "lu
 ========================================================= */
 
 export default function NavbarMenuMobile({
-  userName,
-  userInitials,
-  isAdmin,
+  nomeUsuario,
+  iniciaisUsuario,
+  ehAdmin,
   podeImportar,
   navigationGroupsVisiveis,
   caminhoAtivo,
   grupoAtivo,
   mobileGroupOpen,
-  toggleMobileGroup,
+  alternarGrupoMobile,
   badgePedidos,
   badgeMonitoramento,
   goTo,
-  handleLogout,
+  sair,
   fecharMenuMobile,
 }) {
   return (
@@ -51,12 +51,12 @@ export default function NavbarMenuMobile({
         </div>
 
         <div className="navbar-mobile-user">
-          <span className="navbar-mobile-avatar">{userInitials}</span>
+          <span className="navbar-mobile-avatar">{iniciaisUsuario}</span>
 
           <div>
-            <strong>{userName}</strong>
+            <strong>{nomeUsuario}</strong>
 
-            <span>{isAdmin ? "Administrador" : "Operador"}</span>
+            <span>{ehAdmin ? "Administrador" : "Operador"}</span>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function NavbarMenuMobile({
                   className={
                     active ? "navbar-mobile-group-trigger active" : "navbar-mobile-group-trigger"
                   }
-                  onClick={() => toggleMobileGroup(item.id)}
+                  onClick={() => alternarGrupoMobile(item.id)}
                   aria-expanded={aberto}
                 >
                   <span className="navbar-mobile-link-icon">
@@ -156,7 +156,7 @@ export default function NavbarMenuMobile({
 
         {/* ADMINISTRAÇÃO MOBILE */}
 
-        {(podeImportar || isAdmin) && (
+        {(podeImportar || ehAdmin) && (
           <div className="navbar-mobile-admin">
             <span className="navbar-mobile-section-label">Administração</span>
 
@@ -172,7 +172,7 @@ export default function NavbarMenuMobile({
               </button>
             )}
 
-            {isAdmin && (
+            {ehAdmin && (
               <>
                 <button
                   type="button"
@@ -213,7 +213,7 @@ export default function NavbarMenuMobile({
         )}
 
         <div className="navbar-mobile-footer">
-          <button type="button" className="navbar-mobile-logout" onClick={handleLogout}>
+          <button type="button" className="navbar-mobile-logout" onClick={sair}>
             <LogOut size={18} aria-hidden="true" />
 
             <span>Sair</span>

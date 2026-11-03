@@ -220,7 +220,7 @@ export default function PedidosPage() {
             quantidadeTotal={vm.quantidadeTotal}
             entregasProximos7Dias={vm.entregasProximos7Dias}
             faturamentosHoje={listaFaturamentoHoje.length}
-            onCardClick={setResumoAberto}
+            onClicarCard={setResumoAberto}
           />
         )}
 
@@ -235,9 +235,9 @@ export default function PedidosPage() {
           vendedores={vm.vendedores}
           statusDisponiveis={vm.statusDisponiveis}
           possuiFiltro={vm.possuiFiltro}
-          onPesquisaChange={vm.alterarPesquisa}
-          onVendedorChange={vm.alterarVendedor}
-          onStatusChange={vm.alterarStatus}
+          onAlterarPesquisa={vm.alterarPesquisa}
+          onAlterarVendedor={vm.alterarVendedor}
+          onAlterarStatus={vm.alterarStatus}
           onLimpar={vm.limparFiltros}
         />
 
@@ -264,7 +264,7 @@ export default function PedidosPage() {
           isLoading={isLoading}
           isFetching={isFetching}
           paginaAtual={vm.paginaAtual}
-          onPaginaChange={vm.setPaginaAtual}
+          onMudarPagina={vm.setPaginaAtual}
           onLimparFiltros={vm.limparFiltros}
           onVisualizarPedido={marcarPedidoComoVisualizado}
         />

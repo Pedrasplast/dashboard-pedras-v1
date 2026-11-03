@@ -120,7 +120,7 @@ export default function CadastroReceitasPage() {
      SALVAR
   ======================================================= */
 
-  async function handleSalvar(dados) {
+  async function salvar(dados) {
     const resultado = await salvarReceita(dados);
 
     setMensagemSucesso(
@@ -139,7 +139,7 @@ export default function CadastroReceitasPage() {
      STATUS
   ======================================================= */
 
-  async function handleAlterarStatus(receita) {
+  async function alterarStatus(receita) {
     setMensagemSucesso("");
     setErroAcao("");
 
@@ -365,7 +365,7 @@ export default function CadastroReceitasPage() {
                                   ? "cadastro-receitas-status-botao cadastro-receitas-status-botao--desativar"
                                   : "cadastro-receitas-status-botao cadastro-receitas-status-botao--ativar"
                               }
-                              onClick={() => void handleAlterarStatus(receita)}
+                              onClick={() => void alterarStatus(receita)}
                               disabled={alterandoStatus}
                             >
                               {receita.ativo ? <PowerOff size={15} /> : <Power size={15} />}
@@ -394,7 +394,7 @@ export default function CadastroReceitasPage() {
         fornecedores={fornecedores}
         salvando={salvando}
         onCancelar={fecharModal}
-        onSalvar={handleSalvar}
+        onSalvar={salvar}
       />
     </>
   );

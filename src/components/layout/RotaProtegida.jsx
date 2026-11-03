@@ -25,24 +25,24 @@ import { usePermissoes } from "@/hooks/usePermissoes";
  *   como Gerenciar Usuários.
  */
 export default function RotaProtegida({ children, exigirAdmin = false, permissao = null }) {
-  const { user, isAdmin, loadingAuth, loadingPerfil } = useAuthContext();
+  const { usuario, ehAdmin, carregandoAuth, carregandoPerfil } = useAuthContext();
 
-  const { podeAcessarTela, loadingPermissoes } = usePermissoes();
+  const { podeAcessarTela, carregandoPermissoes } = usePermissoes();
 
   const navigate = useNavigate();
 
-  const precisaCarregarPermissoes = Boolean(user && !isAdmin && !exigirAdmin && permissao);
+  const precisaCarregarPermissoes = Boolean(usuario && !ehAdmin && !exigirAdmin && permissao);
 
   const carregando =
-    loadingAuth || loadingPerfil || (precisaCarregarPermissoes && loadingPermissoes);
+    carregandoAuth || carregandoPerfil || (precisaCarregarPermissoes && carregandoPermissoes);
 
-  const semLogin = !carregando && !user;
+  const semLogin = !carregando && !usuario;
 
-  const semAcessoAdmin = !carregando && Boolean(user && exigirAdmin && !isAdmin);
+  const semAcessoAdmin = !carregando && Boolean(usuario && exigirAdmin && !ehAdmin);
 
   const semPermissaoTela =
     !carregando &&
-    Boolean(user && !isAdmin && !exigirAdmin && permissao && !podeAcessarTela(permissao));
+    Boolean(usuario && !ehAdmin && !exigirAdmin && permissao && !podeAcessarTela(permissao));
 
   const semAcesso = semLogin || semAcessoAdmin || semPermissaoTela;
 
@@ -51,7 +51,7 @@ export default function RotaProtegida({ children, exigirAdmin = false, permissao
       return;
     }
 
-    if (!user) {
+    if (!usuario) {
       navigate("/login", {
         replace: true,
       });
@@ -62,7 +62,7 @@ export default function RotaProtegida({ children, exigirAdmin = false, permissao
     navigate("/", {
       replace: true,
     });
-  }, [semAcesso, user, navigate]);
+  }, [semAcesso, usuario, navigate]);
 
   if (carregando) {
     return <div className="estado-carregando">Carregando...</div>;

@@ -408,10 +408,10 @@ export default function DashboardMateriaPrima() {
         materiais={materiaisFiltro}
         materialPadrao={MATERIAL_PADRAO}
         periodoPadrao={periodoAutomaticoRef.current}
-        onDataInicialChange={(valor) => alterarFiltro("dataInicial", valor)}
-        onDataFinalChange={(valor) => alterarFiltro("dataFinal", valor)}
-        onTipoDataChange={(valor) => alterarFiltro("tipoData", valor)}
-        onOrigemChange={(valor) =>
+        onAlterarDataInicial={(valor) => alterarFiltro("dataInicial", valor)}
+        onAlterarDataFinal={(valor) => alterarFiltro("dataFinal", valor)}
+        onAlterarTipoData={(valor) => alterarFiltro("tipoData", valor)}
+        onAlterarOrigem={(valor) =>
           /* Fornecedores mudam de cadastro entre Manual e Omie. */
           setFiltros((atual) => ({
             ...atual,
@@ -419,8 +419,8 @@ export default function DashboardMateriaPrima() {
             fornecedorSelecionado: "todos",
           }))
         }
-        onFornecedorChange={(valor) => alterarFiltro("fornecedorSelecionado", valor)}
-        onMaterialChange={(valor) => alterarFiltro("materialSelecionado", valor)}
+        onAlterarFornecedor={(valor) => alterarFiltro("fornecedorSelecionado", valor)}
+        onAlterarMaterial={(valor) => alterarFiltro("materialSelecionado", valor)}
         onPeriodoRapido={aplicarPeriodoRapido}
         onLimparFiltros={limparFiltros}
       />

@@ -2,11 +2,11 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabaseClient";
 
 const ContextoAuth = createContext({
-  user: null,
+  usuario: null,
   perfil: null,
-  isAdmin: false,
-  loadingAuth: true,
-  loadingPerfil: true,
+  ehAdmin: false,
+  carregandoAuth: true,
+  carregandoPerfil: true,
 });
 
 /*
@@ -17,24 +17,24 @@ const ContextoAuth = createContext({
  * por sessão, compartilhados por toda a árvore.
  */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  const [usuario, setUsuario] = useState(null);
+  const [carregandoAuth, setLoadingAuth] = useState(true);
   const [perfil, setPerfil] = useState(null);
-  const [loadingPerfil, setLoadingPerfil] = useState(true);
+  const [carregandoPerfil, setLoadingPerfil] = useState(true);
 
   useEffect(() => {
     let ativo = true;
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!ativo) return;
-      setUser(session?.user ?? null);
+      setUsuario(session?.user ?? null);
       setLoadingAuth(false);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_evento, session) => {
-      setUser(session?.user ?? null);
+      setUsuario(session?.user ?? null);
       setLoadingAuth(false);
     });
 
@@ -44,12 +44,12 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const userId = user?.id ?? null;
+  const idUsuario = usuario?.id ?? null;
 
   useEffect(() => {
     let ativo = true;
 
-    if (!userId) {
+    if (!idUsuario) {
       setPerfil(null);
       setLoadingPerfil(false);
       return () => {
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
     supabase
       .from("perfis")
       .select("regra")
-      .eq("id", userId)
+      .eq("id", idUsuario)
       .single()
       .then(({ data, error }) => {
         if (!ativo) return;
@@ -80,17 +80,17 @@ export function AuthProvider({ children }) {
     return () => {
       ativo = false;
     };
-  }, [userId]);
+  }, [idUsuario]);
 
   const valor = useMemo(
     () => ({
-      user,
+      usuario,
       perfil,
-      isAdmin: perfil?.regra === "admin",
-      loadingAuth,
-      loadingPerfil,
+      ehAdmin: perfil?.regra === "admin",
+      carregandoAuth,
+      carregandoPerfil,
     }),
-    [user, perfil, loadingAuth, loadingPerfil],
+    [usuario, perfil, carregandoAuth, carregandoPerfil],
   );
 
   return <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>;

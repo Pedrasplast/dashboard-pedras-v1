@@ -188,7 +188,7 @@ function ProdutosDoMaterial({ material, produtos }) {
         paginaAtual={paginaValida}
         totalItens={produtos.length}
         itensPorPagina={PRODUTOS_POR_PAGINA}
-        onChangePagina={setPaginaAtual}
+        onMudarPagina={setPaginaAtual}
       />
 
       {diferenca > 0.01 && (

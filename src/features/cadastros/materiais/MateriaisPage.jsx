@@ -58,7 +58,7 @@ export default function MateriaisPage() {
     setMaterialEdicao(null);
   }
 
-  async function handleSalvarMaterial(dados) {
+  async function aoSalvarMaterial(dados) {
     const resultado = await salvarMaterial(dados);
 
     setMensagemSucesso(
@@ -113,7 +113,7 @@ export default function MateriaisPage() {
         item={materialEdicao}
         salvando={salvandoMaterial}
         onCancelar={fecharModalMaterial}
-        onSalvar={handleSalvarMaterial}
+        onSalvar={aoSalvarMaterial}
       />
     </>
   );

@@ -9,7 +9,7 @@ export default function NovoUsuarioModal({
   linkPrimeiroAcesso,
   emailUsuarioCriado,
   linkCopiado,
-  onEmailChange,
+  onAlterarEmail,
   onSubmit,
   onCopiarLink,
   onFechar,
@@ -63,7 +63,7 @@ export default function NovoUsuarioModal({
               <input
                 type="email"
                 value={email}
-                onChange={(event) => onEmailChange(event.target.value)}
+                onChange={(event) => onAlterarEmail(event.target.value)}
                 placeholder="nome@empresa.com"
                 autoComplete="email"
                 disabled={criando}

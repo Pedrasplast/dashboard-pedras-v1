@@ -18,7 +18,7 @@ export default function EstoqueTabela({
 
   itensPorPagina,
 
-  onChangePagina,
+  onMudarPagina,
 }) {
   return (
     <section className="estoque-tabela-card">
@@ -172,7 +172,7 @@ export default function EstoqueTabela({
         paginaAtual={paginaAtual}
         totalItens={totalItens}
         itensPorPagina={itensPorPagina}
-        onChangePagina={onChangePagina}
+        onMudarPagina={onMudarPagina}
       />
     </section>
   );

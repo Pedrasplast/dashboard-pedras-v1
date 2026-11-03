@@ -155,7 +155,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
      EXPORTAÇÃO (todos os registros filtrados, sem paginação)
   ===================================================== */
 
-  const handleGerarPDF = async () => {
+  const gerarPdf = async () => {
     if (relatorioEhCustom) {
       return;
     }
@@ -169,7 +169,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     });
   };
 
-  const handleGerarExcel = async () => {
+  const gerarExcel = async () => {
     if (relatorioEhCustom) {
       return;
     }
@@ -292,8 +292,8 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
                     setPaginaAtual(1);
                     setVisualizacaoAberta(true);
                   },
-                  onPdf: handleGerarPDF,
-                  onExcel: handleGerarExcel,
+                  onPdf: gerarPdf,
+                  onExcel: gerarExcel,
                   desabilitado: dadosRelatorioFinal.length === 0,
                 }}
                 indicadores={[

@@ -36,7 +36,7 @@ export function useDadosRelatorio({
 
   const temDadosExternos = Array.isArray(dadosExternos) && dadosExternos.length > 0;
 
-  const { dados: dadosProducao, loading: carregandoProducao } = useCargaMaquina({
+  const { dados: dadosProducao, carregando: carregandoProducao } = useCargaMaquina({
     enabled:
       Boolean(relatorioSelecionado) && !temDadosExternos && !fonteEhPedidos && !relatorioEhCustom,
   });
@@ -66,7 +66,7 @@ export function useDadosRelatorio({
     [relatorioEhCustom, fonteEhPedidos, pedidosBrutos, dadosProducaoBrutos],
   );
 
-  const loading = relatorioEhCustom
+  const carregando = relatorioEhCustom
     ? false
     : fonteEhPedidos
       ? carregandoPedidos
@@ -76,12 +76,12 @@ export function useDadosRelatorio({
 
   /* Descrições dos produtos (Estoque OMIE + Parâmetros) */
 
-  const { descricoesProdutos, loadingDescricoes, erroDescricoes } = useDescricoesProdutos({
+  const { descricoesProdutos, carregandoDescricoes, erroDescricoes } = useDescricoesProdutos({
     enabled: !relatorioEhCustom && relatorioSelecionadoId === ID_PRODUCAO_PRODUTO,
   });
 
   const carregandoRelatorio =
-    loading || (relatorioSelecionadoId === ID_PRODUCAO_PRODUTO && loadingDescricoes);
+    carregando || (relatorioSelecionadoId === ID_PRODUCAO_PRODUTO && carregandoDescricoes);
 
   /* Colunas e listas dos filtros */
 

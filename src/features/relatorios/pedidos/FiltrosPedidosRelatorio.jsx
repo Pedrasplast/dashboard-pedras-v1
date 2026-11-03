@@ -231,7 +231,7 @@ function FiltrosPedidosRelatorio({ filtros, setFiltros, pedidos = [], relatorio 
       valoresPadrao={VALORES_PADRAO_FILTROS_PEDIDOS}
       className="rel-pedidos-filtros"
       mostrarBotaoLimpar
-      renderBotaoLimpar={({ limpar }) => (
+      renderizarBotaoLimpar={({ limpar }) => (
         <button
           type="button"
           className="rel-pedidos-limpar"

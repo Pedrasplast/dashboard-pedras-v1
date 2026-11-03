@@ -146,7 +146,7 @@ export default function EstoquePage() {
           carregando={carregando}
           paginaAtual={paginacao.paginaAtual}
           itensPorPagina={paginacao.itensPorPagina}
-          onChangePagina={paginacao.setPaginaAtual}
+          onMudarPagina={paginacao.setPaginaAtual}
         />
       </div>
     </main>

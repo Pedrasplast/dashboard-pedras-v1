@@ -368,7 +368,7 @@ function criarLeitorDeLinha(linha) {
     normalizada: normalizarCabecalho(chave),
   }));
 
-  return function getVal(chavesPossiveis) {
+  return function lerValor(chavesPossiveis) {
     const aliases = new Set(chavesPossiveis.map(normalizarCabecalho));
 
     const itemEncontrado = chavesDaLinha.find((item) => aliases.has(item.normalizada));
@@ -384,7 +384,7 @@ function criarLeitorDeLinha(linha) {
 ========================================================= */
 
 export function formatarRegistro(linha, indice, tabelaDestino) {
-  const getVal = criarLeitorDeLinha(linha);
+  const lerValor = criarLeitorDeLinha(linha);
   const linhaExcel = indice + 2;
 
   /* =====================================================
@@ -393,29 +393,29 @@ export function formatarRegistro(linha, indice, tabelaDestino) {
 
   if (tabelaDestino === "ciclo_injetora") {
     const registroCiclo = {
-      injetora: limparTexto(getVal(["Injetora"])),
+      injetora: limparTexto(lerValor(["Injetora"])),
 
-      data: formatarData(getVal(["Data"])),
+      data: formatarData(lerValor(["Data"])),
 
       cod_produto: limparTexto(
-        getVal(["Cód. Produto", "Cod. Produto", "Cod Produto", "Codigo Produto"]),
+        lerValor(["Cód. Produto", "Cod. Produto", "Cod Produto", "Codigo Produto"]),
       ),
 
-      descricao: limparTexto(getVal(["Descrição", "Descricao"])),
+      descricao: limparTexto(lerValor(["Descrição", "Descricao"])),
 
-      cavidade_molde: Math.trunc(parseNumero(getVal(["Cavidade Molde", "Cavidade"]))),
+      cavidade_molde: Math.trunc(parseNumero(lerValor(["Cavidade Molde", "Cavidade"]))),
 
-      tempo_resfriamento: formatarDuracao(getVal(["Tempo de Resfriamento", "Resfriamento"])),
+      tempo_resfriamento: formatarDuracao(lerValor(["Tempo de Resfriamento", "Resfriamento"])),
 
-      ciclo: formatarDuracao(getVal(["Ciclo"])),
+      ciclo: formatarDuracao(lerValor(["Ciclo"])),
 
-      tempo_injecao: formatarDuracao(getVal(["Tempo de Injeção", "Tempo Injecao"])),
+      tempo_injecao: formatarDuracao(lerValor(["Tempo de Injeção", "Tempo Injecao"])),
 
-      kg_un: parseNumero(getVal(["Kg UN", "KG UN", "Kg/Un"])),
+      kg_un: parseNumero(lerValor(["Kg UN", "KG UN", "Kg/Un"])),
 
-      kg_haste: parseNumero(getVal(["Kg HASTE", "KG HASTE", "Kg/Haste"])),
+      kg_haste: parseNumero(lerValor(["Kg HASTE", "KG HASTE", "Kg/Haste"])),
 
-      observacao: limparTexto(getVal(["Observação", "Observacao", "Obs"])),
+      observacao: limparTexto(lerValor(["Observação", "Observacao", "Obs"])),
     };
 
     Object.defineProperty(registroCiclo, "__linhaExcel", {
@@ -432,60 +432,60 @@ export function formatarRegistro(linha, indice, tabelaDestino) {
 
   const registro = {
     cod_prod: limparTexto(
-      getVal(["Cód.Prod", "Cod. Prod", "Cod Prod", "Cód. Produto", "Cod_Prod"]),
+      lerValor(["Cód.Prod", "Cod. Prod", "Cod Prod", "Cód. Produto", "Cod_Prod"]),
     ),
 
-    injetora: limparTexto(getVal(["Injetora"])),
+    injetora: limparTexto(lerValor(["Injetora"])),
 
-    inicio: formatarDataHora(getVal(["Início", "Inicio"])),
+    inicio: formatarDataHora(lerValor(["Início", "Inicio"])),
 
-    fim: formatarDataHora(getVal(["Fim", "Término", "Termino"])),
+    fim: formatarDataHora(lerValor(["Fim", "Término", "Termino"])),
 
-    duracao: formatarDuracao(getVal(["Duração", "Duracao"])),
+    duracao: formatarDuracao(lerValor(["Duração", "Duracao"])),
 
-    op: limparTexto(getVal(["OP", "Ordem", "Ordem Producao"])),
+    op: limparTexto(lerValor(["OP", "Ordem", "Ordem Producao"])),
 
-    tipo: limparTexto(getVal(["Tipo"])),
+    tipo: limparTexto(lerValor(["Tipo"])),
 
-    motivo: limparTexto(getVal(["Motivo"])),
+    motivo: limparTexto(lerValor(["Motivo"])),
 
-    justificativa: limparTexto(getVal(["Justificativa"])),
+    justificativa: limparTexto(lerValor(["Justificativa"])),
 
-    celula: limparTexto(getVal(["Célula", "Celula"])),
+    celula: limparTexto(lerValor(["Célula", "Celula"])),
 
-    operador: limparTexto(getVal(["Operador"])),
+    operador: limparTexto(lerValor(["Operador"])),
 
-    material: limparTexto(getVal(["Material"])),
+    material: limparTexto(lerValor(["Material"])),
 
     qtde_perdida_devido_pausa: parseNumero(
-      getVal(["Qtde perdida devido pausa", "Qtde Perdida Devido Pausa"]),
+      lerValor(["Qtde perdida devido pausa", "Qtde Perdida Devido Pausa"]),
     ),
 
-    cliente: limparTexto(getVal(["Cliente"])),
+    cliente: limparTexto(lerValor(["Cliente"])),
 
-    status: limparTexto(getVal(["Status"])),
+    status: limparTexto(lerValor(["Status"])),
 
-    lista_de_data: formatarData(getVal(["ListaDeData", "Lista De Data", "Lista de Data"])),
+    lista_de_data: formatarData(lerValor(["ListaDeData", "Lista De Data", "Lista de Data"])),
 
-    inicio_dia: formatarDataHora(getVal(["InicioDia", "Início Dia", "InícioDia"])),
+    inicio_dia: formatarDataHora(lerValor(["InicioDia", "Início Dia", "InícioDia"])),
 
-    fim_dia: formatarDataHora(getVal(["FimDia", "Fim Dia"])),
+    fim_dia: formatarDataHora(lerValor(["FimDia", "Fim Dia"])),
 
-    tempo: formatarDuracao(getVal(["Tempo"])),
+    tempo: formatarDuracao(lerValor(["Tempo"])),
 
-    conforme: Math.trunc(parseNumero(getVal(["Conforme"]))),
+    conforme: Math.trunc(parseNumero(lerValor(["Conforme"]))),
 
-    danificada: Math.trunc(parseNumero(getVal(["Danificada"]))),
+    danificada: Math.trunc(parseNumero(lerValor(["Danificada"]))),
 
-    mp: limparTexto(getVal(["M.P", "MP"])),
+    mp: limparTexto(lerValor(["M.P", "MP"])),
 
-    pecas: Math.trunc(parseNumero(getVal(["Peças", "Pecas"]))),
+    pecas: Math.trunc(parseNumero(lerValor(["Peças", "Pecas"]))),
 
-    no_injetora: limparTexto(getVal(["№ Injetora", "No Injetor", "Nº Injetora"])),
+    no_injetora: limparTexto(lerValor(["№ Injetora", "No Injetor", "Nº Injetora"])),
 
-    peso: parseNumero(getVal(["Peso"])),
+    peso: parseNumero(lerValor(["Peso"])),
 
-    consumido: parseNumero(getVal(["Consumido"])),
+    consumido: parseNumero(lerValor(["Consumido"])),
   };
 
   Object.defineProperty(registro, "__linhaExcel", {

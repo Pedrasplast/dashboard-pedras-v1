@@ -18,11 +18,11 @@ import {
 
 export default function TabelaPrecosFiltros({
   busca = "",
-  onBuscaChange,
+  onAlterarBusca,
   ordenacao = ORDENACAO_PADRAO,
-  onOrdenacaoChange,
+  onAlterarOrdenacao,
   periodo = PERIODO_PADRAO,
-  onPeriodoChange,
+  onAlterarPeriodo,
   onLimpar,
 }) {
   const temFiltros =
@@ -38,7 +38,7 @@ export default function TabelaPrecosFiltros({
             id="tp-busca"
             type="search"
             value={busca}
-            onChange={(evento) => onBuscaChange(evento.target.value)}
+            onChange={(evento) => onAlterarBusca(evento.target.value)}
             placeholder="Código ou material..."
             autoComplete="off"
           />
@@ -50,7 +50,7 @@ export default function TabelaPrecosFiltros({
           id="tp-ordenacao"
           className="tp-select"
           value={ordenacao}
-          onChange={(evento) => onOrdenacaoChange(evento.target.value)}
+          onChange={(evento) => onAlterarOrdenacao(evento.target.value)}
         >
           {ORDENACOES_PRECOS.map((opcao) => (
             <option key={opcao.value} value={opcao.value}>
@@ -72,7 +72,7 @@ export default function TabelaPrecosFiltros({
               type="button"
               className={`tp-periodo ${periodo === dias ? "tp-periodo--ativo" : ""}`}
               aria-pressed={periodo === dias}
-              onClick={() => onPeriodoChange(dias)}
+              onClick={() => onAlterarPeriodo(dias)}
             >
               {dias} dias
             </button>

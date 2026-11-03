@@ -121,7 +121,7 @@ export default function PreVisualizacaoRelatorio({
           paginaAtual={pagina}
           totalItens={dados.length}
           itensPorPagina={linhasPorPagina}
-          onChangePagina={onMudarPagina}
+          onMudarPagina={onMudarPagina}
         />
       )}
     </section>

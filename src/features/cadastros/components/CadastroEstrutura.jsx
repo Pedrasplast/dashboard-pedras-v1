@@ -85,7 +85,7 @@ export default function CadastroEstrutura({
               paginaAtual={pagina}
               totalItens={registros}
               itensPorPagina={8}
-              onChangePagina={onPagina}
+              onMudarPagina={onPagina}
             />
           )}
         </section>

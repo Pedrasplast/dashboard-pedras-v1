@@ -29,7 +29,7 @@ export default function PedidosCompraCardModal({
   pedidos = [],
   recebimentosFisicos = [],
   tipoDocumento,
-  onClose,
+  onFechar,
 }) {
   const [documentosExpandidos, setDocumentosExpandidos] = useState(() => new Set());
 
@@ -68,7 +68,7 @@ export default function PedidosCompraCardModal({
     <Modal
       asChild
       aberto={aberto}
-      onFechar={onClose}
+      onFechar={onFechar}
       bloqueado={false}
       tamanho={requisicao ? "amplo" : "grande"}
       fecharAoClicarFora={true}
@@ -102,7 +102,7 @@ export default function PedidosCompraCardModal({
           <button
             type="button"
             className="compras-card-modal-fechar"
-            onClick={onClose}
+            onClick={onFechar}
             aria-label="Fechar detalhes"
             title="Fechar"
             data-modal-fechar=""
@@ -225,7 +225,7 @@ export default function PedidosCompraCardModal({
           <button
             type="button"
             className="compras-card-modal-botao-fechar"
-            onClick={onClose}
+            onClick={onFechar}
             data-modal-acao="primaria"
             data-modal-fechar=""
           >

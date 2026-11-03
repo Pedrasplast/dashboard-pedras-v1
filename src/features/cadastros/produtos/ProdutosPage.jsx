@@ -82,7 +82,7 @@ export default function ProdutosPage() {
      SALVAR PRODUTO
   ================================================= */
 
-  async function handleSalvarProduto(dados) {
+  async function aoSalvarProduto(dados) {
     const resultado = await salvarProduto(dados);
 
     setMensagemSucesso(
@@ -161,7 +161,7 @@ export default function ProdutosPage() {
         materiais={materiais}
         salvando={salvandoProduto}
         onCancelar={fecharModalProduto}
-        onSalvar={handleSalvarProduto}
+        onSalvar={aoSalvarProduto}
         buscarDescricaoEstoque={buscarDescricaoEstoque}
       />
     </>

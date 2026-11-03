@@ -49,7 +49,7 @@ export function montarAlertaPedido(notificacao) {
   };
 }
 
-export function useNotificacoesPedidos({ user, podeAcessarPedidos }) {
+export function useNotificacoesPedidos({ usuario, podeAcessarPedidos }) {
   const alertaTimeoutRef = useRef(null);
 
   const [pedidosNaoLidos, setPedidosNaoLidos] = useState(0);
@@ -58,7 +58,7 @@ export function useNotificacoesPedidos({ user, podeAcessarPedidos }) {
 
   const [mostrarAlertaPedido, setMostrarAlertaPedido] = useState(false);
 
-  const ativo = Boolean(user && podeAcessarPedidos);
+  const ativo = Boolean(usuario && podeAcessarPedidos);
 
   const atualizarQuantidadePedidosNovos = useCallback(async () => {
     if (!ativo) {
@@ -86,7 +86,7 @@ export function useNotificacoesPedidos({ user, podeAcessarPedidos }) {
 
   /* Realtime */
 
-  const userId = user?.id;
+  const idUsuario = usuario?.id;
 
   useEffect(() => {
     if (!ativo) {
@@ -94,7 +94,7 @@ export function useNotificacoesPedidos({ user, podeAcessarPedidos }) {
     }
 
     const cancelarAssinatura = assinarNotificacoesPedidos({
-      nomeCanal: `navbar-pedidos-${userId}`,
+      nomeCanal: `navbar-pedidos-${idUsuario}`,
 
       onChange: (payload) => {
         const notificacao = payload?.new;
@@ -128,7 +128,7 @@ export function useNotificacoesPedidos({ user, podeAcessarPedidos }) {
 
       cancelarAssinatura();
     };
-  }, [ativo, userId, atualizarQuantidadePedidosNovos]);
+  }, [ativo, idUsuario, atualizarQuantidadePedidosNovos]);
 
   /* Eventos internos, verificação periódica e volta para a aba */
 

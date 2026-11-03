@@ -27,7 +27,7 @@ export default function ComprasFuturasTabela({
   onConfirmarChegada,
   onEditar,
   onExcluir,
-  isAdmin = false,
+  ehAdmin = false,
 }) {
   return (
     <div className="compras-futuras-tabela-container">
@@ -50,7 +50,7 @@ export default function ComprasFuturasTabela({
               onConfirmarChegada={onConfirmarChegada}
               onEditar={onEditar}
               onExcluir={onExcluir}
-              isAdmin={isAdmin}
+              ehAdmin={ehAdmin}
             />
           ))}
         </tbody>

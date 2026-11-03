@@ -59,7 +59,7 @@ export default function DashboardParadas() {
   ======================================================= */
 
   async function atualizarDados() {
-    if (dashboard.loading || dashboard.atualizando) {
+    if (dashboard.carregando || dashboard.atualizando) {
       return;
     }
 
@@ -74,7 +74,7 @@ export default function DashboardParadas() {
      LOADING INICIAL
   ======================================================= */
 
-  if (dashboard.loading) {
+  if (dashboard.carregando) {
     return <div className="loading-spinner">Processando dados de paradas...</div>;
   }
 

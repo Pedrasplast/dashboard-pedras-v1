@@ -23,7 +23,7 @@ export default function AdministracaoPage() {
   const {
     ano,
     setAno,
-    loading,
+    carregando,
     sincronizando,
     mensagem,
     setMensagem,
@@ -72,7 +72,7 @@ export default function AdministracaoPage() {
               type="button"
               className="administracao-btn administracao-btn-primario"
               onClick={sincronizarFeriados}
-              disabled={sincronizando || loading}
+              disabled={sincronizando || carregando}
             >
               <RefreshCw
                 size={17}
@@ -101,7 +101,7 @@ export default function AdministracaoPage() {
       <CalendarioAnual
         ano={ano}
         setAno={setAno}
-        loading={loading}
+        carregando={carregando}
         mapaCalendario={mapaCalendario}
         hojeIso={hojeIso}
         onAbrirDia={abrirDia}

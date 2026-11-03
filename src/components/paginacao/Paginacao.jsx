@@ -45,7 +45,7 @@ function criarPaginas(paginaAtual, totalPaginas) {
   return [1, "...", paginaAtual - 1, paginaAtual, paginaAtual + 1, "...", totalPaginas];
 }
 
-function Paginacao({ paginaAtual = 1, totalItens = 0, itensPorPagina = 10, onChangePagina }) {
+function Paginacao({ paginaAtual = 1, totalItens = 0, itensPorPagina = 10, onMudarPagina }) {
   const totalPaginas = Math.max(1, Math.ceil(totalItens / itensPorPagina));
 
   /*
@@ -71,7 +71,7 @@ function Paginacao({ paginaAtual = 1, totalItens = 0, itensPorPagina = 10, onCha
       return;
     }
 
-    onChangePagina?.(pagina);
+    onMudarPagina?.(pagina);
   }
 
   return (

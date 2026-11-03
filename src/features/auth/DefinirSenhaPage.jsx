@@ -25,7 +25,7 @@ export default function DefinirSenhaPage() {
      REFERÊNCIAS
   ===================================================== */
 
-  const timerRef = useRef(null);
+  const temporizadorRef = useRef(null);
 
   const clienteRef = useRef(null);
 
@@ -298,8 +298,8 @@ export default function DefinirSenhaPage() {
     return () => {
       ativo = false;
 
-      if (timerRef.current) {
-        window.clearTimeout(timerRef.current);
+      if (temporizadorRef.current) {
+        window.clearTimeout(temporizadorRef.current);
       }
     };
   }, []);
@@ -460,7 +460,7 @@ export default function DefinirSenhaPage() {
          REDIRECIONAR PARA O LOGIN
       ================================================= */
 
-      timerRef.current = window.setTimeout(() => {
+      temporizadorRef.current = window.setTimeout(() => {
         navigate("/", {
           replace: true,
         });

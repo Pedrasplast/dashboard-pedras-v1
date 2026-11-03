@@ -23,7 +23,7 @@ function CardResumo({
   valor,
   icon: Icon,
   variante,
-  loading,
+  carregando,
   ativo,
   clicavel = false,
   compacto = false,
@@ -82,20 +82,20 @@ function CardResumo({
       <div className="compras-resumo-card-conteudo">
         <span className="compras-resumo-card-titulo">{titulo}</span>
 
-        <strong className="compras-resumo-card-valor">{loading ? "-" : valor}</strong>
+        <strong className="compras-resumo-card-valor">{carregando ? "-" : valor}</strong>
       </div>
     </article>
   );
 }
 
 export default function PedidosCompraResumo({
-  loading,
+  carregando,
   indicadores,
   indicadoresRequisicoes,
   indicadoresRecebimentoFisico,
   tipoDocumento,
   cardAtivo,
-  onCardClick,
+  onClicarCard,
 }) {
   const mostrarPedidos = tipoDocumento !== TIPOS_DOCUMENTO.REQUISICAO;
 
@@ -112,11 +112,11 @@ export default function PedidosCompraResumo({
             titulo="Pedidos em aberto"
             valor={indicadores.abertos}
             icon={ShoppingBag}
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "abertos"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -125,11 +125,11 @@ export default function PedidosCompraResumo({
             valor={indicadores.atrasados}
             icon={AlertTriangle}
             variante="danger"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "atrasados"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -138,11 +138,11 @@ export default function PedidosCompraResumo({
             valor={formatarMoeda(indicadores.valorEmAberto)}
             icon={DollarSign}
             variante="success"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "valor-aberto"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -151,11 +151,11 @@ export default function PedidosCompraResumo({
             valor={indicadores.proximos7Dias}
             icon={CalendarClock}
             variante="purple"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "proximos-7-dias"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -164,11 +164,11 @@ export default function PedidosCompraResumo({
             valor={indicadores.hoje}
             icon={CalendarCheck2}
             variante="cyan"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "hoje"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
         </>
       )}
@@ -181,11 +181,11 @@ export default function PedidosCompraResumo({
             valor={indicadoresRequisicoes.total}
             icon={ClipboardList}
             variante="requisicao"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "requisicoes-total"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -194,11 +194,11 @@ export default function PedidosCompraResumo({
             valor={formatarMoeda(indicadoresRequisicoes.valorTotal)}
             icon={WalletCards}
             variante="requisicao-valor"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "requisicoes-valor"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -207,11 +207,11 @@ export default function PedidosCompraResumo({
             valor={indicadoresRequisicoes.itens}
             icon={PackageSearch}
             variante="requisicao-itens"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "requisicoes-itens"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -220,11 +220,11 @@ export default function PedidosCompraResumo({
             valor={indicadoresRequisicoes.proximos7Dias}
             icon={ListChecks}
             variante="requisicao-futuro"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "requisicoes-proximos-7-dias"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
 
           <CardResumo
@@ -233,11 +233,11 @@ export default function PedidosCompraResumo({
             valor={indicadoresRecebimentoFisico?.pedidos ?? 0}
             icon={PackageCheck}
             variante="requisicao-hoje"
-            loading={loading}
+            carregando={carregando}
             ativo={cardAtivo === "recebimentos-fisicos-7-dias"}
             clicavel
             compacto={exibindoAmbos}
-            onClick={onCardClick}
+            onClick={onClicarCard}
           />
         </>
       )}

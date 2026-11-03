@@ -38,7 +38,7 @@ function formatarPercentual(valor) {
 }
 
 export default function Dashboard() {
-  const { dados: rawDados, loading, erro } = useCargaMaquina();
+  const { dados: rawDados, carregando, erro } = useCargaMaquina();
   const [filtros, setFiltros] = useState(() => ({ ...FILTROS_INICIAIS }));
 
   const tiposDisponiveis = useMemo(
@@ -79,7 +79,7 @@ export default function Dashboard() {
   const percentualHoraParada =
     horasTotaisDec > 0 ? (Number(metrics?.horasParadasDec || 0) / horasTotaisDec) * 100 : 0;
 
-  if (loading) {
+  if (carregando) {
     return <div className="loading-spinner">Processando dados de produção...</div>;
   }
 

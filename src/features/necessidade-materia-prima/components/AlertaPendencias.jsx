@@ -32,7 +32,7 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
   const [expandido, setExpandido] = useState(false);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [erro, setErro] = useState("");
-  const { user } = useAuth();
+  const { usuario } = useAuth();
   const queryClient = useQueryClient();
 
   const decidir = useMutation({
@@ -44,7 +44,7 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
             codigoMp: peso.codigoMp,
             quantidade: peso.quantidade,
             decisao: acao,
-            usuario: user,
+            usuario: usuario,
           }),
     onMutate: () => setErro(""),
     onError: (e) => setErro(e?.message || "Não foi possível gravar."),
@@ -215,7 +215,7 @@ function AlertaPendencias({ pendencias = [], pesosAceitos = [] }) {
                 paginaAtual={paginaValida}
                 totalItens={pendencias.length}
                 itensPorPagina={PENDENCIAS_POR_PAGINA}
-                onChangePagina={setPaginaAtual}
+                onMudarPagina={setPaginaAtual}
               />
             </>
           )}

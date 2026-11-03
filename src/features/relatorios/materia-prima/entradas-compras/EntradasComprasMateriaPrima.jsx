@@ -278,8 +278,8 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
 
         textoFiltros,
       });
-    } catch (errorExportacao) {
-      console.error("Erro ao exportar Entradas e Compras em PDF:", errorExportacao);
+    } catch (erroExportacao) {
+      console.error("Erro ao exportar Entradas e Compras em PDF:", erroExportacao);
 
       window.alert("Não foi possível gerar o PDF.");
     } finally {
@@ -306,8 +306,8 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
 
         textoFiltros,
       });
-    } catch (errorExportacao) {
-      console.error("Erro ao exportar Entradas e Compras em Excel:", errorExportacao);
+    } catch (erroExportacao) {
+      console.error("Erro ao exportar Entradas e Compras em Excel:", erroExportacao);
 
       window.alert("Não foi possível gerar o Excel.");
     } finally {
@@ -569,7 +569,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
               paginaAtual={paginaValida}
               totalItens={filtrados.length}
               itensPorPagina={ITENS_POR_PAGINA}
-              onChangePagina={setPaginaAtual}
+              onMudarPagina={setPaginaAtual}
             />
           )}
         </section>

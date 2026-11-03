@@ -27,11 +27,11 @@ export const Route = createFileRoute("/compras-futuras")({
 });
 
 function ComprasFuturasRoute() {
-  const { isAdmin } = useAuthContext();
+  const { ehAdmin } = useAuthContext();
 
   return (
     <RotaProtegida permissao="compras_futuras">
-      <ComprasMateriaPrimaPage secao="compras-futuras" isAdmin={isAdmin} />
+      <ComprasMateriaPrimaPage secao="compras-futuras" ehAdmin={ehAdmin} />
     </RotaProtegida>
   );
 }

@@ -454,13 +454,13 @@ export default function PedidosCompraPage() {
         />
 
         <PedidosCompraResumo
-          loading={carregamentoInicial}
+          carregando={carregamentoInicial}
           indicadores={indicadores}
           indicadoresRequisicoes={indicadoresRequisicoes}
           indicadoresRecebimentoFisico={indicadoresRecebimentoFisico}
           tipoDocumento={filtros.tipoDocumento}
           cardAtivo={cardModalAberto}
-          onCardClick={abrirModalCard}
+          onClicarCard={abrirModalCard}
         />
 
         <PedidosCompraFiltros
@@ -529,7 +529,7 @@ export default function PedidosCompraPage() {
                 paginaAtual={paginaAtual}
                 totalItens={documentosFiltradosTabela.length}
                 itensPorPagina={PEDIDOS_COMPRA_POR_PAGINA}
-                onChangePagina={setPaginaAtual}
+                onMudarPagina={setPaginaAtual}
               />
             </>
           )}
@@ -563,7 +563,7 @@ export default function PedidosCompraPage() {
         pedidos={pedidosDoModal}
         recebimentosFisicos={recebimentosFisicosUltimos7Dias}
         tipoDocumento={modalEhRequisicao ? TIPOS_DOCUMENTO.REQUISICAO : TIPOS_DOCUMENTO.PEDIDO}
-        onClose={fecharModalCard}
+        onFechar={fecharModalCard}
       />
     </main>
   );

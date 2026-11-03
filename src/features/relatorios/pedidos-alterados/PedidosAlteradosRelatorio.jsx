@@ -818,7 +818,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
                   paginaAtual={paginaValida}
                   totalItens={totalItens}
                   itensPorPagina={ITENS_POR_PAGINA}
-                  onChangePagina={setPaginaAtual}
+                  onMudarPagina={setPaginaAtual}
                 />
               )}
             </section>

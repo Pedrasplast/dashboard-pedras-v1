@@ -15,12 +15,12 @@ export default function DashboardMateriaPrimaFiltros({
   materiais,
   materialPadrao = "1",
   periodoPadrao = { dataInicial: "", dataFinal: "" },
-  onDataInicialChange,
-  onDataFinalChange,
-  onTipoDataChange,
-  onOrigemChange,
-  onFornecedorChange,
-  onMaterialChange,
+  onAlterarDataInicial,
+  onAlterarDataFinal,
+  onAlterarTipoData,
+  onAlterarOrigem,
+  onAlterarFornecedor,
+  onAlterarMaterial,
   onPeriodoRapido,
   onLimparFiltros,
 }) {
@@ -41,7 +41,7 @@ export default function DashboardMateriaPrimaFiltros({
           <select
             className="dmp-select-tipo-data"
             value={origem}
-            onChange={(event) => onOrigemChange?.(event.target.value)}
+            onChange={(event) => onAlterarOrigem?.(event.target.value)}
           >
             {ORIGENS_DADOS.map((opcao) => (
               <option key={opcao.value} value={opcao.value}>
@@ -57,7 +57,7 @@ export default function DashboardMateriaPrimaFiltros({
           <select
             className="dmp-select-tipo-data"
             value={tipoData}
-            onChange={(event) => onTipoDataChange(event.target.value)}
+            onChange={(event) => onAlterarTipoData(event.target.value)}
           >
             <option value="compra">Data da compra</option>
 
@@ -85,7 +85,7 @@ export default function DashboardMateriaPrimaFiltros({
           <input
             type="date"
             value={dataInicial}
-            onChange={(event) => onDataInicialChange(event.target.value)}
+            onChange={(event) => onAlterarDataInicial(event.target.value)}
           />
         </label>
 
@@ -95,7 +95,7 @@ export default function DashboardMateriaPrimaFiltros({
           <input
             type="date"
             value={dataFinal}
-            onChange={(event) => onDataFinalChange(event.target.value)}
+            onChange={(event) => onAlterarDataFinal(event.target.value)}
           />
         </label>
 
@@ -104,7 +104,7 @@ export default function DashboardMateriaPrimaFiltros({
 
           <select
             value={materialSelecionado}
-            onChange={(event) => onMaterialChange(event.target.value)}
+            onChange={(event) => onAlterarMaterial(event.target.value)}
           >
             <option value="todos">Todos os materiais</option>
 
@@ -121,7 +121,7 @@ export default function DashboardMateriaPrimaFiltros({
 
           <select
             value={fornecedorSelecionado}
-            onChange={(event) => onFornecedorChange(event.target.value)}
+            onChange={(event) => onAlterarFornecedor(event.target.value)}
           >
             <option value="todos">Todos os fornecedores</option>
 

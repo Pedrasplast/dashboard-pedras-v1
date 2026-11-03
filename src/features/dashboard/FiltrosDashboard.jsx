@@ -131,7 +131,7 @@ function FiltrosDashboard({
      TIPO
   ======================================================= */
 
-  const toggleTipo = useCallback(
+  const alternarTipo = useCallback(
     (tipo) => {
       setFiltros((anterior) => {
         const tiposAtuais = Array.isArray(anterior.tipo) ? anterior.tipo : [];
@@ -510,7 +510,7 @@ function FiltrosDashboard({
                     <input
                       type="checkbox"
                       checked={(filtros.tipo || []).includes(tipo)}
-                      onChange={() => toggleTipo(tipo)}
+                      onChange={() => alternarTipo(tipo)}
                     />
 
                     <div className="tipo-label-conteudo">
