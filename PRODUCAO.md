@@ -26,7 +26,7 @@ só com leitura; nada foi alterado no banco nem nas Edge Functions.
 
 ## Antes de publicar (fazer)
 
-- [ ] CI verde na branch (`npm ci`, lint, testes e build).
+- [x] CI verde na branch: `npm ci`, validação, lint (0 erros, 6 avisos), 31 arquivos de teste do site, 49 testes das Edge Functions e build da Vercel.
 - [ ] Testar no preview da Vercel: login, Home, Pedidos, Pedidos de Compra,
       Matéria-Prima, Financeiro, Relatórios (PDF e Excel), Usuários.
 - [ ] Merge por PR, na ordem: fase-4 → fase-5 → fase-6 (cada uma contém a
