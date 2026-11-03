@@ -1,8 +1,9 @@
 /* =========================================================
    SUPABASE NO SERVIDOR
    ---------------------------------------------------------
-   SOMENTE SERVIDOR. Usado pelas funções de omie.functions.js;
-   a chave secreta nunca pode chegar ao navegador.
+   SOMENTE SERVIDOR. Usado pelas funções de omie.functions.js.
+   Usa apenas a chave pública + o token do usuário (respeita
+   RLS); o site não precisa da chave secreta do Supabase.
 ========================================================= */
 
 import { createClient } from "@supabase/supabase-js";
@@ -39,16 +40,6 @@ function obterSupabasePublicKey() {
   return chave;
 }
 
-function obterSupabaseSecretKey() {
-  const chave = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!chave) {
-    throw new Error("SUPABASE_SECRET_KEY não configurada no servidor.");
-  }
-
-  return chave;
-}
-
 /** Cliente com a sessão do usuário: respeita RLS. */
 export function criarClienteSupabaseUsuario(accessToken) {
   return createClient(obterSupabaseUrl(), obterSupabasePublicKey(), {
@@ -58,13 +49,6 @@ export function criarClienteSupabaseUsuario(accessToken) {
       },
     },
 
-    auth: { ...OPCOES_AUTH_SERVIDOR },
-  });
-}
-
-/** Cliente administrativo (chave secreta): ignora RLS. */
-export function criarClienteSupabaseAdmin() {
-  return createClient(obterSupabaseUrl(), obterSupabaseSecretKey(), {
     auth: { ...OPCOES_AUTH_SERVIDOR },
   });
 }
