@@ -75,3 +75,16 @@ export function validarEntradaSessao(dados) {
     accessToken: dados.accessToken,
   };
 }
+
+/**
+ * Validador da leitura de pedidos: além do token, aceita
+ * `comNumeracao: false` para pular o cálculo da numeração visual (/1, /2...),
+ * que lê todo o histórico de pedidos_omie. Padrão: com numeração.
+ */
+export function validarEntradaPedidos(dados) {
+  return {
+    ...validarEntradaSessao(dados),
+
+    comNumeracao: dados.comNumeracao !== false,
+  };
+}

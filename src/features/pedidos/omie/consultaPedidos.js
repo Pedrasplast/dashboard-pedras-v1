@@ -22,7 +22,11 @@ async function carregarNumeracaoVisual(supabase) {
   }
 }
 
-export async function buscarPedidosParaTela(accessToken) {
+/**
+ * `comNumeracao: false` devolve `pedidoExibicao` igual ao número do Omie, sem
+ * ler o histórico (usado pela Home, que só conta pedidos).
+ */
+export async function buscarPedidosParaTela(accessToken, { comNumeracao = true } = {}) {
   const supabase = criarClienteSupabaseUsuario(accessToken);
 
   const [resultadoPedidos, mapaNumeroPedidoExibicao, resultadoSincronizacao] = await Promise.all([
@@ -56,7 +60,7 @@ export async function buscarPedidosParaTela(accessToken) {
         ascending: true,
       }),
 
-    carregarNumeracaoVisual(supabase),
+    comNumeracao ? carregarNumeracaoVisual(supabase) : new Map(),
 
     supabase
       .from("sincronizacao_omie")

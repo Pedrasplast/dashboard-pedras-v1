@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import { buscarPedidosParaTela } from "./omie/consultaPedidos";
-import { validarEntradaSessao, validarSessao } from "./omie/supabaseServidor";
+import { validarEntradaPedidos, validarSessao } from "./omie/supabaseServidor";
 
 /* =========================================================
    FUNÇÕES DE SERVIDOR DOS PEDIDOS OMIE
@@ -18,9 +18,9 @@ import { validarEntradaSessao, validarSessao } from "./omie/supabaseServidor";
 export const buscarPedidosOmie = createServerFn({
   method: "POST",
 })
-  .validator(validarEntradaSessao)
+  .validator(validarEntradaPedidos)
   .handler(async ({ data }) => {
     await validarSessao(data.accessToken);
 
-    return buscarPedidosParaTela(data.accessToken);
+    return buscarPedidosParaTela(data.accessToken, { comNumeracao: data.comNumeracao });
   });

@@ -96,11 +96,14 @@ export async function buscarPedidosDiretoSupabase() {
   };
 }
 
-// Pedidos do Omie como a server function devolve (sem a numeração de desdobramento).
+// Pedidos ativos para o resumo da Home: sem a numeração de desdobramento
+// (/1, /2...), que a Home não exibe e que exigiria ler todo o histórico.
 export async function buscarPedidosOmieDaSessao() {
   return buscarPedidosOmie({
     data: {
       accessToken: await obterTokenAcesso(),
+
+      comNumeracao: false,
     },
   });
 }
