@@ -6,3 +6,6 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+.vercel
+supabase/functions_arquivadas
+public/version.json
