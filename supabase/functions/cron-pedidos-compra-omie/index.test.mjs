@@ -10,10 +10,11 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 import { transformSync } from "esbuild";
 
 const aqui = fileURLToPath(new URL(".", import.meta.url));
-const fonte = readFileSync(join(aqui, "index.ts"), "utf8").replace(
-  "import {createClient} from 'npm:@supabase/supabase-js@2';",
-  "const createClient = () => ({});",
-);
+// Aceita qualquer formatação da linha de import (o Prettier mudou aspas e espaços).
+const IMPORT_SUPABASE = /import\s*\{\s*createClient\s*\}\s*from\s*["']npm:@supabase\/supabase-js@2["'];?/;
+const original = readFileSync(join(aqui, "index.ts"), "utf8");
+if (!IMPORT_SUPABASE.test(original)) throw new Error("import do supabase-js não encontrado em index.ts");
+const fonte = original.replace(IMPORT_SUPABASE, "const createClient = () => ({});");
 const { code } = transformSync(fonte + "\nexport { pesquisarOmie, semRegistros };", {
   loader: "ts",
   format: "esm",
