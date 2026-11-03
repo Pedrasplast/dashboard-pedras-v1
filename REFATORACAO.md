@@ -56,3 +56,12 @@ A validação estática não substitui o build; ela antecipa erros comuns de JSX
 - Exportação PDF/Excel.
 - Classes CSS e aparência existente.
 - Fluxo de autenticação e permissões.
+
+## Fase 4 — segurança, performance e manutenção (branch `fase-4-refatoracao`)
+
+- **Segurança:** removida a função de servidor `sincronizarPedidosOmie` (sem uso, mas publicada: qualquer usuário logado podia gravar em `pedidos_omie` com a chave secreta). O site não precisa mais de `SUPABASE_SECRET_KEY`/`SUPABASE_SERVICE_ROLE_KEY` nem de `OMIE_APP_KEY`/`OMIE_APP_SECRET`; podem ser removidas das variáveis da Vercel depois do deploy desta branch.
+- **Performance:** a Home e os relatórios de pedidos deixaram de ler todo o histórico de `pedidos_omie` (numeração /1, /2) quando não precisam dela ou quando o servidor já a calculou.
+- **Correção:** Calendário Industrial e Projeção de MP descartam respostas atrasadas ao trocar ano/material rápido (antes podiam exibir o ano/material anterior e, no calendário, sincronizar feriados com a lista errada).
+- **Manutenção:** `FiltroSelect` único em `components/filtros`; `alternarNoConjunto` e `calcularMedia` compartilhados; regras puras de 7 telas grandes movidas para arquivos `*.regras.js` sem alteração de texto.
+
+Pendências que dependem de acesso ao Supabase: trazer para `supabase/functions` o código publicado de `sincronizar-pedidos-omie`, `sincronizar-financeiro-omie` e demais funções que só existem no projeto; revisar RLS/advisors.
