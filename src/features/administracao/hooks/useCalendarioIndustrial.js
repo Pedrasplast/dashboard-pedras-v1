@@ -21,6 +21,10 @@ export default function useCalendarioIndustrial() {
 
   const sincronizacaoAutomaticaRef = useRef(new Set());
 
+  // Número da última consulta: resposta de um ano anterior que chega
+  // atrasada (troca rápida de ano) é descartada.
+  const ultimaConsultaRef = useRef(0);
+
   const mapaCalendario = useMemo(
     () => new Map(calendario.map((item) => [String(item.data), item])),
     [calendario],
@@ -37,19 +41,31 @@ export default function useCalendarioIndustrial() {
   const indicadores = useMemo(() => calcularIndicadores(excecoes), [excecoes]);
 
   const carregarCalendario = useCallback(async () => {
+    const consulta = ++ultimaConsultaRef.current;
+    const ehAtual = () => consulta === ultimaConsultaRef.current;
+
     try {
       setLoading(true);
 
       const dados = await listarCalendarioIndustrialAno(ano);
-      setCalendario(dados);
+
+      if (ehAtual()) {
+        setCalendario(dados);
+      }
     } catch (error) {
+      if (!ehAtual()) {
+        return;
+      }
+
       console.error("Erro ao carregar calendário industrial:", error);
       setMensagem({
         tipo: "erro",
         texto: mensagemErro(error, "Não foi possível carregar o calendário industrial."),
       });
     } finally {
-      setLoading(false);
+      if (ehAtual()) {
+        setLoading(false);
+      }
     }
   }, [ano]);
 

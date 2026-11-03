@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { buscarProjecao } from "./projecaoService";
 
@@ -24,6 +24,10 @@ export default function useProjecao({ dataInicio, dataFim, materialId = "1" }) {
 
   const [erro, setErro] = useState("");
 
+  // Número da última consulta: se o filtro mudar antes de a resposta
+  // anterior chegar, a resposta antiga é descartada.
+  const ultimaConsultaRef = useRef(0);
+
   /* =======================================================
      CARREGAR
   ======================================================= */
@@ -32,6 +36,9 @@ export default function useProjecao({ dataInicio, dataFim, materialId = "1" }) {
     if (!dataInicio || !dataFim || !materialId) {
       return;
     }
+
+    const consulta = ++ultimaConsultaRef.current;
+    const ehAtual = () => consulta === ultimaConsultaRef.current;
 
     setCarregando(true);
 
@@ -44,17 +51,27 @@ export default function useProjecao({ dataInicio, dataFim, materialId = "1" }) {
         materialId,
       });
 
+      if (!ehAtual()) {
+        return;
+      }
+
       setDados(resultado);
 
       setCarregado(true);
     } catch (error) {
+      if (!ehAtual()) {
+        return;
+      }
+
       console.error("Erro ao calcular projeção de matéria-prima:", error);
 
       setErro(error?.message || "Não foi possível calcular a projeção.");
 
       setCarregado(true);
     } finally {
-      setCarregando(false);
+      if (ehAtual()) {
+        setCarregando(false);
+      }
     }
   }, [dataInicio, dataFim, materialId]);
 
