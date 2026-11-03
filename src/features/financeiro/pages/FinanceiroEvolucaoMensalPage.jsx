@@ -20,71 +20,15 @@ import {
 import PageHeader from "@/components/layout/PageHeader";
 import { paraNumero } from "@/shared/lib/numeros";
 import { obterAnoAtual, obterMesAtual } from "@/shared/lib/datas";
-import { formatarNumeroPtBR } from "@/shared/lib/formatar";
 
 import "./FinanceiroEvolucaoMensalPage.css";
-
-/* =========================================================
-   MESES
-========================================================= */
-
-const MESES = Object.freeze([
-  { valor: 1, nome: "Janeiro" },
-  { valor: 2, nome: "Fevereiro" },
-  { valor: 3, nome: "Março" },
-  { valor: 4, nome: "Abril" },
-  { valor: 5, nome: "Maio" },
-  { valor: 6, nome: "Junho" },
-  { valor: 7, nome: "Julho" },
-  { valor: 8, nome: "Agosto" },
-  { valor: 9, nome: "Setembro" },
-  { valor: 10, nome: "Outubro" },
-  { valor: 11, nome: "Novembro" },
-  { valor: 12, nome: "Dezembro" },
-]);
-
-/* =========================================================
-   AUXILIARES
-========================================================= */
-
-function formatarMoeda(valor) {
-  return formatarNumeroPtBR(paraNumero(valor), {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
-function formatarMoedaCompacta(valor) {
-  return formatarNumeroPtBR(paraNumero(valor), {
-    style: "currency",
-    currency: "BRL",
-    notation: "compact",
-    maximumFractionDigits: 1,
-  });
-}
-
-function formatarPercentual(valor) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return `${formatarNumeroPtBR(Number(valor), {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}%`;
-}
-
-function calcularPercentual(numerador, denominador) {
-  const base = paraNumero(denominador);
-
-  if (base === 0) {
-    return null;
-  }
-
-  return (paraNumero(numerador) / Math.abs(base)) * 100;
-}
+import {
+  MESES,
+  formatarMoeda,
+  formatarMoedaCompacta,
+  formatarPercentual,
+  calcularPercentual,
+} from "./financeiroEvolucaoMensal.regras";
 
 /* =========================================================
    PÁGINA

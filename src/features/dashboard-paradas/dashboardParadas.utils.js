@@ -731,3 +731,14 @@ export function consolidarParadas(registros) {
     },
   };
 }
+
+/** Média de `campo` (número; inválido conta como 0). Lista vazia → 0. */
+export function calcularMedia(dados, campo) {
+  if (!Array.isArray(dados) || dados.length === 0) {
+    return 0;
+  }
+
+  const total = dados.reduce((soma, item) => soma + (Number(item?.[campo]) || 0), 0);
+
+  return total / dados.length;
+}
