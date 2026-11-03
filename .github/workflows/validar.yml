@@ -1,0 +1,43 @@
+name: Validar
+
+# Roda em todo PR e em push de branch (exceto main, que recebe só merge de PR).
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: validar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Sintaxe, imports e nomes
+        run: npm run validate:static
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Testes do site
+        run: npm test
+
+      - name: Testes das Edge Functions
+        run: npm run test:funcoes
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://exemplo.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: chave-de-exemplo-para-build
