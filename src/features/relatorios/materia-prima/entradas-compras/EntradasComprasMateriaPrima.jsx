@@ -19,252 +19,20 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import { normalizarTextoSemAparar } from "@/shared/lib/texto";
-import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 import "./EntradasComprasMateriaPrima.css";
+import {
+  formatarNumero,
+  formatarKg,
+  formatarMoeda,
+  criarFiltrosIniciais,
+  combinaSituacao,
+  opcoesUnicas,
+  obterDataReferencia,
+  montarTextoFiltros,
+} from "./entradasCompras.regras";
+import TabelaEntradasCompras from "./components/TabelaEntradasCompras";
 
 const ITENS_POR_PAGINA = 10;
-
-/* =========================================================
-   FORMATADORES
-========================================================= */
-
-function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const partes = String(valor).split("-");
-
-  if (partes.length !== 3) {
-    return String(valor);
-  }
-
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
-}
-
-function formatarNumero(valor, casas = 0) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0";
-  }
-
-  return formatarNumeroPtBR(numero, {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
-}
-
-function formatarKg(valor) {
-  return `${formatarNumero(valor, 2)} kg`;
-}
-
-function formatarMoeda(valor, casas = 2) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return formatarNumeroPtBR(numero, {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
-}
-
-function formatarPreco(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  return `${formatarMoeda(valor, 3)}/kg`;
-}
-
-function formatarPercentual(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return `${formatarDuasCasas(numero)}%`;
-}
-
-/* =========================================================
-   FILTROS
-========================================================= */
-
-function criarFiltrosIniciais() {
-  return {
-    dataInicio: "",
-    dataFim: "",
-    dataReferencia: "PREVISAO",
-    situacao: "TODAS",
-    fornecedorId: "TODOS",
-    materialId: "TODOS",
-    busca: "",
-  };
-}
-
-const SITUACAO_POR_FILTRO = {
-  RECEBIDAS: "RECEBIDA",
-  FUTURAS: "FUTURA",
-  ENCERRADAS: "ENCERRADA",
-};
-
-function combinaSituacao(registro, situacao) {
-  const esperada = SITUACAO_POR_FILTRO[situacao];
-  return !esperada || registro.situacao === esperada;
-}
-
-function opcoesUnicas(registros, campoId, campoNome) {
-  const mapa = new Map();
-  for (const registro of registros) {
-    const id = registro?.[campoId];
-    const nome = String(registro?.[campoNome] ?? "").trim();
-    if (id === null || id === undefined || id === "" || !nome) continue;
-    mapa.set(String(id), { id, nome });
-  }
-  return [...mapa.values()].sort((a, b) =>
-    a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" }),
-  );
-}
-
-function obterDataReferencia(registro, referencia) {
-  if (referencia === "EMISSAO") {
-    return registro.emissao;
-  }
-
-  if (referencia === "RECEBIMENTO") {
-    return registro.recebido;
-  }
-
-  return registro.previsaoRecebimento;
-}
-
-function obterNomeOpcao(opcoes, valor) {
-  return opcoes.find((opcao) => opcao.valor === valor)?.nome || valor;
-}
-
-function montarTextoFiltros(filtros, dados) {
-  const partes = [];
-
-  const nomeReferencia = obterNomeOpcao(DATAS_REFERENCIA_ENTRADAS_COMPRAS, filtros.dataReferencia);
-
-  if (filtros.dataInicio || filtros.dataFim) {
-    partes.push(
-      `${nomeReferencia}: ${
-        filtros.dataInicio ? formatarData(filtros.dataInicio) : "sem início"
-      } até ${filtros.dataFim ? formatarData(filtros.dataFim) : "sem fim"}`,
-    );
-  } else {
-    partes.push(`${nomeReferencia}: todos os períodos`);
-  }
-
-  partes.push(`Situação: ${obterNomeOpcao(SITUACOES_ENTRADAS_COMPRAS, filtros.situacao)}`);
-
-  if (filtros.fornecedorId !== "TODOS") {
-    const fornecedor = dados.fornecedores.find(
-      (item) => String(item.id) === String(filtros.fornecedorId),
-    );
-
-    partes.push(`Fornecedor: ${fornecedor?.nome || filtros.fornecedorId}`);
-  }
-
-  if (filtros.materialId !== "TODOS") {
-    const material = dados.materiais.find((item) => String(item.id) === String(filtros.materialId));
-
-    partes.push(`Material: ${material?.nome || filtros.materialId}`);
-  }
-
-  if (String(filtros.busca).trim()) {
-    partes.push(`Busca: ${String(filtros.busca).trim()}`);
-  }
-
-  return partes.join(" | ");
-}
-
-/* =========================================================
-   TABELA
-========================================================= */
-
-function TabelaRelatorio({ registros }) {
-  return (
-    <div className="relatorio-visualizacao-tabela-wrapper entradas-compras-tabela-wrapper">
-      <table className="relatorio-visualizacao-tabela entradas-compras-tabela">
-        <thead>
-          <tr>
-            <th>Pedido</th>
-            <th>Recebido</th>
-            <th>Emissão</th>
-            <th>Previsão de recebimento</th>
-            <th>Fornecedor</th>
-            <th>Material</th>
-            <th className="coluna-numerica">Quantidade</th>
-            <th className="coluna-numerica">Preço</th>
-            <th className="coluna-numerica">IPI</th>
-            <th className="coluna-numerica">Total</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {registros.map((registro) => (
-            <tr key={registro.id}>
-              <td>
-                <strong className="entradas-compras-pedido">{registro.pedido || "-"}</strong>
-              </td>
-
-              <td>
-                {registro.situacao === "FUTURA" ? (
-                  <span className="entradas-compras-a-receber">A receber</span>
-                ) : registro.situacao === "ENCERRADA" ? (
-                  <span
-                    className="entradas-compras-encerrado"
-                    title="Pedido encerrado no Omie sem recebimento vinculado"
-                  >
-                    Encerrado
-                  </span>
-                ) : (
-                  formatarData(registro.recebido)
-                )}
-              </td>
-
-              <td>{formatarData(registro.emissao)}</td>
-
-              <td>{formatarData(registro.previsaoRecebimento)}</td>
-
-              <td>{registro.fornecedor || "-"}</td>
-
-              <td>{registro.material || "-"}</td>
-
-              <td className="coluna-numerica entradas-compras-numero">
-                {formatarKg(registro.quantidadeKg)}
-              </td>
-
-              <td className="coluna-numerica entradas-compras-numero">
-                {formatarPreco(registro.preco)}
-              </td>
-
-              <td className="coluna-numerica entradas-compras-numero">
-                {formatarPercentual(registro.ipiPercentual)}
-              </td>
-
-              <td className="coluna-numerica entradas-compras-total">
-                {formatarMoeda(registro.total)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
 
 /* =========================================================
    RELATÓRIO
@@ -779,7 +547,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
               <span>Aguarde enquanto os dados são carregados.</span>
             </div>
           ) : filtrados.length > 0 ? (
-            <TabelaRelatorio registros={registrosPagina} />
+            <TabelaEntradasCompras registros={registrosPagina} />
           ) : (
             <div className="relatorio-visualizacao-vazia">
               <FiFileText />
