@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useAuthContext } from "@/lib/auth-context";
-import { buscarPermissoesUsuario } from "@/lib/permissoesService";
+import { useAuthContext } from "@/lib/contextoAuth";
+import { buscarPermissoesUsuario } from "@/lib/permissoes.service";
 
 const SEM_PERMISSOES = {
   telas: new Set(),

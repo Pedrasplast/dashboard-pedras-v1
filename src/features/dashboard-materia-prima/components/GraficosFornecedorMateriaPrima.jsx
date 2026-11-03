@@ -18,7 +18,7 @@ import {
 
 import TooltipFinanceiro from "./TooltipFinanceiro.jsx";
 
-import { formatarKg } from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg } from "../dashboardMateriaPrima.utils.js";
 
 import { formatarKgCompacto, formatarMoedaCompacta } from "./materiaPrimaFormatters.js";
 

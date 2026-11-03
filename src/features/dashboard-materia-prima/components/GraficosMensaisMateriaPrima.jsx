@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { formatarMoeda } from "../dashboardMateriaPrimaUtils.js";
+import { formatarMoeda } from "../dashboardMateriaPrima.utils.js";
 
 import { formatarKgCompleto, formatarMoedaCompleta } from "./materiaPrimaFormatters.js";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";

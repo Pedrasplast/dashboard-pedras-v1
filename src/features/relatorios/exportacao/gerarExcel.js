@@ -1,9 +1,9 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-import { obterColunasExportacao } from "./ColunasExportacao";
-import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
-import { linhaEhTotalGeral, obterDataHoraEmissao } from "@/features/relatorios/exportacao/Comum";
+import { obterColunasExportacao } from "./colunasExportacao";
+import { COLUNAS_NUMERICAS } from "../utils/visualizacao";
+import { linhaEhTotalGeral, obterDataHoraEmissao } from "@/features/relatorios/exportacao/comum";
 
 /* =========================================================
    CORES

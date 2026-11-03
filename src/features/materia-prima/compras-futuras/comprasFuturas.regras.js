@@ -6,7 +6,7 @@ import { obterHojeISO } from "@/shared/lib/datas";
 
    Opções de status/tipo/frete, cálculo financeiro da compra,
    normalização do registro do banco e validações. O acesso ao
-   Supabase fica em comprasFuturasService.js.
+   Supabase fica em comprasFuturas.service.js.
 ========================================================= */
 
 export const STATUS_COMPRA_FUTURA = [

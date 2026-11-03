@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   buscarSaldosIniciais,
   salvarSaldoInicial as salvarSaldoInicialService,
-} from "./saldoInicialService";
+} from "./saldoInicial.service";
 
 const EVENTO_ATUALIZAR_PROJECAO = "materia-prima-projecao-atualizar";
 

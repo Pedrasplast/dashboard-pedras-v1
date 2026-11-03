@@ -4,7 +4,7 @@ import {
   buscarProgramacaoComCalendario,
   excluirProgramacao as excluirProgramacaoService,
   salvarProgramacaoCalendario,
-} from "./programacaoCalendarioService";
+} from "./programacaoCalendario.service";
 
 export default function useProgramacao({ carregar = true } = {}) {
   const [programacao, setProgramacao] = useState([]);

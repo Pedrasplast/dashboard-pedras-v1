@@ -1,6 +1,6 @@
 import { BadgeDollarSign, Building2 } from "lucide-react";
 
-import { formatarKg, formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg, formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrima.utils.js";
 
 import { formatarDias, formatarPercentual } from "./materiaPrimaFormatters.js";
 

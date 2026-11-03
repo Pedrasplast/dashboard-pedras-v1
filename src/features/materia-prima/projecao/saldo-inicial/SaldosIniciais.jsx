@@ -6,7 +6,7 @@ import SaldoInicialModal from "./SaldoInicialModal";
 
 import useSaldosIniciais from "./useSaldosIniciais";
 
-import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
+import { obterUltimosSaldosPorFornecedor } from "./saldoInicial.service";
 
 import "./SaldosIniciais.css";
 import { formatarKg } from "@/features/materia-prima/utils/formatadores";

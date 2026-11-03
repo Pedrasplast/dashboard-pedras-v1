@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabaseClient";
 
-import { buscarCadastroReceitas } from "@/features/cadastros/receitas/cadastroReceitasService";
+import { buscarCadastroReceitas } from "@/features/cadastros/receitas/cadastroReceitas.service";
 
-import { buscarProdutosPP } from "../produtos/produtosPPService";
+import { buscarProdutosPP } from "../produtos/produtosPP.service";
 
-import { buscarProgramacaoAgrupada } from "./programacaoDiariaService";
+import { buscarProgramacaoAgrupada } from "./programacaoDiaria.service";
 import { paraNumeroOu } from "@/shared/lib/numeros";
 
 /* =========================================================

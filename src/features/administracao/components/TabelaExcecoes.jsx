@@ -1,7 +1,7 @@
 import { CalendarDays } from "lucide-react";
 
 import { classePerfil, formatarDataPtBr, formatarDiaSemana } from "../calendarioIndustrial.regras";
-import { ehFeriadoNacionalAutomatico } from "../calendarioIndustrialAdminService";
+import { ehFeriadoNacionalAutomatico } from "../calendarioIndustrialAdmin.service";
 
 export default function TabelaExcecoes({ ano, excecoes, onAbrirDia }) {
   return (

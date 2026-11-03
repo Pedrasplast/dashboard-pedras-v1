@@ -1,8 +1,8 @@
 import jsPDF from "jspdf";
-import { obterColunasRelatorio } from "../config/Colunas.config";
-import { COLUNAS_NUMERICAS } from "../utils/Visualizacao";
+import { obterColunasRelatorio } from "../config/colunas.config";
+import { COLUNAS_NUMERICAS } from "../utils/visualizacao";
 import { LOGO_PROPORCAO, LOGO_RELATORIO } from "./logoRelatorio";
-import { linhaEhTotalGeral } from "@/features/relatorios/exportacao/Comum";
+import { linhaEhTotalGeral } from "@/features/relatorios/exportacao/comum";
 import { formatarDataHoraFrase } from "@/shared/lib/datas";
 
 /* Padrão visual dos PDFs — versão 4 (23/10). Só apresentação. */

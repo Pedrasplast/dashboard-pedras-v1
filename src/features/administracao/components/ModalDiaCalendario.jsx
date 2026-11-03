@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 
 import { Ban, CalendarDays, CheckCircle2, Clock3, RotateCcw, Save, X } from "lucide-react";
 
@@ -15,7 +15,7 @@ import {
 import {
   removerExcecaoCalendarioIndustrial,
   salvarExcecaoCalendarioIndustrial,
-} from "../calendarioIndustrialAdminService";
+} from "../calendarioIndustrialAdmin.service";
 
 const PERFIS = Object.freeze([
   {

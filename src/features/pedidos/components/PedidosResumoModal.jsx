@@ -11,8 +11,8 @@ import {
 
 import { formatarNumero } from "../utils/format.utils";
 
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 
 import "./PedidosResumoModal.css";
 

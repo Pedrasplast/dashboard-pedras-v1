@@ -282,7 +282,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
     try {
       setExportando("pdf");
 
-      const { exportarPdfPedidosAlterados } = await import("./ExportarPedidosAlteradosPDF.js");
+      const { exportarPdfPedidosAlterados } = await import("./exportarPedidosAlteradosPdf.js");
 
       await exportarPdfPedidosAlterados({
         pedidos: pedidosFiltrados,
@@ -321,7 +321,7 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
     try {
       setExportando("excel");
 
-      const { exportarExcelPedidosAlterados } = await import("./ExportarPedidosAlteradosExcel.js");
+      const { exportarExcelPedidosAlterados } = await import("./exportarPedidosAlteradosExcel.js");
 
       await exportarExcelPedidosAlterados({
         pedidos: pedidosFiltrados,

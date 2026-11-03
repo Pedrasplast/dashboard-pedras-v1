@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { buscarProjecao } from "./projecaoService";
+import { buscarProjecao } from "./projecao.service";
 
 const EVENTO_ATUALIZAR_PROJECAO = "materia-prima-projecao-atualizar";
 

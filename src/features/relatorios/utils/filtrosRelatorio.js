@@ -2,14 +2,14 @@ import { normalizarCodigoProduto } from "@/lib/cargaMaquina";
 import { valoresUnicos } from "@/shared/lib/colecoes";
 import { normalizarTexto } from "@/shared/lib/texto";
 
-import { obterDataPedidoRelatorio } from "../pedidos/PedidosRelatorios";
-import { obterDataDoRegistro } from "./Data";
-import { obterNumeroPedidoOriginal, obterNumeroPedidoVisual } from "./Pedidos";
+import { obterDataPedidoRelatorio } from "../pedidos/pedidosRelatorios";
+import { obterDataDoRegistro } from "./data";
+import { obterNumeroPedidoOriginal, obterNumeroPedidoVisual } from "./pedidos";
 import {
   COLUNAS_NUMERICAS,
   TITULOS_COLUNAS_VISUALIZACAO,
   criarTituloAutomatico,
-} from "./Visualizacao";
+} from "./visualizacao";
 
 /* =====================================================
    REGRAS DA CENTRAL DE RELATÓRIOS (FUNÇÕES PURAS)

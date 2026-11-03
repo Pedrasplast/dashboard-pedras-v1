@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePermissoes } from "@/hooks/usePermissoes";
 import { normalizarTexto } from "@/shared/lib/texto";
 
-import { RELATORIOS } from "../config/Relatorio.config";
+import { RELATORIOS } from "../config/relatorio.config";
 
 /**
  * Catálogo da Central de Relatórios: só os relatórios que o usuário pode

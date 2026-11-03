@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { CHAVE_TELA_RELATORIOS, MODULOS_PERMISSOES } from "../constants/gerenciarUsuariosConfig.js";
+import { CHAVE_TELA_RELATORIOS, MODULOS_PERMISSOES } from "../constants/gerenciarUsuarios.config.js";
 
 import {
   atualizarRegraUsuario,
@@ -8,7 +8,7 @@ import {
   cadastrarUsuario,
   excluirUsuarioCompleto,
   salvarPermissoesUsuario,
-} from "../services/gerenciarUsuariosService.js";
+} from "../services/gerenciarUsuarios.service.js";
 
 import {
   agruparRelatoriosPorCategoria,
@@ -20,7 +20,7 @@ import {
   emailValido,
   obterStatusModulo as calcularStatusModulo,
   obterTelasGerenciaveis,
-} from "../utils/gerenciarUsuariosUtils.js";
+} from "../utils/gerenciarUsuarios.utils.js";
 
 const MENSAGEM_INICIAL = Object.freeze({
   tipo: "",

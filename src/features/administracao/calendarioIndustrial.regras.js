@@ -1,7 +1,7 @@
 import {
   PREFIXO_FERIADO_NACIONAL,
   ehFeriadoNacionalAutomatico,
-} from "./calendarioIndustrialAdminService";
+} from "./calendarioIndustrialAdmin.service";
 
 export const NOMES_MESES = Object.freeze([
   "Janeiro",

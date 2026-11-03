@@ -1,6 +1,6 @@
 import { CheckCircle2, Clock3, XCircle } from "lucide-react";
 
-import { STATUS, normalizarStatus, rotuloStatus } from "../utils/comprasFuturasUtils";
+import { STATUS, normalizarStatus, rotuloStatus } from "../utils/comprasFuturas.utils";
 
 const ICONES = {
   [STATUS.PREVISTA]: Clock3,

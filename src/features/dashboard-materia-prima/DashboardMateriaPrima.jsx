@@ -20,9 +20,9 @@ import {
   criarInsightsGerenciais,
   criarMateriaisFiltro,
   criarResumoFinanceiro,
-} from "./dashboardMateriaPrimaSelectors.js";
+} from "./dashboardMateriaPrima.selectors.js";
 
-import { adicionarDias, periodoMesAtual } from "./dashboardMateriaPrimaUtils.js";
+import { adicionarDias, periodoMesAtual } from "./dashboardMateriaPrima.utils.js";
 import { formatarDataISOLocal } from "@/shared/lib/datas";
 
 import "./DashboardMateriaPrima.css";

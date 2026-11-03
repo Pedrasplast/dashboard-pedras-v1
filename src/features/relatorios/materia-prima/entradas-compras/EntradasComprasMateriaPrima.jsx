@@ -7,7 +7,7 @@ import Paginacao from "@/components/paginacao/Paginacao";
 import {
   DATAS_REFERENCIA_ENTRADAS_COMPRAS,
   SITUACOES_ENTRADAS_COMPRAS,
-} from "./services/entradasComprasMateriaPrimaService";
+} from "./services/entradasComprasMateriaPrima.service";
 
 import useEntradasComprasMateriaPrima from "./hooks/useEntradasComprasMateriaPrima";
 

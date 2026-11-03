@@ -1,4 +1,4 @@
-import { converterNumero } from "../utils/Numeros";
+import { converterNumero } from "../utils/numeros";
 
 /* =====================================================
    PRODUÇÃO POR INJETORA

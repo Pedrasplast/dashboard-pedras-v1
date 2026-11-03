@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   buscarRelatorioEntradasComprasMateriaPrima,
   criarResultadoEntradasComprasVazio,
-} from "../services/entradasComprasMateriaPrimaService";
+} from "../services/entradasComprasMateriaPrima.service";
 
 const CHAVE_QUERY = ["relatorio", "materia-prima", "entradas-compras"];
 

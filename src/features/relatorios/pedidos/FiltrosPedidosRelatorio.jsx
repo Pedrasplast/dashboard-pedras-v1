@@ -4,13 +4,13 @@ import { FiFilter, FiX } from "react-icons/fi";
 import CampoFiltro from "@/components/filtros/CampoFiltro";
 import Filtros from "@/components/filtros/Filtros";
 
-import { obterDataPedidoRelatorio } from "./PedidosRelatorios";
+import { obterDataPedidoRelatorio } from "./pedidosRelatorios";
 
 import "./FiltrosPedidosRelatorio.css";
 import {
   obterNumeroPedidoVisual,
   obterNumeroPedidoOriginal,
-} from "@/features/relatorios/utils/Pedidos";
+} from "@/features/relatorios/utils/pedidos";
 import { compararPtBR, valoresUnicosOrdenados } from "@/shared/lib/colecoes";
 import { normalizarTexto } from "@/shared/lib/texto";
 

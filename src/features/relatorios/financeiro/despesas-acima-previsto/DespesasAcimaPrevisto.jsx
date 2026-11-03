@@ -6,7 +6,7 @@ import Filtros from "@/components/filtros/Filtros";
 
 import Paginacao from "@/components/paginacao/Paginacao";
 
-import { obterColunasRelatorio } from "../../config/Colunas.config";
+import { obterColunasRelatorio } from "../../config/colunas.config";
 
 import {
   criarRelatorioFinanceiroExportacao,

@@ -11,7 +11,7 @@ import {
 
 import { useMemo, useState } from "react";
 
-import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
+import ConfirmacaoExclusao from "@/components/confirmacao-exclusao/ConfirmacaoExclusao";
 
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";

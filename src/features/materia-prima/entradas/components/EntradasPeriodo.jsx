@@ -1,6 +1,6 @@
 import { RotateCcw } from "lucide-react";
 
-import { PERIODO_EMISSAO, PERIODO_RECEBIDO } from "../utils/entradasUtils";
+import { PERIODO_EMISSAO, PERIODO_RECEBIDO } from "../utils/entradas.utils";
 
 export default function EntradasPeriodo({
   filtros,

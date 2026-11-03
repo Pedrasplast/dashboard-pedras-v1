@@ -6,7 +6,7 @@ import {
   extrairTipos,
   filtrarAbertas,
   filtrarCompras,
-} from "../utils/comprasFuturasUtils";
+} from "../utils/comprasFuturas.utils";
 
 /**
  * Compras em aberto + estado dos filtros + opções dos selects + lista filtrada.

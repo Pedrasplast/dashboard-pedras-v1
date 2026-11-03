@@ -9,7 +9,7 @@ export function criarRelatorioFinanceiroExportacao(relatorio) {
 }
 
 export async function exportarFinanceiroPDF({ relatorio, dados, textoFiltros, grupos }) {
-  const { gerarPdfRelatorio } = await import("../../exportacao/GerarPDF");
+  const { gerarPdfRelatorio } = await import("../../exportacao/gerarPdf");
 
   return gerarPdfRelatorio({
     relatorio,
@@ -20,7 +20,7 @@ export async function exportarFinanceiroPDF({ relatorio, dados, textoFiltros, gr
 }
 
 export async function exportarFinanceiroExcel({ relatorio, dados, textoFiltros, grupos }) {
-  const { gerarExcelRelatorio } = await import("../../exportacao/GerarExcel");
+  const { gerarExcelRelatorio } = await import("../../exportacao/gerarExcel");
 
   return gerarExcelRelatorio({
     relatorio,

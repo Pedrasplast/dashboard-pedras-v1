@@ -8,7 +8,7 @@ import {
   extrairOpcoes,
   extrairTipos,
   filtrarEntradas,
-} from "../utils/entradasUtils";
+} from "../utils/entradas.utils";
 
 const STORAGE_KEY = "materia-prima-entradas-filtros";
 

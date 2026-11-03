@@ -13,7 +13,7 @@ import {
 
 import KpiCard from "./KpiCard.jsx";
 
-import { formatarKg, formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg, formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrima.utils.js";
 
 import { formatarDias, formatarPercentual } from "./materiaPrimaFormatters.js";
 import { formatarNumeroCasasFixas } from "@/shared/lib/formatar";

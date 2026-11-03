@@ -34,7 +34,7 @@ abertas lado a lado (antes/depois).
      CSS sem uso (`pc-audit-*` e um catálogo `relatorios-*` antigo) e foi removido;
      as 3 regras que valiam foram para `PedidosAlteradosRelatorio.css`, cujas
      classes os dois relatórios usam. Os dois CSS sempre carregam juntos
-     (`Relatorio.config.js` importa os dois relatórios), então nada mudou na tela.
+     (`relatorio.config.js` importa os dois relatórios), então nada mudou na tela.
    - Resolvido: `.girando` global (0,8 s × 0,75 s, conforme a última tela
      aberta). Agora é `.cadastros-girando` (0,8 s) e `.saldos-iniciais-girando`
      (0,75 s); o `.girando` do Estoque não era usado e saiu. A Programação segue

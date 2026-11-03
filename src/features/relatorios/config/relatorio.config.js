@@ -9,20 +9,20 @@ import {
   FiTrendingUp,
 } from "react-icons/fi";
 
-import { agruparProducaoPorInjetora } from "../producao/ProducaoPorInjetora";
+import { agruparProducaoPorInjetora } from "../producao/producaoPorInjetora";
 
-import { agruparProducaoPorProduto } from "../producao/ProducaoPorProduto";
+import { agruparProducaoPorProduto } from "../producao/producaoPorProduto";
 
-import { impactoParadasPorMotivo } from "../paradas/ImpactoPorMotivo";
+import { impactoParadasPorMotivo } from "../paradas/impactoPorMotivo";
 
-import { agruparMotivoJustificativa } from "../paradas/MotivoJustificativa";
+import { agruparMotivoJustificativa } from "../paradas/motivoJustificativa";
 
 import {
   prepararPedidosDetalhados,
   prepararPedidosAtrasados,
   agruparPedidosPorCodigoProduto,
   agruparPedidosPorDataProduto,
-} from "../pedidos/PedidosRelatorios";
+} from "../pedidos/pedidosRelatorios";
 
 import PedidosAlteradosRelatorio from "../pedidos-alterados/PedidosAlteradosRelatorio";
 

@@ -13,7 +13,7 @@ import {
   buscarEstoqueProdutos,
   buscarLocaisEstoqueAtivos,
   buscarPedidosAbertosProdutos,
-} from "../services/estoqueService";
+} from "../services/estoque.service";
 
 /* =========================================================
    HOOK DE ESTOQUE

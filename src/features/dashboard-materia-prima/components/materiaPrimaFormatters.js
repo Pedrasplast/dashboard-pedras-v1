@@ -1,4 +1,4 @@
-import { formatarKg, formatarMoeda } from "../dashboardMateriaPrimaUtils.js";
+import { formatarKg, formatarMoeda } from "../dashboardMateriaPrima.utils.js";
 import {
   formatarNumeroPtBR,
   formatarNumeroCasasFixas,

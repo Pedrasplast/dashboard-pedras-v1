@@ -1,4 +1,4 @@
-import { TELAS_SISTEMA } from "../constants/gerenciarUsuariosConfig.js";
+import { TELAS_SISTEMA } from "../constants/gerenciarUsuarios.config.js";
 
 import { supabase } from "@/lib/supabaseClient";
 

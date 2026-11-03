@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import "./Filtros.css";
 
-import { useLimparNoLayout, useRegistrarLimpar } from "./ContextoLimparFiltros";
+import { useLimparNoLayout, useRegistrarLimpar } from "./contextoLimparFiltros";
 
 /* =========================================================
    COMPARAÇÃO DE VALORES

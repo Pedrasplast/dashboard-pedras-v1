@@ -6,7 +6,7 @@ import { calcularIndicadores, mensagemErro } from "../calendarioIndustrial.regra
 import {
   listarCalendarioIndustrialAno,
   sincronizarFeriadosNacionais,
-} from "../calendarioIndustrialAdminService";
+} from "../calendarioIndustrialAdmin.service";
 
 /**
  * Dados do calendário do ano: carga, sincronização de feriados (automática e manual),

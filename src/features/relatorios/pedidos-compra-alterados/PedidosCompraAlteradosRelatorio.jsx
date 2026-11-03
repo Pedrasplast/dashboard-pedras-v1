@@ -87,7 +87,7 @@ export default function PedidosCompraAlteradosRelatorio({ relatorio }) {
     setExportando(tipo);
 
     try {
-      const modulo = await import("./ExportarPedidosCompraAlterados.js");
+      const modulo = await import("./exportarPedidosCompraAlterados.js");
 
       if (tipo === "pdf") {
         await modulo.exportarPdfPedidosCompraAlterados(filtrados, periodo, referencias);

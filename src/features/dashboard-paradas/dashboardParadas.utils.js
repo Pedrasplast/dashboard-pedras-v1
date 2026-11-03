@@ -9,7 +9,7 @@ import {
 import {
   converterDuracaoParaSegundos,
   formatarSegundosComoDuracao,
-} from "@/features/relatorios/utils/Duracao";
+} from "@/features/relatorios/utils/duracao";
 
 /* =========================================================
    CONFIGURAÇÕES

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabaseClient", () => ({ supabase: {} }));
 
-const { normalizarItemOmie } = await import("./entradasComprasMateriaPrimaService.js");
+const { normalizarItemOmie } = await import("./entradasComprasMateriaPrima.service.js");
 
 const base = {
   cod_ped_compra: 1,

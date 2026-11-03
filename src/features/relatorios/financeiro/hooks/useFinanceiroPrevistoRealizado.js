@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { buscarAnosFinanceiroDoMaisRecente } from "@/features/financeiro/services/financeiro.service";
 
-import { buscarPrevistoRealizadoFinanceiro } from "../services/financeiroPrevistoRealizadoService";
+import { buscarPrevistoRealizadoFinanceiro } from "../services/financeiroPrevistoRealizado.service";
 
 export default function useFinanceiroPrevistoRealizado({ ano, mes, tipo, habilitado = true }) {
   const consultaAnos = useQuery({

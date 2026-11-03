@@ -1,4 +1,4 @@
-import { formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrimaUtils.js";
+import { formatarMoeda, formatarMoedaKg } from "../dashboardMateriaPrima.utils.js";
 
 export default function TooltipFinanceiro({ active, payload, label }) {
   if (!active || !payload?.length) {

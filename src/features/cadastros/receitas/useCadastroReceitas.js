@@ -4,7 +4,7 @@ import {
   alterarStatusCadastroReceita,
   buscarCadastroReceitas,
   salvarCadastroReceita,
-} from "./cadastroReceitasService";
+} from "./cadastroReceitas.service";
 
 const CHAVE_CADASTRO_RECEITAS = ["cadastro-receitas"];
 

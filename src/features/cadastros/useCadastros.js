@@ -13,7 +13,7 @@ import {
   salvarMaterialCadastro,
   salvarMateriaisFornecedorCadastro,
   salvarProdutoCadastro,
-} from "./cadastrosService";
+} from "./cadastros.service";
 
 import { buscarTabelaPrecos } from "@/features/tabela-precos-materia-prima/services/tabelaPrecos.service";
 

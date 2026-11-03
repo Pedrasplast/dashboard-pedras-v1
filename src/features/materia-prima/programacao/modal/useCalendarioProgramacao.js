@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { listarCalendarioIndustrial } from "@/features/calendario-industrial/calendarioIndustrialService";
+import { listarCalendarioIndustrial } from "@/features/calendario-industrial/calendarioIndustrial.service";
 
-import { listarPeriodosProgramacao } from "../programacaoCalendarioService";
+import { listarPeriodosProgramacao } from "../programacaoCalendario.service";
 
 /**
  * Calendário industrial do período da grade e os períodos de trabalho

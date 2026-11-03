@@ -5,7 +5,7 @@ import {
   confirmarChegadaCompraFutura as confirmarChegadaCompraFuturaService,
   excluirCompraFutura as excluirCompraFuturaService,
   salvarCompraFutura as salvarCompraFuturaService,
-} from "./comprasFuturasService";
+} from "./comprasFuturas.service";
 
 export default function useComprasFuturas({ carregar = true } = {}) {
   const [compras, setCompras] = useState([]);

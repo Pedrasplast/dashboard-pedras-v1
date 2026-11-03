@@ -160,7 +160,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return;
     }
 
-    const { gerarPdfRelatorio } = await import("./exportacao/GerarPDF");
+    const { gerarPdfRelatorio } = await import("./exportacao/gerarPdf");
 
     gerarPdfRelatorio({
       relatorio: relatorioSelecionado,
@@ -174,7 +174,7 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       return;
     }
 
-    const { gerarExcelRelatorio } = await import("./exportacao/GerarExcel");
+    const { gerarExcelRelatorio } = await import("./exportacao/gerarExcel");
 
     await gerarExcelRelatorio({
       relatorio: relatorioSelecionado,

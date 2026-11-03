@@ -8,7 +8,7 @@ import { formatarNumeroPtBR, formatarDuasCasas } from "@/shared/lib/formatar";
 import {
   DATAS_REFERENCIA_ENTRADAS_COMPRAS,
   SITUACOES_ENTRADAS_COMPRAS,
-} from "./services/entradasComprasMateriaPrimaService";
+} from "./services/entradasComprasMateriaPrima.service";
 
 /* =========================================================
    FORMATADORES

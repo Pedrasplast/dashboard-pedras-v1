@@ -4,8 +4,8 @@ import { FiFileText, FiX } from "react-icons/fi";
 
 import Paginacao from "@/components/paginacao/Paginacao";
 
-import { linhaEhTotalGeral } from "../exportacao/Comum";
-import { obterValorVisualizacao } from "../utils/Visualizacao";
+import { linhaEhTotalGeral } from "../exportacao/comum";
+import { obterValorVisualizacao } from "../utils/visualizacao";
 
 /**
  * Pré-visualização paginada do relatório. A paginação vale só para esta

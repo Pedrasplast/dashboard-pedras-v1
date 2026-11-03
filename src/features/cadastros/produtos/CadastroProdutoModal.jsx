@@ -1,5 +1,5 @@
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 
 import { useEffect, useRef, useState } from "react";
 import { Boxes, Save, X } from "lucide-react";

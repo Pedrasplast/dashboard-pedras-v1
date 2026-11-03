@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { FiDownload, FiEye, FiFileText, FiFilter, FiRotateCcw, FiX } from "react-icons/fi";
 
-import { ContextoLimparFiltros } from "@/components/filtros/ContextoLimparFiltros";
+import { ContextoLimparFiltros } from "@/components/filtros/contextoLimparFiltros";
 
 import "./LayoutRelatorio.css";
 

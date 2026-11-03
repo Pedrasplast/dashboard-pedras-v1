@@ -1,6 +1,6 @@
 import "./ProgramacaoLayout.css";
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 import { AlertTriangle, CalendarDays, Save, X } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";

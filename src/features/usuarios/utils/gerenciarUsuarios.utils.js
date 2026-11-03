@@ -1,4 +1,4 @@
-import { CHAVE_TELA_USUARIOS } from "../constants/gerenciarUsuariosConfig.js";
+import { CHAVE_TELA_USUARIOS } from "../constants/gerenciarUsuarios.config.js";
 
 export function emailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());

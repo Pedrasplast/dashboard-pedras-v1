@@ -1,6 +1,6 @@
 import "./FinanceiroDetalhes.css";
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 import { memo, useMemo, useState } from "react";
 
 import {

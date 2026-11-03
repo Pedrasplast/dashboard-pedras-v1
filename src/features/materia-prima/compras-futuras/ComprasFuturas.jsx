@@ -7,7 +7,7 @@ import useComprasFuturas from "./useComprasFuturas";
 
 import useFiltrosComprasFuturas from "./hooks/useFiltrosComprasFuturas";
 import useAcoesComprasFuturas from "./hooks/useAcoesComprasFuturas";
-import { calcularIndicadores } from "./utils/comprasFuturasUtils";
+import { calcularIndicadores } from "./utils/comprasFuturas.utils";
 
 import ComprasFuturasIndicadores from "./components/ComprasFuturasIndicadores";
 import ComprasFuturasFiltros from "./components/ComprasFuturasFiltros";

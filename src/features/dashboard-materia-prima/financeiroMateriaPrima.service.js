@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-import { buscarFornecedores } from "@/features/materia-prima/fornecedores/fornecedoresService";
+import { buscarFornecedores } from "@/features/materia-prima/fornecedores/fornecedores.service";
 import { paraNumeroOuNull } from "@/shared/lib/numeros";
 
 const CAMPOS_FINANCEIROS = `

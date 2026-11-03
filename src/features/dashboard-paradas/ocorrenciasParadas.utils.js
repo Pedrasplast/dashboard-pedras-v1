@@ -1,4 +1,4 @@
-import { converterDuracaoParaSegundos } from "@/features/relatorios/utils/Duracao";
+import { converterDuracaoParaSegundos } from "@/features/relatorios/utils/duracao";
 
 /* =========================================================
    TEXTO

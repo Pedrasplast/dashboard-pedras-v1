@@ -1,4 +1,4 @@
-import { obterColunasRelatorio } from "../config/Colunas.config";
+import { obterColunasRelatorio } from "../config/colunas.config";
 
 function criarColunaDescricaoProduto(formato) {
   const coluna = {

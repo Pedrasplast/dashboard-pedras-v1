@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { periodoMesAtual } from "./dashboardMateriaPrimaUtils.js";
+import { periodoMesAtual } from "./dashboardMateriaPrima.utils.js";
 
 describe("periodoMesAtual", () => {
   it("do 1º ao último dia do mês", () => {

@@ -1,8 +1,8 @@
-import { buscarComprasFuturas } from "../compras-futuras/comprasFuturasService";
+import { buscarComprasFuturas } from "../compras-futuras/comprasFuturas.service";
 
-import { buscarProgramacaoParaProjecao } from "../programacao/programacaoDiariaService";
+import { buscarProgramacaoParaProjecao } from "../programacao/programacaoDiaria.service";
 
-import { buscarSaldosIniciais } from "./saldo-inicial/saldoInicialService";
+import { buscarSaldosIniciais } from "./saldo-inicial/saldoInicial.service";
 
 import { calcularProjecao } from "./projecao.regras";
 

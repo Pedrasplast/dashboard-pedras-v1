@@ -1,6 +1,6 @@
-import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/Duracao";
+import { converterDuracaoParaSegundos, formatarSegundosComoDuracao } from "../utils/duracao";
 
-import { converterNumero } from "../utils/Numeros";
+import { converterNumero } from "../utils/numeros";
 
 /* =====================================================
    PRODUÇÃO POR PRODUTO

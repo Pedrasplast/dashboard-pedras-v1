@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-import { buscarFornecedores } from "../fornecedores/fornecedoresService";
+import { buscarFornecedores } from "../fornecedores/fornecedores.service";
 import {
   montarDadosCompraFutura,
   normalizarCompra,

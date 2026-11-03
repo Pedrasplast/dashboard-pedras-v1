@@ -12,8 +12,8 @@ import {
 import { useEffect, useMemo, type ReactNode } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AuthProvider, useAuthContext } from "../lib/auth-context";
-import { normalizarCamposMaiusculos } from "../lib/uppercase-fields";
+import { AuthProvider, useAuthContext } from "../lib/contextoAuth";
+import { normalizarCamposMaiusculos } from "../lib/camposMaiusculos";
 import Navbar from "../components/layout/Navbar";
 
 import "../styles/tokens.css";

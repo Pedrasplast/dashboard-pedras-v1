@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { estaEmAberto } from "../utils/comprasFuturasUtils";
+import { estaEmAberto } from "../utils/comprasFuturas.utils";
 
 /**
  * Controla os 3 fluxos de ação da tela:

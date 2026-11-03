@@ -45,7 +45,7 @@ function normalizarDiaCalendario(registro) {
    AS ALTERAÇÕES DO CALENDÁRIO FICAM EXCLUSIVAMENTE EM:
 
    src/features/administracao/
-   calendarioIndustrialAdminService.js
+   calendarioIndustrialAdmin.service.js
 ========================================================= */
 
 export async function listarCalendarioIndustrial({ dataInicio, dataFim }) {

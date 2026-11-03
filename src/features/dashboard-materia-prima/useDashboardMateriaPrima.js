@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { buscarFinanceiroMateriaPrima } from "./financeiroMateriaPrimaService.js";
+import { buscarFinanceiroMateriaPrima } from "./financeiroMateriaPrima.service.js";
 
-import { buscarFinanceiroMateriaPrimaOmie } from "./financeiroMateriaPrimaOmieService.js";
+import { buscarFinanceiroMateriaPrimaOmie } from "./financeiroMateriaPrimaOmie.service.js";
 
 import { ORIGEM_OMIE } from "./origemOmie.js";
 

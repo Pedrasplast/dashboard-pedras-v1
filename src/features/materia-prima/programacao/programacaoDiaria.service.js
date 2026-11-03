@@ -397,7 +397,7 @@ export function agruparProgramacaoDiaria(dias = []) {
 
 /* =========================================================
    IMPORTANTE:
-   ESTE EXPORT É USADO PELO programacaoCalendarioService.js
+   ESTE EXPORT É USADO PELO programacaoCalendario.service.js
 ========================================================= */
 
 export async function buscarProgramacaoAgrupada({

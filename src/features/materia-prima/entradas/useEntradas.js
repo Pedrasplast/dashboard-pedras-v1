@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { buscarEntradas } from "./entradasService";
+import { buscarEntradas } from "./entradas.service";
 
 /* =========================================================
    HOOK ENTRADAS

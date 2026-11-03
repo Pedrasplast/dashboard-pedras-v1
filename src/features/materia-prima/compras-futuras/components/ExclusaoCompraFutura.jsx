@@ -1,6 +1,6 @@
-import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
+import ConfirmacaoExclusao from "@/components/confirmacao-exclusao/ConfirmacaoExclusao";
 
-import { descricaoExclusao, detalhesExclusao } from "../utils/comprasFuturasUtils";
+import { descricaoExclusao, detalhesExclusao } from "../utils/comprasFuturas.utils";
 
 export default function ExclusaoCompraFutura({
   compra,

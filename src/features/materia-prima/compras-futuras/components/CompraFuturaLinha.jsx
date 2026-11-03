@@ -1,7 +1,7 @@
 import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
 
 import StatusCompra from "./StatusCompra";
-import { estaEmAberto } from "../utils/comprasFuturasUtils";
+import { estaEmAberto } from "../utils/comprasFuturas.utils";
 import {
   formatarCustoKg,
   formatarData,

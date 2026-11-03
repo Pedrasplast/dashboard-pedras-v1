@@ -1,5 +1,5 @@
-import Modal from "@/components/Modal/Modal";
-import ModalTitulo from "@/components/Modal/ModalTitulo";
+import Modal from "@/components/modal/Modal";
+import ModalTitulo from "@/components/modal/ModalTitulo";
 import { AlertTriangle, FlaskConical, Plus, Save, Trash2, X } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";

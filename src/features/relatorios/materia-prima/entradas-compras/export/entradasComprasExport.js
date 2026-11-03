@@ -52,7 +52,7 @@ export function criarDadosExportacaoEntradasCompras(registros, resumo) {
 }
 
 export async function exportarEntradasComprasPDF({ relatorio, dados, textoFiltros }) {
-  const { gerarPdfRelatorio } = await import("../../../exportacao/GerarPDF");
+  const { gerarPdfRelatorio } = await import("../../../exportacao/gerarPdf");
 
   return gerarPdfRelatorio({
     relatorio,
@@ -62,7 +62,7 @@ export async function exportarEntradasComprasPDF({ relatorio, dados, textoFiltro
 }
 
 export async function exportarEntradasComprasExcel({ relatorio, dados, textoFiltros }) {
-  const { gerarExcelRelatorio } = await import("../../../exportacao/GerarExcel");
+  const { gerarExcelRelatorio } = await import("../../../exportacao/gerarExcel");
 
   return gerarExcelRelatorio({
     relatorio,

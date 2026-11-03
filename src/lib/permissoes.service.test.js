@@ -52,7 +52,7 @@ vi.mock("./supabaseClient", () => ({
   },
 }));
 
-const { buscarPermissoesUsuario } = await import("./permissoesService");
+const { buscarPermissoesUsuario } = await import("./permissoes.service");
 
 describe("buscarPermissoesUsuario", () => {
   it("libera só as telas permitidas, com a chave como está no banco", async () => {

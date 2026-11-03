@@ -1,4 +1,4 @@
-import { formatarDataCurta, statusCompraAberta } from "./dashboardMateriaPrimaUtils.js";
+import { formatarDataCurta, statusCompraAberta } from "./dashboardMateriaPrima.utils.js";
 import { paraNumero } from "@/shared/lib/numeros";
 import { formatarDuasCasas } from "@/shared/lib/formatar";
 

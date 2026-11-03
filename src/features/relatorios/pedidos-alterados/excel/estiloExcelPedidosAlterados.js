@@ -6,7 +6,7 @@
    Cada helper devolve um objeto novo por célula.
 ========================================================= */
 
-import { obterDataHoraEmissao } from "@/features/relatorios/exportacao/Comum";
+import { obterDataHoraEmissao } from "@/features/relatorios/exportacao/comum";
 import { COR_EXCEL } from "@/features/relatorios/exportacao/padraoExcel";
 import { formatarFiltroData } from "@/features/relatorios/pedidos-alterados/formatadoresPedidosAlterados";
 

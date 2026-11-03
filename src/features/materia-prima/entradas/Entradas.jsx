@@ -5,7 +5,7 @@ import Paginacao from "@/components/paginacao/Paginacao";
 import useEntradas from "./useEntradas";
 import useFiltrosEntradas from "./hooks/useFiltrosEntradas";
 import usePaginacao from "./hooks/usePaginacao";
-import { calcularIndicadores } from "./utils/entradasUtils";
+import { calcularIndicadores } from "./utils/entradas.utils";
 
 import EntradasIndicadores from "./components/EntradasIndicadores";
 import EntradasFiltros from "./components/EntradasFiltros";

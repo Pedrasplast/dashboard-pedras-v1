@@ -146,7 +146,7 @@ describe("montarFinanceiroOmie", () => {
 
 describe("pedido encerrado no Omie", () => {
   it("vira ENCERRADA: conta nos totais, mas não como em aberto", async () => {
-    const { statusCompraAberta } = await import("./dashboardMateriaPrimaUtils.js");
+    const { statusCompraAberta } = await import("./dashboardMateriaPrima.utils.js");
     const c = normalizarCompraOmie({ ...PARCIAL, encerrado: true });
     expect(c.status).toBe("ENCERRADA");
     expect(statusCompraAberta(c.status)).toBe(false);
