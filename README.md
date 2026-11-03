@@ -23,3 +23,7 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Padrão de nomes
+
+Antes de criar arquivos ou variáveis, veja [NOMENCLATURA.md](NOMENCLATURA.md). `npm run validate:nomes` confere o padrão.

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useContextoAuth } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/ProvedorAuth";
 import { buscarPermissoesUsuario } from "@/lib/permissoes.service";
 
 const SEM_PERMISSOES = {

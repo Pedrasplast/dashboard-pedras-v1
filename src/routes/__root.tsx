@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, type ReactNode } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { ProvedorAuth, useContextoAuth } from "../lib/contextoAuth";
+import { ProvedorAuth, useContextoAuth } from "../lib/ProvedorAuth";
 import { normalizarCamposMaiusculos } from "../lib/camposMaiusculos";
 import Navbar from "../components/layout/Navbar";
 

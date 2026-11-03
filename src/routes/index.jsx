@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import HomePage from "@/features/home/HomePage";
-import { useContextoAuth } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/ProvedorAuth";
 
 export const Route = createFileRoute("/")({
   head: () => ({

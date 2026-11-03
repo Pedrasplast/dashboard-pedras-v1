@@ -1,4 +1,4 @@
-import { useContextoAuth } from "../lib/contextoAuth";
+import { useContextoAuth } from "../lib/ProvedorAuth";
 
 /*
  * Sessão atual do usuário, vinda do provedor global.

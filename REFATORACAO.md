@@ -65,3 +65,10 @@ A validação estática não substitui o build; ela antecipa erros comuns de JSX
 - **Manutenção:** `FiltroSelect` único em `components/filtros`; `alternarNoConjunto` e `calcularMedia` compartilhados; regras puras de 7 telas grandes movidas para arquivos `*.regras.js` sem alteração de texto.
 
 Pendências que dependem de acesso ao Supabase: trazer para `supabase/functions` o código publicado de `sincronizar-pedidos-omie`, `sincronizar-financeiro-omie` e demais funções que só existem no projeto; revisar RLS/advisors.
+
+## Fase 5 — padrão de nomes (branch `fase-5-nomenclatura`)
+
+- Padrão descrito em `NOMENCLATURA.md` e conferido por `npm run validate:nomes` (também dentro de `validate:static`).
+- 55 arquivos e pastas renomeados (`entradasService.js` → `entradas.service.js`, `GerarPDF.js` → `gerarPdf.js`, `components/Modal` → `components/modal`, `lib/auth-context.jsx` → `lib/ProvedorAuth.jsx`…), com os imports reescritos automaticamente.
+- 664 identificadores em inglês passaram para português (`isAdmin` → `ehAdmin`, `loadingAuth` → `carregandoAuth`, `handleLogout` → `sair`, `onXChange` → `onAlterarX`…). Nomes de biblioteca, colunas do banco e classes CSS não mudaram.
+- Verificação: AST idêntica antes/depois a menos das renomeações do mapa; nenhum nome antigo em string; nenhuma chave enviada ao Supabase alterada.

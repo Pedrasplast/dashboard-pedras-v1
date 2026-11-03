@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useContextoAuth } from "@/lib/contextoAuth";
+import { useContextoAuth } from "@/lib/ProvedorAuth";
 import { useNavigate } from "@/lib/navegacao";
 import { usePermissoes } from "@/hooks/usePermissoes";
 
