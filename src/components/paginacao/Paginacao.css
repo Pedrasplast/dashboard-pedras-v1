@@ -18,11 +18,11 @@
 
   gap: 18px;
 
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 /* =========================================================
@@ -30,18 +30,18 @@
 ========================================================= */
 
 .paginacao-info {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   line-height: 1.4;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   white-space: nowrap;
 }
 
 .paginacao-info strong {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 /* =========================================================
@@ -73,17 +73,17 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 7px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 
   cursor: pointer;
 
@@ -95,17 +95,17 @@
 }
 
 .paginacao-botao:hover:not(:disabled) {
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .paginacao-botao:focus-visible {
   outline: none;
 
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
@@ -127,21 +127,21 @@
 }
 
 .paginacao-numero.ativa {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   box-shadow: 0 1px 3px rgba(37, 99, 235, 0.18);
 }
 
 .paginacao-numero.ativa:hover {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 /* =========================================================
@@ -167,9 +167,9 @@
 
   justify-content: center;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
-  font-size: 12px;
+  font-size: var(--font-size-caption);
 
   user-select: none;
 }
@@ -186,7 +186,7 @@
 
     gap: 11px;
 
-    padding: 12px;
+    padding: var(--space-3);
   }
 
   .paginacao-info {
@@ -252,7 +252,7 @@
 
 @media (max-width: 420px) {
   .paginacao-info {
-    font-size: 10px;
+    font-size: var(--font-size-micro);
   }
 
   .paginacao-numero {
@@ -260,7 +260,7 @@
 
     height: 30px;
 
-    font-size: 10px;
+    font-size: var(--font-size-micro);
   }
 
   .paginacao-navegacao {

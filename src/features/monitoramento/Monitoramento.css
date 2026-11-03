@@ -13,7 +13,7 @@
   width: 100%;
   max-width: 1400px;
   margin: 70px auto 0;
-  padding: 24px;
+  padding: var(--space-6);
   box-sizing: border-box;
 }
 
@@ -22,7 +22,7 @@
 .mon-botao {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   padding: 9px 14px;
   border: 1px solid var(--color-border-strong);
   border-radius: 10px;
@@ -44,13 +44,7 @@
 }
 
 .mon-girando {
-  animation: mon-girar 1s linear infinite;
-}
-
-@keyframes mon-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: girar 1s linear infinite;
 }
 
 /* ---------- Resumo ---------- */
@@ -59,17 +53,17 @@
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
-  margin-top: 24px;
+  margin-top: var(--space-6);
 }
 
 .mon-resumo__item {
-  padding: 16px 18px;
+  padding: var(--space-4) 18px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .mon-resumo__item strong {
@@ -102,7 +96,7 @@
   display: block;
   height: 6px;
   margin-top: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface-muted);
   overflow: hidden;
 }
@@ -141,7 +135,7 @@
   padding: 18px;
   background: var(--color-surface);
   border: 1px solid #dbe7f3;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
@@ -149,9 +143,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
 .mon-card__atualizado {
@@ -162,14 +156,14 @@
 .mon-filtro {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-size: var(--font-size-md);
   color: var(--color-text-strong);
   cursor: pointer;
 }
 
 .mon-vazio {
-  margin: 16px 0;
+  margin: var(--space-4) 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-md);
 }
@@ -180,13 +174,13 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .mon-rotina {
   border: 1px solid var(--color-border);
   border-left: 4px solid var(--color-border-strong);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   overflow: hidden;
 }
@@ -209,8 +203,8 @@
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr) 170px 110px 24px;
   align-items: center;
-  gap: 16px;
-  padding: 12px 14px;
+  gap: var(--space-4);
+  padding: var(--space-3) 14px;
   border: 0;
   background: transparent;
   text-align: left;
@@ -259,7 +253,7 @@
 
 .mon-rotina__erro {
   margin: 0;
-  padding: 8px 14px 12px 140px;
+  padding: var(--space-2) 14px var(--space-3) 140px;
   font-size: var(--font-size-body);
   color: var(--color-danger-hover);
   word-break: break-word;
@@ -270,7 +264,7 @@
 }
 
 .mon-rotina__detalhe {
-  padding: 4px 14px 14px;
+  padding: var(--space-1) 14px 14px;
   border-top: 1px solid var(--color-border);
   background: var(--color-surface-subtle);
 }
@@ -286,8 +280,8 @@
 .mon-selo {
   display: inline-flex;
   justify-content: center;
-  padding: 4px 10px;
-  border-radius: 999px;
+  padding: var(--space-1) 10px;
+  border-radius: var(--radius-pill);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-bold);
   white-space: nowrap;
@@ -326,7 +320,7 @@
 
 .mon-historico th {
   text-align: left;
-  padding: 8px 10px;
+  padding: var(--space-2) 10px;
   color: var(--color-text-muted);
   font-weight: var(--font-weight-semibold);
   border-bottom: 1px solid var(--color-border);
@@ -349,7 +343,7 @@
 }
 
 .mon-historico__vazio {
-  margin: 10px 0 4px;
+  margin: 10px 0 var(--space-1);
   font-size: var(--font-size-body);
   color: var(--color-text-muted);
 }
@@ -377,7 +371,7 @@
       "nome nome"
       "ultima ultima"
       "falhas falhas";
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .mon-rotina__cabecalho .mon-selo {
@@ -411,13 +405,13 @@
 
 @media (max-width: 520px) {
   .mon-container {
-    padding: 16px;
+    padding: var(--space-4);
   }
   .mon-resumo {
     gap: 10px;
   }
   .mon-resumo__item {
-    padding: 12px 14px;
+    padding: var(--space-3) 14px;
   }
   .mon-resumo__item strong {
     font-size: 22px;
@@ -434,9 +428,9 @@
   .mon-historico tr {
     display: grid;
     grid-template-columns: auto auto 1fr;
-    gap: 4px 12px;
+    gap: var(--space-1) var(--space-3);
     align-items: center;
-    padding: 8px 2px;
+    padding: var(--space-2) 2px;
     border-bottom: 1px solid var(--color-border);
   }
   .mon-historico td {

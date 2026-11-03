@@ -41,7 +41,7 @@
 
   table-layout: auto;
 
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   text-align: left;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .pedidos-tabela th {
-  padding: 12px 12px;
+  padding: var(--space-3) var(--space-3);
 
   border-bottom: 1px solid var(--color-border);
 
@@ -58,7 +58,7 @@
 
   text-align: left !important;
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 750;
 
   letter-spacing: 0.035em;
@@ -70,7 +70,7 @@
 }
 
 .pedidos-tabela td {
-  padding: 14px 12px;
+  padding: 14px var(--space-3);
 
   border-bottom: 1px solid #eef2f7;
 
@@ -190,7 +190,7 @@
   padding: 3px 7px;
 
   border: 1px solid #bfdbfe;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   background: var(--color-primary-soft);
 
@@ -213,7 +213,7 @@
   min-width: 205px;
   max-width: 320px;
 
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.45;
 
   color: var(--color-text-strong);
@@ -291,7 +291,7 @@
 
   line-height: 1.5;
 
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 
   color: var(--color-text-strong);
 }
@@ -301,8 +301,8 @@
 
   color: var(--color-text-light);
 
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
 
   line-height: 1.3;
 }
@@ -342,12 +342,12 @@
   align-items: center;
   justify-content: center;
 
-  gap: 4px;
+  gap: var(--space-1);
 
-  padding: 4px 7px;
+  padding: var(--space-1) 7px;
 
   border: 1px solid #fecaca;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   background: var(--color-danger-soft);
 
@@ -450,9 +450,9 @@
 
   min-height: 21px;
 
-  padding: 3px 8px;
+  padding: 3px var(--space-2);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   color: var(--color-surface);
 
@@ -496,7 +496,7 @@
 
 .pedidos-tabela-wrapper::-webkit-scrollbar-thumb {
   border: 2px solid var(--color-surface-muted);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   background: #b8c4d3;
 }
@@ -517,7 +517,7 @@
   }
 
   .pedidos-tabela td {
-    padding: 12px 9px;
+    padding: var(--space-3) 9px;
   }
 
   .pedidos-cliente {
@@ -581,7 +581,7 @@
     min-width: 150px;
     max-width: 210px;
 
-    font-size: 10px;
+    font-size: var(--font-size-micro);
   }
 
   .pedidos-col-previsao {
@@ -602,7 +602,7 @@
     min-width: 270px;
     max-width: 390px;
 
-    font-size: 10px;
+    font-size: var(--font-size-micro);
     line-height: 1.4;
   }
 
@@ -630,7 +630,7 @@
   }
 
   .pedidos-tabela th {
-    padding: 8px 5px;
+    padding: var(--space-2) 5px;
 
     font-size: 8px;
 
@@ -638,7 +638,7 @@
   }
 
   .pedidos-tabela td {
-    padding: 8px 5px;
+    padding: var(--space-2) 5px;
 
     line-height: 1.35;
   }
@@ -693,7 +693,7 @@
   }
 
   .pedidos-item-indicador {
-    font-size: 12px;
+    font-size: var(--font-size-caption);
   }
 
   .pedidos-itens-badge {
@@ -734,7 +734,7 @@
     overflow: hidden;
 
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
 
     background: var(--color-surface);
 
@@ -794,7 +794,7 @@
 
     gap: 10px;
 
-    padding: 12px;
+    padding: var(--space-3);
 
     border-bottom: 1px solid #eef2f7;
   }
@@ -805,7 +805,7 @@
     display: flex;
     flex-direction: column;
 
-    gap: 4px;
+    gap: var(--space-1);
   }
 
   .pedidos-mobile-pedido-numero {
@@ -818,7 +818,7 @@
   }
 
   .pedidos-mobile-pedido-numero strong {
-    font-size: 16px;
+    font-size: var(--font-size-lg);
     font-weight: 800;
 
     color: var(--color-primary);
@@ -854,7 +854,7 @@
   /* CLIENTE */
 
   .pedidos-mobile-cliente {
-    padding: 10px 12px;
+    padding: 10px var(--space-3);
 
     border-bottom: 1px solid #eef2f7;
   }
@@ -862,8 +862,8 @@
   .pedidos-mobile-cliente strong {
     display: block;
 
-    font-size: 11px;
-    font-weight: 700;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
 
     line-height: 1.4;
 
@@ -912,8 +912,8 @@
   .pedidos-mobile-info strong {
     max-width: 100%;
 
-    font-size: 10px;
-    font-weight: 700;
+    font-size: var(--font-size-micro);
+    font-weight: var(--font-weight-bold);
 
     line-height: 1.35;
 
@@ -931,7 +931,7 @@
   }
 
   .pedidos-mobile-item {
-    padding: 11px 12px;
+    padding: 11px var(--space-3);
 
     background: rgba(255, 255, 255, 0.72);
   }
@@ -952,7 +952,7 @@
   }
 
   .pedidos-mobile-item-codigo {
-    font-size: 10px;
+    font-size: var(--font-size-micro);
     font-weight: 800;
 
     color: var(--color-text-strong);
@@ -965,7 +965,7 @@
 
     padding: 3px 6px;
 
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
 
     background: var(--color-surface-muted);
 
@@ -1020,9 +1020,9 @@
 
 @media (max-width: 480px) {
   .pedidos-lista-mobile {
-    gap: 8px;
+    gap: var(--space-2);
 
-    padding: 8px;
+    padding: var(--space-2);
   }
 
   .pedidos-mobile-card {
@@ -1050,7 +1050,7 @@
   }
 
   .pedidos-mobile-info {
-    padding: 8px 9px;
+    padding: var(--space-2) 9px;
   }
 
   .pedidos-mobile-item {
@@ -1058,7 +1058,7 @@
   }
 
   .pedidos-mobile-item-produto {
-    font-size: 10px;
+    font-size: var(--font-size-micro);
   }
 }
 

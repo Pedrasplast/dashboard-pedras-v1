@@ -11,7 +11,7 @@
   --rl-verde: #16a34a;
   --rl-verde-texto: #15803d;
   --rl-verde-fundo: #f0fdf4;
-  --rl-borda: #e2e8f0;
+  --rl-borda: var(--color-border);
   --rl-texto: #0f172a;
   --rl-texto-2: #64748b;
 
@@ -38,13 +38,13 @@
 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 
   padding: 14px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--rl-borda);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
@@ -52,7 +52,7 @@
 .rl-filtros-topo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .rl-filtros-topo h3 {
@@ -99,7 +99,7 @@
 .rl-filtros-corpo .filter-section > label {
   color: var(--rl-texto-2);
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .rl-filtros-corpo select,
@@ -108,7 +108,7 @@
   max-width: 100% !important;
   min-height: 38px;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.76rem;
 }
 
@@ -128,7 +128,7 @@
 
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .rl-filtros-corpo .calendar-field {
@@ -166,7 +166,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 7px;
 
-  padding-top: 12px;
+  padding-top: var(--space-3);
   border-top: 1px solid #eef2f7;
 }
 
@@ -180,11 +180,11 @@
 
   padding: 0 10px;
 
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
 
-  color: #334155;
+  color: var(--color-text-strong);
   font: inherit;
   font-size: 0.74rem;
   font-weight: 800;
@@ -205,8 +205,8 @@
 }
 
 .rl-btn:hover:not(:disabled) {
-  border-color: #94a3b8;
-  background: #f8fafc;
+  border-color: var(--color-text-light);
+  background: var(--color-surface-subtle);
 }
 
 .rl-btn:disabled {
@@ -215,8 +215,8 @@
 }
 
 .rl-btn-pdf {
-  color: #b91c1c;
-  background: #fef2f2;
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
   border-color: #fecaca;
 }
 
@@ -249,20 +249,20 @@
 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .rl-cabecalho {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
 
   padding: 14px 18px;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--rl-borda);
   border-bottom: 3px solid var(--rl-verde);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 .rl-logo {
@@ -270,7 +270,7 @@
   width: auto;
   flex-shrink: 0;
 
-  padding-right: 16px;
+  padding-right: var(--space-4);
   border-right: 1px solid var(--rl-borda);
 }
 
@@ -313,9 +313,9 @@
 .rl-indicadores {
   display: flex;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--rl-borda);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
   overflow: hidden;
 }
@@ -324,7 +324,7 @@
   min-width: 0;
   flex: 1 1 0;
 
-  padding: 10px 16px;
+  padding: 10px var(--space-4);
 
   border-right: 1px solid #eef2f7;
 }
@@ -336,7 +336,7 @@
 .rl-indicador span {
   display: block;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -361,7 +361,7 @@
 }
 
 .rl-indicador-alerta strong {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .rl-indicador-texto {
@@ -370,7 +370,7 @@
 
 .rl-indicador-texto strong {
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1.5;
 
   white-space: normal;
@@ -382,7 +382,7 @@
 ========================================================= */
 
 .rl .relatorio-visualizacao {
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   box-shadow: none;
 }
 
@@ -425,9 +425,9 @@
 
   padding: 34px 18px;
 
-  background: #ffffff;
-  border: 1px dashed #cbd5e1;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
 
   color: var(--rl-texto-2);
   font-size: 0.8rem;
@@ -457,7 +457,7 @@
 
     width: min(340px, 88vw);
 
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
     overflow-y: auto;
 
     transform: translateX(-105%);
@@ -483,11 +483,11 @@
 
     margin-left: 6px;
 
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid var(--rl-borda);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 
-    color: #475569;
+    color: var(--color-text-secondary);
     cursor: pointer;
   }
 
@@ -508,7 +508,7 @@
     border: 0;
     border-radius: 9px;
 
-    color: #ffffff;
+    color: var(--color-text-inverse);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 800;
@@ -532,13 +532,13 @@
     flex-shrink: 0;
 
     min-height: 36px;
-    padding: 0 12px;
+    padding: 0 var(--space-3);
 
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
     border-radius: 9px;
 
-    color: #334155;
+    color: var(--color-text-strong);
     font: inherit;
     font-size: 0.76rem;
     font-weight: 800;
@@ -556,9 +556,9 @@
     padding: 0 5px;
 
     background: var(--rl-verde);
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
 
-    color: #ffffff;
+    color: var(--color-text-inverse);
     font-size: 0.66rem;
   }
 
@@ -576,7 +576,7 @@
   .rl-cabecalho {
     flex-wrap: wrap;
     gap: 10px;
-    padding: 12px 14px;
+    padding: var(--space-3) 14px;
   }
 
   .rl-logo {
@@ -631,16 +631,16 @@
 
 .rl-filtros {
   gap: 10px;
-  padding: 12px;
+  padding: var(--space-3);
 }
 
 .rl-filtros-corpo {
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .rl-cabecalho {
   gap: 14px;
-  padding: 9px 16px;
+  padding: 9px var(--space-4);
 }
 
 .rl-logo {
@@ -689,15 +689,15 @@
 }
 
 .rl .relatorio-visualizacao-tabela thead th {
-  padding: 9px 12px;
+  padding: 9px var(--space-3);
 }
 
 .rl .relatorio-visualizacao-tabela tbody td {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
 }
 
 .rl .relatorio-visualizacao-footer {
-  padding: 8px 14px;
+  padding: var(--space-2) 14px;
 }
 
 /* Calendário dos filtros abre dentro da coluna (não fica cortado). */
@@ -706,7 +706,7 @@
   width: 100%;
   max-width: 100%;
   margin-top: 6px;
-  padding: 8px;
+  padding: var(--space-2);
   box-shadow: none;
   border: 1px solid var(--rl-borda);
 }
@@ -801,7 +801,7 @@
 
 @media (min-width: 1025px) {
   .rl--fixo .despesas-acima-previsto-tabela-area {
-    padding: 0 14px 12px;
+    padding: 0 14px var(--space-3);
   }
 }
 
@@ -814,18 +814,18 @@
 
 .rl .rl-filtros {
   gap: 10px;
-  padding: 12px;
+  padding: var(--space-3);
 }
 
 .rl .rl-filtros-corpo,
 .rl .rl-filtros-corpo [class*="filtros-grid"],
 .rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-  gap: 8px !important;
+  gap: var(--space-2) !important;
 }
 
 .rl .rl-filtros-corpo label,
 .rl .rl-filtros-corpo .filter-section {
-  gap: 4px !important;
+  gap: var(--space-1) !important;
   margin: 0 !important;
 }
 
@@ -875,12 +875,12 @@
 
 .rl .rl-filtros-corpo .calendar-trigger {
   padding-left: 9px !important;
-  padding-right: 8px !important;
-  gap: 4px;
+  padding-right: var(--space-2) !important;
+  gap: var(--space-1);
 }
 
 .rl .rl-filtros-corpo input[type="date"] {
-  padding-left: 8px !important;
+  padding-left: var(--space-2) !important;
   padding-right: 6px !important;
 }
 
@@ -897,8 +897,8 @@
 /* Telas baixas: ainda mais compacto */
 @media (max-height: 820px) and (min-width: 1025px) {
   .rl .rl-filtros {
-    gap: 8px;
-    padding: 10px 12px;
+    gap: var(--space-2);
+    padding: 10px var(--space-3);
   }
 
   .rl .rl-filtros-corpo,
@@ -955,7 +955,7 @@
 .rl .rl-filtros-corpo .filter-section {
   display: flex !important;
   flex-direction: column;
-  gap: 4px !important;
+  gap: var(--space-1) !important;
 }
 
 /* Rótulos (PERÍODO, INJETORA, TIPO...) iguais aos demais */
@@ -964,7 +964,7 @@
   margin: 6px 0 0 !important;
   color: var(--rl-texto-2) !important;
   font-size: 0.66rem !important;
-  font-weight: 700 !important;
+  font-weight: var(--font-weight-bold) !important;
   letter-spacing: 0.02em;
 }
 
@@ -978,7 +978,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   margin: 0;
   padding: 0;
 }
@@ -1000,11 +1000,11 @@
 
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--rl-borda);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   box-shadow: none;
 
   color: var(--rl-texto-2);
@@ -1022,19 +1022,19 @@
 .rl .rl-filtros-corpo .clear-date-btn-relatorio::before {
   content: "↺";
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .rl .rl-filtros-corpo .clear-date-btn-relatorio::after {
   content: "Limpar filtros";
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .rl .rl-filtros-corpo .clear-date-btn-relatorio:hover:not(:disabled) {
-  background: #fef2f2;
+  background: var(--color-danger-soft);
   border-color: #fecaca;
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .rl .rl-filtros-corpo .clear-date-btn-relatorio:disabled {
@@ -1056,9 +1056,9 @@
   flex-direction: row !important;
   justify-content: flex-start !important;
 
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   box-shadow: none;
 
   text-align: left;
@@ -1066,7 +1066,7 @@
 }
 
 .rl .rl-filtros-corpo .calendar-trigger:hover:not(:disabled) {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 }
 
 .rl .rl-filtros-corpo .calendar-trigger strong {
@@ -1076,22 +1076,22 @@
 
   color: var(--rl-texto);
   font-size: 0.76rem !important;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .rl .rl-filtros-corpo .calendar-trigger .calendar-trigger-placeholder {
-  color: #94a3b8;
-  font-weight: 500;
+  color: var(--color-text-light);
+  font-weight: var(--font-weight-medium);
 }
 
 .rl .rl-filtros-corpo .calendar-trigger:disabled {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
   cursor: not-allowed;
 }
 
 .rl .rl-filtros-corpo .calendar-empty {
-  margin-top: 4px;
-  color: #b45309;
+  margin-top: var(--space-1);
+  color: var(--color-warning-hover);
   font-size: 0.68rem;
 }
 
@@ -1107,7 +1107,7 @@
 .rl .rl-filtros-corpo .tipo-checkbox-label {
   display: flex !important;
   align-items: center;
-  gap: 8px !important;
+  gap: var(--space-2) !important;
 
   width: 100%;
   min-width: 0;
@@ -1115,17 +1115,17 @@
   margin: 0;
   padding: 5px 9px !important;
 
-  background: #ffffff !important;
+  background: var(--color-surface) !important;
   border: 1px solid var(--rl-borda) !important;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   box-sizing: border-box;
 
   cursor: pointer;
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label:hover {
-  background: #f8fafc !important;
-  border-color: #cbd5e1 !important;
+  background: var(--color-surface-subtle) !important;
+  border-color: var(--color-border-strong) !important;
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label input[type="checkbox"] {
@@ -1133,7 +1133,7 @@
   width: 15px;
   height: 15px;
   margin: 0;
-  accent-color: #2563eb;
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -1156,16 +1156,16 @@
   background: #eef4ff !important;
   border-radius: 5px;
 
-  color: #2563eb !important;
+  color: var(--color-primary) !important;
   font-size: 0.66rem !important;
   font-weight: 800;
   line-height: 1;
 }
 
 .rl .rl-filtros-corpo .tipo-label-descricao {
-  color: #334155 !important;
+  color: var(--color-text-strong) !important;
   font-size: 0.72rem !important;
-  font-weight: 600 !important;
+  font-weight: var(--font-weight-semibold) !important;
   line-height: 1.25;
   opacity: 1 !important;
 }
@@ -1176,18 +1176,18 @@
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) .tipo-label-numero {
-  background: #2563eb !important;
-  color: #ffffff !important;
+  background: var(--color-primary) !important;
+  color: var(--color-text-inverse) !important;
 }
 
 .rl .rl-filtros-corpo .tipo-checkbox-label:has(input:checked) .tipo-label-descricao {
-  color: #1d4ed8 !important;
+  color: var(--color-primary-hover) !important;
 }
 
 /* Select desabilitado com aparência de desabilitado, sem bloco cinza escuro */
 .rl .rl-filtros-corpo select:disabled {
-  background: #f8fafc !important;
-  color: #94a3b8 !important;
+  background: var(--color-surface-subtle) !important;
+  color: var(--color-text-light) !important;
   border-color: var(--rl-borda) !important;
 }
 
@@ -1200,7 +1200,7 @@
   flex-direction: row !important;
   flex-wrap: wrap !important;
   align-items: flex-start;
-  gap: 8px !important;
+  gap: var(--space-2) !important;
 }
 
 .rl .rl-filtros-corpo .periodo-relatorio-area .calendar-field {
@@ -1228,9 +1228,9 @@
   min-width: 0 !important;
   max-width: none !important;
   margin: 0 !important;
-  padding: 8px !important;
+  padding: var(--space-2) !important;
 
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--rl-borda);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
@@ -1311,8 +1311,8 @@
 ========================================================= */
 
 .rl .rl-btn-pdf {
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--color-primary-hover);
+  background: var(--color-primary-soft);
   border-color: #bfdbfe;
 }
 
@@ -1322,8 +1322,8 @@
 }
 
 .rl .rl-btn-limpar:not(:disabled) {
-  color: #b91c1c;
-  background: #fef2f2;
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
   border-color: #fecaca;
 }
 
@@ -1334,8 +1334,8 @@
 
 .rl .rl-btn-limpar:disabled {
   color: var(--rl-texto-2);
-  background: #ffffff;
-  border-color: #e2e8f0;
+  background: var(--color-surface);
+  border-color: var(--color-border);
   opacity: 0.55;
   cursor: not-allowed;
 }

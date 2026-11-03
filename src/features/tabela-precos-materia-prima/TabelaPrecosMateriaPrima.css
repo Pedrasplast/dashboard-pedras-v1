@@ -4,14 +4,14 @@
 
 .tp-page {
   min-height: 100%;
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .tp-container {
   width: 100%;
   max-width: 1600px;
   margin: 70px auto 0;
-  padding: 24px;
+  padding: var(--space-6);
   box-sizing: border-box;
 }
 
@@ -20,11 +20,11 @@
 ========================================================= */
 
 .tp-card {
-  margin-top: 24px;
+  margin-top: var(--space-6);
   padding: 22px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid #dbe7f3;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
@@ -32,22 +32,22 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--space-5);
   margin-bottom: 18px;
 }
 
 .tp-card-cabecalho h2 {
-  margin: 0 0 8px;
-  color: #0f172a;
-  font-size: 18px;
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+  font-size: var(--font-size-xl);
   font-weight: 800;
   line-height: 1.2;
 }
 
 .tp-card-cabecalho p {
   margin: 0;
-  color: #64748b;
-  font-size: 14px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
   line-height: 1.5;
   max-width: 1100px;
 }
@@ -57,8 +57,8 @@
   min-width: 96px;
   padding: 10px 14px;
   border: 1px solid #dbeafe;
-  border-radius: 999px;
-  background: #eff6ff;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,16 +66,16 @@
 }
 
 .tp-total strong {
-  color: #2563eb;
-  font-size: 24px;
+  color: var(--color-primary);
+  font-size: var(--font-size-page-title);
   line-height: 1.1;
   font-weight: 800;
 }
 
 .tp-total span {
-  color: #2563eb;
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Regra do cálculo, abaixo da descrição do card */
@@ -248,25 +248,25 @@
   overflow-x: auto;
   border: 1px solid #dbe7f3;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .tp-tabela {
   width: 100%;
   min-width: 1100px;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .tp-tabela thead {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 }
 
 .tp-tabela th {
   padding: 15px 14px;
   text-align: left;
-  color: #334155;
-  font-size: 13px;
+  color: var(--color-text-strong);
+  font-size: var(--font-size-body);
   font-weight: 800;
   border-bottom: 1px solid #d5e1ee;
   white-space: nowrap;
@@ -274,7 +274,7 @@
 
 .tp-tabela td {
   padding: 15px 14px;
-  color: #475569;
+  color: var(--color-text-secondary);
   border-bottom: 1px solid #e5edf6;
   white-space: nowrap;
   vertical-align: middle;
@@ -290,18 +290,18 @@
 
 .tp-codigo {
   font-family: inherit;
-  font-weight: 700;
-  color: #334155;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-strong);
 }
 
 .tp-material {
-  font-weight: 700;
-  color: #0f172a !important;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text) !important;
 }
 
 .tp-numero {
   font-variant-numeric: tabular-nums;
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .tp-preco {
@@ -317,9 +317,9 @@
 }
 
 .tp-referencia-info small {
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 500;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
   white-space: normal;
 }
 
@@ -329,29 +329,29 @@
 
 .tp-estado,
 .tp-vazio {
-  padding: 52px 16px;
+  padding: 52px var(--space-4);
   text-align: center;
-  color: #64748b;
-  font-size: 14px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
 }
 
 .tp-erro {
-  margin-top: 8px;
-  padding: 18px 20px;
+  margin-top: var(--space-2);
+  padding: 18px var(--space-5);
   border: 1px solid #fecaca;
   border-radius: 14px;
-  background: #fef2f2;
+  background: var(--color-danger-soft);
   color: #991b1b;
 }
 
 .tp-erro strong {
   display: block;
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .tp-erro p {
-  margin: 8px 0 0;
-  font-size: 13px;
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-body);
   line-height: 1.5;
 }
 
@@ -363,15 +363,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding-top: 16px;
-  color: #64748b;
-  font-size: 12px;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
 }
 
 .tp-atualizacao {
-  color: #64748b;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
 }
 
 /* =========================================================
@@ -379,13 +379,7 @@
 ========================================================= */
 
 .tp-girando {
-  animation: tp-spin 1s linear infinite;
-}
-
-@keyframes tp-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: girar 1s linear infinite;
 }
 
 /* =========================================================
@@ -422,7 +416,7 @@
   }
 
   .tp-card {
-    padding: 16px;
+    padding: var(--space-4);
     border-radius: 14px;
   }
 
@@ -436,7 +430,7 @@
   }
 
   .tp-card-cabecalho p {
-    font-size: 13px;
+    font-size: var(--font-size-body);
   }
 
   .tp-total {

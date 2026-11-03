@@ -254,7 +254,7 @@
 ========================================================= */
 
 .compras-estado strong {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-body);
 }

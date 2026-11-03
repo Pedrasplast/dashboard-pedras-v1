@@ -32,13 +32,13 @@
   align-items: center;
   justify-content: center;
 
-  padding: 18px 24px 24px;
+  padding: 18px var(--space-6) var(--space-6);
 
   background: rgb(15 23 42 / 0.58);
 
   backdrop-filter: blur(5px);
 
-  animation: compras-modal-backdrop-in var(--transition-base) ease-out;
+  animation: aparecer var(--transition-base) ease-out;
 }
 
 /* =========================================================
@@ -114,7 +114,7 @@
 
   gap: 22px;
 
-  padding: 24px 28px 21px;
+  padding: var(--space-6) 28px 21px;
 
   border-bottom: 1px solid var(--color-border);
 
@@ -369,7 +369,7 @@
 
   min-width: 0;
 
-  padding: 12px 14px;
+  padding: var(--space-3) 14px;
 
   overflow: hidden;
 
@@ -548,13 +548,13 @@
 ========================================================= */
 
 .compras-card-modal-tabela td {
-  padding: 12px 10px;
+  padding: var(--space-3) 10px;
 
   border-bottom: 1px solid #edf1f5;
 
   background: var(--color-surface);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 10.5px;
 
@@ -628,7 +628,7 @@
 
   overflow: hidden;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 
@@ -669,7 +669,7 @@
   min-width: 145px;
   max-width: 200px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 
@@ -707,7 +707,7 @@
 .compras-card-modal-produto > strong {
   display: block;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-micro);
   font-weight: 650;
@@ -1008,16 +1008,6 @@
     opacity: 1;
 
     transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes compras-modal-backdrop-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
   }
 }
 

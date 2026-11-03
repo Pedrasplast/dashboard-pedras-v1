@@ -1,0 +1,31 @@
+/* =========================================================
+   ANIMAÇÕES GLOBAIS
+   Use estes nomes em vez de criar @keyframes iguais em cada tela.
+   - girar: ícones de carregando/atualizar
+   - aparecer: fundo de modal (fade)
+   - subir-aparecer: caixa de confirmação entrando
+========================================================= */
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes subir-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

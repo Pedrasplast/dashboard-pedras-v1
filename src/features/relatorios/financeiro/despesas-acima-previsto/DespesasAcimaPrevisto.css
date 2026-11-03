@@ -3,7 +3,7 @@
 ========================================================= */
 
 .despesas-acima-previsto-icone {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .despesas-acima-previsto-filtros-card {
@@ -46,10 +46,10 @@
 }
 
 .despesas-acima-previsto-filtros label > span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .despesas-acima-previsto-filtros select,
@@ -59,11 +59,11 @@
 
   box-sizing: border-box;
 
-  color: #334155;
-  background: #ffffff;
+  color: var(--color-text-strong);
+  background: var(--color-surface);
 
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
 
   font-family: inherit;
   font-size: 0.75rem;
@@ -86,12 +86,12 @@
 
 .despesas-acima-previsto-filtros select:hover,
 .despesas-acima-previsto-filtros input:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 }
 
 .despesas-acima-previsto-filtros select:focus,
 .despesas-acima-previsto-filtros input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
@@ -115,7 +115,7 @@
   width: 15px;
   height: 15px;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   transform: translateY(-50%);
 
@@ -127,11 +127,11 @@
 }
 
 .despesas-acima-previsto-busca-campo input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .despesas-acima-previsto-filtros-wrapper > .filtros-compartilhados-limpar {
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }
 
 .despesas-acima-previsto-atualizando {
@@ -140,20 +140,14 @@
 
   gap: 7px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .despesas-acima-previsto-girando {
-  animation: despesas-acima-previsto-girar 0.8s linear infinite;
-}
-
-@keyframes despesas-acima-previsto-girar {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: girar 0.8s linear infinite;
 }
 
 .despesas-acima-previsto-loading {
@@ -165,7 +159,7 @@
 }
 
 .despesas-acima-previsto-tabela-area {
-  padding: 18px 20px 22px;
+  padding: 18px var(--space-5) 22px;
 }
 
 .despesas-acima-previsto-tabela {

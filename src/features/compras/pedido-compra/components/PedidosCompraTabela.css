@@ -245,7 +245,7 @@
 ========================================================= */
 
 .compras-categoria-requisicao {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 
@@ -262,7 +262,7 @@
   min-width: 210px;
   max-width: 290px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: 650;
 }
@@ -272,7 +272,7 @@
 ========================================================= */
 
 .compras-previsao {
-  color: #334155;
+  color: var(--color-text-strong);
 }
 
 .compras-previsao-conteudo {
@@ -285,7 +285,7 @@
 }
 
 .compras-previsao-conteudo > strong {
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 10.5px;
   font-weight: var(--font-weight-bold);
@@ -305,7 +305,7 @@
 .compras-codigo {
   min-width: 105px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-weight: var(--font-weight-bold);
 
@@ -321,7 +321,7 @@
 ========================================================= */
 
 .compras-produto {
-  color: #334155;
+  color: var(--color-text-strong);
 
   line-height: 1.35;
 
@@ -489,7 +489,7 @@
   min-width: 130px;
   max-width: 200px;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: var(--font-size-micro);
   font-weight: 650;
@@ -983,9 +983,9 @@
   ======================================================= */
 
   .compras-mobile-card h3 {
-    margin: 12px 0;
+    margin: var(--space-3) 0;
 
-    color: #334155;
+    color: var(--color-text-strong);
 
     font-size: var(--font-size-caption);
   }
@@ -1074,7 +1074,7 @@
   }
 
   .compras-mobile-item strong {
-    color: #334155;
+    color: var(--color-text-strong);
 
     font-size: 9px;
   }
@@ -1105,7 +1105,7 @@
   .compras-btn-itens {
     min-height: 24px;
 
-    padding: 4px 7px;
+    padding: var(--space-1) 7px;
 
     font-size: 8px;
   }

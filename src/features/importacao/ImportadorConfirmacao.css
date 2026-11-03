@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: center;
 
-  padding: 24px;
+  padding: var(--space-6);
 
   background: rgba(15, 23, 42, 0.58);
 
@@ -30,7 +30,7 @@
 
   -webkit-backdrop-filter: blur(4px);
 
-  animation: importacao-confirmacao-fundo 0.16s ease-out;
+  animation: aparecer 0.16s ease-out;
 }
 
 /* =========================================================
@@ -44,13 +44,13 @@
 
   border: 1px solid rgba(203, 213, 225, 0.95);
 
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
 
-  animation: importacao-confirmacao-entrada 0.18s ease-out;
+  animation: subir-aparecer 0.18s ease-out;
 }
 
 /* =========================================================
@@ -71,9 +71,9 @@
 
   padding: 21px 22px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fafcff 100%);
 }
 
 /* =========================================================
@@ -92,11 +92,11 @@
 
   border: 1px solid #bfdbfe;
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 22px;
 }
@@ -112,9 +112,9 @@
 .importacao-confirmacao-titulo > span {
   display: block;
 
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.63rem;
 
@@ -128,7 +128,7 @@
 .importacao-confirmacao-titulo h3 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 1.2rem;
 
@@ -142,7 +142,7 @@
 .importacao-confirmacao-titulo p {
   margin: 5px 0 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.78rem;
 
@@ -165,13 +165,13 @@
 
   border: 1px solid transparent;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background: transparent;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 18px;
+  font-size: var(--font-size-xl);
 
   cursor: pointer;
 
@@ -182,11 +182,11 @@
 }
 
 .importacao-confirmacao-fechar:hover {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -194,7 +194,7 @@
 ========================================================= */
 
 .importacao-confirmacao-conteudo {
-  padding: 20px 22px;
+  padding: var(--space-5) 22px;
 }
 
 /* =========================================================
@@ -205,7 +205,7 @@
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: var(--space-3);
 
   min-width: 0;
 
@@ -215,7 +215,7 @@
 
   border-radius: 11px;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .importacao-confirmacao-arquivo-icone {
@@ -230,13 +230,13 @@
 
   border-radius: 9px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
-  font-size: 18px;
+  font-size: var(--font-size-xl);
 }
 
 .importacao-confirmacao-arquivo > div:last-child {
@@ -249,11 +249,11 @@
 }
 
 .importacao-confirmacao-arquivo span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.66rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-transform: uppercase;
 
@@ -267,11 +267,11 @@
 
   overflow: hidden;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.84rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   white-space: nowrap;
 
@@ -289,32 +289,32 @@
 
   gap: 10px;
 
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }
 
 .importacao-confirmacao-detalhes > div {
   display: flex;
   flex-direction: column;
 
-  gap: 4px;
+  gap: var(--space-1);
 
   min-width: 0;
 
-  padding: 12px 13px;
+  padding: var(--space-3) 13px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 9px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .importacao-confirmacao-detalhes span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.64rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   letter-spacing: 0.04em;
 
@@ -322,7 +322,7 @@
 }
 
 .importacao-confirmacao-detalhes strong {
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 0.82rem;
 
@@ -358,7 +358,7 @@
 
   margin-top: 1px;
 
-  font-size: 18px;
+  font-size: var(--font-size-xl);
 }
 
 .importacao-confirmacao-alerta > div {
@@ -405,9 +405,9 @@
 
   padding: 15px 22px 18px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
@@ -417,21 +417,21 @@
 .importacao-confirmacao-cancelar {
   min-height: 40px;
 
-  padding: 0 16px;
+  padding: 0 var(--space-4);
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-family: inherit;
 
   font-size: 0.78rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   cursor: pointer;
 
@@ -442,11 +442,11 @@
 }
 
 .importacao-confirmacao-cancelar:hover {
-  border-color: #94a3b8;
+  border-color: var(--color-text-light);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -466,13 +466,13 @@
 
   padding: 0 17px;
 
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary-hover);
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font-family: inherit;
 
@@ -492,9 +492,9 @@
 }
 
 .importacao-confirmacao-importar:hover {
-  border-color: #1e40af;
+  border-color: var(--color-primary-active);
 
-  background: #1d4ed8;
+  background: var(--color-primary-hover);
 
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22);
 }
@@ -518,30 +518,6 @@
 /* =========================================================
    ANIMAÇÕES
 ========================================================= */
-
-@keyframes importacao-confirmacao-fundo {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes importacao-confirmacao-entrada {
-  from {
-    opacity: 0;
-
-    transform: translateY(8px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-
-    transform: translateY(0) scale(1);
-  }
-}
 
 /* =========================================================
    MOBILE

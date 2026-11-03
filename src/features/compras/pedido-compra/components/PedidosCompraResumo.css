@@ -96,7 +96,7 @@
 
   gap: 10px;
 
-  padding: 12px 13px;
+  padding: var(--space-3) 13px;
 }
 
 /* =========================================================
@@ -424,6 +424,6 @@
   .compras-resumo-card--compacto {
     min-height: 72px;
 
-    padding: 11px 12px;
+    padding: 11px var(--space-3);
   }
 }
