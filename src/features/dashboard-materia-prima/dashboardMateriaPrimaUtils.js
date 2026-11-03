@@ -1,5 +1,11 @@
 import { numeroOuNull } from "@/shared/lib/numeros";
 import { formatarDataISO } from "@/shared/lib/datas";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarKg as formatarKgBase,
+  formatarDataISOParaBR,
+} from "@/shared/lib/formatar";
 
 export function numero(valor) {
   const convertido = Number(valor);
@@ -10,35 +16,15 @@ export function numero(valor) {
 export { numeroOuNull };
 
 export function formatarNumero(valor, casas = 0) {
-  return numero(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor, { casas });
 }
 
 export function formatarKg(valor, casas = 0) {
-  if (valor === null || valor === undefined) {
-    return "-";
-  }
-
-  return `${formatarNumero(valor, casas)} kg`;
+  return formatarKgBase(valor, { casas, vazios: [null, undefined] });
 }
 
 export function formatarMoeda(valor, casas = 2) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return Number(valor).toLocaleString("pt-BR", {
-    style: "currency",
-
-    currency: "BRL",
-
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
+  return formatarMoedaBase(valor, { casas, vazios: [null, undefined], invalido: "-" });
 }
 
 export function formatarMoedaKg(valor, casas = 3) {
@@ -48,17 +34,7 @@ export function formatarMoedaKg(valor, casas = 3) {
 }
 
 export function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return String(valor);
-  }
-
-  return `${dia}/${mes}/${ano}`;
+  return formatarDataISOParaBR(valor);
 }
 
 export function formatarDataCurta(valor) {

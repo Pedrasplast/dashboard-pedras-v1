@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Boxes, Save, X } from "lucide-react";
 
 import "../CadastroProdutoModal.css";
+import { numeroFlexivelOuNull } from "@/shared/lib/numeros";
 
 /* =====================================================
    FUNÇÕES AUXILIARES — NÚMEROS
@@ -19,20 +20,7 @@ function valorParaCampo(valor) {
 }
 
 function normalizarNumero(valor) {
-  const texto = String(valor ?? "")
-    .trim()
-    .replace(/\s/g, "");
-
-  if (!texto) return null;
-
-  const normalizado =
-    texto.includes(",") && texto.includes(".")
-      ? texto.replace(/\./g, "").replace(",", ".")
-      : texto.replace(",", ".");
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
+  return numeroFlexivelOuNull(valor);
 }
 
 /* =====================================================

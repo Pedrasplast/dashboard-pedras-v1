@@ -24,6 +24,7 @@ import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 import { normalizarTextoOcorrencia, obterMotivoRegistro } from "../ocorrenciasParadas.utils";
 
 import "./CriticidadeParadas.css";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -76,9 +77,7 @@ const QUADRANTES = Object.freeze({
 ========================================================= */
 
 function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 function formatarHoras(valor) {

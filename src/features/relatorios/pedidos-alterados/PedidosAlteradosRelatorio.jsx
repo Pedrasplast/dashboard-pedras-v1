@@ -20,6 +20,7 @@ import LayoutRelatorio from "../components/LayoutRelatorio";
 
 import "./PedidosAlteradosRelatorio.css";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarDataHora as formatarDataHoraBase } from "@/shared/lib/formatar";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -267,23 +268,7 @@ const ESTILOS_DESDOBRAMENTO = `
 ===================================================== */
 
 function formatarDataHora(valor) {
-  if (!valor) return "-";
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  return formatarDataHoraBase(valor, { fuso: "America/Sao_Paulo", hour12: false });
 }
 
 function formatarDataSemFuso(valor) {

@@ -1,19 +1,12 @@
 import { formatarKg, formatarMoeda, formatarNumero } from "../dashboardMateriaPrimaUtils.js";
+import { formatarPercentual as formatarPercentualBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    PERCENTUAL
 ========================================================= */
 
 export function formatarPercentual(valor, casas = 1) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return `${Number(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  })}%`;
+  return formatarPercentualBase(valor, { casas, vazios: [null, undefined], invalido: "-" });
 }
 
 /* =========================================================

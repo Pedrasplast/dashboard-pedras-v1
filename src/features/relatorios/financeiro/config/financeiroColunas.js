@@ -1,4 +1,8 @@
 import { converterNumeroFlexivel } from "@/shared/lib/numeros";
+import {
+  formatarPercentual as formatarPercentualBase,
+  formatarMoeda as formatarMoedaBase,
+} from "@/shared/lib/formatar";
 
 const converterNumero = converterNumeroFlexivel;
 
@@ -7,31 +11,15 @@ function valorVazio(valor) {
 }
 
 function formatarMoeda(valor) {
-  if (valorVazio(valor)) {
-    return "-";
-  }
-
-  const numero = converterNumero(valor);
-
-  return numero.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  return formatarMoedaBase(valor, { ler: "flexivel", vazios: [null, undefined, ""] });
 }
 
 function formatarPercentual(valor) {
-  if (valorVazio(valor)) {
-    return "-";
-  }
-
-  const numero = converterNumero(valor);
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}%`;
+  return formatarPercentualBase(valor, {
+    casas: 2,
+    ler: "flexivel",
+    vazios: [null, undefined, ""],
+  });
 }
 
 export const COLUNAS_FINANCEIRO = {

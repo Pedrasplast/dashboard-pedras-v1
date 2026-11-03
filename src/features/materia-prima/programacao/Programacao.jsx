@@ -18,23 +18,18 @@ import useProgramacao from "./useProgramacao";
 
 import "./Programacao.css";
 import { normalizarTexto } from "@/shared/lib/texto";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarKg as formatarKgBase,
+  formatarDataISOParaBR,
+} from "@/shared/lib/formatar";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
 function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return valor;
-  }
-
-  return `${dia}/${mes}/${ano}`;
+  return formatarDataISOParaBR(valor);
 }
 
 function formatarHora(valor) {
@@ -46,12 +41,7 @@ function formatarHora(valor) {
 }
 
 function formatarNumero(valor, casas = 0) {
-  const numero = Number(valor ?? 0);
-
-  return numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor ?? 0, { casas });
 }
 
 function formatarHoras(valor) {
@@ -72,11 +62,7 @@ function formatarHoras(valor) {
 }
 
 function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 3,
-
-    maximumFractionDigits: 3,
-  })} kg`;
+  return formatarKgBase(valor ?? 0, { casas: 3 });
 }
 
 /* =========================================================

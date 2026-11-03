@@ -24,6 +24,7 @@ import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 import { normalizarTextoOcorrencia } from "../ocorrenciasParadas.utils";
 
 import "./ParetoParadas.css";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    CONFIGURAÇÃO
@@ -36,16 +37,11 @@ const QUANTIDADE_PRINCIPAIS = 9;
 ========================================================= */
 
 function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
+  return formatarNumeroBase(valor, { casas: 1 });
 }
 
 function formatarHorasEixo(valor) {

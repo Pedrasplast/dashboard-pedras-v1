@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import useProjecao from "./useProjecao";
 
 import "./ProjecaoDiaria.css";
+import { formatarKg as formatarKgBase, formatarDataISOParaBR } from "@/shared/lib/formatar";
 
 /* =========================================================
    HELPERS
@@ -23,24 +24,11 @@ function dataLocal(offsetDias = 0) {
 }
 
 function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : valor;
+  return formatarDataISOParaBR(valor);
 }
 
 function formatarKg(valor) {
-  if (valor === null || valor === undefined) {
-    return "-";
-  }
-
-  return `${Number(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  })} kg`;
+  return formatarKgBase(valor, { casas: 3, vazios: [null, undefined] });
 }
 
 function numero(valor) {

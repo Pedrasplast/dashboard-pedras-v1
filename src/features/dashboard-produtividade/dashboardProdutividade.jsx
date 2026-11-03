@@ -26,6 +26,10 @@ import {
 } from "./oee.utils";
 
 import "./dashboardProdutividade.css";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarPercentual as formatarPercentualBase,
+} from "@/shared/lib/formatar";
 
 /* =================================================
    FILTROS INICIAIS
@@ -49,20 +53,11 @@ const criarFiltrosIniciais = () => ({
 ===================================================== */
 
 function formatarPercentual(valor) {
-  const numero = Number(valor) || 0;
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  })}%`;
+  return formatarPercentualBase(valor, { casas: 1 });
 }
 
 function formatarNumero(valor) {
-  const numero = Number(valor) || 0;
-
-  return numero.toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 /* =====================================================

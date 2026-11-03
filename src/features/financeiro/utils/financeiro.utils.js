@@ -1,3 +1,9 @@
+import {
+  formatarPercentual as formatarPercentualBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarDataHora as formatarDataHoraBase,
+} from "@/shared/lib/formatar";
+
 /* =========================================================
    NÚMERO SEGURO
 ========================================================= */
@@ -302,36 +308,16 @@ export function processarFinanceiro(registros) {
    FORMATAR MOEDA
 ========================================================= */
 
-const formatadorMoeda = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-
-  currency: "BRL",
-
-  minimumFractionDigits: 2,
-
-  maximumFractionDigits: 2,
-});
-
 export function formatarMoeda(valor) {
-  return formatadorMoeda.format(numeroSeguro(valor));
+  return formatarMoedaBase(valor ?? 0);
 }
 
 /* =========================================================
    FORMATAR PERCENTUAL
 ========================================================= */
 
-const formatadorPercentual = new Intl.NumberFormat("pt-BR", {
-  minimumFractionDigits: 1,
-
-  maximumFractionDigits: 1,
-});
-
 export function formatarPercentual(valor) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return `${formatadorPercentual.format(Number(valor))}%`;
+  return formatarPercentualBase(valor, { casas: 1, vazios: [null, undefined], invalido: "-" });
 }
 
 /* =========================================================
@@ -364,32 +350,8 @@ export function formatarData(valor) {
    FORMATAR DATA/HORA
 ========================================================= */
 
-const formatadorDataHora = new Intl.DateTimeFormat("pt-BR", {
-  timeZone: "America/Sao_Paulo",
-
-  day: "2-digit",
-
-  month: "2-digit",
-
-  year: "numeric",
-
-  hour: "2-digit",
-
-  minute: "2-digit",
-});
-
 export function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return formatadorDataHora.format(data);
+  return formatarDataHoraBase(valor, { fuso: "America/Sao_Paulo" });
 }
 
 /* =========================================================

@@ -21,6 +21,10 @@ import { listarPeriodosProgramacao } from "./programacaoCalendarioService";
 import "./ProgramacaoModal.css";
 import "./ProgramacaoCalendario.css";
 import { formatarDataISO, dataHojeLocal } from "@/shared/lib/datas";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarKg as formatarKgBase,
+} from "@/shared/lib/formatar";
 
 /* =========================================================
    CONSTANTES
@@ -103,21 +107,11 @@ function formatarDataVisual(valor) {
 }
 
 function formatarNumero(valor, casas = 0) {
-  const numero = Number(valor ?? 0);
-
-  if (!Number.isFinite(numero)) {
-    return "0";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor ?? 0, { casas, invalido: "0" });
 }
 
 function formatarKg(valor) {
-  return `${formatarNumero(valor, 3)} kg`;
+  return formatarKgBase(valor ?? 0, { casas: 3, invalido: "0 kg" });
 }
 
 function formatarMinutos(minutos) {

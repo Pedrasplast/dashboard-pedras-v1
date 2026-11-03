@@ -10,6 +10,7 @@ import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
 
 import "./SaldosIniciais.css";
 import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarKg as formatarKgBase, formatarDataISOParaBR } from "@/shared/lib/formatar";
 
 /* =========================================================
 
@@ -18,29 +19,11 @@ import { normalizarTexto } from "@/shared/lib/texto";
 \========================================================= */
 
 function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) {
-    return valor;
-  }
-
-  return `${dia}/${mes}/${ano}`;
+  return formatarDataISOParaBR(valor);
 }
 
 function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString(
-    "pt-BR",
-
-    {
-      minimumFractionDigits: 3,
-
-      maximumFractionDigits: 3,
-    },
-  )} kg`;
+  return formatarKgBase(valor ?? 0, { casas: 3 });
 }
 
 /* =========================================================

@@ -7,22 +7,18 @@ import DashboardParadasCard from "./DashboardParadasCard";
 import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 
 import "./JustificativasParadas.css";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
 
 function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
+  return formatarNumeroBase(valor, { casas: 1 });
 }
 
 function formatarDuracaoComMilhar(segundos) {

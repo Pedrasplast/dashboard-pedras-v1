@@ -9,6 +9,7 @@ import {
   registrarRecebimentoFisicoItem,
 } from "../services/recebimentoFisico.service";
 import { formatarNumero } from "../utils/pedidosCompra.utils";
+import { formatarDataHora as formatarDataHoraBase } from "@/shared/lib/formatar";
 
 function obterCodigoPedidoCompra(pedido) {
   const codigo = Number(
@@ -19,17 +20,7 @@ function obterCodigoPedidoCompra(pedido) {
 }
 
 function formatarDataHora(valor) {
-  if (!valor) return "-";
-
-  const data = new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    timeZone: "America/Sao_Paulo",
-  });
+  return formatarDataHoraBase(valor, { segundos: true, fuso: "America/Sao_Paulo" });
 }
 
 function rotuloMovimento(tipo) {

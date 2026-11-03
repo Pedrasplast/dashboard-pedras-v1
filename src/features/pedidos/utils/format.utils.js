@@ -1,13 +1,7 @@
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
+
 export { normalizarTexto } from "@/shared/lib/texto";
 
 export function formatarNumero(valor) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    maximumFractionDigits: 3,
-  });
+  return formatarNumeroBase(valor, { maximo: 3, invalido: "0" });
 }

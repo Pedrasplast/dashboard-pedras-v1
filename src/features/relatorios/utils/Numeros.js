@@ -1,9 +1,8 @@
 import { converterNumeroDecimal } from "@/shared/lib/numeros";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 export const converterNumero = converterNumeroDecimal;
 
 export function formatarNumero(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
-    maximumFractionDigits: 2,
-  });
+  return formatarNumeroBase(valor, { maximo: 2, ler: "decimal" });
 }

@@ -44,6 +44,7 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import "./DespesasAcimaPrevisto.css";
+import { formatarMoeda as formatarMoedaBase } from "@/shared/lib/formatar";
 
 const ITENS_POR_PAGINA = 10;
 
@@ -60,18 +61,7 @@ function criarFiltrosIniciais() {
 }
 
 function formatarMoeda(valor) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  return formatarMoedaBase(valor, { invalido: "-" });
 }
 
 export default function DespesasAcimaPrevisto({ relatorio }) {
