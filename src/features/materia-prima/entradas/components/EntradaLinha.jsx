@@ -5,7 +5,7 @@ import {
   formatarPercentual,
   formatarPrecoKg,
   formatarQuantidade,
-} from "../utils/formatadores";
+} from "../../utils/formatadores";
 
 export default function EntradaLinha({ entrada }) {
   return (

@@ -1,5 +1,5 @@
 /* =========================================================
-   FORMATADORES
+   FORMATADORES — Entradas e Compras Futuras de matéria-prima
 ========================================================= */
 
 function valorInvalido(valor) {
