@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { CHAVE_TELA_RELATORIOS, MODULOS_PERMISSOES } from "../constants/gerenciarUsuarios.config.js";
+import {
+  CHAVE_TELA_RELATORIOS,
+  MODULOS_PERMISSOES,
+} from "../constants/gerenciarUsuarios.config.js";
 
 import {
   atualizarRegraUsuario,

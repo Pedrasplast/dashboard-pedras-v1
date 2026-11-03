@@ -443,7 +443,9 @@ function Navbar({ usuario, ehAdmin }) {
                   <div ref={menuRef} className="navbar-user-area">
                     <button
                       type="button"
-                      className={menuUsuarioAberto ? "navbar-user-trigger open" : "navbar-user-trigger"}
+                      className={
+                        menuUsuarioAberto ? "navbar-user-trigger open" : "navbar-user-trigger"
+                      }
                       onClick={alternarMenuUsuario}
                       aria-expanded={menuUsuarioAberto}
                       aria-haspopup="menu"

@@ -415,12 +415,7 @@ export default function ImportadorCarga() {
     <div className="importador-container">
       {/* VOLTAR */}
 
-      <button
-        type="button"
-        className="back-importador-btn"
-        onClick={voltar}
-        disabled={carregando}
-      >
+      <button type="button" className="back-importador-btn" onClick={voltar} disabled={carregando}>
         <FiArrowLeft />
 
         <span>Página Inicial</span>

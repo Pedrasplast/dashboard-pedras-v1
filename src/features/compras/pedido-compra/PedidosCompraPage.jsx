@@ -29,9 +29,7 @@ import { useResumosRecebimentoFisico } from "./hooks/useResumosRecebimentoFisico
 import { useRecebimentosFisicosUltimos7Dias } from "./hooks/useRecebimentosFisicosUltimos7Dias";
 
 import "./PedidosCompraPage.css";
-import {
-  obterCodigoPedidoCompra,
-} from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
+import { obterCodigoPedidoCompra } from "@/features/compras/pedido-compra/utils/pedidosCompra.utils";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { converterDataLocal, obterHoje } from "@/shared/lib/datas";
 import {

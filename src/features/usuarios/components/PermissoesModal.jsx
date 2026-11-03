@@ -66,7 +66,14 @@ function TelaItem({ tela, ativo, salvando, onAlternar }) {
   );
 }
 
-function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo, onAlternarTela }) {
+function ModuloCard({
+  modulo,
+  status,
+  permissoesTelas,
+  salvando,
+  onDefinirModulo,
+  onAlternarTela,
+}) {
   const classeStatus = status.completo ? "is-active" : status.parcial ? "is-partial" : "";
 
   return (

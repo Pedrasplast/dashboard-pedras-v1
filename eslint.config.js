@@ -80,4 +80,19 @@ export default tseslint.config(
     },
   },
   eslintPluginPrettier,
+  {
+    // Edge Functions rodam no Deno e são publicadas como estão no Supabase: seguem o
+    // estilo próprio (deno fmt), usam `any` nas respostas do Omie e `catch {}` de propósito.
+    // Não reformatar aqui para o código continuar igual ao publicado.
+    files: ["supabase/functions/**/*.{ts,mjs}"],
+    languageOptions: {
+      globals: { ...globals.node, Deno: "readonly" },
+    },
+    rules: {
+      "prettier/prettier": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      "prefer-const": "warn",
+    },
+  },
 );
