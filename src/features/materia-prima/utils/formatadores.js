@@ -1,40 +1,25 @@
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarPercentual as formatarPercentualBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarDataISOParaBR,
+} from "@/shared/lib/formatar";
+
 /* =========================================================
-   FORMATADORES
+   FORMATADORES — Entradas e Compras Futuras de matéria-prima
 ========================================================= */
 
-function valorInvalido(valor) {
-  return valor === null || valor === undefined || !Number.isFinite(Number(valor));
-}
-
 function formatarNumero(valor, casas) {
-  return Number(valor ?? 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor, { casas });
 }
 
 function formatarReais(valor, casas) {
-  if (valorInvalido(valor)) {
-    return "-";
-  }
-
-  return Number(valor).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
+  return formatarMoedaBase(valor, { casas, vazios: [null, undefined], invalido: "-" });
 }
 
 /** "2026-09-28" -> "28/09/2026" */
 export function formatarData(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [ano, mes, dia] = valor.split("-");
-
-  return `${dia}/${mes}/${ano}`;
+  return formatarDataISOParaBR(valor);
 }
 
 /** 1234 -> "1.234" */
@@ -62,9 +47,5 @@ export function formatarCustoKg(valor) {
 
 /** 6.5 -> "6,50%" */
 export function formatarPercentual(valor) {
-  if (valorInvalido(valor)) {
-    return "-";
-  }
-
-  return `${formatarNumero(valor, 2)}%`;
+  return formatarPercentualBase(valor, { casas: 2, vazios: [null, undefined], invalido: "-" });
 }

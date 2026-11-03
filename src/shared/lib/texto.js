@@ -11,3 +11,10 @@ export function normalizarTexto(valor, { compactarEspacos = false } = {}) {
 
   return texto;
 }
+
+/** Código de produto/material para comparação: sem espaços nas pontas e em maiúsculas. */
+export function normalizarCodigo(valor) {
+  return String(valor ?? "")
+    .trim()
+    .toUpperCase();
+}

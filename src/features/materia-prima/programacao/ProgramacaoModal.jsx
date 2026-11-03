@@ -20,6 +20,11 @@ import { listarPeriodosProgramacao } from "./programacaoCalendarioService";
 
 import "./ProgramacaoModal.css";
 import "./ProgramacaoCalendario.css";
+import { formatarDataISO, dataHojeLocal } from "@/shared/lib/datas";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarKg as formatarKgBase,
+} from "@/shared/lib/formatar";
 
 /* =========================================================
    CONSTANTES
@@ -79,20 +84,6 @@ const PERFIS = [
    UTILITÁRIOS
 ========================================================= */
 
-function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-function dataHojeLocal() {
-  return formatarDataISO(new Date());
-}
-
 function criarDataLocal(valor) {
   const [ano, mes, dia] = String(valor ?? "")
     .split("-")
@@ -116,21 +107,11 @@ function formatarDataVisual(valor) {
 }
 
 function formatarNumero(valor, casas = 0) {
-  const numero = Number(valor ?? 0);
-
-  if (!Number.isFinite(numero)) {
-    return "0";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor ?? 0, { casas, invalido: "0" });
 }
 
 function formatarKg(valor) {
-  return `${formatarNumero(valor, 3)} kg`;
+  return formatarKgBase(valor ?? 0, { casas: 3, invalido: "0 kg" });
 }
 
 function formatarMinutos(minutos) {

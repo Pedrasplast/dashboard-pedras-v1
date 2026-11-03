@@ -11,37 +11,12 @@ import {
 } from "./comprasFuturasService";
 
 import "./CompraFuturaModal.css";
-
-function dataHojeLocal() {
-  const agora = new Date();
-
-  const ano = agora.getFullYear();
-
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
+import { dataHojeLocal } from "@/shared/lib/datas";
+import { formatarMoeda as formatarMoedaBase } from "@/shared/lib/formatar";
+import { numeroFlexivelOuNull } from "@/shared/lib/numeros";
 
 function normalizarNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : null;
-  }
-
-  const texto = String(valor).trim().replace(/\s/g, "");
-
-  if (!texto) return null;
-
-  const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
+  return numeroFlexivelOuNull(valor);
 }
 
 function numeroParaInput(valor) {
@@ -53,19 +28,7 @@ function numeroParaInput(valor) {
 }
 
 function formatarMoeda(valor) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return Number(valor).toLocaleString("pt-BR", {
-    style: "currency",
-
-    currency: "BRL",
-
-    minimumFractionDigits: 2,
-
-    maximumFractionDigits: 2,
-  });
+  return formatarMoedaBase(valor, { vazios: [null, undefined], invalido: "-" });
 }
 
 function formatarPrecoKg(valor) {

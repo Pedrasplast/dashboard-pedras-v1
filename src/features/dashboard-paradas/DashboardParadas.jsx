@@ -20,22 +20,18 @@ import TopParadas from "./components/TopParadas";
 import useDashboardParadas, { FILTROS_INICIAIS_PARADAS } from "./useDashboardParadas";
 
 import "./DashboardParadas.css";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
 
 function formatarPercentual(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
+  return formatarNumeroBase(valor, { casas: 1 });
 }
 
 function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 /* =========================================================

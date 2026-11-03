@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "../fornecedores/fornecedoresService";
+import { numeroFlexivelOuNull } from "@/shared/lib/numeros";
 
 export const STATUS_COMPRA_FUTURA = [
   {
@@ -139,46 +140,7 @@ const CAMPOS_COMPRA_FUTURA = `
 `;
 
 function normalizarNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : null;
-  }
-
-  const texto = String(valor)
-    .trim()
-
-    .replace(
-      /\s/g,
-
-      "",
-    );
-
-  if (!texto) {
-    return null;
-  }
-
-  const normalizado = texto.includes(",")
-    ? texto
-
-        .replace(
-          /\./g,
-
-          "",
-        )
-
-        .replace(
-          ",",
-
-          ".",
-        )
-    : texto;
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
+  return numeroFlexivelOuNull(valor);
 }
 
 function arredondar(

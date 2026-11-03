@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Clock3 } from "lucide-react";
 
 import { obterProximaSincronizacaoPedidos } from "../utils/proximaSincronizacao";
+import { formatarDataHora as formatarDataHoraBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    ATUALIZACAO AUTOMATICA
@@ -50,27 +51,7 @@ function formatarHorario(valor) {
 ========================================================= */
 
 function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-
-    month: "2-digit",
-
-    year: "numeric",
-
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
+  return formatarDataHoraBase(valor);
 }
 
 /* =========================================================

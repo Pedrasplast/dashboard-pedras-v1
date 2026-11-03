@@ -28,6 +28,12 @@ import {
 
 import LayoutRelatorio from "../../components/LayoutRelatorio";
 import "./EntradasComprasMateriaPrima.css";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarPercentual as formatarPercentualBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarKg as formatarKgBase,
+} from "@/shared/lib/formatar";
 
 const ITENS_POR_PAGINA = 10;
 
@@ -50,35 +56,15 @@ function formatarData(valor) {
 }
 
 function formatarNumero(valor, casas = 0) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor, { casas, invalido: "0" });
 }
 
 function formatarKg(valor) {
-  return `${formatarNumero(valor, 3)} kg`;
+  return formatarKgBase(valor, { casas: 3, invalido: "0 kg" });
 }
 
 function formatarMoeda(valor, casas = 2) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return numero.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
+  return formatarMoedaBase(valor, { casas, invalido: "-" });
 }
 
 function formatarPreco(valor) {
@@ -90,20 +76,7 @@ function formatarPreco(valor) {
 }
 
 function formatarPercentual(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return "-";
-  }
-
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })}%`;
+  return formatarPercentualBase(valor, { maximo: 2, vazios: [null, undefined, ""], invalido: "-" });
 }
 
 function normalizarTexto(valor) {

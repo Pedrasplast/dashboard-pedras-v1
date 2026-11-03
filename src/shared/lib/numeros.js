@@ -1,0 +1,91 @@
+export function converterNumeroFlexivel(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return 0;
+  }
+
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : 0;
+  }
+
+  let texto = String(valor).trim().replace(/\s/g, "");
+
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
+  } else {
+    texto = texto.replace(",", ".");
+  }
+
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : 0;
+}
+
+export function formatarNumeroFlexivel(valor, casas = 2) {
+  return converterNumeroFlexivel(valor).toLocaleString("pt-BR", {
+    maximumFractionDigits: casas,
+  });
+}
+
+/**
+ * Conversão simples usada nos dados de produção.
+ * Mantém a semântica histórica baseada em parseFloat.
+ */
+export function converterNumeroDecimal(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return 0;
+  }
+
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : 0;
+  }
+
+  const numero = Number.parseFloat(String(valor).trim().replace(",", "."));
+  return Number.isFinite(numero) ? numero : 0;
+}
+
+/**
+ * Número estrito (Number) ou null quando vazio ou inválido.
+ * Não interpreta vírgula decimal: "1,5" vira null.
+ */
+export function numeroOuNull(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return null;
+  }
+
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+/**
+ * Como converterNumeroFlexivel ("1.234,56" → 1234.56), mas devolve null
+ * para vazio ou inválido em vez de 0. Usado em campos de formulário.
+ */
+export function numeroFlexivelOuNull(valor) {
+  if (valor === null || valor === undefined) {
+    return null;
+  }
+
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : null;
+  }
+
+  let texto = String(valor).trim().replace(/\s/g, "");
+
+  if (!texto) {
+    return null;
+  }
+
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
+  } else {
+    texto = texto.replace(",", ".");
+  }
+
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+/** Number(valor) quando finito; senão 0. Não interpreta vírgula decimal. */
+export function numeroOuZero(valor) {
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : 0;
+}

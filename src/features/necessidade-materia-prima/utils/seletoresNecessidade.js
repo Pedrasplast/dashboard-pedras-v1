@@ -1,4 +1,5 @@
 import { numero } from "./calculosNecessidade";
+import { normalizarCodigo } from "@/shared/lib/texto";
 
 export function normalizarDataPrevisao(valor) {
   if (!valor) return null;
@@ -31,11 +32,7 @@ export function resumirConsumosDoPeriodo(pedidos) {
   }));
 }
 
-export function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
+export { normalizarCodigo };
 
 /* ============================================================
    DESCRIÇÃO DAS PENDÊNCIAS

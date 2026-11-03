@@ -1,19 +1,10 @@
 import { supabase } from "@/lib/supabaseClient";
+import { numeroOuNull as numeroOpcional } from "@/shared/lib/numeros";
 
 function numero(valor) {
   const convertido = Number(valor);
 
   return Number.isFinite(convertido) ? convertido : 0;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
 }
 
 function texto(valor) {

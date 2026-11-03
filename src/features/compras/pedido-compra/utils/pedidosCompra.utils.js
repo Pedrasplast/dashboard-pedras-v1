@@ -1,12 +1,12 @@
 import { SITUACOES_RECEBIMENTO } from "../constants/pedidosCompra.constants";
+import { normalizarTexto } from "@/shared/lib/texto";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarDataHora as formatarDataHoraBase,
+} from "@/shared/lib/formatar";
 
-export function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+export { normalizarTexto };
 
 export function numeroSeguro(valor) {
   const numero = Number(valor);
@@ -55,23 +55,7 @@ export function formatarData(valor) {
 }
 
 export function formatarDataHora(valor) {
-  if (!valor) {
-    return "-";
-  }
-
-  const data = valor instanceof Date ? valor : new Date(valor);
-
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatarDataHoraBase(valor);
 }
 
 export function formatarHorario(valor) {
@@ -92,18 +76,11 @@ export function formatarHorario(valor) {
 }
 
 export function formatarNumero(valor, casas = 0) {
-  return numeroSeguro(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: casas,
-
-    maximumFractionDigits: casas,
-  });
+  return formatarNumeroBase(valor, { casas });
 }
 
 export function formatarMoeda(valor) {
-  return numeroSeguro(valor).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  return formatarMoedaBase(valor);
 }
 
 export function calcularResumoItens(itens = []) {

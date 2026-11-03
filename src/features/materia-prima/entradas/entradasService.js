@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "../fornecedores/fornecedoresService";
+import { numeroOuNull } from "@/shared/lib/numeros";
 
 /* =========================================================
    CAMPOS
@@ -35,20 +36,6 @@ const CAMPOS_ENTRADA = `
   condicao_pagamento,
   observacao_financeira
 `;
-
-/* =========================================================
-   UTILITÁRIOS
-========================================================= */
-
-function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : null;
-}
 
 /* =========================================================
    BUSCAR ENTRADAS

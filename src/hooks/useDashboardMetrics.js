@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { normalizarTexto as normalizarTextoBase } from "@/shared/lib/texto";
+
 /* =========================================================
    NÚMEROS
 ========================================================= */
@@ -146,14 +148,7 @@ const formatarDiasEHoras = (totalHoras) => {
    NORMALIZA TEXTO
 ========================================================= */
 
-const normalizarTexto = (valor) => {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ");
-};
+const normalizarTexto = (valor) => normalizarTextoBase(valor, { compactarEspacos: true });
 
 /* =========================================================
    NORMALIZA TIPO

@@ -1,4 +1,4 @@
-import { formatarKg, formatarMoeda } from "../utils/formatadores";
+import { formatarKg, formatarMoeda } from "../../utils/formatadores";
 
 export default function ComprasFuturasIndicadores({ indicadores }) {
   return (

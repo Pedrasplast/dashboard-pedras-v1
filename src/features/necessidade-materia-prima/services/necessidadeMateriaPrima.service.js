@@ -1,4 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
+import { normalizarCodigo } from "@/shared/lib/texto";
+import { numeroOuNull as numeroOpcional } from "@/shared/lib/numeros";
 
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — SERVIÇO
@@ -41,24 +43,8 @@ const FONTES = Object.freeze({
    FUNÇÕES AUXILIARES
 ============================================================ */
 
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
-
 function normalizarId(valor) {
   return String(valor ?? "").trim();
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
 }
 
 /* ============================================================

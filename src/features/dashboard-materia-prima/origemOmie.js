@@ -1,3 +1,5 @@
+import { numeroOuNull } from "@/shared/lib/numeros";
+
 /* =========================================================
    DASHBOARD MATÉRIA-PRIMA — ORIGEM OMIE
 
@@ -55,12 +57,6 @@ export const CAMPOS_OMIE = [
   "numeros_nf",
   "encerrado",
 ].join(",");
-
-function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const n = Number(valor);
-  return Number.isFinite(n) ? n : null;
-}
 
 function texto(valor) {
   return String(valor ?? "").trim();

@@ -1,5 +1,5 @@
-import { converterNumeroFlexivel as converterNumero } from "@/lib/numeros";
-import { normalizarTexto } from "@/lib/texto";
+import { converterNumeroFlexivel as converterNumero } from "@/shared/lib/numeros";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 const DATA_FIM_ORDENACAO = "9999-12-31";
 const SEM_DATA = "Sem data";

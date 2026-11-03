@@ -18,6 +18,12 @@ import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
 
 import "./FinanceiroEvolucaoMensalPage.css";
+import { obterAnoAtual } from "@/shared/lib/datas";
+import {
+  formatarPercentual as formatarPercentualBase,
+  formatarMoeda as formatarMoedaBase,
+} from "@/shared/lib/formatar";
+import { numeroOuZero } from "@/shared/lib/numeros";
 
 /* =========================================================
    MESES
@@ -42,27 +48,16 @@ const MESES = Object.freeze([
    AUXILIARES
 ========================================================= */
 
-function obterAnoAtual() {
-  return new Date().getFullYear();
-}
-
 function obterMesAtual() {
   return new Date().getMonth() + 1;
 }
 
 function converterNumero(valor) {
-  const numero = Number(valor);
-
-  return Number.isFinite(numero) ? numero : 0;
+  return numeroOuZero(valor);
 }
 
 function formatarMoeda(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  return formatarMoedaBase(valor);
 }
 
 function formatarMoedaCompacta(valor) {
@@ -75,14 +70,7 @@ function formatarMoedaCompacta(valor) {
 }
 
 function formatarPercentual(valor) {
-  if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
-    return "-";
-  }
-
-  return `${Number(valor).toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}%`;
+  return formatarPercentualBase(valor, { casas: 2, vazios: [null, undefined], invalido: "-" });
 }
 
 function calcularPercentual(numerador, denominador) {

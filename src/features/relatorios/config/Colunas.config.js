@@ -1,4 +1,4 @@
-import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/lib/numeros";
+import { converterNumeroFlexivel, formatarNumeroFlexivel } from "@/shared/lib/numeros";
 
 import { COLUNAS_FINANCEIRO } from "../financeiro/config/financeiroColunas";
 

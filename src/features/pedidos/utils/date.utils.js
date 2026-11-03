@@ -1,3 +1,5 @@
+import { obterHoje } from "@/shared/lib/datas";
+
 function extrairPartesDataCalendario(valor) {
   if (!valor) {
     return null;
@@ -86,11 +88,7 @@ export function converterDataCalendario(valor) {
   return data;
 }
 
-export function obterHoje() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
+export { obterHoje };
 
 export function formatarData(valor) {
   if (!valor) {

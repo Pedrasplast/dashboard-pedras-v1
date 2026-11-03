@@ -1,4 +1,4 @@
-import { formatarData } from "./formatadores";
+import { formatarData } from "../../utils/formatadores";
 
 /* =========================================================
    CONSTANTES

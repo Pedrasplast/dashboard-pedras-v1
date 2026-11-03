@@ -34,6 +34,14 @@ import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
 
 import "./Home.css";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje } from "@/shared/lib/datas";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarPercentual as formatarPercentualBase,
+  formatarDataHora as formatarDataHoraBase,
+} from "@/shared/lib/formatar";
+import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -70,60 +78,19 @@ function obterNomeUsuario(email) {
 }
 
 /* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-/* =========================================================
    NÚMEROS
 ========================================================= */
 
 function converterNumero(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return 0;
-  }
-
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
-  let texto = String(valor).trim().replace(/\s/g, "");
-
-  if (texto.includes(",") && texto.includes(".")) {
-    texto = texto.replace(/\./g, "").replace(",", ".");
-  } else {
-    texto = texto.replace(",", ".");
-  }
-
-  const numero = Number(texto);
-
-  return Number.isFinite(numero) ? numero : 0;
+  return converterNumeroFlexivel(valor);
 }
 
 function formatarNumero(valor) {
-  return converterNumero(valor).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0, ler: "flexivel" });
 }
 
 function formatarPercentual(valor) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0,0%";
-  }
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  })}%`;
+  return formatarPercentualBase(valor, { casas: 1, invalido: "0,0%" });
 }
 
 /* =========================================================
@@ -150,12 +117,6 @@ function converterData(dataTexto) {
   return data;
 }
 
-function obterHoje() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
-
 function formatarHorario(dataTexto) {
   if (!dataTexto) {
     return "-";
@@ -174,28 +135,8 @@ function formatarHorario(dataTexto) {
   });
 }
 
-function formatarDataHora(dataTexto) {
-  if (!dataTexto) {
-    return "Ainda não atualizado";
-  }
-
-  const data = new Date(dataTexto);
-
-  if (Number.isNaN(data.getTime())) {
-    return "Ainda não atualizado";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-
-    month: "2-digit",
-
-    year: "numeric",
-
-    hour: "2-digit",
-
-    minute: "2-digit",
-  });
+function formatarDataHora(valor) {
+  return formatarDataHoraBase(valor, { vazio: "Ainda não atualizado" });
 }
 
 /* =========================================================

@@ -17,26 +17,11 @@ import CadastroReceitaModal from "./CadastroReceitaModal";
 import useCadastroReceitas from "./useCadastroReceitas";
 
 import "./CadastroReceitas.css";
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+import { normalizarTexto } from "@/shared/lib/texto";
+import { formatarPercentual as formatarPercentualBase } from "@/shared/lib/formatar";
 
 function formatarPercentual(valor) {
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "0%";
-  }
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 4,
-  })}%`;
+  return formatarPercentualBase(valor, { maximo: 4, invalido: "0%" });
 }
 
 function CardResumo({ titulo, valor, subtitulo, icone: Icone }) {

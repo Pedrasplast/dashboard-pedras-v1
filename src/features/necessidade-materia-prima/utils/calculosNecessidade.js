@@ -1,3 +1,6 @@
+import { normalizarCodigo } from "@/shared/lib/texto";
+import { numeroOuNull as numeroOpcional } from "@/shared/lib/numeros";
+
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — CÁLCULOS
    - Sem formatação: formatadoresNecessidade.js é separado.
@@ -13,18 +16,6 @@ export function numero(valor) {
   if (valor === null || valor === undefined || valor === "") return 0;
   const convertido = Number(valor);
   return Number.isFinite(convertido) ? convertido : 0;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const convertido = Number(valor);
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
 }
 
 function normalizarId(valor) {

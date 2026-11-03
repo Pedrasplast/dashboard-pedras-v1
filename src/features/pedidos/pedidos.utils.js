@@ -1,4 +1,6 @@
-import { normalizarTexto } from "@/lib/texto";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje } from "@/shared/lib/datas";
+import { formatarDataHora as formatarDataHoraBase } from "@/shared/lib/formatar";
 
 export const PEDIDOS_VAZIOS = Object.freeze([]);
 
@@ -16,10 +18,7 @@ export function converterData(dataTexto) {
   return Number.isNaN(data.getTime()) ? null : data;
 }
 
-export function obterHoje() {
-  const agora = new Date();
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
+export { obterHoje };
 
 export function obterProximaAtualizacao(dataAtual) {
   const agora = dataAtual instanceof Date ? dataAtual : new Date();
@@ -66,23 +65,8 @@ export function formatarHorario(dataTexto) {
   });
 }
 
-export function formatarDataHora(dataTexto) {
-  if (!dataTexto) {
-    return "-";
-  }
-
-  const data = dataTexto instanceof Date ? dataTexto : new Date(dataTexto);
-  if (Number.isNaN(data.getTime())) {
-    return "-";
-  }
-
-  return data.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+export function formatarDataHora(valor) {
+  return formatarDataHoraBase(valor);
 }
 
 export function calcularDiasAtraso(previsao) {

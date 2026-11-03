@@ -1,3 +1,5 @@
+import { obterAnoAtual } from "@/shared/lib/datas";
+
 export const MESES = Object.freeze([
   { valor: 1, nome: "Janeiro" },
   { valor: 2, nome: "Fevereiro" },
@@ -13,9 +15,7 @@ export const MESES = Object.freeze([
   { valor: 12, nome: "Dezembro" },
 ]);
 
-export function obterAnoAtual() {
-  return new Date().getFullYear();
-}
+export { obterAnoAtual };
 
 export function obterMesAtual() {
   return new Date().getMonth() + 1;

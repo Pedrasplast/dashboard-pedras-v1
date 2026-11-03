@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import CampoDataCalendario from "@/components/filtros/CampoDataCalendario";
 import Filtros from "@/components/filtros/Filtros";
 import { useLimparNoLayout } from "@/components/filtros/ContextoLimparFiltros";
-import { valoresUnicosOrdenados } from "@/lib/colecoes";
+import { valoresUnicosOrdenados } from "@/shared/lib/colecoes";
 
 import {
   TURNOS_DISPONIVEIS,

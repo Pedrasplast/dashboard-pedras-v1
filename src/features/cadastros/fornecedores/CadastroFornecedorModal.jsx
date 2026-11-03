@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Save, Truck, X } from "lucide-react";
 
 import "../CadastroProdutoModal.css";
+import { numeroFlexivelOuNull } from "@/shared/lib/numeros";
 
 /* =========================================================
    UTILITÁRIOS
@@ -19,23 +20,7 @@ function valorParaCampo(valor) {
 }
 
 function normalizarNumero(valor) {
-  const texto = String(valor ?? "").trim();
-
-  if (!texto) {
-    return null;
-  }
-
-  let normalizado = texto.replace(/\s/g, "");
-
-  if (normalizado.includes(",") && normalizado.includes(".")) {
-    normalizado = normalizado.replace(/\./g, "").replace(",", ".");
-  } else {
-    normalizado = normalizado.replace(",", ".");
-  }
-
-  const numero = Number(normalizado);
-
-  return Number.isFinite(numero) ? numero : null;
+  return numeroFlexivelOuNull(valor);
 }
 
 /* =========================================================

@@ -9,15 +9,14 @@ import {
 } from "lucide-react";
 
 import "./ParadasKpis.css";
+import { formatarNumero as formatarNumeroBase } from "@/shared/lib/formatar";
 
 /* =========================================================
    FORMATAÇÕES
 ========================================================= */
 
 function formatarNumero(valor) {
-  return Number(valor || 0).toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-  });
+  return formatarNumeroBase(valor, { maximo: 0 });
 }
 
 /* =========================================================
