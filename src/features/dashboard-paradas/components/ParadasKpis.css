@@ -26,12 +26,7 @@
   box-sizing: border-box;
   overflow: hidden;
 
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #fbfdff 100%
-    );
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 
   border: 1px solid var(--dp-border);
   border-top: 3px solid #94a3b8;
@@ -54,12 +49,7 @@
   height: 80px;
   pointer-events: none;
 
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(148, 163, 184, 0.11),
-      transparent 70%
-    );
+  background: radial-gradient(circle at top right, rgba(148, 163, 184, 0.11), transparent 70%);
 }
 
 .dp-kpi:hover {
@@ -170,12 +160,7 @@
 
   color: var(--dp-text);
 
-  font-size:
-    clamp(
-      1.25rem,
-      1.5vw,
-      1.7rem
-    );
+  font-size: clamp(1.25rem, 1.5vw, 1.7rem);
 
   font-weight: 850;
   line-height: 1.06;
@@ -217,12 +202,7 @@
 .dp-kpi-duration__numero {
   color: var(--dp-text);
 
-  font-size:
-    clamp(
-      1.5rem,
-      1.8vw,
-      2rem
-    );
+  font-size: clamp(1.5rem, 1.8vw, 2rem);
 
   font-weight: 900;
   line-height: 1;
@@ -276,12 +256,7 @@
 .dp-kpi__value--machine {
   max-width: 100%;
 
-  font-size:
-    clamp(
-      1rem,
-      1.22vw,
-      1.35rem
-    );
+  font-size: clamp(1rem, 1.22vw, 1.35rem);
 
   line-height: 1.12;
   letter-spacing: -0.025em;

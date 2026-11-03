@@ -21,18 +21,15 @@
 
   margin: 0 0 var(--space-5);
 
-  padding:
-    var(--space-5)
-    calc(var(--space-5) + 2px);
+  padding: var(--space-5) calc(var(--space-5) + 2px);
 
-  background:
-    linear-gradient(
-      112deg,
-      rgb(37 165 92 / 0.045) 0%,
-      rgb(37 165 92 / 0.025) 38%,
-      rgb(4 21 74 / 0.02) 68%,
-      rgb(4 21 74 / 0.045) 100%
-    );
+  background: linear-gradient(
+    112deg,
+    rgb(37 165 92 / 0.045) 0%,
+    rgb(37 165 92 / 0.025) 38%,
+    rgb(4 21 74 / 0.02) 68%,
+    rgb(4 21 74 / 0.045) 100%
+  );
 
   border: 1px solid rgb(148 163 184 / 0.26);
 
@@ -45,7 +42,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    LINHA SUPERIOR
 ========================================================= */
@@ -56,22 +52,12 @@
   position: absolute;
   z-index: -1;
 
-  inset:
-    0
-    0
-    auto;
+  inset: 0 0 auto;
 
   height: 3px;
 
-  background:
-    linear-gradient(
-      90deg,
-      var(--color-primary),
-      #60a5fa 58%,
-      rgb(96 165 250 / 0) 100%
-    );
+  background: linear-gradient(90deg, var(--color-primary), #60a5fa 58%, rgb(96 165 250 / 0) 100%);
 }
-
 
 /* =========================================================
    EFEITO DECORATIVO
@@ -91,14 +77,8 @@
 
   pointer-events: none;
 
-  background:
-    radial-gradient(
-      circle,
-      rgb(59 130 246 / 0.12) 0%,
-      rgb(59 130 246 / 0) 70%
-    );
+  background: radial-gradient(circle, rgb(59 130 246 / 0.12) 0%, rgb(59 130 246 / 0) 70%);
 }
-
 
 /* =========================================================
    AREA PRINCIPAL
@@ -113,7 +93,6 @@
   gap: 14px;
 }
 
-
 /* =========================================================
    CONTEUDO
 ========================================================= */
@@ -122,16 +101,12 @@
   min-width: 0;
 }
 
-
 /* =========================================================
    ICONE
 ========================================================= */
 
 .page-header .page-header__icon {
-  flex:
-    0
-    0
-    46px;
+  flex: 0 0 46px;
 
   width: 46px;
   height: 46px;
@@ -142,12 +117,7 @@
 
   color: var(--color-primary);
 
-  background:
-    linear-gradient(
-      145deg,
-      rgb(239 246 255 / 0.96),
-      rgb(219 234 254 / 0.86)
-    );
+  background: linear-gradient(145deg, rgb(239 246 255 / 0.96), rgb(219 234 254 / 0.86));
 
   border: 1px solid rgb(37 99 235 / 0.16);
 
@@ -163,7 +133,6 @@
   height: 23px;
 }
 
-
 /* =========================================================
    EYEBROW
 ========================================================= */
@@ -171,10 +140,7 @@
 .page-header .page-header__eyebrow {
   display: block;
 
-  margin:
-    0
-    0
-    var(--space-1);
+  margin: 0 0 var(--space-1);
 
   color: var(--color-primary);
 
@@ -187,7 +153,6 @@
 
   text-transform: uppercase;
 }
-
 
 /* =========================================================
    TITULO
@@ -206,7 +171,6 @@
   letter-spacing: -0.025em;
 }
 
-
 /* =========================================================
    DESCRICAO
 ========================================================= */
@@ -214,10 +178,7 @@
 .page-header .page-header__description {
   max-width: 700px;
 
-  margin:
-    6px
-    0
-    0;
+  margin: 6px 0 0;
 
   color: var(--color-text-muted);
 
@@ -225,7 +186,6 @@
 
   line-height: var(--line-height-normal);
 }
-
 
 /* =========================================================
    ACOES
@@ -235,10 +195,7 @@
   position: static;
   z-index: auto;
 
-  flex:
-    0
-    0
-    auto;
+  flex: 0 0 auto;
 
   display: flex;
   align-items: center;
@@ -248,7 +205,6 @@
 
   max-width: 100%;
 }
-
 
 /* =========================================================
    RESPONSIVIDADE
@@ -271,7 +227,6 @@
     justify-content: flex-start;
   }
 }
-
 
 @media (max-width: 480px) {
   .page-header .page-header__icon {

@@ -1,8 +1,4 @@
-import {
-  calcularDiasAtraso,
-  converterDataCalendario,
-  obterHoje,
-} from "./date.utils";
+import { calcularDiasAtraso, converterDataCalendario, obterHoje } from "./date.utils";
 import { normalizarTexto } from "./format.utils";
 
 export function pedidoEhCancelado(pedido) {
@@ -10,10 +6,7 @@ export function pedidoEhCancelado(pedido) {
 }
 
 export function pedidoEstaAtrasado(pedido) {
-  return (
-    normalizarTexto(pedido?.status) === "pedido" &&
-    calcularDiasAtraso(pedido?.previsao) > 0
-  );
+  return normalizarTexto(pedido?.status) === "pedido" && calcularDiasAtraso(pedido?.previsao) > 0;
 }
 
 export function formatarTextoAtraso(dias) {
@@ -97,18 +90,14 @@ export function criarMapaNotificacoes(notificacoes = []) {
 
 export function obterVendedores(pedidos = []) {
   return [
-    ...new Set(
-      pedidos
-        .map((pedido) => pedido.vendedor)
-        .filter((nome) => nome && nome !== "-"),
-    ),
+    ...new Set(pedidos.map((pedido) => pedido.vendedor).filter((nome) => nome && nome !== "-")),
   ].sort((a, b) => a.localeCompare(b, "pt-BR"));
 }
 
 export function obterStatusDisponiveis(pedidos = []) {
-  return [
-    ...new Set(pedidos.map((pedido) => pedido.status).filter(Boolean)),
-  ].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+  return [...new Set(pedidos.map((pedido) => pedido.status).filter(Boolean))].sort((a, b) =>
+    String(a).localeCompare(String(b), "pt-BR"),
+  );
 }
 
 export function filtrarPedidos(pedidos, { pesquisa, vendedor, status }) {
@@ -122,12 +111,10 @@ export function filtrarPedidos(pedidos, { pesquisa, vendedor, status }) {
       normalizarTexto(pedido?.produto).includes(termo) ||
       normalizarTexto(pedido?.codigoProduto).includes(termo);
 
-    const correspondeVendedor =
-      vendedor === "todos" || pedido?.vendedor === vendedor;
+    const correspondeVendedor = vendedor === "todos" || pedido?.vendedor === vendedor;
 
     const correspondeStatus =
-      status === "todos" ||
-      normalizarTexto(pedido?.status) === normalizarTexto(status);
+      status === "todos" || normalizarTexto(pedido?.status) === normalizarTexto(status);
 
     return correspondePesquisa && correspondeVendedor && correspondeStatus;
   });
@@ -147,10 +134,7 @@ export function obterPedidosUnicos(pedidos = []) {
   return [...mapa.values()];
 }
 
-export function ordenarPedidosUnicosPorNotificacao(
-  pedidos,
-  notificacoesPorPedido,
-) {
+export function ordenarPedidosUnicosPorNotificacao(pedidos, notificacoesPorPedido) {
   const lista = [...pedidos];
   const ordemOriginal = new Map();
 
@@ -192,10 +176,7 @@ export function ordenarPedidosUnicosPorNotificacao(
   });
 }
 
-export function obterLinhasDaPagina(
-  pedidosFiltrados,
-  pedidosUnicosDaPagina,
-) {
+export function obterLinhasDaPagina(pedidosFiltrados, pedidosUnicosDaPagina) {
   const ordemPagina = new Map();
 
   pedidosUnicosDaPagina.forEach((pedido, indice) => {
@@ -207,9 +188,7 @@ export function obterLinhasDaPagina(
   );
 
   return pedidosFiltrados
-    .filter((pedido) =>
-      chavesPedidosDaPagina.has(obterChavePedido(pedido)),
-    )
+    .filter((pedido) => chavesPedidosDaPagina.has(obterChavePedido(pedido)))
     .sort((a, b) => {
       const ordemA = ordemPagina.get(obterChavePedido(a)) ?? 0;
       const ordemB = ordemPagina.get(obterChavePedido(b)) ?? 0;

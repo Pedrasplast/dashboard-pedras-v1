@@ -45,8 +45,7 @@ function montarReceitas(receitas, componentes, fornecedores) {
     componentesPorReceita.get(chave).push({
       id: componente.id,
       fornecedorId: componente.fornecedor_id,
-      fornecedorNome:
-        fornecedor?.nome || `Fornecedor ${componente.fornecedor_id}`,
+      fornecedorNome: fornecedor?.nome || `Fornecedor ${componente.fornecedor_id}`,
       fornecedorAtivo: fornecedor?.ativo !== false,
       percentual: arredondarPercentual(componente.percentual),
       criadoEm: componente.criado_em ?? null,
@@ -55,11 +54,10 @@ function montarReceitas(receitas, componentes, fornecedores) {
   }
 
   return receitas.map((receita) => {
-    const itens = (componentesPorReceita.get(String(receita.id)) ?? []).sort(
-      (itemA, itemB) =>
-        itemA.fornecedorNome.localeCompare(itemB.fornecedorNome, "pt-BR", {
-          sensitivity: "base",
-        }),
+    const itens = (componentesPorReceita.get(String(receita.id)) ?? []).sort((itemA, itemB) =>
+      itemA.fornecedorNome.localeCompare(itemB.fornecedorNome, "pt-BR", {
+        sensitivity: "base",
+      }),
     );
 
     const percentualTotal = arredondarPercentual(
@@ -76,20 +74,17 @@ function montarReceitas(receitas, componentes, fornecedores) {
       itens,
       percentualTotal,
       quantidadeComponentes: itens.length,
-      configurada:
-        itens.length > 0 &&
-        Math.abs(percentualTotal - 100) <= TOLERANCIA_PERCENTUAL,
+      configurada: itens.length > 0 && Math.abs(percentualTotal - 100) <= TOLERANCIA_PERCENTUAL,
     };
   });
 }
 
 export async function buscarCadastroReceitas() {
-  const [receitasResultado, componentesResultado, fornecedoresResultado] =
-    await Promise.all([
-      supabase
-        .from("materia_prima_receitas")
-        .select(
-          `
+  const [receitasResultado, componentesResultado, fornecedoresResultado] = await Promise.all([
+    supabase
+      .from("materia_prima_receitas")
+      .select(
+        `
             id,
             nome,
             descricao,
@@ -97,13 +92,13 @@ export async function buscarCadastroReceitas() {
             criado_em,
             atualizado_em
           `,
-        )
-        .order("nome", { ascending: true }),
+      )
+      .order("nome", { ascending: true }),
 
-      supabase
-        .from("materia_prima_receitas_componentes")
-        .select(
-          `
+    supabase
+      .from("materia_prima_receitas_componentes")
+      .select(
+        `
             id,
             receita_id,
             fornecedor_id,
@@ -111,53 +106,43 @@ export async function buscarCadastroReceitas() {
             criado_em,
             atualizado_em
           `,
-        )
-        .order("id", { ascending: true }),
+      )
+      .order("id", { ascending: true }),
 
-      supabase
-        .from("materia_prima_fornecedores")
-        .select(
-          `
+    supabase
+      .from("materia_prima_fornecedores")
+      .select(
+        `
             id,
             nome,
             ativo,
             criado_em,
             atualizado_em
           `,
-        )
-        .order("nome", { ascending: true }),
-    ]);
+      )
+      .order("nome", { ascending: true }),
+  ]);
 
   if (receitasResultado.error) {
-    throw new Error(
-      receitasResultado.error.message || "Erro ao carregar as receitas.",
-    );
+    throw new Error(receitasResultado.error.message || "Erro ao carregar as receitas.");
   }
 
   if (componentesResultado.error) {
     throw new Error(
-      componentesResultado.error.message ||
-        "Erro ao carregar os componentes das receitas.",
+      componentesResultado.error.message || "Erro ao carregar os componentes das receitas.",
     );
   }
 
   if (fornecedoresResultado.error) {
-    throw new Error(
-      fornecedoresResultado.error.message || "Erro ao carregar fornecedores.",
-    );
+    throw new Error(fornecedoresResultado.error.message || "Erro ao carregar fornecedores.");
   }
 
-  const receitas = Array.isArray(receitasResultado.data)
-    ? receitasResultado.data
-    : [];
+  const receitas = Array.isArray(receitasResultado.data) ? receitasResultado.data : [];
 
-  const componentes = Array.isArray(componentesResultado.data)
-    ? componentesResultado.data
-    : [];
+  const componentes = Array.isArray(componentesResultado.data) ? componentesResultado.data : [];
 
-  const fornecedores = (Array.isArray(fornecedoresResultado.data)
-    ? fornecedoresResultado.data
-    : []
+  const fornecedores = (
+    Array.isArray(fornecedoresResultado.data) ? fornecedoresResultado.data : []
   ).map((fornecedor) => ({
     id: fornecedor.id,
     nome: texto(fornecedor.nome),
@@ -172,12 +157,7 @@ export async function buscarCadastroReceitas() {
   };
 }
 
-export async function salvarCadastroReceita({
-  id = null,
-  nome,
-  descricao,
-  itens,
-}) {
+export async function salvarCadastroReceita({ id = null, nome, descricao, itens }) {
   const nomeFinal = texto(nome);
   const descricaoFinal = texto(descricao);
 
@@ -200,9 +180,7 @@ export async function salvarCadastroReceita({
     }
 
     if (percentual === null || percentual <= 0 || percentual > 100) {
-      throw new Error(
-        "Os percentuais devem ser maiores que zero e menores ou iguais a 100.",
-      );
+      throw new Error("Os percentuais devem ser maiores que zero e menores ou iguais a 100.");
     }
 
     return {
@@ -211,9 +189,7 @@ export async function salvarCadastroReceita({
     };
   });
 
-  const fornecedoresUnicos = new Set(
-    payloadItens.map((item) => String(item.fornecedor_id)),
-  );
+  const fornecedoresUnicos = new Set(payloadItens.map((item) => String(item.fornecedor_id)));
 
   if (fornecedoresUnicos.size !== payloadItens.length) {
     throw new Error("Não repita o mesmo fornecedor na receita.");
@@ -225,22 +201,18 @@ export async function salvarCadastroReceita({
 
   if (Math.abs(total - 100) > TOLERANCIA_PERCENTUAL) {
     throw new Error(
-      `A receita deve totalizar exatamente 100%. Total informado: ${total.toLocaleString(
-        "pt-BR",
-        { maximumFractionDigits: 4 },
-      )}%.`,
+      `A receita deve totalizar exatamente 100%. Total informado: ${total.toLocaleString("pt-BR", {
+        maximumFractionDigits: 4,
+      })}%.`,
     );
   }
 
-  const { data, error } = await supabase.rpc(
-    "salvar_receita_materia_prima_v3",
-    {
-      p_id: id || null,
-      p_nome: nomeFinal,
-      p_descricao: descricaoFinal || null,
-      p_itens: payloadItens,
-    },
-  );
+  const { data, error } = await supabase.rpc("salvar_receita_materia_prima_v3", {
+    p_id: id || null,
+    p_nome: nomeFinal,
+    p_descricao: descricaoFinal || null,
+    p_itens: payloadItens,
+  });
 
   if (error) {
     throw new Error(error.message || "Erro ao salvar a receita.");
@@ -252,28 +224,20 @@ export async function salvarCadastroReceita({
   };
 }
 
-export async function alterarStatusCadastroReceita({
-  id,
-  ativo,
-}) {
+export async function alterarStatusCadastroReceita({ id, ativo }) {
   const receitaId = Number(id);
 
   if (!Number.isFinite(receitaId) || receitaId <= 0) {
     throw new Error("Receita inválida.");
   }
 
-  const { data, error } = await supabase.rpc(
-    "alterar_status_receita_materia_prima",
-    {
-      p_id: receitaId,
-      p_ativo: ativo === true,
-    },
-  );
+  const { data, error } = await supabase.rpc("alterar_status_receita_materia_prima", {
+    p_id: receitaId,
+    p_ativo: ativo === true,
+  });
 
   if (error) {
-    throw new Error(
-      error.message || "Erro ao alterar o status da receita.",
-    );
+    throw new Error(error.message || "Erro ao alterar o status da receita.");
   }
 
   return data;

@@ -13,8 +13,7 @@ export const Route = createFileRoute("/relatorios")({
       },
       {
         name: "description",
-        content:
-          "Relatórios e análises operacionais da Pedrasplast.",
+        content: "Relatórios e análises operacionais da Pedrasplast.",
       },
     ],
   }),

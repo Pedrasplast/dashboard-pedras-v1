@@ -1,13 +1,8 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  AlertTriangle,
-  Trash2,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Trash2, X } from "lucide-react";
 
 import "./ConfirmacaoExclusao.css";
-
 
 export default function ConfirmacaoExclusao({
   aberto = false,
@@ -27,7 +22,6 @@ export default function ConfirmacaoExclusao({
     return null;
   }
 
-
   return (
     <Modal
       asChild
@@ -37,204 +31,93 @@ export default function ConfirmacaoExclusao({
       tamanho="pequeno"
       fecharAoClicarFora={false}
     >
-
       <div
         className="confirmacao-exclusao"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirmacao-exclusao-titulo"
       >
-
         <div className="confirmacao-exclusao-header" data-modal-header="">
-
           <div className="confirmacao-exclusao-icone" data-modal-icone="">
-
-            <Trash2
-              size={21}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-
+            <Trash2 size={21} strokeWidth={2} aria-hidden="true" />
           </div>
-
 
           <div className="confirmacao-exclusao-header-texto">
-
-            <span>
-              Exclusão
-            </span>
+            <span>Exclusão</span>
 
             <ModalTitulo>
-              <h3 id="confirmacao-exclusao-titulo">
-                {titulo}
-              </h3>
+              <h3 id="confirmacao-exclusao-titulo">{titulo}</h3>
             </ModalTitulo>
 
-            <p>
-              {descricao}
-            </p>
-
+            <p>{descricao}</p>
           </div>
-
 
           <button
             type="button"
             className="confirmacao-exclusao-fechar"
-            onClick={
-              onCancelar
-            }
-            disabled={
-              processando
-            }
+            onClick={onCancelar}
+            disabled={processando}
             aria-label="Fechar"
             data-modal-fechar=""
           >
-
-            <X
-              size={18}
-            />
-
+            <X size={18} />
           </button>
-
         </div>
-
 
         <div className="confirmacao-exclusao-conteudo" data-modal-body="">
-
-          {(itemTitulo ||
-            itemDescricao) && (
-
+          {(itemTitulo || itemDescricao) && (
             <div className="confirmacao-exclusao-item">
+              {itemTitulo && <strong>{itemTitulo}</strong>}
 
-              {itemTitulo && (
-
-                <strong>
-                  {itemTitulo}
-                </strong>
-
-              )}
-
-
-              {itemDescricao && (
-
-                <span>
-                  {itemDescricao}
-                </span>
-
-              )}
-
+              {itemDescricao && <span>{itemDescricao}</span>}
             </div>
-
           )}
 
-
-          {Array.isArray(
-            detalhes,
-          ) &&
-            detalhes.length >
-              0 && (
-
+          {Array.isArray(detalhes) && detalhes.length > 0 && (
             <div className="confirmacao-exclusao-detalhes">
+              {detalhes.map((detalhe, indice) => (
+                <div key={`${detalhe?.label}-${indice}`}>
+                  <span>{detalhe?.label}</span>
 
-              {detalhes.map(
-                (
-                  detalhe,
-                  indice,
-                ) => (
-
-                  <div
-                    key={
-                      `${detalhe?.label}-${indice}`
-                    }
-                  >
-
-                    <span>
-                      {
-                        detalhe
-                          ?.label
-                      }
-                    </span>
-
-                    <strong>
-                      {
-                        detalhe
-                          ?.valor ??
-                        "-"
-                      }
-                    </strong>
-
-                  </div>
-
-                ),
-              )}
-
+                  <strong>{detalhe?.valor ?? "-"}</strong>
+                </div>
+              ))}
             </div>
-
           )}
-
 
           {erro && (
-
             <div className="confirmacao-exclusao-erro">
+              <AlertTriangle size={16} />
 
-              <AlertTriangle
-                size={16}
-              />
-
-              <span>
-                {erro}
-              </span>
-
+              <span>{erro}</span>
             </div>
-
           )}
-
         </div>
 
-
         <div className="confirmacao-exclusao-acoes" data-modal-footer="">
-
           <button
             type="button"
             className="confirmacao-exclusao-cancelar"
-            onClick={
-              onCancelar
-            }
-            disabled={
-              processando
-            }
+            onClick={onCancelar}
+            disabled={processando}
             data-modal-acao="secundaria"
           >
             {textoCancelar}
           </button>
 
-
           <button
             type="button"
             className="confirmacao-exclusao-confirmar"
-            onClick={
-              onConfirmar
-            }
-            disabled={
-              processando
-            }
+            onClick={onConfirmar}
+            disabled={processando}
             data-modal-acao="perigo"
           >
+            <Trash2 size={15} />
 
-            <Trash2
-              size={15}
-            />
-
-            {processando
-              ? "Excluindo..."
-              : textoConfirmar}
-
+            {processando ? "Excluindo..." : textoConfirmar}
           </button>
-
         </div>
-
       </div>
-
     </Modal>
   );
 }

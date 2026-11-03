@@ -1,0 +1,5 @@
+# Commits só de formatação, ignorados pelo git blame.
+# Use: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# [REF] Fase 0: aplica o Prettier (somente formatação)
+8473ffd94346f4361906f4eb4f127fea0468d556

@@ -1,20 +1,10 @@
-import {
-  converterNumeroFlexivel,
-} from "@/lib/numeros";
+import { converterNumeroFlexivel } from "@/lib/numeros";
 
-
-const converterNumero =
-  converterNumeroFlexivel;
-
+const converterNumero = converterNumeroFlexivel;
 
 function valorVazio(valor) {
-  return (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  );
+  return valor === null || valor === undefined || valor === "";
 }
-
 
 function formatarMoeda(valor) {
   if (valorVazio(valor)) {
@@ -23,17 +13,13 @@ function formatarMoeda(valor) {
 
   const numero = converterNumero(valor);
 
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-  );
+  return numero.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
-
 
 function formatarPercentual(valor) {
   if (valorVazio(valor)) {
@@ -42,300 +28,175 @@ function formatarPercentual(valor) {
 
   const numero = converterNumero(valor);
 
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-  )}%`;
+  return `${numero.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
 }
-
 
 export const COLUNAS_FINANCEIRO = {
   codigo_categoria: {
-    titulo:
-      "Código Categoria",
+    titulo: "Código Categoria",
 
-    larguraPdf:
-      27,
+    larguraPdf: 27,
 
-    larguraExcel:
-      18,
+    larguraExcel: 18,
 
-    larguraTabela:
-      "14%",
+    larguraTabela: "14%",
 
-    valor: (item) =>
-      String(
-        item?.codigo_categoria ?? "",
-      ).trim() || "-",
+    valor: (item) => String(item?.codigo_categoria ?? "").trim() || "-",
 
-    valorExcel: (item) =>
-      String(
-        item?.codigo_categoria ?? "",
-      ).trim() || "-",
+    valorExcel: (item) => String(item?.codigo_categoria ?? "").trim() || "-",
   },
-
 
   categoria_financeira: {
-    titulo:
-      "Categoria Financeira",
+    titulo: "Categoria Financeira",
 
-    larguraPdf:
-      52,
+    larguraPdf: 52,
 
-    larguraExcel:
-      42,
+    larguraExcel: 42,
 
-    larguraTabela:
-      "26%",
+    larguraTabela: "26%",
 
-    valor: (item) =>
-      item?.categoria_financeira ||
-      item?.categoria ||
-      "-",
+    valor: (item) => item?.categoria_financeira || item?.categoria || "-",
 
-    valorExcel: (item) =>
-      item?.categoria_financeira ||
-      item?.categoria ||
-      "-",
+    valorExcel: (item) => item?.categoria_financeira || item?.categoria || "-",
   },
-
 
   tipo_financeiro: {
-    titulo:
-      "Tipo",
+    titulo: "Tipo",
 
-    larguraPdf:
-      20,
+    larguraPdf: 20,
 
-    larguraExcel:
-      14,
+    larguraExcel: 14,
 
-    larguraTabela:
-      "12%",
+    larguraTabela: "12%",
 
-    valor: (item) =>
-      item?.tipo_financeiro ||
-      item?.tipo ||
-      "-",
+    valor: (item) => item?.tipo_financeiro || item?.tipo || "-",
 
-    valorExcel: (item) =>
-      item?.tipo_financeiro ||
-      item?.tipo ||
-      "-",
+    valorExcel: (item) => item?.tipo_financeiro || item?.tipo || "-",
   },
-
 
   valor_previsto: {
-    titulo:
-      "Valor Previsto",
+    titulo: "Valor Previsto",
 
-    larguraPdf:
-      31,
+    larguraPdf: 31,
 
-    larguraExcel:
-      18,
+    larguraExcel: 18,
 
-    larguraTabela:
-      "15%",
+    larguraTabela: "15%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarMoeda(
-        item?.valor_previsto,
-      ),
+    valor: (item) => formatarMoeda(item?.valor_previsto),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item?.valor_previsto,
-      ),
+    valorExcel: (item) => converterNumero(item?.valor_previsto),
 
-    formatoExcel:
-      '[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00',
+    formatoExcel: "[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00",
   },
-
 
   valor_realizado: {
-    titulo:
-      "Valor Realizado",
+    titulo: "Valor Realizado",
 
-    larguraPdf:
-      31,
+    larguraPdf: 31,
 
-    larguraExcel:
-      18,
+    larguraExcel: 18,
 
-    larguraTabela:
-      "15%",
+    larguraTabela: "15%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarMoeda(
-        item?.valor_realizado,
-      ),
+    valor: (item) => formatarMoeda(item?.valor_realizado),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item?.valor_realizado,
-      ),
+    valorExcel: (item) => converterNumero(item?.valor_realizado),
 
-    formatoExcel:
-      '[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00',
+    formatoExcel: "[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00",
   },
-
 
   variacao: {
-    titulo:
-      "Variação",
+    titulo: "Variação",
 
-    larguraPdf:
-      31,
+    larguraPdf: 31,
 
-    larguraExcel:
-      18,
+    larguraExcel: 18,
 
-    larguraTabela:
-      "15%",
+    larguraTabela: "15%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarMoeda(
-        item?.variacao,
-      ),
+    valor: (item) => formatarMoeda(item?.variacao),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item?.variacao,
-      ),
+    valorExcel: (item) => converterNumero(item?.variacao),
 
-    formatoExcel:
-      '[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00',
+    formatoExcel: "[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00",
   },
-
 
   variacao_percentual: {
-    titulo:
-      "Variação Percentual",
+    titulo: "Variação Percentual",
 
-    larguraPdf:
-      31,
+    larguraPdf: 31,
 
-    larguraExcel:
-      20,
+    larguraExcel: 20,
 
-    larguraTabela:
-      "15%",
+    larguraTabela: "15%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarPercentual(
-        item?.variacao_percentual,
-      ),
+    valor: (item) => formatarPercentual(item?.variacao_percentual),
 
     valorExcel: (item) => {
-      if (
-        valorVazio(
-          item?.variacao_percentual,
-        )
-      ) {
+      if (valorVazio(item?.variacao_percentual)) {
         return null;
       }
 
-      return (
-        converterNumero(
-          item.variacao_percentual,
-        ) / 100
-      );
+      return converterNumero(item.variacao_percentual) / 100;
     },
 
-    formatoExcel:
-      '0.00%;[Red]-0.00%',
+    formatoExcel: "0.00%;[Red]-0.00%",
   },
-
 
   excesso_previsto: {
-    titulo:
-      "Excesso sobre o Previsto",
+    titulo: "Excesso sobre o Previsto",
 
-    larguraPdf:
-      34,
+    larguraPdf: 34,
 
-    larguraExcel:
-      22,
+    larguraExcel: 22,
 
-    larguraTabela:
-      "17%",
+    larguraTabela: "17%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarMoeda(
-        item?.excesso_previsto,
-      ),
+    valor: (item) => formatarMoeda(item?.excesso_previsto),
 
-    valorExcel: (item) =>
-      converterNumero(
-        item?.excesso_previsto,
-      ),
+    valorExcel: (item) => converterNumero(item?.excesso_previsto),
 
-    formatoExcel:
-      '[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00',
+    formatoExcel: "[$R$-416] #,##0.00;[Red]-[$R$-416] #,##0.00",
   },
 
-
   excesso_percentual: {
-    titulo:
-      "Excesso Percentual",
+    titulo: "Excesso Percentual",
 
-    larguraPdf:
-      29,
+    larguraPdf: 29,
 
-    larguraExcel:
-      20,
+    larguraExcel: 20,
 
-    larguraTabela:
-      "15%",
+    larguraTabela: "15%",
 
-    numerica:
-      true,
+    numerica: true,
 
-    valor: (item) =>
-      formatarPercentual(
-        item?.excesso_percentual,
-      ),
+    valor: (item) => formatarPercentual(item?.excesso_percentual),
 
     valorExcel: (item) => {
-      if (
-        valorVazio(
-          item?.excesso_percentual,
-        )
-      ) {
+      if (valorVazio(item?.excesso_percentual)) {
         return null;
       }
 
-      return (
-        converterNumero(
-          item.excesso_percentual,
-        ) / 100
-      );
+      return converterNumero(item.excesso_percentual) / 100;
     },
 
-    formatoExcel:
-      '0.00%;[Red]-0.00%',
+    formatoExcel: "0.00%;[Red]-0.00%",
   },
 };
-
 
 export const CHAVES_COLUNAS_FINANCEIRO = [
   "codigo_categoria",
@@ -347,18 +208,11 @@ export const CHAVES_COLUNAS_FINANCEIRO = [
   "variacao_percentual",
 ];
 
-
-export function obterColunasFinanceiro({
-  incluirTipo = false,
-} = {}) {
-  return CHAVES_COLUNAS_FINANCEIRO
-    .filter(
-      (chave) =>
-        incluirTipo ||
-        chave !== "tipo_financeiro",
-    )
-    .map((chave) => ({
-      chave,
-      ...COLUNAS_FINANCEIRO[chave],
-    }));
+export function obterColunasFinanceiro({ incluirTipo = false } = {}) {
+  return CHAVES_COLUNAS_FINANCEIRO.filter(
+    (chave) => incluirTipo || chave !== "tipo_financeiro",
+  ).map((chave) => ({
+    chave,
+    ...COLUNAS_FINANCEIRO[chave],
+  }));
 }

@@ -60,15 +60,11 @@ import {
    Tempo Programado Total
 ===================================================== */
 
-
 /* =====================================================
    CONFIGURAÇÃO DO CALENDÁRIO
 ===================================================== */
 
-const SEGUNDOS_PROGRAMADOS_DIA_UTIL =
-  21 * 60 * 60 +
-  55 * 60;
-
+const SEGUNDOS_PROGRAMADOS_DIA_UTIL = 21 * 60 * 60 + 55 * 60;
 
 /*
  * Finais de semana com produção especial.
@@ -86,30 +82,20 @@ const FINAIS_DE_SEMANA_PROGRAMADOS = new Set([
   // "2026-08-15",
 ]);
 
-
 /* =====================================================
    CONVERTER NÚMERO
 ===================================================== */
 
 function converterNumero(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return 0;
   }
 
-  if (
-    typeof valor === "number"
-  ) {
-    return Number.isFinite(valor)
-      ? valor
-      : 0;
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : 0;
   }
 
-  let texto =
-    String(valor).trim();
+  let texto = String(valor).trim();
 
   if (!texto) {
     return 0;
@@ -123,54 +109,31 @@ function converterNumero(valor) {
    * 1234.56
    */
 
-  if (
-    texto.includes(",") &&
-    texto.includes(".")
-  ) {
-    texto =
-      texto
-        .replace(/\./g, "")
-        .replace(",", ".");
-  } else if (
-    texto.includes(",")
-  ) {
-    texto =
-      texto.replace(",", ".");
+  if (texto.includes(",") && texto.includes(".")) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
+  } else if (texto.includes(",")) {
+    texto = texto.replace(",", ".");
   }
 
-  const numero =
-    Number(texto);
+  const numero = Number(texto);
 
-  return Number.isFinite(numero)
-    ? numero
-    : 0;
+  return Number.isFinite(numero) ? numero : 0;
 }
-
 
 /* =====================================================
    DURAÇÃO PARA SEGUNDOS
 ===================================================== */
 
 function duracaoParaSegundos(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
+  if (valor === null || valor === undefined || valor === "") {
     return 0;
   }
 
-  if (
-    typeof valor === "number"
-  ) {
-    return Math.max(
-      0,
-      valor,
-    );
+  if (typeof valor === "number") {
+    return Math.max(0, valor);
   }
 
-  const texto =
-    String(valor).trim();
+  const texto = String(valor).trim();
 
   if (!texto) {
     return 0;
@@ -180,117 +143,52 @@ function duracaoParaSegundos(valor) {
    * HH:MM:SS
    */
 
-  if (
-    /^\d+:\d{2}:\d{2}$/.test(
-      texto,
-    )
-  ) {
-    const [
-      horas,
-      minutos,
-      segundos,
-    ] =
-      texto
-        .split(":")
-        .map(Number);
+  if (/^\d+:\d{2}:\d{2}$/.test(texto)) {
+    const [horas, minutos, segundos] = texto.split(":").map(Number);
 
-    return (
-      horas * 3600 +
-      minutos * 60 +
-      segundos
-    );
+    return horas * 3600 + minutos * 60 + segundos;
   }
 
   /*
    * MM:SS
    */
 
-  if (
-    /^\d+:\d{2}$/.test(
-      texto,
-    )
-  ) {
-    const [
-      minutos,
-      segundos,
-    ] =
-      texto
-        .split(":")
-        .map(Number);
+  if (/^\d+:\d{2}$/.test(texto)) {
+    const [minutos, segundos] = texto.split(":").map(Number);
 
-    return (
-      minutos * 60 +
-      segundos
-    );
+    return minutos * 60 + segundos;
   }
 
   /*
    * Número puro.
    */
 
-  const numero =
-    Number(texto);
+  const numero = Number(texto);
 
-  return Number.isFinite(numero)
-    ? Math.max(
-        0,
-        numero,
-      )
-    : 0;
+  return Number.isFinite(numero) ? Math.max(0, numero) : 0;
 }
-
 
 /* =====================================================
    SEGUNDOS PARA HH:MM:SS
 ===================================================== */
 
-export function formatarSegundos(
-  segundos,
-) {
-  const total =
-    Math.max(
-      0,
-      Math.round(
-        converterNumero(
-          segundos,
-        ),
-      ),
-    );
+export function formatarSegundos(segundos) {
+  const total = Math.max(0, Math.round(converterNumero(segundos)));
 
-  const horas =
-    Math.floor(
-      total / 3600,
-    );
+  const horas = Math.floor(total / 3600);
 
-  const minutos =
-    Math.floor(
-      (total % 3600) /
-        60,
-    );
+  const minutos = Math.floor((total % 3600) / 60);
 
-  const segundosRestantes =
-    total % 60;
+  const segundosRestantes = total % 60;
 
   return [
-    String(horas).padStart(
-      2,
-      "0",
-    ),
+    String(horas).padStart(2, "0"),
 
-    String(minutos).padStart(
-      2,
-      "0",
-    ),
+    String(minutos).padStart(2, "0"),
 
-    String(
-      segundosRestantes,
-    ).padStart(
-      2,
-      "0",
-    ),
+    String(segundosRestantes).padStart(2, "0"),
   ].join(":");
 }
-
 
 /* =====================================================
    DATA ISO PARA DATE
@@ -301,84 +199,45 @@ function converterDataISO(valor) {
     return null;
   }
 
-  const correspondencia =
-    String(valor).match(
-      /^(\d{4})-(\d{2})-(\d{2})$/,
-    );
+  const correspondencia = String(valor).match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
   if (!correspondencia) {
     return null;
   }
 
-  const ano =
-    Number(
-      correspondencia[1],
-    );
+  const ano = Number(correspondencia[1]);
 
-  const mes =
-    Number(
-      correspondencia[2],
-    ) - 1;
+  const mes = Number(correspondencia[2]) - 1;
 
-  const dia =
-    Number(
-      correspondencia[3],
-    );
+  const dia = Number(correspondencia[3]);
 
   /*
    * Meio-dia evita problemas de mudança
    * de data por timezone.
    */
 
-  const data =
-    new Date(
-      ano,
-      mes,
-      dia,
-      12,
-      0,
-      0,
-    );
+  const data = new Date(ano, mes, dia, 12, 0, 0);
 
-  if (
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+  if (Number.isNaN(data.getTime())) {
     return null;
   }
 
   return data;
 }
 
-
 /* =====================================================
    DATE PARA ISO
 ===================================================== */
 
 function formatarDataISO(data) {
-  const ano =
-    data.getFullYear();
+  const ano = data.getFullYear();
 
-  const mes =
-    String(
-      data.getMonth() + 1,
-    ).padStart(
-      2,
-      "0",
-    );
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
 
-  const dia =
-    String(
-      data.getDate(),
-    ).padStart(
-      2,
-      "0",
-    );
+  const dia = String(data.getDate()).padStart(2, "0");
 
   return `${ano}-${mes}-${dia}`;
 }
-
 
 /* =====================================================
    DIA PROGRAMADO?
@@ -397,17 +256,13 @@ function diaEhProgramado(data) {
    * 6 = Sábado
    */
 
-  const diaSemana =
-    data.getDay();
+  const diaSemana = data.getDay();
 
   /*
    * Segunda a sexta.
    */
 
-  if (
-    diaSemana >= 1 &&
-    diaSemana <= 5
-  ) {
+  if (diaSemana >= 1 && diaSemana <= 5) {
     return true;
   }
 
@@ -415,18 +270,10 @@ function diaEhProgramado(data) {
    * Fim de semana especial.
    */
 
-  const dataISO =
-    formatarDataISO(
-      data,
-    );
+  const dataISO = formatarDataISO(data);
 
-  return (
-    FINAIS_DE_SEMANA_PROGRAMADOS.has(
-      dataISO,
-    )
-  );
+  return FINAIS_DE_SEMANA_PROGRAMADOS.has(dataISO);
 }
-
 
 /* =====================================================
    CALCULAR TEMPO PROGRAMADO
@@ -446,26 +293,12 @@ function diaEhProgramado(data) {
    21h55
 ===================================================== */
 
-function calcularTempoProgramado(
-  dataInicio,
-  dataFim,
-  quantidadeMaquinas = 1,
-) {
-  const inicio =
-    converterDataISO(
-      dataInicio,
-    );
+function calcularTempoProgramado(dataInicio, dataFim, quantidadeMaquinas = 1) {
+  const inicio = converterDataISO(dataInicio);
 
-  const fim =
-    converterDataISO(
-      dataFim,
-    );
+  const fim = converterDataISO(dataFim);
 
-  if (
-    !inicio ||
-    !fim ||
-    inicio > fim
-  ) {
+  if (!inicio || !fim || inicio > fim) {
     return {
       segundos: 0,
 
@@ -477,36 +310,18 @@ function calcularTempoProgramado(
     };
   }
 
-  const quantidade =
-    Math.max(
-      1,
-      Number(
-        quantidadeMaquinas,
-      ) || 1,
-    );
+  const quantidade = Math.max(1, Number(quantidadeMaquinas) || 1);
 
   let diasProgramados = 0;
 
-  const atual =
-    new Date(
-      inicio,
-    );
+  const atual = new Date(inicio);
 
-  while (
-    atual <= fim
-  ) {
-    if (
-      diaEhProgramado(
-        atual,
-      )
-    ) {
-      diasProgramados +=
-        1;
+  while (atual <= fim) {
+    if (diaEhProgramado(atual)) {
+      diasProgramados += 1;
     }
 
-    atual.setDate(
-      atual.getDate() + 1,
-    );
+    atual.setDate(atual.getDate() + 1);
   }
 
   /*
@@ -519,31 +334,25 @@ function calcularTempoProgramado(
    * = 55 máquina-dias
    */
 
-  const maquinaDias =
-    diasProgramados *
-    quantidade;
+  const maquinaDias = diasProgramados * quantidade;
 
   /*
    * Tempo total programado
    * de todas as máquinas.
    */
 
-  const segundos =
-    maquinaDias *
-    SEGUNDOS_PROGRAMADOS_DIA_UTIL;
+  const segundos = maquinaDias * SEGUNDOS_PROGRAMADOS_DIA_UTIL;
 
   return {
     segundos,
 
     diasProgramados,
 
-    quantidadeMaquinas:
-      quantidade,
+    quantidadeMaquinas: quantidade,
 
     maquinaDias,
   };
 }
-
 
 /* =====================================================
    DESCOBRIR PERÍODO PELOS DADOS
@@ -590,28 +399,17 @@ function obterPeriodoDosDados(dados) {
   };
 }
 
-
 /* =====================================================
    TOTAL PRODUZIDO
 ===================================================== */
 
 function obterTotalProduzido(item) {
-  const conforme =
-    converterNumero(
-      item?.conforme,
-    );
+  const conforme = converterNumero(item?.conforme);
 
-  const danificada =
-    converterNumero(
-      item?.danificada,
-    );
+  const danificada = converterNumero(item?.danificada);
 
-  return (
-    conforme +
-    danificada
-  );
+  return conforme + danificada;
 }
-
 
 /* =====================================================
    CICLO REAL
@@ -623,14 +421,9 @@ function obterCicloReal(item) {
    * uma coluna ciclo do banco.
    */
 
-  const cicloDireto =
-    converterNumero(
-      item?.ciclo,
-    );
+  const cicloDireto = converterNumero(item?.ciclo);
 
-  if (
-    cicloDireto > 0
-  ) {
+  if (cicloDireto > 0) {
     return cicloDireto;
   }
 
@@ -640,29 +433,16 @@ function obterCicloReal(item) {
    * duração / quantidade produzida
    */
 
-  const totalProduzido =
-    obterTotalProduzido(
-      item,
-    );
+  const totalProduzido = obterTotalProduzido(item);
 
-  const duracao =
-    duracaoParaSegundos(
-      item?.duracao,
-    );
+  const duracao = duracaoParaSegundos(item?.duracao);
 
-  if (
-    totalProduzido <= 0 ||
-    duracao <= 0
-  ) {
+  if (totalProduzido <= 0 || duracao <= 0) {
     return 0;
   }
 
-  return (
-    duracao /
-    totalProduzido
-  );
+  return duracao / totalProduzido;
 }
-
 
 /* =====================================================
    REFERÊNCIA HISTÓRICA DE CICLO
@@ -671,146 +451,66 @@ function obterCicloReal(item) {
    históricos de cada produto.
 ===================================================== */
 
-export function criarReferenciaHistoricaCiclo(
-  dados,
-) {
-  const referencias =
-    new Map();
+export function criarReferenciaHistoricaCiclo(dados) {
+  const referencias = new Map();
 
-  if (
-    !Array.isArray(dados) ||
-    dados.length === 0
-  ) {
+  if (!Array.isArray(dados) || dados.length === 0) {
     return referencias;
   }
 
-  const produtos =
-    new Map();
+  const produtos = new Map();
 
-  dados.forEach(
-    (item) => {
-      /*
-       * Paradas não entram
-       * na referência de ciclo.
-       */
+  dados.forEach((item) => {
+    /*
+     * Paradas não entram
+     * na referência de ciclo.
+     */
 
-      if (
-        registroEhParada(
-          item,
-        )
-      ) {
-        return;
-      }
+    if (registroEhParada(item)) {
+      return;
+    }
 
-      const produto =
-        String(
-          item?.cod_prod ??
-            "",
-        ).trim();
+    const produto = String(item?.cod_prod ?? "").trim();
 
-      if (!produto) {
-        return;
-      }
+    if (!produto) {
+      return;
+    }
 
-      const ciclo =
-        obterCicloReal(
-          item,
-        );
+    const ciclo = obterCicloReal(item);
 
-      if (
-        ciclo <= 0 ||
-        !Number.isFinite(
-          ciclo,
-        )
-      ) {
-        return;
-      }
+    if (ciclo <= 0 || !Number.isFinite(ciclo)) {
+      return;
+    }
 
-      if (
-        !produtos.has(
-          produto,
-        )
-      ) {
-        produtos.set(
-          produto,
-          [],
-        );
-      }
+    if (!produtos.has(produto)) {
+      produtos.set(produto, []);
+    }
 
-      produtos
-        .get(
-          produto,
-        )
-        .push(
-          ciclo,
-        );
-    },
-  );
+    produtos.get(produto).push(ciclo);
+  });
 
-  produtos.forEach(
-    (
-      ciclos,
-      produto,
-    ) => {
-      const ordenados =
-        [...ciclos].sort(
-          (a, b) =>
-            a - b,
-        );
+  produtos.forEach((ciclos, produto) => {
+    const ordenados = [...ciclos].sort((a, b) => a - b);
 
-      /*
-       * Melhores 20%.
-       */
+    /*
+     * Melhores 20%.
+     */
 
-      const quantidade =
-        Math.max(
-          1,
-          Math.ceil(
-            ordenados.length *
-              0.2,
-          ),
-        );
+    const quantidade = Math.max(1, Math.ceil(ordenados.length * 0.2));
 
-      const melhores =
-        ordenados.slice(
-          0,
-          quantidade,
-        );
+    const melhores = ordenados.slice(0, quantidade);
 
-      const soma =
-        melhores.reduce(
-          (
-            total,
-            ciclo,
-          ) =>
-            total +
-            ciclo,
-          0,
-        );
+    const soma = melhores.reduce((total, ciclo) => total + ciclo, 0);
 
-      const media =
-        melhores.length > 0
-          ? soma /
-            melhores.length
-          : 0;
+    const media = melhores.length > 0 ? soma / melhores.length : 0;
 
-      if (
-        media > 0 &&
-        Number.isFinite(
-          media,
-        )
-      ) {
-        referencias.set(
-          produto,
-          media,
-        );
-      }
-    },
-  );
+    if (media > 0 && Number.isFinite(media)) {
+      referencias.set(produto, media);
+    }
+  });
 
   return referencias;
 }
-
 
 /* =====================================================
    RESULTADO VAZIO
@@ -838,41 +538,29 @@ function criarResultadoVazio() {
 
     maquinaDias: 0,
 
-    tempoProgramadoSegundos:
-      0,
+    tempoProgramadoSegundos: 0,
 
-    tempoProduzindoSegundos:
-      0,
+    tempoProduzindoSegundos: 0,
 
-    tempoParadoSegundos:
-      0,
+    tempoParadoSegundos: 0,
 
-    tempoConsideradoSegundos:
-      0,
+    tempoConsideradoSegundos: 0,
 
-    tempoProgramado:
-      "00:00:00",
+    tempoProgramado: "00:00:00",
 
-    tempoProduzindo:
-      "00:00:00",
+    tempoProduzindo: "00:00:00",
 
-    tempoParado:
-      "00:00:00",
+    tempoParado: "00:00:00",
 
-    tempoConsiderado:
-      "00:00:00",
+    tempoConsiderado: "00:00:00",
 
-    performanceEstimada:
-      true,
+    performanceEstimada: true,
 
-    produtosComReferencia:
-      0,
+    produtosComReferencia: 0,
 
-    produtosSemReferencia:
-      0,
+    produtosSemReferencia: 0,
   };
 }
-
 
 /* =====================================================
    CALCULAR OEE
@@ -883,11 +571,7 @@ export function calcularOeeCargaMaquina(
   dadosHistoricos = dadosFiltrados,
   opcoes = {},
 ) {
-  if (
-    !Array.isArray(
-      dadosFiltrados,
-    )
-  ) {
+  if (!Array.isArray(dadosFiltrados)) {
     return criarResultadoVazio();
   }
 
@@ -895,19 +579,11 @@ export function calcularOeeCargaMaquina(
      PERÍODO
   ================================================= */
 
-  const periodoDados =
-    obterPeriodoDosDados(
-      dadosFiltrados,
-    );
+  const periodoDados = obterPeriodoDosDados(dadosFiltrados);
 
-  const dataInicio =
-    opcoes.dataInicio ||
-    periodoDados.dataInicio;
+  const dataInicio = opcoes.dataInicio || periodoDados.dataInicio;
 
-  const dataFim =
-    opcoes.dataFim ||
-    periodoDados.dataFim;
-
+  const dataFim = opcoes.dataFim || periodoDados.dataFim;
 
   /* =================================================
      QUANTIDADE DE INJETORAS
@@ -927,34 +603,15 @@ export function calcularOeeCargaMaquina(
   ================================================= */
 
   const baseParaInjetoras =
-    Array.isArray(
-      dadosHistoricos,
-    ) &&
-    dadosHistoricos.length > 0
-      ? dadosHistoricos
-      : dadosFiltrados;
+    Array.isArray(dadosHistoricos) && dadosHistoricos.length > 0 ? dadosHistoricos : dadosFiltrados;
 
-  const injetorasConsideradas =
-    [
-      ...new Set(
-        baseParaInjetoras
-          .map(
-            (item) =>
-              String(
-                item?.injetora ??
-                  "",
-              ).trim(),
-          )
-          .filter(Boolean),
-      ),
-    ];
+  const injetorasConsideradas = [
+    ...new Set(
+      baseParaInjetoras.map((item) => String(item?.injetora ?? "").trim()).filter(Boolean),
+    ),
+  ];
 
-  const quantidadeMaquinas =
-    Math.max(
-      1,
-      injetorasConsideradas.length,
-    );
-
+  const quantidadeMaquinas = Math.max(1, injetorasConsideradas.length);
 
   /* =================================================
      TEMPO PROGRAMADO
@@ -968,30 +625,17 @@ export function calcularOeeCargaMaquina(
      21h55
   ================================================= */
 
-  const calendario =
-    calcularTempoProgramado(
-      dataInicio,
-      dataFim,
-      quantidadeMaquinas,
-    );
+  const calendario = calcularTempoProgramado(dataInicio, dataFim, quantidadeMaquinas);
 
-  const tempoProgramado =
-    calendario.segundos;
-
+  const tempoProgramado = calendario.segundos;
 
   /* =================================================
      REFERÊNCIA HISTÓRICA
   ================================================= */
 
-  const referencias =
-    criarReferenciaHistoricaCiclo(
-      Array.isArray(
-        dadosHistoricos,
-      )
-        ? dadosHistoricos
-        : dadosFiltrados,
-    );
-
+  const referencias = criarReferenciaHistoricaCiclo(
+    Array.isArray(dadosHistoricos) ? dadosHistoricos : dadosFiltrados,
+  );
 
   /* =================================================
      ACUMULADORES
@@ -1005,32 +649,20 @@ export function calcularOeeCargaMaquina(
 
   let tempoIdeal = 0;
 
-  const produtosComReferencia =
-    new Set();
+  const produtosComReferencia = new Set();
 
-  const produtosSemReferencia =
-    new Set();
-
+  const produtosSemReferencia = new Set();
 
   /* =================================================
      PERCORRE REGISTROS
   ================================================= */
 
-  dadosFiltrados.forEach(
-    (item) => {
-      const tipo =
-        String(
-          item?.tipo ??
-            "",
-        ).trim();
+  dadosFiltrados.forEach((item) => {
+    const tipo = String(item?.tipo ?? "").trim();
 
-      const duracao =
-        duracaoParaSegundos(
-          item?.duracao,
-        );
+    const duracao = duracaoParaSegundos(item?.duracao);
 
-
-      /* =============================================
+    /* =============================================
          PARADA TIPO 1
          PLANEJADA
 
@@ -1038,34 +670,26 @@ export function calcularOeeCargaMaquina(
          afeta a disponibilidade.
       ============================================= */
 
-      if (
-        tipo === "1"
-      ) {
-        tempoParado +=
-          duracao;
+    if (tipo === "1") {
+      tempoParado += duracao;
 
-        return;
-      }
+      return;
+    }
 
-
-      /* =============================================
+    /* =============================================
          PARADA TIPO 2
          NÃO PLANEJADA
 
          Afeta disponibilidade.
       ============================================= */
 
-      if (
-        tipo === "2"
-      ) {
-        tempoParado +=
-          duracao;
+    if (tipo === "2") {
+      tempoParado += duracao;
 
-        return;
-      }
+      return;
+    }
 
-
-      /* =============================================
+    /* =============================================
          TIPO 3
 
          Intervalo / Fora de Produção.
@@ -1074,81 +698,46 @@ export function calcularOeeCargaMaquina(
          de disponibilidade.
       ============================================= */
 
-      if (
-        tipo === "3"
-      ) {
-        return;
-      }
+    if (tipo === "3") {
+      return;
+    }
 
-
-      /* =============================================
+    /* =============================================
          PRODUÇÃO
       ============================================= */
 
-      const conforme =
-        converterNumero(
-          item?.conforme,
-        );
+    const conforme = converterNumero(item?.conforme);
 
-      const danificada =
-        converterNumero(
-          item?.danificada,
-        );
+    const danificada = converterNumero(item?.danificada);
 
-      const totalProduzido =
-        conforme +
-        danificada;
+    const totalProduzido = conforme + danificada;
 
-      if (
-        totalProduzido <= 0
-      ) {
-        return;
-      }
+    if (totalProduzido <= 0) {
+      return;
+    }
 
-      conformeTotal +=
-        conforme;
+    conformeTotal += conforme;
 
-      danificadaTotal +=
-        danificada;
+    danificadaTotal += danificada;
 
-
-      /* =============================================
+    /* =============================================
          PERFORMANCE
       ============================================= */
 
-      const produto =
-        String(
-          item?.cod_prod ??
-            "",
-        ).trim();
+    const produto = String(item?.cod_prod ?? "").trim();
 
-      const cicloReferencia =
-        referencias.get(
-          produto,
-        ) || 0;
+    const cicloReferencia = referencias.get(produto) || 0;
 
-      if (
-        cicloReferencia > 0
-      ) {
-        tempoIdeal +=
-          totalProduzido *
-          cicloReferencia;
+    if (cicloReferencia > 0) {
+      tempoIdeal += totalProduzido * cicloReferencia;
 
-        if (produto) {
-          produtosComReferencia.add(
-            produto,
-          );
-        }
-      } else if (
-        produto
-      ) {
-        produtosSemReferencia.add(
-          produto,
-        );
+      if (produto) {
+        produtosComReferencia.add(produto);
       }
-    },
-  );
-
+    } else if (produto) {
+      produtosSemReferencia.add(produto);
+    }
+  });
 
   /* =====================================================
      PROTEÇÃO DO TEMPO PARADO
@@ -1157,12 +746,7 @@ export function calcularOeeCargaMaquina(
      o tempo programado.
   ===================================================== */
 
-  tempoParado =
-    Math.min(
-      tempoParado,
-      tempoProgramado,
-    );
-
+  tempoParado = Math.min(tempoParado, tempoProgramado);
 
   /* =====================================================
      TEMPO OPERACIONAL
@@ -1170,13 +754,7 @@ export function calcularOeeCargaMaquina(
      PROGRAMADO - PARADAS
   ===================================================== */
 
-  const tempoOperacional =
-    Math.max(
-      0,
-      tempoProgramado -
-        tempoParado,
-    );
-
+  const tempoOperacional = Math.max(0, tempoProgramado - tempoParado);
 
   /* =====================================================
      DISPONIBILIDADE
@@ -1186,27 +764,15 @@ export function calcularOeeCargaMaquina(
      tempo programado
   ===================================================== */
 
-  const disponibilidade =
-    tempoProgramado > 0
-      ? tempoOperacional /
-        tempoProgramado
-      : 0;
-
+  const disponibilidade = tempoProgramado > 0 ? tempoOperacional / tempoProgramado : 0;
 
   /* =====================================================
      QUALIDADE
   ===================================================== */
 
-  const totalProduzido =
-    conformeTotal +
-    danificadaTotal;
+  const totalProduzido = conformeTotal + danificadaTotal;
 
-  const qualidade =
-    totalProduzido > 0
-      ? conformeTotal /
-        totalProduzido
-      : 0;
-
+  const qualidade = totalProduzido > 0 ? conformeTotal / totalProduzido : 0;
 
   /* =====================================================
      PERFORMANCE
@@ -1218,101 +784,62 @@ export function calcularOeeCargaMaquina(
      Ainda é uma estimativa histórica.
   ===================================================== */
 
-  let performance =
-    tempoOperacional > 0
-      ? tempoIdeal /
-        tempoOperacional
-      : 0;
+  let performance = tempoOperacional > 0 ? tempoIdeal / tempoOperacional : 0;
 
-  performance =
-    Math.max(
-      0,
-      Math.min(
-        1,
-        performance,
-      ),
-    );
-
+  performance = Math.max(0, Math.min(1, performance));
 
   /* =====================================================
      OEE
   ===================================================== */
 
-  const oee =
-    disponibilidade *
-    performance *
-    qualidade;
-
+  const oee = disponibilidade * performance * qualidade;
 
   /* =====================================================
      RESULTADO
   ===================================================== */
 
   return {
-    disponibilidade:
-      disponibilidade *
-      100,
+    disponibilidade: disponibilidade * 100,
 
-    performance:
-      performance *
-      100,
+    performance: performance * 100,
 
-    qualidade:
-      qualidade *
-      100,
+    qualidade: qualidade * 100,
 
-    oee:
-      oee *
-      100,
+    oee: oee * 100,
 
-    conforme:
-      conformeTotal,
+    conforme: conformeTotal,
 
-    danificada:
-      danificadaTotal,
+    danificada: danificadaTotal,
 
     totalProduzido,
-
 
     /* =================================================
        CALENDÁRIO
     ================================================= */
 
-    diasProgramados:
-      calendario.diasProgramados,
+    diasProgramados: calendario.diasProgramados,
 
-    quantidadeMaquinas:
-      calendario.quantidadeMaquinas,
+    quantidadeMaquinas: calendario.quantidadeMaquinas,
 
-    maquinaDias:
-      calendario.maquinaDias,
-
+    maquinaDias: calendario.maquinaDias,
 
     /* =================================================
        TEMPOS EM SEGUNDOS
     ================================================= */
 
-    tempoProgramadoSegundos:
-      tempoProgramado,
+    tempoProgramadoSegundos: tempoProgramado,
 
-    tempoProduzindoSegundos:
-      tempoOperacional,
+    tempoProduzindoSegundos: tempoOperacional,
 
-    tempoParadoSegundos:
-      tempoParado,
+    tempoParadoSegundos: tempoParado,
 
-    tempoConsideradoSegundos:
-      tempoProgramado,
-
+    tempoConsideradoSegundos: tempoProgramado,
 
     /* =================================================
        TEMPOS FORMATADOS
     ================================================= */
 
-    tempoProgramado:
-      formatarSegundos(
-        tempoProgramado,
-      ),
+    tempoProgramado: formatarSegundos(tempoProgramado),
 
     /*
      * Mantemos o nome tempoProduzindo
@@ -1323,33 +850,20 @@ export function calcularOeeCargaMaquina(
      * Tempo Programado - Tempo Parado
      */
 
-    tempoProduzindo:
-      formatarSegundos(
-        tempoOperacional,
-      ),
+    tempoProduzindo: formatarSegundos(tempoOperacional),
 
-    tempoParado:
-      formatarSegundos(
-        tempoParado,
-      ),
+    tempoParado: formatarSegundos(tempoParado),
 
-    tempoConsiderado:
-      formatarSegundos(
-        tempoProgramado,
-      ),
-
+    tempoConsiderado: formatarSegundos(tempoProgramado),
 
     /* =================================================
        PERFORMANCE
     ================================================= */
 
-    performanceEstimada:
-      true,
+    performanceEstimada: true,
 
-    produtosComReferencia:
-      produtosComReferencia.size,
+    produtosComReferencia: produtosComReferencia.size,
 
-    produtosSemReferencia:
-      produtosSemReferencia.size,
+    produtosSemReferencia: produtosSemReferencia.size,
   };
 }

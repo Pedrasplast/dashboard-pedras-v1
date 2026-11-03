@@ -438,7 +438,8 @@ function Navbar({ user, isAdmin }) {
 
   /* Aviso de rotinas com erro (só administradores; ver Monitoramento). */
   const { data: avisosMonitoramento = 0 } = useAvisosMonitoramento(Boolean(user) && isAdmin);
-  const badgeMonitoramento = avisosMonitoramento > 0 ? formatarBadgePedidos(avisosMonitoramento) : null;
+  const badgeMonitoramento =
+    avisosMonitoramento > 0 ? formatarBadgePedidos(avisosMonitoramento) : null;
 
   /* =====================================================
      NOTIFICAÇÕES DE PEDIDOS

@@ -2,11 +2,11 @@ import { supabase } from "@/lib/supabaseClient";
 import { carregarMapaNumeroPedidoExibicao } from "../numeroPedidoExibicao";
 
 export async function buscarPedidosDiretoSupabase() {
-  const [resultadoPedidos, mapaNumeroPedidoExibicao, resultadoSincronizacao] =
-    await Promise.all([
-      supabase
-        .from("pedidos_omie")
-        .select(`
+  const [resultadoPedidos, mapaNumeroPedidoExibicao, resultadoSincronizacao] = await Promise.all([
+    supabase
+      .from("pedidos_omie")
+      .select(
+        `
           chave_item,
           codigo_pedido_omie,
           numero_pedido,
@@ -21,47 +21,44 @@ export async function buscarPedidosDiretoSupabase() {
           valor,
           codigo_etapa,
           status
-        `)
-        .eq("ativo", true)
-        .order("previsao", {
-          ascending: true,
-          nullsFirst: false,
-        })
-        .order("numero_pedido", {
-          ascending: true,
-        }),
+        `,
+      )
+      .eq("ativo", true)
+      .order("previsao", {
+        ascending: true,
+        nullsFirst: false,
+      })
+      .order("numero_pedido", {
+        ascending: true,
+      }),
 
-      carregarMapaNumeroPedidoExibicao(supabase),
+    carregarMapaNumeroPedidoExibicao(supabase),
 
-      supabase
-        .from("sincronizacao_omie")
-        .select(`
+    supabase
+      .from("sincronizacao_omie")
+      .select(
+        `
           ultima_sincronizacao,
           status,
           quantidade_pedidos,
           quantidade_itens,
           duracao_ms,
           mensagem
-        `)
-        .eq("id", 1)
-        .maybeSingle(),
-    ]);
+        `,
+      )
+      .eq("id", 1)
+      .maybeSingle(),
+  ]);
 
   if (resultadoPedidos.error) {
-    throw new Error(
-      `Erro ao consultar pedidos: ${resultadoPedidos.error.message}`,
-    );
+    throw new Error(`Erro ao consultar pedidos: ${resultadoPedidos.error.message}`);
   }
 
   if (resultadoSincronizacao.error) {
-    throw new Error(
-      `Erro ao consultar sincronização: ${resultadoSincronizacao.error.message}`,
-    );
+    throw new Error(`Erro ao consultar sincronização: ${resultadoSincronizacao.error.message}`);
   }
 
-  const registros = Array.isArray(resultadoPedidos.data)
-    ? resultadoPedidos.data
-    : [];
+  const registros = Array.isArray(resultadoPedidos.data) ? resultadoPedidos.data : [];
 
   const pedidos = registros.map((registro) => ({
     id: registro.chave_item,
@@ -71,8 +68,7 @@ export async function buscarPedidosDiretoSupabase() {
     pedido: registro.numero_pedido,
     numero_pedido: registro.numero_pedido,
     pedidoExibicao:
-      mapaNumeroPedidoExibicao.get(Number(registro.codigo_pedido_omie)) ||
-      registro.numero_pedido,
+      mapaNumeroPedidoExibicao.get(Number(registro.codigo_pedido_omie)) || registro.numero_pedido,
     cliente: registro.cliente || "-",
     data: registro.data_pedido || null,
     previsao: registro.previsao || null,
@@ -99,10 +95,9 @@ export async function buscarPedidosDiretoSupabase() {
 }
 
 export async function buscarNotificacoesPendentes() {
-  const { data, error } = await supabase.rpc(
-    "listar_notificacoes_pedidos_nao_lidas",
-    { p_limite: 100 },
-  );
+  const { data, error } = await supabase.rpc("listar_notificacoes_pedidos_nao_lidas", {
+    p_limite: 100,
+  });
 
   if (error) throw error;
 
@@ -110,10 +105,9 @@ export async function buscarNotificacoesPendentes() {
 }
 
 export async function marcarPedidoComoVisualizado(codigoPedido) {
-  const { data, error } = await supabase.rpc(
-    "marcar_pedido_como_visualizado",
-    { p_codigo_pedido_omie: codigoPedido },
-  );
+  const { data, error } = await supabase.rpc("marcar_pedido_como_visualizado", {
+    p_codigo_pedido_omie: codigoPedido,
+  });
 
   if (error) throw error;
   return data === true;

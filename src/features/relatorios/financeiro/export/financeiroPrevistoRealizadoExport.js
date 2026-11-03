@@ -1,32 +1,15 @@
-export function criarRelatorioFinanceiroExportacao(
-  relatorio,
-) {
+export function criarRelatorioFinanceiroExportacao(relatorio) {
   return {
     ...relatorio,
 
-    colunas: Array.isArray(
-      relatorio?.colunas,
-    )
-      ? relatorio.colunas.filter(
-          (chave) =>
-            chave !== "tipo_financeiro",
-        )
+    colunas: Array.isArray(relatorio?.colunas)
+      ? relatorio.colunas.filter((chave) => chave !== "tipo_financeiro")
       : [],
   };
 }
 
-
-export async function exportarFinanceiroPDF({
-  relatorio,
-  dados,
-  textoFiltros,
-  grupos,
-}) {
-  const {
-    gerarPdfRelatorio,
-  } = await import(
-    "../../exportacao/GerarPDF"
-  );
+export async function exportarFinanceiroPDF({ relatorio, dados, textoFiltros, grupos }) {
+  const { gerarPdfRelatorio } = await import("../../exportacao/GerarPDF");
 
   return gerarPdfRelatorio({
     relatorio,
@@ -36,18 +19,8 @@ export async function exportarFinanceiroPDF({
   });
 }
 
-
-export async function exportarFinanceiroExcel({
-  relatorio,
-  dados,
-  textoFiltros,
-  grupos,
-}) {
-  const {
-    gerarExcelRelatorio,
-  } = await import(
-    "../../exportacao/GerarExcel"
-  );
+export async function exportarFinanceiroExcel({ relatorio, dados, textoFiltros, grupos }) {
+  const { gerarExcelRelatorio } = await import("../../exportacao/GerarExcel");
 
   return gerarExcelRelatorio({
     relatorio,

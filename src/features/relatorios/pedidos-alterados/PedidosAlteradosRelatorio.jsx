@@ -26,7 +26,6 @@ import "./PedidosAlteradosRelatorio.css";
 
 const ITENS_POR_PAGINA = 8;
 
-
 /* =====================================================
    DESDOBRAMENTO / NUMERAÇÃO VISUAL
 
@@ -43,9 +42,7 @@ function obterTimestampCriacaoPedido(valor) {
 
   const timestamp = new Date(valor).getTime();
 
-  return Number.isFinite(timestamp)
-    ? timestamp
-    : Number.POSITIVE_INFINITY;
+  return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
 }
 
 function criarMapaMetadadosPedidoExibicao(registros) {
@@ -525,21 +522,14 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
     isLoading,
     error,
   } = useQuery({
-    queryKey: [
-      "relatorio-pedidos-alterados",
-      dataInicial,
-      dataFinal,
-    ],
+    queryKey: ["relatorio-pedidos-alterados", dataInicial, dataFinal],
 
     queryFn: async () => {
-      const { data, error: erroRpc } = await supabase.rpc(
-        "listar_relatorio_pedidos_alterados",
-        {
-          p_data_inicial: dataInicial || null,
-          p_data_final: dataFinal || null,
-          p_limite: 2000,
-        },
-      );
+      const { data, error: erroRpc } = await supabase.rpc("listar_relatorio_pedidos_alterados", {
+        p_data_inicial: dataInicial || null,
+        p_data_final: dataFinal || null,
+        p_limite: 2000,
+      });
 
       if (erroRpc) {
         throw erroRpc;
@@ -562,19 +552,14 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
      exibidos.
   ================================================= */
 
-  const {
-    data: mapaMetadadosPedidoExibicao,
-  } = useQuery({
+  const { data: mapaMetadadosPedidoExibicao } = useQuery({
     queryKey: ["mapa-metadados-pedidos-desdobrados-v3"],
 
     queryFn: async () => {
       try {
         return await carregarMapaMetadadosPedidoExibicao();
       } catch (erro) {
-        console.warn(
-          "Não foi possível carregar os metadados de desdobramento dos pedidos:",
-          erro,
-        );
+        console.warn("Não foi possível carregar os metadados de desdobramento dos pedidos:", erro);
 
         return new Map();
       }
@@ -596,27 +581,16 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
   const relatorio = useMemo(() => {
     const mapa =
-      mapaMetadadosPedidoExibicao instanceof Map
-        ? mapaMetadadosPedidoExibicao
-        : new Map();
+      mapaMetadadosPedidoExibicao instanceof Map ? mapaMetadadosPedidoExibicao : new Map();
 
     return relatorioBase.map((pedido) => {
-      const codigoPedidoOmie = Number(
-        pedido?.codigo_pedido_omie,
-      );
+      const codigoPedidoOmie = Number(pedido?.codigo_pedido_omie);
 
-      const numeroOriginal = String(
-        pedido?.numero_pedido ??
-          codigoPedidoOmie ??
-          "",
-      ).trim();
+      const numeroOriginal = String(pedido?.numero_pedido ?? codigoPedidoOmie ?? "").trim();
 
-      const metadadosDesdobramento =
-        mapa.get(codigoPedidoOmie);
+      const metadadosDesdobramento = mapa.get(codigoPedidoOmie);
 
-      const numeroExibicao =
-        metadadosDesdobramento?.numeroExibicao ??
-        numeroOriginal;
+      const numeroExibicao = metadadosDesdobramento?.numeroExibicao ?? numeroOriginal;
 
       return {
         ...pedido,
@@ -629,25 +603,21 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
 
         // Metadados visuais do desdobramento.
         // Isso NÃO aumenta a contagem de alterações.
-        pedido_desdobrado:
-          Boolean(metadadosDesdobramento?.desdobrado),
+        pedido_desdobrado: Boolean(metadadosDesdobramento?.desdobrado),
 
-        pedido_desdobramento_original:
-          Boolean(metadadosDesdobramento?.ehOriginal),
+        pedido_desdobramento_original: Boolean(metadadosDesdobramento?.ehOriginal),
 
-        pedido_desdobramento_indice:
-          Number(metadadosDesdobramento?.indice ?? 0),
+        pedido_desdobramento_indice: Number(metadadosDesdobramento?.indice ?? 0),
 
-        pedido_desdobramento_total:
-          Number(metadadosDesdobramento?.total ?? 1),
+        pedido_desdobramento_total: Number(metadadosDesdobramento?.total ?? 1),
 
-        pedido_desdobramento_quantidade_derivados:
-          Number(metadadosDesdobramento?.quantidadeDerivados ?? 0),
+        pedido_desdobramento_quantidade_derivados: Number(
+          metadadosDesdobramento?.quantidadeDerivados ?? 0,
+        ),
 
-        pedido_desdobramento_partes:
-          Array.isArray(metadadosDesdobramento?.partes)
-            ? metadadosDesdobramento.partes
-            : [],
+        pedido_desdobramento_partes: Array.isArray(metadadosDesdobramento?.partes)
+          ? metadadosDesdobramento.partes
+          : [],
       };
     });
   }, [relatorioBase, mapaMetadadosPedidoExibicao]);
@@ -892,50 +862,50 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
           (pesquisa.trim() ? 1 : 0)
         }
         filtros={
-        <div className="pedidos-alterados-filtros">
-          {/* DATA INICIAL */}
+          <div className="pedidos-alterados-filtros">
+            {/* DATA INICIAL */}
 
-          <label className="pedidos-alterados-campo">
-            <span>De</span>
-
-            <input
-              type="date"
-              value={dataInicial}
-              max={dataFinal || undefined}
-              onChange={(event) => alterarDataInicial(event.target.value)}
-            />
-          </label>
-
-          {/* DATA FINAL */}
-
-          <label className="pedidos-alterados-campo">
-            <span>Até</span>
-
-            <input
-              type="date"
-              value={dataFinal}
-              min={dataInicial || undefined}
-              onChange={(event) => alterarDataFinal(event.target.value)}
-            />
-          </label>
-
-          {/* PESQUISA */}
-
-          <label className="pedidos-alterados-campo pedidos-alterados-pesquisa-campo">
-            <span>Buscar</span>
-
-            <div className="pedidos-alterados-pesquisa">
-              <FiSearch />
+            <label className="pedidos-alterados-campo">
+              <span>De</span>
 
               <input
-                type="text"
-                value={pesquisa}
-                onChange={(event) => alterarPesquisa(event.target.value)}
-                placeholder="Pedido, cliente, vendedor ou campo alterado..."
+                type="date"
+                value={dataInicial}
+                max={dataFinal || undefined}
+                onChange={(event) => alterarDataInicial(event.target.value)}
               />
-            </div>
-          </label>
-        </div>
+            </label>
+
+            {/* DATA FINAL */}
+
+            <label className="pedidos-alterados-campo">
+              <span>Até</span>
+
+              <input
+                type="date"
+                value={dataFinal}
+                min={dataInicial || undefined}
+                onChange={(event) => alterarDataFinal(event.target.value)}
+              />
+            </label>
+
+            {/* PESQUISA */}
+
+            <label className="pedidos-alterados-campo pedidos-alterados-pesquisa-campo">
+              <span>Buscar</span>
+
+              <div className="pedidos-alterados-pesquisa">
+                <FiSearch />
+
+                <input
+                  type="text"
+                  value={pesquisa}
+                  onChange={(event) => alterarPesquisa(event.target.value)}
+                  placeholder="Pedido, cliente, vendedor ou campo alterado..."
+                />
+              </div>
+            </label>
+          </div>
         }
         acoes={{
           onPdf: exportarPDF,
@@ -950,7 +920,11 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
           gerandoExcel: exportando === "excel",
         }}
         indicadores={[
-          { rotulo: "Pedidos alterados", valor: totalItens.toLocaleString("pt-BR"), destaque: true },
+          {
+            rotulo: "Pedidos alterados",
+            valor: totalItens.toLocaleString("pt-BR"),
+            destaque: true,
+          },
           { rotulo: "Alterações", valor: totalAlteracoes.toLocaleString("pt-BR") },
           {
             rotulo: "Período",
@@ -961,403 +935,408 @@ export default function PedidosAlteradosRelatorio({ relatorio: relatorioConfig }
           },
         ]}
       >
-      {/* ===============================================
+        {/* ===============================================
           ERRO DA CONSULTA
       =============================================== */}
 
-      {error && (
-        <div className="relatorios-erro pedidos-alterados-erro">
-          <FiAlertTriangle />
+        {error && (
+          <div className="relatorios-erro pedidos-alterados-erro">
+            <FiAlertTriangle />
 
-          <span>{error.message || "Não foi possível carregar as alterações dos pedidos."}</span>
-        </div>
-      )}
+            <span>{error.message || "Não foi possível carregar as alterações dos pedidos."}</span>
+          </div>
+        )}
 
-      {/* ===============================================
+        {/* ===============================================
           CARREGAMENTO
       =============================================== */}
 
-      {!error && isLoading && (
-        <div className="relatorios-loading pedidos-alterados-loading">
-          <div className="relatorios-loading-card">
-            <div className="relatorios-spinner" />
+        {!error && isLoading && (
+          <div className="relatorios-loading pedidos-alterados-loading">
+            <div className="relatorios-loading-card">
+              <div className="relatorios-spinner" />
 
-            <p>Carregando alterações dos pedidos...</p>
+              <p>Carregando alterações dos pedidos...</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ===============================================
+        {/* ===============================================
           TABELA DE AUDITORIA
       =============================================== */}
 
-      {!error && !isLoading && totalItens > 0 && (
-        <>
-          <section className="relatorio-visualizacao pedidos-alterados-visualizacao">
-            {/* CABEÇALHO */}
+        {!error && !isLoading && totalItens > 0 && (
+          <>
+            <section className="relatorio-visualizacao pedidos-alterados-visualizacao">
+              {/* CABEÇALHO */}
 
-            <div className="relatorio-visualizacao-header">
-              <div>
-                <span className="relatorio-visualizacao-eyebrow">Auditoria</span>
+              <div className="relatorio-visualizacao-header">
+                <div>
+                  <span className="relatorio-visualizacao-eyebrow">Auditoria</span>
 
-                <h3>Alterações encontradas</h3>
-              </div>
-            </div>
-
-            {/* INFORMAÇÕES */}
-
-            <div className="relatorio-visualizacao-info">
-              <div className="relatorio-visualizacao-info-item">
-                <span>Período</span>
-
-                <strong>
-                  {dataInicial ? dataInicial.split("-").reverse().join("/") : "Sem data inicial"}
-
-                  {" até "}
-
-                  {dataFinal ? dataFinal.split("-").reverse().join("/") : "Sem data final"}
-                </strong>
+                  <h3>Alterações encontradas</h3>
+                </div>
               </div>
 
-              <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
-                <span>Pedidos</span>
+              {/* INFORMAÇÕES */}
 
-                <strong>{totalItens}</strong>
+              <div className="relatorio-visualizacao-info">
+                <div className="relatorio-visualizacao-info-item">
+                  <span>Período</span>
+
+                  <strong>
+                    {dataInicial ? dataInicial.split("-").reverse().join("/") : "Sem data inicial"}
+
+                    {" até "}
+
+                    {dataFinal ? dataFinal.split("-").reverse().join("/") : "Sem data final"}
+                  </strong>
+                </div>
+
+                <div className="relatorio-visualizacao-info-item relatorio-visualizacao-total">
+                  <span>Pedidos</span>
+
+                  <strong>{totalItens}</strong>
+                </div>
               </div>
-            </div>
 
-            {/* =====================================
+              {/* =====================================
                 TABELA
             ===================================== */}
 
-            <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
-              <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
-                <thead>
-                  <tr>
-                    <th>Pedido</th>
+              <div className="relatorio-visualizacao-tabela-wrapper pedidos-alterados-tabela-wrapper">
+                <table className="relatorio-visualizacao-tabela pedidos-alterados-tabela">
+                  <thead>
+                    <tr>
+                      <th>Pedido</th>
 
-                    <th>Cliente</th>
+                      <th>Cliente</th>
 
-                    <th>Vendedor</th>
+                      <th>Vendedor</th>
 
-                    <th>Última alteração</th>
+                      <th>Última alteração</th>
 
-                    <th>Nº alterações</th>
+                      <th>Nº alterações</th>
 
-                    <th>O que foi alterado</th>
+                      <th>O que foi alterado</th>
 
-                    <th>Histórico</th>
-                  </tr>
-                </thead>
+                      <th>Histórico</th>
+                    </tr>
+                  </thead>
 
-                {/* =================================
+                  {/* =================================
                     CORPO DA TABELA
 
                     Usa pedidosPagina.
                 ================================= */}
 
-                <tbody>
-                  {pedidosPagina.map((pedido) => {
-                    const codigo = pedido.codigo_pedido_omie;
+                  <tbody>
+                    {pedidosPagina.map((pedido) => {
+                      const codigo = pedido.codigo_pedido_omie;
 
-                    const expandido = pedidosExpandidos.has(codigo);
+                      const expandido = pedidosExpandidos.has(codigo);
 
-                    const campos = Array.isArray(pedido.campos_alterados)
-                      ? pedido.campos_alterados
-                      : [];
+                      const campos = Array.isArray(pedido.campos_alterados)
+                        ? pedido.campos_alterados
+                        : [];
 
-                    const ocorrencias = Array.isArray(pedido.detalhes_alteracoes)
-                      ? pedido.detalhes_alteracoes
-                      : [];
+                      const ocorrencias = Array.isArray(pedido.detalhes_alteracoes)
+                        ? pedido.detalhes_alteracoes
+                        : [];
 
-                    return (
-                      <Fragment key={`pedido-${codigo}`}>
-                        {/* =========================
+                      return (
+                        <Fragment key={`pedido-${codigo}`}>
+                          {/* =========================
                             LINHA DO PEDIDO
                         ========================= */}
 
-                        <tr>
-                          {/* PEDIDO */}
+                          <tr>
+                            {/* PEDIDO */}
 
-                          <td>
-                            <div className="pedidos-alterados-pedido-identificacao">
-                              <strong className="pedidos-alterados-numero">
-                                {pedido.numero_pedido || codigo}
-                              </strong>
+                            <td>
+                              <div className="pedidos-alterados-pedido-identificacao">
+                                <strong className="pedidos-alterados-numero">
+                                  {pedido.numero_pedido || codigo}
+                                </strong>
 
-                              {pedido.pedido_desdobrado && (
-                                <span
-                                  className={`pedidos-alterados-desdobramento-badge ${
-                                    pedido.pedido_desdobramento_original
-                                      ? "original"
-                                      : "derivado"
-                                  }`}
-                                  title={
-                                    pedido.pedido_desdobramento_original
-                                      ? "Pedido original que possui desdobramento"
-                                      : `Pedido gerado pelo desdobramento do pedido ${
-                                          pedido.numero_pedido_original || ""
-                                        }`
-                                  }
-                                >
-                                  <FiGitBranch />
+                                {pedido.pedido_desdobrado && (
+                                  <span
+                                    className={`pedidos-alterados-desdobramento-badge ${
+                                      pedido.pedido_desdobramento_original ? "original" : "derivado"
+                                    }`}
+                                    title={
+                                      pedido.pedido_desdobramento_original
+                                        ? "Pedido original que possui desdobramento"
+                                        : `Pedido gerado pelo desdobramento do pedido ${
+                                            pedido.numero_pedido_original || ""
+                                          }`
+                                    }
+                                  >
+                                    <FiGitBranch />
 
-                                  {pedido.pedido_desdobramento_original
-                                    ? "Desdobrado"
-                                    : "Parte desdobrada"}
-                                </span>
-                              )}
-                            </div>
-                          </td>
+                                    {pedido.pedido_desdobramento_original
+                                      ? "Desdobrado"
+                                      : "Parte desdobrada"}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
 
-                          {/* CLIENTE */}
+                            {/* CLIENTE */}
 
-                          <td>{pedido.cliente || "-"}</td>
+                            <td>{pedido.cliente || "-"}</td>
 
-                          {/* VENDEDOR */}
+                            {/* VENDEDOR */}
 
-                          <td>{pedido.vendedor || "-"}</td>
+                            <td>{pedido.vendedor || "-"}</td>
 
-                          {/* ÚLTIMA ALTERAÇÃO */}
+                            {/* ÚLTIMA ALTERAÇÃO */}
 
-                          <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
+                            <td>{formatarDataHora(pedido.ultima_alteracao)}</td>
 
-                          {/* QUANTIDADE DE ALTERAÇÕES */}
+                            {/* QUANTIDADE DE ALTERAÇÕES */}
 
-                          <td>
-                            <span className="pedidos-alterados-contador">
-                              {pedido.quantidade_alteracoes}
-                            </span>
-                          </td>
+                            <td>
+                              <span className="pedidos-alterados-contador">
+                                {pedido.quantidade_alteracoes}
+                              </span>
+                            </td>
 
-                          {/* CAMPOS ALTERADOS */}
+                            {/* CAMPOS ALTERADOS */}
 
-                          <td>
-                            <div className="pedidos-alterados-campos">
-                              {campos.map((campo) => (
-                                <span key={campo}>{campo}</span>
-                              ))}
-                            </div>
-                          </td>
+                            <td>
+                              <div className="pedidos-alterados-campos">
+                                {campos.map((campo) => (
+                                  <span key={campo}>{campo}</span>
+                                ))}
+                              </div>
+                            </td>
 
-                          {/* BOTÃO HISTÓRICO */}
+                            {/* BOTÃO HISTÓRICO */}
 
-                          <td>
-                            <button
-                              type="button"
-                              className="pedidos-alterados-ver"
-                              onClick={() => alternarPedido(codigo)}
-                              aria-expanded={expandido}
-                            >
-                              {expandido ? <FiChevronUp /> : <FiChevronDown />}
+                            <td>
+                              <button
+                                type="button"
+                                className="pedidos-alterados-ver"
+                                onClick={() => alternarPedido(codigo)}
+                                aria-expanded={expandido}
+                              >
+                                {expandido ? <FiChevronUp /> : <FiChevronDown />}
 
-                              {expandido ? "Fechar" : "Ver"}
-                            </button>
-                          </td>
-                        </tr>
+                                {expandido ? "Fechar" : "Ver"}
+                              </button>
+                            </td>
+                          </tr>
 
-                        {/* =========================
+                          {/* =========================
                             HISTÓRICO EXPANDIDO
                         ========================= */}
 
-                        {expandido && (
-                          <tr className="pedidos-alterados-historico-linha">
-                            <td colSpan={7}>
-                              <div className="pedidos-alterados-historico">
-                                {/* TÍTULO */}
+                          {expandido && (
+                            <tr className="pedidos-alterados-historico-linha">
+                              <td colSpan={7}>
+                                <div className="pedidos-alterados-historico">
+                                  {/* TÍTULO */}
 
-                                <div className="pedidos-alterados-historico-titulo">
-                                  <FiEdit3 />
-
-                                  <div>
-                                    <strong>
-                                      Histórico do pedido {pedido.numero_pedido || codigo}
-                                    </strong>
-
-                                    <span>
-                                      {ocorrencias.length} ocorrência
-                                      {ocorrencias.length !== 1 ? "s" : ""}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                {pedido.pedido_desdobrado && (
-                                  <div className="pedidos-alterados-desdobramento-aviso">
-                                    <FiGitBranch />
+                                  <div className="pedidos-alterados-historico-titulo">
+                                    <FiEdit3 />
 
                                     <div>
                                       <strong>
-                                        {pedido.pedido_desdobramento_original
-                                          ? `Pedido ${
-                                              pedido.numero_pedido_original ||
-                                              pedido.numero_pedido ||
-                                              codigo
-                                            } desdobrado`
-                                          : `Pedido gerado por desdobramento de ${
-                                              pedido.numero_pedido_original || "pedido original"
-                                            }`}
+                                        Histórico do pedido {pedido.numero_pedido || codigo}
                                       </strong>
 
                                       <span>
-                                        {pedido.pedido_desdobramento_original
-                                          ? `Este é o pedido original. O sistema identificou ${
-                                              pedido.pedido_desdobramento_quantidade_derivados
-                                            } ${
-                                              pedido.pedido_desdobramento_quantidade_derivados === 1
-                                                ? "pedido derivado"
-                                                : "pedidos derivados"
-                                            } vinculado${
-                                              pedido.pedido_desdobramento_quantidade_derivados === 1
-                                                ? ""
-                                                : "s"
-                                            } a ele.`
-                                          : `Esta é a parte ${
-                                              pedido.pedido_desdobramento_indice
-                                            } do desdobramento. O sufixo /${
-                                              pedido.pedido_desdobramento_indice
-                                            } é apenas visual para diferenciar os pedidos; no Omie e no Supabase o número-base permanece ${
-                                              pedido.numero_pedido_original || "o mesmo"
-                                            }.`}
+                                        {ocorrencias.length} ocorrência
+                                        {ocorrencias.length !== 1 ? "s" : ""}
                                       </span>
-
-                                      {pedido.pedido_desdobramento_partes?.length > 1 && (
-                                        <div className="pedidos-alterados-desdobramento-partes">
-                                          <small>Pedidos relacionados:</small>
-
-                                          <div>
-                                            {pedido.pedido_desdobramento_partes.map((parte) => (
-                                              <span
-                                                key={`${codigo}-desdobramento-${parte.codigo_pedido_omie}`}
-                                                className={
-                                                  Number(parte.codigo_pedido_omie) === Number(codigo)
-                                                    ? "atual"
-                                                    : ""
-                                                }
-                                              >
-                                                {parte.numero_exibicao}
-                                              </span>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
                                     </div>
                                   </div>
-                                )}
 
-                                {/* OCORRÊNCIAS */}
+                                  {pedido.pedido_desdobrado && (
+                                    <div className="pedidos-alterados-desdobramento-aviso">
+                                      <FiGitBranch />
 
-                                <div className="pedidos-alterados-ocorrencias">
-                                  {ocorrencias.map((ocorrencia, indice) => {
-                                    const mudancas = extrairMudancas(ocorrencia);
+                                      <div>
+                                        <strong>
+                                          {pedido.pedido_desdobramento_original
+                                            ? `Pedido ${
+                                                pedido.numero_pedido_original ||
+                                                pedido.numero_pedido ||
+                                                codigo
+                                              } desdobrado`
+                                            : `Pedido gerado por desdobramento de ${
+                                                pedido.numero_pedido_original || "pedido original"
+                                              }`}
+                                        </strong>
 
-                                    return (
-                                      <article
-                                        key={ocorrencia.id || `${codigo}-${indice}`}
-                                        className="pedidos-alterados-ocorrencia"
-                                      >
-                                        {/* TOPO */}
+                                        <span>
+                                          {pedido.pedido_desdobramento_original
+                                            ? `Este é o pedido original. O sistema identificou ${
+                                                pedido.pedido_desdobramento_quantidade_derivados
+                                              } ${
+                                                pedido.pedido_desdobramento_quantidade_derivados ===
+                                                1
+                                                  ? "pedido derivado"
+                                                  : "pedidos derivados"
+                                              } vinculado${
+                                                pedido.pedido_desdobramento_quantidade_derivados ===
+                                                1
+                                                  ? ""
+                                                  : "s"
+                                              } a ele.`
+                                            : `Esta é a parte ${
+                                                pedido.pedido_desdobramento_indice
+                                              } do desdobramento. O sufixo /${
+                                                pedido.pedido_desdobramento_indice
+                                              } é apenas visual para diferenciar os pedidos; no Omie e no Supabase o número-base permanece ${
+                                                pedido.numero_pedido_original || "o mesmo"
+                                              }.`}
+                                        </span>
 
-                                        <div className="pedidos-alterados-ocorrencia-topo">
-                                          <strong>Alteração #{ocorrencias.length - indice}</strong>
+                                        {pedido.pedido_desdobramento_partes?.length > 1 && (
+                                          <div className="pedidos-alterados-desdobramento-partes">
+                                            <small>Pedidos relacionados:</small>
 
-                                          <span>{formatarDataHora(ocorrencia.alterado_em)}</span>
-                                        </div>
-
-                                        {/* MUDANÇAS */}
-
-                                        {mudancas.length > 0 ? (
-                                          <div className="pedidos-alterados-mudancas">
-                                            {mudancas.map((mudanca) => (
-                                              <div
-                                                key={`${ocorrencia.id}-${mudanca.chave}`}
-                                                className="pedidos-alterados-mudanca"
-                                              >
-                                                <strong>{mudanca.campo}</strong>
-
-                                                <div className="pedidos-alterados-antes-depois">
-                                                  {/* ANTES */}
-
-                                                  <span>
-                                                    <small>Antes</small>
-
-                                                    <b>{mudanca.anterior}</b>
-                                                  </span>
-
-                                                  {/* SETA */}
-
-                                                  <span className="pedidos-alterados-seta">→</span>
-
-                                                  {/* DEPOIS */}
-
-                                                  <span>
-                                                    <small>Depois</small>
-
-                                                    <b>{mudanca.novo}</b>
-                                                  </span>
-                                                </div>
-                                              </div>
-                                            ))}
+                                            <div>
+                                              {pedido.pedido_desdobramento_partes.map((parte) => (
+                                                <span
+                                                  key={`${codigo}-desdobramento-${parte.codigo_pedido_omie}`}
+                                                  className={
+                                                    Number(parte.codigo_pedido_omie) ===
+                                                    Number(codigo)
+                                                      ? "atual"
+                                                      : ""
+                                                  }
+                                                >
+                                                  {parte.numero_exibicao}
+                                                </span>
+                                              ))}
+                                            </div>
                                           </div>
-                                        ) : (
-                                          <p className="pedidos-alterados-sem-detalhe">
-                                            {ocorrencia.resumo ||
-                                              "Alteração registrada sem detalhamento disponível."}
-                                          </p>
                                         )}
-                                      </article>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                                      </div>
+                                    </div>
+                                  )}
 
-            {/* =====================================
+                                  {/* OCORRÊNCIAS */}
+
+                                  <div className="pedidos-alterados-ocorrencias">
+                                    {ocorrencias.map((ocorrencia, indice) => {
+                                      const mudancas = extrairMudancas(ocorrencia);
+
+                                      return (
+                                        <article
+                                          key={ocorrencia.id || `${codigo}-${indice}`}
+                                          className="pedidos-alterados-ocorrencia"
+                                        >
+                                          {/* TOPO */}
+
+                                          <div className="pedidos-alterados-ocorrencia-topo">
+                                            <strong>
+                                              Alteração #{ocorrencias.length - indice}
+                                            </strong>
+
+                                            <span>{formatarDataHora(ocorrencia.alterado_em)}</span>
+                                          </div>
+
+                                          {/* MUDANÇAS */}
+
+                                          {mudancas.length > 0 ? (
+                                            <div className="pedidos-alterados-mudancas">
+                                              {mudancas.map((mudanca) => (
+                                                <div
+                                                  key={`${ocorrencia.id}-${mudanca.chave}`}
+                                                  className="pedidos-alterados-mudanca"
+                                                >
+                                                  <strong>{mudanca.campo}</strong>
+
+                                                  <div className="pedidos-alterados-antes-depois">
+                                                    {/* ANTES */}
+
+                                                    <span>
+                                                      <small>Antes</small>
+
+                                                      <b>{mudanca.anterior}</b>
+                                                    </span>
+
+                                                    {/* SETA */}
+
+                                                    <span className="pedidos-alterados-seta">
+                                                      →
+                                                    </span>
+
+                                                    {/* DEPOIS */}
+
+                                                    <span>
+                                                      <small>Depois</small>
+
+                                                      <b>{mudanca.novo}</b>
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          ) : (
+                                            <p className="pedidos-alterados-sem-detalhe">
+                                              {ocorrencia.resumo ||
+                                                "Alteração registrada sem detalhamento disponível."}
+                                            </p>
+                                          )}
+                                        </article>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* =====================================
                 RODAPÉ
 
                 Mantém totais gerais, mas exibe
                 o intervalo da página.
             ===================================== */}
 
-            <div className="relatorio-visualizacao-footer">
-              <span>
-                Exibindo {inicioExibicao} a {fimExibicao} de {totalItens} pedido(s)
-              </span>
+              <div className="relatorio-visualizacao-footer">
+                <span>
+                  Exibindo {inicioExibicao} a {fimExibicao} de {totalItens} pedido(s)
+                </span>
 
-              <span>{totalAlteracoes} alteração(ões) no período</span>
-            </div>
-            {totalPaginas > 1 && (
-              <Paginacao
-                paginaAtual={paginaValida}
-                totalItens={totalItens}
-                itensPorPagina={ITENS_POR_PAGINA}
-                onChangePagina={setPaginaAtual}
-              />
-            )}
-          </section>
-        </>
-      )}
+                <span>{totalAlteracoes} alteração(ões) no período</span>
+              </div>
+              {totalPaginas > 1 && (
+                <Paginacao
+                  paginaAtual={paginaValida}
+                  totalItens={totalItens}
+                  itensPorPagina={ITENS_POR_PAGINA}
+                  onChangePagina={setPaginaAtual}
+                />
+              )}
+            </section>
+          </>
+        )}
 
-      {/* ===============================================
+        {/* ===============================================
           NENHUMA ALTERAÇÃO
       =============================================== */}
 
-      {!error && !isLoading && totalItens === 0 && (
-        <div className="rl-vazio pedidos-alterados-vazio">
-          <FiEdit3 />
+        {!error && !isLoading && totalItens === 0 && (
+          <div className="rl-vazio pedidos-alterados-vazio">
+            <FiEdit3 />
 
-          <strong>Nenhuma alteração encontrada</strong>
+            <strong>Nenhuma alteração encontrada</strong>
 
-          <span>Não existem pedidos com alterações reais no período selecionado.</span>
-        </div>
-      )}
+            <span>Não existem pedidos com alterações reais no período selecionado.</span>
+          </div>
+        )}
       </LayoutRelatorio>
     </>
   );

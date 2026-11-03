@@ -18,7 +18,6 @@ Objetivo desta revisão: melhorar reutilização, manutenção e performance sem
 - Logs informativos de `carga_maquina` ficam restritos ao ambiente de desenvolvimento.
 - Adicionada validação estática própria para sintaxe, nomes/escopo e imports locais.
 
-
 ## Ajustes de build e deploy — Vercel
 
 - O projeto passou a usar a configuração oficial de Vite/TanStack Start diretamente, sem o wrapper `@lovable.dev/vite-tanstack-config`.

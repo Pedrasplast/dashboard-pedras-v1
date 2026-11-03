@@ -1,8 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   buscarComprasFuturas,
@@ -11,9 +7,7 @@ import {
   salvarCompraFutura as salvarCompraFuturaService,
 } from "./comprasFuturasService";
 
-export default function useComprasFuturas({
-  carregar = true,
-} = {}) {
+export default function useComprasFuturas({ carregar = true } = {}) {
   const [compras, setCompras] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
   const [materiais, setMateriais] = useState([]);
@@ -35,45 +29,25 @@ export default function useComprasFuturas({
     try {
       const resultado = await buscarComprasFuturas();
 
-      setCompras(
-        Array.isArray(resultado?.compras)
-          ? resultado.compras
-          : [],
-      );
+      setCompras(Array.isArray(resultado?.compras) ? resultado.compras : []);
 
-      setFornecedores(
-        Array.isArray(resultado?.fornecedores)
-          ? resultado.fornecedores
-          : [],
-      );
+      setFornecedores(Array.isArray(resultado?.fornecedores) ? resultado.fornecedores : []);
 
-      setMateriais(
-        Array.isArray(resultado?.materiais)
-          ? resultado.materiais
-          : [],
-      );
+      setMateriais(Array.isArray(resultado?.materiais) ? resultado.materiais : []);
 
       setFornecedorMateriais(
-        Array.isArray(resultado?.fornecedorMateriais)
-          ? resultado.fornecedorMateriais
-          : [],
+        Array.isArray(resultado?.fornecedorMateriais) ? resultado.fornecedorMateriais : [],
       );
 
       setCarregado(true);
     } catch (error) {
-      console.error(
-        "Erro ao carregar compras futuras:",
-        error,
-      );
+      console.error("Erro ao carregar compras futuras:", error);
 
       setCompras([]);
       setFornecedores([]);
       setMateriais([]);
       setFornecedorMateriais([]);
-      setErro(
-        error?.message ||
-        "Não foi possível carregar as compras futuras.",
-      );
+      setErro(error?.message || "Não foi possível carregar as compras futuras.");
       setCarregado(true);
     } finally {
       setCarregando(false);
@@ -86,12 +60,7 @@ export default function useComprasFuturas({
     }
 
     void carregarCompras();
-  }, [
-    carregar,
-    carregado,
-    carregando,
-    carregarCompras,
-  ]);
+  }, [carregar, carregado, carregando, carregarCompras]);
 
   const recarregar = useCallback(async () => {
     await carregarCompras();
@@ -103,8 +72,7 @@ export default function useComprasFuturas({
       setSalvandoId(dados?.id ?? null);
 
       try {
-        const resultado =
-          await salvarCompraFuturaService(dados);
+        const resultado = await salvarCompraFuturaService(dados);
 
         await carregarCompras();
 
@@ -118,25 +86,16 @@ export default function useComprasFuturas({
   );
 
   const confirmarChegadaCompraFutura = useCallback(
-    async ({
-      id,
-      dataRecebimento,
-    }) => {
+    async ({ id, dataRecebimento }) => {
       if (id === null || id === undefined) {
-        throw new Error(
-          "Compra futura não informada.",
-        );
+        throw new Error("Compra futura não informada.");
       }
 
       setConfirmandoChegada(true);
       setConfirmandoChegadaId(id);
 
       try {
-        const resultado =
-          await confirmarChegadaCompraFuturaService(
-            id,
-            dataRecebimento,
-          );
+        const resultado = await confirmarChegadaCompraFuturaService(id, dataRecebimento);
 
         await carregarCompras();
 
@@ -152,17 +111,14 @@ export default function useComprasFuturas({
   const excluirCompraFutura = useCallback(
     async (id) => {
       if (id === null || id === undefined) {
-        throw new Error(
-          "Compra futura não informada.",
-        );
+        throw new Error("Compra futura não informada.");
       }
 
       setExcluindo(true);
       setExcluindoId(id);
 
       try {
-        const resultado =
-          await excluirCompraFuturaService(id);
+        const resultado = await excluirCompraFuturaService(id);
 
         await carregarCompras();
 
@@ -203,10 +159,7 @@ export default function useComprasFuturas({
 
       return String(id) === String(confirmandoChegadaId);
     },
-    [
-      confirmandoChegada,
-      confirmandoChegadaId,
-    ],
+    [confirmandoChegada, confirmandoChegadaId],
   );
 
   return {

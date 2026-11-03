@@ -15,11 +15,7 @@ import {
    CONFIGURAÇÕES
 ========================================================= */
 
-export const TIPOS_PARADA = Object.freeze([
-  "1",
-  "2",
-  "3",
-]);
+export const TIPOS_PARADA = Object.freeze(["1", "2", "3"]);
 
 export const FAIXAS_DURACAO = Object.freeze([
   {
@@ -58,15 +54,7 @@ export const FAIXAS_DURACAO = Object.freeze([
   },
 ]);
 
-const DIAS_SEMANA = Object.freeze([
-  "Dom",
-  "Seg",
-  "Ter",
-  "Qua",
-  "Qui",
-  "Sex",
-  "Sáb",
-]);
+const DIAS_SEMANA = Object.freeze(["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]);
 
 const FAIXAS_HORARIO = Object.freeze([
   {
@@ -137,88 +125,46 @@ function criarGrupoMapa(mapa, chave, criador) {
 }
 
 function adicionarDiasISO(dataISO, quantidade) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(
-      String(dataISO || ""),
-    )
-  ) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dataISO || ""))) {
     return "";
   }
 
-  const [ano, mes, dia] = dataISO
-    .split("-")
-    .map(Number);
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
 
-  const data = new Date(
-    Date.UTC(
-      ano,
-      mes - 1,
-      dia,
-    ),
-  );
+  const data = new Date(Date.UTC(ano, mes - 1, dia));
 
-  data.setUTCDate(
-    data.getUTCDate() + quantidade,
-  );
+  data.setUTCDate(data.getUTCDate() + quantidade);
 
-  return data
-    .toISOString()
-    .slice(0, 10);
+  return data.toISOString().slice(0, 10);
 }
 
-function diferencaDiasInclusiva(
-  inicio,
-  fim,
-) {
-  if (
-    !inicio ||
-    !fim ||
-    fim < inicio
-  ) {
+function diferencaDiasInclusiva(inicio, fim) {
+  if (!inicio || !fim || fim < inicio) {
     return 0;
   }
 
-  const dataInicio = new Date(
-    `${inicio}T00:00:00Z`,
-  );
+  const dataInicio = new Date(`${inicio}T00:00:00Z`);
 
-  const dataFim = new Date(
-    `${fim}T00:00:00Z`,
-  );
+  const dataFim = new Date(`${fim}T00:00:00Z`);
 
-  const diferenca =
-    dataFim.getTime() -
-    dataInicio.getTime();
+  const diferenca = dataFim.getTime() - dataInicio.getTime();
 
-  return (
-    Math.floor(
-      diferenca / 86_400_000,
-    ) + 1
-  );
+  return Math.floor(diferenca / 86_400_000) + 1;
 }
 
 /* =========================================================
    IDENTIFICAÇÃO DE PARADAS
 ========================================================= */
 
-export function ehRegistroParada(
-  registro,
-) {
-  return TIPOS_PARADA.includes(
-    String(
-      registro?.tipo ?? "",
-    ).trim(),
-  );
+export function ehRegistroParada(registro) {
+  return TIPOS_PARADA.includes(String(registro?.tipo ?? "").trim());
 }
 
 /* =========================================================
    FILTRO DE PARADAS
 ========================================================= */
 
-export function filtrarParadas(
-  registros,
-  filtros,
-) {
+export function filtrarParadas(registros, filtros) {
   /*
    * Aproveita primeiro o filtro que já existe
    * no Dashboard de Produção.
@@ -228,122 +174,62 @@ export function filtrarParadas(
    * - injetora
    * - demais filtros compartilhados
    */
-  const base =
-    filtrarRegistrosDashboard(
-      registros,
-      filtros,
-    );
+  const base = filtrarRegistrosDashboard(registros, filtros);
 
-  const tiposSelecionados =
-    Array.isArray(filtros?.tipo)
-      ? filtros.tipo
-          .map((tipo) =>
-            String(tipo).trim(),
-          )
-          .filter(Boolean)
-      : [];
+  const tiposSelecionados = Array.isArray(filtros?.tipo)
+    ? filtros.tipo.map((tipo) => String(tipo).trim()).filter(Boolean)
+    : [];
 
-  const motivoSelecionado =
-    String(
-      filtros?.motivo ||
-        "Todos",
-    ).trim();
+  const motivoSelecionado = String(filtros?.motivo || "Todos").trim();
 
-  const chaveMotivoSelecionado =
-    chaveTexto(
-      motivoSelecionado,
-    );
+  const chaveMotivoSelecionado = chaveTexto(motivoSelecionado);
 
-  return base.filter(
-    (registro) => {
-      if (
-        !ehRegistroParada(
-          registro,
-        )
-      ) {
+  return base.filter((registro) => {
+    if (!ehRegistroParada(registro)) {
+      return false;
+    }
+
+    const tipo = String(registro.tipo ?? "").trim();
+
+    if (tiposSelecionados.length > 0 && !tiposSelecionados.includes(tipo)) {
+      return false;
+    }
+
+    if (motivoSelecionado !== "Todos") {
+      const motivo = textoOuPadrao(registro.motivo, "SEM MOTIVO INFORMADO");
+
+      if (chaveTexto(motivo) !== chaveMotivoSelecionado) {
         return false;
       }
+    }
 
-      const tipo = String(
-        registro.tipo ?? "",
-      ).trim();
-
-      if (
-        tiposSelecionados.length >
-          0 &&
-        !tiposSelecionados.includes(
-          tipo,
-        )
-      ) {
-        return false;
-      }
-
-      if (
-        motivoSelecionado !==
-        "Todos"
-      ) {
-        const motivo =
-          textoOuPadrao(
-            registro.motivo,
-            "SEM MOTIVO INFORMADO",
-          );
-
-        if (
-          chaveTexto(motivo) !==
-          chaveMotivoSelecionado
-        ) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-  );
+    return true;
+  });
 }
 
 /* =========================================================
    PERÍODO ANTERIOR
 ========================================================= */
 
-export function obterPeriodoAnterior(
-  filtros,
-) {
-  const inicio = String(
-    filtros?.dataInicio || "",
-  );
+export function obterPeriodoAnterior(filtros) {
+  const inicio = String(filtros?.dataInicio || "");
 
-  const fim = String(
-    filtros?.dataFim || "",
-  );
+  const fim = String(filtros?.dataFim || "");
 
-  const dias =
-    diferencaDiasInclusiva(
-      inicio,
-      fim,
-    );
+  const dias = diferencaDiasInclusiva(inicio, fim);
 
   if (dias <= 0) {
     return null;
   }
 
-  const fimAnterior =
-    adicionarDiasISO(
-      inicio,
-      -1,
-    );
+  const fimAnterior = adicionarDiasISO(inicio, -1);
 
-  const inicioAnterior =
-    adicionarDiasISO(
-      fimAnterior,
-      -(dias - 1),
-    );
+  const inicioAnterior = adicionarDiasISO(fimAnterior, -(dias - 1));
 
   return {
-    dataInicio:
-      inicioAnterior,
+    dataInicio: inicioAnterior,
 
-    dataFim:
-      fimAnterior,
+    dataFim: fimAnterior,
   };
 }
 
@@ -351,21 +237,12 @@ export function obterPeriodoAnterior(
    FORMATAÇÕES
 ========================================================= */
 
-export function formatarDuracaoResumida(
-  segundos,
-) {
-  const total = Math.max(
-    0,
-    Number(segundos) || 0,
-  );
+export function formatarDuracaoResumida(segundos) {
+  const total = Math.max(0, Number(segundos) || 0);
 
-  const horas = Math.floor(
-    total / 3600,
-  );
+  const horas = Math.floor(total / 3600);
 
-  const minutos = Math.floor(
-    (total % 3600) / 60,
-  );
+  const minutos = Math.floor((total % 3600) / 60);
 
   if (horas <= 0) {
     return `${minutos} min`;
@@ -375,24 +252,15 @@ export function formatarDuracaoResumida(
     return `${horas}h`;
   }
 
-  return `${horas}h ${String(
-    minutos,
-  ).padStart(2, "0")}min`;
+  return `${horas}h ${String(minutos).padStart(2, "0")}min`;
 }
 
-export function formatarDataCurta(
-  dataISO,
-) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(
-      String(dataISO || ""),
-    )
-  ) {
+export function formatarDataCurta(dataISO) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dataISO || ""))) {
     return "-";
   }
 
-  const [, mes, dia] =
-    dataISO.split("-");
+  const [, mes, dia] = dataISO.split("-");
 
   return `${dia}/${mes}`;
 }
@@ -401,28 +269,16 @@ export function formatarDataCurta(
    COMPARAÇÃO COM PERÍODO ANTERIOR
 ========================================================= */
 
-export function calcularVariacaoPercentual(
-  atual,
-  anterior,
-) {
-  const atualNumero =
-    Number(atual) || 0;
+export function calcularVariacaoPercentual(atual, anterior) {
+  const atualNumero = Number(atual) || 0;
 
-  const anteriorNumero =
-    Number(anterior) || 0;
+  const anteriorNumero = Number(anterior) || 0;
 
   if (anteriorNumero === 0) {
     return null;
   }
 
-  return (
-    ((atualNumero -
-      anteriorNumero) /
-      Math.abs(
-        anteriorNumero,
-      )) *
-    100
-  );
+  return ((atualNumero - anteriorNumero) / Math.abs(anteriorNumero)) * 100;
 }
 
 /* =========================================================
@@ -436,14 +292,8 @@ export function calcularVariacaoPercentual(
    componente.
 ========================================================= */
 
-export function consolidarParadas(
-  registros,
-) {
-  const lista = Array.isArray(
-    registros,
-  )
-    ? registros
-    : [];
+export function consolidarParadas(registros) {
+  const lista = Array.isArray(registros) ? registros : [];
 
   let tempoTotalSegundos = 0;
 
@@ -451,21 +301,13 @@ export function consolidarParadas(
 
   const motivos = new Map();
 
-  const justificativas =
-    new Map();
+  const justificativas = new Map();
 
   const injetoras = new Map();
 
   const datas = new Map();
 
-  const faixas = new Map(
-    FAIXAS_DURACAO.map(
-      (faixa) => [
-        faixa.id,
-        0,
-      ],
-    ),
-  );
+  const faixas = new Map(FAIXAS_DURACAO.map((faixa) => [faixa.id, 0]));
 
   const heatmap = new Map();
 
@@ -474,60 +316,33 @@ export function consolidarParadas(
   ===================================================== */
 
   for (const registro of lista) {
-    const duracaoSegundos =
-      converterDuracaoParaSegundos(
-        registro?.duracao,
-      );
+    const duracaoSegundos = converterDuracaoParaSegundos(registro?.duracao);
 
-    const tipo = String(
-      registro?.tipo ?? "",
-    ).trim();
+    const tipo = String(registro?.tipo ?? "").trim();
 
-    const motivo =
-      textoOuPadrao(
-        registro?.motivo,
-        "SEM MOTIVO INFORMADO",
-      );
+    const motivo = textoOuPadrao(registro?.motivo, "SEM MOTIVO INFORMADO");
 
-    const justificativa =
-      textoOuPadrao(
-        registro?.justificativa,
-        "SEM JUSTIFICATIVA",
-      );
+    const justificativa = textoOuPadrao(registro?.justificativa, "SEM JUSTIFICATIVA");
 
-    const injetora =
-      textoOuPadrao(
-        registro?.injetora,
-        "SEM INJETORA",
-      );
+    const injetora = textoOuPadrao(registro?.injetora, "SEM INJETORA");
 
-    const dataISO =
-      extrairDataISORegistro(
-        registro,
-      );
+    const dataISO = extrairDataISORegistro(registro);
 
     /* ===================================================
        TOTAL
     =================================================== */
 
-    tempoTotalSegundos +=
-      duracaoSegundos;
+    tempoTotalSegundos += duracaoSegundos;
 
     /* ===================================================
        MAIOR PARADA
     =================================================== */
 
-    if (
-      !maiorParada ||
-      duracaoSegundos >
-        maiorParada
-          .duracao_segundos
-    ) {
+    if (!maiorParada || duracaoSegundos > maiorParada.duracao_segundos) {
       maiorParada = {
         id: registro?.id,
 
-        data:
-          dataISO,
+        data: dataISO,
 
         injetora,
 
@@ -537,13 +352,9 @@ export function consolidarParadas(
 
         tipo,
 
-        duracao_segundos:
-          duracaoSegundos,
+        duracao_segundos: duracaoSegundos,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            duracaoSegundos,
-          ),
+        tempo_total: formatarSegundosComoDuracao(duracaoSegundos),
       };
     }
 
@@ -551,144 +362,99 @@ export function consolidarParadas(
        MOTIVOS
     =================================================== */
 
-    const chaveMotivo =
-      chaveTexto(motivo);
+    const chaveMotivo = chaveTexto(motivo);
 
-    const grupoMotivo =
-      criarGrupoMapa(
-        motivos,
-        chaveMotivo,
-        () => ({
-          motivo,
+    const grupoMotivo = criarGrupoMapa(motivos, chaveMotivo, () => ({
+      motivo,
 
-          ocorrencias: 0,
+      ocorrencias: 0,
 
-          duracao_segundos: 0,
-        }),
-      );
+      duracao_segundos: 0,
+    }));
 
-    grupoMotivo.ocorrencias +=
-      1;
+    grupoMotivo.ocorrencias += 1;
 
-    grupoMotivo.duracao_segundos +=
-      duracaoSegundos;
+    grupoMotivo.duracao_segundos += duracaoSegundos;
 
     /* ===================================================
        JUSTIFICATIVAS
     =================================================== */
 
-    const chaveJustificativa =
-      `${chaveMotivo}|||${chaveTexto(
-        justificativa,
-      )}`;
+    const chaveJustificativa = `${chaveMotivo}|||${chaveTexto(justificativa)}`;
 
-    const grupoJustificativa =
-      criarGrupoMapa(
-        justificativas,
-        chaveJustificativa,
-        () => ({
-          motivo,
+    const grupoJustificativa = criarGrupoMapa(justificativas, chaveJustificativa, () => ({
+      motivo,
 
-          justificativa,
+      justificativa,
 
-          ocorrencias: 0,
+      ocorrencias: 0,
 
-          duracao_segundos: 0,
-        }),
-      );
+      duracao_segundos: 0,
+    }));
 
-    grupoJustificativa.ocorrencias +=
-      1;
+    grupoJustificativa.ocorrencias += 1;
 
-    grupoJustificativa.duracao_segundos +=
-      duracaoSegundos;
+    grupoJustificativa.duracao_segundos += duracaoSegundos;
 
     /* ===================================================
        INJETORAS
     =================================================== */
 
-    const chaveInjetora =
-      chaveTexto(injetora);
+    const chaveInjetora = chaveTexto(injetora);
 
-    const grupoInjetora =
-      criarGrupoMapa(
-        injetoras,
-        chaveInjetora,
-        () => ({
-          injetora,
+    const grupoInjetora = criarGrupoMapa(injetoras, chaveInjetora, () => ({
+      injetora,
 
-          ocorrencias: 0,
+      ocorrencias: 0,
 
-          duracao_segundos: 0,
+      duracao_segundos: 0,
 
-          maior_parada_segundos:
-            0,
-        }),
-      );
+      maior_parada_segundos: 0,
+    }));
 
-    grupoInjetora.ocorrencias +=
-      1;
+    grupoInjetora.ocorrencias += 1;
 
-    grupoInjetora.duracao_segundos +=
-      duracaoSegundos;
+    grupoInjetora.duracao_segundos += duracaoSegundos;
 
-    grupoInjetora.maior_parada_segundos =
-      Math.max(
-        grupoInjetora
-          .maior_parada_segundos,
+    grupoInjetora.maior_parada_segundos = Math.max(
+      grupoInjetora.maior_parada_segundos,
 
-        duracaoSegundos,
-      );
+      duracaoSegundos,
+    );
 
     /* ===================================================
        EVOLUÇÃO POR DATA
     =================================================== */
 
     if (dataISO) {
-      const grupoData =
-        criarGrupoMapa(
-          datas,
-          dataISO,
-          () => ({
-            data:
-              dataISO,
+      const grupoData = criarGrupoMapa(datas, dataISO, () => ({
+        data: dataISO,
 
-            tipo1_segundos:
-              0,
+        tipo1_segundos: 0,
 
-            tipo2_segundos:
-              0,
+        tipo2_segundos: 0,
 
-            tipo3_segundos:
-              0,
+        tipo3_segundos: 0,
 
-            duracao_segundos:
-              0,
+        duracao_segundos: 0,
 
-            ocorrencias:
-              0,
-          }),
-        );
+        ocorrencias: 0,
+      }));
 
-      grupoData.ocorrencias +=
-        1;
+      grupoData.ocorrencias += 1;
 
-      grupoData.duracao_segundos +=
-        duracaoSegundos;
+      grupoData.duracao_segundos += duracaoSegundos;
 
       if (tipo === "1") {
-        grupoData.tipo1_segundos +=
-          duracaoSegundos;
+        grupoData.tipo1_segundos += duracaoSegundos;
       }
 
       if (tipo === "2") {
-        grupoData.tipo2_segundos +=
-          duracaoSegundos;
+        grupoData.tipo2_segundos += duracaoSegundos;
       }
 
       if (tipo === "3") {
-        grupoData.tipo3_segundos +=
-          duracaoSegundos;
+        grupoData.tipo3_segundos += duracaoSegundos;
       }
     }
 
@@ -696,47 +462,23 @@ export function consolidarParadas(
        FAIXAS DE DURAÇÃO
     =================================================== */
 
-    const faixaEncontrada =
-      FAIXAS_DURACAO.find(
-        (faixa) => {
-          if (
-            faixa.id ===
-            "ate-15"
-          ) {
-            return (
-              duracaoSegundos <=
-              faixa.max
-            );
-          }
+    const faixaEncontrada = FAIXAS_DURACAO.find((faixa) => {
+      if (faixa.id === "ate-15") {
+        return duracaoSegundos <= faixa.max;
+      }
 
-          if (
-            faixa.max ===
-            Infinity
-          ) {
-            return (
-              duracaoSegundos >
-              faixa.min
-            );
-          }
+      if (faixa.max === Infinity) {
+        return duracaoSegundos > faixa.min;
+      }
 
-          return (
-            duracaoSegundos >
-              faixa.min &&
-            duracaoSegundos <=
-              faixa.max
-          );
-        },
-      );
+      return duracaoSegundos > faixa.min && duracaoSegundos <= faixa.max;
+    });
 
     if (faixaEncontrada) {
       faixas.set(
         faixaEncontrada.id,
 
-        (
-          faixas.get(
-            faixaEncontrada.id,
-          ) || 0
-        ) + 1,
+        (faixas.get(faixaEncontrada.id) || 0) + 1,
       );
     }
 
@@ -745,88 +487,48 @@ export function consolidarParadas(
        Usa somente o horário informado no registro manual.
     =================================================== */
 
-    const minutosInicio =
-      extrairHorarioMinutosRegistro(
-        registro,
+    const minutosInicio = extrairHorarioMinutosRegistro(registro);
+
+    if (dataISO && minutosInicio !== null) {
+      const dataUTC = new Date(`${dataISO}T12:00:00Z`);
+
+      const diaSemana = Number.isNaN(dataUTC.getTime()) ? null : dataUTC.getUTCDay();
+
+      const faixaHorario = FAIXAS_HORARIO.find(
+        (faixa) => minutosInicio >= faixa.inicio && minutosInicio < faixa.fim,
       );
 
-    if (
-      dataISO &&
-      minutosInicio !== null
-    ) {
-      const dataUTC =
-        new Date(
-          `${dataISO}T12:00:00Z`,
-        );
+      if (diaSemana !== null && faixaHorario) {
+        const chaveHeatmap = `${diaSemana}|${faixaHorario.id}`;
 
-      const diaSemana =
-        Number.isNaN(
-          dataUTC.getTime(),
-        )
-          ? null
-          : dataUTC.getUTCDay();
+        const celula = criarGrupoMapa(heatmap, chaveHeatmap, () => ({
+          dia_indice: diaSemana,
 
-      const faixaHorario =
-        FAIXAS_HORARIO.find(
-          (faixa) =>
-            minutosInicio >=
-              faixa.inicio &&
-            minutosInicio <
-              faixa.fim,
-        );
+          dia: DIAS_SEMANA[diaSemana],
 
-      if (
-        diaSemana !== null &&
-        faixaHorario
-      ) {
-        const chaveHeatmap =
-          `${diaSemana}|${faixaHorario.id}`;
+          faixa: faixaHorario.id,
 
-        const celula =
-          criarGrupoMapa(
-            heatmap,
-            chaveHeatmap,
-            () => ({
-              dia_indice:
-                diaSemana,
+          faixa_label: faixaHorario.label,
 
-              dia:
-                DIAS_SEMANA[
-                  diaSemana
-                ],
+          ocorrencias: 0,
 
-              faixa:
-                faixaHorario.id,
+          duracao_segundos: 0,
 
-              faixa_label:
-                faixaHorario.label,
+          /*
+           * Guarda exatamente os mesmos registros
+           * que formaram esta célula do Heatmap.
+           *
+           * Assim o drill-down não precisa tentar
+           * reconstruir dia/horário novamente.
+           */
+          registros: [],
+        }));
 
-              ocorrencias:
-                0,
+        celula.registros.push(registro);
 
-              duracao_segundos:
-                0,
+        celula.ocorrencias = celula.registros.length;
 
-              /*
-               * Guarda exatamente os mesmos registros
-               * que formaram esta célula do Heatmap.
-               *
-               * Assim o drill-down não precisa tentar
-               * reconstruir dia/horário novamente.
-               */
-              registros: [],
-            }),
-          );
-
-        celula.registros.push(
-          registro,
-        );
-
-        celula.ocorrencias =
-          celula.registros.length;
-
-        celula.duracao_segundos +=
-          duracaoSegundos;
+        celula.duracao_segundos += duracaoSegundos;
       }
     }
   }
@@ -835,37 +537,18 @@ export function consolidarParadas(
      MOTIVOS
   ===================================================== */
 
-  const motivosOrdenados =
-    Array.from(
-      motivos.values(),
-    )
-      .sort(
-        (a, b) =>
-          b.duracao_segundos -
-          a.duracao_segundos,
-      )
-      .map((item) => ({
-        ...item,
+  const motivosOrdenados = Array.from(motivos.values())
+    .sort((a, b) => b.duracao_segundos - a.duracao_segundos)
+    .map((item) => ({
+      ...item,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            item.duracao_segundos,
-          ),
+      tempo_total: formatarSegundosComoDuracao(item.duracao_segundos),
 
-        tempo_medio_segundos:
-          item.ocorrencias > 0
-            ? item.duracao_segundos /
-              item.ocorrencias
-            : 0,
+      tempo_medio_segundos: item.ocorrencias > 0 ? item.duracao_segundos / item.ocorrencias : 0,
 
-        percentual_impacto:
-          tempoTotalSegundos > 0
-            ? (
-                item.duracao_segundos /
-                tempoTotalSegundos
-              ) * 100
-            : 0,
-      }));
+      percentual_impacto:
+        tempoTotalSegundos > 0 ? (item.duracao_segundos / tempoTotalSegundos) * 100 : 0,
+    }));
 
   /* =====================================================
      PARETO
@@ -873,199 +556,102 @@ export function consolidarParadas(
 
   let acumulado = 0;
 
-  const paretoCompleto =
-    motivosOrdenados.map(
-      (item) => {
-        acumulado +=
-          item.percentual_impacto;
+  const paretoCompleto = motivosOrdenados.map((item) => {
+    acumulado += item.percentual_impacto;
 
-        return {
-          ...item,
+    return {
+      ...item,
 
-          percentual_acumulado:
-            Math.min(
-              100,
-              acumulado,
-            ),
-        };
-      },
-    );
+      percentual_acumulado: Math.min(100, acumulado),
+    };
+  });
 
   /* =====================================================
      JUSTIFICATIVAS
   ===================================================== */
 
-  const justificativasOrdenadas =
-    Array.from(
-      justificativas.values(),
-    )
-      .sort(
-        (a, b) =>
-          b.duracao_segundos -
-          a.duracao_segundos,
-      )
-      .map((item) => ({
-        ...item,
+  const justificativasOrdenadas = Array.from(justificativas.values())
+    .sort((a, b) => b.duracao_segundos - a.duracao_segundos)
+    .map((item) => ({
+      ...item,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            item.duracao_segundos,
-          ),
+      tempo_total: formatarSegundosComoDuracao(item.duracao_segundos),
 
-        tempo_medio_segundos:
-          item.ocorrencias > 0
-            ? item.duracao_segundos /
-              item.ocorrencias
-            : 0,
+      tempo_medio_segundos: item.ocorrencias > 0 ? item.duracao_segundos / item.ocorrencias : 0,
 
-        percentual_impacto:
-          tempoTotalSegundos > 0
-            ? (
-                item.duracao_segundos /
-                tempoTotalSegundos
-              ) * 100
-            : 0,
-      }));
+      percentual_impacto:
+        tempoTotalSegundos > 0 ? (item.duracao_segundos / tempoTotalSegundos) * 100 : 0,
+    }));
 
   /* =====================================================
      RANKING DE INJETORAS
   ===================================================== */
 
-  const rankingInjetoras =
-    Array.from(
-      injetoras.values(),
-    )
-      .sort(
-        (a, b) =>
-          b.duracao_segundos -
-          a.duracao_segundos,
-      )
-      .map((item) => ({
-        ...item,
+  const rankingInjetoras = Array.from(injetoras.values())
+    .sort((a, b) => b.duracao_segundos - a.duracao_segundos)
+    .map((item) => ({
+      ...item,
 
-        tempo_total:
-          formatarSegundosComoDuracao(
-            item.duracao_segundos,
-          ),
+      tempo_total: formatarSegundosComoDuracao(item.duracao_segundos),
 
-        tempo_medio_segundos:
-          item.ocorrencias > 0
-            ? item.duracao_segundos /
-              item.ocorrencias
-            : 0,
+      tempo_medio_segundos: item.ocorrencias > 0 ? item.duracao_segundos / item.ocorrencias : 0,
 
-        percentual_impacto:
-          tempoTotalSegundos > 0
-            ? (
-                item.duracao_segundos /
-                tempoTotalSegundos
-              ) * 100
-            : 0,
-      }));
+      percentual_impacto:
+        tempoTotalSegundos > 0 ? (item.duracao_segundos / tempoTotalSegundos) * 100 : 0,
+    }));
 
   /* =====================================================
      EVOLUÇÃO
   ===================================================== */
 
-  const evolucao =
-    Array.from(
-      datas.values(),
-    ).sort(
-      (a, b) =>
-        a.data.localeCompare(
-          b.data,
-        ),
-    );
+  const evolucao = Array.from(datas.values()).sort((a, b) => a.data.localeCompare(b.data));
 
   /* =====================================================
      DISTRIBUIÇÃO DE DURAÇÃO
   ===================================================== */
 
-  const distribuicaoDuracao =
-    FAIXAS_DURACAO.map(
-      (faixa) => ({
-        faixa:
-          faixa.label,
+  const distribuicaoDuracao = FAIXAS_DURACAO.map((faixa) => ({
+    faixa: faixa.label,
 
-        ocorrencias:
-          faixas.get(
-            faixa.id,
-          ) || 0,
-      }),
-    );
+    ocorrencias: faixas.get(faixa.id) || 0,
+  }));
 
   /* =====================================================
      TOP 5 MAIORES PARADAS
   ===================================================== */
 
-  const maioresParadas =
-    [...lista]
-      .map((registro) => {
-        const duracaoSegundos =
-          converterDuracaoParaSegundos(
-            registro?.duracao,
-          );
+  const maioresParadas = [...lista]
+    .map((registro) => {
+      const duracaoSegundos = converterDuracaoParaSegundos(registro?.duracao);
 
-        return {
-          id:
-            registro?.id,
+      return {
+        id: registro?.id,
 
-          data:
-            extrairDataISORegistro(
-              registro,
-            ),
+        data: extrairDataISORegistro(registro),
 
-          injetora:
-            textoOuPadrao(
-              registro?.injetora,
-              "SEM INJETORA",
-            ),
+        injetora: textoOuPadrao(registro?.injetora, "SEM INJETORA"),
 
-          motivo:
-            textoOuPadrao(
-              registro?.motivo,
-              "SEM MOTIVO INFORMADO",
-            ),
+        motivo: textoOuPadrao(registro?.motivo, "SEM MOTIVO INFORMADO"),
 
-          justificativa:
-            textoOuPadrao(
-              registro?.justificativa,
-              "SEM JUSTIFICATIVA",
-            ),
+        justificativa: textoOuPadrao(registro?.justificativa, "SEM JUSTIFICATIVA"),
 
-          tipo: String(
-            registro?.tipo ?? "",
-          ).trim(),
+        tipo: String(registro?.tipo ?? "").trim(),
 
-          duracao_segundos:
-            duracaoSegundos,
+        duracao_segundos: duracaoSegundos,
 
-          tempo_total:
-            formatarSegundosComoDuracao(
-              duracaoSegundos,
-            ),
-        };
-      })
-      .sort(
-        (a, b) =>
-          b.duracao_segundos -
-          a.duracao_segundos,
-      )
-      .slice(0, 5);
+        tempo_total: formatarSegundosComoDuracao(duracaoSegundos),
+      };
+    })
+    .sort((a, b) => b.duracao_segundos - a.duracao_segundos)
+    .slice(0, 5);
 
   /* =====================================================
      CONCENTRAÇÃO TOP 3
   ===================================================== */
 
-  const top3Tempo =
-    motivosOrdenados
-      .slice(0, 3)
-      .reduce(
-        (total, item) =>
-          total +
-          item.duracao_segundos,
-        0,
-      );
+  const top3Tempo = motivosOrdenados
+    .slice(0, 3)
+    .reduce((total, item) => total + item.duracao_segundos, 0);
 
   /* =====================================================
      HEATMAP
@@ -1078,63 +664,37 @@ export function consolidarParadas(
    *
    * O modal usa diretamente essa lista.
    */
-  const heatmapLista =
-    Array.from(
-      heatmap.values(),
-    );
+  const heatmapLista = Array.from(heatmap.values());
 
-  const heatmapMaxOcorrencias =
-    heatmapLista.reduce(
-      (maior, item) =>
-        Math.max(
-          maior,
-          item.ocorrencias,
-        ),
-      0,
-    );
+  const heatmapMaxOcorrencias = heatmapLista.reduce(
+    (maior, item) => Math.max(maior, item.ocorrencias),
+    0,
+  );
 
   /* =====================================================
      RETORNO ÚNICO DO DASHBOARD
   ===================================================== */
 
   return {
-    totalParadas:
-      lista.length,
+    totalParadas: lista.length,
 
     tempoTotalSegundos,
 
-    tempoMedioSegundos:
-      lista.length > 0
-        ? tempoTotalSegundos /
-          lista.length
-        : 0,
+    tempoMedioSegundos: lista.length > 0 ? tempoTotalSegundos / lista.length : 0,
 
     maiorParada,
 
-    motivoMaisCritico:
-      motivosOrdenados[0] ||
-      null,
+    motivoMaisCritico: motivosOrdenados[0] || null,
 
-    maquinaMaisImpactada:
-      rankingInjetoras[0] ||
-      null,
+    maquinaMaisImpactada: rankingInjetoras[0] || null,
 
-    concentracaoTop3:
-      tempoTotalSegundos > 0
-        ? (
-            top3Tempo /
-            tempoTotalSegundos
-          ) * 100
-        : 0,
+    concentracaoTop3: tempoTotalSegundos > 0 ? (top3Tempo / tempoTotalSegundos) * 100 : 0,
 
-    motivos:
-      motivosOrdenados,
+    motivos: motivosOrdenados,
 
-    pareto:
-      paretoCompleto,
+    pareto: paretoCompleto,
 
-    justificativas:
-      justificativasOrdenadas,
+    justificativas: justificativasOrdenadas,
 
     rankingInjetoras,
 
@@ -1144,48 +704,32 @@ export function consolidarParadas(
 
     maioresParadas,
 
-    criticidade:
-      motivosOrdenados
-        .slice(0, 12)
-        .map((item) => ({
-          motivo:
-            item.motivo,
+    criticidade: motivosOrdenados.slice(0, 12).map((item) => ({
+      motivo: item.motivo,
 
-          ocorrencias:
-            item.ocorrencias,
+      ocorrencias: item.ocorrencias,
 
-          horas:
-            item.duracao_segundos /
-            3600,
+      horas: item.duracao_segundos / 3600,
 
-          tempo_medio_segundos:
-            item.tempo_medio_segundos,
+      tempo_medio_segundos: item.tempo_medio_segundos,
 
-          tamanho:
-            Math.max(
-              80,
+      tamanho: Math.max(
+        80,
 
-              item.tempo_medio_segundos ||
-                item.ocorrencias *
-                  100,
-            ),
+        item.tempo_medio_segundos || item.ocorrencias * 100,
+      ),
 
-          duracao_segundos:
-            item.duracao_segundos,
-        })),
+      duracao_segundos: item.duracao_segundos,
+    })),
 
     heatmap: {
-      dias:
-        DIAS_SEMANA,
+      dias: DIAS_SEMANA,
 
-      faixas:
-        FAIXAS_HORARIO,
+      faixas: FAIXAS_HORARIO,
 
-      celulas:
-        heatmapLista,
+      celulas: heatmapLista,
 
-      maxOcorrencias:
-        heatmapMaxOcorrencias,
+      maxOcorrencias: heatmapMaxOcorrencias,
     },
   };
 }

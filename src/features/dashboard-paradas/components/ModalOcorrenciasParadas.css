@@ -13,102 +13,51 @@
 
   padding: 22px;
 
-  background:
-    rgba(
-      7,
-      18,
-      38,
-      0.68
-    );
+  background: rgba(7, 18, 38, 0.68);
 
-  backdrop-filter:
-    blur(7px);
+  backdrop-filter: blur(7px);
 
-  -webkit-backdrop-filter:
-    blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
 .dp-ocorrencias-modal {
-  width:
-    min(
-      1480px,
-      97vw
-    );
+  width: min(1480px, 97vw);
 
-  height:
-    min(
-      880px,
-      93vh
-    );
+  height: min(880px, 93vh);
 
   display: flex;
   flex-direction: column;
 
   overflow: hidden;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  background:
-    #f5f8fc;
+  background: #f5f8fc;
 
-  border:
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.38
-    );
+  border: 1px solid rgba(255, 255, 255, 0.38);
 
-  border-radius:
-    20px;
+  border-radius: 20px;
 
   box-shadow:
-    0 38px 100px
-    rgba(
-      2,
-      8,
-      23,
-      0.36
-    ),
-    0 12px 36px
-    rgba(
-      15,
-      23,
-      42,
-      0.16
-    );
+    0 38px 100px rgba(2, 8, 23, 0.36),
+    0 12px 36px rgba(15, 23, 42, 0.16);
 
-  animation:
-    dpModalEntrada
-    0.2s
-    cubic-bezier(
-      0.16,
-      1,
-      0.3,
-      1
-    );
+  animation: dpModalEntrada 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes dpModalEntrada {
   from {
     opacity: 0;
 
-    transform:
-      translateY(14px)
-      scale(0.985);
+    transform: translateY(14px) scale(0.985);
   }
 
   to {
     opacity: 1;
 
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0) scale(1);
   }
 }
-
 
 /* =========================================================
    CABEÇALHO EXECUTIVO
@@ -125,29 +74,13 @@
 
   gap: 24px;
 
-  padding:
-    22px
-    26px;
+  padding: 22px 26px;
 
-  color:
-    #ffffff;
+  color: #ffffff;
 
-  background:
-    linear-gradient(
-      120deg,
-      #102a4c 0%,
-      #163b66 48%,
-      #1d4ed8 135%
-    );
+  background: linear-gradient(120deg, #102a4c 0%, #163b66 48%, #1d4ed8 135%);
 
-  border-bottom:
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.1
-    );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dp-ocorrencias-header--novo::after {
@@ -163,25 +96,9 @@
 
   pointer-events: none;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(
-        96,
-        165,
-        250,
-        0.22
-      ) 0%,
-      rgba(
-        96,
-        165,
-        250,
-        0
-      ) 68%
-    );
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.22) 0%, rgba(96, 165, 250, 0) 68%);
 }
 
 .dp-ocorrencias-header-conteudo {
@@ -200,103 +117,51 @@
   width: 48px;
   height: 48px;
 
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  color:
-    #dbeafe;
+  color: #dbeafe;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.11
-    );
+  background: rgba(255, 255, 255, 0.11);
 
-  border:
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.16
-    );
+  border: 1px solid rgba(255, 255, 255, 0.16);
 
-  border-radius:
-    13px;
+  border-radius: 13px;
 
-  box-shadow:
-    inset
-    0 1px 0
-    rgba(
-      255,
-      255,
-      255,
-      0.08
-    );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .dp-ocorrencias-eyebrow {
-  width:
-    fit-content;
+  width: fit-content;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  margin-bottom:
-    5px;
+  margin-bottom: 5px;
 
-  padding:
-    3px
-    7px;
+  padding: 3px 7px;
 
-  color:
-    #bfdbfe;
+  color: #bfdbfe;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.08
-    );
+  background: rgba(255, 255, 255, 0.08);
 
-  border:
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.1
-    );
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
-  font-size:
-    0.61rem;
+  font-size: 0.61rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    0.09em;
+  letter-spacing: 0.09em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
 
 .dp-ocorrencias-header h3 {
@@ -304,63 +169,45 @@
 
   overflow: hidden;
 
-  color:
-    #ffffff;
+  color: #ffffff;
 
-  font-size:
-    clamp(
-      1.12rem,
-      1.5vw,
-      1.42rem
-    );
+  font-size: clamp(1.12rem, 1.5vw, 1.42rem);
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    -0.02em;
+  letter-spacing: -0.02em;
 
-  line-height:
-    1.25;
+  line-height: 1.25;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
 .dp-ocorrencias-header-meta {
   display: flex;
   align-items: center;
 
-  flex-wrap:
-    wrap;
+  flex-wrap: wrap;
 
   gap: 8px;
 
-  margin-top:
-    7px;
+  margin-top: 7px;
 
-  color:
-    #cbd5e1;
+  color: #cbd5e1;
 
-  font-size:
-    0.69rem;
+  font-size: 0.69rem;
 
-  font-weight:
-    500;
+  font-weight: 500;
 }
 
 .dp-ocorrencias-header-meta i {
   width: 4px;
   height: 4px;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 
-  background:
-    #60a5fa;
+  background: #60a5fa;
 }
 
 .dp-ocorrencias-fechar {
@@ -370,70 +217,39 @@
   width: 38px;
   height: 38px;
 
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   padding: 0;
 
-  color:
-    #dbeafe;
+  color: #dbeafe;
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.08
-    );
+  background: rgba(255, 255, 255, 0.08);
 
-  border:
-    1px solid
-    rgba(
-      255,
-      255,
-      255,
-      0.15
-    );
+  border: 1px solid rgba(255, 255, 255, 0.15);
 
-  border-radius:
-    10px;
+  border-radius: 10px;
 
   cursor: pointer;
 
   transition:
-    background
-    0.15s ease,
-    color
-    0.15s ease,
-    transform
-    0.15s ease;
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .dp-ocorrencias-fechar:hover {
-  color:
-    #ffffff;
+  color: #ffffff;
 
-  background:
-    rgba(
-      239,
-      68,
-      68,
-      0.3
-    );
+  background: rgba(239, 68, 68, 0.3);
 
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
-
 
 /* =========================================================
    KPIs EXECUTIVOS
@@ -442,24 +258,15 @@
 .dp-ocorrencias-resumo--novo {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 12px;
 
-  padding:
-    16px
-    22px;
+  padding: 16px 22px;
 
-  background:
-    #eef3f9;
+  background: #eef3f9;
 
-  border-bottom:
-    1px solid
-    #dce5ef;
+  border-bottom: 1px solid #dce5ef;
 }
 
 .dp-ocorrencias-kpi {
@@ -473,30 +280,17 @@
 
   gap: 12px;
 
-  padding:
-    13px
-    14px;
+  padding: 13px 14px;
 
   overflow: hidden;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  border:
-    1px solid
-    #dce5ef;
+  border: 1px solid #dce5ef;
 
-  border-radius:
-    12px;
+  border-radius: 12px;
 
-  box-shadow:
-    0 4px 14px
-    rgba(
-      15,
-      23,
-      42,
-      0.045
-    );
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.045);
 }
 
 .dp-ocorrencias-kpi::after {
@@ -510,70 +304,42 @@
 
   height: 3px;
 
-  background:
-    var(
-      --dp-modal-kpi-accent,
-      #2563eb
-    );
+  background: var(--dp-modal-kpi-accent, #2563eb);
 }
 
 .dp-ocorrencias-kpi--ocorrencias {
-  --dp-modal-kpi-accent:
-    #2563eb;
+  --dp-modal-kpi-accent: #2563eb;
 }
 
 .dp-ocorrencias-kpi--tempo {
-  --dp-modal-kpi-accent:
-    #dc2626;
+  --dp-modal-kpi-accent: #dc2626;
 }
 
 .dp-ocorrencias-kpi--media {
-  --dp-modal-kpi-accent:
-    #d97706;
+  --dp-modal-kpi-accent: #d97706;
 }
 
 .dp-ocorrencias-kpi--maquinas {
-  --dp-modal-kpi-accent:
-    #0f766e;
+  --dp-modal-kpi-accent: #0f766e;
 }
 
 .dp-ocorrencias-kpi__icon {
   width: 38px;
   height: 38px;
 
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
   display: grid;
 
   place-items: center;
 
-  color:
-    var(
-      --dp-modal-kpi-accent
-    );
+  color: var(--dp-modal-kpi-accent);
 
-  background:
-    color-mix(
-      in srgb,
-      var(
-        --dp-modal-kpi-accent
-      ) 8%,
-      white
-    );
+  background: color-mix(in srgb, var(--dp-modal-kpi-accent) 8%, white);
 
-  border:
-    1px solid
-    color-mix(
-      in srgb,
-      var(
-        --dp-modal-kpi-accent
-      ) 16%,
-      white
-    );
+  border: 1px solid color-mix(in srgb, var(--dp-modal-kpi-accent) 16%, white);
 
-  border-radius:
-    10px;
+  border-radius: 10px;
 }
 
 .dp-ocorrencias-kpi__conteudo {
@@ -583,162 +349,105 @@
 .dp-ocorrencias-kpi__conteudo span {
   display: block;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  font-size:
-    0.62rem;
+  font-size: 0.62rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    0.045em;
+  letter-spacing: 0.045em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
 
 .dp-ocorrencias-kpi__conteudo strong {
   display: block;
 
-  margin-top:
-    2px;
+  margin-top: 2px;
 
-  overflow:
-    hidden;
+  overflow: hidden;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  font-size:
-    1.1rem;
+  font-size: 1.1rem;
 
-  font-weight:
-    850;
+  font-weight: 850;
 
-  line-height:
-    1.18;
+  line-height: 1.18;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
 .dp-ocorrencias-kpi__conteudo small {
   display: block;
 
-  margin-top:
-    2px;
+  margin-top: 2px;
 
-  color:
-    #94a3b8;
+  color: #94a3b8;
 
-  font-size:
-    0.59rem;
+  font-size: 0.59rem;
 
-  font-weight:
-    600;
+  font-weight: 600;
 }
-
 
 /* =========================================================
    TOOLBAR / PESQUISA
 ========================================================= */
 
 .dp-ocorrencias-toolbar--novo {
-  min-height:
-    62px;
+  min-height: 62px;
 
   display: flex;
 
   align-items: center;
 
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   gap: 18px;
 
-  padding:
-    11px
-    22px;
+  padding: 11px 22px;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  border-bottom:
-    1px solid
-    #dce5ef;
+  border-bottom: 1px solid #dce5ef;
 }
 
 .dp-ocorrencias-busca {
-  width:
-    min(
-      680px,
-      100%
-    );
+  width: min(680px, 100%);
 
-  height:
-    40px;
+  height: 40px;
 
   display: flex;
   align-items: center;
 
   gap: 9px;
 
-  padding:
-    0
-    11px;
+  padding: 0 11px;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  background:
-    #f8fafc;
+  background: #f8fafc;
 
-  border:
-    1px solid
-    #d5dfeb;
+  border: 1px solid #d5dfeb;
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
-  box-shadow:
-    inset
-    0 1px 2px
-    rgba(
-      15,
-      23,
-      42,
-      0.02
-    );
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
 
   transition:
-    border-color
-    0.15s ease,
-    box-shadow
-    0.15s ease,
-    background
-    0.15s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
 .dp-ocorrencias-busca:focus-within {
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  border-color:
-    #3b82f6;
+  border-color: #3b82f6;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.09
-    );
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
 }
 
 .dp-ocorrencias-busca input {
@@ -748,71 +457,56 @@
 
   padding: 0;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  background:
-    transparent;
+  background: transparent;
 
   border: 0;
 
   outline: 0;
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    0.73rem;
+  font-size: 0.73rem;
 }
 
 .dp-ocorrencias-busca input::placeholder {
-  color:
-    #94a3b8;
+  color: #94a3b8;
 }
 
 .dp-ocorrencias-limpar-busca {
   width: 25px;
   height: 25px;
 
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   padding: 0;
 
-  color:
-    #94a3b8;
+  color: #94a3b8;
 
-  background:
-    transparent;
+  background: transparent;
 
   border: 0;
 
-  border-radius:
-    6px;
+  border-radius: 6px;
 
   cursor: pointer;
 }
 
 .dp-ocorrencias-limpar-busca:hover {
-  color:
-    #334155;
+  color: #334155;
 
-  background:
-    #e2e8f0;
+  background: #e2e8f0;
 }
 
 .dp-ocorrencias-toolbar-info {
-  flex:
-    0 0 auto;
+  flex: 0 0 auto;
 
   display: flex;
 
@@ -822,66 +516,48 @@
 }
 
 .dp-ocorrencias-toolbar-info__label {
-  color:
-    #94a3b8;
+  color: #94a3b8;
 
-  font-size:
-    0.62rem;
+  font-size: 0.62rem;
 
-  font-weight:
-    700;
+  font-weight: 700;
 }
 
 .dp-ocorrencias-total-encontrado {
-  min-width:
-    88px;
+  min-width: 88px;
 
   display: inline-flex;
 
   align-items: baseline;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   gap: 4px;
 
-  padding:
-    7px
-    10px;
+  padding: 7px 10px;
 
-  color:
-    #1d4ed8;
+  color: #1d4ed8;
 
-  background:
-    #eff6ff;
+  background: #eff6ff;
 
-  border:
-    1px solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
-  border-radius:
-    8px;
+  border-radius: 8px;
 }
 
 .dp-ocorrencias-total-encontrado strong {
-  font-size:
-    0.82rem;
+  font-size: 0.82rem;
 
-  font-weight:
-    850;
+  font-weight: 850;
 }
 
 .dp-ocorrencias-total-encontrado span {
-  color:
-    #64748b;
+  color: #64748b;
 
-  font-size:
-    0.61rem;
+  font-size: 0.61rem;
 
-  font-weight:
-    700;
+  font-weight: 700;
 }
-
 
 /* =========================================================
    TABELA EXECUTIVA
@@ -890,44 +566,25 @@
 .dp-ocorrencias-tabela-wrap {
   flex: 1;
 
-  min-height:
-    240px;
+  min-height: 240px;
 
-  margin:
-    14px
-    16px
-    16px;
+  margin: 14px 16px 16px;
 
   overflow: auto;
 
-  overscroll-behavior:
-    contain;
+  overscroll-behavior: contain;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  border:
-    1px solid
-    #dce5ef;
+  border: 1px solid #dce5ef;
 
-  border-radius:
-    12px;
+  border-radius: 12px;
 
-  box-shadow:
-    0 4px 14px
-    rgba(
-      15,
-      23,
-      42,
-      0.035
-    );
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
 
-  scrollbar-width:
-    thin;
+  scrollbar-width: thin;
 
-  scrollbar-color:
-    #cbd5e1
-    transparent;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
 .dp-ocorrencias-tabela-wrap::-webkit-scrollbar {
@@ -936,37 +593,29 @@
 }
 
 .dp-ocorrencias-tabela-wrap::-webkit-scrollbar-track {
-  background:
-    transparent;
+  background: transparent;
 }
 
 .dp-ocorrencias-tabela-wrap::-webkit-scrollbar-thumb {
-  background:
-    #cbd5e1;
+  background: #cbd5e1;
 
-  border-radius:
-    999px;
+  border-radius: 999px;
 }
 
 .dp-ocorrencias-tabela-wrap::-webkit-scrollbar-thumb:hover {
-  background:
-    #94a3b8;
+  background: #94a3b8;
 }
 
 .dp-ocorrencias-tabela {
   width: 100%;
 
-  min-width:
-    1180px;
+  min-width: 1180px;
 
-  border-collapse:
-    separate;
+  border-collapse: separate;
 
-  border-spacing:
-    0;
+  border-spacing: 0;
 
-  font-size:
-    0.69rem;
+  font-size: 0.69rem;
 }
 
 .dp-ocorrencias-tabela thead {
@@ -978,403 +627,266 @@
 }
 
 .dp-ocorrencias-tabela--novo th {
-  height:
-    42px;
+  height: 42px;
 
-  padding:
-    0
-    12px;
+  padding: 0 12px;
 
-  color:
-    #475569;
+  color: #475569;
 
-  background:
-    #f3f6fa;
+  background: #f3f6fa;
 
-  border-bottom:
-    1px solid
-    #d6e0eb;
+  border-bottom: 1px solid #d6e0eb;
 
-  text-align:
-    left;
+  text-align: left;
 
-  font-size:
-    0.6rem;
+  font-size: 0.6rem;
 
-  font-weight:
-    850;
+  font-weight: 850;
 
-  letter-spacing:
-    0.05em;
+  letter-spacing: 0.05em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 }
 
 .dp-ocorrencias-tabela--novo td {
-  padding:
-    10px
-    12px;
+  padding: 10px 12px;
 
-  color:
-    #334155;
+  color: #334155;
 
-  background:
-    #ffffff;
+  background: #ffffff;
 
-  border-bottom:
-    1px solid
-    #edf2f7;
+  border-bottom: 1px solid #edf2f7;
 
-  vertical-align:
-    middle;
+  vertical-align: middle;
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
-  transition:
-    background-color
-    0.12s ease;
+  transition: background-color 0.12s ease;
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:nth-child(even) td {
-  background:
-    #fbfcfe;
+  background: #fbfcfe;
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:hover td {
-  background:
-    #eef5ff;
+  background: #eef5ff;
 }
 
 .dp-ocorrencias-tabela--novo tbody tr:last-child td {
-  border-bottom:
-    0;
+  border-bottom: 0;
 }
 
 .dp-ocorrencias-col-numero {
   width: 48px;
 
-  color:
-    #94a3b8
-    !important;
+  color: #94a3b8 !important;
 
-  text-align:
-    center
-    !important;
+  text-align: center !important;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 .dp-ocorrencias-injetora {
-  min-width:
-    72px;
+  min-width: 72px;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  padding:
-    4px
-    8px;
+  padding: 4px 8px;
 
-  color:
-    #1d4ed8;
+  color: #1d4ed8;
 
-  background:
-    #eff6ff;
+  background: #eff6ff;
 
-  border:
-    1px solid
-    #dbeafe;
+  border: 1px solid #dbeafe;
 
-  border-radius:
-    7px;
+  border-radius: 7px;
 
-  font-size:
-    0.64rem;
+  font-size: 0.64rem;
 
-  font-weight:
-    850;
+  font-weight: 850;
 }
 
 .dp-ocorrencias-motivo {
-  max-width:
-    220px;
+  max-width: 220px;
 
-  color:
-    #1e293b
-    !important;
+  color: #1e293b !important;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  line-height:
-    1.35;
+  line-height: 1.35;
 
-  white-space:
-    normal
-    !important;
+  white-space: normal !important;
 }
 
 .dp-ocorrencias-tabela td.dp-ocorrencias-descricao {
-  min-width:
-    300px;
+  min-width: 300px;
 
-  max-width:
-    470px;
+  max-width: 470px;
 
-  color:
-    #475569;
+  color: #475569;
 
-  line-height:
-    1.42;
+  line-height: 1.42;
 
-  white-space:
-    normal;
+  white-space: normal;
 }
 
 .dp-ocorrencias-duracao-cell {
-  text-align:
-    right;
+  text-align: right;
 }
 
 .dp-ocorrencias-duracao {
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
-  min-width:
-    78px;
+  min-width: 78px;
 
-  padding:
-    4px
-    7px;
+  padding: 4px 7px;
 
-  color:
-    #0f172a;
+  color: #0f172a;
 
-  background:
-    #f1f5f9;
+  background: #f1f5f9;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid #e2e8f0;
 
-  border-radius:
-    7px;
+  border-radius: 7px;
 
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    "Liberation Mono",
-    monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  font-size:
-    0.68rem;
+  font-size: 0.68rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 
-  letter-spacing:
-    0.015em;
+  letter-spacing: 0.015em;
 }
-
 
 /* =========================================================
    SEM RESULTADOS
 ========================================================= */
 
 .dp-ocorrencias-vazio {
-  height:
-    240px;
+  height: 240px;
 
-  padding:
-    40px
-    !important;
+  padding: 40px !important;
 
-  color:
-    #94a3b8
-    !important;
+  color: #94a3b8 !important;
 
-  text-align:
-    center
-    !important;
+  text-align: center !important;
 
-  white-space:
-    normal
-    !important;
+  white-space: normal !important;
 }
 
 .dp-ocorrencias-vazio svg {
   display: block;
 
-  margin:
-    0
-    auto
-    9px;
+  margin: 0 auto 9px;
 
-  color:
-    #94a3b8;
+  color: #94a3b8;
 }
 
 .dp-ocorrencias-vazio strong {
   display: block;
 
-  color:
-    #334155;
+  color: #334155;
 
-  font-size:
-    0.8rem;
+  font-size: 0.8rem;
 }
 
 .dp-ocorrencias-vazio span {
   display: block;
 
-  margin-top:
-    4px;
+  margin-top: 4px;
 
-  color:
-    #94a3b8;
+  color: #94a3b8;
 
-  font-size:
-    0.67rem;
+  font-size: 0.67rem;
 }
-
 
 /* =========================================================
    RESPONSIVIDADE
 ========================================================= */
 
-@media (
-  max-width:
-    1100px
-) {
+@media (max-width: 1100px) {
   .dp-ocorrencias-resumo--novo {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (
-  max-width:
-    760px
-) {
+@media (max-width: 760px) {
   .dp-ocorrencias-overlay {
-    padding:
-      7px;
+    padding: 7px;
   }
 
   .dp-ocorrencias-modal {
-    width:
-      100%;
+    width: 100%;
 
-    height:
-      97vh;
+    height: 97vh;
 
-    border-radius:
-      14px;
+    border-radius: 14px;
   }
 
   .dp-ocorrencias-header--novo {
-    min-height:
-      auto;
+    min-height: auto;
 
-    padding:
-      18px
-      16px;
+    padding: 18px 16px;
   }
 
   .dp-ocorrencias-header-icon {
-    display:
-      none;
+    display: none;
   }
 
   .dp-ocorrencias-header h3 {
-    white-space:
-      normal;
+    white-space: normal;
   }
 
   .dp-ocorrencias-resumo--novo {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap:
-      8px;
+    gap: 8px;
 
-    padding:
-      11px
-      12px;
+    padding: 11px 12px;
   }
 
   .dp-ocorrencias-kpi {
-    padding:
-      10px;
+    padding: 10px;
   }
 
   .dp-ocorrencias-kpi__icon {
-    display:
-      none;
+    display: none;
   }
 
   .dp-ocorrencias-toolbar--novo {
-    align-items:
-      stretch;
+    align-items: stretch;
 
-    flex-direction:
-      column;
+    flex-direction: column;
 
-    padding:
-      10px
-      12px;
+    padding: 10px 12px;
   }
 
   .dp-ocorrencias-busca {
-    width:
-      100%;
+    width: 100%;
   }
 
   .dp-ocorrencias-toolbar-info {
-    justify-content:
-      space-between;
+    justify-content: space-between;
   }
 
   .dp-ocorrencias-tabela-wrap {
-    margin:
-      10px;
+    margin: 10px;
   }
 }
 
-@media (
-  max-width:
-    520px
-) {
+@media (max-width: 520px) {
   .dp-ocorrencias-resumo--novo {
     grid-template-columns:
       1fr
@@ -1382,70 +894,46 @@
   }
 
   .dp-ocorrencias-kpi__conteudo strong {
-    font-size:
-      0.93rem;
+    font-size: 0.93rem;
   }
 
   .dp-ocorrencias-header-meta {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    flex-direction:
-      column;
+    flex-direction: column;
   }
 
   .dp-ocorrencias-header-meta i {
-    display:
-      none;
+    display: none;
   }
 }
-
 
 /* =========================================================
    FALLBACK DE CORES DOS ÍCONES KPI
 ========================================================= */
 
-@supports not (
-  color:
-    color-mix(
-      in srgb,
-      red,
-      white
-    )
-) {
-  .dp-ocorrencias-kpi--ocorrencias
-  .dp-ocorrencias-kpi__icon {
-    background:
-      #eff6ff;
+@supports not (color: color-mix(in srgb, red, white)) {
+  .dp-ocorrencias-kpi--ocorrencias .dp-ocorrencias-kpi__icon {
+    background: #eff6ff;
 
-    border-color:
-      #dbeafe;
+    border-color: #dbeafe;
   }
 
-  .dp-ocorrencias-kpi--tempo
-  .dp-ocorrencias-kpi__icon {
-    background:
-      #fef2f2;
+  .dp-ocorrencias-kpi--tempo .dp-ocorrencias-kpi__icon {
+    background: #fef2f2;
 
-    border-color:
-      #fee2e2;
+    border-color: #fee2e2;
   }
 
-  .dp-ocorrencias-kpi--media
-  .dp-ocorrencias-kpi__icon {
-    background:
-      #fffbeb;
+  .dp-ocorrencias-kpi--media .dp-ocorrencias-kpi__icon {
+    background: #fffbeb;
 
-    border-color:
-      #fef3c7;
+    border-color: #fef3c7;
   }
 
-  .dp-ocorrencias-kpi--maquinas
-  .dp-ocorrencias-kpi__icon {
-    background:
-      #f0fdfa;
+  .dp-ocorrencias-kpi--maquinas .dp-ocorrencias-kpi__icon {
+    background: #f0fdfa;
 
-    border-color:
-      #ccfbf1;
+    border-color: #ccfbf1;
   }
 }

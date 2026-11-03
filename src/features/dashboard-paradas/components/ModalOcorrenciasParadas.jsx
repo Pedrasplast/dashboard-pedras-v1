@@ -1,26 +1,10 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  Activity,
-  CirclePause,
-  Clock3,
-  Factory,
-  Search,
-  Timer,
-  X,
-} from "lucide-react";
+import { Activity, CirclePause, Clock3, Factory, Search, Timer, X } from "lucide-react";
 
-import {
-  formatarDuracaoResumida,
-} from "../dashboardParadas.utils";
+import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 
 import {
   formatarDataRegistro,
@@ -38,57 +22,26 @@ import "./ModalOcorrenciasParadas.css";
 ========================================================= */
 
 function formatarNumero(valor) {
-  return Number(
-    valor || 0,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      maximumFractionDigits: 0,
-    },
-  );
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    maximumFractionDigits: 0,
+  });
 }
 
-function formatarDuracaoHHMMSS(
-  segundos,
-) {
-  const total =
-    Math.max(
-      0,
-      Math.floor(
-        Number(segundos) || 0,
-      ),
-    );
+function formatarDuracaoHHMMSS(segundos) {
+  const total = Math.max(0, Math.floor(Number(segundos) || 0));
 
-  const horas =
-    Math.floor(
-      total / 3600,
-    );
+  const horas = Math.floor(total / 3600);
 
-  const minutos =
-    Math.floor(
-      (total % 3600) / 60,
-    );
+  const minutos = Math.floor((total % 3600) / 60);
 
-  const segundosRestantes =
-    total % 60;
+  const segundosRestantes = total % 60;
 
   return [
-    String(horas).padStart(
-      2,
-      "0",
-    ),
+    String(horas).padStart(2, "0"),
 
-    String(minutos).padStart(
-      2,
-      "0",
-    ),
+    String(minutos).padStart(2, "0"),
 
-    String(
-      segundosRestantes,
-    ).padStart(
-      2,
-      "0",
-    ),
+    String(segundosRestantes).padStart(2, "0"),
   ].join(":");
 }
 
@@ -99,35 +52,25 @@ function formatarDuracaoHHMMSS(
 function ModalOcorrenciasParadas({
   aberto = false,
   titulo = "",
-  subtitulo =
-    "Dados conforme os filtros atuais",
-  eyebrow =
-    "Análise detalhada",
+  subtitulo = "Dados conforme os filtros atuais",
+  eyebrow = "Análise detalhada",
   ocorrencias = [],
   onFechar,
   icone,
 }) {
-  const [
-    busca,
-    setBusca,
-  ] = useState("");
+  const [busca, setBusca] = useState("");
 
-  const Icone =
-    icone || CirclePause;
+  const Icone = icone || CirclePause;
 
   /* =======================================================
      FECHAR
   ======================================================= */
 
-  const fechar =
-    useCallback(() => {
-      if (
-        typeof onFechar ===
-        "function"
-      ) {
-        onFechar();
-      }
-    }, [onFechar]);
+  const fechar = useCallback(() => {
+    if (typeof onFechar === "function") {
+      onFechar();
+    }
+  }, [onFechar]);
 
   /* =======================================================
      REINICIAR BUSCA
@@ -137,10 +80,7 @@ function ModalOcorrenciasParadas({
     if (aberto) {
       setBusca("");
     }
-  }, [
-    aberto,
-    titulo,
-  ]);
+  }, [aberto, titulo]);
 
   /* =======================================================
      MODAL ABERTO
@@ -149,71 +89,41 @@ function ModalOcorrenciasParadas({
      - bloqueia scroll da página
   ======================================================= */
 
-
-
   /* =======================================================
      BASE
   ======================================================= */
 
-  const lista =
-    useMemo(
-      () =>
-        Array.isArray(
-          ocorrencias,
-        )
-          ? ocorrencias
-          : [],
-      [ocorrencias],
-    );
+  const lista = useMemo(() => (Array.isArray(ocorrencias) ? ocorrencias : []), [ocorrencias]);
 
   /* =======================================================
      RESUMO
   ======================================================= */
 
-  const resumo =
-    useMemo(() => {
-      let totalSegundos = 0;
+  const resumo = useMemo(() => {
+    let totalSegundos = 0;
 
-      const injetoras =
-        new Set();
+    const injetoras = new Set();
 
-      for (
-        const registro of
-        lista
-      ) {
-        totalSegundos +=
-          obterDuracaoSegundos(
-            registro,
-          );
+    for (const registro of lista) {
+      totalSegundos += obterDuracaoSegundos(registro);
 
-        const injetora =
-          obterInjetoraRegistro(
-            registro,
-          );
+      const injetora = obterInjetoraRegistro(registro);
 
-        if (injetora) {
-          injetoras.add(
-            injetora,
-          );
-        }
+      if (injetora) {
+        injetoras.add(injetora);
       }
+    }
 
-      return {
-        total:
-          lista.length,
+    return {
+      total: lista.length,
 
-        totalSegundos,
+      totalSegundos,
 
-        mediaSegundos:
-          lista.length > 0
-            ? totalSegundos /
-              lista.length
-            : 0,
+      mediaSegundos: lista.length > 0 ? totalSegundos / lista.length : 0,
 
-        injetoras:
-          injetoras.size,
-      };
-    }, [lista]);
+      injetoras: injetoras.size,
+    };
+  }, [lista]);
 
   /* =======================================================
      PESQUISA
@@ -221,46 +131,30 @@ function ModalOcorrenciasParadas({
      Preserva a ordem original dos registros.
   ======================================================= */
 
-  const ocorrenciasPesquisadas =
-    useMemo(() => {
-      const termo =
-        normalizarTextoOcorrencia(
-          busca,
-        );
+  const ocorrenciasPesquisadas = useMemo(() => {
+    const termo = normalizarTextoOcorrencia(busca);
 
-      if (!termo) {
-        return lista;
-      }
+    if (!termo) {
+      return lista;
+    }
 
-      return lista.filter(
-        (registro) => {
-          const campos = [
-            registro?.injetora,
-            registro?.no_injetora,
-            registro?.motivo,
-            registro?.justificativa,
-            registro?.descricao,
-            registro?.op,
-            registro?.operador,
-            registro?.cod_prod,
-            registro?.material,
-            registro?.cliente,
-          ];
+    return lista.filter((registro) => {
+      const campos = [
+        registro?.injetora,
+        registro?.no_injetora,
+        registro?.motivo,
+        registro?.justificativa,
+        registro?.descricao,
+        registro?.op,
+        registro?.operador,
+        registro?.cod_prod,
+        registro?.material,
+        registro?.cliente,
+      ];
 
-          return campos.some(
-            (campo) =>
-              normalizarTextoOcorrencia(
-                campo,
-              ).includes(
-                termo,
-              ),
-          );
-        },
-      );
-    }, [
-      lista,
-      busca,
-    ]);
+      return campos.some((campo) => normalizarTextoOcorrencia(campo).includes(termo));
+    });
+  }, [lista, busca]);
 
   if (!aberto) {
     return null;
@@ -284,11 +178,7 @@ function ModalOcorrenciasParadas({
         role="dialog"
         aria-modal="true"
         aria-labelledby="dp-ocorrencias-titulo"
-        onMouseDown={(
-          event,
-        ) =>
-          event.stopPropagation()
-        }
+        onMouseDown={(event) => event.stopPropagation()}
       >
         {/* ===============================================
             CABEÇALHO
@@ -297,37 +187,22 @@ function ModalOcorrenciasParadas({
         <header className="dp-ocorrencias-header dp-ocorrencias-header--novo" data-modal-header="">
           <div className="dp-ocorrencias-header-conteudo" data-modal-body="">
             <div className="dp-ocorrencias-header-icon" data-modal-icone="">
-              <Icone
-                size={20}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Icone size={20} strokeWidth={2} aria-hidden="true" />
             </div>
 
             <div>
-              <span className="dp-ocorrencias-eyebrow">
-                {eyebrow}
-              </span>
+              <span className="dp-ocorrencias-eyebrow">{eyebrow}</span>
 
               <ModalTitulo>
-                <h3 id="dp-ocorrencias-titulo">
-                  {titulo}
-                </h3>
+                <h3 id="dp-ocorrencias-titulo">{titulo}</h3>
               </ModalTitulo>
 
               <div className="dp-ocorrencias-header-meta">
-                <span>
-                  {formatarNumero(
-                    resumo.total,
-                  )}{" "}
-                  ocorrência(s)
-                </span>
+                <span>{formatarNumero(resumo.total)} ocorrência(s)</span>
 
                 <i />
 
-                <span>
-                  {subtitulo}
-                </span>
+                <span>{subtitulo}</span>
               </div>
             </div>
           </div>
@@ -350,103 +225,57 @@ function ModalOcorrenciasParadas({
         <div className="dp-ocorrencias-resumo dp-ocorrencias-resumo--novo">
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--ocorrencias">
             <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
-              <Activity
-                size={18}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Activity size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
             <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
-              <span>
-                Total de ocorrências
-              </span>
+              <span>Total de ocorrências</span>
 
-              <strong>
-                {formatarNumero(
-                  resumo.total,
-                )}
-              </strong>
+              <strong>{formatarNumero(resumo.total)}</strong>
 
-              <small>
-                registros no recorte atual
-              </small>
+              <small>registros no recorte atual</small>
             </div>
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--tempo">
             <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
-              <Clock3
-                size={18}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Clock3 size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
             <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
-              <span>
-                Tempo total parado
-              </span>
+              <span>Tempo total parado</span>
 
-              <strong>
-                {formatarDuracaoResumida(
-                  resumo.totalSegundos,
-                )}
-              </strong>
+              <strong>{formatarDuracaoResumida(resumo.totalSegundos)}</strong>
 
-              <small>
-                impacto acumulado
-              </small>
+              <small>impacto acumulado</small>
             </div>
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--media">
             <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
-              <Timer
-                size={18}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Timer size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
             <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
-              <span>
-                Tempo médio
-              </span>
+              <span>Tempo médio</span>
 
-              <strong>
-                {formatarDuracaoResumida(
-                  resumo.mediaSegundos,
-                )}
-              </strong>
+              <strong>{formatarDuracaoResumida(resumo.mediaSegundos)}</strong>
 
-              <small>
-                média por ocorrência
-              </small>
+              <small>média por ocorrência</small>
             </div>
           </article>
 
           <article className="dp-ocorrencias-kpi dp-ocorrencias-kpi--maquinas">
             <div className="dp-ocorrencias-kpi__icon" data-modal-icone="">
-              <Factory
-                size={18}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Factory size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
             <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
-              <span>
-                Injetoras afetadas
-              </span>
+              <span>Injetoras afetadas</span>
 
-              <strong>
-                {resumo.injetoras}
-              </strong>
+              <strong>{resumo.injetoras}</strong>
 
-              <small>
-                máquinas diferentes
-              </small>
+              <small>máquinas diferentes</small>
             </div>
           </article>
         </div>
@@ -462,14 +291,7 @@ function ModalOcorrenciasParadas({
             <input
               type="search"
               value={busca}
-              onChange={(
-                event,
-              ) =>
-                setBusca(
-                  event.target
-                    .value,
-                )
-              }
+              onChange={(event) => setBusca(event.target.value)}
               placeholder="Pesquisar injetora, justificativa, OP, operador ou produto..."
             />
 
@@ -477,9 +299,7 @@ function ModalOcorrenciasParadas({
               <button
                 type="button"
                 className="dp-ocorrencias-limpar-busca"
-                onClick={() =>
-                  setBusca("")
-                }
+                onClick={() => setBusca("")}
                 aria-label="Limpar busca"
               >
                 <X size={14} />
@@ -488,23 +308,12 @@ function ModalOcorrenciasParadas({
           </label>
 
           <div className="dp-ocorrencias-toolbar-info">
-            <span className="dp-ocorrencias-toolbar-info__label">
-              Registros exibidos
-            </span>
+            <span className="dp-ocorrencias-toolbar-info__label">Registros exibidos</span>
 
             <div className="dp-ocorrencias-total-encontrado">
-              <strong>
-                {formatarNumero(
-                  ocorrenciasPesquisadas.length,
-                )}
-              </strong>
+              <strong>{formatarNumero(ocorrenciasPesquisadas.length)}</strong>
 
-              <span>
-                de{" "}
-                {formatarNumero(
-                  resumo.total,
-                )}
-              </span>
+              <span>de {formatarNumero(resumo.total)}</span>
             </div>
           </div>
         </div>
@@ -517,17 +326,12 @@ function ModalOcorrenciasParadas({
           <table className="dp-ocorrencias-tabela dp-ocorrencias-tabela--novo">
             <thead>
               <tr>
-                <th className="dp-ocorrencias-col-numero">
-                  #
-                </th>
+                <th className="dp-ocorrencias-col-numero">#</th>
 
                 <th>Data</th>
                 <th>Injetora</th>
                 <th>Motivo</th>
-                <th>
-                  Descrição /
-                  justificativa
-                </th>
+                <th>Descrição / justificativa</th>
                 <th>OP</th>
                 <th>Operador</th>
                 <th>Início</th>
@@ -537,126 +341,56 @@ function ModalOcorrenciasParadas({
             </thead>
 
             <tbody>
-              {ocorrenciasPesquisadas.length ===
-              0 ? (
+              {ocorrenciasPesquisadas.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={10}
-                    className="dp-ocorrencias-vazio"
-                  >
-                    <Search
-                      size={22}
-                    />
+                  <td colSpan={10} className="dp-ocorrencias-vazio">
+                    <Search size={22} />
 
-                    <strong>
-                      Nenhum registro encontrado
-                    </strong>
+                    <strong>Nenhum registro encontrado</strong>
 
-                    <span>
-                      Tente alterar o termo da pesquisa.
-                    </span>
+                    <span>Tente alterar o termo da pesquisa.</span>
                   </td>
                 </tr>
               ) : (
-                ocorrenciasPesquisadas.map(
-                  (
-                    registro,
-                    indice,
-                  ) => {
-                    const justificativa =
-                      String(
-                        registro
-                          ?.justificativa ||
-                          registro
-                            ?.descricao ||
-                          "",
-                      ).trim();
+                ocorrenciasPesquisadas.map((registro, indice) => {
+                  const justificativa = String(
+                    registro?.justificativa || registro?.descricao || "",
+                  ).trim();
 
-                    const injetora =
-                      obterInjetoraRegistro(
-                        registro,
-                      );
+                  const injetora = obterInjetoraRegistro(registro);
 
-                    const duracao =
-                      obterDuracaoSegundos(
-                        registro,
-                      );
+                  const duracao = obterDuracaoSegundos(registro);
 
-                    return (
-                      <tr
-                        key={
-                          registro?.id ??
-                          `${titulo}-${indice}`
-                        }
-                      >
-                        <td className="dp-ocorrencias-col-numero">
-                          {indice + 1}
-                        </td>
+                  return (
+                    <tr key={registro?.id ?? `${titulo}-${indice}`}>
+                      <td className="dp-ocorrencias-col-numero">{indice + 1}</td>
 
-                        <td>
-                          {formatarDataRegistro(
-                            registro,
-                          )}
-                        </td>
+                      <td>{formatarDataRegistro(registro)}</td>
 
-                        <td>
-                          <span className="dp-ocorrencias-injetora">
-                            {injetora ||
-                              "—"}
-                          </span>
-                        </td>
+                      <td>
+                        <span className="dp-ocorrencias-injetora">{injetora || "—"}</span>
+                      </td>
 
-                        <td className="dp-ocorrencias-motivo">
-                          {obterMotivoRegistro(
-                            registro,
-                          )}
-                        </td>
+                      <td className="dp-ocorrencias-motivo">{obterMotivoRegistro(registro)}</td>
 
-                        <td className="dp-ocorrencias-descricao">
-                          {justificativa ||
-                            "—"}
-                        </td>
+                      <td className="dp-ocorrencias-descricao">{justificativa || "—"}</td>
 
-                        <td>
-                          {registro?.op ||
-                            "—"}
-                        </td>
+                      <td>{registro?.op || "—"}</td>
 
-                        <td>
-                          {registro
-                            ?.operador ||
-                            "—"}
-                        </td>
+                      <td>{registro?.operador || "—"}</td>
 
-                        <td>
-                          {formatarHorarioRegistro(
-                            registro?.inicio ||
-                              registro
-                                ?.inicio_dia,
-                          )}
-                        </td>
+                      <td>{formatarHorarioRegistro(registro?.inicio || registro?.inicio_dia)}</td>
 
-                        <td>
-                          {formatarHorarioRegistro(
-                            registro?.fim ||
-                              registro
-                                ?.fim_dia,
-                          )}
-                        </td>
+                      <td>{formatarHorarioRegistro(registro?.fim || registro?.fim_dia)}</td>
 
-                        <td className="dp-ocorrencias-duracao-cell">
-                          <strong className="dp-ocorrencias-duracao">
-                            {duracao > 0
-                              ? formatarDuracaoHHMMSS(
-                                  duracao,
-                                )
-                              : "00:00:00"}
-                          </strong>
-                        </td>
-                      </tr>
-                    );
-                  },
-                )
+                      <td className="dp-ocorrencias-duracao-cell">
+                        <strong className="dp-ocorrencias-duracao">
+                          {duracao > 0 ? formatarDuracaoHHMMSS(duracao) : "00:00:00"}
+                        </strong>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -666,6 +400,4 @@ function ModalOcorrenciasParadas({
   );
 }
 
-export default memo(
-  ModalOcorrenciasParadas,
-);
+export default memo(ModalOcorrenciasParadas);

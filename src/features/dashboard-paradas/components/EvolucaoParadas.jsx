@@ -1,9 +1,4 @@
-import {
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import {
   Area,
@@ -16,21 +11,14 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Activity,
-} from "lucide-react";
+import { Activity } from "lucide-react";
 
 import DashboardParadasCard from "./DashboardParadasCard";
 import ModalOcorrenciasParadas from "./ModalOcorrenciasParadas";
 
-import {
-  formatarDataCurta,
-  formatarDuracaoResumida,
-} from "../dashboardParadas.utils";
+import { formatarDataCurta, formatarDuracaoResumida } from "../dashboardParadas.utils";
 
-import {
-  obterDataISORegistro,
-} from "../ocorrenciasParadas.utils";
+import { obterDataISORegistro } from "../ocorrenciasParadas.utils";
 
 import "./EvolucaoParadas.css";
 
@@ -38,113 +26,52 @@ import "./EvolucaoParadas.css";
    MODOS
 ========================================================= */
 
-const MODO_TEMPO =
-  "tempo";
+const MODO_TEMPO = "tempo";
 
-const MODO_OCORRENCIAS =
-  "ocorrencias";
+const MODO_OCORRENCIAS = "ocorrencias";
 
 /* =========================================================
    DATA
 ========================================================= */
 
-function criarDataUTC(
-  dataISO,
-) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(
-      String(
-        dataISO || "",
-      ),
-    )
-  ) {
+function criarDataUTC(dataISO) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dataISO || ""))) {
     return null;
   }
 
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    dataISO
-      .split("-")
-      .map(Number);
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
 
-  const data =
-    new Date(
-      Date.UTC(
-        ano,
-        mes - 1,
-        dia,
-      ),
-    );
+  const data = new Date(Date.UTC(ano, mes - 1, dia));
 
-  return Number.isNaN(
-    data.getTime(),
-  )
-    ? null
-    : data;
+  return Number.isNaN(data.getTime()) ? null : data;
 }
 
-function dataParaISO(
-  data,
-) {
-  if (
-    !(data instanceof Date) ||
-    Number.isNaN(
-      data.getTime(),
-    )
-  ) {
+function dataParaISO(data) {
+  if (!(data instanceof Date) || Number.isNaN(data.getTime())) {
     return "";
   }
 
-  return data
-    .toISOString()
-    .slice(0, 10);
+  return data.toISOString().slice(0, 10);
 }
 
-function adicionarDiasUTC(
-  dataISO,
-  quantidade,
-) {
-  const data =
-    criarDataUTC(
-      dataISO,
-    );
+function adicionarDiasUTC(dataISO, quantidade) {
+  const data = criarDataUTC(dataISO);
 
   if (!data) {
     return "";
   }
 
-  data.setUTCDate(
-    data.getUTCDate() +
-      quantidade,
-  );
+  data.setUTCDate(data.getUTCDate() + quantidade);
 
-  return dataParaISO(
-    data,
-  );
+  return dataParaISO(data);
 }
 
-function formatarDataCompletaISO(
-  dataISO,
-) {
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(
-      String(
-        dataISO || "",
-      ),
-    )
-  ) {
+function formatarDataCompletaISO(dataISO) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dataISO || ""))) {
     return "";
   }
 
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    dataISO.split("-");
+  const [ano, mes, dia] = dataISO.split("-");
 
   return `${dia}/${mes}/${ano}`;
 }
@@ -153,91 +80,48 @@ function formatarDataCompletaISO(
    INÍCIO DA SEMANA
 ========================================================= */
 
-function obterInicioSemana(
-  dataISO,
-) {
-  const data =
-    criarDataUTC(
-      dataISO,
-    );
+function obterInicioSemana(dataISO) {
+  const data = criarDataUTC(dataISO);
 
   if (!data) {
     return "";
   }
 
-  const diaSemana =
-    data.getUTCDay();
+  const diaSemana = data.getUTCDay();
 
-  const deslocamento =
-    (
-      diaSemana + 6
-    ) % 7;
+  const deslocamento = (diaSemana + 6) % 7;
 
-  data.setUTCDate(
-    data.getUTCDate() -
-      deslocamento,
-  );
+  data.setUTCDate(data.getUTCDate() - deslocamento);
 
-  return dataParaISO(
-    data,
-  );
+  return dataParaISO(data);
 }
 
 /* =========================================================
    FIM DO MÊS
 ========================================================= */
 
-function obterFimMes(
-  anoMes,
-) {
-  if (
-    !/^\d{4}-\d{2}$/.test(
-      String(
-        anoMes || "",
-      ),
-    )
-  ) {
+function obterFimMes(anoMes) {
+  if (!/^\d{4}-\d{2}$/.test(String(anoMes || ""))) {
     return "";
   }
 
-  const [
-    ano,
-    mes,
-  ] =
-    anoMes
-      .split("-")
-      .map(Number);
+  const [ano, mes] = anoMes.split("-").map(Number);
 
-  const data =
-    new Date(
-      Date.UTC(
-        ano,
-        mes,
-        0,
-      ),
-    );
+  const data = new Date(Date.UTC(ano, mes, 0));
 
-  return dataParaISO(
-    data,
-  );
+  return dataParaISO(data);
 }
 
 /* =========================================================
    AGRUPAMENTO AUTOMÁTICO
 ========================================================= */
 
-function definirGranularidade(
-  quantidadeDatas,
-) {
-  if (
-    quantidadeDatas <= 45
-  ) {
+function definirGranularidade(quantidadeDatas) {
+  if (quantidadeDatas <= 45) {
     return "dia";
   }
 
-  if (
-    quantidadeDatas <= 120
-  ) {
+  if (quantidadeDatas <= 120) {
     return "semana";
   }
 
@@ -248,184 +132,95 @@ function definirGranularidade(
    AGRUPAR EVOLUÇÃO
 ========================================================= */
 
-function agruparEvolucao(
-  dados,
-) {
-  const lista =
-    Array.isArray(dados)
-      ? dados
-          .filter(
-            (item) =>
-              item?.data,
-          )
-          .sort(
-            (a, b) =>
-              String(
-                a.data,
-              ).localeCompare(
-                String(
-                  b.data,
-                ),
-              ),
-          )
-      : [];
+function agruparEvolucao(dados) {
+  const lista = Array.isArray(dados)
+    ? dados
+        .filter((item) => item?.data)
+        .sort((a, b) => String(a.data).localeCompare(String(b.data)))
+    : [];
 
-  const granularidade =
-    definirGranularidade(
-      lista.length,
-    );
+  const granularidade = definirGranularidade(lista.length);
 
-  const mapa =
-    new Map();
+  const mapa = new Map();
 
-  for (
-    const item of lista
-  ) {
-    const dataISO =
-      String(
-        item.data || "",
-      );
+  for (const item of lista) {
+    const dataISO = String(item.data || "");
 
-    let chave =
-      dataISO;
+    let chave = dataISO;
 
-    let label =
-      formatarDataCurta(
-        dataISO,
-      );
+    let label = formatarDataCurta(dataISO);
 
-    let labelCompleto =
-      label;
+    let labelCompleto = label;
 
-    let dataInicio =
-      dataISO;
+    let dataInicio = dataISO;
 
-    let dataFim =
-      dataISO;
+    let dataFim = dataISO;
 
     /* =====================================================
        SEMANA
     ===================================================== */
 
-    if (
-      granularidade ===
-      "semana"
-    ) {
-      const inicioSemana =
-        obterInicioSemana(
-          dataISO,
-        );
+    if (granularidade === "semana") {
+      const inicioSemana = obterInicioSemana(dataISO);
 
-      chave =
-        inicioSemana;
+      chave = inicioSemana;
 
-      dataInicio =
-        inicioSemana;
+      dataInicio = inicioSemana;
 
-      dataFim =
-        adicionarDiasUTC(
-          inicioSemana,
-          6,
-        );
+      dataFim = adicionarDiasUTC(inicioSemana, 6);
 
-      label =
-        formatarDataCurta(
-          inicioSemana,
-        );
+      label = formatarDataCurta(inicioSemana);
 
-      labelCompleto =
-        `Semana de ${label}`;
+      labelCompleto = `Semana de ${label}`;
     }
 
     /* =====================================================
        MÊS
     ===================================================== */
 
-    if (
-      granularidade ===
-      "mes"
-    ) {
-      chave =
-        dataISO.slice(
-          0,
-          7,
-        );
+    if (granularidade === "mes") {
+      chave = dataISO.slice(0, 7);
 
-      const [
-        ano,
-        mes,
-      ] =
-        chave.split("-");
+      const [ano, mes] = chave.split("-");
 
-      dataInicio =
-        `${chave}-01`;
+      dataInicio = `${chave}-01`;
 
-      dataFim =
-        obterFimMes(
-          chave,
-        );
+      dataFim = obterFimMes(chave);
 
-      label =
-        `${mes}/${String(
-          ano,
-        ).slice(-2)}`;
+      label = `${mes}/${String(ano).slice(-2)}`;
 
-      labelCompleto =
-        `${mes}/${ano}`;
+      labelCompleto = `${mes}/${ano}`;
     }
 
-    if (
-      !mapa.has(
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
         chave,
-      )
-    ) {
-      mapa.set(
-        chave,
-        {
-          chave,
 
-          label,
+        label,
 
-          labelCompleto,
+        labelCompleto,
 
-          dataInicio,
+        dataInicio,
 
-          dataFim,
+        dataFim,
 
-          duracao_segundos:
-            0,
+        duracao_segundos: 0,
 
-          ocorrencias:
-            0,
-        },
-      );
+        ocorrencias: 0,
+      });
     }
 
-    const grupo =
-      mapa.get(
-        chave,
-      );
+    const grupo = mapa.get(chave);
 
-    grupo.duracao_segundos +=
-      Number(
-        item.duracao_segundos ||
-          0,
-      );
+    grupo.duracao_segundos += Number(item.duracao_segundos || 0);
 
-    grupo.ocorrencias +=
-      Number(
-        item.ocorrencias ||
-          0,
-      );
+    grupo.ocorrencias += Number(item.ocorrencias || 0);
   }
 
   return {
     granularidade,
 
-    dados:
-      Array.from(
-        mapa.values(),
-      ),
+    dados: Array.from(mapa.values()),
   };
 }
 
@@ -433,59 +228,26 @@ function agruparEvolucao(
    MÉDIA
 ========================================================= */
 
-function calcularMedia(
-  dados,
-  campo,
-) {
-  if (
-    !Array.isArray(dados) ||
-    dados.length === 0
-  ) {
+function calcularMedia(dados, campo) {
+  if (!Array.isArray(dados) || dados.length === 0) {
     return 0;
   }
 
-  const total =
-    dados.reduce(
-      (
-        soma,
-        item,
-      ) =>
-        soma +
-        (
-          Number(
-            item?.[campo],
-          ) || 0
-        ),
-      0,
-    );
+  const total = dados.reduce((soma, item) => soma + (Number(item?.[campo]) || 0), 0);
 
-  return (
-    total /
-    dados.length
-  );
+  return total / dados.length;
 }
 
 /* =========================================================
    TOOLTIP
 ========================================================= */
 
-function EvolucaoTooltip({
-  active,
-  payload,
-  modo,
-}) {
-  if (
-    !active ||
-    !Array.isArray(
-      payload,
-    ) ||
-    payload.length === 0
-  ) {
+function EvolucaoTooltip({ active, payload, modo }) {
+  if (!active || !Array.isArray(payload) || payload.length === 0) {
     return null;
   }
 
-  const item =
-    payload[0]?.payload;
+  const item = payload[0]?.payload;
 
   if (!item) {
     return null;
@@ -493,74 +255,40 @@ function EvolucaoTooltip({
 
   return (
     <div className="dp-chart-tooltip">
-      <strong>
-        {item.labelCompleto}
-      </strong>
+      <strong>{item.labelCompleto}</strong>
 
-      {modo ===
-      MODO_TEMPO ? (
+      {modo === MODO_TEMPO ? (
         <>
           <div className="dp-chart-tooltip__linha">
-            <span>
-              Tempo parado
-            </span>
+            <span>Tempo parado</span>
 
-            <b>
-              {formatarDuracaoResumida(
-                item.duracao_segundos,
-              )}
-            </b>
+            <b>{formatarDuracaoResumida(item.duracao_segundos)}</b>
           </div>
 
           <div className="dp-chart-tooltip__linha">
-            <span>
-              Ocorrências
-            </span>
+            <span>Ocorrências</span>
 
-            <b>
-              {Number(
-                item.ocorrencias ||
-                  0,
-              ).toLocaleString(
-                "pt-BR",
-              )}
-            </b>
+            <b>{Number(item.ocorrencias || 0).toLocaleString("pt-BR")}</b>
           </div>
         </>
       ) : (
         <>
           <div className="dp-chart-tooltip__linha">
-            <span>
-              Ocorrências
-            </span>
+            <span>Ocorrências</span>
 
-            <b>
-              {Number(
-                item.ocorrencias ||
-                  0,
-              ).toLocaleString(
-                "pt-BR",
-              )}
-            </b>
+            <b>{Number(item.ocorrencias || 0).toLocaleString("pt-BR")}</b>
           </div>
 
           <div className="dp-chart-tooltip__linha">
-            <span>
-              Tempo acumulado
-            </span>
+            <span>Tempo acumulado</span>
 
-            <b>
-              {formatarDuracaoResumida(
-                item.duracao_segundos,
-              )}
-            </b>
+            <b>{formatarDuracaoResumida(item.duracao_segundos)}</b>
           </div>
         </>
       )}
 
       <div className="dp-drilldown-tooltip-clique">
-        Clique no ponto para
-        visualizar as ocorrências.
+        Clique no ponto para visualizar as ocorrências.
       </div>
     </div>
   );
@@ -570,242 +298,122 @@ function EvolucaoTooltip({
    EVOLUÇÃO
 ========================================================= */
 
-function EvolucaoParadas({
-  dados = [],
-  ocorrencias = [],
-}) {
-  const [
-    modo,
-    setModo,
-  ] = useState(
-    MODO_TEMPO,
-  );
+function EvolucaoParadas({ dados = [], ocorrencias = [] }) {
+  const [modo, setModo] = useState(MODO_TEMPO);
 
-  const [
-    periodoSelecionado,
-    setPeriodoSelecionado,
-  ] = useState(null);
+  const [periodoSelecionado, setPeriodoSelecionado] = useState(null);
 
   /* =======================================================
      AGRUPAMENTO
   ======================================================= */
 
-  const agrupamento =
-    useMemo(
-      () =>
-        agruparEvolucao(
-          dados,
-        ),
-      [dados],
-    );
+  const agrupamento = useMemo(() => agruparEvolucao(dados), [dados]);
 
   /* =======================================================
      DADOS DO GRÁFICO
   ======================================================= */
 
-  const dadosGrafico =
-    useMemo(
-      () =>
-        agrupamento.dados.map(
-          (item) => ({
-            ...item,
+  const dadosGrafico = useMemo(
+    () =>
+      agrupamento.dados.map((item) => ({
+        ...item,
 
-            horas:
-              item.duracao_segundos /
-              3600,
+        horas: item.duracao_segundos / 3600,
 
-            valor:
-              modo ===
-              MODO_TEMPO
-                ? item.duracao_segundos /
-                  3600
-                : item.ocorrencias,
-          }),
-        ),
-      [
-        agrupamento,
-        modo,
-      ],
-    );
+        valor: modo === MODO_TEMPO ? item.duracao_segundos / 3600 : item.ocorrencias,
+      })),
+    [agrupamento, modo],
+  );
 
-  const vazio =
-    dadosGrafico.length ===
-    0;
+  const vazio = dadosGrafico.length === 0;
 
   /* =======================================================
      MÉDIA
   ======================================================= */
 
-  const media =
-    useMemo(
-      () =>
-        calcularMedia(
-          dadosGrafico,
-          "valor",
-        ),
-      [dadosGrafico],
-    );
+  const media = useMemo(() => calcularMedia(dadosGrafico, "valor"), [dadosGrafico]);
 
   /* =======================================================
      GRANULARIDADE
   ======================================================= */
 
-  const granularidadeLabel =
-    useMemo(() => {
-      if (
-        agrupamento
-          .granularidade ===
-        "mes"
-      ) {
-        return "Visão mensal";
-      }
+  const granularidadeLabel = useMemo(() => {
+    if (agrupamento.granularidade === "mes") {
+      return "Visão mensal";
+    }
 
-      if (
-        agrupamento
-          .granularidade ===
-        "semana"
-      ) {
-        return "Visão semanal";
-      }
+    if (agrupamento.granularidade === "semana") {
+      return "Visão semanal";
+    }
 
-      return "Visão diária";
-    }, [
-      agrupamento
-        .granularidade,
-    ]);
+    return "Visão diária";
+  }, [agrupamento.granularidade]);
 
   /* =======================================================
      CLIQUE NO GRÁFICO
   ======================================================= */
 
-  const abrirPeriodo =
-    useCallback(
-      (evento) => {
-        const item =
-          evento
-            ?.activePayload?.[0]
-            ?.payload ||
-          evento?.payload;
+  const abrirPeriodo = useCallback((evento) => {
+    const item = evento?.activePayload?.[0]?.payload || evento?.payload;
 
-        if (
-          !item?.dataInicio ||
-          !item?.dataFim
-        ) {
-          return;
-        }
+    if (!item?.dataInicio || !item?.dataFim) {
+      return;
+    }
 
-        setPeriodoSelecionado(
-          item,
-        );
-      },
-      [],
-    );
+    setPeriodoSelecionado(item);
+  }, []);
 
-  const fecharPeriodo =
-    useCallback(() => {
-      setPeriodoSelecionado(
-        null,
-      );
-    }, []);
+  const fecharPeriodo = useCallback(() => {
+    setPeriodoSelecionado(null);
+  }, []);
 
   /* =======================================================
      OCORRÊNCIAS DO PERÍODO
   ======================================================= */
 
-  const ocorrenciasPeriodo =
-    useMemo(() => {
-      if (
-        !periodoSelecionado
-      ) {
-        return [];
+  const ocorrenciasPeriodo = useMemo(() => {
+    if (!periodoSelecionado) {
+      return [];
+    }
+
+    const inicio = periodoSelecionado.dataInicio;
+
+    const fim = periodoSelecionado.dataFim;
+
+    return (Array.isArray(ocorrencias) ? ocorrencias : []).filter((registro) => {
+      const dataISO = obterDataISORegistro(registro);
+
+      if (!dataISO) {
+        return false;
       }
 
-      const inicio =
-        periodoSelecionado
-          .dataInicio;
-
-      const fim =
-        periodoSelecionado
-          .dataFim;
-
-      return (
-        Array.isArray(
-          ocorrencias,
-        )
-          ? ocorrencias
-          : []
-      ).filter(
-        (registro) => {
-          const dataISO =
-            obterDataISORegistro(
-              registro,
-            );
-
-          if (!dataISO) {
-            return false;
-          }
-
-          return (
-            dataISO >= inicio &&
-            dataISO <= fim
-          );
-        },
-      );
-    }, [
-      ocorrencias,
-      periodoSelecionado,
-    ]);
+      return dataISO >= inicio && dataISO <= fim;
+    });
+  }, [ocorrencias, periodoSelecionado]);
 
   /* =======================================================
      TÍTULO DO MODAL
   ======================================================= */
 
-  const tituloModal =
-    useMemo(() => {
-      if (
-        !periodoSelecionado
-      ) {
-        return "";
-      }
+  const tituloModal = useMemo(() => {
+    if (!periodoSelecionado) {
+      return "";
+    }
 
-      if (
-        agrupamento
-          .granularidade ===
-        "mes"
-      ) {
-        return `Mês: ${periodoSelecionado.labelCompleto}`;
-      }
+    if (agrupamento.granularidade === "mes") {
+      return `Mês: ${periodoSelecionado.labelCompleto}`;
+    }
 
-      if (
-        agrupamento
-          .granularidade ===
-        "semana"
-      ) {
-        return (
-          "Semana: " +
-          `${formatarDataCompletaISO(
-            periodoSelecionado
-              .dataInicio,
-          )} a ` +
-          `${formatarDataCompletaISO(
-            periodoSelecionado
-              .dataFim,
-          )}`
-        );
-      }
-
+    if (agrupamento.granularidade === "semana") {
       return (
-        "Dia: " +
-        formatarDataCompletaISO(
-          periodoSelecionado
-            .dataInicio,
-        )
+        "Semana: " +
+        `${formatarDataCompletaISO(periodoSelecionado.dataInicio)} a ` +
+        `${formatarDataCompletaISO(periodoSelecionado.dataFim)}`
       );
-    }, [
-      periodoSelecionado,
-      agrupamento
-        .granularidade,
-    ]);
+    }
+
+    return "Dia: " + formatarDataCompletaISO(periodoSelecionado.dataInicio);
+  }, [periodoSelecionado, agrupamento.granularidade]);
 
   /* =======================================================
      BOTÕES
@@ -813,28 +421,13 @@ function EvolucaoParadas({
 
   const actions = (
     <div className="dp-evolucao-actions">
-      <span className="dp-evolucao-granularidade">
-        {granularidadeLabel}
-      </span>
+      <span className="dp-evolucao-granularidade">{granularidadeLabel}</span>
 
-      <div
-        className="dp-chart-toggle"
-        role="group"
-        aria-label="Visualização da evolução"
-      >
+      <div className="dp-chart-toggle" role="group" aria-label="Visualização da evolução">
         <button
           type="button"
-          className={
-            modo ===
-            MODO_TEMPO
-              ? "dp-chart-toggle__btn active"
-              : "dp-chart-toggle__btn"
-          }
-          onClick={() =>
-            setModo(
-              MODO_TEMPO,
-            )
-          }
+          className={modo === MODO_TEMPO ? "dp-chart-toggle__btn active" : "dp-chart-toggle__btn"}
+          onClick={() => setModo(MODO_TEMPO)}
         >
           Tempo parado
         </button>
@@ -842,16 +435,9 @@ function EvolucaoParadas({
         <button
           type="button"
           className={
-            modo ===
-            MODO_OCORRENCIAS
-              ? "dp-chart-toggle__btn active"
-              : "dp-chart-toggle__btn"
+            modo === MODO_OCORRENCIAS ? "dp-chart-toggle__btn active" : "dp-chart-toggle__btn"
           }
-          onClick={() =>
-            setModo(
-              MODO_OCORRENCIAS,
-            )
-          }
+          onClick={() => setModo(MODO_OCORRENCIAS)}
         >
           Ocorrências
         </button>
@@ -873,15 +459,10 @@ function EvolucaoParadas({
         empty={vazio}
       >
         <div className="dp-chart dp-chart--evolucao dp-chart--evolucao-clicavel">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={dadosGrafico}
-              onClick={
-                abrirPeriodo
-              }
+              onClick={abrirPeriodo}
               margin={{
                 top: 18,
                 right: 18,
@@ -890,32 +471,14 @@ function EvolucaoParadas({
               }}
             >
               <defs>
-                <linearGradient
-                  id="dpEvolucaoGradient"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor="#2563eb"
-                    stopOpacity={0.32}
-                  />
+                <linearGradient id="dpEvolucaoGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#2563eb" stopOpacity={0.32} />
 
-                  <stop
-                    offset="100%"
-                    stopColor="#2563eb"
-                    stopOpacity={0.03}
-                  />
+                  <stop offset="100%" stopColor="#2563eb" stopOpacity={0.03} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#e8eef5"
-              />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e8eef5" />
 
               <XAxis
                 dataKey="label"
@@ -924,18 +487,14 @@ function EvolucaoParadas({
                   fill: "#64748b",
                 }}
                 axisLine={{
-                  stroke:
-                    "#cbd5e1",
+                  stroke: "#cbd5e1",
                 }}
                 tickLine={false}
                 minTickGap={18}
               />
 
               <YAxis
-                allowDecimals={
-                  modo ===
-                  MODO_TEMPO
-                }
+                allowDecimals={modo === MODO_TEMPO}
                 tick={{
                   fontSize: 11,
                   fill: "#64748b",
@@ -943,43 +502,20 @@ function EvolucaoParadas({
                 axisLine={false}
                 tickLine={false}
                 width={52}
-                tickFormatter={(
-                  valor,
-                ) => {
-                  if (
-                    modo ===
-                    MODO_TEMPO
-                  ) {
-                    return `${Number(
-                      valor,
-                    ).toLocaleString(
-                      "pt-BR",
-                      {
-                        maximumFractionDigits:
-                          1,
-                      },
-                    )}h`;
+                tickFormatter={(valor) => {
+                  if (modo === MODO_TEMPO) {
+                    return `${Number(valor).toLocaleString("pt-BR", {
+                      maximumFractionDigits: 1,
+                    })}h`;
                   }
 
-                  return Number(
-                    valor,
-                  ).toLocaleString(
-                    "pt-BR",
-                    {
-                      maximumFractionDigits:
-                        0,
-                    },
-                  );
+                  return Number(valor).toLocaleString("pt-BR", {
+                    maximumFractionDigits: 0,
+                  });
                 }}
               />
 
-              <Tooltip
-                content={
-                  <EvolucaoTooltip
-                    modo={modo}
-                  />
-                }
-              />
+              <Tooltip content={<EvolucaoTooltip modo={modo} />} />
 
               {media > 0 && (
                 <ReferenceLine
@@ -988,12 +524,9 @@ function EvolucaoParadas({
                   strokeDasharray="5 5"
                   label={{
                     value: "Média",
-                    position:
-                      "insideTopRight",
-                    fill:
-                      "#64748b",
-                    fontSize:
-                      10,
+                    position: "insideTopRight",
+                    fill: "#64748b",
+                    fontSize: 10,
                   }}
                 />
               )}
@@ -1008,26 +541,18 @@ function EvolucaoParadas({
                 connectNulls
                 activeDot={{
                   r: 6,
-                  fill:
-                    "#1d4ed8",
-                  stroke:
-                    "#ffffff",
-                  strokeWidth:
-                    2,
-                  cursor:
-                    "pointer",
+                  fill: "#1d4ed8",
+                  stroke: "#ffffff",
+                  strokeWidth: 2,
+                  cursor: "pointer",
                 }}
                 dot={
-                  dadosGrafico.length <=
-                  24
+                  dadosGrafico.length <= 24
                     ? {
                         r: 3,
-                        fill:
-                          "#2563eb",
-                        stroke:
-                          "#ffffff",
-                        strokeWidth:
-                          1.5,
+                        fill: "#2563eb",
+                        stroke: "#ffffff",
+                        strokeWidth: 1.5,
                       }
                     : false
                 }
@@ -1038,34 +563,21 @@ function EvolucaoParadas({
         </div>
 
         <div className="dp-drilldown__clique">
-          Clique em um ponto do
-          gráfico para visualizar
-          as ocorrências daquele
-          período.
+          Clique em um ponto do gráfico para visualizar as ocorrências daquele período.
         </div>
       </DashboardParadasCard>
 
       <ModalOcorrenciasParadas
-        aberto={Boolean(
-          periodoSelecionado,
-        )}
+        aberto={Boolean(periodoSelecionado)}
         titulo={tituloModal}
         subtitulo="Ocorrências deste período dentro dos filtros atuais"
         eyebrow="Detalhamento da evolução"
-        ocorrencias={
-          ocorrenciasPeriodo
-        }
-        onFechar={
-          fecharPeriodo
-        }
-        icone={
-          Activity
-        }
+        ocorrencias={ocorrenciasPeriodo}
+        onFechar={fecharPeriodo}
+        icone={Activity}
       />
     </>
   );
 }
 
-export default memo(
-  EvolucaoParadas,
-);
+export default memo(EvolucaoParadas);

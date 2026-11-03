@@ -95,16 +95,11 @@ export function calcularDiasAtraso(previsao) {
   dataPrevisao.setHours(0, 0, 0, 0);
   const diferencaMs = hoje.getTime() - dataPrevisao.getTime();
 
-  return diferencaMs <= 0
-    ? 0
-    : Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
+  return diferencaMs <= 0 ? 0 : Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
 }
 
 export function pedidoEstaAtrasado(pedido) {
-  return (
-    normalizarTexto(pedido?.status) === "pedido" &&
-    calcularDiasAtraso(pedido?.previsao) > 0
-  );
+  return normalizarTexto(pedido?.status) === "pedido" && calcularDiasAtraso(pedido?.previsao) > 0;
 }
 
 export function formatarTextoAtraso(dias) {

@@ -2,161 +2,81 @@ import { supabase } from "@/lib/supabaseClient";
 
 import { buscarFornecedores } from "../fornecedores/fornecedoresService";
 
-
-
 export const STATUS_COMPRA_FUTURA = [
-
   {
-
     valor: "PREVISTA",
 
     nome: "Prevista",
-
   },
 
   {
-
     valor: "CONFIRMADA",
 
     nome: "Confirmada",
-
   },
 
   {
-
     valor: "RECEBIDA",
 
     nome: "Recebida",
-
   },
 
   {
-
     valor: "CANCELADA",
 
     nome: "Cancelada",
-
   },
-
 ];
 
-
-
 export const TIPOS_CLASSIFICACAO = [
-
   {
-
     valor: "TIPO SP",
 
     nome: "TIPO SP",
-
   },
 
   {
-
     valor: "TIPO C",
 
     nome: "TIPO C",
-
   },
-
 ];
 
-
-
 export const TIPOS_FRETE = [
-
   {
-
     valor: "",
 
     nome: "Não informado",
-
   },
 
   {
-
     valor: "CIF",
 
     nome: "CIF",
-
   },
 
   {
-
     valor: "FOB",
 
     nome: "FOB",
-
   },
 
   {
-
     valor: "SEM_FRETE",
 
     nome: "Sem frete",
-
   },
-
 ];
 
+const STATUS_VALIDOS = new Set(STATUS_COMPRA_FUTURA.map(({ valor }) => valor));
 
-
-const STATUS_VALIDOS = new Set(
-
-  STATUS_COMPRA_FUTURA.map(
-
-    ({
-
-      valor,
-
-    }) => valor,
-
-  ),
-
-);
-
-
-
-const TIPOS_CLASSIFICACAO_VALIDOS = new Set(
-
-  TIPOS_CLASSIFICACAO.map(
-
-    ({
-
-      valor,
-
-    }) => valor,
-
-  ),
-
-);
-
-
+const TIPOS_CLASSIFICACAO_VALIDOS = new Set(TIPOS_CLASSIFICACAO.map(({ valor }) => valor));
 
 const TIPOS_FRETE_VALIDOS = new Set(
+  TIPOS_FRETE.map(({ valor }) => valor)
 
-  TIPOS_FRETE
-
-    .map(
-
-      ({
-
-        valor,
-
-      }) => valor,
-
-    )
-
-    .filter(
-
-      Boolean,
-
-    ),
-
+    .filter(Boolean),
 );
-
-
 
 const CAMPOS_COMPRA_FUTURA = `
 
@@ -218,260 +138,80 @@ const CAMPOS_COMPRA_FUTURA = `
 
 `;
 
-
-
 function normalizarNumero(valor) {
-
-  if (
-
-    valor === null ||
-
-    valor === undefined ||
-
-    valor === ""
-
-  ) {
-
+  if (valor === null || valor === undefined || valor === "") {
     return null;
-
   }
 
-
-
-  if (
-
-    typeof valor ===
-
-    "number"
-
-  ) {
-
-    return Number.isFinite(
-
-      valor,
-
-    )
-
-      ? valor
-
-      : null;
-
+  if (typeof valor === "number") {
+    return Number.isFinite(valor) ? valor : null;
   }
 
+  const texto = String(valor)
+    .trim()
 
+    .replace(
+      /\s/g,
 
-  const texto =
-
-    String(
-
-      valor,
-
-    )
-
-      .trim()
-
-      .replace(
-
-        /\s/g,
-
-        "",
-
-      );
-
-
-
-  if (!texto) {
-
-    return null;
-
-  }
-
-
-
-  const normalizado =
-
-    texto.includes(
-
-      ",",
-
-    )
-
-      ? texto
-
-          .replace(
-
-            /\./g,
-
-            "",
-
-          )
-
-          .replace(
-
-            ",",
-
-            ".",
-
-          )
-
-      : texto;
-
-
-
-  const numero =
-
-    Number(
-
-      normalizado,
-
+      "",
     );
 
+  if (!texto) {
+    return null;
+  }
 
+  const normalizado = texto.includes(",")
+    ? texto
 
-  return Number.isFinite(
+        .replace(
+          /\./g,
 
-    numero,
+          "",
+        )
 
-  )
+        .replace(
+          ",",
 
-    ? numero
+          ".",
+        )
+    : texto;
 
-    : null;
+  const numero = Number(normalizado);
 
+  return Number.isFinite(numero) ? numero : null;
 }
 
-
-
 function arredondar(
-
   valor,
 
   casas = 2,
-
 ) {
-
-  if (
-
-    !Number.isFinite(
-
-      valor,
-
-    )
-
-  ) {
-
+  if (!Number.isFinite(valor)) {
     return null;
-
   }
 
+  const fator = 10 ** casas;
 
-
-  const fator =
-
-    10 ** casas;
-
-
-
-  return (
-
-    Math.round(
-
-      (
-
-        valor +
-
-        Number.EPSILON
-
-      ) *
-
-      fator,
-
-    ) /
-
-    fator
-
-  );
-
+  return Math.round((valor + Number.EPSILON) * fator) / fator;
 }
 
-
-
-function numeroRegistroOuNull(
-
-  valor,
-
-) {
-
-  if (
-
-    valor === null ||
-
-    valor === undefined ||
-
-    valor === ""
-
-  ) {
-
+function numeroRegistroOuNull(valor) {
+  if (valor === null || valor === undefined || valor === "") {
     return null;
-
   }
 
+  const numero = Number(valor);
 
-
-  const numero =
-
-    Number(
-
-      valor,
-
-    );
-
-
-
-  return Number.isFinite(
-
-    numero,
-
-  )
-
-    ? numero
-
-    : null;
-
+  return Number.isFinite(numero) ? numero : null;
 }
 
+function textoOpcional(valor) {
+  const texto = String(valor ?? "").trim();
 
-
-function textoOpcional(
-
-  valor,
-
-) {
-
-  const texto =
-
-    String(
-
-      valor ?? "",
-
-    ).trim();
-
-
-
-  return (
-
-    texto ||
-
-    null
-
-  );
-
+  return texto || null;
 }
-
-
 
 export function calcularResumoFinanceiroCompra({
-
   quantidadeKg,
 
   precoUnitario,
@@ -485,762 +225,232 @@ export function calcularResumoFinanceiroCompra({
   valorDesconto,
 
   outrasDespesas,
-
 } = {}) {
+  const quantidade = normalizarNumero(quantidadeKg);
 
-  const quantidade =
+  const preco = normalizarNumero(precoUnitario);
 
-    normalizarNumero(
+  const ipi = normalizarNumero(ipiPercentual);
 
-      quantidadeKg,
+  const freteInformado = normalizarNumero(valorFrete);
 
-    );
+  const desconto = normalizarNumero(valorDesconto);
 
+  const despesas = normalizarNumero(outrasDespesas);
 
+  const tipoFreteFinal = String(tipoFrete ?? "")
+    .trim()
 
-  const preco =
+    .toUpperCase();
 
-    normalizarNumero(
-
-      precoUnitario,
-
-    );
-
-
-
-  const ipi =
-
-    normalizarNumero(
-
-      ipiPercentual,
-
-    );
-
-
-
-  const freteInformado =
-
-    normalizarNumero(
-
-      valorFrete,
-
-    );
-
-
-
-  const desconto =
-
-    normalizarNumero(
-
-      valorDesconto,
-
-    );
-
-
-
-  const despesas =
-
-    normalizarNumero(
-
-      outrasDespesas,
-
-    );
-
-
-
-  const tipoFreteFinal =
-
-    String(
-
-      tipoFrete ?? "",
-
-    )
-
-      .trim()
-
-      .toUpperCase();
-
-
-
-  const valorFreteFinal =
-
-    tipoFreteFinal ===
-
-    "SEM_FRETE"
-
-      ? 0
-
-      : freteInformado;
-
-
+  const valorFreteFinal = tipoFreteFinal === "SEM_FRETE" ? 0 : freteInformado;
 
   const base = {
-
     precoUnitario:
-
       preco === null
-
         ? null
-
         : arredondar(
-
             preco,
 
             6,
-
           ),
 
-
-
-    subtotalProdutos:
-
-      null,
-
-
+    subtotalProdutos: null,
 
     ipiPercentual:
-
       ipi === null
-
         ? null
-
         : arredondar(
-
             ipi,
 
             4,
-
           ),
 
-
-
-    valorIpi:
-
-      null,
-
-
+    valorIpi: null,
 
     valorFrete:
-
       valorFreteFinal === null
-
         ? null
-
         : arredondar(
-
             valorFreteFinal,
 
             2,
-
           ),
 
-
-
-    tipoFrete:
-
-      tipoFreteFinal ||
-
-      null,
-
-
+    tipoFrete: tipoFreteFinal || null,
 
     valorDesconto:
-
       desconto === null
-
         ? null
-
         : arredondar(
-
             desconto,
 
             2,
-
           ),
 
-
-
     outrasDespesas:
-
       despesas === null
-
         ? null
-
         : arredondar(
-
             despesas,
 
             2,
-
           ),
 
+    valorTotal: null,
 
-
-    valorTotal:
-
-      null,
-
-
-
-    custoEfetivoKg:
-
-      null,
-
+    custoEfetivoKg: null,
   };
 
-
-
-  if (
-
-    quantidade === null ||
-
-    quantidade <= 0 ||
-
-    preco === null
-
-  ) {
-
+  if (quantidade === null || quantidade <= 0 || preco === null) {
     return base;
-
   }
 
+  const subtotalProdutos = arredondar(
+    quantidade * preco,
 
+    2,
+  );
 
-  const subtotalProdutos =
+  const valorIpi = arredondar(
+    (subtotalProdutos * (ipi ?? 0)) / 100,
 
-    arredondar(
+    2,
+  );
 
-      quantidade *
+  const valorTotal = arredondar(
+    subtotalProdutos + valorIpi + (valorFreteFinal ?? 0) + (despesas ?? 0) - (desconto ?? 0),
 
-      preco,
-
-      2,
-
-    );
-
-
-
-  const valorIpi =
-
-    arredondar(
-
-      subtotalProdutos *
-
-      (
-
-        ipi ??
-
-        0
-
-      ) /
-
-      100,
-
-      2,
-
-    );
-
-
-
-  const valorTotal =
-
-    arredondar(
-
-      subtotalProdutos +
-
-      valorIpi +
-
-      (
-
-        valorFreteFinal ??
-
-        0
-
-      ) +
-
-      (
-
-        despesas ??
-
-        0
-
-      ) -
-
-      (
-
-        desconto ??
-
-        0
-
-      ),
-
-      2,
-
-    );
-
-
+    2,
+  );
 
   return {
-
     ...base,
-
-
 
     subtotalProdutos,
 
-
-
     valorIpi,
-
-
 
     valorTotal,
 
-
-
     custoEfetivoKg:
-
       valorTotal === null
-
         ? null
-
         : arredondar(
-
-            valorTotal /
-
-            quantidade,
+            valorTotal / quantidade,
 
             6,
-
           ),
-
   };
-
 }
 
-
-
-function normalizarCompra(
-
-  registro,
-
-) {
-
+function normalizarCompra(registro) {
   if (!registro) {
-
     return null;
-
   }
 
+  const id = registro.id;
 
+  const dataCompra = String(registro.data_compra ?? "").trim();
 
-  const id =
+  const dataPrevista = String(registro.data_prevista ?? "").trim();
 
-    registro.id;
+  const fornecedorId = registro.fornecedor_id;
 
+  const materialId = registro.material_id;
 
+  const quantidadeKg = Number(registro.quantidade_kg);
 
-  const dataCompra =
+  const status = String(registro.status ?? "")
+    .trim()
 
-    String(
-
-      registro
-
-        .data_compra ??
-
-        "",
-
-    ).trim();
-
-
-
-  const dataPrevista =
-
-    String(
-
-      registro
-
-        .data_prevista ??
-
-        "",
-
-    ).trim();
-
-
-
-  const fornecedorId =
-
-    registro
-
-      .fornecedor_id;
-
-
-
-  const materialId =
-
-    registro
-
-      .material_id;
-
-
-
-  const quantidadeKg =
-
-    Number(
-
-      registro
-
-        .quantidade_kg,
-
-    );
-
-
-
-  const status =
-
-    String(
-
-      registro
-
-        .status ??
-
-        "",
-
-    )
-
-      .trim()
-
-      .toUpperCase();
-
-
+    .toUpperCase();
 
   if (
-
     id === null ||
-
     id === undefined ||
-
     !dataCompra ||
-
     !dataPrevista ||
-
     fornecedorId === null ||
-
     fornecedorId === undefined ||
-
     materialId === null ||
-
     materialId === undefined ||
-
-    !Number.isFinite(
-
-      quantidadeKg,
-
-    ) ||
-
-    !STATUS_VALIDOS.has(
-
-      status,
-
-    )
-
+    !Number.isFinite(quantidadeKg) ||
+    !STATUS_VALIDOS.has(status)
   ) {
-
     return null;
-
   }
 
-
-
   return {
-
     id,
-
-
 
     dataCompra,
 
-
-
     dataPrevista,
 
-
-
-    dataRecebimento:
-
-      registro
-
-        .data_recebimento
-
-        ? String(
-
-            registro
-
-              .data_recebimento,
-
-          ).trim()
-
-        : null,
-
-
+    dataRecebimento: registro.data_recebimento ? String(registro.data_recebimento).trim() : null,
 
     fornecedorId,
 
-
-
     materialId,
 
+    tipoMaterial: registro.tipo_material ?? "",
 
-
-    tipoMaterial:
-
-      registro
-
-        .tipo_material ??
-
-      "",
-
-
-
-    tipoClassificacao:
-
-      registro
-
-        .tipo_classificacao ??
-
-      "",
-
-
+    tipoClassificacao: registro.tipo_classificacao ?? "",
 
     quantidadeKg,
 
-
-
-    numeroPedido:
-
-      registro
-
-        .numero_pedido ??
-
-      "",
-
-
+    numeroPedido: registro.numero_pedido ?? "",
 
     status,
 
+    observacao: registro.observacao ?? "",
 
+    ativo: registro.ativo !== false,
 
-    observacao:
+    criadoEm: registro.criado_em ?? null,
 
-      registro
+    atualizadoEm: registro.atualizado_em ?? null,
 
-        .observacao ??
+    precoUnitario: numeroRegistroOuNull(registro.preco_unitario),
 
-      "",
+    subtotalProdutos: numeroRegistroOuNull(registro.subtotal_produtos),
 
+    ipiPercentual: numeroRegistroOuNull(registro.ipi_percentual),
 
+    valorIpi: numeroRegistroOuNull(registro.valor_ipi),
 
-    ativo:
+    valorFrete: numeroRegistroOuNull(registro.valor_frete),
 
-      registro
+    tipoFrete: registro.tipo_frete ?? "",
 
-        .ativo !==
+    valorDesconto: numeroRegistroOuNull(registro.valor_desconto),
 
-      false,
+    outrasDespesas: numeroRegistroOuNull(registro.outras_despesas),
 
+    valorTotal: numeroRegistroOuNull(registro.valor_total),
 
+    custoEfetivoKg: numeroRegistroOuNull(registro.custo_efetivo_kg),
 
-    criadoEm:
+    numeroNf: registro.numero_nf ?? "",
 
-      registro
+    condicaoPagamento: registro.condicao_pagamento ?? "",
 
-        .criado_em ??
-
-      null,
-
-
-
-    atualizadoEm:
-
-      registro
-
-        .atualizado_em ??
-
-      null,
-
-
-
-    precoUnitario:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .preco_unitario,
-
-      ),
-
-
-
-    subtotalProdutos:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .subtotal_produtos,
-
-      ),
-
-
-
-    ipiPercentual:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .ipi_percentual,
-
-      ),
-
-
-
-    valorIpi:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .valor_ipi,
-
-      ),
-
-
-
-    valorFrete:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .valor_frete,
-
-      ),
-
-
-
-    tipoFrete:
-
-      registro
-
-        .tipo_frete ??
-
-      "",
-
-
-
-    valorDesconto:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .valor_desconto,
-
-      ),
-
-
-
-    outrasDespesas:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .outras_despesas,
-
-      ),
-
-
-
-    valorTotal:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .valor_total,
-
-      ),
-
-
-
-    custoEfetivoKg:
-
-      numeroRegistroOuNull(
-
-        registro
-
-          .custo_efetivo_kg,
-
-      ),
-
-
-
-    numeroNf:
-
-      registro
-
-        .numero_nf ??
-
-      "",
-
-
-
-    condicaoPagamento:
-
-      registro
-
-        .condicao_pagamento ??
-
-      "",
-
-
-
-    observacaoFinanceira:
-
-      registro
-
-        .observacao_financeira ??
-
-      "",
-
+    observacaoFinanceira: registro.observacao_financeira ?? "",
   };
-
 }
 
-
-
 async function buscarMateriaisCompra() {
-
   const {
-
     data,
 
     error,
+  } = await supabase
 
-  } =
+    .from("materia_prima_materiais")
 
-    await supabase
-
-      .from(
-
-        "materia_prima_materiais",
-
-      )
-
-      .select(`
+    .select(
+      `
 
         id,
 
@@ -1248,93 +458,41 @@ async function buscarMateriaisCompra() {
 
         ativo
 
-      `)
+      `,
+    )
 
-      .order(
+    .order(
+      "nome",
 
-        "nome",
-
-        {
-
-          ascending: true,
-
-        },
-
-      );
-
-
+      {
+        ascending: true,
+      },
+    );
 
   if (error) {
-
     throw error;
-
   }
 
+  return (Array.isArray(data) ? data : []).map((material) => ({
+    id: material.id,
 
+    nome: String(material.nome ?? "").trim(),
 
-  return (
-
-    Array.isArray(data)
-
-      ? data
-
-      : []
-
-  ).map(
-
-    (material) => ({
-
-      id:
-
-        material.id,
-
-
-
-      nome:
-
-        String(
-
-          material.nome ??
-
-          "",
-
-        ).trim(),
-
-
-
-      ativo:
-
-        material.ativo !==
-
-        false,
-
-    }),
-
-  );
-
+    ativo: material.ativo !== false,
+  }));
 }
 
-
-
 async function buscarFornecedorMateriaisCompra() {
-
   const {
-
     data,
 
     error,
+  } = await supabase
 
-  } =
+    .from("materia_prima_fornecedor_materiais")
 
-    await supabase
-
-      .from(
-
-        "materia_prima_fornecedor_materiais",
-
-      )
-
-      .select(`
+    .select(
+      `
 
         id,
 
@@ -1346,366 +504,112 @@ async function buscarFornecedorMateriaisCompra() {
 
         ativo
 
-      `)
+      `,
+    )
+
+    .eq(
+      "ativo",
+
+      true,
+    )
+
+    .order(
+      "fornecedor_id",
+
+      {
+        ascending: true,
+      },
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return (Array.isArray(data) ? data : []).map((vinculo) => ({
+    id: vinculo.id,
+
+    fornecedorId: vinculo.fornecedor_id,
+
+    materialId: vinculo.material_id,
+
+    padrao: vinculo.padrao === true,
+
+    ativo: vinculo.ativo !== false,
+  }));
+}
+
+export async function buscarComprasFuturas() {
+  const [fornecedores, materiais, fornecedorMateriais, resultadoCompras] = await Promise.all([
+    buscarFornecedores(),
+
+    buscarMateriaisCompra(),
+
+    buscarFornecedorMateriaisCompra(),
+
+    supabase
+
+      .from("materia_prima_compras_futuras")
+
+      .select(CAMPOS_COMPRA_FUTURA)
 
       .eq(
-
         "ativo",
 
         true,
-
       )
 
       .order(
-
-        "fornecedor_id",
+        "data_prevista",
 
         {
-
           ascending: true,
-
         },
+      )
 
-      );
+      .order(
+        "id",
 
+        {
+          ascending: false,
+        },
+      ),
+  ]);
 
-
-  if (error) {
-
-    throw error;
-
+  if (resultadoCompras.error) {
+    throw resultadoCompras.error;
   }
 
-
-
-  return (
-
-    Array.isArray(data)
-
-      ? data
-
-      : []
-
-  ).map(
-
-    (vinculo) => ({
-
-      id:
-
-        vinculo.id,
-
-
-
-      fornecedorId:
-
-        vinculo.fornecedor_id,
-
-
-
-      materialId:
-
-        vinculo.material_id,
-
-
-
-      padrao:
-
-        vinculo.padrao ===
-
-        true,
-
-
-
-      ativo:
-
-        vinculo.ativo !==
-
-        false,
-
-    }),
-
+  const fornecedoresPorId = new Map(
+    fornecedores.map((fornecedor) => [String(fornecedor.id), fornecedor]),
   );
 
-}
+  const materiaisPorId = new Map(materiais.map((material) => [String(material.id), material]));
 
+  const compras = (Array.isArray(resultadoCompras.data) ? resultadoCompras.data : [])
 
+    .map(normalizarCompra)
 
-export async function buscarComprasFuturas() {
+    .filter(Boolean)
 
-  const [
+    .map((compra) => {
+      const fornecedor = fornecedoresPorId.get(String(compra.fornecedorId));
 
-    fornecedores,
+      const material = materiaisPorId.get(String(compra.materialId));
 
-    materiais,
+      return {
+        ...compra,
 
-    fornecedorMateriais,
+        fornecedorNome: fornecedor?.nome ?? "Fornecedor não encontrado",
 
-    resultadoCompras,
+        fornecedorAtivo: fornecedor?.ativo !== false,
 
-  ] =
+        materialNome: material?.nome ?? compra.tipoMaterial ?? "Material não encontrado",
 
-    await Promise.all([
-
-      buscarFornecedores(),
-
-
-
-      buscarMateriaisCompra(),
-
-
-
-      buscarFornecedorMateriaisCompra(),
-
-
-
-      supabase
-
-        .from(
-
-          "materia_prima_compras_futuras",
-
-        )
-
-        .select(
-
-          CAMPOS_COMPRA_FUTURA,
-
-        )
-
-        .eq(
-
-          "ativo",
-
-          true,
-
-        )
-
-        .order(
-
-          "data_prevista",
-
-          {
-
-            ascending:
-
-              true,
-
-          },
-
-        )
-
-        .order(
-
-          "id",
-
-          {
-
-            ascending:
-
-              false,
-
-          },
-
-        ),
-
-    ]);
-
-
-
-  if (
-
-    resultadoCompras.error
-
-  ) {
-
-    throw resultadoCompras.error;
-
-  }
-
-
-
-  const fornecedoresPorId =
-
-    new Map(
-
-      fornecedores.map(
-
-        (
-
-          fornecedor,
-
-        ) => [
-
-          String(
-
-            fornecedor.id,
-
-          ),
-
-          fornecedor,
-
-        ],
-
-      ),
-
-    );
-
-
-
-  const materiaisPorId =
-
-    new Map(
-
-      materiais.map(
-
-        (
-
-          material,
-
-        ) => [
-
-          String(
-
-            material.id,
-
-          ),
-
-          material,
-
-        ],
-
-      ),
-
-    );
-
-
-
-  const compras =
-
-    (
-
-      Array.isArray(
-
-        resultadoCompras.data,
-
-      )
-
-        ? resultadoCompras.data
-
-        : []
-
-    )
-
-      .map(
-
-        normalizarCompra,
-
-      )
-
-      .filter(
-
-        Boolean,
-
-      )
-
-      .map(
-
-        (
-
-          compra,
-
-        ) => {
-
-          const fornecedor =
-
-            fornecedoresPorId.get(
-
-              String(
-
-                compra
-
-                  .fornecedorId,
-
-              ),
-
-            );
-
-
-
-          const material =
-
-            materiaisPorId.get(
-
-              String(
-
-                compra
-
-                  .materialId,
-
-              ),
-
-            );
-
-
-
-          return {
-
-            ...compra,
-
-
-
-            fornecedorNome:
-
-              fornecedor
-
-                ?.nome ??
-
-              "Fornecedor não encontrado",
-
-
-
-            fornecedorAtivo:
-
-              fornecedor
-
-                ?.ativo !==
-
-              false,
-
-
-
-            materialNome:
-
-              material
-
-                ?.nome ??
-
-              compra
-
-                .tipoMaterial ??
-
-              "Material não encontrado",
-
-
-
-            materialAtivo:
-
-              material
-
-                ?.ativo !==
-
-              false,
-
-          };
-
-        },
-
-      );
-
-
+        materialAtivo: material?.ativo !== false,
+      };
+    });
 
   return {
-
     compras,
 
     fornecedores,
@@ -1713,1561 +617,502 @@ export async function buscarComprasFuturas() {
     materiais,
 
     fornecedorMateriais,
-
   };
-
 }
 
-
-
 export async function salvarCompraFutura({
-
   id = null,
-
-
 
   dataCompra,
 
-
-
   dataPrevista,
-
-
 
   dataRecebimento = null,
 
-
-
   fornecedorId,
-
-
 
   materialId,
 
-
-
   quantidadeKg,
-
-
 
   numeroPedido = "",
 
-
-
   tipoClassificacao = "",
-
-
 
   status = "CONFIRMADA",
 
-
-
   observacao = "",
-
-
 
   ativo = true,
 
-
-
   precoUnitario = null,
-
-
 
   ipiPercentual = null,
 
-
-
   valorFrete = null,
-
-
 
   tipoFrete = "",
 
-
-
   valorDesconto = null,
-
-
 
   outrasDespesas = null,
 
-
-
   numeroNf = "",
-
-
 
   condicaoPagamento = "",
 
-
-
   observacaoFinanceira = "",
-
 }) {
+  const dataCompraFinal = String(dataCompra ?? "").trim();
 
-  const dataCompraFinal =
+  const dataPrevistaFinal = String(dataPrevista ?? "").trim();
 
-    String(
+  const statusFinal = String(status ?? "CONFIRMADA")
+    .trim()
 
-      dataCompra ?? "",
+    .toUpperCase();
 
-    ).trim();
+  const materialIdFinal = Number(materialId);
 
+  const quantidadeFinal = normalizarNumero(quantidadeKg);
 
+  const tipoClassificacaoFinal = String(tipoClassificacao ?? "")
+    .trim()
 
-  const dataPrevistaFinal =
+    .toUpperCase();
 
-    String(
+  const tipoFreteFinal = String(tipoFrete ?? "")
+    .trim()
 
-      dataPrevista ?? "",
-
-    ).trim();
-
-
-
-  const statusFinal =
-
-    String(
-
-      status ??
-
-        "CONFIRMADA",
-
-    )
-
-      .trim()
-
-      .toUpperCase();
-
-
-
-  const materialIdFinal =
-
-    Number(
-
-      materialId,
-
-    );
-
-
-
-  const quantidadeFinal =
-
-    normalizarNumero(
-
-      quantidadeKg,
-
-    );
-
-
-
-  const tipoClassificacaoFinal =
-
-    String(
-
-      tipoClassificacao ??
-
-        "",
-
-    )
-
-      .trim()
-
-      .toUpperCase();
-
-
-
-  const tipoFreteFinal =
-
-    String(
-
-      tipoFrete ??
-
-        "",
-
-    )
-
-      .trim()
-
-      .toUpperCase();
-
-
+    .toUpperCase();
 
   if (!dataCompraFinal) {
-
-    throw new Error(
-
-      "Informe a data da compra.",
-
-    );
-
+    throw new Error("Informe a data da compra.");
   }
-
-
 
   if (!dataPrevistaFinal) {
-
-    throw new Error(
-
-      "Informe a data prevista de chegada.",
-
-    );
-
+    throw new Error("Informe a data prevista de chegada.");
   }
 
-
-
-  if (
-
-    dataPrevistaFinal <
-
-    dataCompraFinal
-
-  ) {
-
-    throw new Error(
-
-      "A data prevista não pode ser anterior à data da compra.",
-
-    );
-
+  if (dataPrevistaFinal < dataCompraFinal) {
+    throw new Error("A data prevista não pode ser anterior à data da compra.");
   }
 
-
-
-  if (
-
-    fornecedorId === null ||
-
-    fornecedorId ===
-
-      undefined ||
-
-    fornecedorId === ""
-
-  ) {
-
-    throw new Error(
-
-      "Selecione o fornecedor.",
-
-    );
-
+  if (fornecedorId === null || fornecedorId === undefined || fornecedorId === "") {
+    throw new Error("Selecione o fornecedor.");
   }
 
-
-
-  if (
-
-    !Number.isFinite(
-
-      materialIdFinal,
-
-    )
-
-  ) {
-
-    throw new Error(
-
-      "Selecione o material.",
-
-    );
-
+  if (!Number.isFinite(materialIdFinal)) {
+    throw new Error("Selecione o material.");
   }
 
+  const [materialResultado, vinculoResultado] = await Promise.all([
+    supabase
 
+      .from("materia_prima_materiais")
 
-  const [
+      .select("id, ativo")
 
-    materialResultado,
+      .eq(
+        "id",
 
-    vinculoResultado,
+        materialIdFinal,
+      )
 
-  ] =
+      .eq(
+        "ativo",
 
-    await Promise.all([
+        true,
+      )
 
-      supabase
+      .maybeSingle(),
 
-        .from(
+    supabase
 
-          "materia_prima_materiais",
+      .from("materia_prima_fornecedor_materiais")
 
-        )
+      .select("id")
 
-        .select(
+      .eq(
+        "fornecedor_id",
 
-          "id, ativo",
+        fornecedorId,
+      )
 
-        )
+      .eq(
+        "material_id",
 
-        .eq(
+        materialIdFinal,
+      )
 
-          "id",
+      .eq(
+        "ativo",
 
-          materialIdFinal,
+        true,
+      )
 
-        )
+      .maybeSingle(),
+  ]);
 
-        .eq(
-
-          "ativo",
-
-          true,
-
-        )
-
-        .maybeSingle(),
-
-
-
-      supabase
-
-        .from(
-
-          "materia_prima_fornecedor_materiais",
-
-        )
-
-        .select(
-
-          "id",
-
-        )
-
-        .eq(
-
-          "fornecedor_id",
-
-          fornecedorId,
-
-        )
-
-        .eq(
-
-          "material_id",
-
-          materialIdFinal,
-
-        )
-
-        .eq(
-
-          "ativo",
-
-          true,
-
-        )
-
-        .maybeSingle(),
-
-    ]);
-
-
-
-  if (
-
-    materialResultado.error
-
-  ) {
-
+  if (materialResultado.error) {
     throw materialResultado.error;
-
   }
 
-
-
-  if (
-
-    vinculoResultado.error
-
-  ) {
-
+  if (vinculoResultado.error) {
     throw vinculoResultado.error;
-
   }
 
-
-
-  if (
-
-    !materialResultado.data
-
-  ) {
-
-    throw new Error(
-
-      "O material selecionado está inativo ou não existe.",
-
-    );
-
+  if (!materialResultado.data) {
+    throw new Error("O material selecionado está inativo ou não existe.");
   }
 
-
-
-  if (
-
-    !vinculoResultado.data
-
-  ) {
-
-    throw new Error(
-
-      "O material selecionado não está vinculado a este fornecedor.",
-
-    );
-
+  if (!vinculoResultado.data) {
+    throw new Error("O material selecionado não está vinculado a este fornecedor.");
   }
 
-
-
-  if (
-
-    quantidadeFinal ===
-
-      null ||
-
-    quantidadeFinal <= 0
-
-  ) {
-
-    throw new Error(
-
-      "Informe uma quantidade em kg maior que zero.",
-
-    );
-
+  if (quantidadeFinal === null || quantidadeFinal <= 0) {
+    throw new Error("Informe uma quantidade em kg maior que zero.");
   }
 
-
-
-  if (
-
-    !TIPOS_CLASSIFICACAO_VALIDOS.has(
-
-      tipoClassificacaoFinal,
-
-    )
-
-  ) {
-
-    throw new Error(
-
-      "Selecione o tipo do material.",
-
-    );
-
+  if (!TIPOS_CLASSIFICACAO_VALIDOS.has(tipoClassificacaoFinal)) {
+    throw new Error("Selecione o tipo do material.");
   }
 
-
-
-  if (
-
-    !STATUS_VALIDOS.has(
-
-      statusFinal,
-
-    )
-
-  ) {
-
-    throw new Error(
-
-      "Status da compra inválido.",
-
-    );
-
+  if (!STATUS_VALIDOS.has(statusFinal)) {
+    throw new Error("Status da compra inválido.");
   }
 
+  let dataRecebimentoFinal = dataRecebimento ? String(dataRecebimento).trim() : null;
 
-
-  let dataRecebimentoFinal =
-
-    dataRecebimento
-
-      ? String(
-
-          dataRecebimento,
-
-        ).trim()
-
-      : null;
-
-
-
-  if (
-
-    statusFinal ===
-
-    "RECEBIDA"
-
-  ) {
-
-    if (
-
-      !dataRecebimentoFinal
-
-    ) {
-
-      throw new Error(
-
-        "Informe a data real de recebimento.",
-
-      );
-
+  if (statusFinal === "RECEBIDA") {
+    if (!dataRecebimentoFinal) {
+      throw new Error("Informe a data real de recebimento.");
     }
-
   } else {
-
-    dataRecebimentoFinal =
-
-      null;
-
+    dataRecebimentoFinal = null;
   }
 
+  const precoFinal = normalizarNumero(precoUnitario);
 
+  const ipiFinal = normalizarNumero(ipiPercentual);
 
-  const precoFinal =
+  const freteFinal = normalizarNumero(valorFrete);
 
-    normalizarNumero(
+  const descontoFinal = normalizarNumero(valorDesconto);
 
-      precoUnitario,
+  const despesasFinal = normalizarNumero(outrasDespesas);
 
-    );
-
-
-
-  const ipiFinal =
-
-    normalizarNumero(
-
-      ipiPercentual,
-
-    );
-
-
-
-  const freteFinal =
-
-    normalizarNumero(
-
-      valorFrete,
-
-    );
-
-
-
-  const descontoFinal =
-
-    normalizarNumero(
-
-      valorDesconto,
-
-    );
-
-
-
-  const despesasFinal =
-
-    normalizarNumero(
-
-      outrasDespesas,
-
-    );
-
-
-
-  if (
-
-    precoFinal !==
-
-      null &&
-
-    precoFinal < 0
-
-  ) {
-
-    throw new Error(
-
-      "O preço unitário não pode ser negativo.",
-
-    );
-
+  if (precoFinal !== null && precoFinal < 0) {
+    throw new Error("O preço unitário não pode ser negativo.");
   }
 
-
-
-  if (
-
-    ipiFinal !==
-
-      null &&
-
-    (
-
-      ipiFinal < 0 ||
-
-      ipiFinal > 100
-
-    )
-
-  ) {
-
-    throw new Error(
-
-      "O IPI deve estar entre 0% e 100%.",
-
-    );
-
+  if (ipiFinal !== null && (ipiFinal < 0 || ipiFinal > 100)) {
+    throw new Error("O IPI deve estar entre 0% e 100%.");
   }
 
+  for (const [valor, nome] of [
+    [freteFinal, "frete"],
 
+    [descontoFinal, "desconto"],
 
-  for (
-
-    const [
-
-      valor,
-
-      nome,
-
-    ] of [
-
-      [
-
-        freteFinal,
-
-        "frete",
-
-      ],
-
-      [
-
-        descontoFinal,
-
-        "desconto",
-
-      ],
-
-      [
-
-        despesasFinal,
-
-        "outras despesas",
-
-      ],
-
-    ]
-
-  ) {
-
-    if (
-
-      valor !==
-
-        null &&
-
-      valor < 0
-
-    ) {
-
-      throw new Error(
-
-        `O valor de ${nome} não pode ser negativo.`,
-
-      );
-
+    [despesasFinal, "outras despesas"],
+  ]) {
+    if (valor !== null && valor < 0) {
+      throw new Error(`O valor de ${nome} não pode ser negativo.`);
     }
-
   }
 
-
-
-  if (
-
-    tipoFreteFinal &&
-
-    !TIPOS_FRETE_VALIDOS.has(
-
-      tipoFreteFinal,
-
-    )
-
-  ) {
-
-    throw new Error(
-
-      "Tipo de frete inválido.",
-
-    );
-
+  if (tipoFreteFinal && !TIPOS_FRETE_VALIDOS.has(tipoFreteFinal)) {
+    throw new Error("Tipo de frete inválido.");
   }
 
+  const financeiro = calcularResumoFinanceiroCompra({
+    quantidadeKg: quantidadeFinal,
 
+    precoUnitario: precoFinal,
 
-  const financeiro =
+    ipiPercentual: ipiFinal,
 
-    calcularResumoFinanceiroCompra({
+    valorFrete: freteFinal,
 
-      quantidadeKg:
+    tipoFrete: tipoFreteFinal,
 
-        quantidadeFinal,
+    valorDesconto: descontoFinal,
 
+    outrasDespesas: despesasFinal,
+  });
 
-
-      precoUnitario:
-
-        precoFinal,
-
-
-
-      ipiPercentual:
-
-        ipiFinal,
-
-
-
-      valorFrete:
-
-        freteFinal,
-
-
-
-      tipoFrete:
-
-        tipoFreteFinal,
-
-
-
-      valorDesconto:
-
-        descontoFinal,
-
-
-
-      outrasDespesas:
-
-        despesasFinal,
-
-    });
-
-
-
-  if (
-
-    financeiro
-
-      .valorTotal !==
-
-      null &&
-
-    financeiro
-
-      .valorTotal < 0
-
-  ) {
-
-    throw new Error(
-
-      "O valor total da compra não pode ser negativo. Revise o desconto informado.",
-
-    );
-
+  if (financeiro.valorTotal !== null && financeiro.valorTotal < 0) {
+    throw new Error("O valor total da compra não pode ser negativo. Revise o desconto informado.");
   }
-
-
 
   const dadosSalvar = {
+    data_compra: dataCompraFinal,
 
-    data_compra:
+    data_prevista: dataPrevistaFinal,
 
-      dataCompraFinal,
+    data_recebimento: dataRecebimentoFinal,
 
+    fornecedor_id: fornecedorId,
 
+    material_id: materialIdFinal,
 
-    data_prevista:
+    tipo_classificacao: tipoClassificacaoFinal,
 
-      dataPrevistaFinal,
+    quantidade_kg: quantidadeFinal,
 
+    numero_pedido: textoOpcional(numeroPedido),
 
+    status: statusFinal,
 
-    data_recebimento:
+    observacao: textoOpcional(observacao),
 
-      dataRecebimentoFinal,
+    ativo: Boolean(ativo),
 
+    preco_unitario: financeiro.precoUnitario,
 
+    subtotal_produtos: financeiro.subtotalProdutos,
 
-    fornecedor_id:
+    ipi_percentual: financeiro.ipiPercentual,
 
-      fornecedorId,
+    valor_ipi: financeiro.valorIpi,
 
+    valor_frete: financeiro.valorFrete,
 
+    tipo_frete: financeiro.tipoFrete,
 
-    material_id:
+    valor_desconto: financeiro.valorDesconto,
 
-      materialIdFinal,
+    outras_despesas: financeiro.outrasDespesas,
 
+    valor_total: financeiro.valorTotal,
 
+    custo_efetivo_kg: financeiro.custoEfetivoKg,
 
-    tipo_classificacao:
+    numero_nf: textoOpcional(numeroNf),
 
-      tipoClassificacaoFinal,
+    condicao_pagamento: textoOpcional(condicaoPagamento),
 
+    observacao_financeira: textoOpcional(observacaoFinanceira),
 
-
-    quantidade_kg:
-
-      quantidadeFinal,
-
-
-
-    numero_pedido:
-
-      textoOpcional(
-
-        numeroPedido,
-
-      ),
-
-
-
-    status:
-
-      statusFinal,
-
-
-
-    observacao:
-
-      textoOpcional(
-
-        observacao,
-
-      ),
-
-
-
-    ativo:
-
-      Boolean(
-
-        ativo,
-
-      ),
-
-
-
-    preco_unitario:
-
-      financeiro
-
-        .precoUnitario,
-
-
-
-    subtotal_produtos:
-
-      financeiro
-
-        .subtotalProdutos,
-
-
-
-    ipi_percentual:
-
-      financeiro
-
-        .ipiPercentual,
-
-
-
-    valor_ipi:
-
-      financeiro
-
-        .valorIpi,
-
-
-
-    valor_frete:
-
-      financeiro
-
-        .valorFrete,
-
-
-
-    tipo_frete:
-
-      financeiro
-
-        .tipoFrete,
-
-
-
-    valor_desconto:
-
-      financeiro
-
-        .valorDesconto,
-
-
-
-    outras_despesas:
-
-      financeiro
-
-        .outrasDespesas,
-
-
-
-    valor_total:
-
-      financeiro
-
-        .valorTotal,
-
-
-
-    custo_efetivo_kg:
-
-      financeiro
-
-        .custoEfetivoKg,
-
-
-
-    numero_nf:
-
-      textoOpcional(
-
-        numeroNf,
-
-      ),
-
-
-
-    condicao_pagamento:
-
-      textoOpcional(
-
-        condicaoPagamento,
-
-      ),
-
-
-
-    observacao_financeira:
-
-      textoOpcional(
-
-        observacaoFinanceira,
-
-      ),
-
-
-
-    atualizado_em:
-
-      new Date()
-
-        .toISOString(),
-
+    atualizado_em: new Date().toISOString(),
   };
 
-
-
-  const consulta =
-
-    supabase.from(
-
-      "materia_prima_compras_futuras",
-
-    );
-
-
+  const consulta = supabase.from("materia_prima_compras_futuras");
 
   const {
-
     data,
 
     error,
-
   } =
-
-    id !== null &&
-
-    id !== undefined
-
+    id !== null && id !== undefined
       ? await consulta
 
-          .update(
-
-            dadosSalvar,
-
-          )
+          .update(dadosSalvar)
 
           .eq(
-
             "id",
 
             id,
-
           )
 
-          .select(
-
-            CAMPOS_COMPRA_FUTURA,
-
-          )
+          .select(CAMPOS_COMPRA_FUTURA)
 
           .single()
-
       : await consulta
 
-          .insert(
+          .insert(dadosSalvar)
 
-            dadosSalvar,
-
-          )
-
-          .select(
-
-            CAMPOS_COMPRA_FUTURA,
-
-          )
+          .select(CAMPOS_COMPRA_FUTURA)
 
           .single();
 
-
-
   if (error) {
-
     throw error;
-
   }
 
-
-
-  return normalizarCompra(
-
-    data,
-
-  );
-
+  return normalizarCompra(data);
 }
 
-
-
 export async function confirmarChegadaCompraFutura(
-
   id,
 
   dataRecebimento,
-
 ) {
-
-  if (
-
-    id === null ||
-
-    id === undefined ||
-
-    id === ""
-
-  ) {
-
-    throw new Error(
-
-      "Compra futura não informada.",
-
-    );
-
+  if (id === null || id === undefined || id === "") {
+    throw new Error("Compra futura não informada.");
   }
 
+  const dataRecebimentoFinal = String(dataRecebimento ?? "").trim();
 
-
-  const dataRecebimentoFinal =
-
-    String(
-
-      dataRecebimento ?? "",
-
-    ).trim();
-
-
-
-  if (
-
-    !dataRecebimentoFinal
-
-  ) {
-
-    throw new Error(
-
-      "Informe a data real de chegada.",
-
-    );
-
+  if (!dataRecebimentoFinal) {
+    throw new Error("Informe a data real de chegada.");
   }
 
+  const hoje = new Date();
 
+  const ano = hoje.getFullYear();
 
-  const hoje =
+  const mes = String(hoje.getMonth() + 1).padStart(
+    2,
 
-    new Date();
+    "0",
+  );
 
+  const dia = String(hoje.getDate()).padStart(
+    2,
 
+    "0",
+  );
 
-  const ano =
+  const dataHoje = `${ano}-${mes}-${dia}`;
 
-    hoje.getFullYear();
-
-
-
-  const mes =
-
-    String(
-
-      hoje.getMonth() +
-
-      1,
-
-    ).padStart(
-
-      2,
-
-      "0",
-
-    );
-
-
-
-  const dia =
-
-    String(
-
-      hoje.getDate(),
-
-    ).padStart(
-
-      2,
-
-      "0",
-
-    );
-
-
-
-  const dataHoje =
-
-    `${ano}-${mes}-${dia}`;
-
-
-
-  if (
-
-    dataRecebimentoFinal >
-
-    dataHoje
-
-  ) {
-
-    throw new Error(
-
-      "A data da chegada não pode ser futura.",
-
-    );
-
+  if (dataRecebimentoFinal > dataHoje) {
+    throw new Error("A data da chegada não pode ser futura.");
   }
-
-
 
   const {
-
     data: compraAtual,
 
     error: erroBusca,
+  } = await supabase
 
-  } =
+    .from("materia_prima_compras_futuras")
 
-    await supabase
+    .select("id, data_compra, status, ativo")
 
-      .from(
+    .eq(
+      "id",
 
-        "materia_prima_compras_futuras",
-
-      )
-
-      .select(
-
-        "id, data_compra, status, ativo",
-
-      )
-
-      .eq(
-
-        "id",
-
-        id,
-
-      )
-
-      .eq(
-
-        "ativo",
-
-        true,
-
-      )
-
-      .maybeSingle();
-
-
-
-  if (
-
-    erroBusca
-
-  ) {
-
-    throw erroBusca;
-
-  }
-
-
-
-  if (
-
-    !compraAtual
-
-  ) {
-
-    throw new Error(
-
-      "A compra futura não foi encontrada ou está inativa.",
-
-    );
-
-  }
-
-
-
-  const statusAtual =
-
-    String(
-
-      compraAtual
-
-        .status ??
-
-      "",
-
+      id,
     )
 
-      .trim()
-
-      .toUpperCase();
-
-
-
-  if (
-
-    statusAtual !==
-
-      "PREVISTA" &&
-
-    statusAtual !==
-
-      "CONFIRMADA"
-
-  ) {
-
-    throw new Error(
-
-      statusAtual ===
-
-        "RECEBIDA"
-
-        ? "A chegada desta compra já foi confirmada."
-
-        : "Esta compra não pode ter a chegada confirmada no status atual.",
-
-    );
-
-  }
-
-
-
-  const dataCompra =
-
-    String(
-
-      compraAtual
-
-        .data_compra ??
-
-      "",
-
-    ).trim();
-
-
-
-  if (
-
-    dataCompra &&
-
-    dataRecebimentoFinal <
-
-      dataCompra
-
-  ) {
-
-    throw new Error(
-
-      "A data da chegada não pode ser anterior à data da compra.",
-
-    );
-
-  }
-
-
-
-  const {
-
-    data,
-
-    error,
-
-  } =
-
-    await supabase
-
-      .from(
-
-        "materia_prima_compras_futuras",
-
-      )
-
-      .update({
-
-        status:
-
-          "RECEBIDA",
-
-
-
-        data_recebimento:
-
-          dataRecebimentoFinal,
-
-
-
-        atualizado_em:
-
-          new Date()
-
-            .toISOString(),
-
-      })
-
-      .eq(
-
-        "id",
-
-        id,
-
-      )
-
-      .eq(
-
-        "ativo",
-
-        true,
-
-      )
-
-      .eq(
-
-        "status",
-
-        statusAtual,
-
-      )
-
-      .select(
-
-        CAMPOS_COMPRA_FUTURA,
-
-      );
-
-
-
-  if (error) {
-
-    throw error;
-
-  }
-
-
-
-  if (
-
-    !Array.isArray(
-
-      data,
-
-    ) ||
-
-    data.length !==
-
-      1
-
-  ) {
-
-    throw new Error(
-
-      "A compra foi alterada por outro processo. Atualize a tela e tente novamente.",
-
-    );
-
-  }
-
-
-
-  return normalizarCompra(
-
-    data[0],
-
-  );
-
-}
-
-
-
-export async function excluirCompraFutura(
-
-  id,
-
-) {
-
-  if (
-
-    id === null ||
-
-    id === undefined
-
-  ) {
-
-    throw new Error(
-
-      "Compra futura não informada.",
-
-    );
-
-  }
-
-
-
-  const {
-
-    data,
-
-    error,
-
-  } =
-
-    await supabase
-
-      .from(
-
-        "materia_prima_compras_futuras",
-
-      )
-
-      .update({
-
-        ativo:
-
-          false,
-
-
-
-        atualizado_em:
-
-          new Date()
-
-            .toISOString(),
-
-      })
-
-      .eq(
-
-        "id",
-
-        id,
-
-      )
-
-      .eq(
-
-        "ativo",
-
-        true,
-
-      )
-
-      .select(
-
-        "id",
-
-      );
-
-
-
-  if (error) {
-
-    throw error;
-
-  }
-
-
-
-  if (
-
-    !Array.isArray(
-
-      data,
-
-    ) ||
-
-    data.length ===
-
-      0
-
-  ) {
-
-    throw new Error(
-
-      "A compra futura não foi encontrada ou já foi excluída.",
-
-    );
-
-  }
-
-
-
-  return {
-
-    id,
-
-
-
-    excluida:
+    .eq(
+      "ativo",
 
       true,
+    )
 
+    .maybeSingle();
+
+  if (erroBusca) {
+    throw erroBusca;
+  }
+
+  if (!compraAtual) {
+    throw new Error("A compra futura não foi encontrada ou está inativa.");
+  }
+
+  const statusAtual = String(compraAtual.status ?? "")
+    .trim()
+
+    .toUpperCase();
+
+  if (statusAtual !== "PREVISTA" && statusAtual !== "CONFIRMADA") {
+    throw new Error(
+      statusAtual === "RECEBIDA"
+        ? "A chegada desta compra já foi confirmada."
+        : "Esta compra não pode ter a chegada confirmada no status atual.",
+    );
+  }
+
+  const dataCompra = String(compraAtual.data_compra ?? "").trim();
+
+  if (dataCompra && dataRecebimentoFinal < dataCompra) {
+    throw new Error("A data da chegada não pode ser anterior à data da compra.");
+  }
+
+  const {
+    data,
+
+    error,
+  } = await supabase
+
+    .from("materia_prima_compras_futuras")
+
+    .update({
+      status: "RECEBIDA",
+
+      data_recebimento: dataRecebimentoFinal,
+
+      atualizado_em: new Date().toISOString(),
+    })
+
+    .eq(
+      "id",
+
+      id,
+    )
+
+    .eq(
+      "ativo",
+
+      true,
+    )
+
+    .eq(
+      "status",
+
+      statusAtual,
+    )
+
+    .select(CAMPOS_COMPRA_FUTURA);
+
+  if (error) {
+    throw error;
+  }
+
+  if (!Array.isArray(data) || data.length !== 1) {
+    throw new Error("A compra foi alterada por outro processo. Atualize a tela e tente novamente.");
+  }
+
+  return normalizarCompra(data[0]);
+}
+
+export async function excluirCompraFutura(id) {
+  if (id === null || id === undefined) {
+    throw new Error("Compra futura não informada.");
+  }
+
+  const {
+    data,
+
+    error,
+  } = await supabase
+
+    .from("materia_prima_compras_futuras")
+
+    .update({
+      ativo: false,
+
+      atualizado_em: new Date().toISOString(),
+    })
+
+    .eq(
+      "id",
+
+      id,
+    )
+
+    .eq(
+      "ativo",
+
+      true,
+    )
+
+    .select("id");
+
+  if (error) {
+    throw error;
+  }
+
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error("A compra futura não foi encontrada ou já foi excluída.");
+  }
+
+  return {
+    id,
+
+    excluida: true,
   };
-
 }

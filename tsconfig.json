@@ -5,8 +5,9 @@
     "src/**/*.js",
     "src/**/*.jsx",
     "vite.config.ts",
-    "eslint.config.js"
-, "vite-env.d.ts"  ],
+    "eslint.config.js",
+    "vite-env.d.ts"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
@@ -15,7 +16,6 @@
     "types": ["vite/client"],
     "allowJs": true,
     "checkJs": false,
-
 
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,

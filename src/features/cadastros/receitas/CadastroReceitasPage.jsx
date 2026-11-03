@@ -9,10 +9,7 @@ import {
   Search,
 } from "lucide-react";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 
 import PageHeader from "@/components/layout/PageHeader";
 
@@ -21,7 +18,6 @@ import useCadastroReceitas from "./useCadastroReceitas";
 
 import "./CadastroReceitas.css";
 
-
 function normalizarTexto(valor) {
   return String(valor ?? "")
     .trim()
@@ -29,7 +25,6 @@ function normalizarTexto(valor) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 }
-
 
 function formatarPercentual(valor) {
   const numero = Number(valor);
@@ -44,13 +39,7 @@ function formatarPercentual(valor) {
   })}%`;
 }
 
-
-function CardResumo({
-  titulo,
-  valor,
-  subtitulo,
-  icone: Icone,
-}) {
+function CardResumo({ titulo, valor, subtitulo, icone: Icone }) {
   return (
     <article className="cadastro-receitas-resumo-card">
       <div className="cadastro-receitas-resumo-card__topo">
@@ -63,7 +52,6 @@ function CardResumo({
     </article>
   );
 }
-
 
 export default function CadastroReceitasPage() {
   const [pesquisa, setPesquisa] = useState("");
@@ -83,7 +71,6 @@ export default function CadastroReceitasPage() {
     alterarStatusReceita,
   } = useCadastroReceitas();
 
-
   /* =======================================================
      RESUMO
   ======================================================= */
@@ -92,24 +79,14 @@ export default function CadastroReceitasPage() {
     () => ({
       total: receitas.length,
 
-      ativas:
-        receitas.filter(
-          (receita) => receita.ativo,
-        ).length,
+      ativas: receitas.filter((receita) => receita.ativo).length,
 
-      inativas:
-        receitas.filter(
-          (receita) => !receita.ativo,
-        ).length,
+      inativas: receitas.filter((receita) => !receita.ativo).length,
 
-      configuradas:
-        receitas.filter(
-          (receita) => receita.configurada,
-        ).length,
+      configuradas: receitas.filter((receita) => receita.configurada).length,
     }),
     [receitas],
   );
-
 
   /* =======================================================
      FILTRO
@@ -123,20 +100,13 @@ export default function CadastroReceitasPage() {
     }
 
     return receitas.filter((receita) => {
-      const fornecedoresTexto =
-        receita.itens
-          .map((item) => item.fornecedorNome)
-          .join(" ");
+      const fornecedoresTexto = receita.itens.map((item) => item.fornecedorNome).join(" ");
 
-      return normalizarTexto(
-        `${receita.nome} ${receita.descricao} ${fornecedoresTexto}`,
-      ).includes(termo);
+      return normalizarTexto(`${receita.nome} ${receita.descricao} ${fornecedoresTexto}`).includes(
+        termo,
+      );
     });
-  }, [
-    receitas,
-    pesquisa,
-  ]);
-
+  }, [receitas, pesquisa]);
 
   /* =======================================================
      MODAL
@@ -149,14 +119,12 @@ export default function CadastroReceitasPage() {
     setModalAberto(true);
   }
 
-
   function abrirEdicao(receita) {
     setMensagemSucesso("");
     setErroAcao("");
     setReceitaEdicao(receita);
     setModalAberto(true);
   }
-
 
   function fecharModal() {
     if (salvando) {
@@ -167,14 +135,12 @@ export default function CadastroReceitasPage() {
     setReceitaEdicao(null);
   }
 
-
   /* =======================================================
      SALVAR
   ======================================================= */
 
   async function handleSalvar(dados) {
-    const resultado =
-      await salvarReceita(dados);
+    const resultado = await salvarReceita(dados);
 
     setMensagemSucesso(
       resultado?.acao === "criada"
@@ -188,7 +154,6 @@ export default function CadastroReceitasPage() {
     return resultado;
   }
 
-
   /* =======================================================
      STATUS
   ======================================================= */
@@ -197,8 +162,7 @@ export default function CadastroReceitasPage() {
     setMensagemSucesso("");
     setErroAcao("");
 
-    const novoStatus =
-      !receita.ativo;
+    const novoStatus = !receita.ativo;
 
     try {
       await alterarStatusReceita({
@@ -212,13 +176,9 @@ export default function CadastroReceitasPage() {
           : `Receita “${receita.nome}” desativada com sucesso.`,
       );
     } catch (error) {
-      setErroAcao(
-        error?.message ||
-          "Não foi possível alterar o status da receita.",
-      );
+      setErroAcao(error?.message || "Não foi possível alterar o status da receita.");
     }
   }
-
 
   /* =======================================================
      RENDER
@@ -228,7 +188,6 @@ export default function CadastroReceitasPage() {
     <>
       <main className="cadastro-receitas-page">
         <div className="cadastro-receitas-container">
-
           <PageHeader
             eyebrow="Cadastro"
             title="Cadastro de receita"
@@ -236,108 +195,70 @@ export default function CadastroReceitasPage() {
             icon={FlaskConical}
           />
 
-
           {/* =================================================
               RESUMO
           ================================================= */}
 
           <section className="cadastro-receitas-resumo">
-
             <CardResumo
               titulo="Receitas"
-              valor={
-                carregando
-                  ? "-"
-                  : resumo.total
-              }
+              valor={carregando ? "-" : resumo.total}
               subtitulo="Total cadastrado"
               icone={FlaskConical}
             />
 
-
             <CardResumo
               titulo="Ativas"
-              valor={
-                carregando
-                  ? "-"
-                  : resumo.ativas
-              }
+              valor={carregando ? "-" : resumo.ativas}
               subtitulo="Disponíveis para programação"
               icone={CheckCircle2}
             />
 
-
             <CardResumo
               titulo="Inativas"
-              valor={
-                carregando
-                  ? "-"
-                  : resumo.inativas
-              }
+              valor={carregando ? "-" : resumo.inativas}
               subtitulo="Ocultas para novas programações"
               icone={PowerOff}
             />
 
-
             <CardResumo
               titulo="Composição válida"
-              valor={
-                carregando
-                  ? "-"
-                  : resumo.configuradas
-              }
+              valor={carregando ? "-" : resumo.configuradas}
               subtitulo="Receitas totalizando 100%"
               icone={CheckCircle2}
             />
-
           </section>
-
 
           {/* =================================================
               MENSAGENS
           ================================================= */}
 
-          {mensagemSucesso && (
-            <div className="cadastro-receitas-sucesso">
-              {mensagemSucesso}
-            </div>
-          )}
-
+          {mensagemSucesso && <div className="cadastro-receitas-sucesso">{mensagemSucesso}</div>}
 
           {(erro || erroAcao) && (
             <div className="cadastro-receitas-erro">
               <AlertTriangle size={17} />
 
-              <span>
-                {erroAcao || erro}
-              </span>
+              <span>{erroAcao || erro}</span>
             </div>
           )}
-
 
           {/* =================================================
               CONTEÚDO
           ================================================= */}
 
           <section className="cadastro-receitas-conteudo">
-
             <div className="cadastro-receitas-toolbar">
-
               <div className="cadastro-receitas-pesquisa">
                 <Search size={18} />
 
                 <input
                   type="text"
                   value={pesquisa}
-                  onChange={(evento) =>
-                    setPesquisa(
-                      evento.target.value,
-                    )
-                  }
+                  onChange={(evento) => setPesquisa(evento.target.value)}
                   placeholder="Buscar receita ou fornecedor..."
                 />
               </div>
-
 
               <button
                 type="button"
@@ -347,221 +268,140 @@ export default function CadastroReceitasPage() {
                 <Plus size={17} />
                 Nova receita
               </button>
-
             </div>
-
 
             {/* =================================================
                 TABELA
             ================================================= */}
 
             <div className="cadastro-receitas-tabela-scroll">
-
               <table className="cadastro-receitas-tabela">
-
                 <thead>
                   <tr>
                     <th>Receita</th>
                     <th>Composição</th>
-                    <th className="numero">
-                      Total
-                    </th>
+                    <th className="numero">Total</th>
                     <th>Status</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
 
-
                 <tbody>
-
                   {carregando ? (
-
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="cadastro-receitas-vazio"
-                      >
+                      <td colSpan={5} className="cadastro-receitas-vazio">
                         Carregando receitas...
                       </td>
                     </tr>
-
                   ) : receitasFiltradas.length === 0 ? (
-
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="cadastro-receitas-vazio"
-                      >
+                      <td colSpan={5} className="cadastro-receitas-vazio">
                         {receitas.length === 0
                           ? "Nenhuma receita cadastrada."
                           : "Nenhuma receita encontrada para a pesquisa."}
                       </td>
                     </tr>
-
                   ) : (
+                    receitasFiltradas.map((receita) => (
+                      <tr key={receita.id}>
+                        {/* RECEITA */}
 
-                    receitasFiltradas.map(
-                      (receita) => (
-                        <tr key={receita.id}>
+                        <td className="cadastro-receitas-coluna-receita">
+                          <strong>{receita.nome}</strong>
 
-                          {/* RECEITA */}
+                          <span>{receita.descricao || "Sem descrição"}</span>
+                        </td>
 
-                          <td className="cadastro-receitas-coluna-receita">
+                        {/* COMPOSIÇÃO */}
 
-                            <strong>
-                              {receita.nome}
-                            </strong>
+                        <td>
+                          <div className="cadastro-receitas-composicao-lista">
+                            {receita.itens.map((item) => (
+                              <span
+                                key={item.id ?? `${receita.id}-${item.fornecedorId}`}
+                                className="cadastro-receitas-componente-tag"
+                              >
+                                {item.fornecedorNome}
 
-                            <span>
-                              {receita.descricao ||
-                                "Sem descrição"}
-                            </span>
+                                <strong>{formatarPercentual(item.percentual)}</strong>
+                              </span>
+                            ))}
 
-                          </td>
+                            {receita.itens.length === 0 && (
+                              <span className="cadastro-receitas-sem-composicao">
+                                Sem composição
+                              </span>
+                            )}
+                          </div>
+                        </td>
 
+                        {/* TOTAL */}
 
-                          {/* COMPOSIÇÃO */}
+                        <td className="numero">
+                          <span
+                            className={
+                              receita.configurada
+                                ? "cadastro-receitas-total-tabela cadastro-receitas-total-tabela--valido"
+                                : "cadastro-receitas-total-tabela cadastro-receitas-total-tabela--invalido"
+                            }
+                          >
+                            {formatarPercentual(receita.percentualTotal)}
+                          </span>
+                        </td>
 
-                          <td>
+                        {/* STATUS */}
 
-                            <div className="cadastro-receitas-composicao-lista">
+                        <td>
+                          <span
+                            className={
+                              receita.ativo
+                                ? "cadastro-receitas-status cadastro-receitas-status--ativo"
+                                : "cadastro-receitas-status cadastro-receitas-status--inativo"
+                            }
+                          >
+                            {receita.ativo ? "Ativa" : "Inativa"}
+                          </span>
+                        </td>
 
-                              {receita.itens.map(
-                                (item) => (
-                                  <span
-                                    key={
-                                      item.id ??
-                                      `${receita.id}-${item.fornecedorId}`
-                                    }
-                                    className="cadastro-receitas-componente-tag"
-                                  >
-                                    {item.fornecedorNome}
+                        {/* AÇÕES */}
 
-                                    <strong>
-                                      {formatarPercentual(
-                                        item.percentual,
-                                      )}
-                                    </strong>
-                                  </span>
-                                ),
-                              )}
-
-
-                              {receita.itens.length === 0 && (
-                                <span className="cadastro-receitas-sem-composicao">
-                                  Sem composição
-                                </span>
-                              )}
-
-                            </div>
-
-                          </td>
-
-
-                          {/* TOTAL */}
-
-                          <td className="numero">
-
-                            <span
-                              className={
-                                receita.configurada
-                                  ? "cadastro-receitas-total-tabela cadastro-receitas-total-tabela--valido"
-                                  : "cadastro-receitas-total-tabela cadastro-receitas-total-tabela--invalido"
-                              }
+                        <td>
+                          <div className="cadastro-receitas-acoes">
+                            <button
+                              type="button"
+                              className="cadastro-receitas-editar"
+                              onClick={() => abrirEdicao(receita)}
+                              disabled={alterandoStatus}
                             >
-                              {formatarPercentual(
-                                receita.percentualTotal,
-                              )}
-                            </span>
+                              <Pencil size={15} />
+                              Editar
+                            </button>
 
-                          </td>
-
-
-                          {/* STATUS */}
-
-                          <td>
-
-                            <span
+                            <button
+                              type="button"
                               className={
                                 receita.ativo
-                                  ? "cadastro-receitas-status cadastro-receitas-status--ativo"
-                                  : "cadastro-receitas-status cadastro-receitas-status--inativo"
+                                  ? "cadastro-receitas-status-botao cadastro-receitas-status-botao--desativar"
+                                  : "cadastro-receitas-status-botao cadastro-receitas-status-botao--ativar"
                               }
+                              onClick={() => void handleAlterarStatus(receita)}
+                              disabled={alterandoStatus}
                             >
-                              {receita.ativo
-                                ? "Ativa"
-                                : "Inativa"}
-                            </span>
+                              {receita.ativo ? <PowerOff size={15} /> : <Power size={15} />}
 
-                          </td>
-
-
-                          {/* AÇÕES */}
-
-                          <td>
-
-                            <div className="cadastro-receitas-acoes">
-
-                              <button
-                                type="button"
-                                className="cadastro-receitas-editar"
-                                onClick={() =>
-                                  abrirEdicao(
-                                    receita,
-                                  )
-                                }
-                                disabled={alterandoStatus}
-                              >
-                                <Pencil size={15} />
-                                Editar
-                              </button>
-
-
-                              <button
-                                type="button"
-                                className={
-                                  receita.ativo
-                                    ? "cadastro-receitas-status-botao cadastro-receitas-status-botao--desativar"
-                                    : "cadastro-receitas-status-botao cadastro-receitas-status-botao--ativar"
-                                }
-                                onClick={() =>
-                                  void handleAlterarStatus(
-                                    receita,
-                                  )
-                                }
-                                disabled={alterandoStatus}
-                              >
-                                {receita.ativo ? (
-                                  <PowerOff size={15} />
-                                ) : (
-                                  <Power size={15} />
-                                )}
-
-                                {receita.ativo
-                                  ? "Desativar"
-                                  : "Ativar"}
-                              </button>
-
-                            </div>
-
-                          </td>
-
-                        </tr>
-                      ),
-                    )
+                              {receita.ativo ? "Desativar" : "Ativar"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-
                 </tbody>
-
               </table>
-
             </div>
-
           </section>
-
         </div>
       </main>
-
 
       {/* ===================================================
           MODAL

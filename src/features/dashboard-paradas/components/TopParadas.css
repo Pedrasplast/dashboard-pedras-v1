@@ -3,10 +3,7 @@
 ========================================================= */
 
 .dp-top-paradas-card-content {
-  padding:
-    4px
-    14px
-    10px;
+  padding: 4px 14px 10px;
 }
 
 .dp-top-paradas {
@@ -22,13 +19,9 @@
 
   gap: 10px;
 
-  padding:
-    11px
-    2px;
+  padding: 11px 2px;
 
-  border-bottom:
-    1px solid
-    #edf2f7;
+  border-bottom: 1px solid #edf2f7;
 }
 
 .dp-top-paradas__item:last-child {
@@ -43,11 +36,9 @@
 
   place-items: center;
 
-  color:
-    #64748b;
+  color: #64748b;
 
-  background:
-    #f1f5f9;
+  background: #f1f5f9;
 
   border-radius: 8px;
 
@@ -56,15 +47,11 @@
   font-weight: 850;
 }
 
-.dp-top-paradas__item:first-child
-.dp-top-paradas__rank {
-  color:
-    #b91c1c;
+.dp-top-paradas__item:first-child .dp-top-paradas__rank {
+  color: #b91c1c;
 
-  background:
-    #fef2f2;
+  background: #fef2f2;
 }
-
 
 /* =========================================================
    CONTEÚDO
@@ -103,11 +90,9 @@
 
   place-items: center;
 
-  color:
-    var(--dp-primary);
+  color: var(--dp-primary);
 
-  background:
-    var(--dp-primary-soft);
+  background: var(--dp-primary-soft);
 
   border-radius: 6px;
 }
@@ -115,8 +100,7 @@
 .dp-top-paradas__machine strong {
   overflow: hidden;
 
-  color:
-    var(--dp-text);
+  color: var(--dp-text);
 
   font-size: 0.72rem;
 
@@ -128,15 +112,12 @@
 .dp-top-paradas__duration {
   flex: 0 0 auto;
 
-  color:
-    var(--dp-danger);
+  color: var(--dp-danger);
 
   font-size: 0.79rem;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
-
 
 /* =========================================================
    MOTIVO / TIPO
@@ -155,22 +136,17 @@
 }
 
 .dp-top-paradas__reason > strong {
-  color:
-    #334155;
+  color: #334155;
 
   font-size: 0.68rem;
 }
 
 .dp-top-paradas__tipo {
-  padding:
-    2px
-    6px;
+  padding: 2px 6px;
 
-  color:
-    #475569;
+  color: #475569;
 
-  background:
-    #f1f5f9;
+  background: #f1f5f9;
 
   border-radius: 999px;
 
@@ -179,21 +155,16 @@
   font-weight: 800;
 }
 
-
 /* =========================================================
    JUSTIFICATIVA
 ========================================================= */
 
 .dp-top-paradas__justificativa {
-  margin:
-    4px
-    0
-    0;
+  margin: 4px 0 0;
 
   overflow: hidden;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.65rem;
 
@@ -203,7 +174,6 @@
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    RODAPÉ
@@ -220,8 +190,7 @@
 
   margin-top: 6px;
 
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.59rem;
 }
@@ -234,25 +203,18 @@
   gap: 4px;
 }
 
-
 /* =========================================================
    RESPONSIVIDADE
 ========================================================= */
 
-@media (
-  max-width:
-    520px
-) {
+@media (max-width: 520px) {
   .dp-top-paradas__top {
-    align-items:
-      flex-start;
+    align-items: flex-start;
 
-    flex-direction:
-      column;
+    flex-direction: column;
   }
 
   .dp-top-paradas__duration {
-    padding-left:
-      31px;
+    padding-left: 31px;
   }
 }

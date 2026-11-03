@@ -17,7 +17,10 @@ export const COR_EXCEL = Object.freeze({
 });
 
 /** Título (linha 1) e informações (linhas seguintes), mesclados até a última coluna. */
-export function escreverTituloExcel(worksheet, { titulo, categoria, informacoes = [], totalColunas }) {
+export function escreverTituloExcel(
+  worksheet,
+  { titulo, categoria, informacoes = [], totalColunas },
+) {
   const ultima = worksheet.getColumn(Math.max(1, totalColunas)).letter;
   let linha = 1;
 

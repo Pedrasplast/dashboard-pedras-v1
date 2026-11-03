@@ -23,9 +23,7 @@ export default function PageHeader({
         <div className="page-header__content">
           {eyebrow && <span className="page-header__eyebrow">{eyebrow}</span>}
           <Title className="page-header__title">{title}</Title>
-          {description && (
-            <p className="page-header__description">{description}</p>
-          )}
+          {description && <p className="page-header__description">{description}</p>}
         </div>
       </div>
 

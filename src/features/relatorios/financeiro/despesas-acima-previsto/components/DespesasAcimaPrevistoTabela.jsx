@@ -1,7 +1,4 @@
-export default function DespesasAcimaPrevistoTabela({
-  dados,
-  colunas,
-}) {
+export default function DespesasAcimaPrevistoTabela({ dados, colunas }) {
   return (
     <div className="relatorio-visualizacao-tabela-wrapper">
       <table className="relatorio-visualizacao-tabela despesas-acima-previsto-tabela">
@@ -10,9 +7,7 @@ export default function DespesasAcimaPrevistoTabela({
             <col
               key={coluna.chave}
               style={{
-                width:
-                  coluna.larguraTabela ||
-                  "auto",
+                width: coluna.larguraTabela || "auto",
               }}
             />
           ))}
@@ -23,11 +18,7 @@ export default function DespesasAcimaPrevistoTabela({
             {colunas.map((coluna) => (
               <th
                 key={coluna.chave}
-                className={
-                  coluna.numerica
-                    ? "despesas-acima-previsto-coluna-numerica"
-                    : ""
-                }
+                className={coluna.numerica ? "despesas-acima-previsto-coluna-numerica" : ""}
               >
                 {coluna.titulo}
               </th>
@@ -37,26 +28,16 @@ export default function DespesasAcimaPrevistoTabela({
 
         <tbody>
           {dados.map((item, indice) => (
-            <tr
-              key={`${item?.codigo_categoria || "categoria"}-${indice}`}
-            >
+            <tr key={`${item?.codigo_categoria || "categoria"}-${indice}`}>
               {colunas.map((coluna) => (
                 <td
                   key={coluna.chave}
                   className={[
-                    coluna.numerica
-                      ? "despesas-acima-previsto-coluna-numerica"
-                      : "",
+                    coluna.numerica ? "despesas-acima-previsto-coluna-numerica" : "",
 
-                    coluna.chave ===
-                    "excesso_previsto"
-                      ? "despesas-acima-previsto-destaque"
-                      : "",
+                    coluna.chave === "excesso_previsto" ? "despesas-acima-previsto-destaque" : "",
 
-                    coluna.chave ===
-                    "excesso_percentual"
-                      ? "despesas-acima-previsto-destaque"
-                      : "",
+                    coluna.chave === "excesso_percentual" ? "despesas-acima-previsto-destaque" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}

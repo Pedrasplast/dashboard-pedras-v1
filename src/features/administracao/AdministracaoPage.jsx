@@ -392,12 +392,7 @@ export default function AdministracaoPage() {
     } finally {
       setSalvando(false);
     }
-  }, [
-    diaSelecionado,
-    perfilSelecionado,
-    observacao,
-    carregarCalendario,
-  ]);
+  }, [diaSelecionado, perfilSelecionado, observacao, carregarCalendario]);
 
   const voltarAoPadrao = useCallback(async () => {
     if (!diaSelecionado?.data || !diaSelecionado?.temExcecao) {
@@ -547,9 +542,7 @@ export default function AdministracaoPage() {
           <div>
             <span className="administracao-section-eyebrow">Planejamento anual</span>
             <h2>Calendário {ano}</h2>
-            <p>
-              Clique em qualquer dia para bloquear, reduzir horas ou liberar uma exceção.
-            </p>
+            <p>Clique em qualquer dia para bloquear, reduzir horas ou liberar uma exceção.</p>
           </div>
 
           <div className="administracao-ano-controle" aria-label="Selecionar ano">
@@ -574,11 +567,26 @@ export default function AdministracaoPage() {
         </div>
 
         <div className="administracao-legenda">
-          <span><i className="legenda-dot padrao" />Padrão 24h</span>
-          <span><i className="legenda-dot bloqueado" />Sem produção</span>
-          <span><i className="legenda-dot parcial" />Jornada especial</span>
-          <span><i className="legenda-dot liberado" />Liberação 24h</span>
-          <span><i className="legenda-dot feriado" />Feriado nacional</span>
+          <span>
+            <i className="legenda-dot padrao" />
+            Padrão 24h
+          </span>
+          <span>
+            <i className="legenda-dot bloqueado" />
+            Sem produção
+          </span>
+          <span>
+            <i className="legenda-dot parcial" />
+            Jornada especial
+          </span>
+          <span>
+            <i className="legenda-dot liberado" />
+            Liberação 24h
+          </span>
+          <span>
+            <i className="legenda-dot feriado" />
+            Feriado nacional
+          </span>
         </div>
 
         {loading ? (
@@ -645,9 +653,7 @@ export default function AdministracaoPage() {
                         >
                           <span className="administracao-dia-numero">{dia.dia}</span>
 
-                          {automatico && (
-                            <span className="administracao-dia-marca">F</span>
-                          )}
+                          {automatico && <span className="administracao-dia-marca">F</span>}
 
                           {temExcecao && !automatico && (
                             <span className="administracao-dia-marca">
@@ -722,15 +728,15 @@ export default function AdministracaoPage() {
                         </span>
                       </td>
                       <td>
-                        <span className={`administracao-perfil-badge ${classePerfil(item.perfil_codigo)}`}>
+                        <span
+                          className={`administracao-perfil-badge ${classePerfil(item.perfil_codigo)}`}
+                        >
                           {item.perfil_codigo === "SEM_PRODUCAO"
                             ? "SEM PRODUÇÃO"
                             : item.perfil_codigo}
                         </span>
                       </td>
-                      <td className="administracao-observacao-col">
-                        {item.observacao || "—"}
-                      </td>
+                      <td className="administracao-observacao-col">{item.observacao || "—"}</td>
                       <td>
                         <button
                           type="button"
@@ -773,9 +779,7 @@ export default function AdministracaoPage() {
               <div>
                 <span>Calendário industrial</span>
                 <ModalTitulo>
-                  <h3 id="administracao-modal-titulo">
-                    {formatarDataPtBr(diaSelecionado.data)}
-                  </h3>
+                  <h3 id="administracao-modal-titulo">{formatarDataPtBr(diaSelecionado.data)}</h3>
                 </ModalTitulo>
                 <p>{formatarDiaSemana(diaSelecionado.data)}</p>
               </div>
@@ -796,7 +800,8 @@ export default function AdministracaoPage() {
               <div className="administracao-modal-feriado">
                 <CalendarDays size={16} aria-hidden="true" />
                 <span>
-                  Este dia foi importado automaticamente como feriado nacional. Uma alteração manual terá prioridade nas próximas sincronizações.
+                  Este dia foi importado automaticamente como feriado nacional. Uma alteração manual
+                  terá prioridade nas próximas sincronizações.
                 </span>
               </div>
             )}

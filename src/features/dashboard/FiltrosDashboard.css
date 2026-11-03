@@ -132,8 +132,7 @@
 
   cursor: pointer;
 
-  box-shadow:
-    0 2px 5px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
 
   transition:
     background-color 0.2s ease,
@@ -153,8 +152,7 @@
   outline: none;
   border-color: #3b82f6;
 
-  box-shadow:
-    0 0 0 3px rgba(59, 130, 246, 0.18);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .calendar-trigger:disabled {
@@ -349,10 +347,8 @@
     opacity 0.2s ease;
 }
 
-.calendar-popover
-  .rdp-button_previous:hover:not(:disabled),
-.calendar-popover
-  .rdp-button_next:hover:not(:disabled) {
+.calendar-popover .rdp-button_previous:hover:not(:disabled),
+.calendar-popover .rdp-button_next:hover:not(:disabled) {
   background: #eff6ff;
   border-color: #bfdbfe;
   color: #1d4ed8;
@@ -436,16 +432,14 @@
     box-shadow 0.18s ease;
 }
 
-.calendar-popover
-  .rdp-day_button:hover:not(:disabled) {
+.calendar-popover .rdp-day_button:hover:not(:disabled) {
   background: #eff6ff;
   color: #1d4ed8;
 
   transform: scale(1.04);
 }
 
-.calendar-popover
-  .rdp-day_button:focus-visible {
+.calendar-popover .rdp-day_button:focus-visible {
   outline: 2px solid rgba(37, 99, 235, 0.35);
   outline-offset: 1px;
 }
@@ -454,25 +448,20 @@
    DIA SELECIONADO
 ===================================================== */
 
-.calendar-popover
-  .rdp-selected
-  .rdp-day_button {
+.calendar-popover .rdp-selected .rdp-day_button {
   background: #2563eb;
   color: #ffffff;
 
   font-weight: 800;
 
-  box-shadow:
-    0 6px 14px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
 }
 
 /* =====================================================
    DIA ATUAL
 ===================================================== */
 
-.calendar-popover
-  .rdp-today:not(.rdp-selected)
-  .rdp-day_button {
+.calendar-popover .rdp-today:not(.rdp-selected) .rdp-day_button {
   background: #f8fbff;
   border: 1px solid #93c5fd;
 
@@ -484,32 +473,24 @@
    DIAS COM DADOS
 ===================================================== */
 
-.calendar-popover
-  .calendar-day-has-data
-  .rdp-day_button {
+.calendar-popover .calendar-day-has-data .rdp-day_button {
   background: #f1f5f9;
 
   color: #0f172a;
   font-weight: 700;
 }
 
-.calendar-popover
-  .calendar-day-has-data
-  .rdp-day_button:hover {
+.calendar-popover .calendar-day-has-data .rdp-day_button:hover {
   background: #dbeafe;
   color: #1d4ed8;
 }
 
-.calendar-popover
-  .calendar-day-has-data
-  .rdp-day_button::after {
+.calendar-popover .calendar-day-has-data .rdp-day_button::after {
   display: none;
   content: none;
 }
 
-.calendar-popover
-  .rdp-selected.calendar-day-has-data
-  .rdp-day_button {
+.calendar-popover .rdp-selected.calendar-day-has-data .rdp-day_button {
   background: #2563eb;
   color: #ffffff;
 }
@@ -522,9 +503,7 @@
   opacity: 1;
 }
 
-.calendar-popover
-  .rdp-disabled
-  .rdp-day_button {
+.calendar-popover .rdp-disabled .rdp-day_button {
   background: transparent;
 
   color: #cbd5e1;
@@ -602,8 +581,7 @@
   outline: none;
   cursor: pointer;
 
-  box-shadow:
-    0 2px 5px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
 
   transition:
     background-color 0.2s ease,
@@ -622,8 +600,7 @@
 .filter-section select:focus-visible {
   border-color: #3b82f6;
 
-  box-shadow:
-    0 0 0 3px rgba(59, 130, 246, 0.18);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
 .filter-section select:disabled {
@@ -656,9 +633,7 @@
   overflow-y: auto;
 
   scrollbar-width: thin;
-  scrollbar-color:
-    rgba(191, 219, 254, 0.45)
-    transparent;
+  scrollbar-color: rgba(191, 219, 254, 0.45) transparent;
 }
 
 .filter-section .checkbox-label {
@@ -701,17 +676,14 @@
   transform: translateX(2px);
 }
 
-.filter-section
-  .checkbox-label:has(input:checked) {
+.filter-section .checkbox-label:has(input:checked) {
   background: rgba(37, 99, 235, 0.28);
   border-color: rgba(147, 197, 253, 0.32);
 
   color: #ffffff;
 }
 
-.filter-section
-  .checkbox-label
-  input[type="checkbox"] {
+.filter-section .checkbox-label input[type="checkbox"] {
   flex: 0 0 auto;
 
   width: 17px;
@@ -736,24 +708,20 @@
    BARRA DE ROLAGEM DOS CHECKBOXES
 ===================================================== */
 
-.filter-section
-  .checkbox-group::-webkit-scrollbar {
+.filter-section .checkbox-group::-webkit-scrollbar {
   width: 5px;
 }
 
-.filter-section
-  .checkbox-group::-webkit-scrollbar-track {
+.filter-section .checkbox-group::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.filter-section
-  .checkbox-group::-webkit-scrollbar-thumb {
+.filter-section .checkbox-group::-webkit-scrollbar-thumb {
   background: rgba(191, 219, 254, 0.4);
   border-radius: 999px;
 }
 
-.filter-section
-  .checkbox-group::-webkit-scrollbar-thumb:hover {
+.filter-section .checkbox-group::-webkit-scrollbar-thumb:hover {
   background: rgba(191, 219, 254, 0.6);
 }
 
@@ -782,8 +750,7 @@
 
   .filter-section .date-inputs-container {
     display: grid;
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 12px;
   }
@@ -802,8 +769,7 @@
     padding: 12px;
   }
 
-  .calendar-field:last-child
-    .calendar-popover {
+  .calendar-field:last-child .calendar-popover {
     right: 0;
     left: auto;
   }
@@ -825,8 +791,7 @@
 
   .filter-section .checkbox-group {
     display: grid;
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     max-height: none;
     gap: 8px;
@@ -875,8 +840,7 @@
     transform: translate(-50%, -50%);
   }
 
-  .calendar-field:last-child
-    .calendar-popover {
+  .calendar-field:last-child .calendar-popover {
     right: auto;
     left: 50%;
   }
@@ -885,18 +849,13 @@
     from {
       opacity: 0;
 
-      transform:
-        translate(
-          -50%,
-          calc(-50% - 8px)
-        );
+      transform: translate(-50%, calc(-50% - 8px));
     }
 
     to {
       opacity: 1;
 
-      transform:
-        translate(-50%, -50%);
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -920,8 +879,7 @@
   }
 
   .filter-section .checkbox-group {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 7px;
   }
@@ -1013,8 +971,6 @@
   }
 }
 
-
-
 /* =====================================================
    DISPOSITIVOS SEM HOVER
 ===================================================== */
@@ -1082,8 +1038,7 @@
   color: #ffffff;
   background: rgba(96, 165, 250, 0.2);
 
-  border: 1px solid
-    rgba(147, 197, 253, 0.32);
+  border: 1px solid rgba(147, 197, 253, 0.32);
   border-radius: 6px;
 
   font-size: 0.72rem;
@@ -1105,21 +1060,13 @@
   overflow-wrap: anywhere;
 }
 
-.filter-section
-  .tipo-checkbox-label:has(
-    input:checked
-  )
-  .tipo-label-numero {
+.filter-section .tipo-checkbox-label:has(input:checked) .tipo-label-numero {
   color: #0b1f5e;
   background: #ffffff;
   border-color: #ffffff;
 }
 
-.filter-section
-  .tipo-checkbox-label:has(
-    input:checked
-  )
-  .tipo-label-descricao {
+.filter-section .tipo-checkbox-label:has(input:checked) .tipo-label-descricao {
   color: #ffffff;
 }
 
@@ -1177,8 +1124,7 @@
 .relatorio-filtros-card .tipo-checkbox-group {
   display: grid;
 
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   gap: 10px;
 
@@ -1222,9 +1168,7 @@
    CHECKBOX
 ===================================================== */
 
-.relatorio-filtros-card
-  .tipo-checkbox-label
-  input[type="checkbox"] {
+.relatorio-filtros-card .tipo-checkbox-label input[type="checkbox"] {
   flex: 0 0 auto;
 
   width: 15px;
@@ -1295,8 +1239,7 @@
    HOVER
 ===================================================== */
 
-.relatorio-filtros-card
-  .tipo-checkbox-label:hover {
+.relatorio-filtros-card .tipo-checkbox-label:hover {
   border-color: #aebdcd;
 
   background: #f8fafc;
@@ -1306,23 +1249,16 @@
    SELECIONADO
 ===================================================== */
 
-.relatorio-filtros-card
-  .tipo-checkbox-label:has(
-    input[type="checkbox"]:checked
-  ) {
+.relatorio-filtros-card .tipo-checkbox-label:has(input[type="checkbox"]:checked) {
   border-color: #82a9ed;
 
   background: #f4f8ff;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(37, 99, 235, 0.05);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.05);
 }
 
 .relatorio-filtros-card
-  .tipo-checkbox-label:has(
-    input[type="checkbox"]:checked
-  )
+  .tipo-checkbox-label:has(input[type="checkbox"]:checked)
   .tipo-label-numero {
   background: #2563eb;
 
@@ -1330,9 +1266,7 @@
 }
 
 .relatorio-filtros-card
-  .tipo-checkbox-label:has(
-    input[type="checkbox"]:checked
-  )
+  .tipo-checkbox-label:has(input[type="checkbox"]:checked)
   .tipo-label-descricao {
   color: #1d4ed8;
 

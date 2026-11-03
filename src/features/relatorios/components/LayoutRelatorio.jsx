@@ -77,8 +77,7 @@ export default function LayoutRelatorio({
   // registrado pelo componente de filtros.
   const acaoLimpar = onLimpar || limparRegistrado?.limpar;
   const limparDesabilitado =
-    limparDesabilitadoInformado ??
-    (onLimpar ? false : !limparRegistrado?.possuiFiltroAtivo);
+    limparDesabilitadoInformado ?? (onLimpar ? false : !limparRegistrado?.possuiFiltroAtivo);
 
   const nomeCategoria = categoria ?? relatorio?.categoria;
   const nomeTitulo = titulo ?? relatorio?.titulo;
@@ -120,13 +119,30 @@ export default function LayoutRelatorio({
         </div>
 
         <div className="rl-acoes">
-          <Botao onClick={onVisualizar} desabilitado={desabilitado} icone={FiEye} classe="rl-btn-ver">
+          <Botao
+            onClick={onVisualizar}
+            desabilitado={desabilitado}
+            icone={FiEye}
+            classe="rl-btn-ver"
+          >
             Visualizar
           </Botao>
-          <Botao onClick={onPdf} desabilitado={desabilitado} carregando={gerandoPdf} icone={FiFileText} classe="rl-btn-pdf">
+          <Botao
+            onClick={onPdf}
+            desabilitado={desabilitado}
+            carregando={gerandoPdf}
+            icone={FiFileText}
+            classe="rl-btn-pdf"
+          >
             PDF
           </Botao>
-          <Botao onClick={onExcel} desabilitado={desabilitado} carregando={gerandoExcel} icone={FiDownload} classe="rl-btn-excel">
+          <Botao
+            onClick={onExcel}
+            desabilitado={desabilitado}
+            carregando={gerandoExcel}
+            icone={FiDownload}
+            classe="rl-btn-excel"
+          >
             Excel
           </Botao>
           <Botao
@@ -150,11 +166,7 @@ export default function LayoutRelatorio({
       </aside>
 
       {filtrosAbertos && (
-        <div
-          className="rl-sombra"
-          onClick={() => setFiltrosAbertos(false)}
-          aria-hidden="true"
-        />
+        <div className="rl-sombra" onClick={() => setFiltrosAbertos(false)} aria-hidden="true" />
       )}
 
       <section className="rl-conteudo">

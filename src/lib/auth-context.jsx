@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabaseClient";
 
 const ContextoAuth = createContext({
@@ -99,9 +93,7 @@ export function AuthProvider({ children }) {
     [user, perfil, loadingAuth, loadingPerfil],
   );
 
-  return (
-    <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>
-  );
+  return <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>;
 }
 
 export function useAuthContext() {

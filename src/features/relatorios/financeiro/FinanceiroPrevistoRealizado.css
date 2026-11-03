@@ -3,7 +3,6 @@
    Complemento do padrão visual de TelaRelatorios.css
 ========================================================= */
 
-
 /* =========================================================
    CARD DE FILTROS
 ========================================================= */
@@ -12,22 +11,18 @@
   min-width: 0;
 }
 
-
 .financeiro-relatorio-filtros-header {
   align-items: center;
 }
-
 
 .financeiro-relatorio-filtros-header h3 {
   margin-bottom: 0;
 }
 
-
 .financeiro-relatorio-filtros-wrapper {
   width: 100%;
   min-width: 0;
 }
-
 
 /* =========================================================
    GRID DOS FILTROS
@@ -55,7 +50,6 @@
   align-items: end;
 }
 
-
 .financeiro-relatorio-filtros label {
   min-width: 0;
 
@@ -65,14 +59,12 @@
   gap: 6px;
 }
 
-
 .financeiro-relatorio-filtros label > span {
   color: #64748b;
 
   font-size: 0.64rem;
   font-weight: 700;
 }
-
 
 /* =========================================================
    SELECTS E INPUT
@@ -102,38 +94,27 @@
     box-shadow 0.16s ease;
 }
 
-
 .financeiro-relatorio-filtros select {
-  padding:
-    0
-    10px;
+  padding: 0 10px;
 
   cursor: pointer;
 }
 
-
 .financeiro-relatorio-filtros input {
-  padding:
-    0
-    10px;
+  padding: 0 10px;
 }
-
 
 .financeiro-relatorio-filtros select:hover,
 .financeiro-relatorio-filtros input:hover {
   border-color: #94a3b8;
 }
 
-
 .financeiro-relatorio-filtros select:focus,
 .financeiro-relatorio-filtros input:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    CATEGORIA
@@ -142,7 +123,6 @@
 .financeiro-relatorio-filtro-categoria {
   min-width: 0;
 }
-
 
 .financeiro-relatorio-filtro-categoria select {
   min-width: 0;
@@ -154,7 +134,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
    BUSCA DE CATEGORIA
 ========================================================= */
@@ -163,13 +142,11 @@
   min-width: 0;
 }
 
-
 .financeiro-relatorio-busca-categoria-campo {
   position: relative;
 
   min-width: 0;
 }
-
 
 .financeiro-relatorio-busca-categoria-campo > svg {
   position: absolute;
@@ -182,22 +159,18 @@
 
   color: #94a3b8;
 
-  transform:
-    translateY(-50%);
+  transform: translateY(-50%);
 
   pointer-events: none;
 }
-
 
 .financeiro-relatorio-busca-categoria-campo input {
   padding-left: 34px;
 }
 
-
 .financeiro-relatorio-busca-categoria-campo input::placeholder {
   color: #94a3b8;
 }
-
 
 /* =========================================================
    LIMPAR FILTROS
@@ -205,18 +178,14 @@
    Mantém o botão compartilhado já existente.
 ========================================================= */
 
-.financeiro-relatorio-filtros-wrapper
-> .filtros-compartilhados-limpar {
+.financeiro-relatorio-filtros-wrapper > .filtros-compartilhados-limpar {
   margin-top: 12px;
 }
 
-
-.financeiro-relatorio-filtros-wrapper
-> .filtros-compartilhados-limpar svg {
+.financeiro-relatorio-filtros-wrapper > .filtros-compartilhados-limpar svg {
   width: 15px;
   height: 15px;
 }
-
 
 /* =========================================================
    CARREGAMENTO / ATUALIZAÇÃO
@@ -225,7 +194,6 @@
 .financeiro-relatorio-loading {
   min-height: 220px;
 }
-
 
 .financeiro-relatorio-atualizando {
   display: inline-flex;
@@ -240,23 +208,15 @@
   font-weight: 700;
 }
 
-
 .financeiro-relatorio-girando {
-  animation:
-    financeiro-relatorio-girar
-    0.8s
-    linear
-    infinite;
+  animation: financeiro-relatorio-girar 0.8s linear infinite;
 }
-
 
 @keyframes financeiro-relatorio-girar {
   to {
-    transform:
-      rotate(360deg);
+    transform: rotate(360deg);
   }
 }
-
 
 /* =========================================================
    GRUPOS RECEITAS / DESPESAS
@@ -268,17 +228,12 @@
 
   gap: 22px;
 
-  padding:
-    18px
-    20px
-    22px;
+  padding: 18px 20px 22px;
 }
-
 
 .financeiro-relatorio-grupo {
   min-width: 0;
 }
-
 
 .financeiro-relatorio-grupo-titulo {
   display: flex;
@@ -290,9 +245,7 @@
 
   margin-bottom: 8px;
 
-  padding:
-    11px
-    14px;
+  padding: 11px 14px;
 
   background: #f8fafc;
 
@@ -301,11 +254,9 @@
   border-radius: 8px;
 }
 
-
 .financeiro-relatorio-grupo-titulo div {
   min-width: 0;
 }
-
 
 .financeiro-relatorio-grupo-titulo span {
   display: block;
@@ -322,7 +273,6 @@
   text-transform: uppercase;
 }
 
-
 .financeiro-relatorio-grupo-titulo h4 {
   margin: 0;
 
@@ -334,7 +284,6 @@
   text-transform: uppercase;
 }
 
-
 .financeiro-relatorio-grupo-titulo strong {
   flex: 0 0 auto;
 
@@ -344,28 +293,21 @@
   font-weight: 700;
 }
 
-
-.financeiro-relatorio-grupo-receitas
-.financeiro-relatorio-grupo-titulo {
+.financeiro-relatorio-grupo-receitas .financeiro-relatorio-grupo-titulo {
   border-left-color: #059669;
 }
 
-
-.financeiro-relatorio-grupo-despesas
-.financeiro-relatorio-grupo-titulo {
+.financeiro-relatorio-grupo-despesas .financeiro-relatorio-grupo-titulo {
   border-left-color: #dc2626;
 }
 
-
-.financeiro-relatorio-grupo
-.relatorio-visualizacao-tabela-wrapper {
+.financeiro-relatorio-grupo .relatorio-visualizacao-tabela-wrapper {
   border: 1px solid #e2e8f0;
 
   border-radius: 8px;
 
   overflow: auto;
 }
-
 
 /* =========================================================
    TABELA FINANCEIRA
@@ -377,12 +319,10 @@
   min-width: 1050px;
 }
 
-
 .financeiro-relatorio-tabela th,
 .financeiro-relatorio-tabela td {
   vertical-align: middle;
 }
-
 
 .financeiro-relatorio-tabela th:nth-child(2),
 .financeiro-relatorio-tabela td:nth-child(2) {
@@ -391,44 +331,33 @@
   word-break: break-word;
 }
 
-
-.financeiro-relatorio-tabela
-.financeiro-coluna-numerica {
+.financeiro-relatorio-tabela .financeiro-coluna-numerica {
   text-align: right !important;
 
   white-space: nowrap;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
-
 
 .financeiro-relatorio-tabela tbody td {
   color: #334155;
 }
 
-
-.financeiro-relatorio-tabela
-.financeiro-valor-positivo {
+.financeiro-relatorio-tabela .financeiro-valor-positivo {
   color: #047857;
 
   font-weight: 750;
 }
 
-
-.financeiro-relatorio-tabela
-.financeiro-valor-negativo {
+.financeiro-relatorio-tabela .financeiro-valor-negativo {
   color: #b42318;
 
   font-weight: 750;
 }
 
-
-.financeiro-relatorio-tabela
-.financeiro-valor-neutro {
+.financeiro-relatorio-tabela .financeiro-valor-neutro {
   color: #64748b;
 }
-
 
 /* =========================================================
    LINHA CABEÇALHO FINANCEIRO
@@ -440,77 +369,53 @@
 .financeiro-linha-cabecalho-grupo td {
   font-weight: 800;
 
-  background:
-    #f1f5f9 !important;
+  background: #f1f5f9 !important;
 
-  border-top:
-    2px solid #cbd5e1;
+  border-top: 2px solid #cbd5e1;
 
-  border-bottom:
-    2px solid #cbd5e1;
+  border-bottom: 2px solid #cbd5e1;
 }
-
 
 .financeiro-linha-cabecalho-grupo td:first-child,
 .financeiro-linha-cabecalho-grupo td:nth-child(2) {
   color: #0f172a;
 }
 
-
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
 @media (max-width: 1250px) {
-
   .financeiro-relatorio-filtros {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 
   .financeiro-relatorio-filtro-categoria {
-    grid-column:
-      auto;
+    grid-column: auto;
   }
-
 
   .financeiro-relatorio-busca-categoria {
-    grid-column:
-      auto;
+    grid-column: auto;
   }
-
 }
 
-
 @media (max-width: 760px) {
-
   .financeiro-relatorio-filtros {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .financeiro-relatorio-filtro-categoria,
   .financeiro-relatorio-busca-categoria {
-    grid-column:
-      auto;
+    grid-column: auto;
   }
 
-
-  .financeiro-relatorio-filtros-wrapper
-  > .filtros-compartilhados-limpar {
+  .financeiro-relatorio-filtros-wrapper > .filtros-compartilhados-limpar {
     width: 100%;
   }
-
 
   .financeiro-relatorio-grupos {
     padding: 14px;
   }
-
 
   .financeiro-relatorio-grupo-titulo {
     align-items: flex-start;
@@ -519,5 +424,4 @@
 
     gap: 6px;
   }
-
 }

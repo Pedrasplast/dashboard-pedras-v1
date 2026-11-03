@@ -17,9 +17,7 @@ function normalizarTexto(valor) {
 }
 
 export function ehFeriadoNacionalAutomatico(item) {
-  return normalizarTexto(item?.observacao)
-    .toUpperCase()
-    .startsWith(PREFIXO_FERIADO_NACIONAL);
+  return normalizarTexto(item?.observacao).toUpperCase().startsWith(PREFIXO_FERIADO_NACIONAL);
 }
 
 export async function listarCalendarioIndustrialAno(ano) {
@@ -37,19 +35,12 @@ export async function listarCalendarioIndustrialAno(ano) {
   return data ?? [];
 }
 
-export async function salvarExcecaoCalendarioIndustrial({
-  data,
-  perfilCodigo,
-  observacao,
-}) {
-  const { data: resultado, error } = await supabase.rpc(
-    "salvar_excecao_calendario_industrial",
-    {
-      p_data: data,
-      p_perfil_codigo: perfilCodigo,
-      p_observacao: normalizarTexto(observacao) || null,
-    },
-  );
+export async function salvarExcecaoCalendarioIndustrial({ data, perfilCodigo, observacao }) {
+  const { data: resultado, error } = await supabase.rpc("salvar_excecao_calendario_industrial", {
+    p_data: data,
+    p_perfil_codigo: perfilCodigo,
+    p_observacao: normalizarTexto(observacao) || null,
+  });
 
   if (error) {
     throw error;
@@ -59,12 +50,9 @@ export async function salvarExcecaoCalendarioIndustrial({
 }
 
 export async function removerExcecaoCalendarioIndustrial(data) {
-  const { data: resultado, error } = await supabase.rpc(
-    "remover_excecao_calendario_industrial",
-    {
-      p_data: data,
-    },
-  );
+  const { data: resultado, error } = await supabase.rpc("remover_excecao_calendario_industrial", {
+    p_data: data,
+  });
 
   if (error) {
     throw error;
@@ -76,20 +64,15 @@ export async function removerExcecaoCalendarioIndustrial(data) {
 export async function buscarFeriadosNacionais(ano) {
   const anoValido = validarAno(ano);
 
-  const resposta = await fetch(
-    `https://brasilapi.com.br/api/feriados/v1/${anoValido}`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
+  const resposta = await fetch(`https://brasilapi.com.br/api/feriados/v1/${anoValido}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
     },
-  );
+  });
 
   if (!resposta.ok) {
-    throw new Error(
-      `Não foi possível consultar os feriados nacionais (${resposta.status}).`,
-    );
+    throw new Error(`Não foi possível consultar os feriados nacionais (${resposta.status}).`);
   }
 
   const dados = await resposta.json();
@@ -107,15 +90,10 @@ export async function buscarFeriadosNacionais(ano) {
     .filter((item) => /^\d{4}-\d{2}-\d{2}$/.test(item.data) && item.nome);
 }
 
-export async function sincronizarFeriadosNacionais({
-  ano,
-  calendarioAtual = [],
-}) {
+export async function sincronizarFeriadosNacionais({ ano, calendarioAtual = [] }) {
   const feriados = await buscarFeriadosNacionais(ano);
 
-  const mapaAtual = new Map(
-    (calendarioAtual ?? []).map((item) => [String(item.data), item]),
-  );
+  const mapaAtual = new Map((calendarioAtual ?? []).map((item) => [String(item.data), item]));
 
   let inseridos = 0;
   let atualizados = 0;

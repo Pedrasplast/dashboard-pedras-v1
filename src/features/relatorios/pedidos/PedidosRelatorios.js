@@ -23,9 +23,7 @@ export function normalizarDataPedido(valor) {
 }
 
 export function obterDataPedidoRelatorio(item) {
-  return normalizarDataPedido(
-    item?.previsao ?? item?.data_previsao ?? item?.previsao_faturamento,
-  );
+  return normalizarDataPedido(item?.previsao ?? item?.data_previsao ?? item?.previsao_faturamento);
 }
 
 function obterHojeIso() {
@@ -48,33 +46,22 @@ export function calcularDiasAtrasoPedido(previsao) {
   const dataPrevisao = new Date(anoPrevisao, mesPrevisao - 1, diaPrevisao);
   const dataHoje = new Date(anoHoje, mesHoje - 1, diaHoje);
 
-  return Math.floor(
-    (dataHoje.getTime() - dataPrevisao.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  return Math.floor((dataHoje.getTime() - dataPrevisao.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 export function pedidoEstaAtrasadoRelatorio(item) {
-  return (
-    normalizarTexto(item?.status) === "pedido" &&
-    calcularDiasAtrasoPedido(item?.previsao) > 0
-  );
+  return normalizarTexto(item?.status) === "pedido" && calcularDiasAtrasoPedido(item?.previsao) > 0;
 }
 
 // Usa o número comercial; nunca utiliza item.id (ID interno da linha).
 function obterNumeroPedidoVisivel(item) {
   return String(
-    item?.pedido ??
-      item?.numero_pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "",
+    item?.pedido ?? item?.numero_pedido ?? item?.codigoPedido ?? item?.codigo_pedido ?? "",
   ).trim();
 }
 
 function obterCodigoProduto(item) {
-  return String(
-    item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "-",
-  ).trim() || "-";
+  return String(item?.codigoProduto ?? item?.codigo_produto ?? item?.codigo ?? "-").trim() || "-";
 }
 
 function obterDescricaoProduto(item) {
@@ -87,12 +74,7 @@ function obterUnidade(item) {
 
 function normalizarItemPedido(item) {
   return {
-    pedido:
-      item?.pedido ??
-      item?.numero_pedido ??
-      item?.codigoPedido ??
-      item?.codigo_pedido ??
-      "-",
+    pedido: item?.pedido ?? item?.numero_pedido ?? item?.codigoPedido ?? item?.codigo_pedido ?? "-",
     cliente: item?.cliente ?? item?.nome_cliente ?? "-",
     data_pedido: normalizarDataPedido(item?.data ?? item?.data_pedido),
     previsao: obterDataPedidoRelatorio(item),
@@ -119,9 +101,7 @@ function compararPrevisaoEPedido(a, b) {
 }
 
 export function prepararPedidosDetalhados(dados = []) {
-  return Array.isArray(dados)
-    ? dados.map(normalizarItemPedido).sort(compararPrevisaoEPedido)
-    : [];
+  return Array.isArray(dados) ? dados.map(normalizarItemPedido).sort(compararPrevisaoEPedido) : [];
 }
 
 export function prepararPedidosAtrasados(dados = []) {
@@ -131,9 +111,7 @@ export function prepararPedidosAtrasados(dados = []) {
     .filter(pedidoEstaAtrasadoRelatorio)
     .map(normalizarItemPedido)
     .sort((a, b) =>
-      b.dias_atraso !== a.dias_atraso
-        ? b.dias_atraso - a.dias_atraso
-        : compararPedido(a, b),
+      b.dias_atraso !== a.dias_atraso ? b.dias_atraso - a.dias_atraso : compararPedido(a, b),
     );
 }
 
@@ -228,10 +206,8 @@ export function agruparPedidosPorDataProduto(dados = []) {
       const dataA = a.previsao === SEM_DATA ? DATA_FIM_ORDENACAO : a.previsao;
       const dataB = b.previsao === SEM_DATA ? DATA_FIM_ORDENACAO : b.previsao;
       if (dataA !== dataB) return dataA.localeCompare(dataB);
-      return String(a.codigo_produto).localeCompare(
-        String(b.codigo_produto),
-        "pt-BR",
-        { numeric: true },
-      );
+      return String(a.codigo_produto).localeCompare(String(b.codigo_produto), "pt-BR", {
+        numeric: true,
+      });
     });
 }

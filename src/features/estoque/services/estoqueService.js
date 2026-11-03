@@ -1,6 +1,4 @@
-import {
-  supabase,
-} from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 import {
   LOCAL_TODOS,
@@ -15,7 +13,6 @@ import {
   normalizarLocalEstoque,
 } from "../utils/estoque.utils";
 
-
 /* =========================================================
    EXECUTAR CONSULTA PAGINADA
 
@@ -27,150 +24,81 @@ import {
    - fim
 ========================================================= */
 
-async function buscarTodasPaginas(
-  executarConsulta,
-) {
-  const registros =
-    [];
+async function buscarTodasPaginas(executarConsulta) {
+  const registros = [];
 
-
-  let inicio =
-    0;
-
+  let inicio = 0;
 
   while (true) {
-    const fim =
-      inicio +
-      TAMANHO_PAGINA_ESTOQUE -
-      1;
+    const fim = inicio + TAMANHO_PAGINA_ESTOQUE - 1;
 
-
-    const {
-      data,
-      error,
-    } =
-      await executarConsulta({
-        inicio,
-        fim,
-      });
-
+    const { data, error } = await executarConsulta({
+      inicio,
+      fim,
+    });
 
     if (error) {
       throw error;
     }
 
+    const lote = Array.isArray(data) ? data : [];
 
-    const lote =
-      Array.isArray(
-        data,
-      )
-        ? data
-        : [];
+    registros.push(...lote);
 
-
-    registros.push(
-      ...lote,
-    );
-
-
-    if (
-      lote.length <
-      TAMANHO_PAGINA_ESTOQUE
-    ) {
+    if (lote.length < TAMANHO_PAGINA_ESTOQUE) {
       break;
     }
 
-
-    inicio +=
-      TAMANHO_PAGINA_ESTOQUE;
+    inicio += TAMANHO_PAGINA_ESTOQUE;
   }
-
 
   return registros;
 }
-
 
 /* =========================================================
    LOCAIS DE ESTOQUE
 ========================================================= */
 
 export async function buscarLocaisEstoqueAtivos() {
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "locais_estoque_omie",
-      )
-      .select(`
+  const { data, error } = await supabase
+    .from("locais_estoque_omie")
+    .select(
+      `
         codigo_local_estoque,
         codigo,
         descricao,
         padrao,
         inativo
-      `)
-      .eq(
-        "inativo",
-        false,
-      )
-      .order(
-        "padrao",
-        {
-          ascending:
-            false,
-        },
-      )
-      .order(
-        "codigo",
-        {
-          ascending:
-            true,
-        },
-      );
-
+      `,
+    )
+    .eq("inativo", false)
+    .order("padrao", {
+      ascending: false,
+    })
+    .order("codigo", {
+      ascending: true,
+    });
 
   if (error) {
-    throw new Error(
-      `Erro ao carregar locais de estoque: ${error.message}`,
-    );
+    throw new Error(`Erro ao carregar locais de estoque: ${error.message}`);
   }
 
+  const registros = Array.isArray(data) ? data : [];
 
-  const registros =
-    Array.isArray(
-      data,
-    )
-      ? data
-      : [];
-
-
-  return registros.map(
-    normalizarLocalEstoque,
-  );
+  return registros.map(normalizarLocalEstoque);
 }
-
 
 /* =========================================================
    ESTOQUE
 ========================================================= */
 
-export async function buscarEstoqueProdutos({
-  codigoLocalEstoque,
-}) {
+export async function buscarEstoqueProdutos({ codigoLocalEstoque }) {
   try {
-    const registros =
-      await buscarTodasPaginas(
-        async ({
-          inicio,
-          fim,
-        }) => {
-          let consulta =
-            supabase
-              .from(
-                "estoque_produto_acabado_omie",
-              )
-              .select(`
+    const registros = await buscarTodasPaginas(async ({ inicio, fim }) => {
+      let consulta = supabase
+        .from("estoque_produto_acabado_omie")
+        .select(
+          `
                 id,
                 codigo_produto_omie,
                 codigo_integracao,
@@ -189,70 +117,32 @@ export async function buscarEstoqueProdutos({
                 ativo,
                 sincronizado_em,
                 atualizado_em
-              `)
-              .eq(
-                "tipo_item",
-                TIPO_ITEM_PRODUTO_ACABADO,
-              )
-              .eq(
-                "ativo",
-                true,
-              )
-              .order(
-                "codigo_produto",
-                {
-                  ascending:
-                    true,
-                },
-              );
+              `,
+        )
+        .eq("tipo_item", TIPO_ITEM_PRODUTO_ACABADO)
+        .eq("ativo", true)
+        .order("codigo_produto", {
+          ascending: true,
+        });
 
+      const filtrarLocal =
+        codigoLocalEstoque !== LOCAL_TODOS &&
+        codigoLocalEstoque !== null &&
+        codigoLocalEstoque !== undefined &&
+        codigoLocalEstoque !== "";
 
-          const filtrarLocal =
-            codigoLocalEstoque !==
-              LOCAL_TODOS &&
-            codigoLocalEstoque !==
-              null &&
-            codigoLocalEstoque !==
-              undefined &&
-            codigoLocalEstoque !==
-              "";
+      if (filtrarLocal) {
+        consulta = consulta.eq("codigo_local_estoque", Number(codigoLocalEstoque));
+      }
 
+      return consulta.range(inicio, fim);
+    });
 
-          if (
-            filtrarLocal
-          ) {
-            consulta =
-              consulta.eq(
-                "codigo_local_estoque",
-                Number(
-                  codigoLocalEstoque,
-                ),
-              );
-          }
-
-
-          return consulta.range(
-            inicio,
-            fim,
-          );
-        },
-      );
-
-
-    return registros.map(
-      normalizarEstoque,
-    );
-
+    return registros.map(normalizarEstoque);
   } catch (error) {
-    throw new Error(
-      `Erro ao carregar estoque: ${
-        error?.message ||
-        "erro desconhecido"
-      }`,
-    );
+    throw new Error(`Erro ao carregar estoque: ${error?.message || "erro desconhecido"}`);
   }
 }
-
 
 /* =========================================================
    PEDIDOS EM ABERTO
@@ -260,73 +150,40 @@ export async function buscarEstoqueProdutos({
 
 export async function buscarPedidosAbertosProdutos() {
   try {
-    const registros =
-      await buscarTodasPaginas(
-        ({
-          inicio,
-          fim,
-        }) =>
-          supabase
-            .from(
-              "pedidos_omie",
-            )
-            .select(`
+    const registros = await buscarTodasPaginas(({ inicio, fim }) =>
+      supabase
+        .from("pedidos_omie")
+        .select(
+          `
               id,
               codigo_pedido_omie,
               codigo_produto,
               quantidade
-            `)
-            .eq(
-              "ativo",
-              true,
-            )
-            .eq(
-              "status",
-              STATUS_PEDIDO_ABERTO,
-            )
-            .order(
-              "id",
-              {
-                ascending:
-                  true,
-              },
-            )
-            .range(
-              inicio,
-              fim,
-            ),
-      );
-
-
-    return agruparPedidosPorProduto(
-      registros,
+            `,
+        )
+        .eq("ativo", true)
+        .eq("status", STATUS_PEDIDO_ABERTO)
+        .order("id", {
+          ascending: true,
+        })
+        .range(inicio, fim),
     );
 
+    return agruparPedidosPorProduto(registros);
   } catch (error) {
-    throw new Error(
-      `Erro ao carregar pedidos em aberto: ${
-        error?.message ||
-        "erro desconhecido"
-      }`,
-    );
+    throw new Error(`Erro ao carregar pedidos em aberto: ${error?.message || "erro desconhecido"}`);
   }
 }
-
 
 /* =========================================================
    STATUS DA SINCRONIZAÇÃO
 ========================================================= */
 
 export async function buscarStatusSincronizacaoEstoque() {
-  const {
-    data,
-    error,
-  } =
-    await supabase
-      .from(
-        "sincronizacao_estoque_omie",
-      )
-      .select(`
+  const { data, error } = await supabase
+    .from("sincronizacao_estoque_omie")
+    .select(
+      `
         id,
         ultima_sincronizacao,
         inicio_em,
@@ -339,21 +196,14 @@ export async function buscarStatusSincronizacaoEstoque() {
         duracao_ms,
         mensagem,
         atualizado_em
-      `)
-      .eq(
-        "id",
-        1,
-      )
-      .maybeSingle();
-
+      `,
+    )
+    .eq("id", 1)
+    .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Erro ao carregar status da sincronização: ${error.message}`,
-    );
+    throw new Error(`Erro ao carregar status da sincronização: ${error.message}`);
   }
 
-
-  return data ??
-    null;
+  return data ?? null;
 }

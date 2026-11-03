@@ -14,8 +14,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Painel de Produção | Pedrasplast" },
       {
         property: "og:description",
-        content:
-          "Visão integrada da produtividade por máquina e monitoramento de eficiência.",
+        content: "Visão integrada da produtividade por máquina e monitoramento de eficiência.",
       },
     ],
   }),

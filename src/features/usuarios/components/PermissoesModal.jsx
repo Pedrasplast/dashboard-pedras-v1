@@ -1,10 +1,6 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   FiCheckCircle,
@@ -18,13 +14,7 @@ import {
 
 import "./PermissoesModal.css";
 
-
-function TogglePermissao({
-  ativo,
-  disabled = false,
-  onChange,
-  ariaLabel,
-}) {
+function TogglePermissao({ ativo, disabled = false, onChange, ariaLabel }) {
   return (
     <button
       type="button"
@@ -40,11 +30,7 @@ function TogglePermissao({
   );
 }
 
-
-function BadgeStatus({
-  completo,
-  parcial,
-}) {
+function BadgeStatus({ completo, parcial }) {
   if (completo) {
     return (
       <span className="pu-status pu-status-active">
@@ -55,104 +41,45 @@ function BadgeStatus({
   }
 
   if (parcial) {
-    return (
-      <span className="pu-status pu-status-partial">
-        Parcial
-      </span>
-    );
+    return <span className="pu-status pu-status-partial">Parcial</span>;
   }
 
-  return (
-    <span className="pu-status pu-status-blocked">
-      Bloqueado
-    </span>
-  );
+  return <span className="pu-status pu-status-blocked">Bloqueado</span>;
 }
 
-
-function TelaItem({
-  tela,
-  ativo,
-  salvando,
-  onToggle,
-}) {
+function TelaItem({ tela, ativo, salvando, onToggle }) {
   return (
-    <div
-      className={`pu-item ${
-        ativo
-          ? "is-active"
-          : ""
-      }`}
-    >
+    <div className={`pu-item ${ativo ? "is-active" : ""}`}>
       <div className="pu-item-info">
-        <strong>
-          {tela.nome}
-        </strong>
+        <strong>{tela.nome}</strong>
 
-        <span>
-          {tela.rota}
-        </span>
+        <span>{tela.rota}</span>
       </div>
 
       <TogglePermissao
         ativo={ativo}
         disabled={salvando}
-        ariaLabel={
-          `${ativo ? "Bloquear" : "Liberar"} ${tela.nome}`
-        }
-        onChange={
-          () =>
-            onToggle(
-              tela.id,
-            )
-        }
+        ariaLabel={`${ativo ? "Bloquear" : "Liberar"} ${tela.nome}`}
+        onChange={() => onToggle(tela.id)}
       />
     </div>
   );
 }
 
-
-function ModuloCard({
-  modulo,
-  status,
-  permissoesTelas,
-  salvando,
-  onDefinirModulo,
-  onToggleTela,
-}) {
-  const classeStatus =
-    status.completo
-      ? "is-active"
-      : status.parcial
-        ? "is-partial"
-        : "";
+function ModuloCard({ modulo, status, permissoesTelas, salvando, onDefinirModulo, onToggleTela }) {
+  const classeStatus = status.completo ? "is-active" : status.parcial ? "is-partial" : "";
 
   return (
-    <section
-      className={
-        `pu-module-card ${classeStatus}`
-      }
-    >
+    <section className={`pu-module-card ${classeStatus}`}>
       <header className="pu-module-header">
         <div className="pu-module-title">
           <div className="pu-module-title-row">
-            <strong>
-              {modulo.nome}
-            </strong>
+            <strong>{modulo.nome}</strong>
 
-            <BadgeStatus
-              completo={
-                status.completo
-              }
-              parcial={
-                status.parcial
-              }
-            />
+            <BadgeStatus completo={status.completo} parcial={status.parcial} />
           </div>
 
-          <p>
-            {modulo.descricao}
-          </p>
+          <p>{modulo.descricao}</p>
         </div>
 
         <div className="pu-module-actions">
@@ -162,123 +89,54 @@ function ModuloCard({
 
           <button
             type="button"
-            className={
-              status.completo
-                ? "pu-btn-module pu-btn-module-block"
-                : "pu-btn-module"
-            }
-            disabled={
-              salvando
-            }
-            onClick={
-              () =>
-                onDefinirModulo(
-                  modulo,
-                  !status.completo,
-                )
-            }
+            className={status.completo ? "pu-btn-module pu-btn-module-block" : "pu-btn-module"}
+            disabled={salvando}
+            onClick={() => onDefinirModulo(modulo, !status.completo)}
           >
-            {status.completo
-              ? "Bloquear"
-              : "Liberar tudo"}
+            {status.completo ? "Bloquear" : "Liberar tudo"}
           </button>
         </div>
       </header>
 
       <div className="pu-module-items">
-        {modulo.telas.map(
-          (
-            tela,
-          ) => {
-            const ativo =
-              Boolean(
-                permissoesTelas[
-                  String(
-                    tela.id,
-                  )
-                ],
-              );
+        {modulo.telas.map((tela) => {
+          const ativo = Boolean(permissoesTelas[String(tela.id)]);
 
-            return (
-              <TelaItem
-                key={
-                  tela.id
-                }
-                tela={
-                  tela
-                }
-                ativo={
-                  ativo
-                }
-                salvando={
-                  salvando
-                }
-                onToggle={
-                  onToggleTela
-                }
-              />
-            );
-          },
-        )}
+          return (
+            <TelaItem
+              key={tela.id}
+              tela={tela}
+              ativo={ativo}
+              salvando={salvando}
+              onToggle={onToggleTela}
+            />
+          );
+        })}
       </div>
     </section>
   );
 }
 
-
-function RelatorioItem({
-  relatorio,
-  ativo,
-  disabled,
-  salvando,
-  onToggle,
-}) {
+function RelatorioItem({ relatorio, ativo, disabled, salvando, onToggle }) {
   return (
-    <div
-      className={
-        `pu-report-item ${
-          ativo
-            ? "is-active"
-            : ""
-        } ${
-          disabled
-            ? "is-disabled"
-            : ""
-        }`
-      }
-    >
+    <div className={`pu-report-item ${ativo ? "is-active" : ""} ${disabled ? "is-disabled" : ""}`}>
       <div className="pu-report-icon">
         <FiFileText />
       </div>
 
       <div className="pu-report-info">
-        <strong>
-          {relatorio.nome}
-        </strong>
+        <strong>{relatorio.nome}</strong>
       </div>
 
       <TogglePermissao
-        ativo={
-          ativo
-        }
-        disabled={
-          salvando ||
-          disabled
-        }
-        ariaLabel={
-          `${ativo ? "Bloquear" : "Liberar"} relatório ${relatorio.nome}`
-        }
-        onChange={
-          () =>
-            onToggle(
-              relatorio.id,
-            )
-        }
+        ativo={ativo}
+        disabled={salvando || disabled}
+        ariaLabel={`${ativo ? "Bloquear" : "Liberar"} relatório ${relatorio.nome}`}
+        onChange={() => onToggle(relatorio.id)}
       />
     </div>
   );
 }
-
 
 export default function PermissoesModal({
   usuario,
@@ -313,134 +171,55 @@ export default function PermissoesModal({
 
   onSalvar,
 }) {
-  const [
-    abaAtiva,
-    setAbaAtiva,
-  ] =
-    useState(
-      "telas",
-    );
+  const [abaAtiva, setAbaAtiva] = useState("telas");
 
+  useEffect(() => {
+    if (usuario) {
+      setAbaAtiva("telas");
+    }
+  }, [usuario]);
 
-  useEffect(
-    () => {
-      if (
-        usuario
-      ) {
-        setAbaAtiva(
-          "telas",
-        );
-      }
-    },
-    [
-      usuario,
-    ],
+  const moduloRelatorios = useMemo(
+    () => telasPorModulo.find((modulo) => modulo.id === "relatorios") || null,
+    [telasPorModulo],
   );
 
+  const telaCentralRelatorios = useMemo(
+    () =>
+      moduloRelatorios?.telas?.find((tela) => tela.chave === "relatorios") ||
+      moduloRelatorios?.telas?.[0] ||
+      null,
+    [moduloRelatorios],
+  );
 
-  const moduloRelatorios =
-    useMemo(
-      () =>
-        telasPorModulo.find(
-          (
-            modulo,
-          ) =>
-            modulo.id ===
-            "relatorios",
-        ) ||
-        null,
-      [
-        telasPorModulo,
-      ],
-    );
+  const modulosDeTelas = useMemo(
+    () => telasPorModulo.filter((modulo) => modulo.id !== "relatorios"),
+    [telasPorModulo],
+  );
 
+  const liberarTodasAsTelas = () => {
+    for (const modulo of modulosDeTelas) {
+      onDefinirModulo(modulo, true);
+    }
+  };
 
-  const telaCentralRelatorios =
-    useMemo(
-      () =>
-        moduloRelatorios
-          ?.telas
-          ?.find(
-            (
-              tela,
-            ) =>
-              tela.chave ===
-              "relatorios",
-          ) ||
-        moduloRelatorios
-          ?.telas
-          ?.[0] ||
-        null,
-      [
-        moduloRelatorios,
-      ],
-    );
+  const bloquearTodasAsTelas = () => {
+    for (const modulo of modulosDeTelas) {
+      onDefinirModulo(modulo, false);
+    }
+  };
 
+  const alternarCentralRelatorios = () => {
+    if (!telaCentralRelatorios) {
+      return;
+    }
 
-  const modulosDeTelas =
-    useMemo(
-      () =>
-        telasPorModulo.filter(
-          (
-            modulo,
-          ) =>
-            modulo.id !==
-            "relatorios",
-        ),
-      [
-        telasPorModulo,
-      ],
-    );
+    onToggleTela(telaCentralRelatorios.id);
+  };
 
-
-  const liberarTodasAsTelas =
-    () => {
-      for (
-        const modulo of
-        modulosDeTelas
-      ) {
-        onDefinirModulo(
-          modulo,
-          true,
-        );
-      }
-    };
-
-
-  const bloquearTodasAsTelas =
-    () => {
-      for (
-        const modulo of
-        modulosDeTelas
-      ) {
-        onDefinirModulo(
-          modulo,
-          false,
-        );
-      }
-    };
-
-
-  const alternarCentralRelatorios =
-    () => {
-      if (
-        !telaCentralRelatorios
-      ) {
-        return;
-      }
-
-      onToggleTela(
-        telaCentralRelatorios.id,
-      );
-    };
-
-
-  if (
-    !usuario
-  ) {
+  if (!usuario) {
     return null;
   }
-
 
   return (
     <Modal
@@ -451,606 +230,316 @@ export default function PermissoesModal({
       tamanho="amplo"
       fecharAoClicarFora={false}
     >
-
       <section
         className="pu-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="pu-modal-title"
       >
-
         {/* =====================================================
             CABEÇALHO
         ===================================================== */}
 
         <header className="pu-header" data-modal-header="">
-
           <div className="pu-header-main">
-
             <div className="pu-header-icon" data-modal-icone="">
               <FiSettings />
             </div>
 
             <div className="pu-header-text">
-
-              <span className="pu-eyebrow">
-                Controle de acesso
-              </span>
+              <span className="pu-eyebrow">Controle de acesso</span>
 
               <ModalTitulo>
-                <h2 id="pu-modal-title">
-                  Permissões do usuário
-                </h2>
+                <h2 id="pu-modal-title">Permissões do usuário</h2>
               </ModalTitulo>
 
-              <p>
-                {usuario.email}
-              </p>
-
+              <p>{usuario.email}</p>
             </div>
-
           </div>
 
-
           <div className="pu-header-right">
-
             <div className="pu-header-stats">
-
               <div className="pu-stat">
-                <span>
-                  Telas
-                </span>
+                <span>Telas</span>
 
                 <strong>
                   {resumo.telasLiberadas}
 
-                  <small>
-                    /{resumo.totalTelas}
-                  </small>
+                  <small>/{resumo.totalTelas}</small>
                 </strong>
               </div>
 
-
               <div className="pu-stat">
-                <span>
-                  Relatórios
-                </span>
+                <span>Relatórios</span>
 
                 <strong>
                   {resumo.relatoriosPermitidos}
 
-                  <small>
-                    /{resumo.totalRelatorios}
-                  </small>
+                  <small>/{resumo.totalRelatorios}</small>
                 </strong>
               </div>
-
             </div>
-
 
             <button
               type="button"
               className="pu-close"
-              disabled={
-                salvando
-              }
-              onClick={
-                onFechar
-              }
+              disabled={salvando}
+              onClick={onFechar}
               aria-label="Fechar"
               data-modal-fechar=""
             >
               <FiX />
             </button>
-
           </div>
-
         </header>
-
 
         {/* =====================================================
             ABAS
         ===================================================== */}
 
-        <nav
-          className="pu-tabs"
-          aria-label="Tipos de permissões"
-        >
-
+        <nav className="pu-tabs" aria-label="Tipos de permissões">
           <button
             type="button"
-            className={
-              `pu-tab ${
-                abaAtiva ===
-                "telas"
-                  ? "is-active"
-                  : ""
-              }`
-            }
-            onClick={
-              () =>
-                setAbaAtiva(
-                  "telas",
-                )
-            }
+            className={`pu-tab ${abaAtiva === "telas" ? "is-active" : ""}`}
+            onClick={() => setAbaAtiva("telas")}
           >
             <FiGrid />
 
-            <span>
-              Telas e módulos
-            </span>
+            <span>Telas e módulos</span>
 
             <small>
               {resumo.telasLiberadas}/{resumo.totalTelas}
             </small>
           </button>
 
-
           <button
             type="button"
-            className={
-              `pu-tab ${
-                abaAtiva ===
-                "relatorios"
-                  ? "is-active"
-                  : ""
-              }`
-            }
-            onClick={
-              () =>
-                setAbaAtiva(
-                  "relatorios",
-                )
-            }
+            className={`pu-tab ${abaAtiva === "relatorios" ? "is-active" : ""}`}
+            onClick={() => setAbaAtiva("relatorios")}
           >
             <FiFileText />
 
-            <span>
-              Relatórios
-            </span>
+            <span>Relatórios</span>
 
             <small>
               {resumo.relatoriosPermitidos}/{resumo.totalRelatorios}
             </small>
           </button>
-
         </nav>
-
 
         {/* =====================================================
             CONTEÚDO
         ===================================================== */}
 
         <main className="pu-content" data-modal-body="">
-
-          {abaAtiva ===
-          "telas" ? (
-
+          {abaAtiva === "telas" ? (
             <div className="pu-tab-panel">
-
               <div className="pu-section-header" data-modal-header="">
-
                 <div>
-                  <h3>
-                    Acessos ao sistema
-                  </h3>
+                  <h3>Acessos ao sistema</h3>
 
-                  <p>
-                    Escolha os módulos e telas que este usuário poderá acessar.
-                  </p>
+                  <p>Escolha os módulos e telas que este usuário poderá acessar.</p>
                 </div>
 
-
                 <div className="pu-bulk-actions" data-modal-footer="">
-
                   <button
                     type="button"
                     className="pu-btn-secondary pu-btn-green"
-                    disabled={
-                      salvando
-                    }
-                    onClick={
-                      liberarTodasAsTelas
-                    }
+                    disabled={salvando}
+                    onClick={liberarTodasAsTelas}
                     data-modal-acao="secundaria"
                   >
                     <FiUnlock />
-
                     Liberar todas
                   </button>
-
 
                   <button
                     type="button"
                     className="pu-btn-secondary"
-                    disabled={
-                      salvando
-                    }
-                    onClick={
-                      bloquearTodasAsTelas
-                    }
+                    disabled={salvando}
+                    onClick={bloquearTodasAsTelas}
                     data-modal-acao="secundaria"
                   >
                     <FiLock />
-
                     Bloquear todas
                   </button>
-
                 </div>
-
               </div>
-
 
               <div className="pu-module-grid">
-
-                {modulosDeTelas.map(
-                  (
-                    modulo,
-                  ) => (
-
-                    <ModuloCard
-                      key={
-                        modulo.id
-                      }
-                      modulo={
-                        modulo
-                      }
-                      status={
-                        onObterStatusModulo(
-                          modulo,
-                        )
-                      }
-                      permissoesTelas={
-                        permissoesTelas
-                      }
-                      salvando={
-                        salvando
-                      }
-                      onDefinirModulo={
-                        onDefinirModulo
-                      }
-                      onToggleTela={
-                        onToggleTela
-                      }
-                    />
-
-                  ),
-                )}
-
+                {modulosDeTelas.map((modulo) => (
+                  <ModuloCard
+                    key={modulo.id}
+                    modulo={modulo}
+                    status={onObterStatusModulo(modulo)}
+                    permissoesTelas={permissoesTelas}
+                    salvando={salvando}
+                    onDefinirModulo={onDefinirModulo}
+                    onToggleTela={onToggleTela}
+                  />
+                ))}
               </div>
-
             </div>
-
           ) : (
-
             <div className="pu-tab-panel">
-
               {/* ===============================================
                   CENTRAL DE RELATÓRIOS
               =============================================== */}
 
-              <section
-                className={
-                  `pu-report-central ${
-                    relatoriosLiberados
-                      ? "is-active"
-                      : ""
-                  }`
-                }
-              >
-
+              <section className={`pu-report-central ${relatoriosLiberados ? "is-active" : ""}`}>
                 <div className="pu-report-central-icon" data-modal-icone="">
-
-                  {relatoriosLiberados
-                    ? <FiUnlock />
-                    : <FiLock />}
-
+                  {relatoriosLiberados ? <FiUnlock /> : <FiLock />}
                 </div>
-
 
                 <div className="pu-report-central-info">
+                  <span>Acesso principal</span>
 
-                  <span>
-                    Acesso principal
-                  </span>
-
-                  <strong>
-                    Central de Relatórios
-                  </strong>
+                  <strong>Central de Relatórios</strong>
 
                   <p>
-                    O usuário precisa deste acesso liberado para visualizar
-                    qualquer relatório selecionado abaixo.
+                    O usuário precisa deste acesso liberado para visualizar qualquer relatório
+                    selecionado abaixo.
                   </p>
-
                 </div>
 
-
                 <div className="pu-report-central-control">
-
-                  <span
-                    className={
-                      relatoriosLiberados
-                        ? "is-active"
-                        : ""
-                    }
-                  >
-                    {relatoriosLiberados
-                      ? "Liberada"
-                      : "Bloqueada"}
+                  <span className={relatoriosLiberados ? "is-active" : ""}>
+                    {relatoriosLiberados ? "Liberada" : "Bloqueada"}
                   </span>
 
                   <TogglePermissao
-                    ativo={
-                      relatoriosLiberados
-                    }
-                    disabled={
-                      salvando ||
-                      !telaCentralRelatorios
-                    }
+                    ativo={relatoriosLiberados}
+                    disabled={salvando || !telaCentralRelatorios}
                     ariaLabel="Alterar acesso à Central de Relatórios"
-                    onChange={
-                      alternarCentralRelatorios
-                    }
+                    onChange={alternarCentralRelatorios}
                   />
-
                 </div>
-
               </section>
 
-
               <div className="pu-section-header pu-report-section-header" data-modal-header="">
-
                 <div>
-                  <h3>
-                    Relatórios disponíveis
-                  </h3>
+                  <h3>Relatórios disponíveis</h3>
 
-                  <p>
-                    Defina individualmente quais relatórios poderão ser consultados.
-                  </p>
+                  <p>Defina individualmente quais relatórios poderão ser consultados.</p>
                 </div>
 
-
                 <div className="pu-bulk-actions" data-modal-footer="">
-
                   <button
                     type="button"
                     className="pu-btn-secondary pu-btn-green"
-                    disabled={
-                      salvando ||
-                      !relatoriosLiberados
-                    }
-                    onClick={
-                      onMarcarTodosRelatorios
-                    }
+                    disabled={salvando || !relatoriosLiberados}
+                    onClick={onMarcarTodosRelatorios}
                     data-modal-acao="secundaria"
                   >
                     <FiUnlock />
-
                     Liberar todos
                   </button>
-
 
                   <button
                     type="button"
                     className="pu-btn-secondary"
-                    disabled={
-                      salvando ||
-                      !relatoriosLiberados
-                    }
-                    onClick={
-                      onDesmarcarTodosRelatorios
-                    }
+                    disabled={salvando || !relatoriosLiberados}
+                    onClick={onDesmarcarTodosRelatorios}
                     data-modal-acao="secundaria"
                   >
                     <FiLock />
-
                     Bloquear todos
                   </button>
-
                 </div>
-
               </div>
-
 
               {!relatoriosLiberados && (
                 <div className="pu-report-warning">
                   <FiLock />
 
                   <div>
-                    <strong>
-                      Central de Relatórios bloqueada
-                    </strong>
+                    <strong>Central de Relatórios bloqueada</strong>
 
-                    <span>
-                      Libere o acesso acima antes de configurar os relatórios.
-                    </span>
+                    <span>Libere o acesso acima antes de configurar os relatórios.</span>
                   </div>
                 </div>
               )}
 
+              <div className={`pu-report-categories ${!relatoriosLiberados ? "is-disabled" : ""}`}>
+                {Object.entries(relatoriosPorCategoria).map(([categoria, relatorios]) => {
+                  const liberados = relatorios.filter((relatorio) =>
+                    Boolean(permissoesRelatorios[String(relatorio.id)]),
+                  ).length;
 
-              <div
-                className={
-                  `pu-report-categories ${
-                    !relatoriosLiberados
-                      ? "is-disabled"
-                      : ""
-                  }`
-                }
-              >
+                  return (
+                    <section key={categoria} className="pu-report-category">
+                      <header className="pu-report-category-header" data-modal-header="">
+                        <strong>{categoria}</strong>
 
-                {Object.entries(
-                  relatoriosPorCategoria,
-                ).map(
-                  ([
-                    categoria,
-                    relatorios,
-                  ]) => {
+                        <span>
+                          {liberados}/{relatorios.length}
+                        </span>
+                      </header>
 
-                    const liberados =
-                      relatorios.filter(
-                        (
-                          relatorio,
-                        ) =>
-                          Boolean(
-                            permissoesRelatorios[
-                              String(
-                                relatorio.id,
-                              )
-                            ],
-                          ),
-                      ).length;
-
-
-                    return (
-                      <section
-                        key={
-                          categoria
-                        }
-                        className="pu-report-category"
-                      >
-
-                        <header className="pu-report-category-header" data-modal-header="">
-
-                          <strong>
-                            {categoria}
-                          </strong>
-
-                          <span>
-                            {liberados}/{relatorios.length}
-                          </span>
-
-                        </header>
-
-
-                        <div className="pu-report-grid">
-
-                          {relatorios.map(
-                            (
-                              relatorio,
-                            ) => (
-
-                              <RelatorioItem
-                                key={
-                                  relatorio.id
-                                }
-                                relatorio={
-                                  relatorio
-                                }
-                                ativo={
-                                  Boolean(
-                                    permissoesRelatorios[
-                                      String(
-                                        relatorio.id,
-                                      )
-                                    ],
-                                  )
-                                }
-                                disabled={
-                                  !relatoriosLiberados
-                                }
-                                salvando={
-                                  salvando
-                                }
-                                onToggle={
-                                  onToggleRelatorio
-                                }
-                              />
-
-                            ),
-                          )}
-
-                        </div>
-
-                      </section>
-                    );
-                  },
-                )}
-
+                      <div className="pu-report-grid">
+                        {relatorios.map((relatorio) => (
+                          <RelatorioItem
+                            key={relatorio.id}
+                            relatorio={relatorio}
+                            ativo={Boolean(permissoesRelatorios[String(relatorio.id)])}
+                            disabled={!relatoriosLiberados}
+                            salvando={salvando}
+                            onToggle={onToggleRelatorio}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
               </div>
-
             </div>
-
           )}
-
         </main>
-
 
         {/* =====================================================
             RODAPÉ
         ===================================================== */}
 
         <footer className="pu-footer" data-modal-footer="">
-
           <div className="pu-footer-info">
-
-            {abaAtiva ===
-            "telas" ? (
+            {abaAtiva === "telas" ? (
               <>
-                <strong>
-                  {resumo.telasLiberadas}
-                </strong>
+                <strong>{resumo.telasLiberadas}</strong>
 
-                <span>
-                  de {resumo.totalTelas} telas liberadas
-                </span>
+                <span>de {resumo.totalTelas} telas liberadas</span>
               </>
             ) : (
               <>
-                <strong>
-                  {resumo.relatoriosPermitidos}
-                </strong>
+                <strong>{resumo.relatoriosPermitidos}</strong>
 
-                <span>
-                  de {resumo.totalRelatorios} relatórios selecionados
-                </span>
+                <span>de {resumo.totalRelatorios} relatórios selecionados</span>
               </>
             )}
-
           </div>
 
-
           <div className="pu-footer-actions" data-modal-footer="">
-
             <button
               type="button"
               className="pu-btn-cancel"
-              disabled={
-                salvando
-              }
-              onClick={
-                onFechar
-              }
+              disabled={salvando}
+              onClick={onFechar}
               data-modal-acao="secundaria"
             >
               Cancelar
             </button>
 
-
             <button
               type="button"
               className="pu-btn-save"
-              disabled={
-                salvando
-              }
-              onClick={
-                onSalvar
-              }
+              disabled={salvando}
+              onClick={onSalvar}
               data-modal-acao="secundaria"
             >
-              {salvando
-                ? "Salvando..."
-                : "Salvar permissões"}
+              {salvando ? "Salvando..." : "Salvar permissões"}
             </button>
-
           </div>
-
         </footer>
-
       </section>
-
     </Modal>
   );
 }

@@ -13,16 +13,13 @@ export const MESES = Object.freeze([
   { valor: 12, nome: "Dezembro" },
 ]);
 
-
 export function obterAnoAtual() {
   return new Date().getFullYear();
 }
 
-
 export function obterMesAtual() {
   return new Date().getMonth() + 1;
 }
-
 
 export function criarFiltrosFinanceirosIniciais() {
   return {
@@ -34,13 +31,9 @@ export function criarFiltrosFinanceirosIniciais() {
   };
 }
 
-
 export function obterNomeMes(numero) {
-  return MESES.find(
-    (item) => item.valor === Number(numero),
-  )?.nome || "-";
+  return MESES.find((item) => item.valor === Number(numero))?.nome || "-";
 }
-
 
 function normalizarTextoBusca(valor) {
   return String(valor ?? "")
@@ -50,54 +43,34 @@ function normalizarTextoBusca(valor) {
     .trim();
 }
 
-
 export function obterCategoriasFinanceiras(dados) {
   const mapa = new Map();
 
-  (Array.isArray(dados) ? dados : []).forEach(
-    (item) => {
-      const codigo = String(
-        item?.codigo_categoria ?? "",
-      ).trim();
+  (Array.isArray(dados) ? dados : []).forEach((item) => {
+    const codigo = String(item?.codigo_categoria ?? "").trim();
 
-      const nome = String(
-        item?.categoria_financeira ??
-        item?.categoria ??
-        "",
-      ).trim();
+    const nome = String(item?.categoria_financeira ?? item?.categoria ?? "").trim();
 
-      if (!codigo) {
-        return;
-      }
+    if (!codigo) {
+      return;
+    }
 
-      mapa.set(codigo, {
-        codigo,
-        nome: nome || codigo,
-      });
-    },
-  );
+    mapa.set(codigo, {
+      codigo,
+      nome: nome || codigo,
+    });
+  });
 
-  return [...mapa.values()].sort(
-    (a, b) =>
-      a.codigo.localeCompare(
-        b.codigo,
-        "pt-BR",
-        {
-          numeric: true,
-          sensitivity: "base",
-        },
-      ),
+  return [...mapa.values()].sort((a, b) =>
+    a.codigo.localeCompare(b.codigo, "pt-BR", {
+      numeric: true,
+      sensitivity: "base",
+    }),
   );
 }
 
-
-export function filtrarCategoriasFinanceiras(
-  categorias,
-  busca,
-) {
-  const lista = Array.isArray(categorias)
-    ? categorias
-    : [];
+export function filtrarCategoriasFinanceiras(categorias, busca) {
+  const lista = Array.isArray(categorias) ? categorias : [];
 
   const termo = normalizarTextoBusca(busca);
 
@@ -105,40 +78,21 @@ export function filtrarCategoriasFinanceiras(
     return lista;
   }
 
-  const termos = termo
-    .split(/\s+/)
-    .filter(Boolean);
+  const termos = termo.split(/\s+/).filter(Boolean);
 
   return lista.filter((item) => {
-    const alvo = normalizarTextoBusca(
-      `${item?.codigo ?? ""} ${item?.nome ?? ""}`,
-    );
+    const alvo = normalizarTextoBusca(`${item?.codigo ?? ""} ${item?.nome ?? ""}`);
 
-    return termos.every(
-      (parte) => alvo.includes(parte),
-    );
+    return termos.every((parte) => alvo.includes(parte));
   });
 }
 
+export function filtrarDadosPorCategoria(dados, categoria, busca = "") {
+  const lista = Array.isArray(dados) ? dados : [];
 
-export function filtrarDadosPorCategoria(
-  dados,
-  categoria,
-  busca = "",
-) {
-  const lista = Array.isArray(dados)
-    ? dados
-    : [];
-
-  if (
-    categoria &&
-    categoria !== "todas"
-  ) {
+  if (categoria && categoria !== "todas") {
     return lista.filter(
-      (item) =>
-        String(
-          item?.codigo_categoria ?? "",
-        ).trim() === String(categoria).trim(),
+      (item) => String(item?.codigo_categoria ?? "").trim() === String(categoria).trim(),
     );
   }
 
@@ -148,45 +102,24 @@ export function filtrarDadosPorCategoria(
     return lista;
   }
 
-  const termos = termo
-    .split(/\s+/)
-    .filter(Boolean);
+  const termos = termo.split(/\s+/).filter(Boolean);
 
   return lista.filter((item) => {
     const alvo = normalizarTextoBusca(
-      `${item?.codigo_categoria ?? ""} ${
-        item?.categoria_financeira ??
-        item?.categoria ??
-        ""
-      }`,
+      `${item?.codigo_categoria ?? ""} ${item?.categoria_financeira ?? item?.categoria ?? ""}`,
     );
 
-    return termos.every(
-      (parte) => alvo.includes(parte),
-    );
+    return termos.every((parte) => alvo.includes(parte));
   });
 }
 
-
-export function obterNomeCategoriaSelecionada(
-  categorias,
-  categoria,
-) {
-  if (
-    !categoria ||
-    categoria === "todas"
-  ) {
+export function obterNomeCategoriaSelecionada(categorias, categoria) {
+  if (!categoria || categoria === "todas") {
     return "Todas as categorias";
   }
 
-  const encontrada = (
-    Array.isArray(categorias)
-      ? categorias
-      : []
-  ).find(
-    (item) =>
-      String(item.codigo) ===
-      String(categoria),
+  const encontrada = (Array.isArray(categorias) ? categorias : []).find(
+    (item) => String(item.codigo) === String(categoria),
   );
 
   if (!encontrada) {
@@ -196,54 +129,29 @@ export function obterNomeCategoriaSelecionada(
   return `${encontrada.codigo} - ${encontrada.nome}`;
 }
 
-
-export function colocarCabecalhoPrimeiro(
-  lista,
-  codigoCabecalho,
-) {
-  const registros = Array.isArray(lista)
-    ? [...lista]
-    : [];
+export function colocarCabecalhoPrimeiro(lista, codigoCabecalho) {
+  const registros = Array.isArray(lista) ? [...lista] : [];
 
   const indice = registros.findIndex(
-    (item) =>
-      String(
-        item?.codigo_categoria || "",
-      ).trim() === String(codigoCabecalho),
+    (item) => String(item?.codigo_categoria || "").trim() === String(codigoCabecalho),
   );
 
   if (indice <= 0) {
     return registros;
   }
 
-  const [cabecalho] = registros.splice(
-    indice,
-    1,
-  );
+  const [cabecalho] = registros.splice(indice, 1);
 
-  return [
-    cabecalho,
-    ...registros,
-  ];
+  return [cabecalho, ...registros];
 }
 
-
-export function criarGruposFinanceiros(
-  dados,
-  tipo,
-) {
-  const lista = Array.isArray(dados)
-    ? dados
-    : [];
+export function criarGruposFinanceiros(dados, tipo) {
+  const lista = Array.isArray(dados) ? dados : [];
 
   const receitas = colocarCabecalhoPrimeiro(
     lista.filter(
       (item) =>
-        String(
-          item?.tipo_financeiro ||
-          item?.tipo ||
-          "",
-        )
+        String(item?.tipo_financeiro || item?.tipo || "")
           .trim()
           .toLowerCase() === "receita",
     ),
@@ -253,11 +161,7 @@ export function criarGruposFinanceiros(
   const despesas = colocarCabecalhoPrimeiro(
     lista.filter(
       (item) =>
-        String(
-          item?.tipo_financeiro ||
-          item?.tipo ||
-          "",
-        )
+        String(item?.tipo_financeiro || item?.tipo || "")
           .trim()
           .toLowerCase() === "despesa",
     ),
@@ -271,9 +175,7 @@ export function criarGruposFinanceiros(
         titulo: "Receitas",
         dados: receitas,
       },
-    ].filter(
-      (grupo) => grupo.dados.length > 0,
-    );
+    ].filter((grupo) => grupo.dados.length > 0);
   }
 
   if (tipo === "Despesa") {
@@ -283,9 +185,7 @@ export function criarGruposFinanceiros(
         titulo: "Despesas",
         dados: despesas,
       },
-    ].filter(
-      (grupo) => grupo.dados.length > 0,
-    );
+    ].filter((grupo) => grupo.dados.length > 0);
   }
 
   return [
@@ -299,54 +199,30 @@ export function criarGruposFinanceiros(
       titulo: "Despesas",
       dados: despesas,
     },
-  ].filter(
-    (grupo) => grupo.dados.length > 0,
-  );
+  ].filter((grupo) => grupo.dados.length > 0);
 }
 
-
-export function paginarGruposFinanceiros({
-  grupos,
-  inicio,
-  fim,
-}) {
+export function paginarGruposFinanceiros({ grupos, inicio, fim }) {
   let indiceGlobal = 0;
 
   return grupos
     .map((grupo) => {
       const inicioGrupo = indiceGlobal;
-      const fimGrupo =
-        inicioGrupo + grupo.dados.length;
+      const fimGrupo = inicioGrupo + grupo.dados.length;
 
       indiceGlobal = fimGrupo;
 
-      const inicioLocal = Math.max(
-        0,
-        inicio - inicioGrupo,
-      );
+      const inicioLocal = Math.max(0, inicio - inicioGrupo);
 
-      const fimLocal = Math.max(
-        0,
-        Math.min(
-          grupo.dados.length,
-          fim - inicioGrupo,
-        ),
-      );
+      const fimLocal = Math.max(0, Math.min(grupo.dados.length, fim - inicioGrupo));
 
       return {
         ...grupo,
 
-        totalGrupo:
-          grupo.dados.length,
+        totalGrupo: grupo.dados.length,
 
-        dados:
-          grupo.dados.slice(
-            inicioLocal,
-            fimLocal,
-          ),
+        dados: grupo.dados.slice(inicioLocal, fimLocal),
       };
     })
-    .filter(
-      (grupo) => grupo.dados.length > 0,
-    );
+    .filter((grupo) => grupo.dados.length > 0);
 }

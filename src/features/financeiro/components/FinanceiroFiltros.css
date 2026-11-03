@@ -2,7 +2,6 @@
    FILTROS FINANCEIRO
 ========================================================= */
 
-
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -36,27 +35,18 @@
 
   background: #ffffff;
 
-  box-shadow:
-    0 1px 2px
-    rgba(
-      15,
-      23,
-      42,
-      0.04
-    );
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 
   min-width: 0;
 
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    GRUPOS
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-grupo {
+.financeiro-page .financeiro-filtro-grupo {
   display: flex;
 
   flex-direction: column;
@@ -68,39 +58,29 @@
   min-width: 0;
 }
 
-
 /* =========================================================
    TAMANHOS
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-grupo-mes {
+.financeiro-page .financeiro-filtro-grupo-mes {
   width: 150px;
 }
 
-
-.financeiro-page
-.financeiro-filtro-grupo-ano {
+.financeiro-page .financeiro-filtro-grupo-ano {
   width: 130px;
 }
 
-
-.financeiro-page
-.financeiro-filtro-grupo-tipo {
+.financeiro-page .financeiro-filtro-grupo-tipo {
   width: 150px;
 }
 
-
-.financeiro-page
-.financeiro-filtro-grupo-categoria {
+.financeiro-page .financeiro-filtro-grupo-categoria {
   width: 100%;
 
   max-width: 320px;
 }
 
-
-.financeiro-page
-.financeiro-filtro-grupo-busca {
+.financeiro-page .financeiro-filtro-grupo-busca {
   width: 100%;
 
   max-width: 360px;
@@ -110,21 +90,17 @@
   flex: initial;
 }
 
-
-.financeiro-page
-.financeiro-filtro-grupo-limpar {
+.financeiro-page .financeiro-filtro-grupo-limpar {
   width: 140px;
 
   min-width: 140px;
 }
 
-
 /* =========================================================
    LABEL
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-label {
+.financeiro-page .financeiro-filtro-label {
   display: block;
 
   margin: 0;
@@ -138,19 +114,15 @@
   color: #475569;
 }
 
-
-.financeiro-page
-.financeiro-filtro-label-vazio {
+.financeiro-page .financeiro-filtro-label-vazio {
   user-select: none;
 }
-
 
 /* =========================================================
    SELECT / INPUT
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-select {
+.financeiro-page .financeiro-filtro-select {
   display: block;
 
   width: 100%;
@@ -161,11 +133,7 @@
 
   height: 36px;
 
-  padding:
-    0
-    32px
-    0
-    10px;
+  padding: 0 32px 0 10px;
 
   border: 1px solid #cbd5e1;
 
@@ -184,48 +152,30 @@
   box-sizing: border-box;
 
   transition:
-    border-color
-    0.15s ease,
-    box-shadow
-    0.15s ease,
-    background
-    0.15s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
-
-.financeiro-page
-select.financeiro-filtro-select {
+.financeiro-page select.financeiro-filtro-select {
   cursor: pointer;
 }
 
-
-.financeiro-page
-.financeiro-filtro-select:hover {
+.financeiro-page .financeiro-filtro-select:hover {
   border-color: #94a3b8;
 }
 
-
-.financeiro-page
-.financeiro-filtro-select:focus {
+.financeiro-page .financeiro-filtro-select:focus {
   border-color: #2563eb;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(
-      37,
-      99,
-      235,
-      0.1
-    );
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-
 
 /* =========================================================
    BUSCA
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-busca-wrapper {
+.financeiro-page .financeiro-filtro-busca-wrapper {
   position: relative;
 
   display: flex;
@@ -237,9 +187,7 @@ select.financeiro-filtro-select {
   min-width: 0;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-icone {
+.financeiro-page .financeiro-filtro-busca-icone {
   position: absolute;
 
   left: 10px;
@@ -251,9 +199,7 @@ select.financeiro-filtro-select {
   pointer-events: none;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-input {
+.financeiro-page .financeiro-filtro-busca-input {
   width: 100%;
 
   padding-left: 34px;
@@ -263,31 +209,24 @@ select.financeiro-filtro-select {
   cursor: text;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-input::-webkit-search-cancel-button {
+.financeiro-page .financeiro-filtro-busca-input::-webkit-search-cancel-button {
   display: none;
 
   -webkit-appearance: none;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-input::-webkit-search-decoration {
+.financeiro-page .financeiro-filtro-busca-input::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-limpar {
+.financeiro-page .financeiro-filtro-busca-limpar {
   position: absolute;
 
   top: 50%;
 
   right: 7px;
 
-  transform:
-    translateY(-50%);
+  transform: translateY(-50%);
 
   display: inline-flex;
 
@@ -312,27 +251,21 @@ select.financeiro-filtro-select {
   cursor: pointer;
 
   transition:
-    background
-    0.15s ease,
-    color
-    0.15s ease;
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
-
-.financeiro-page
-.financeiro-filtro-busca-limpar:hover {
+.financeiro-page .financeiro-filtro-busca-limpar:hover {
   background: #f1f5f9;
 
   color: #0f172a;
 }
 
-
 /* =========================================================
    BOTÃO LIMPAR FILTROS
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-limpar {
+.financeiro-page .financeiro-filtro-limpar {
   display: inline-flex;
 
   align-items: center;
@@ -358,18 +291,12 @@ select.financeiro-filtro-select {
   box-sizing: border-box;
 
   transition:
-    color
-    0.18s ease,
-    background
-    0.18s ease,
-    border-color
-    0.18s ease,
-    box-shadow
-    0.18s ease,
-    opacity
-    0.18s ease;
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
 }
-
 
 /* =========================================================
    LIMPAR - SEM FILTRO
@@ -378,8 +305,7 @@ select.financeiro-filtro-select {
    mas fica visualmente inativo.
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-limpar.is-disabled {
+.financeiro-page .financeiro-filtro-limpar.is-disabled {
   border: 1px solid #e2e8f0;
 
   background: #f8fafc;
@@ -393,9 +319,7 @@ select.financeiro-filtro-select {
   box-shadow: none;
 }
 
-
-.financeiro-page
-.financeiro-filtro-limpar.is-disabled:hover {
+.financeiro-page .financeiro-filtro-limpar.is-disabled:hover {
   border-color: #e2e8f0;
 
   background: #f8fafc;
@@ -403,15 +327,13 @@ select.financeiro-filtro-select {
   color: #b6c0cf;
 }
 
-
 /* =========================================================
    LIMPAR - FILTRO ATIVO
 
    Visual semelhante ao exemplo enviado.
 ========================================================= */
 
-.financeiro-page
-.financeiro-filtro-limpar.is-active {
+.financeiro-page .financeiro-filtro-limpar.is-active {
   border: 1px solid #ff4365;
 
   background: #ffffff;
@@ -422,19 +344,10 @@ select.financeiro-filtro-select {
 
   opacity: 1;
 
-  box-shadow:
-    0 1px 2px
-    rgba(
-      244,
-      63,
-      94,
-      0.06
-    );
+  box-shadow: 0 1px 2px rgba(244, 63, 94, 0.06);
 }
 
-
-.financeiro-page
-.financeiro-filtro-limpar.is-active:hover {
+.financeiro-page .financeiro-filtro-limpar.is-active:hover {
   border-color: #e11d48;
 
   background: #fff1f2;
@@ -442,30 +355,15 @@ select.financeiro-filtro-select {
   color: #e11d48;
 }
 
-
-.financeiro-page
-.financeiro-filtro-limpar.is-active:active {
-  transform:
-    translateY(
-      1px
-    );
+.financeiro-page .financeiro-filtro-limpar.is-active:active {
+  transform: translateY(1px);
 }
 
-
-.financeiro-page
-.financeiro-filtro-limpar.is-active:focus-visible {
+.financeiro-page .financeiro-filtro-limpar.is-active:focus-visible {
   outline: none;
 
-  box-shadow:
-    0 0 0 3px
-    rgba(
-      244,
-      63,
-      94,
-      0.13
-    );
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.13);
 }
-
 
 /* =========================================================
    TELAS GRANDES
@@ -474,9 +372,7 @@ select.financeiro-filtro-select {
 ========================================================= */
 
 @media (min-width: 1600px) {
-
-  .financeiro-page
-  .financeiro-filtros {
+  .financeiro-page .financeiro-filtros {
     grid-template-columns:
       150px
       130px
@@ -487,94 +383,55 @@ select.financeiro-filtro-select {
 
     column-gap: 14px;
   }
-
 }
-
 
 /* =========================================================
    NOTEBOOK
 ========================================================= */
 
-@media
-  (min-width: 1101px)
-  and
-  (max-width: 1399px) {
-
-  .financeiro-page
-  .financeiro-filtros {
+@media (min-width: 1101px) and (max-width: 1399px) {
+  .financeiro-page .financeiro-filtros {
     grid-template-columns:
       135px
       115px
       135px
-      minmax(
-        210px,
-        270px
-      )
-      minmax(
-        220px,
-        1fr
-      )
+      minmax(210px, 270px)
+      minmax(220px, 1fr)
       140px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-mes,
-  .financeiro-page
-  .financeiro-filtro-grupo-ano,
-  .financeiro-page
-  .financeiro-filtro-grupo-tipo,
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria,
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
+  .financeiro-page .financeiro-filtro-grupo-mes,
+  .financeiro-page .financeiro-filtro-grupo-ano,
+  .financeiro-page .financeiro-filtro-grupo-tipo,
+  .financeiro-page .financeiro-filtro-grupo-categoria,
+  .financeiro-page .financeiro-filtro-grupo-busca {
     width: 100%;
 
     max-width: none;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
+  .financeiro-page .financeiro-filtro-grupo-busca {
     min-width: 0;
   }
-
 }
-
 
 /* =========================================================
    NOTEBOOK MENOR / TABLET HORIZONTAL
 ========================================================= */
 
 @media (max-width: 1100px) {
-
-  .financeiro-page
-  .financeiro-filtros {
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(
-          0,
-          1fr
-        )
-      );
+  .financeiro-page .financeiro-filtros {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 10px 12px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo,
-  .financeiro-page
-  .financeiro-filtro-grupo-mes,
-  .financeiro-page
-  .financeiro-filtro-grupo-ano,
-  .financeiro-page
-  .financeiro-filtro-grupo-tipo,
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria,
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
+  .financeiro-page .financeiro-filtro-grupo,
+  .financeiro-page .financeiro-filtro-grupo-mes,
+  .financeiro-page .financeiro-filtro-grupo-ano,
+  .financeiro-page .financeiro-filtro-grupo-tipo,
+  .financeiro-page .financeiro-filtro-grupo-categoria,
+  .financeiro-page .financeiro-filtro-grupo-busca {
     width: 100%;
 
     max-width: none;
@@ -582,21 +439,15 @@ select.financeiro-filtro-select {
     min-width: 0;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria {
+  .financeiro-page .financeiro-filtro-grupo-categoria {
     grid-column: span 1;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
+  .financeiro-page .financeiro-filtro-grupo-busca {
     grid-column: span 2;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-limpar {
+  .financeiro-page .financeiro-filtro-grupo-limpar {
     grid-column: span 1;
 
     width: 140px;
@@ -605,45 +456,27 @@ select.financeiro-filtro-select {
 
     justify-self: start;
   }
-
 }
-
 
 /* =========================================================
    TABLET
 ========================================================= */
 
 @media (max-width: 800px) {
-
-  .financeiro-page
-  .financeiro-filtros {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(
-          0,
-          1fr
-        )
-      );
+  .financeiro-page .financeiro-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     padding: 12px;
 
     gap: 10px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo,
-  .financeiro-page
-  .financeiro-filtro-grupo-mes,
-  .financeiro-page
-  .financeiro-filtro-grupo-ano,
-  .financeiro-page
-  .financeiro-filtro-grupo-tipo,
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria,
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
+  .financeiro-page .financeiro-filtro-grupo,
+  .financeiro-page .financeiro-filtro-grupo-mes,
+  .financeiro-page .financeiro-filtro-grupo-ano,
+  .financeiro-page .financeiro-filtro-grupo-tipo,
+  .financeiro-page .financeiro-filtro-grupo-categoria,
+  .financeiro-page .financeiro-filtro-grupo-busca {
     width: 100%;
 
     max-width: none;
@@ -651,20 +484,13 @@ select.financeiro-filtro-select {
     min-width: 0;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria,
-  .financeiro-page
-  .financeiro-filtro-grupo-busca {
-    grid-column:
-      1 / -1;
+  .financeiro-page .financeiro-filtro-grupo-categoria,
+  .financeiro-page .financeiro-filtro-grupo-busca {
+    grid-column: 1 / -1;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo-limpar {
-    grid-column:
-      1 / -1;
+  .financeiro-page .financeiro-filtro-grupo-limpar {
+    grid-column: 1 / -1;
 
     width: 140px;
 
@@ -673,57 +499,37 @@ select.financeiro-filtro-select {
     justify-self: start;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-select {
+  .financeiro-page .financeiro-filtro-select {
     height: 40px;
 
     font-size: 13px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-limpar {
+  .financeiro-page .financeiro-filtro-limpar {
     height: 40px;
   }
-
 }
-
 
 /* =========================================================
    CELULAR
 ========================================================= */
 
 @media (max-width: 560px) {
-
-  .financeiro-page
-  .financeiro-filtros {
-    grid-template-columns:
-      minmax(
-        0,
-        1fr
-      );
+  .financeiro-page .financeiro-filtros {
+    grid-template-columns: minmax(0, 1fr);
 
     gap: 9px;
 
     padding: 10px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-grupo,
-  .financeiro-page
-  .financeiro-filtro-grupo-mes,
-  .financeiro-page
-  .financeiro-filtro-grupo-ano,
-  .financeiro-page
-  .financeiro-filtro-grupo-tipo,
-  .financeiro-page
-  .financeiro-filtro-grupo-categoria,
-  .financeiro-page
-  .financeiro-filtro-grupo-busca,
-  .financeiro-page
-  .financeiro-filtro-grupo-limpar {
+  .financeiro-page .financeiro-filtro-grupo,
+  .financeiro-page .financeiro-filtro-grupo-mes,
+  .financeiro-page .financeiro-filtro-grupo-ano,
+  .financeiro-page .financeiro-filtro-grupo-tipo,
+  .financeiro-page .financeiro-filtro-grupo-categoria,
+  .financeiro-page .financeiro-filtro-grupo-busca,
+  .financeiro-page .financeiro-filtro-grupo-limpar {
     grid-column: 1;
 
     width: 100%;
@@ -733,26 +539,19 @@ select.financeiro-filtro-select {
     min-width: 0;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-select {
+  .financeiro-page .financeiro-filtro-select {
     height: 42px;
 
     font-size: 14px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-limpar {
+  .financeiro-page .financeiro-filtro-limpar {
     width: 100%;
 
     height: 42px;
   }
 
-
-  .financeiro-page
-  .financeiro-filtro-label-vazio {
+  .financeiro-page .financeiro-filtro-label-vazio {
     display: none;
   }
-
 }

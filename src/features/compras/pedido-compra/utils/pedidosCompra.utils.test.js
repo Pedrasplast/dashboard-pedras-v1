@@ -26,12 +26,18 @@ function pedido(quantidade, recebida, deslocamentoDias) {
 
 describe("obterSituacaoRecebimento", () => {
   it("recebido parcialmente com previsão vencida é parcial em atraso", () => {
-    expect(obterSituacaoRecebimento(pedido(10, 4, -1))).toBe(SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO);
+    expect(obterSituacaoRecebimento(pedido(10, 4, -1))).toBe(
+      SITUACOES_RECEBIMENTO.PARCIAL_EM_ATRASO,
+    );
   });
 
   it("recebido parcialmente dentro do prazo continua parcial", () => {
-    expect(obterSituacaoRecebimento(pedido(10, 4, 0))).toBe(SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE);
-    expect(obterSituacaoRecebimento(pedido(10, 4, 3))).toBe(SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE);
+    expect(obterSituacaoRecebimento(pedido(10, 4, 0))).toBe(
+      SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE,
+    );
+    expect(obterSituacaoRecebimento(pedido(10, 4, 3))).toBe(
+      SITUACOES_RECEBIMENTO.RECEBIDO_PARCIALMENTE,
+    );
   });
 
   it("sem recebimento e previsão vencida é atraso; previsão hoje está em aberto", () => {
@@ -50,7 +56,11 @@ describe("obterSituacaoRecebimento", () => {
 
 function enriquecido(quantidade, recebida, deslocamentoDias) {
   const p = pedido(quantidade, recebida, deslocamentoDias);
-  return { ...p, situacao_recebimento: obterSituacaoRecebimento(p), ...calcularResumoItens(p.itens) };
+  return {
+    ...p,
+    situacao_recebimento: obterSituacaoRecebimento(p),
+    ...calcularResumoItens(p.itens),
+  };
 }
 
 describe("atendeFiltroRecebimento", () => {

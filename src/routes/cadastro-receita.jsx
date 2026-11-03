@@ -13,8 +13,7 @@ export const Route = createFileRoute("/cadastro-receita")({
       },
       {
         name: "description",
-        content:
-          "Cadastro independente de receitas de matéria-prima utilizadas na programação.",
+        content: "Cadastro independente de receitas de matéria-prima utilizadas na programação.",
       },
     ],
   }),

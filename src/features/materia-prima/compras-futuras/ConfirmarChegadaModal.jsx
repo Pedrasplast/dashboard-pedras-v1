@@ -1,14 +1,8 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  CheckCircle2,
-  X,
-} from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 
 import "./CompraFuturaModal.css";
 
@@ -55,8 +49,6 @@ export default function ConfirmarChegadaModal({
     setErro("");
   }, [aberto, item?.id]);
 
-
-
   async function enviar(event) {
     event.preventDefault();
     setErro("");
@@ -87,10 +79,7 @@ export default function ConfirmarChegadaModal({
         dataRecebimento,
       });
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível confirmar a chegada da compra.",
-      );
+      setErro(error?.message || "Não foi possível confirmar a chegada da compra.");
     }
   }
 
@@ -105,10 +94,7 @@ export default function ConfirmarChegadaModal({
       tamanho="pequeno"
       fecharAoClicarFora={false}
     >
-      <div
-        className="compra-futura-modal"
-        style={{ maxWidth: "560px" }}
-      >
+      <div className="compra-futura-modal" style={{ maxWidth: "560px" }}>
         <div className="compra-futura-modal-header" data-modal-header="">
           <div
             className="compra-futura-modal-icone"
@@ -126,9 +112,7 @@ export default function ConfirmarChegadaModal({
             <ModalTitulo>
               <h3>Confirmar chegada</h3>
             </ModalTitulo>
-            <p>
-              Informe somente a data em que o material realmente chegou.
-            </p>
+            <p>Informe somente a data em que o material realmente chegou.</p>
           </div>
 
           <button
@@ -143,17 +127,11 @@ export default function ConfirmarChegadaModal({
           </button>
         </div>
 
-        <form
-          className="compra-futura-modal-form"
-          onSubmit={enviar}
-          data-modal-form=""
-        >
+        <form className="compra-futura-modal-form" onSubmit={enviar} data-modal-form="">
           <section className="compra-futura-modal-secao">
             <div className="compra-futura-modal-secao-titulo">
               <strong>Compra selecionada</strong>
-              <span>
-                Os dados abaixo são apenas para conferência e não serão alterados.
-              </span>
+              <span>Os dados abaixo são apenas para conferência e não serão alterados.</span>
             </div>
 
             <div className="compra-futura-modal-resumo">
@@ -200,11 +178,7 @@ export default function ConfirmarChegadaModal({
             </label>
           </section>
 
-          {erro && (
-            <div className="compra-futura-modal-erro">
-              {erro}
-            </div>
-          )}
+          {erro && <div className="compra-futura-modal-erro">{erro}</div>}
 
           <div className="compra-futura-modal-acoes" data-modal-footer="">
             <button
