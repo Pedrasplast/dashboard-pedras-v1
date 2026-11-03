@@ -1,18 +1,13 @@
+import { numeroOuNull } from "@/shared/lib/numeros";
+import { formatarDataISO } from "@/shared/lib/datas";
+
 export function numero(valor) {
   const convertido = Number(valor);
 
   return Number.isFinite(convertido) ? convertido : 0;
 }
 
-export function numeroOuNull(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
-}
+export { numeroOuNull };
 
 export function formatarNumero(valor, casas = 0) {
   return numero(valor).toLocaleString("pt-BR", {
@@ -80,15 +75,7 @@ export function periodoMesAtual(hoje = new Date()) {
   };
 }
 
-export function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
+export { formatarDataISO };
 
 export function adicionarDias(dataISO, quantidade) {
   const [ano, mes, dia] = String(dataISO).split("-").map(Number);

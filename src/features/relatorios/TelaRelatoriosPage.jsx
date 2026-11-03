@@ -17,8 +17,8 @@ import {
 } from "@/lib/cargaMaquina";
 
 import { usePedidosSupabase } from "@/features/pedidos/usePedidosSupabase";
-import { valoresUnicos } from "@/lib/colecoes";
-import { normalizarTexto } from "@/lib/texto";
+import { valoresUnicos } from "@/shared/lib/colecoes";
+import { normalizarTexto } from "@/shared/lib/texto";
 import { supabase } from "@/lib/supabaseClient";
 
 import FiltrosDashboard from "@/features/dashboard/FiltrosDashboard";

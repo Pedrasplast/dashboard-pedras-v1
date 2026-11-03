@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { numeroOuNull as numeroOpcional } from "@/shared/lib/numeros";
 
 export const SITUACOES_ENTRADAS_COMPRAS = [
   {
@@ -73,16 +74,6 @@ function numero(valor, padrao = 0) {
   const convertido = Number(valor);
 
   return Number.isFinite(convertido) ? convertido : padrao;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null;
-  }
-
-  const convertido = Number(valor);
-
-  return Number.isFinite(convertido) ? convertido : null;
 }
 
 /**

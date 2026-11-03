@@ -16,18 +16,7 @@ import { usePedidosData } from "./hooks/usePedidosData";
 import { usePedidosViewModel } from "./hooks/usePedidosViewModel";
 
 import "./PedidosPage.css";
-
-/* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =========================================================
    DATA LOCAL

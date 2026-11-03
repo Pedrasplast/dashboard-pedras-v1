@@ -1,10 +1,6 @@
-export function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+import { normalizarTexto } from "@/shared/lib/texto";
+
+export { normalizarTexto };
 
 export function formatarNumero(valor, casas = 3) {
   if (valor === null || valor === undefined || valor === "") return "-";

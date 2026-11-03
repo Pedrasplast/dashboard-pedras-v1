@@ -34,6 +34,8 @@ import { buscarPedidosOmie } from "@/features/pedidos/omie.functions";
 import { formatarMoeda, processarFinanceiro } from "@/features/financeiro/utils/financeiro.utils";
 
 import "./Home.css";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje } from "@/shared/lib/datas";
 
 /* =========================================================
    CONFIGURAÇÕES
@@ -67,18 +69,6 @@ function obterNomeUsuario(email) {
     .split("@")[0]
     .replace(/[._-]+/g, " ")
     .replace(/\b\w/g, (letra) => letra.toUpperCase());
-}
-
-/* =========================================================
-   TEXTO
-========================================================= */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =========================================================
@@ -148,12 +138,6 @@ function converterData(dataTexto) {
   }
 
   return data;
-}
-
-function obterHoje() {
-  const agora = new Date();
-
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
 }
 
 function formatarHorario(dataTexto) {

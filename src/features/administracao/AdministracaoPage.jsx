@@ -31,6 +31,7 @@ import {
 } from "./calendarioIndustrialAdminService";
 
 import "./AdministracaoPage.css";
+import { obterAnoAtual } from "@/shared/lib/datas";
 
 const NOMES_MESES = Object.freeze([
   "Janeiro",
@@ -90,10 +91,6 @@ function obterHojeIso() {
   const hoje = new Date();
 
   return dataIsoLocal(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-}
-
-function obterAnoAtual() {
-  return new Date().getFullYear();
 }
 
 function formatarDataPtBr(dataIso) {

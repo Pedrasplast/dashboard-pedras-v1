@@ -1,4 +1,4 @@
-import { converterNumeroFlexivel as converterNumeroVisualizacao } from "@/lib/numeros";
+import { converterNumeroFlexivel as converterNumeroVisualizacao } from "@/shared/lib/numeros";
 
 /* =========================================================
    COLUNAS DA PRÉ-VISUALIZAÇÃO

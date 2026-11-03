@@ -1,4 +1,4 @@
-import { normalizarTexto } from "@/lib/texto";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 import {
   extrairDataISORegistro,

@@ -2,6 +2,7 @@ import {
   obterDataRegistroOee as obterDataRegistro,
   registroEhParadaOee as registroEhParada,
 } from "./oee.utils.js";
+import { formatarDataISO } from "@/shared/lib/datas";
 
 /* =====================================================
    OEE - CARGA MAQUINA
@@ -223,20 +224,6 @@ function converterDataISO(valor) {
   }
 
   return data;
-}
-
-/* =====================================================
-   DATE PARA ISO
-===================================================== */
-
-function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
 }
 
 /* =====================================================

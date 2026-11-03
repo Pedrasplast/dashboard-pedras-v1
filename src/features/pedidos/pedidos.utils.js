@@ -1,4 +1,5 @@
-import { normalizarTexto } from "@/lib/texto";
+import { normalizarTexto } from "@/shared/lib/texto";
+import { obterHoje } from "@/shared/lib/datas";
 
 export const PEDIDOS_VAZIOS = Object.freeze([]);
 
@@ -16,10 +17,7 @@ export function converterData(dataTexto) {
   return Number.isNaN(data.getTime()) ? null : data;
 }
 
-export function obterHoje() {
-  const agora = new Date();
-  return new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), 0, 0, 0, 0);
-}
+export { obterHoje };
 
 export function obterProximaAtualizacao(dataAtual) {
   const agora = dataAtual instanceof Date ? dataAtual : new Date();

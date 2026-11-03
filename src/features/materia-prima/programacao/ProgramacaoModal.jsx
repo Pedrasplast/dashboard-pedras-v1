@@ -20,6 +20,7 @@ import { listarPeriodosProgramacao } from "./programacaoCalendarioService";
 
 import "./ProgramacaoModal.css";
 import "./ProgramacaoCalendario.css";
+import { formatarDataISO, dataHojeLocal } from "@/shared/lib/datas";
 
 /* =========================================================
    CONSTANTES
@@ -78,20 +79,6 @@ const PERFIS = [
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function formatarDataISO(data) {
-  const ano = data.getFullYear();
-
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
-
-function dataHojeLocal() {
-  return formatarDataISO(new Date());
-}
 
 function criarDataLocal(valor) {
   const [ano, mes, dia] = String(valor ?? "")

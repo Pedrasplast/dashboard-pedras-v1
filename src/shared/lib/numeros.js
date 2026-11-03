@@ -41,3 +41,16 @@ export function converterNumeroDecimal(valor) {
   const numero = Number.parseFloat(String(valor).trim().replace(",", "."));
   return Number.isFinite(numero) ? numero : 0;
 }
+
+/**
+ * Número estrito (Number) ou null quando vazio ou inválido.
+ * Não interpreta vírgula decimal: "1,5" vira null.
+ */
+export function numeroOuNull(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return null;
+  }
+
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : null;
+}

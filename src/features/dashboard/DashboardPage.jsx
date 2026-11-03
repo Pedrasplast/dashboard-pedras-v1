@@ -12,7 +12,7 @@ import {
 import Sidebar from "@/components/layout/Sidebar";
 import PageHeader from "@/components/layout/PageHeader";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import { valoresUnicosOrdenados } from "@/lib/colecoes";
+import { valoresUnicosOrdenados } from "@/shared/lib/colecoes";
 import { useCargaMaquina } from "@/lib/cargaMaquina";
 
 import FiltrosDashboard from "./FiltrosDashboard";

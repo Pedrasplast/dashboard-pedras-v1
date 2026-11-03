@@ -17,14 +17,7 @@ import CadastroReceitaModal from "./CadastroReceitaModal";
 import useCadastroReceitas from "./useCadastroReceitas";
 
 import "./CadastroReceitas.css";
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
+import { normalizarTexto } from "@/shared/lib/texto";
 
 function formatarPercentual(valor) {
   const numero = Number(valor);

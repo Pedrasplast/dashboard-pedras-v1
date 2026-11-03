@@ -5,22 +5,11 @@ import { useEffect, useState } from "react";
 import { Save, Scale, X } from "lucide-react";
 
 import "./SaldoInicialModal.css";
+import { dataHojeLocal } from "@/shared/lib/datas";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
-
-function dataHojeLocal() {
-  const agora = new Date();
-
-  const ano = agora.getFullYear();
-
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
 
 function normalizarQuantidade(valor) {
   const texto = String(valor ?? "").trim();

@@ -1,4 +1,4 @@
-import { converterNumeroFlexivel } from "@/lib/numeros";
+import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 
 const converterNumero = converterNumeroFlexivel;
 

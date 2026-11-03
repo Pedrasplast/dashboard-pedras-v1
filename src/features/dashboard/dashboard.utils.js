@@ -1,3 +1,5 @@
+import { formatarDataISO } from "@/shared/lib/datas";
+
 export const DESCRICOES_TIPO = Object.freeze({
   1: "Paradas Planejadas",
   2: "Paradas não Planejadas",
@@ -62,17 +64,7 @@ export function obterDescricaoTipo(tipo) {
   return DESCRICOES_TIPO[String(tipo).trim()] || "Tipo sem descrição";
 }
 
-export function formatarDataISO(data) {
-  if (!(data instanceof Date) || Number.isNaN(data.getTime())) {
-    return "";
-  }
-
-  const ano = data.getFullYear();
-  const mes = String(data.getMonth() + 1).padStart(2, "0");
-  const dia = String(data.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
+export { formatarDataISO };
 
 export function converterISOParaData(valorISO) {
   if (!valorISO) {

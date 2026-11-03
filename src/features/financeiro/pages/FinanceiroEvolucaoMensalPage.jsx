@@ -18,6 +18,7 @@ import { supabase } from "@/lib/supabaseClient";
 import PageHeader from "@/components/layout/PageHeader";
 
 import "./FinanceiroEvolucaoMensalPage.css";
+import { obterAnoAtual } from "@/shared/lib/datas";
 
 /* =========================================================
    MESES
@@ -41,10 +42,6 @@ const MESES = Object.freeze([
 /* =========================================================
    AUXILIARES
 ========================================================= */
-
-function obterAnoAtual() {
-  return new Date().getFullYear();
-}
 
 function obterMesAtual() {
   return new Date().getMonth() + 1;

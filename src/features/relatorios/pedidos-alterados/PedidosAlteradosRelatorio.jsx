@@ -19,6 +19,7 @@ import Paginacao from "@/components/paginacao/Paginacao";
 import LayoutRelatorio from "../components/LayoutRelatorio";
 
 import "./PedidosAlteradosRelatorio.css";
+import { normalizarTexto } from "@/shared/lib/texto";
 
 /* =====================================================
    CONFIGURAÇÕES
@@ -338,18 +339,6 @@ function obterPeriodoPadrao() {
     inicio: formatarDataInput(inicio),
     fim: formatarDataInput(hoje),
   };
-}
-
-/* =====================================================
-   NORMALIZAR TEXTO
-===================================================== */
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 /* =====================================================
