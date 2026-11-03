@@ -934,13 +934,7 @@
 
   border-radius: 50%;
 
-  animation: produtividade-spin 0.75s linear infinite;
-}
-
-@keyframes produtividade-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: girar 0.75s linear infinite;
 }
 
 /* =========================================================
