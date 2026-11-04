@@ -170,4 +170,21 @@
   --transition-fast: 120ms ease;
   --transition-base: 180ms ease;
   --transition-slow: 250ms ease;
+
+  /* =======================================================
+     CAMADAS DE SOBREPOSICAO (z-index)
+     Do mais baixo para o mais alto. Valores pequenos (ate 99)
+     continuam locais, para ordenar pecas dentro de um mesmo
+     componente. Para ficar logo acima/abaixo de um nivel, use
+     calc(var(--z-...) + 1) ou - 1.
+  ======================================================= */
+
+  --z-dropdown: 100; /* listas e calendarios dentro do conteudo */
+  --z-painel: 200; /* paineis fixos das telas (filtros dos relatorios) */
+  --z-navbar: 300; /* barra de navegacao fixa */
+  --z-navbar-menu: 310; /* menus abertos da navbar (dentro dela) */
+  --z-menu-lateral: 400; /* menu lateral do celular */
+  --z-popover: 400; /* calendarios flutuantes dos filtros */
+  --z-modal: 1000; /* janelas modais e seu fundo */
+  --z-modal-sobre-modal: 1100; /* modal aberto por cima de outro modal */
 }

@@ -26,24 +26,6 @@
    CABEÇALHO
 ========================================================= */
 
-.produtividade-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-
-  gap: var(--space-5);
-
-  margin-bottom: 14px;
-  padding: var(--space-5) 22px;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
-}
-
 .produtividade-subtitle {
   display: block;
 
@@ -57,30 +39,6 @@
   letter-spacing: 0.09em;
 
   text-transform: uppercase;
-}
-
-.produtividade-header h1 {
-  margin: 0;
-
-  color: var(--color-text);
-
-  font-size: 1.45rem;
-  font-weight: 800;
-
-  line-height: 1.2;
-
-  letter-spacing: -0.025em;
-}
-
-.produtividade-header p {
-  max-width: 700px;
-
-  margin: 6px 0 0;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.8rem;
-  line-height: 1.5;
 }
 
 /* =========================================================
@@ -331,7 +289,7 @@
   top: calc(100% + 6px);
   left: 0;
 
-  z-index: 100;
+  z-index: var(--z-dropdown);
 
   width: 296px;
   max-width: 296px;
@@ -1091,18 +1049,6 @@
 @media (max-width: 640px) {
   .produtividade-main {
     padding: 14px 11px 26px;
-  }
-
-  .produtividade-header {
-    padding: var(--space-4);
-  }
-
-  .produtividade-header h1 {
-    font-size: 1.2rem;
-  }
-
-  .produtividade-header p {
-    font-size: 0.73rem;
   }
 
   .produtividade-filtros-card {

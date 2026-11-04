@@ -171,7 +171,7 @@
   top: calc(100% + var(--space-2));
   left: 0;
 
-  z-index: 4000;
+  z-index: var(--z-popover);
 
   width: 296px;
   min-width: 296px;

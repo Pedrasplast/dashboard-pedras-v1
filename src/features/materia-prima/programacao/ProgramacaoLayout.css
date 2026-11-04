@@ -1,61 +1,65 @@
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-  width: min(1640px, calc(100vw - 32px));
-  height: calc(100dvh - 112px);
-  max-height: calc(100dvh - 112px);
-  margin-top: 0;
-  margin-bottom: 18px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-  flex: 0 0 auto;
-  padding: 10px 18px;
-  gap: var(--space-3);
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  > [data-modal-header]
-  [data-modal-icone] {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
-  margin: 0;
-  font-size: 22px;
-  line-height: 1.1;
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-  margin: 3px 0 0;
-  font-size: var(--font-size-xs);
-  line-height: 1.3;
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] .programacao-modal-form {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  gap: 0;
-  overflow: hidden;
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  .programacao-modal-form
-  > .programacao-modal-conteudo {
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  padding: 10px 14px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  grid-template-areas: "calendario configuracao" "calendario controles" "resumo resumo" "status status";
-  grid-auto-rows: min-content;
-  gap: var(--space-2);
-  align-content: start;
-  align-items: start;
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
+/* Personalizações do modal padrão (components/Modal/Modal.css).
+   Ficam na mesma camada do modal para continuar vencendo o padrão. */
+@layer componentes-padrao {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+    width: min(1640px, calc(100vw - 32px));
+    height: calc(100dvh - 112px);
+    max-height: calc(100dvh - 112px);
+    margin-top: 0;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    gap: var(--space-3);
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    > [data-modal-header]
+    [data-modal-icone] {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+    margin: 3px 0 0;
+    font-size: var(--font-size-xs);
+    line-height: 1.3;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] .programacao-modal-form {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+  }
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-conteudo {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-areas: "calendario configuracao" "calendario controles" "resumo resumo" "status status";
+    grid-auto-rows: min-content;
+    gap: var(--space-2);
+    align-content: start;
+    align-items: start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
 }
 .programacao-modal-conteudo *,
 .programacao-modal-conteudo *::before,
@@ -307,46 +311,50 @@
   margin: 0;
   padding: 7px 10px;
 }
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  .programacao-modal-form
-  > .programacao-modal-acoes {
-  position: relative !important;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  z-index: 20;
-  flex: 0 0 auto;
-  width: 100%;
-  margin: 0;
-  padding: 9px var(--space-4) 11px;
-  border-top: 1px solid var(--color-border);
-  background: var(--color-surface);
-  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
-}
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  .programacao-modal-form
-  > .programacao-modal-acoes
-  .programacao-modal-cancelar,
-.sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-  .programacao-modal-form
-  > .programacao-modal-acoes
-  .programacao-modal-salvar {
-  min-height: 38px;
-  padding: 0 var(--space-4);
-}
-@media (min-width: 1500px) and (min-height: 950px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    width: min(1640px, calc(100vw - 42px));
-    height: calc(100dvh - 118px);
-    max-height: calc(100dvh - 118px);
-    margin-bottom: var(--space-5);
+@layer componentes-padrao {
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: 20;
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+    padding: 9px var(--space-4) 11px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
   }
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
     .programacao-modal-form
-    > .programacao-modal-conteudo {
-    grid-template-columns: minmax(0, 1fr) 390px;
-    padding: var(--space-3) var(--space-4);
-    gap: 10px;
+    > .programacao-modal-acoes
+    .programacao-modal-cancelar,
+  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+    .programacao-modal-form
+    > .programacao-modal-acoes
+    .programacao-modal-salvar {
+    min-height: 38px;
+    padding: 0 var(--space-4);
+  }
+}
+@media (min-width: 1500px) and (min-height: 950px) {
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      width: min(1640px, calc(100vw - 42px));
+      height: calc(100dvh - 118px);
+      max-height: calc(100dvh - 118px);
+      margin-bottom: var(--space-5);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      grid-template-columns: minmax(0, 1fr) 390px;
+      padding: var(--space-3) var(--space-4);
+      gap: 10px;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-dia {
     height: 76px;
@@ -354,25 +362,27 @@
   }
 }
 @media (min-width: 1101px) and (min-height: 820px) and (max-height: 949px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 128px);
-    max-height: calc(100dvh - 128px);
-    margin-bottom: 18px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-    padding-top: 7px;
-    padding-bottom: 7px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-    margin-top: 1px;
-    font-size: var(--font-size-micro);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    padding: 7px 10px;
-    gap: 6px;
-    grid-template-columns: minmax(0, 1fr) 350px;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      height: calc(100dvh - 128px);
+      max-height: calc(100dvh - 128px);
+      margin-bottom: 18px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+      margin-top: 1px;
+      font-size: var(--font-size-micro);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      padding: 7px 10px;
+      gap: 6px;
+      grid-template-columns: minmax(0, 1fr) 350px;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-dia {
     height: 62px;
@@ -407,28 +417,30 @@
   }
 }
 @media (min-width: 901px) and (max-height: 819px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    width: calc(100vw - 28px);
-    height: calc(100dvh - 112px);
-    max-height: calc(100dvh - 112px);
-    margin-bottom: 14px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-    padding: 5px var(--space-3);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
-    font-size: var(--font-size-xl);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-    display: none;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    padding: 5px var(--space-2);
-    gap: 5px;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    overflow-y: auto;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      width: calc(100vw - 28px);
+      height: calc(100dvh - 112px);
+      max-height: calc(100dvh - 112px);
+      margin-bottom: 14px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+      padding: 5px var(--space-3);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+      font-size: var(--font-size-xl);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+      display: none;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      padding: 5px var(--space-2);
+      gap: 5px;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      overflow-y: auto;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-cabecalho {
     padding: 5px 7px;
@@ -509,37 +521,41 @@
   .programacao-modal-conteudo .programacao-modal-status {
     padding: 5px var(--space-2);
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes {
-    padding-top: 6px;
-    padding-bottom: var(--space-2);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-cancelar,
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-salvar {
-    min-height: 34px;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes {
+      padding-top: 6px;
+      padding-bottom: var(--space-2);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-cancelar,
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-salvar {
+      min-height: 34px;
+    }
   }
 }
 @media (min-width: 761px) and (max-width: 1100px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    width: calc(100vw - 24px);
-    height: calc(100dvh - 76px);
-    max-height: calc(100dvh - 76px);
-    margin-bottom: var(--space-3);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    grid-template-columns: minmax(0, 1fr) 290px;
-    padding: 7px;
-    gap: 6px;
-    overflow-y: auto;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      width: calc(100vw - 24px);
+      height: calc(100dvh - 76px);
+      max-height: calc(100dvh - 76px);
+      margin-bottom: var(--space-3);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      grid-template-columns: minmax(0, 1fr) 290px;
+      padding: 7px;
+      gap: 6px;
+      overflow-y: auto;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-dia {
     height: 58px;
@@ -547,18 +563,20 @@
   }
 }
 @media (max-width: 900px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    width: calc(100vw - 20px);
-    height: calc(100dvh - 32px);
-    max-height: calc(100dvh - 32px);
-    margin: var(--space-2) auto var(--space-3);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "configuracao" "calendario" "controles" "resumo" "status";
-    overflow-y: auto;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      width: calc(100vw - 20px);
+      height: calc(100dvh - 32px);
+      max-height: calc(100dvh - 32px);
+      margin: var(--space-2) auto var(--space-3);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "configuracao" "calendario" "controles" "resumo" "status";
+      overflow-y: auto;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-configuracao-cabecalho {
     flex-direction: row;
@@ -572,29 +590,31 @@
   }
 }
 @media (max-width: 600px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    margin: 0;
-    border-radius: 0;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-    padding: 7px 10px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
-    font-size: 17px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-    display: none;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    padding: 6px;
-    gap: 6px;
-    overflow-y: auto;
-    padding-bottom: 10px;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      margin: 0;
+      border-radius: 0;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+      padding: 7px 10px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+      font-size: 17px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+      display: none;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      padding: 6px;
+      gap: 6px;
+      overflow-y: auto;
+      padding-bottom: 10px;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-config {
     grid-template-columns: 1fr;
@@ -625,25 +645,27 @@
   .programacao-modal-conteudo .programacao-calendario-resumo {
     grid-template-columns: 1fr;
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes {
-    flex: 0 0 auto;
-    position: relative !important;
-    bottom: auto;
-    padding: var(--space-2) 10px max(var(--space-3), env(safe-area-inset-bottom));
-    background: var(--color-surface);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-cancelar,
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-salvar {
-    flex: 1;
-    min-width: 0;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes {
+      flex: 0 0 auto;
+      position: relative;
+      bottom: auto;
+      padding: var(--space-2) 10px max(var(--space-3), env(safe-area-inset-bottom));
+      background: var(--color-surface);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-cancelar,
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-salvar {
+      flex: 1;
+      min-width: 0;
+    }
   }
 }
 @media (max-width: 430px) {
@@ -666,26 +688,28 @@
   }
 }
 @media (min-width: 901px) and (max-height: 900px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 105px);
-    max-height: calc(100dvh - 105px);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-    padding: 7px 14px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
-    font-size: var(--font-size-xl);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-    margin-top: 1px;
-    font-size: 9px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    padding: 6px 9px;
-    gap: 5px;
-    overflow: hidden;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      height: calc(100dvh - 105px);
+      max-height: calc(100dvh - 105px);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+      padding: 7px 14px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+      font-size: var(--font-size-xl);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+      margin-top: 1px;
+      font-size: 9px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      padding: 6px 9px;
+      gap: 5px;
+      overflow: hidden;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-cabecalho {
     padding: 5px 7px;
@@ -753,51 +777,55 @@
   .programacao-modal-conteudo .programacao-modal-status {
     padding: var(--space-1) var(--space-2);
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes {
-    padding: 5px 10px 7px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-cancelar,
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-salvar {
-    min-height: 32px;
-    padding: 0 var(--space-3);
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes {
+      padding: 5px 10px 7px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-cancelar,
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-salvar {
+      min-height: 32px;
+      padding: 0 var(--space-3);
+    }
   }
 }
 @media (min-width: 901px) and (max-height: 800px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
-    height: calc(100dvh - 92px);
-    max-height: calc(100dvh - 92px);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
-    padding: var(--space-1) 10px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    > [data-modal-header]
-    [data-modal-icone] {
-    width: 30px;
-    height: 30px;
-    flex-basis: 30px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
-    font-size: var(--font-size-lg);
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
-    display: none;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    padding: var(--space-1) 6px;
-    gap: var(--space-1);
-    grid-template-columns: minmax(0, 1fr) 300px;
-    overflow: hidden;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] {
+      height: calc(100dvh - 92px);
+      max-height: calc(100dvh - 92px);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] {
+      padding: var(--space-1) 10px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      > [data-modal-header]
+      [data-modal-icone] {
+      width: 30px;
+      height: 30px;
+      flex-basis: 30px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] h3 {
+      font-size: var(--font-size-lg);
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"] > [data-modal-header] p {
+      display: none;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      padding: var(--space-1) 6px;
+      gap: var(--space-1);
+      grid-template-columns: minmax(0, 1fr) 300px;
+      overflow: hidden;
+    }
   }
   .programacao-modal-conteudo .programacao-calendario-cabecalho {
     padding: var(--space-1) 6px;
@@ -901,29 +929,33 @@
   .programacao-modal-conteudo .programacao-modal-status {
     padding: 3px 6px;
   }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes {
-    padding: var(--space-1) var(--space-2) 6px;
-  }
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-cancelar,
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-acoes
-    .programacao-modal-salvar {
-    min-height: 30px;
-    padding: 0 10px;
-    font-size: var(--font-size-micro);
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes {
+      padding: var(--space-1) var(--space-2) 6px;
+    }
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-cancelar,
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-acoes
+      .programacao-modal-salvar {
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: var(--font-size-micro);
+    }
   }
 }
 @media (min-width: 901px) and (max-height: 650px) {
-  .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
-    .programacao-modal-form
-    > .programacao-modal-conteudo {
-    overflow-y: auto;
+  @layer componentes-padrao {
+    .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
+      .programacao-modal-form
+      > .programacao-modal-conteudo {
+      overflow-y: auto;
+    }
   }
 }
 .programacao-modal-conteudo

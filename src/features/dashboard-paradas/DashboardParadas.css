@@ -377,10 +377,6 @@
    CABEÇALHO
 ========================================================= */
 
-.dp-header {
-  margin-bottom: 18px;
-}
-
 /* =========================================================
    INDICADOR DE ATUALIZAÇÃO
 ========================================================= */
@@ -657,10 +653,6 @@
 ========================================================= */
 
 @media (max-width: 1450px) {
-  .dp-header {
-    margin-bottom: 14px;
-  }
-
   .dp-insights {
     gap: 10px;
     margin-bottom: 14px;
@@ -726,10 +718,6 @@
 ========================================================= */
 
 @media (max-width: 920px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
   .dp-dashboard-actions {
     margin: -2px 0 10px;
   }
@@ -782,10 +770,6 @@
 ========================================================= */
 
 @media (max-width: 520px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
   .dp-insight {
     padding: 10px;
   }
@@ -806,10 +790,6 @@
 ========================================================= */
 
 @media (max-height: 820px) and (min-width: 761px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
   .dp-dashboard-actions {
     min-height: 32px;
 
@@ -826,10 +806,6 @@
 }
 
 @media (max-height: 680px) and (min-width: 761px) {
-  .dp-header {
-    margin-bottom: 7px;
-  }
-
   .dp-chart {
     height: 245px;
   }

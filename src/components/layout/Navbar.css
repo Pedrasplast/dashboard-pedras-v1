@@ -9,15 +9,6 @@
   --navbar-height: 76px;
 }
 
-html {
-  scroll-padding-top: calc(var(--navbar-height) + 16px);
-}
-
-body {
-  padding-top: var(--navbar-height);
-  box-sizing: border-box;
-}
-
 /* =========================================================
    ESTRUTURA PRINCIPAL
 ========================================================= */
@@ -25,7 +16,7 @@ body {
 .main-navbar {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 3000;
+  z-index: var(--z-navbar);
   width: 100%;
   height: var(--navbar-height);
   box-sizing: border-box;
@@ -235,7 +226,7 @@ body {
   position: absolute;
   top: calc(100% + 9px);
   left: 0;
-  z-index: 3200;
+  z-index: var(--z-navbar-menu);
 
   min-width: 225px;
   padding: 7px;
@@ -454,7 +445,7 @@ body {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  z-index: 3500;
+  z-index: calc(var(--z-navbar-menu) + 1);
 
   width: min(280px, calc(100vw - 20px));
   padding: var(--space-2);
@@ -792,7 +783,7 @@ body {
   .navbar-mobile-overlay {
     position: fixed;
     inset: 0;
-    z-index: 3900;
+    z-index: calc(var(--z-menu-lateral) - 1);
 
     display: block;
 
@@ -811,7 +802,7 @@ body {
   .navbar-mobile-drawer {
     position: fixed;
     inset: 0 0 0 auto;
-    z-index: 4000;
+    z-index: var(--z-menu-lateral);
 
     display: flex;
     flex-direction: column;
@@ -1202,8 +1193,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .main-navbar *,
   .navbar-mobile-drawer * {
-    transition: none !important;
-    animation: none !important;
+    transition: none;
+    animation: none;
   }
 }
 /* =========================================================

@@ -10,10 +10,6 @@
   padding: var(--space-6);
 }
 
-.cadastros-header {
-  margin-bottom: var(--space-5);
-}
-
 .cadastros-header-actions {
   display: flex;
   align-items: center;
@@ -573,10 +569,6 @@
 /* =========================================================
    ANIMAÇÃO
 ========================================================= */
-
-.girando {
-  animation: girar 0.8s linear infinite;
-}
 
 /* =========================================================
    RESPONSIVO

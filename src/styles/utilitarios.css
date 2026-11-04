@@ -1,0 +1,11 @@
+/* =========================================================
+   UTILITÁRIOS
+   Classes de uso geral aplicadas direto no JSX.
+   Ficam na camada "utilitarios", a mais alta: vencem o CSS
+   das telas e dos componentes.
+========================================================= */
+
+/* Ícone de carregando/atualizar girando. */
+.girando {
+  animation: girar 0.8s linear infinite;
+}

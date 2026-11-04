@@ -428,10 +428,6 @@
   cursor: pointer;
 }
 
-.girando {
-  animation: girar 0.75s linear infinite;
-}
-
 @media (max-width: 850px) {
   .saldos-iniciais-toolbar {
     align-items: stretch;

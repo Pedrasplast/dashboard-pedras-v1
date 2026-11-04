@@ -47,10 +47,6 @@
   cursor: not-allowed;
 }
 
-.cadastro-receitas-atualizar .girando {
-  animation: girar 0.8s linear infinite;
-}
-
 .cadastro-receitas-resumo {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -373,7 +369,7 @@
 .cadastro-receita-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;

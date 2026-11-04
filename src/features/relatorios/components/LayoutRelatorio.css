@@ -104,8 +104,8 @@
 
 .rl-filtros-corpo select,
 .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]) {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   min-height: 38px;
 
   border-radius: var(--radius-md);
@@ -143,13 +143,13 @@
 /* Grades internas dos filtros customizados: uma coluna. */
 .rl-filtros-corpo [class*="filtros-grid"],
 .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-  grid-template-columns: 1fr !important;
+  grid-template-columns: 1fr;
 }
 
 .rl-filtros-corpo [class*="busca"],
 .rl-filtros-corpo [class*="periodo-grupo"],
 .rl-filtros-corpo [class*="-campo"] {
-  grid-column: auto !important;
+  grid-column: auto;
 }
 
 /* Botões do próprio filtro (ex.: Limpar) no padrão. */
@@ -387,11 +387,11 @@
 }
 
 .rl .relatorio-visualizacao-tabela thead th {
-  color: var(--rl-azul) !important;
-  background: var(--rl-azul-claro) !important;
+  color: var(--rl-azul);
+  background: var(--rl-azul-claro);
 
   border-right: 0 !important;
-  border-bottom: 1px solid #d6def0 !important;
+  border-bottom: 1px solid #d6def0;
 }
 
 .rl .relatorio-visualizacao-tabela tbody td {
@@ -453,7 +453,7 @@
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 1200;
+    z-index: var(--z-painel);
 
     width: min(340px, 88vw);
 
@@ -519,7 +519,7 @@
   .rl-sombra {
     position: fixed;
     inset: 0;
-    z-index: 1150;
+    z-index: calc(var(--z-painel) - 1);
 
     background: rgba(15, 23, 42, 0.38);
   }
@@ -771,7 +771,7 @@
 
 /* Na coluna, nenhum campo ocupa mais de uma coluna. */
 .rl-filtros-corpo [class*="-filtros"] > * {
-  grid-column: auto !important;
+  grid-column: auto;
 }
 
 /* A rolagem da tabela/filtros não "vaza" para a página atrás. */
@@ -820,13 +820,13 @@
 .rl .rl-filtros-corpo,
 .rl .rl-filtros-corpo [class*="filtros-grid"],
 .rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-  gap: var(--space-2) !important;
+  gap: var(--space-2);
 }
 
 .rl .rl-filtros-corpo label,
 .rl .rl-filtros-corpo .filter-section {
-  gap: var(--space-1) !important;
-  margin: 0 !important;
+  gap: var(--space-1);
+  margin: 0;
 }
 
 .rl .rl-filtros-corpo .filter-section > label {
@@ -837,35 +837,35 @@
 .rl .rl-filtros-corpo .campo-filtro__label,
 .rl .rl-filtros-corpo .periodo-relatorio-label,
 .rl .rl-filtros-corpo .filter-section > label {
-  font-size: 0.66rem !important;
+  font-size: 0.66rem;
   line-height: 1.25;
 }
 
 .rl .rl-filtros-corpo select,
 .rl .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]),
 .rl .rl-filtros-corpo .calendar-trigger {
-  height: 34px !important;
-  min-height: 34px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  font-size: 0.76rem !important;
+  height: 34px;
+  min-height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 0.76rem;
   box-sizing: border-box;
 }
 
 /* Datas "de" e "até" lado a lado */
 .rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rl .rl-filtros-corpo :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo)) > * {
-  grid-column: 1 / -1 !important;
+  grid-column: 1 / -1;
 }
 
 .rl
   .rl-filtros-corpo
   :is([class*="filtros-grid"], [class*="-filtros"]:not(.rl-filtros-corpo))
   > :is(:has(> input[type="date"]), :has(> .calendar-field)) {
-  grid-column: auto !important;
+  grid-column: auto;
   min-width: 0;
 }
 
@@ -880,8 +880,8 @@
 }
 
 .rl .rl-filtros-corpo input[type="date"] {
-  padding-left: var(--space-2) !important;
-  padding-right: 6px !important;
+  padding-left: var(--space-2);
+  padding-right: 6px;
 }
 
 /* Botões */
@@ -904,19 +904,19 @@
   .rl .rl-filtros-corpo,
   .rl .rl-filtros-corpo [class*="filtros-grid"],
   .rl .rl-filtros-corpo [class*="-filtros"]:not(.rl-filtros-corpo) {
-    gap: 6px !important;
+    gap: 6px;
   }
 
   .rl .rl-filtros-corpo label,
   .rl .rl-filtros-corpo .filter-section {
-    gap: 3px !important;
+    gap: 3px;
   }
 
   .rl .rl-filtros-corpo select,
   .rl .rl-filtros-corpo input:not([type="checkbox"]):not([type="radio"]),
   .rl .rl-filtros-corpo .calendar-trigger {
-    height: 31px !important;
-    min-height: 31px !important;
+    height: 31px;
+    min-height: 31px;
   }
 
   .rl .rl-btn {
@@ -1295,7 +1295,7 @@
   .rl--fixo .relatorio-visualizacao > .rl-rolagem,
   .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,
   .rl--fixo .relatorio-visualizacao .relatorio-visualizacao-tabela-wrapper {
-    padding-top: 0 !important;
+    padding-top: 0;
     scroll-padding-top: 0;
   }
 

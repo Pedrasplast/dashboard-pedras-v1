@@ -10,6 +10,8 @@ import viteReact from "@vitejs/plugin-react";
 
 import { nitro } from "nitro/vite";
 
+import type { ChildNode, Container, Plugin as PostcssPlugin } from "postcss";
+
 /* =========================================================
    VERSÃO AUTOMÁTICA DO SISTEMA
 ========================================================= */
@@ -44,6 +46,133 @@ function criarPluginVersao(versao: string) {
 
         "utf8",
       );
+    },
+  };
+}
+
+/* =========================================================
+   CAMADAS CSS (@layer)
+   ---------------------------------------------------------
+   Cada arquivo CSS entra numa camada conforme a pasta onde
+   está. Entre camadas, quem vence é sempre a camada mais
+   alta da lista, sem depender de especificidade nem da
+   ordem em que os arquivos carregam.
+
+     base         tokens, animações e reset global
+     bibliotecas  CSS de pacotes (node_modules)
+     componentes  src/components e src/styles
+     telas        src/features
+     componentes-padrao
+                  visual padrão que deve vencer as telas
+                  (hoje só o Modal: todos os modais seguem
+                  o mesmo padrão, mesmo que a tela tenha
+                  CSS próprio para o modal)
+     utilitarios  src/styles/utilitarios.css
+
+   Os arquivos CSS não precisam declarar a camada: este
+   plugin faz isso no build e no modo dev.
+========================================================= */
+
+const ORDEM_CAMADAS = [
+  "base",
+  "bibliotecas",
+  "componentes",
+  "telas",
+  "componentes-padrao",
+  "utilitarios",
+];
+
+const ARQUIVOS_COMPONENTES_PADRAO = ["/src/components/Modal/Modal.css"];
+
+const ARQUIVOS_BASE = [
+  "/src/styles/tokens.css",
+  "/src/styles/animacoes.css",
+  "/src/legacy-base.css",
+  "/src/app-layout.css",
+];
+
+function camadaDoArquivo(arquivo: string | undefined): string | null {
+  if (!arquivo) return null;
+
+  const caminho = arquivo.replace(/\\/g, "/").split("?")[0];
+
+  if (caminho.includes("/node_modules/")) return "bibliotecas";
+  if (caminho.endsWith("/src/styles/utilitarios.css")) return "utilitarios";
+  if (ARQUIVOS_BASE.some((base) => caminho.endsWith(base))) return "base";
+  if (ARQUIVOS_COMPONENTES_PADRAO.some((arquivo) => caminho.endsWith(arquivo))) {
+    return "componentes-padrao";
+  }
+  if (caminho.includes("/src/components/") || caminho.includes("/src/styles/")) {
+    return "componentes";
+  }
+  if (caminho.includes("/src/features/")) return "telas";
+
+  return null;
+}
+
+function criarPluginCamadasCss(): PostcssPlugin {
+  return {
+    postcssPlugin: "pedrasplast-camadas-css",
+
+    Once(raiz, { AtRule }) {
+      /*
+       * Depois que o Vite resolve os @import, os trechos
+       * importados continuam marcando o arquivo de origem.
+       * Por isso a camada é decidida trecho a trecho.
+       */
+      let criouCamada = false;
+
+      /*
+       * Regras que já declaram @layer ficam como estão.
+       * Um @media que tem @layer dentro é percorrido por
+       * dentro, para não criar camadas aninhadas.
+       */
+      const temCamadaDentro = (no: ChildNode) => {
+        let achou = false;
+        if (no.type === "atrule") no.walkAtRules("layer", () => void (achou = true));
+        return achou;
+      };
+
+      const distribuir = (container: Container) => {
+        let blocoAtual: InstanceType<typeof AtRule> | null = null;
+
+        for (const no of [...(container.nodes ?? [])]) {
+          if (no.type === "atrule" && no.name === "layer") {
+            blocoAtual = null;
+            continue;
+          }
+
+          if (temCamadaDentro(no)) {
+            blocoAtual = null;
+            distribuir(no as Container);
+            continue;
+          }
+
+          const camada = camadaDoArquivo(no.source?.input.file);
+
+          if (!camada) {
+            blocoAtual = null;
+            continue;
+          }
+
+          if (!blocoAtual || blocoAtual.params !== camada) {
+            blocoAtual = new AtRule({ name: "layer", params: camada });
+            no.before(blocoAtual);
+            criouCamada = true;
+          }
+
+          blocoAtual.append(no);
+        }
+      };
+
+      distribuir(raiz);
+
+      let usaCamada = criouCamada;
+      raiz.walkAtRules("layer", () => void (usaCamada = true));
+
+      if (usaCamada) {
+        raiz.prepend(new AtRule({ name: "layer", params: ORDEM_CAMADAS.join(", ") }));
+      }
     },
   };
 }
@@ -91,6 +220,12 @@ export default defineConfig(({ command }) => {
 
       viteReact(),
     ],
+
+    css: {
+      postcss: {
+        plugins: [criarPluginCamadasCss()],
+      },
+    },
 
     build: {
       /*

@@ -1,9 +1,13 @@
-/* Distribuicao de espaco exclusiva do modal financeiro. */
-.sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
-  height: min(960px, calc(100dvh - 114px));
-}
-.sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] [data-modal-header] {
-  padding: var(--space-3) 22px;
+/* Distribuicao de espaco exclusiva do modal financeiro.
+   As regras .sistema-modal.* personalizam o modal padrão
+   (components/Modal/Modal.css) e ficam na mesma camada dele. */
+@layer componentes-padrao {
+  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
+    height: min(960px, calc(100dvh - 114px));
+  }
+  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] [data-modal-header] {
+    padding: var(--space-3) 22px;
+  }
 }
 .financeiro-detalhes-painel .financeiro-detalhes-codigo {
   margin-bottom: var(--space-1);
@@ -55,26 +59,33 @@
   min-height: 0;
 }
 @media (max-width: 1200px) {
-  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
-    height: min(960px, calc(100dvh - 96px));
+  @layer componentes-padrao {
+    .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
+      height: min(960px, calc(100dvh - 96px));
+    }
   }
 }
 @media (max-width: 900px) {
-  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
-    height: calc(100dvh - 88px);
+  @layer componentes-padrao {
+    .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
+      height: calc(100dvh - 88px);
+    }
   }
 }
 @media (max-width: 560px) {
-  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
-    height: calc(100dvh - 60px);
-  }
-  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] [data-modal-header] {
-    padding: 10px 14px;
-  }
-  .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho]
-    [data-modal-header]
-    h2 {
-    font-size: 17px;
+  @layer componentes-padrao {
+    .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
+      height: calc(100dvh - 60px);
+    }
+    .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho]
+      [data-modal-header] {
+      padding: 10px 14px;
+    }
+    .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho]
+      [data-modal-header]
+      h2 {
+      font-size: 17px;
+    }
   }
   .financeiro-detalhes-painel .financeiro-detalhes-principais {
     padding: var(--space-2) 14px 6px;
