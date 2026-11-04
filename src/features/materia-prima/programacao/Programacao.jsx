@@ -1,13 +1,4 @@
-import {
-  AlertTriangle,
-  CalendarDays,
-  CheckCircle2,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { AlertTriangle, CalendarDays, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 
 import { useMemo, useState } from "react";
 
@@ -17,7 +8,6 @@ import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
 
 import "./Programacao.css";
-import { normalizarTexto } from "@/shared/lib/texto";
 import {
   formatarNumero as formatarNumeroBase,
   formatarKg as formatarKgBase,
@@ -39,8 +29,6 @@ function formatarDiaMes(dataISO) {
   return dia && mes ? `${dia}/${mes}` : "";
 }
 
-const MAXIMO_DIAS_VISIVEIS = 8;
-
 function formatarKg(valor) {
   return formatarKgBase(valor ?? 0, { casas: 3 });
 }
@@ -50,10 +38,6 @@ function formatarKg(valor) {
 ========================================================= */
 
 export default function Programacao() {
-  const [busca, setBusca] = useState("");
-
-  const [filtroData, setFiltroData] = useState("");
-
   const [modalAberto, setModalAberto] = useState(false);
 
   const [itemEmEdicao, setItemEmEdicao] = useState(null);
@@ -79,31 +63,11 @@ export default function Programacao() {
   } = useProgramacao();
 
   /* =======================================================
-     FILTRO
-  ======================================================= */
-
-  const programacaoFiltrada = useMemo(() => {
-    const termo = normalizarTexto(busca);
-
-    return programacao.filter((item) => {
-      const correspondeBusca =
-        !termo ||
-        normalizarTexto(item.codigoProduto).includes(termo) ||
-        normalizarTexto(item.descricao).includes(termo) ||
-        normalizarTexto(item.injetora).includes(termo);
-
-      const correspondeData = !filtroData || (item.datasVigentes ?? []).includes(filtroData);
-
-      return correspondeBusca && correspondeData;
-    });
-  }, [programacao, busca, filtroData]);
-
-  /* =======================================================
      INDICADORES
   ======================================================= */
 
   const indicadores = useMemo(() => {
-    const ativos = programacaoFiltrada.filter((item) => item.ativo);
+    const ativos = programacao.filter((item) => item.ativo);
 
     return {
       registros: ativos.length,
@@ -115,7 +79,7 @@ export default function Programacao() {
         0,
       ),
     };
-  }, [programacaoFiltrada]);
+  }, [programacao]);
 
   /* =======================================================
      NOVO
@@ -237,38 +201,19 @@ export default function Programacao() {
             </div>
 
             <div>
-              <span>Peças período</span>
+              <span>Peças previstas</span>
 
               <strong>{formatarNumero(indicadores.pecasPeriodo)}</strong>
             </div>
 
             <div>
-              <span>Consumo período</span>
+              <span>Consumo previsto</span>
 
               <strong>{formatarKg(indicadores.consumoPeriodoKg)}</strong>
             </div>
           </div>
 
           <div className="programacao-pp-acoes">
-            <label className="programacao-pp-busca">
-              <Search size={16} strokeWidth={2} />
-
-              <input
-                type="search"
-                value={busca}
-                onChange={(event) => setBusca(event.target.value)}
-                placeholder="Buscar produto ou injetora..."
-              />
-            </label>
-
-            <input
-              type="date"
-              className="programacao-pp-data"
-              value={filtroData}
-              onChange={(event) => setFiltroData(event.target.value)}
-              title="Mostrar programações ativas nesta data"
-            />
-
             <button
               type="button"
               className="programacao-pp-atualizar"
@@ -334,144 +279,120 @@ export default function Programacao() {
               <table className="programacao-pp-tabela">
                 <thead>
                   <tr>
-                    <th>Injetora</th>
-                    <th>Produto</th>
-                    <th>Dias programados</th>
-                    <th className="programacao-pp-numero">Peças previstas</th>
-                    <th className="programacao-pp-numero">Consumo previsto</th>
+                    <th>Inj.</th>
+                    <th>Código</th>
+                    <th className="programacao-pp-texto">Produto</th>
+                    <th>Ciclo</th>
+                    <th>Cav.</th>
+                    <th>Peso (kg)</th>
+                    <th>Dias</th>
+                    <th>Peças</th>
+                    <th>Consumo (kg)</th>
                     <th>Receita</th>
-                    <th>Status</th>
+                    <th>Ativa</th>
                     <th aria-label="Ações" />
                   </tr>
                 </thead>
 
                 <tbody>
-                  {programacaoFiltrada.map((item) => {
+                  {programacao.map((item) => {
                     const estaSalvando = itemEstaSalvando(item.id);
 
                     const estaExcluindo = itemEstaExcluindo(item.id);
 
+                    const consumoPorFornecedor = (item.consumosFornecedores ?? [])
+                      .map(
+                        (fornecedor) =>
+                          `${fornecedor.fornecedorNome}: ${formatarKg(fornecedor.consumoPeriodoKg)}`,
+                      )
+                      .join("\n");
+
                     return (
                       <tr key={item.id}>
-                        <td className="programacao-pp-injetora">
-                          {item.injetora ? `Injetora ${item.injetora}` : "-"}
+                        <td className="programacao-pp-centro programacao-pp-forte">
+                          {item.injetora || "-"}
                         </td>
 
-                        <td className="programacao-pp-produto">
-                          <strong>{item.descricao || "Sem descrição"}</strong>
-
-                          <span className="programacao-pp-produto-dados">
-                            {[
-                              item.codigoProduto,
-                              item.materialNome,
-                              item.cicloSegundos
-                                ? `ciclo ${formatarNumero(item.cicloSegundos)} s`
-                                : "",
-                              item.cavidadeMolde
-                                ? `${formatarNumero(item.cavidadeMolde)} cav.`
-                                : "",
-                              item.pesoKg ? formatarKg(item.pesoKg) : "",
-                            ]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </span>
-
-                          {item.receitaConfigurada && item.consumosFornecedores.length > 0 && (
-                            <small>
-                              {item.consumosFornecedores
-                                .map(
-                                  (fornecedor) =>
-                                    `${fornecedor.fornecedorNome}: ${formatarKg(
-                                      fornecedor.consumoPeriodoKg,
-                                    )}`,
-                                )
-                                .join(" • ")}
-                            </small>
-                          )}
+                        <td className="programacao-pp-centro programacao-pp-codigo">
+                          {item.codigoProduto}
                         </td>
 
-                        <td className="programacao-pp-dias">
-                          <span className="programacao-pp-dias-total">
-                            {item.quantidadeDias} dia{item.quantidadeDias === 1 ? "" : "s"}
-                          </span>
+                        <td className="programacao-pp-texto">
+                          {item.descricao || "Sem descrição"}
+                        </td>
 
-                          <span className="programacao-pp-dias-lista">
-                            {(item.datasVigentes ?? [])
-                              .slice(0, MAXIMO_DIAS_VISIVEIS)
-                              .map((data) => (
-                                <span key={data}>{formatarDiaMes(data)}</span>
-                              ))}
+                        <td className="programacao-pp-centro">
+                          {item.cicloSegundos ? `${formatarNumero(item.cicloSegundos)} s` : "-"}
+                        </td>
 
-                            {(item.datasVigentes ?? []).length > MAXIMO_DIAS_VISIVEIS && (
-                              <span className="mais">
-                                +{item.datasVigentes.length - MAXIMO_DIAS_VISIVEIS}
-                              </span>
-                            )}
-                          </span>
+                        <td className="programacao-pp-centro">
+                          {item.cavidadeMolde ? formatarNumero(item.cavidadeMolde) : "-"}
+                        </td>
+
+                        <td className="programacao-pp-numero">
+                          {item.pesoKg ? formatarNumero(item.pesoKg, 3) : "-"}
+                        </td>
+
+                        <td className="programacao-pp-centro programacao-pp-forte">
+                          {item.quantidadeDias}
                         </td>
 
                         <td className="programacao-pp-numero">
                           {formatarNumero(item.pecasPrevistas)}
                         </td>
 
-                        <td className="programacao-pp-numero programacao-pp-consumo">
-                          {formatarKg(item.consumoPeriodoKg)}
+                        <td
+                          className="programacao-pp-numero programacao-pp-consumo"
+                          title={consumoPorFornecedor || undefined}
+                        >
+                          {formatarNumero(item.consumoPeriodoKg, 3)}
                         </td>
 
-                        <td>
+                        <td className="programacao-pp-centro">
                           {item.receitaConfigurada ? (
-                            <span
-                              className="programacao-pp-receita ok"
-                              title={(item.receitaNomes ?? []).join(" • ")}
-                            >
-                              <CheckCircle2 size={13} />
-
+                            <span title={(item.receitaNomes ?? []).join(" • ")}>
                               {(item.receitaNomes ?? []).length > 1
                                 ? `${item.receitaNomes.length} receitas`
-                                : item.receitaNomes?.[0] || "Receita definida"}
+                                : item.receitaNomes?.[0] || "Definida"}
                             </span>
                           ) : (
-                            <span className="programacao-pp-receita pendente">
+                            <span className="programacao-pp-receita-pendente">
                               <AlertTriangle size={13} />
                               Pendente
                             </span>
                           )}
                         </td>
 
-                        <td>
+                        <td className="programacao-pp-centro">
                           <span
-                            className={
-                              item.ativo
-                                ? "programacao-pp-status ativo"
-                                : "programacao-pp-status inativo"
-                            }
-                          >
-                            {item.ativo ? "Ativa" : "Inativa"}
-                          </span>
+                            className={`programacao-pp-ativa${item.ativo ? " sim" : ""}`}
+                            title={item.ativo ? "Ativa" : "Inativa"}
+                            aria-label={item.ativo ? "Ativa" : "Inativa"}
+                          />
                         </td>
 
-                        <td>
+                        <td className="programacao-pp-centro">
                           <div className="programacao-pp-acoes-linha">
                             <button
                               type="button"
-                              className="programacao-pp-editar"
+                              className="programacao-pp-icone"
                               onClick={() => abrirEdicao(item)}
                               disabled={salvando || excluindo}
+                              title={estaSalvando ? "Salvando..." : "Editar"}
+                              aria-label="Editar programação"
                             >
                               <Pencil size={14} />
-
-                              {estaSalvando ? "Salvando..." : "Editar"}
                             </button>
 
                             <button
                               type="button"
-                              className="programacao-pp-editar perigo"
+                              className="programacao-pp-icone perigo"
                               onClick={() => solicitarExclusao(item)}
                               disabled={salvando || excluindo}
+                              title={estaExcluindo ? "Excluindo..." : "Excluir"}
+                              aria-label="Excluir programação"
                             >
                               <Trash2 size={14} />
-
-                              {estaExcluindo ? "Excluindo..." : "Excluir"}
                             </button>
                           </div>
                         </td>
@@ -483,20 +404,10 @@ export default function Programacao() {
             </div>
 
             <div className="programacao-pp-rodape">
-              Exibindo <strong>{programacaoFiltrada.length}</strong> de{" "}
-              <strong>{programacao.length}</strong> programações
+              <strong>{programacao.length}</strong>{" "}
+              {programacao.length === 1 ? "programação" : "programações"}
             </div>
           </>
-        )}
-
-        {!carregando && !erro && programacao.length > 0 && programacaoFiltrada.length === 0 && (
-          <div className="programacao-pp-sem-resultado">
-            <Search size={27} />
-
-            <strong>Nenhuma programação encontrada</strong>
-
-            <p>Altere os filtros para visualizar outros períodos.</p>
-          </div>
         )}
       </div>
 
