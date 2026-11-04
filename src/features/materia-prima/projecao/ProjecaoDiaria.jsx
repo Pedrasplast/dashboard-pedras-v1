@@ -426,7 +426,11 @@ export default function ProjecaoDiaria() {
 
               <strong>Escolha um fornecedor para analisar</strong>
 
-              <small>A tabela mostra apenas o fornecedor selecionado.</small>
+              <small>
+                {carregando
+                  ? "Atualizando projeção..."
+                  : "A projeção atualiza sozinha ao mudar período ou material."}
+              </small>
             </div>
 
             <div className="projecao-diaria-filtros">
@@ -485,12 +489,6 @@ export default function ProjecaoDiaria() {
                       </option>
                     ))}
                 </select>
-
-                <small>
-                  {carregando
-                    ? "Atualizando projeção automaticamente..."
-                    : "A atualização é automática ao alterar período ou material."}
-                </small>
               </label>
             </div>
 

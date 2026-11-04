@@ -267,16 +267,48 @@
 }
 
 /* Filtros (período e material) na barra de fornecedores,
-   ao lado de "Ir para fornecedor". */
+   ao lado de "Ir para fornecedor". Todos os campos ficam na
+   mesma linha de base: mesma altura e mesmo rótulo. */
 .projecao-diaria-fornecedor-navegador-topo .projecao-diaria-filtros {
   flex: 1 1 560px;
   max-width: 780px;
   grid-template-columns:
     minmax(300px, 1.4fr)
     minmax(190px, 0.8fr);
+  align-items: end;
   padding: 0;
   border: 0;
   background: none;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo > svg {
+  align-self: end;
+  margin-bottom: 11px;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo label > span,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material > span,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select > span {
+  font-size: var(--font-size-micro);
+  letter-spacing: 0.04em;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo input,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material select,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select select {
+  height: 40px;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo label,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select {
+  gap: 5px;
 }
 
 .projecao-diaria-fornecedor-select {
