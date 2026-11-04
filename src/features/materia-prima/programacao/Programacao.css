@@ -173,10 +173,6 @@
   cursor: not-allowed;
 }
 
-.programacao-pp-atualizar .girando {
-  animation: girar 0.8s linear infinite;
-}
-
 /* =========================================================
    TABELA
 ========================================================= */

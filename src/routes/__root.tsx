@@ -21,6 +21,7 @@ import "../styles/animacoes.css";
 import "../legacy-base.css";
 import "../app-layout.css";
 import "../styles/pagina-aviso.css";
+import "../styles/utilitarios.css";
 
 /* =========================================================
    PAGINA NAO ENCONTRADA

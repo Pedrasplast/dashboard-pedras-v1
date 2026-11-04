@@ -47,10 +47,6 @@
   cursor: not-allowed;
 }
 
-.cadastro-receitas-atualizar .girando {
-  animation: girar 0.8s linear infinite;
-}
-
 .cadastro-receitas-resumo {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

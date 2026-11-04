@@ -112,10 +112,6 @@
   cursor: wait;
 }
 
-.financeiro-evolucao-atualizar .girando {
-  animation: girar 0.8s linear infinite;
-}
-
 /* =========================================================
    FILTROS
 ========================================================= */
