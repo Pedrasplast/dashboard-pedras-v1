@@ -5,7 +5,7 @@
    Utiliza os tokens globais do Pedrasplast Design System.
 ========================================================= */
 
-.page-header.page-header {
+.page-header {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -46,7 +46,7 @@
    LINHA SUPERIOR
 ========================================================= */
 
-.page-header.page-header::before {
+.page-header::before {
   content: "";
 
   position: absolute;
@@ -63,7 +63,7 @@
    EFEITO DECORATIVO
 ========================================================= */
 
-.page-header.page-header::after {
+.page-header::after {
   content: "";
 
   position: absolute;
@@ -211,7 +211,7 @@
 ========================================================= */
 
 @media (max-width: 700px) {
-  .page-header.page-header {
+  .page-header {
     align-items: flex-start;
 
     flex-direction: column;

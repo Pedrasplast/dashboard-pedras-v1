@@ -1,5 +1,5 @@
 /* Padrao visual do sistema, baseado no modal de pedidos de compra. */
-.sistema-modal-overlay.sistema-modal-overlay {
+.sistema-modal-overlay {
   box-sizing: border-box;
   position: fixed;
   inset: 72px 0 0;
@@ -12,7 +12,7 @@
   backdrop-filter: blur(5px);
   animation: aparecer 180ms ease-out;
 }
-.sistema-modal.sistema-modal.sistema-modal {
+.sistema-modal {
   box-sizing: border-box;
   position: relative;
   inset: auto;
@@ -49,7 +49,7 @@
 .sistema-modal[data-modal-tamanho="amplo"] {
   --modal-largura: 1500px;
 }
-.sistema-modal.sistema-modal.sistema-modal::before {
+.sistema-modal::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
@@ -58,7 +58,7 @@
   background: linear-gradient(90deg, var(--color-primary), #6366f1 48%, #8b5cf6);
   pointer-events: none;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
+.sistema-modal [data-modal-header] {
   position: relative;
   flex: 0 0 auto;
   display: flex;
@@ -70,11 +70,11 @@
   border-bottom: 1px solid var(--color-border);
   background: linear-gradient(135deg, var(--color-surface), #f8fbff 55%, #f5f7ff);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] > div {
+.sistema-modal [data-modal-header] > div {
   min-width: 0;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] h2,
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] h3 {
+.sistema-modal [data-modal-header] h2,
+.sistema-modal [data-modal-header] h3 {
   margin: 0;
   color: var(--color-text);
   font-size: 22px;
@@ -82,13 +82,13 @@
   font-weight: 750;
   letter-spacing: -0.4px;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] p {
+.sistema-modal [data-modal-header] p {
   margin: 6px 0 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-caption);
   line-height: 1.5;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-icone] {
+.sistema-modal [data-modal-icone] {
   width: 50px;
   height: 50px;
   flex: 0 0 50px;
@@ -100,7 +100,7 @@
   background: var(--color-primary-soft);
   color: var(--color-primary);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-header] [data-modal-fechar] {
+.sistema-modal [data-modal-header] [data-modal-fechar] {
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
@@ -120,24 +120,22 @@
     color 150ms,
     border-color 150ms;
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-header]
-  [data-modal-fechar]:hover:not(:disabled) {
+.sistema-modal [data-modal-header] [data-modal-fechar]:hover:not(:disabled) {
   transform: none;
   background: var(--color-surface-subtle, #f1f5f9);
   border-color: var(--color-border-strong);
   color: var(--color-text);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-body] {
+.sistema-modal [data-modal-body] {
   min-height: 0;
   overflow: auto;
   padding: var(--space-5) 28px;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
+.sistema-modal [data-modal-form] {
   min-height: 0;
   overflow: auto;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] {
+.sistema-modal [data-modal-footer] {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -149,12 +147,12 @@
   border-top: 1px solid var(--color-border);
   background: var(--color-page-background);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] > span {
+.sistema-modal [data-modal-footer] > span {
   margin-right: auto;
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] button {
+.sistema-modal [data-modal-footer] button {
   min-width: 92px;
   min-height: 36px;
   padding: var(--space-2) var(--space-4);
@@ -171,23 +169,23 @@
   font-weight: 750;
   cursor: pointer;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="primaria"] {
+.sistema-modal [data-modal-footer] [data-modal-acao="primaria"] {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-text-inverse);
   box-shadow: 0 4px 10px rgb(37 99 235 / 0.16);
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-acao="perigo"] {
+.sistema-modal [data-modal-footer] [data-modal-acao="perigo"] {
   border-color: var(--color-danger);
   background: var(--color-danger);
   color: var(--color-text-inverse);
 }
-.sistema-modal.sistema-modal.sistema-modal button:disabled {
+.sistema-modal button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-fechar]:focus-visible,
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] button:focus-visible {
+.sistema-modal [data-modal-fechar]:focus-visible,
+.sistema-modal [data-modal-footer] button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
@@ -202,88 +200,88 @@
   }
 }
 @media (max-width: 1200px) {
-  .sistema-modal-overlay.sistema-modal-overlay {
+  .sistema-modal-overlay {
     inset: 68px 0 0;
     padding: 14px;
   }
-  .sistema-modal.sistema-modal.sistema-modal {
+  .sistema-modal {
     max-height: calc(100dvh - 96px);
   }
 }
 @media (max-width: 900px) {
-  .sistema-modal-overlay.sistema-modal-overlay {
+  .sistema-modal-overlay {
     inset: 64px 0 0;
     align-items: flex-end;
     padding: var(--space-3);
   }
-  .sistema-modal.sistema-modal.sistema-modal {
+  .sistema-modal {
     width: 100%;
     max-height: calc(100dvh - 88px);
     border-radius: 17px 17px 10px 10px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
+  .sistema-modal [data-modal-header] {
     padding: 18px 18px 15px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-header] h2,
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-header] h3 {
+  .sistema-modal [data-modal-header] h2,
+  .sistema-modal [data-modal-header] h3 {
     font-size: 20px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-body],
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] {
+  .sistema-modal [data-modal-body],
+  .sistema-modal [data-modal-footer] {
     padding: var(--space-3) 18px;
   }
 }
 @media (max-width: 560px) {
-  .sistema-modal-overlay.sistema-modal-overlay {
+  .sistema-modal-overlay {
     inset: 60px 0 0;
     padding: 0;
   }
-  .sistema-modal.sistema-modal.sistema-modal {
+  .sistema-modal {
     max-height: calc(100dvh - 60px);
     border-radius: 19px 19px 0 0;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-header] {
+  .sistema-modal [data-modal-header] {
     gap: 10px;
     padding: var(--space-4) 14px 13px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-body],
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-footer] {
+  .sistema-modal [data-modal-body],
+  .sistema-modal [data-modal-footer] {
     padding: var(--space-3) 14px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sistema-modal-overlay.sistema-modal-overlay,
-  .sistema-modal.sistema-modal.sistema-modal {
+  .sistema-modal-overlay,
+  .sistema-modal {
     animation: none;
   }
 }
 
 /* Formularios preservam suas regras, com espacamento e rodape comuns. */
-.sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
+.sistema-modal [data-modal-form] {
   padding: var(--space-5) 28px;
 }
-.sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
+.sistema-modal [data-modal-form] > [data-modal-footer] {
   margin: 0 -28px -20px;
 }
 @media (max-width: 900px) {
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
+  .sistema-modal [data-modal-form] {
     padding: var(--space-3) 18px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
+  .sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -18px -12px;
   }
 }
 @media (max-width: 560px) {
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] {
+  .sistema-modal [data-modal-form] {
     padding: var(--space-3) 14px;
   }
-  .sistema-modal.sistema-modal.sistema-modal [data-modal-form] > [data-modal-footer] {
+  .sistema-modal [data-modal-form] > [data-modal-footer] {
     margin: 0 -14px -12px;
   }
 }
 
 /* O botao Fechar do rodape mantem sua cor em todos os modais. */
-.sistema-modal.sistema-modal.sistema-modal [data-modal-footer] [data-modal-fechar] {
+.sistema-modal [data-modal-footer] [data-modal-fechar] {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-text-inverse);
@@ -292,9 +290,7 @@
     background-color 150ms,
     border-color 150ms;
 }
-.sistema-modal.sistema-modal.sistema-modal
-  [data-modal-footer]
-  [data-modal-fechar]:hover:not(:disabled) {
+.sistema-modal [data-modal-footer] [data-modal-fechar]:hover:not(:disabled) {
   background: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
   color: var(--color-text-inverse);
