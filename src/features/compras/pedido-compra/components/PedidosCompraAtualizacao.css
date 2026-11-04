@@ -143,7 +143,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .compras-atualizacao {
     margin-left: 0;
   }

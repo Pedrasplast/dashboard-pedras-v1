@@ -435,7 +435,7 @@
    !important até 760px — abaixo disso o layout empilha)
 ===================================================== */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .sidebar {
     position: relative;
 
@@ -465,7 +465,7 @@
    CELULAR
 ===================================================== */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .sidebar {
     gap: 17px;
 

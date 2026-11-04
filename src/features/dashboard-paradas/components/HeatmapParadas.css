@@ -566,7 +566,7 @@
    FALLBACK DE RESPONSIVIDADE POR VIEWPORT
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-heatmap__legend {
     justify-content: flex-start;
 

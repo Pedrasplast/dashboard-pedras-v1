@@ -29,14 +29,14 @@
   color: var(--color-text);
 }
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .gerenciar-usuarios-container {
     width: 96%;
     padding-inline: 14px;
   }
 }
 
-@media (max-width: 850px) {
+@media (--tablet) {
   .gerenciar-usuarios-container {
     width: 100%;
     padding: 14px var(--space-3) var(--space-6);
@@ -871,7 +871,7 @@
    RESPONSIVO — NOTEBOOK / TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .gerenciar-usuarios-container {
     padding: 14px var(--space-3) var(--space-6);
   }
@@ -905,7 +905,7 @@
    horizontalmente para encontrar a ação Excluir.
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .gerenciar-usuarios-container {
     width: 100%;
     padding: 14px var(--space-3) var(--space-6);
@@ -1038,7 +1038,7 @@
    RESPONSIVO — CELULAR
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .gerenciar-usuarios-container {
     padding: 10px var(--space-2) var(--space-5);
   }
@@ -1126,7 +1126,7 @@
    RESPONSIVO — CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 420px) {
+@media (--celular) {
   .btn-voltar-home,
   .btn-novo-usuario {
     font-size: var(--font-size-micro);

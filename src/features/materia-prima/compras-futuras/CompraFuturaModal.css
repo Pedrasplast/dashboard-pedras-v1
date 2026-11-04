@@ -476,14 +476,14 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 800px) {
+@media (--tablet) {
   .compra-futura-modal-grid-3,
   .compra-futura-modal-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .compra-futura-modal-overlay {
     align-items: flex-end;
 

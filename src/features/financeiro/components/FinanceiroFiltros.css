@@ -371,7 +371,7 @@
    Mantém tamanhos controlados.
 ========================================================= */
 
-@media (min-width: 1600px) {
+@media (--acima-desktop) {
   .financeiro-page .financeiro-filtros {
     grid-template-columns:
       150px
@@ -389,7 +389,7 @@
    NOTEBOOK
 ========================================================= */
 
-@media (min-width: 1101px) and (max-width: 1399px) {
+@media (--acima-notebook) and (--desktop) {
   .financeiro-page .financeiro-filtros {
     grid-template-columns:
       135px
@@ -419,7 +419,7 @@
    NOTEBOOK MENOR / TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 1100px) {
+@media (--notebook) {
   .financeiro-page .financeiro-filtros {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 
@@ -462,7 +462,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 800px) {
+@media (--tablet) {
   .financeiro-page .financeiro-filtros {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -514,7 +514,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .financeiro-page .financeiro-filtros {
     grid-template-columns: minmax(0, 1fr);
 

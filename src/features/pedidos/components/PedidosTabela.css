@@ -505,7 +505,7 @@
    ATÉ 1500px
 ========================================================= */
 
-@media (max-width: 1500px) {
+@media (--desktop) {
   .pedidos-tabela {
     min-width: 1150px;
 
@@ -556,7 +556,7 @@
    ATÉ 1200px
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .pedidos-tabela {
     min-width: 980px;
 
@@ -622,7 +622,7 @@
    ATÉ 900px
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .pedidos-tabela {
     min-width: 840px;
 
@@ -707,7 +707,7 @@
    MOBILE - ATÉ 700px
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .pedidos-tabela-desktop {
     display: none;
   }
@@ -1018,7 +1018,7 @@
    MOBILE - ATÉ 480px
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .pedidos-lista-mobile {
     gap: var(--space-2);
 
@@ -1066,7 +1066,7 @@
    MOBILE - ATÉ 360px
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .pedidos-mobile-header {
     flex-direction: column;
 

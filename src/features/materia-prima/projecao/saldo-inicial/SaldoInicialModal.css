@@ -399,7 +399,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .saldo-inicial-modal-overlay {
     align-items: flex-end;
 

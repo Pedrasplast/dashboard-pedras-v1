@@ -544,7 +544,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .entradas-pp-toolbar {
     align-items: stretch;
 
@@ -574,7 +574,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (--tablet) {
   .entradas-pp-indicadores {
     display: grid;
 
@@ -614,7 +614,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .entradas-pp-periodo-datas {
     flex-direction: column;
   }

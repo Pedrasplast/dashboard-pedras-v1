@@ -178,7 +178,7 @@
    RESPONSIVO - TABLET
 ========================================================= */
 
-@media (max-width: 800px) {
+@media (--tablet) {
   .paginacao {
     flex-direction: column;
 
@@ -202,7 +202,7 @@
    RESPONSIVO - MOBILE
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .paginacao {
     padding: 11px 9px;
   }
@@ -250,7 +250,7 @@
    MOBILE PEQUENO
 ========================================================= */
 
-@media (max-width: 420px) {
+@media (--celular) {
   .paginacao-info {
     font-size: var(--font-size-micro);
   }

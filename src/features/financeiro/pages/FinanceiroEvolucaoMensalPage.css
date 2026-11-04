@@ -711,7 +711,7 @@
    MOBILE DO GRÁFICO
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .financeiro-evolucao-grafico {
     min-width: 720px;
     height: 330px;
@@ -720,7 +720,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .financeiro-evolucao-grafico-wrapper {
     padding: 14px 10px 10px;
   }
@@ -821,7 +821,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .financeiro-evolucao-kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -835,7 +835,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .financeiro-evolucao-page {
     padding: var(--space-4) 14px var(--space-6);
   }
@@ -849,7 +849,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .financeiro-evolucao-page {
     margin-top: 64px;
 

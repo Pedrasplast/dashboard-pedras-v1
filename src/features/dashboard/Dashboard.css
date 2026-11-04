@@ -6,11 +6,6 @@
 ========================================================= */
 
 :root {
-  --logo-azul-escuro: #0b1f5e;
-  --logo-azul-medio: #1d3f91;
-  --logo-azul-claro: #2e5bba;
-  --logo-verde: #3dbb63;
-  --logo-verde-escuro: #1f8f4a;
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
   --dashboard-sticky-top: var(--navbar-height, 76px);
@@ -22,7 +17,7 @@
    POSICIONAMENTO ABAIXO DA NAVBAR
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   html:has(.producao-page),
   body:has(.producao-page) {
     height: 100%;
@@ -884,7 +879,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — DESKTOP INTERMEDIÁRIO
 ========================================================= */
 
-@media (max-width: 1450px) and (min-width: 761px) {
+@media (--desktop) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns: 268px minmax(0, 1fr);
   }
@@ -902,7 +897,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) and (min-width: 761px) {
+@media (--desktop-pequeno) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns: 250px minmax(0, 1fr);
   }
@@ -970,7 +965,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK ESTREITO
 ========================================================= */
 
-@media (max-width: 1120px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns: 236px minmax(0, 1fr);
   }
@@ -1009,7 +1004,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 920px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     grid-template-columns: 218px minmax(0, 1fr);
 
@@ -1043,7 +1038,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK COM POUCA ALTURA
 ========================================================= */
 
-@media (max-height: 820px) and (min-width: 761px) {
+@media (max-height: 820px) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     padding-bottom: 6px;
   }
@@ -1141,7 +1136,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    Preserva a rolagem interna para não cortar dados.
 ========================================================= */
 
-@media (max-height: 570px) and (min-width: 761px) {
+@media (max-height: 570px) and (--acima-tablet) {
   .producao-page > .main-content {
     overflow-y: auto;
   }
@@ -1156,7 +1151,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR / TABLET VERTICAL
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   html:has(.producao-page),
   body:has(.producao-page) {
     height: auto;
@@ -1354,7 +1349,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   body:has(.producao-page) .dashboard-container.producao-page {
     padding: var(--space-2);
   }
@@ -1385,7 +1380,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR MUITO ESTREITO
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .producao-page .dias-trabalhados-indicador {
     position: static;
 

@@ -946,7 +946,7 @@
    NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .produtividade-main {
     padding: 22px 22px 38px;
   }
@@ -987,7 +987,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .produtividade-main {
     padding: 18px var(--space-4) var(--space-8);
   }
@@ -1046,7 +1046,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .produtividade-main {
     padding: 14px 11px 26px;
   }

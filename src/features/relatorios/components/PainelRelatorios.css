@@ -413,7 +413,7 @@
    TABLET E CELULAR
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .pr-recentes {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -503,7 +503,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .pr-cabecalho {
     padding: 10px var(--space-3);
     gap: 10px;
@@ -528,7 +528,7 @@
    maiores e a lista em duas colunas para não sobrar vazio.
 ========================================================= */
 
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .pr {
     min-height: 100%;
   }
@@ -545,7 +545,7 @@
   }
 }
 
-@media (min-width: 1500px) {
+@media (--acima-desktop) {
   .pr {
     gap: 14px;
   }

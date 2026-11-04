@@ -299,7 +299,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 520px) {
+@media (--celular) {
   .confirmacao-exclusao-overlay {
     padding: var(--space-3);
   }

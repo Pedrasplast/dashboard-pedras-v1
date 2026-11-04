@@ -440,7 +440,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .pedidos-resumo-modal-backdrop {
     padding: var(--space-3);
   }

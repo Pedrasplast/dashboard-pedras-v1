@@ -553,7 +553,7 @@
    RESPONSIVIDADE — NOTEBOOK / TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   /* Um cartão por linha */
 
   .pc-audit-linhas {
@@ -573,7 +573,7 @@
    RESPONSIVIDADE — CELULAR
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .pc-audit-historico {
     padding: 10px;
   }
@@ -629,7 +629,7 @@
    CELULARES MUITO ESTREITOS
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .pc-audit-historico {
     padding: var(--space-2);
   }

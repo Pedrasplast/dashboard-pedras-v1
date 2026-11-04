@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 import { resolve } from "node:path";
 
@@ -178,6 +178,54 @@ function criarPluginCamadasCss(): PostcssPlugin {
 }
 
 /* =========================================================
+   BREAKPOINTS (@custom-media)
+   ---------------------------------------------------------
+   A escala fica em src/styles/breakpoints.css. Este plugin
+   troca cada nome, como (--tablet), pelo valor definido lá.
+   Um nome que não existe na escala para o build com erro,
+   para não virar um @media que nunca se aplica.
+========================================================= */
+
+function lerBreakpoints(): Map<string, string> {
+  const texto = readFileSync(resolve(process.cwd(), "src/styles/breakpoints.css"), "utf8");
+  const mapa = new Map<string, string>();
+
+  for (const [, nome, valor] of texto.matchAll(/@custom-media\s+(--[\w-]+)\s+([^;]+);/g)) {
+    mapa.set(nome, valor.trim());
+  }
+
+  return mapa;
+}
+
+function criarPluginBreakpoints(): PostcssPlugin {
+  const breakpoints = lerBreakpoints();
+
+  return {
+    postcssPlugin: "pedrasplast-breakpoints",
+
+    AtRule: {
+      "custom-media": (regra) => {
+        regra.remove();
+      },
+
+      media: (regra) => {
+        if (!regra.params.includes("(--")) return;
+
+        regra.params = regra.params.replace(/\((--[\w-]+)\)/g, (_, nome: string) => {
+          const valor = breakpoints.get(nome);
+
+          if (!valor) {
+            throw regra.error(`Breakpoint desconhecido: ${nome} (veja src/styles/breakpoints.css)`);
+          }
+
+          return valor;
+        });
+      },
+    },
+  };
+}
+
+/* =========================================================
    VITE
 ========================================================= */
 
@@ -223,7 +271,7 @@ export default defineConfig(({ command }) => {
 
     css: {
       postcss: {
-        plugins: [criarPluginCamadasCss()],
+        plugins: [criarPluginBreakpoints(), criarPluginCamadasCss()],
       },
     },
 

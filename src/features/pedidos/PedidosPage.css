@@ -98,7 +98,7 @@
    RESPONSIVIDADE - 1200px
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .pedidos-page {
     padding: 90px 18px 26px;
   }
@@ -108,7 +108,7 @@
    RESPONSIVIDADE - 900px
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .pedidos-page {
     padding: 84px var(--space-3) 22px;
   }
@@ -126,7 +126,7 @@
    RESPONSIVIDADE - 700px
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .pedidos-page {
     padding: 82px 10px 18px;
   }
@@ -146,7 +146,7 @@
    RESPONSIVIDADE - 520px
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .pedidos-page {
     padding: 78px var(--space-2) var(--space-4);
   }
@@ -162,7 +162,7 @@
    RESPONSIVIDADE - 360px
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .pedidos-page {
     padding: 76px 6px 14px;
   }

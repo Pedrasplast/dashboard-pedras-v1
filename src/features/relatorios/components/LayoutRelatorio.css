@@ -443,7 +443,7 @@
    TABLET E CELULAR: filtros viram gaveta
 ========================================================= */
 
-@media (max-width: 1024px) {
+@media (--notebook) {
   .rl {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -572,7 +572,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .rl-cabecalho {
     flex-wrap: wrap;
     gap: 10px;
@@ -722,7 +722,7 @@
    CABEÇALHO E FILTROS FIXOS: só a tabela rola (computador)
 ========================================================= */
 
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .rl--fixo {
     flex: 1 1 auto;
     min-height: 0;
@@ -784,7 +784,7 @@
 
 /* Tabela dentro de uma área própria (Financeiro): só a área de fora rola,
    assim o cabeçalho da tabela fica fixo no topo enquanto as linhas rolam. */
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .rl--fixo .despesas-acima-previsto-tabela-area .relatorio-visualizacao-tabela-wrapper,
   .rl--fixo .financeiro-relatorio-grupos .relatorio-visualizacao-tabela-wrapper {
     flex: none;
@@ -799,7 +799,7 @@
   z-index: 3;
 }
 
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .rl--fixo .despesas-acima-previsto-tabela-area {
     padding: 0 14px var(--space-3);
   }
@@ -895,7 +895,7 @@
 }
 
 /* Telas baixas: ainda mais compacto */
-@media (max-height: 820px) and (min-width: 1025px) {
+@media (max-height: 820px) and (--acima-notebook) {
   .rl .rl-filtros {
     gap: var(--space-2);
     padding: 10px var(--space-3);
@@ -926,7 +926,7 @@
 
 /* Computador: se mesmo assim não couber, só os campos rolam e os
    botões ficam fixos no rodapé da coluna. */
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .rl--fixo .rl-filtros {
     overflow: hidden;
     align-self: start;
@@ -1290,7 +1290,7 @@
    Tira o padding de cima da área e põe o espaço no conteúdo.
 ========================================================= */
 
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .rl--fixo .relatorio-visualizacao > .financeiro-relatorio-grupos,
   .rl--fixo .relatorio-visualizacao > .rl-rolagem,
   .rl--fixo .relatorio-visualizacao > .despesas-acima-previsto-tabela-area,

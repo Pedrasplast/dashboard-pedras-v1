@@ -463,7 +463,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1150px) {
+@media (--notebook) {
   .compras-futuras-resumo-filtros {
     align-items: stretch;
 
@@ -481,7 +481,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (--tablet) {
   .compras-futuras-toolbar {
     min-height: 0;
   }

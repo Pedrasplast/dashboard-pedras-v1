@@ -446,7 +446,7 @@
    RESPONSIVIDADE - 1450px
 ========================================================= */
 
-@media (max-width: 1450px) {
+@media (--desktop) {
   .compras-filtros-linha-principal {
     grid-template-columns:
       minmax(300px, 1.5fr)
@@ -458,7 +458,7 @@
    RESPONSIVIDADE - 1150px
 ========================================================= */
 
-@media (max-width: 1150px) {
+@media (--notebook) {
   .compras-filtros-linha-principal {
     grid-template-columns:
       1fr
@@ -488,7 +488,7 @@
    RESPONSIVIDADE - 700px
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .compras-filtros-linha-principal {
     grid-template-columns: 1fr;
   }
@@ -516,7 +516,7 @@
    RESPONSIVIDADE - 520px
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .compras-filtros {
     padding: 10px;
   }

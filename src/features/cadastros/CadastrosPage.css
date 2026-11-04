@@ -574,7 +574,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1100px) {
+@media (--notebook) {
   .cadastros-tabela th:last-child,
   .cadastros-tabela td:last-child {
     width: 108px;
@@ -592,7 +592,7 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .cadastros-tabela th:last-child,
   .cadastros-tabela td:last-child {
     width: 100px;

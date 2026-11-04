@@ -10,7 +10,7 @@
    ESTRUTURA EXTERNA — SOMENTE NA ROTA DE PARADAS
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   html:has(.dp-page),
   body:has(.dp-page) {
     height: 100%;
@@ -241,7 +241,7 @@
    FILTROS DA SIDEBAR — DESKTOP
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   .dp-sidebar-shell .filter-section {
     gap: var(--space-2);
   }
@@ -340,7 +340,7 @@
    FILTROS — NOTEBOOK COM POUCA ALTURA
 ========================================================= */
 
-@media (max-height: 760px) and (min-width: 761px) {
+@media (max-height: 760px) and (--acima-tablet) {
   .dp-sidebar-shell .filter-section {
     gap: 5px;
   }
@@ -652,7 +652,7 @@
    AJUSTES VISUAIS — DESKTOP MENOR
 ========================================================= */
 
-@media (max-width: 1450px) {
+@media (--desktop) {
   .dp-insights {
     gap: 10px;
     margin-bottom: 14px;
@@ -672,7 +672,7 @@
    AJUSTES VISUAIS — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) {
+@media (--desktop-pequeno) {
   .dp-insight {
     gap: 9px;
 
@@ -697,7 +697,7 @@
    GRÁFICOS EM UMA COLUNA
 ========================================================= */
 
-@media (max-width: 1120px) {
+@media (--notebook) {
   .dp-grid--principal,
   .dp-grid--analise,
   .dp-grid--operacional {
@@ -717,7 +717,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 920px) {
+@media (--notebook) {
   .dp-dashboard-actions {
     margin: -2px 0 10px;
   }
@@ -731,7 +731,7 @@
    CELULAR — ELEMENTOS VISUAIS
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-dashboard-actions {
     align-items: stretch;
     flex-direction: column;
@@ -769,7 +769,7 @@
    CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .dp-insight {
     padding: 10px;
   }
@@ -789,7 +789,7 @@
    NOTEBOOK COM ALTURA REDUZIDA
 ========================================================= */
 
-@media (max-height: 820px) and (min-width: 761px) {
+@media (max-height: 820px) and (--acima-tablet) {
   .dp-dashboard-actions {
     min-height: 32px;
 
@@ -805,7 +805,7 @@
   }
 }
 
-@media (max-height: 680px) and (min-width: 761px) {
+@media (max-height: 680px) and (--acima-tablet) {
   .dp-chart {
     height: 245px;
   }
@@ -942,7 +942,7 @@
    Ajusta a largura da sidebar sem mudar a altura da Navbar.
 ========================================================= */
 
-@media (max-width: 1450px) and (min-width: 761px) {
+@media (--desktop) and (--acima-tablet) {
   .dashboard-container.dp-page {
     grid-template-columns: 268px minmax(0, 1fr);
   }
@@ -957,7 +957,7 @@
    RESPONSIVIDADE — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) and (min-width: 761px) {
+@media (--desktop-pequeno) and (--acima-tablet) {
   .dashboard-container.dp-page {
     grid-template-columns: 250px minmax(0, 1fr);
   }
@@ -971,7 +971,7 @@
    RESPONSIVIDADE — NOTEBOOK ESTREITO
 ========================================================= */
 
-@media (max-width: 1120px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   .dashboard-container.dp-page {
     grid-template-columns: 236px minmax(0, 1fr);
   }
@@ -992,7 +992,7 @@
    RESPONSIVIDADE — TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 920px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   .dashboard-container.dp-page {
     grid-template-columns: 218px minmax(0, 1fr);
 
@@ -1020,7 +1020,7 @@
    RESPONSIVIDADE — TELA BAIXA
 ========================================================= */
 
-@media (max-height: 760px) and (min-width: 761px) {
+@media (max-height: 760px) and (--acima-tablet) {
   .dashboard-container.dp-page {
     padding-top: var(--space-2);
     padding-bottom: var(--space-2);
@@ -1044,7 +1044,7 @@
    Sidebar primeiro; conteúdo em seguida.
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   html:has(.dp-page),
   body:has(.dp-page) {
     height: auto;
@@ -1199,7 +1199,7 @@
    RESPONSIVIDADE — CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .dashboard-container.dp-page {
     padding: var(--space-2);
   }

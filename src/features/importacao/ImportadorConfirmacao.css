@@ -523,7 +523,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .importacao-confirmacao-overlay {
     padding: 14px;
   }

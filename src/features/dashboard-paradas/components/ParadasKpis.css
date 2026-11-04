@@ -338,7 +338,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1500px) {
+@media (--desktop) {
   .dp-kpis {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -348,7 +348,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
@@ -368,7 +368,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@media (--celular) {
   .dp-kpis {
     grid-template-columns: 1fr;
   }

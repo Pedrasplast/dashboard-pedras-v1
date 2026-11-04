@@ -806,7 +806,7 @@
    DESKTOP MEDIO
 ========================================================= */
 
-@media (max-width: 1650px) {
+@media (--desktop) {
   .compras-tabela--requisicoes {
     min-width: 1280px;
   }
@@ -843,7 +843,7 @@
    NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1350px) {
+@media (--desktop-pequeno) {
   .compras-tabela--requisicoes {
     min-width: 1180px;
     .compras-col-codigo,
@@ -876,7 +876,7 @@
    NOTEBOOK MENOR
 ========================================================= */
 
-@media (max-width: 1100px) {
+@media (--notebook) {
   .compras-tabela--requisicoes {
     min-width: 1080px;
   }
@@ -894,7 +894,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .compras-tabela--requisicoes {
     min-width: 1000px;
   }
@@ -904,7 +904,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .compras-tabela-desktop {
     display: none;
   }
@@ -1115,7 +1115,7 @@
    CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .compras-mobile-grade {
     grid-template-columns: 1fr;
   }

@@ -223,7 +223,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   :where(.campo-filtro) {
     width: 100%;
   }

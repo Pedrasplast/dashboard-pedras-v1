@@ -199,7 +199,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .materia-prima-navegacao-tabs {
     width: 100%;
 
@@ -228,7 +228,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .materia-prima-navegacao-tabs {
     width: 100%;
 
@@ -272,7 +272,7 @@
    MOBILE MUITO PEQUENO
 ========================================================= */
 
-@media (max-width: 390px) {
+@media (--celular) {
   .materia-prima-nav-item {
     gap: var(--space-1);
 

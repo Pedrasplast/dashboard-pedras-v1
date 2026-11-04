@@ -207,7 +207,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .dp-top-paradas__top {
     align-items: flex-start;
 

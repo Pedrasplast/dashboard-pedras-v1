@@ -1054,7 +1054,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorio-acoes {
     display: grid;
 
@@ -1473,7 +1473,7 @@
    NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .relatorios-container {
     padding: 22px 22px 38px;
   }
@@ -1494,7 +1494,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .relatorios-container {
     padding: 18px var(--space-4) var(--space-8);
   }
@@ -1541,7 +1541,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-container {
     padding: 14px 11px 26px;
   }
@@ -1694,7 +1694,7 @@
    TELAS MUITO PEQUENAS
 ========================================================= */
 
-@media (max-width: 420px) {
+@media (--celular) {
   .relatorio-card {
     grid-template-columns:
       38px
@@ -1774,7 +1774,7 @@
 .relatorio-resumo-grid--sem-contagem {
   grid-template-columns: minmax(220px, 320px) minmax(300px, 1fr);
 }
-@media (max-width: 900px) {
+@media (--notebook) {
   .relatorio-resumo-grid--sem-contagem {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1782,7 +1782,7 @@
     grid-column: auto;
   }
 }
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-busca {
     flex-wrap: wrap;
   }
@@ -2404,7 +2404,7 @@
    RESPONSIVO DO CATÁLOGO
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .relatorios-catalogo-layout {
     grid-template-columns: 205px minmax(0, 1fr);
     gap: 14px;
@@ -2415,7 +2415,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .relatorios-catalogo-layout {
     display: flex;
     flex-direction: column;
@@ -2473,7 +2473,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-catalogo {
     gap: var(--space-3);
   }
@@ -2547,7 +2547,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (--celular) {
   .relatorios-grid--catalogo .relatorio-card {
     grid-template-columns:
       40px
@@ -2953,13 +2953,13 @@
 }
 
 /* Em telas largas, usa três colunas quando houver espaço real. */
-@media (min-width: 1440px) {
+@media (--acima-desktop) {
   .relatorios-grid--catalogo {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 1180px) {
+@media (--desktop-pequeno) {
   .relatorios-catalogo-layout {
     grid-template-columns: 190px minmax(0, 1fr);
   }
@@ -2969,7 +2969,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .relatorios-catalogo {
     padding: 10px;
   }
@@ -3026,7 +3026,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-header {
     margin-bottom: var(--space-3);
     padding: 15px;
@@ -3127,7 +3127,7 @@
   bottom: 10px;
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-grid--catalogo .relatorio-card {
     min-height: 68px;
 
@@ -3227,7 +3227,7 @@
   font-weight: 800;
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .relatorios-container.relatorios-container--aberto {
     padding: 10px 10px 14px;
   }
@@ -3239,7 +3239,7 @@
 
 /* Computador: o relatório ocupa a altura que sobra abaixo da navbar, sem rolar
    a página (o topo nunca fica por baixo da navbar). Só a tabela rola. */
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .relatorios-container.relatorios-container--aberto {
     /* Preso logo abaixo da navbar: não depende da rolagem da página. */
     position: fixed;
@@ -3280,7 +3280,7 @@
 
 /* Computador: o painel ocupa a tela toda abaixo da navbar (nunca fica
    por baixo dela) e usa a largura disponível, sem ficar "pequeno no meio". */
-@media (min-width: 1025px) {
+@media (--acima-notebook) {
   .relatorios-container:not(.relatorios-container--aberto):has(> .pr) {
     position: fixed;
     top: var(--navbar-height, 76px);

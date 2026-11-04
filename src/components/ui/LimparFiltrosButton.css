@@ -96,7 +96,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .limpar-filtros-button {
     width: 100%;
 

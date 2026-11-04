@@ -729,7 +729,7 @@
    NOTEBOOKS E TELAS INTERMEDIÁRIAS
 ===================================================== */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   .calendar-trigger {
     min-height: 56px;
   }
@@ -743,7 +743,7 @@
    TABLETS
 ===================================================== */
 
-@media (max-width: 1024px) {
+@media (--notebook) {
   .filter-section {
     gap: var(--space-3);
   }
@@ -806,7 +806,7 @@
    CELULARES
 ===================================================== */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .filter-section {
     gap: 9px;
   }
@@ -893,7 +893,7 @@
    CELULARES PEQUENOS
 ===================================================== */
 
-@media (max-width: 420px) {
+@media (--celular) {
   .filter-section .filter-header-row {
     gap: 6px;
   }
@@ -941,7 +941,7 @@
    TELAS MUITO PEQUENAS
 ===================================================== */
 
-@media (max-width: 340px) {
+@media (--celular-pequeno) {
   .calendar-popover {
     width: calc(100vw - 10px);
     padding: 7px;
@@ -1074,13 +1074,13 @@
    RESPONSIVIDADE
 ===================================================== */
 
-@media (max-width: 1024px) {
+@media (--notebook) {
   .filter-section .tipo-label-descricao {
     font-size: 0.71rem;
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .filter-section .tipo-checkbox-label {
     min-height: 46px;
   }
@@ -1102,7 +1102,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (--celular) {
   .filter-section .tipo-checkbox-label {
     padding-right: 7px;
     padding-left: 7px;
@@ -1277,7 +1277,7 @@
    RESPONSIVO
 ===================================================== */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .relatorio-filtros-card .tipo-checkbox-group {
     grid-template-columns: 1fr;
   }
