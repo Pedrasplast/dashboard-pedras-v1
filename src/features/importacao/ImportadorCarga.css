@@ -13,12 +13,6 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.importador-header h3 {
-  margin: 0 0 var(--space-6) 0;
-  color: var(--color-text);
-  font-size: 1.25rem;
-}
-
 /* Área de Upload (Drag and Drop) */
 .upload-dropzone {
   border: 2px dashed var(--color-border-strong);

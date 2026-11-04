@@ -47,10 +47,6 @@
    CABEÇALHO
 ========================================================= */
 
-.admin-header-block {
-  margin-bottom: 14px;
-}
-
 /* =========================================================
    NOVO USUÁRIO
 ========================================================= */
@@ -1045,10 +1041,6 @@
 @media (max-width: 600px) {
   .gerenciar-usuarios-container {
     padding: 10px var(--space-2) var(--space-5);
-  }
-
-  .admin-header-block {
-    margin-bottom: var(--space-3);
   }
 
   .btn-novo-usuario {

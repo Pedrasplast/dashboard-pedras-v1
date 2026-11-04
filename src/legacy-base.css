@@ -31,6 +31,11 @@ body,
   min-height: 100vh;
 }
 
+/* Âncoras não ficam escondidas atrás da navbar fixa. */
+html {
+  scroll-padding-top: calc(var(--navbar-height) + 16px);
+}
+
 /* =========================================================
    BODY
 ========================================================= */
