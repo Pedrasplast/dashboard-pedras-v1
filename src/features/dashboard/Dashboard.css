@@ -6,11 +6,6 @@
 ========================================================= */
 
 :root {
-  --logo-azul-escuro: #0b1f5e;
-  --logo-azul-medio: #1d3f91;
-  --logo-azul-claro: #2e5bba;
-  --logo-verde: #3dbb63;
-  --logo-verde-escuro: #1f8f4a;
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
   --dashboard-sticky-top: var(--navbar-height, 76px);

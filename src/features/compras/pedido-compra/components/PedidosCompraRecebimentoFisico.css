@@ -2,12 +2,6 @@
    RECEBIMENTO FÍSICO - BASE
 ========================================================= */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 .compras-col-recebimento-fisico {
   min-width: 145px;
   text-align: center;
