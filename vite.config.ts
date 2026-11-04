@@ -60,7 +60,7 @@ function criarPluginVersao(versao: string) {
 
      base         tokens, animações e reset global
      bibliotecas  CSS de pacotes (node_modules)
-     componentes  src/components e src/styles
+     componentes  src/components, src/shared e src/styles
      telas        src/features
      componentes-padrao
                   visual padrão que deve vencer as telas
@@ -102,7 +102,11 @@ function camadaDoArquivo(arquivo: string | undefined): string | null {
   if (ARQUIVOS_COMPONENTES_PADRAO.some((arquivo) => caminho.endsWith(arquivo))) {
     return "componentes-padrao";
   }
-  if (caminho.includes("/src/components/") || caminho.includes("/src/styles/")) {
+  if (
+    caminho.includes("/src/components/") ||
+    caminho.includes("/src/shared/") ||
+    caminho.includes("/src/styles/")
+  ) {
     return "componentes";
   }
   if (caminho.includes("/src/features/")) return "telas";

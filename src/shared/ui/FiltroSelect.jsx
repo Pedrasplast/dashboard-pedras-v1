@@ -1,16 +1,24 @@
-import { TODOS } from "../utils/entradasUtils";
-
 /**
- * Select com a opção "Todos" + lista de opções.
+ * Select de filtro com a opção "Todos" no topo.
+ *
  * `opcoes` pode ser [{ id, nome }] ou uma lista de strings.
+ * `valorTodos` é o valor enviado quando "Todos" está escolhido.
  */
-export default function FiltroSelect({ rotulo, textoTodos, valor, opcoes, onChange, className }) {
+export default function FiltroSelect({
+  rotulo,
+  textoTodos,
+  valor,
+  opcoes,
+  onChange,
+  className,
+  valorTodos = "TODOS",
+}) {
   return (
     <label className={className}>
       <span>{rotulo}</span>
 
       <select value={valor} onChange={(event) => onChange(event.target.value)}>
-        <option value={TODOS}>{textoTodos}</option>
+        <option value={valorTodos}>{textoTodos}</option>
 
         {opcoes.map((opcao) => {
           const id = typeof opcao === "string" ? opcao : opcao.id;
