@@ -11,6 +11,18 @@
 
 <!-- LOVABLE:END -->
 
+## Banco de dados e testes
+
+- NUNCA testar no navegador contra o Supabase de produção
+  (`rkfjhxcczgjyxfucytla`). O projeto está no plano free e cada carregamento
+  da tela Carga de Máquina baixa ~21 MB, consumindo a cota de egress.
+- Para testes no navegador, usar o Supabase local (`supabase start`) com dados
+  de exemplo pequenos (ex.: 200 linhas de `carga_maquina`) ou dados simulados
+  (mock).
+- Preferir validações sem navegador: type-check, lint e testes unitários.
+- Se for indispensável abrir o sistema real, abrir cada tela no máximo uma vez
+  e nunca a tela Carga de Máquina.
+
 ## Refatoração — padrão de nomes
 
 Todo trabalho da refatoração (plano "Análise de Refatoração — Dashboard
