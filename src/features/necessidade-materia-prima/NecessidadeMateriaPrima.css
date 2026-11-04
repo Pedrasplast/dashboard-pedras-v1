@@ -442,7 +442,7 @@
 }
 
 .necessidade-coluna-numero {
-  text-align: right !important;
+  text-align: right;
 }
 
 /* ============================================================
@@ -574,8 +574,8 @@
   min-height: 38px !important;
   border: 1.5px solid #93c5fd !important;
   border-radius: 10px !important;
-  background: var(--color-surface) !important;
-  text-align: center !important;
+  background: var(--color-surface);
+  text-align: center;
   font-variant-numeric: tabular-nums;
   font-weight: var(--font-weight-bold);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
@@ -583,7 +583,7 @@
 
 .necessidade-resumo-input:focus {
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px #dbeafe !important;
+  box-shadow: 0 0 0 3px #dbeafe;
 }
 
 .necessidade-resumo-celula-necessidade,
@@ -592,7 +592,7 @@
 }
 
 .necessidade-negativo {
-  color: var(--color-danger) !important;
+  color: var(--color-danger);
   font-weight: 800;
 }
 
@@ -683,7 +683,7 @@
 .necessidade-tabela-produtos tbody td,
 .necessidade-tabela-produtos tbody th,
 .necessidade-tabela-produtos .necessidade-coluna-numero {
-  text-align: left !important;
+  text-align: left;
 }
 
 .necessidade-detalhamento-vazio {
@@ -826,7 +826,7 @@
 /* Estoque negativo */
 .necessidade-page .necessidade-estoque-negativo {
   color: var(--color-danger) !important;
-  font-weight: 800 !important;
+  font-weight: 800;
 }
 
 /* Destaque opcional do campo negativo */

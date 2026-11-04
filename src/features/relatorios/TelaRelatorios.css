@@ -23,7 +23,7 @@
 .relatorio-visualizacao-tabela td,
 .relatorio-visualizacao-tabela th.coluna-numerica,
 .relatorio-visualizacao-tabela td.coluna-numerica {
-  text-align: left !important;
+  text-align: left;
 }
 
 /* =========================================================

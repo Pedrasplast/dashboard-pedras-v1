@@ -56,7 +56,7 @@
 
   background: var(--color-surface-subtle);
 
-  text-align: left !important;
+  text-align: left;
 
   font-size: var(--font-size-micro);
   font-weight: 750;
@@ -74,7 +74,7 @@
 
   border-bottom: 1px solid #eef2f7;
 
-  text-align: left !important;
+  text-align: left;
 
   vertical-align: top;
 
@@ -145,7 +145,7 @@
 }
 
 .pedidos-celula-agrupada {
-  vertical-align: top !important;
+  vertical-align: top;
 
   background: var(--color-surface);
 
@@ -376,7 +376,7 @@
 }
 
 .pedido-celula-atrasada {
-  background: #fffafa !important;
+  background: #fffafa;
 }
 
 .pedidos-inicio-grupo.pedido-linha-atrasada > td:first-child {

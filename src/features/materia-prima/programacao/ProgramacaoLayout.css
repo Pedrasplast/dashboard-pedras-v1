@@ -315,7 +315,7 @@
   .sistema-modal.programacao-modal[data-modal-tamanho][role="dialog"]
     .programacao-modal-form
     > .programacao-modal-acoes {
-    position: relative !important;
+    position: relative;
     left: auto;
     right: auto;
     bottom: auto;
@@ -650,7 +650,7 @@
       .programacao-modal-form
       > .programacao-modal-acoes {
       flex: 0 0 auto;
-      position: relative !important;
+      position: relative;
       bottom: auto;
       padding: var(--space-2) 10px max(var(--space-3), env(safe-area-inset-bottom));
       background: var(--color-surface);

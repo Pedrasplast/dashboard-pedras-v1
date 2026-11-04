@@ -1193,8 +1193,8 @@
 @media (prefers-reduced-motion: reduce) {
   .main-navbar *,
   .navbar-mobile-drawer * {
-    transition: none !important;
-    animation: none !important;
+    transition: none;
+    animation: none;
   }
 }
 /* =========================================================
