@@ -732,6 +732,8 @@ export default function ProgramacaoModal({
       return [...mapa.values()].sort((a, b) => a.data.localeCompare(b.data));
     });
 
+    // Receita aplicada: desmarca os dias para a próxima seleção.
+    setDatasMarcadas([]);
     setErro("");
   }
 
@@ -1523,7 +1525,7 @@ export default function ProgramacaoModal({
                       onClick={() => setDatasMarcadas([])}
                       disabled={datasMarcadas.length === 0 || salvando}
                     >
-                      Limpar
+                      Desmarcar
                     </button>
                   </div>
                 </div>

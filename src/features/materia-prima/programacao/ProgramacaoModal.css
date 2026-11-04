@@ -400,7 +400,7 @@
   background: #dcfce7;
   color: #15803d;
 
-  font-size: 9px;
+  font-size: var(--font-size-micro);
   font-weight: 900;
 
   letter-spacing: 0.05em;

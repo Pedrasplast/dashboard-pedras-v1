@@ -188,7 +188,7 @@
 
   border-collapse: collapse;
 
-  min-width: 1050px;
+  min-width: 900px;
 }
 
 .programacao-pp-tabela th {
@@ -200,8 +200,9 @@
 
   color: var(--color-text-muted);
 
-  font-size: 9px;
+  font-size: var(--font-size-micro);
   font-weight: 750;
+  letter-spacing: 0.03em;
 
   text-align: left;
   text-transform: uppercase;
@@ -225,15 +226,34 @@
   background: var(--color-surface-subtle);
 }
 
-.programacao-pp-data-coluna,
-.programacao-pp-codigo {
+.programacao-pp-injetora {
   font-weight: var(--font-weight-bold);
 
   white-space: nowrap;
 }
 
+.programacao-pp-tabela .programacao-pp-numero {
+  font-variant-numeric: tabular-nums;
+
+  text-align: right;
+
+  white-space: nowrap;
+}
+
 .programacao-pp-produto {
-  min-width: 280px;
+  min-width: 300px;
+}
+
+.programacao-pp-produto-dados {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-micro);
+
+  font-variant-numeric: tabular-nums;
 }
 
 .programacao-pp-produto strong {
@@ -251,8 +271,64 @@
 
   color: var(--color-text-muted);
 
-  font-size: 8px;
+  font-size: var(--font-size-micro);
   line-height: 1.4;
+}
+
+/* =========================================================
+   DIAS PROGRAMADOS
+   Os mesmos dias marcados no calendário do modal.
+========================================================= */
+
+.programacao-pp-dias {
+  min-width: 170px;
+}
+
+.programacao-pp-dias-total {
+  display: block;
+
+  margin-bottom: var(--space-1);
+
+  font-weight: var(--font-weight-bold);
+}
+
+.programacao-pp-dias-lista {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 3px;
+
+  max-width: 230px;
+}
+
+.programacao-pp-dias-lista span {
+  padding: 1px 5px;
+
+  border: 1px solid #dbeafe;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary-soft);
+
+  color: var(--color-primary-hover);
+
+  font-size: var(--font-size-micro);
+  font-variant-numeric: tabular-nums;
+}
+
+.programacao-pp-dias-lista span.mais {
+  border-color: var(--color-border);
+
+  background: var(--color-surface-subtle);
+
+  color: var(--color-text-muted);
+}
+
+.programacao-pp-acoes-linha {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 6px;
 }
 
 .programacao-pp-consumo {
@@ -344,7 +420,7 @@
   color: var(--color-text-secondary);
 
   font: inherit;
-  font-size: 9px;
+  font-size: var(--font-size-micro);
   font-weight: var(--font-weight-bold);
 
   cursor: pointer;
@@ -356,6 +432,20 @@
   background: var(--color-primary-soft);
 
   color: var(--color-primary);
+}
+
+.programacao-pp-editar.perigo {
+  border-color: #fecaca;
+
+  color: var(--color-danger);
+}
+
+.programacao-pp-editar.perigo:hover:not(:disabled) {
+  border-color: #fca5a5;
+
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger-hover);
 }
 
 /* =========================================================

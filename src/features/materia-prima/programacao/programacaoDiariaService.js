@@ -355,6 +355,8 @@ export function agruparProgramacaoDiaria(dias = [], hojeISO = dataHojeLocal()) {
 
         quantidadeDias: diasVigentes.length,
 
+        datasVigentes: diasVigentes.map((dia) => dia.data),
+
         dataInicio: diasVigentes[0]?.data ?? null,
 
         dataFim: diasVigentes.at(-1)?.data ?? null,
