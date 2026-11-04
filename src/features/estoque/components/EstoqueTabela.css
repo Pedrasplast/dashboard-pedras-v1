@@ -64,7 +64,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .estoque-tabela .estoque-valor--negativo {
     min-width: 64px;
 

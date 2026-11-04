@@ -840,7 +840,7 @@
    RESPONSIVIDADE — NOTEBOOKS E TABLETS
 ============================================================ */
 
-@media (max-width: 1024px) {
+@media (--notebook) {
   .necessidade-page {
     padding: 78px 18px 18px;
   }
@@ -869,7 +869,7 @@
    RESPONSIVIDADE — TABLETS E CELULARES
 ============================================================ */
 
-@media (max-width: 768px) {
+@media (--tablet) {
   .necessidade-page {
     padding: 76px var(--space-3) var(--space-3);
   }
@@ -958,7 +958,7 @@
    RESPONSIVIDADE — CELULARES PEQUENOS
 ============================================================ */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .necessidade-page {
     padding: 72px 10px 10px;
   }

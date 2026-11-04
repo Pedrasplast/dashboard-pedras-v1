@@ -608,7 +608,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   :where(.calendar-popover) {
     width: min(296px, calc(100vw - 24px));
 

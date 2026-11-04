@@ -58,21 +58,21 @@
   flex: 1 1 0;
   min-height: 0;
 }
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   @layer componentes-padrao {
     .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
       height: min(960px, calc(100dvh - 96px));
     }
   }
 }
-@media (max-width: 900px) {
+@media (--notebook) {
   @layer componentes-padrao {
     .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
       height: calc(100dvh - 88px);
     }
   }
 }
-@media (max-width: 560px) {
+@media (--celular-grande) {
   @layer componentes-padrao {
     .sistema-modal.financeiro-detalhes-painel[role="dialog"][data-modal-tamanho] {
       height: calc(100dvh - 60px);

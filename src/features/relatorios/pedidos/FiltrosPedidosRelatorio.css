@@ -174,7 +174,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 1050px) {
+@media (--notebook) {
   .rel-pedidos-filtros-grid {
     grid-template-columns: repeat(2, minmax(170px, 1fr));
   }
@@ -188,7 +188,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 650px) {
+@media (--celular-grande) {
   .rel-pedidos-filtros-grid {
     grid-template-columns: 1fr;
   }

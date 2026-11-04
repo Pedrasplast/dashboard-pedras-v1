@@ -337,7 +337,7 @@
    RESPONSIVIDADE - TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .compras-page {
     padding: var(--space-3);
   }
@@ -353,7 +353,7 @@
    RESPONSIVIDADE - MOBILE
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .compras-page {
     padding: var(--space-2);
   }

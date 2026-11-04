@@ -1,8 +1,8 @@
 /* =========================================================
    NAVBAR PEDRASPLAST — RESPONSIVA
-   Desktop: acima de 1799px
-   Notebook: 1321px até 1799px
-   Menu lateral: até 1320px
+   Desktop: a partir de 1800px
+   Notebook: 1281px até 1799px (--navbar-compacta)
+   Menu lateral: até 1280px (--desktop-pequeno)
 ========================================================= */
 
 :root {
@@ -668,7 +668,7 @@
    NOTEBOOK — 1321px A 1799px
 ========================================================= */
 
-@media (max-width: 1799px) and (min-width: 1321px) {
+@media (--navbar-compacta) and (--acima-desktop-pequeno) {
   .navbar-container {
     grid-template-columns:
       165px
@@ -735,7 +735,7 @@
    NOTEBOOK ESTREITO, TABLET E CELULAR — ATÉ 1320px
 ========================================================= */
 
-@media (max-width: 1320px) {
+@media (--desktop-pequeno) {
   :root {
     --navbar-height: 68px;
   }
@@ -1148,7 +1148,7 @@
    CELULARES — ATÉ 560px
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   :root {
     --navbar-height: 64px;
   }
@@ -1171,7 +1171,7 @@
    CELULARES MUITO PEQUENOS — ATÉ 360px
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .navbar-container {
     padding: 0 9px;
   }

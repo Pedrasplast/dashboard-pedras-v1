@@ -814,7 +814,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 980px) {
+@media (--notebook) {
   .programacao-calendario-config-tecnico {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -828,7 +828,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .programacao-calendario-configuracao-cabecalho,
   .programacao-calendario-cabecalho,
   .programacao-calendario-resumo-cabecalho {
@@ -908,7 +908,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@media (--celular) {
   .programacao-calendario-legenda {
     display: none;
   }
@@ -1009,7 +1009,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .programacao-calendario-lote {
     margin-left: 6px;
     margin-right: 6px;
@@ -1039,7 +1039,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .programacao-calendario-lote-receita {
     width: 100%;
   }

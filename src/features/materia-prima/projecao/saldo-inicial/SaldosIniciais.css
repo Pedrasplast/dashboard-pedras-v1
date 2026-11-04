@@ -428,7 +428,7 @@
   cursor: pointer;
 }
 
-@media (max-width: 850px) {
+@media (--tablet) {
   .saldos-iniciais-toolbar {
     align-items: stretch;
 
@@ -459,7 +459,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .saldos-iniciais-indicadores {
     grid-template-columns: 1fr;
   }

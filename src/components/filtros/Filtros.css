@@ -126,7 +126,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 640px) {
+@media (--celular-grande) {
   .filtros-compartilhados-limpar {
     min-height: var(--control-height-md);
   }

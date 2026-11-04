@@ -183,7 +183,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .materia-prima-container {
     padding: 18px;
   }
@@ -193,7 +193,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .materia-prima-container {
     padding: 14px;
   }

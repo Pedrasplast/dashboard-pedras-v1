@@ -28,7 +28,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 768px) {
+@media (--tablet) {
   .materia-prima-header {
     flex-direction: column;
   }

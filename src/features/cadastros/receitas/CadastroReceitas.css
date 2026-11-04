@@ -714,13 +714,13 @@
   background: var(--color-surface-muted);
 }
 
-@media (max-width: 1000px) {
+@media (--notebook) {
   .cadastro-receitas-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .cadastro-receitas-container {
     margin: 60px auto;
     padding: 14px;
@@ -751,7 +751,7 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .cadastro-receitas-resumo {
     grid-template-columns: 1fr;
   }

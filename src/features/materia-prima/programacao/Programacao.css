@@ -463,7 +463,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1050px) {
+@media (--notebook) {
   .programacao-pp-toolbar {
     align-items: stretch;
 
@@ -481,7 +481,7 @@
   }
 }
 
-@media (max-width: 650px) {
+@media (--celular-grande) {
   .programacao-pp-indicadores {
     display: grid;
 

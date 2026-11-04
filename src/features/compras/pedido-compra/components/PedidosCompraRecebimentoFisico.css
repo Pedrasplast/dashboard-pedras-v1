@@ -859,7 +859,7 @@
    Ex.: 1366 x 768
 ========================================================= */
 
-@media (max-height: 820px) and (min-width: 761px) {
+@media (max-height: 820px) and (--acima-tablet) {
   .compras-rf-backdrop {
     padding: var(--space-3) var(--space-5);
   }
@@ -896,7 +896,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .compras-rf-backdrop {
     padding: 14px;
   }
@@ -936,7 +936,7 @@
    CELULAR / TABLET PEQUENO
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .compras-rf-backdrop {
     align-items: flex-end;
 
@@ -1032,7 +1032,7 @@
    CELULARES ESTREITOS
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .compras-rf-cabecalho {
     padding: 14px;
   }

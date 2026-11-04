@@ -195,7 +195,7 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .pedidos-atualizacao-minimal {
     margin-left: 0;
   }
@@ -222,7 +222,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .pedidos-atualizacao-minimal {
     gap: 6px;
 
@@ -259,7 +259,7 @@
    MOBILE PEQUENO
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .pedidos-atualizacao-minimal-icone {
     display: none;
   }

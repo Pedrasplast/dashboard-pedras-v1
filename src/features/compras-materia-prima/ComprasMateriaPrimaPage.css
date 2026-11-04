@@ -51,13 +51,13 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .compras-materia-prima-container {
     padding: 18px;
   }
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .compras-materia-prima-container {
     padding: 14px;
   }

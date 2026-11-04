@@ -210,7 +210,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (--celular-grande) {
   .page-header {
     align-items: flex-start;
 
@@ -228,7 +228,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (--celular) {
   .page-header .page-header__icon {
     flex-basis: 40px;
 

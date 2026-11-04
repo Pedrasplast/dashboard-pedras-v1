@@ -334,7 +334,7 @@
    RESPONSIVIDADE - 1500
 ========================================================= */
 
-@media (max-width: 1500px) {
+@media (--desktop) {
   .compras-resumo {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -362,7 +362,7 @@
    RESPONSIVIDADE - 1200
 ========================================================= */
 
-@media (max-width: 1200px) {
+@media (--desktop-pequeno) {
   /*
    * 12 colunas: pedidos 3 por linha (span 4, duas linhas) e
    * requisições 3 + 2 (as duas últimas com span 6).
@@ -389,7 +389,7 @@
    RESPONSIVIDADE - 950
 ========================================================= */
 
-@media (max-width: 950px) {
+@media (--notebook) {
   .compras-resumo--completo.compras-resumo--pedidos > .compras-resumo-card,
   .compras-resumo--completo.compras-resumo--pedidos > [class*="compras-resumo-card--requisicao"],
   .compras-resumo--completo.compras-resumo--pedidos > .compras-resumo-card:nth-last-child(-n + 2) {
@@ -412,7 +412,7 @@
    RESPONSIVIDADE - 560
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .compras-resumo,
   .compras-resumo--completo,
   .compras-resumo--pedidos:not(.compras-resumo--completo),

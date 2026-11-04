@@ -539,7 +539,7 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .programacao-modal-overlay {
     align-items: flex-end;
 

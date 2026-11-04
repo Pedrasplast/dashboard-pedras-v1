@@ -60,7 +60,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-chart--pareto {
     width: 100%;
 

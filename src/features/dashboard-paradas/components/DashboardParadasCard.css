@@ -196,7 +196,7 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-card__header {
     flex-direction: column;
 

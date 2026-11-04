@@ -144,13 +144,13 @@
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 1250px) {
+@media (--desktop-pequeno) {
   .dp-chart--criticidade {
     height: 340px;
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-criticidade-quadrantes {
     grid-template-columns: 1fr;
   }

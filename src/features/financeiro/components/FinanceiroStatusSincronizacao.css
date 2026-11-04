@@ -131,7 +131,7 @@
    CELULAR
 ========================================================= */
 
-@media (max-width: 768px) {
+@media (--tablet) {
   .financeiro-sync-mini {
     width: 100%;
 
@@ -163,7 +163,7 @@
    CELULARES PEQUENOS
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .financeiro-sync-mini__separador {
     display: none;
   }

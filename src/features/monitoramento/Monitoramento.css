@@ -350,13 +350,13 @@
 
 /* ---------- Telas menores ---------- */
 
-@media (max-width: 1180px) {
+@media (--desktop-pequeno) {
   .mon-resumo {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .mon-resumo {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -403,7 +403,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@media (--celular) {
   .mon-container {
     padding: var(--space-4);
   }

@@ -379,7 +379,7 @@
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1250px) {
+@media (--desktop-pequeno) {
   .financeiro-relatorio-filtros {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -393,7 +393,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .financeiro-relatorio-filtros {
     grid-template-columns: 1fr;
   }

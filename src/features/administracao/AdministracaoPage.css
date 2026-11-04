@@ -1266,19 +1266,19 @@
    RESPONSIVO
    ========================================================= */
 
-@media (max-width: 1280px) {
+@media (--desktop-pequeno) {
   .administracao-meses-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 980px) {
+@media (--notebook) {
   .administracao-resumo-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .administracao-page {
     padding: var(--space-4) var(--space-3) 30px;
   }
@@ -1322,7 +1322,7 @@
   }
 }
 
-@media (max-width: 540px) {
+@media (--celular) {
   .administracao-resumo-grid {
     grid-template-columns: 1fr;
   }
