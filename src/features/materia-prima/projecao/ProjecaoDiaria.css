@@ -266,6 +266,19 @@
   line-height: 1.45;
 }
 
+/* Filtros (período e material) na barra de fornecedores,
+   ao lado de "Ir para fornecedor". */
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-filtros {
+  flex: 1 1 560px;
+  max-width: 780px;
+  grid-template-columns:
+    minmax(300px, 1.4fr)
+    minmax(190px, 0.8fr);
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
 .projecao-diaria-fornecedor-select {
   min-width: 285px;
   display: flex;
@@ -675,6 +688,11 @@
   .projecao-diaria-fornecedor-select {
     width: 100%;
     min-width: 0;
+  }
+
+  .projecao-diaria-fornecedor-navegador-topo .projecao-diaria-filtros {
+    flex: 0 0 auto;
+    max-width: none;
   }
 }
 

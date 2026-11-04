@@ -1,3 +1,5 @@
+import { supabase } from "@/lib/supabaseClient";
+
 import { buscarComprasFuturas } from "../compras-futuras/comprasFuturasService";
 
 import { buscarProgramacaoParaProjecao } from "../programacao/programacaoDiariaService";
@@ -145,6 +147,83 @@ function fimDiaUTC(data) {
   }
 
   return inicio + 24 * 60 * 60 * 1000;
+}
+
+/* =========================================================
+   MATERIAL DE CADA FORNECEDOR DA RECEITA
+
+   A receita guarda só fornecedor e percentual, sem material.
+   Um mesmo produto de PP pode usar fornecedores de outro
+   material (ex.: 80R/20RA usa BIG PACK, que só fornece RÁFIA).
+   Por isso o material de cada parte do consumo é decidido
+   pelo fornecedor, nesta ordem:
+
+   1. o material do produto, se o fornecedor tem qualquer
+      vínculo com ele (ativo ou não);
+   2. o material padrão do fornecedor (vínculo ativo);
+   3. o único material ativo do fornecedor;
+   4. sem vínculo: o material do produto.
+========================================================= */
+
+async function buscarVinculosFornecedorMaterial() {
+  const { data, error } = await supabase
+    .from("materia_prima_fornecedor_materiais")
+    .select("fornecedor_id, material_id, padrao, ativo");
+
+  if (error) {
+    throw error;
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+export function criarResolvedorMaterial(vinculos = []) {
+  const porFornecedor = new Map();
+
+  for (const vinculo of Array.isArray(vinculos) ? vinculos : []) {
+    const chave = String(vinculo?.fornecedor_id ?? "");
+
+    if (!chave) {
+      continue;
+    }
+
+    if (!porFornecedor.has(chave)) {
+      porFornecedor.set(chave, []);
+    }
+
+    porFornecedor.get(chave).push({
+      materialId: String(vinculo?.material_id ?? ""),
+      padrao: vinculo?.padrao === true,
+      ativo: vinculo?.ativo !== false,
+    });
+  }
+
+  return function resolverMaterial(fornecedorId, materialProdutoId) {
+    const materialProduto =
+      materialProdutoId === null || materialProdutoId === undefined
+        ? ""
+        : String(materialProdutoId);
+
+    const lista = porFornecedor.get(String(fornecedorId ?? "")) ?? [];
+
+    if (lista.some((vinculo) => vinculo.materialId === materialProduto)) {
+      return materialProduto;
+    }
+
+    const ativos = lista.filter((vinculo) => vinculo.ativo);
+
+    const padrao = ativos.find((vinculo) => vinculo.padrao);
+
+    if (padrao) {
+      return padrao.materialId;
+    }
+
+    if (ativos.length === 1) {
+      return ativos[0].materialId;
+    }
+
+    return materialProduto;
+  };
 }
 
 /* =========================================================
@@ -457,7 +536,7 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
      FONTES
   ======================================================= */
 
-  const [resultadoSaldos, resultadoCompras, resultadoProgramacao] = await Promise.all([
+  const [resultadoSaldos, resultadoCompras, resultadoProgramacao, vinculos] = await Promise.all([
     buscarSaldosIniciais({
       materialId: materialIdFinal,
     }),
@@ -468,7 +547,13 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
       dataInicio: null,
       dataFim,
     }),
+
+    buscarVinculosFornecedorMaterial(),
   ]);
+
+  const resolverMaterial = criarResolvedorMaterial(vinculos);
+
+  const materialSelecionado = String(materialIdFinal);
 
   const materiais = Array.isArray(resultadoCompras?.materiais)
     ? resultadoCompras.materiais
@@ -501,17 +586,25 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
   );
 
   /* =======================================================
-     FILTRAR PROGRAMAÇÃO PELO MATERIAL DO PRODUTO
+     PROGRAMAÇÃO
 
-     Antes havia uma regra específica para PP.
-     Agora qualquer material cadastrado pode participar
-     da projeção.
+     Entram todas as programações. O consumo de cada dia é
+     dividido pela receita, e só ficam as partes cujo
+     fornecedor é do material selecionado (veja
+     criarResolvedorMaterial). Programação sem receita não
+     pode ser dividida: entra pelo material do produto.
   ======================================================= */
 
-  const programacoes = obterProgramacoes(resultadoProgramacao).filter(
-    (programacao) =>
-      String(programacao?.materialId ?? programacao?.material_id ?? "") === String(materialIdFinal),
-  );
+  const materialDoProduto = (programacao) =>
+    programacao?.materialId ?? programacao?.material_id ?? null;
+
+  const itensDoMaterial = (programacao) =>
+    obterItensReceita(programacao).filter(
+      (item) =>
+        resolverMaterial(item.fornecedorId, materialDoProduto(programacao)) === materialSelecionado,
+    );
+
+  const programacoes = obterProgramacoes(resultadoProgramacao);
 
   /* =======================================================
      MAPA DOS FORNECEDORES
@@ -543,7 +636,7 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
    * nas programações.
    */
   programacoes.forEach((programacao) => {
-    obterItensReceita(programacao).forEach((item) => {
+    itensDoMaterial(programacao).forEach((item) => {
       registrarFornecedor(fornecedoresMapa, item.fornecedorId, item.fornecedorNome, true);
     });
   });
@@ -695,6 +788,10 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
       =================================================== */
 
     if (!receitaConfigurada || itensReceita.length === 0) {
+      if (String(materialDoProduto(programacao) ?? "") !== materialSelecionado) {
+        return;
+      }
+
       const consumoTotal = obterConsumoTotalProgramacao(programacao);
 
       if (consumoTotal > 0) {
@@ -719,7 +816,13 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
          REGISTRAR FORNECEDORES DA RECEITA
       =================================================== */
 
-    itensReceita.forEach((item) => {
+    const itensMaterial = itensDoMaterial(programacao);
+
+    if (itensMaterial.length === 0) {
+      return;
+    }
+
+    itensMaterial.forEach((item) => {
       registrarFornecedor(fornecedoresMapa, item.fornecedorId, item.fornecedorNome, true);
     });
 
@@ -748,9 +851,15 @@ export async function buscarProjecao({ dataInicio, dataFim, materialId = MATERIA
              DISTRIBUIÇÃO PELA RECEITA
           =============================================== */
 
-      distribuirConsumoReceita(consumoDia.consumoKg, itensReceita).forEach((item) => {
-        adicionarMovimento(movimentosMapa, data, item.fornecedorId, "consumoKg", item.consumoKg);
-      });
+      // Divide pela receita inteira e só depois separa o material,
+      // para cada fornecedor receber a parte certa do consumo.
+      const idsMaterial = new Set(itensMaterial.map((item) => String(item.fornecedorId)));
+
+      distribuirConsumoReceita(consumoDia.consumoKg, itensReceita)
+        .filter((item) => idsMaterial.has(String(item.fornecedorId)))
+        .forEach((item) => {
+          adicionarMovimento(movimentosMapa, data, item.fornecedorId, "consumoKg", item.consumoKg);
+        });
     });
   });
 
