@@ -331,7 +331,7 @@ export default function DespesasAcimaPrevisto({ relatorio }) {
           </Filtros>
           {atualizando && (
             <span className="despesas-acima-previsto-atualizando">
-              <FiRefreshCw className="despesas-acima-previsto-girando" />
+              <FiRefreshCw className="girando" />
               Atualizando dados...
             </span>
           )}

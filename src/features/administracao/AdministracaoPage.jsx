@@ -470,11 +470,7 @@ export default function AdministracaoPage() {
               onClick={sincronizarFeriados}
               disabled={sincronizando || loading}
             >
-              <RefreshCw
-                size={17}
-                className={sincronizando ? "administracao-spin" : ""}
-                aria-hidden="true"
-              />
+              <RefreshCw size={17} className={sincronizando ? "girando" : ""} aria-hidden="true" />
               {sincronizando ? "Sincronizando..." : "Sincronizar feriados"}
             </button>
           </div>

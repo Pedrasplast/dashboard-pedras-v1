@@ -11,6 +11,7 @@ import { obterUltimosSaldosPorFornecedor } from "./saldoInicialService";
 import "./SaldosIniciais.css";
 import { normalizarTexto } from "@/shared/lib/texto";
 import { formatarKg as formatarKgBase, formatarDataISOParaBR } from "@/shared/lib/formatar";
+import Spinner from "@/shared/ui/Spinner";
 
 /* =========================================================
 
@@ -284,7 +285,7 @@ export default function SaldosIniciais() {
 
         {carregando && (
           <div className="saldos-iniciais-estado">
-            <span className="saldos-iniciais-loading" />
+            <Spinner />
 
             <strong>Carregando saldos</strong>
           </div>

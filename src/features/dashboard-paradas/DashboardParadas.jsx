@@ -157,7 +157,7 @@ export default function DashboardParadas() {
                 strokeWidth={2.2}
                 className={
                   dashboard.atualizando
-                    ? "dp-refresh-button__icon is-spinning"
+                    ? "dp-refresh-button__icon girando"
                     : "dp-refresh-button__icon"
                 }
               />

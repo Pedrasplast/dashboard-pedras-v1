@@ -409,57 +409,6 @@
 }
 
 /* =========================================================
-   ESTADOS
-========================================================= */
-
-.compras-futuras-estado {
-  min-height: 270px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  padding: var(--space-6);
-
-  color: var(--color-text-muted);
-
-  text-align: center;
-}
-
-.compras-futuras-estado strong {
-  color: var(--color-text);
-}
-
-.compras-futuras-estado p {
-  margin: 0;
-
-  font-size: var(--font-size-micro);
-}
-
-.compras-futuras-erro {
-  color: var(--color-danger-hover);
-}
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-.compras-futuras-loading {
-  width: 26px;
-  height: 26px;
-
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-primary);
-
-  border-radius: 50%;
-
-  animation: girar 0.75s linear infinite;
-}
-
-/* =========================================================
    RESPONSIVO
 ========================================================= */
 

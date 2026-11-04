@@ -43,10 +43,6 @@
   cursor: default;
 }
 
-.mon-girando {
-  animation: girar 1s linear infinite;
-}
-
 /* ---------- Resumo ---------- */
 
 .mon-resumo {

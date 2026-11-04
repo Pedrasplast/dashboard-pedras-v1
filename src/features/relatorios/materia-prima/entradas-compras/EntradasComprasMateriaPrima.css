@@ -97,10 +97,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.entradas-compras-girando {
-  animation: girar 0.8s linear infinite;
-}
-
 /* =========================================================
    ESTADOS
 ========================================================= */

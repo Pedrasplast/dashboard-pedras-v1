@@ -62,7 +62,7 @@ export default function MonitoramentoPage() {
               onClick={() => refetch()}
               disabled={isFetching}
             >
-              <RefreshCw size={16} aria-hidden="true" className={isFetching ? "mon-girando" : ""} />
+              <RefreshCw size={16} aria-hidden="true" className={isFetching ? "girando" : ""} />
               {isFetching ? "Atualizando…" : "Atualizar agora"}
             </button>
           }

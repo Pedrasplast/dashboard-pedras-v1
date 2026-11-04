@@ -1,0 +1,18 @@
+/* =========================================================
+   SPINNER
+   Anel girando de carregamento (src/shared/ui/Spinner.jsx).
+========================================================= */
+
+.spinner {
+  display: inline-block;
+
+  width: 26px;
+  height: 26px;
+
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+
+  border-radius: 50%;
+
+  animation: girar 0.75s linear infinite;
+}
