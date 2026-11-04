@@ -453,7 +453,7 @@
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 1200;
+    z-index: var(--z-painel);
 
     width: min(340px, 88vw);
 
@@ -519,7 +519,7 @@
   .rl-sombra {
     position: fixed;
     inset: 0;
-    z-index: 1150;
+    z-index: calc(var(--z-painel) - 1);
 
     background: rgba(15, 23, 42, 0.38);
   }
