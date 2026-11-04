@@ -300,6 +300,14 @@ export default function ProjecaoDiaria() {
     [grupos, fornecedorSelecionadoId],
   );
 
+  const temFornecedores = Boolean(
+    !carregando && !erro && carregado && grupos.length > 0 && fornecedorSelecionado,
+  );
+
+  const nomeMaterial =
+    materiais.find((material) => String(material.id) === String(materialId))?.nome ??
+    "o material selecionado";
+
   /* =======================================================
      INDICADORES
   ======================================================= */
@@ -322,73 +330,6 @@ export default function ProjecaoDiaria() {
 
   return (
     <div className="projecao-diaria">
-      {/* FILTROS */}
-
-      <div className="projecao-diaria-filtros">
-        <div className="projecao-diaria-periodo">
-          <CalendarDays size={17} aria-hidden="true" />
-
-          <label>
-            <span>Início</span>
-
-            <input
-              type="date"
-              value={dataInicio}
-              onChange={(event) => {
-                const valor = event.target.value;
-
-                setDataInicio(valor);
-
-                if (valor && dataFim < valor) {
-                  const data = new Date(`${valor}T12:00:00`);
-
-                  data.setDate(data.getDate() + 10);
-
-                  const ano = data.getFullYear();
-
-                  const mes = String(data.getMonth() + 1).padStart(2, "0");
-
-                  const dia = String(data.getDate()).padStart(2, "0");
-
-                  setDataFim(`${ano}-${mes}-${dia}`);
-                }
-              }}
-            />
-          </label>
-
-          <label>
-            <span>Fim</span>
-
-            <input
-              type="date"
-              min={dataInicio}
-              value={dataFim}
-              onChange={(event) => setDataFim(event.target.value)}
-            />
-          </label>
-        </div>
-
-        <label className="projecao-diaria-material">
-          <span>Material</span>
-
-          <select value={materialId} onChange={(event) => setMaterialId(event.target.value)}>
-            {materiais
-              .filter((material) => material.ativo !== false)
-              .map((material) => (
-                <option key={material.id} value={material.id}>
-                  {material.nome}
-                </option>
-              ))}
-          </select>
-
-          <small>
-            {carregando
-              ? "Atualizando projeção automaticamente..."
-              : "A atualização é automática ao alterar período ou material."}
-          </small>
-        </label>
-      </div>
-
       {/* INDICADORES */}
 
       <div className="projecao-diaria-indicadores">
@@ -453,7 +394,7 @@ export default function ProjecaoDiaria() {
           <AlertTriangle size={18} />
 
           <div>
-            <strong>Consumo programado disponível para PP</strong>
+            <strong>Sem consumo programado para {nomeMaterial}</strong>
 
             <p>
               O consumo permanece zerado enquanto não houver receita configurada para o material
@@ -468,12 +409,125 @@ export default function ProjecaoDiaria() {
           <AlertTriangle size={18} />
 
           <div>
-            <strong>Programação sem receita de PP</strong>
+            <strong>Programação sem receita de {nomeMaterial}</strong>
 
             <p>Existem dias programados sem receita. Revise Cadastro → Receita e Programação.</p>
           </div>
         </div>
       )}
+
+      {/* FORNECEDORES */}
+
+      <div className="projecao-diaria-fornecedores">
+        <section className="projecao-diaria-fornecedor-navegador">
+          <div className="projecao-diaria-fornecedor-navegador-topo">
+            <div>
+              <span>Fornecedores</span>
+
+              <strong>Escolha um fornecedor para analisar</strong>
+
+              <small>A tabela mostra apenas o fornecedor selecionado.</small>
+            </div>
+
+            <div className="projecao-diaria-filtros">
+              <div className="projecao-diaria-periodo">
+                <CalendarDays size={17} aria-hidden="true" />
+
+                <label>
+                  <span>Início</span>
+
+                  <input
+                    type="date"
+                    value={dataInicio}
+                    onChange={(event) => {
+                      const valor = event.target.value;
+
+                      setDataInicio(valor);
+
+                      if (valor && dataFim < valor) {
+                        const data = new Date(`${valor}T12:00:00`);
+
+                        data.setDate(data.getDate() + 10);
+
+                        const ano = data.getFullYear();
+
+                        const mes = String(data.getMonth() + 1).padStart(2, "0");
+
+                        const dia = String(data.getDate()).padStart(2, "0");
+
+                        setDataFim(`${ano}-${mes}-${dia}`);
+                      }
+                    }}
+                  />
+                </label>
+
+                <label>
+                  <span>Fim</span>
+
+                  <input
+                    type="date"
+                    min={dataInicio}
+                    value={dataFim}
+                    onChange={(event) => setDataFim(event.target.value)}
+                  />
+                </label>
+              </div>
+
+              <label className="projecao-diaria-material">
+                <span>Material</span>
+
+                <select value={materialId} onChange={(event) => setMaterialId(event.target.value)}>
+                  {materiais
+                    .filter((material) => material.ativo !== false)
+                    .map((material) => (
+                      <option key={material.id} value={material.id}>
+                        {material.nome}
+                      </option>
+                    ))}
+                </select>
+
+                <small>
+                  {carregando
+                    ? "Atualizando projeção automaticamente..."
+                    : "A atualização é automática ao alterar período ou material."}
+                </small>
+              </label>
+            </div>
+
+            {temFornecedores && (
+              <label className="projecao-diaria-fornecedor-select">
+                <span>Ir para fornecedor</span>
+
+                <select
+                  value={String(fornecedorSelecionado?.fornecedorId ?? "")}
+                  onChange={(event) => setFornecedorSelecionadoId(event.target.value)}
+                >
+                  {grupos.map((grupo) => (
+                    <option key={grupo.fornecedorId} value={grupo.fornecedorId}>
+                      {grupo.fornecedorNome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+
+          {temFornecedores && (
+            <div className="projecao-diaria-fornecedor-abas">
+              {grupos.map((grupo) => (
+                <FornecedorCard
+                  key={grupo.fornecedorId}
+                  grupo={grupo}
+                  ativo={String(grupo.fornecedorId) === String(fornecedorSelecionado?.fornecedorId)}
+                  onClick={() => setFornecedorSelecionadoId(String(grupo.fornecedorId))}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {temFornecedores && <FornecedorDetalhe grupo={fornecedorSelecionado} />}
+      </div>
 
       {/* CARREGAMENTO */}
 
@@ -496,52 +550,6 @@ export default function ProjecaoDiaria() {
           <strong>Não foi possível calcular a projeção</strong>
 
           <p>{erro}</p>
-        </div>
-      )}
-
-      {/* FORNECEDORES */}
-
-      {!carregando && !erro && carregado && grupos.length > 0 && fornecedorSelecionado && (
-        <div className="projecao-diaria-fornecedores">
-          <section className="projecao-diaria-fornecedor-navegador">
-            <div className="projecao-diaria-fornecedor-navegador-topo">
-              <div>
-                <span>Fornecedores</span>
-
-                <strong>Escolha um fornecedor para analisar</strong>
-
-                <small>A tabela mostra apenas o fornecedor selecionado.</small>
-              </div>
-
-              <label className="projecao-diaria-fornecedor-select">
-                <span>Ir para fornecedor</span>
-
-                <select
-                  value={String(fornecedorSelecionado.fornecedorId)}
-                  onChange={(event) => setFornecedorSelecionadoId(event.target.value)}
-                >
-                  {grupos.map((grupo) => (
-                    <option key={grupo.fornecedorId} value={grupo.fornecedorId}>
-                      {grupo.fornecedorNome}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            <div className="projecao-diaria-fornecedor-abas">
-              {grupos.map((grupo) => (
-                <FornecedorCard
-                  key={grupo.fornecedorId}
-                  grupo={grupo}
-                  ativo={String(grupo.fornecedorId) === String(fornecedorSelecionado.fornecedorId)}
-                  onClick={() => setFornecedorSelecionadoId(String(grupo.fornecedorId))}
-                />
-              ))}
-            </div>
-          </section>
-
-          <FornecedorDetalhe grupo={fornecedorSelecionado} />
         </div>
       )}
 
