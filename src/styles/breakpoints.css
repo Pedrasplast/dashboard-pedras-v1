@@ -1,0 +1,43 @@
+/* =========================================================
+   BREAKPOINTS
+   ---------------------------------------------------------
+   Escala única de larguras de tela. Use sempre estes nomes
+   nos @media, em vez de números:
+
+     @media (--tablet) { ... }
+     @media (--acima-tablet) and (--notebook) { ... }
+
+   Variáveis CSS (var(--...)) não funcionam dentro de @media.
+   Por isso a escala usa @custom-media: o plugin do Vite
+   (vite.config.ts) troca o nome pelo valor no build e no
+   modo dev. Este arquivo não precisa ser importado.
+
+   "Até" (max-width) vale para a largura indicada e menores.
+   "Acima" (min-width) vale para larguras maiores que ela.
+
+   Regras por altura (max-height), hover, movimento reduzido
+   e cores forçadas continuam escritas direto no @media.
+========================================================= */
+
+/* Até a largura (max-width) */
+@custom-media --celular-pequeno (max-width: 360px);
+@custom-media --celular (max-width: 480px);
+@custom-media --celular-grande (max-width: 640px);
+@custom-media --tablet (max-width: 768px);
+@custom-media --notebook (max-width: 1024px);
+@custom-media --desktop-pequeno (max-width: 1280px);
+@custom-media --desktop (max-width: 1440px);
+
+/* Acima da largura (min-width) */
+@custom-media --acima-celular-pequeno (min-width: 361px);
+@custom-media --acima-celular (min-width: 481px);
+@custom-media --acima-celular-grande (min-width: 641px);
+@custom-media --acima-tablet (min-width: 769px);
+@custom-media --acima-notebook (min-width: 1025px);
+@custom-media --acima-desktop-pequeno (min-width: 1281px);
+@custom-media --acima-desktop (min-width: 1441px);
+
+/* Exceção: a navbar completa (todos os menus abertos) só
+   cabe a partir de 1800px. Abaixo disso ela usa a versão
+   compacta, até virar menu lateral em --desktop-pequeno. */
+@custom-media --navbar-compacta (max-width: 1799px);
