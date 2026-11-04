@@ -32,3 +32,12 @@ Pedrasplast") usa a marca **REF**, para separar essas branches das demais.
   `[REF] Fase 1: cria shared/lib/formatar.js`.
 
 Branches sem `REF/` não fazem parte da refatoração.
+
+**Preview antes de commitar:** em toda mudança, antes de commitar e
+enviar, gere um preview para o usuário aprovar.
+
+- Rode as verificações (`npm run validate`, `npm test`, `npm run lint`)
+  e, se mexer em visual, compare as capturas com a `main`.
+- Deixe o app da branch rodando, informe o link do preview e mostre as
+  capturas das telas afetadas.
+- Só commite e envie depois que o usuário aprovar.
