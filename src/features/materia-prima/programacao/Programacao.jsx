@@ -21,7 +21,6 @@ import { normalizarTexto } from "@/shared/lib/texto";
 import {
   formatarNumero as formatarNumeroBase,
   formatarKg as formatarKgBase,
-  formatarDataISOParaBR,
 } from "@/shared/lib/formatar";
 import Spinner from "@/shared/ui/Spinner";
 
@@ -29,38 +28,18 @@ import Spinner from "@/shared/ui/Spinner";
    UTILITÁRIOS
 ========================================================= */
 
-function formatarData(valor) {
-  return formatarDataISOParaBR(valor);
-}
-
-function formatarHora(valor) {
-  if (!valor) {
-    return "";
-  }
-
-  return String(valor).slice(0, 5);
-}
-
 function formatarNumero(valor, casas = 0) {
   return formatarNumeroBase(valor ?? 0, { casas });
 }
 
-function formatarHoras(valor) {
-  if (valor === null || valor === undefined) {
-    return "-";
-  }
+/* "AAAA-MM-DD" → "DD/MM" */
+function formatarDiaMes(dataISO) {
+  const [, mes, dia] = String(dataISO ?? "").split("-");
 
-  const numero = Number(valor);
-
-  if (!Number.isFinite(numero)) {
-    return "-";
-  }
-
-  return `${numero.toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })} h`;
+  return dia && mes ? `${dia}/${mes}` : "";
 }
+
+const MAXIMO_DIAS_VISIVEIS = 8;
 
 function formatarKg(valor) {
   return formatarKgBase(valor ?? 0, { casas: 3 });
@@ -113,8 +92,7 @@ export default function Programacao() {
         normalizarTexto(item.descricao).includes(termo) ||
         normalizarTexto(item.injetora).includes(termo);
 
-      const correspondeData =
-        !filtroData || (filtroData >= item.dataInicio && filtroData <= item.dataFim);
+      const correspondeData = !filtroData || (item.datasVigentes ?? []).includes(filtroData);
 
       return correspondeBusca && correspondeData;
     });
@@ -356,20 +334,14 @@ export default function Programacao() {
               <table className="programacao-pp-tabela">
                 <thead>
                   <tr>
-                    <th>Período</th>
-                    <th>Horas</th>
                     <th>Injetora</th>
-                    <th>Código</th>
                     <th>Produto</th>
-                    <th>Material</th>
-                    <th>Ciclo</th>
-                    <th>Cavidades</th>
-                    <th>Peças previstas</th>
-                    <th>Peso</th>
-                    <th>Consumo período</th>
+                    <th>Dias programados</th>
+                    <th className="programacao-pp-numero">Peças previstas</th>
+                    <th className="programacao-pp-numero">Consumo previsto</th>
                     <th>Receita</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th aria-label="Ações" />
                   </tr>
                 </thead>
 
@@ -381,26 +353,28 @@ export default function Programacao() {
 
                     return (
                       <tr key={item.id}>
-                        <td className="programacao-pp-data-coluna">
-                          {formatarData(item.dataInicio)}
-
-                          {item.horaInicio ? ` ${formatarHora(item.horaInicio)}` : ""}
-
-                          {" até "}
-
-                          {formatarData(item.dataFim)}
-
-                          {item.horaFim ? ` ${formatarHora(item.horaFim)}` : ""}
+                        <td className="programacao-pp-injetora">
+                          {item.injetora ? `Injetora ${item.injetora}` : "-"}
                         </td>
-
-                        <td>{formatarHoras(item.horasPeriodo)}</td>
-
-                        <td>{item.injetora ? `Injetora ${item.injetora}` : "-"}</td>
-
-                        <td className="programacao-pp-codigo">{item.codigoProduto}</td>
 
                         <td className="programacao-pp-produto">
                           <strong>{item.descricao || "Sem descrição"}</strong>
+
+                          <span className="programacao-pp-produto-dados">
+                            {[
+                              item.codigoProduto,
+                              item.materialNome,
+                              item.cicloSegundos
+                                ? `ciclo ${formatarNumero(item.cicloSegundos)} s`
+                                : "",
+                              item.cavidadeMolde
+                                ? `${formatarNumero(item.cavidadeMolde)} cav.`
+                                : "",
+                              item.pesoKg ? formatarKg(item.pesoKg) : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </span>
 
                           {item.receitaConfigurada && item.consumosFornecedores.length > 0 && (
                             <small>
@@ -416,19 +390,31 @@ export default function Programacao() {
                           )}
                         </td>
 
-                        <td>{item.materialNome || "-"}</td>
+                        <td className="programacao-pp-dias">
+                          <span className="programacao-pp-dias-total">
+                            {item.quantidadeDias} dia{item.quantidadeDias === 1 ? "" : "s"}
+                          </span>
 
-                        <td>
-                          {item.cicloSegundos ? `${formatarNumero(item.cicloSegundos)} s` : "-"}
+                          <span className="programacao-pp-dias-lista">
+                            {(item.datasVigentes ?? [])
+                              .slice(0, MAXIMO_DIAS_VISIVEIS)
+                              .map((data) => (
+                                <span key={data}>{formatarDiaMes(data)}</span>
+                              ))}
+
+                            {(item.datasVigentes ?? []).length > MAXIMO_DIAS_VISIVEIS && (
+                              <span className="mais">
+                                +{item.datasVigentes.length - MAXIMO_DIAS_VISIVEIS}
+                              </span>
+                            )}
+                          </span>
                         </td>
 
-                        <td>{item.cavidadeMolde ? formatarNumero(item.cavidadeMolde) : "-"}</td>
+                        <td className="programacao-pp-numero">
+                          {formatarNumero(item.pecasPrevistas)}
+                        </td>
 
-                        <td>{formatarNumero(item.pecasPrevistas)}</td>
-
-                        <td>{formatarKg(item.pesoKg)}</td>
-
-                        <td className="programacao-pp-consumo">
+                        <td className="programacao-pp-numero programacao-pp-consumo">
                           {formatarKg(item.consumoPeriodoKg)}
                         </td>
 
@@ -465,15 +451,7 @@ export default function Programacao() {
                         </td>
 
                         <td>
-                          <div
-                            style={{
-                              display: "flex",
-
-                              alignItems: "center",
-
-                              gap: "6px",
-                            }}
-                          >
+                          <div className="programacao-pp-acoes-linha">
                             <button
                               type="button"
                               className="programacao-pp-editar"
@@ -487,16 +465,9 @@ export default function Programacao() {
 
                             <button
                               type="button"
-                              className="programacao-pp-editar"
+                              className="programacao-pp-editar perigo"
                               onClick={() => solicitarExclusao(item)}
                               disabled={salvando || excluindo}
-                              style={{
-                                color: "#dc2626",
-
-                                borderColor: "#fecaca",
-
-                                background: "#ffffff",
-                              }}
                             >
                               <Trash2 size={14} />
 
@@ -562,22 +533,10 @@ export default function Programacao() {
           },
 
           {
-            label: "Início",
+            label: "Dias programados",
 
             valor: itemParaExcluir
-              ? `${formatarData(itemParaExcluir.dataInicio)}${
-                  itemParaExcluir.horaInicio ? ` ${formatarHora(itemParaExcluir.horaInicio)}` : ""
-                }`
-              : "-",
-          },
-
-          {
-            label: "Fim",
-
-            valor: itemParaExcluir
-              ? `${formatarData(itemParaExcluir.dataFim)}${
-                  itemParaExcluir.horaFim ? ` ${formatarHora(itemParaExcluir.horaFim)}` : ""
-                }`
+              ? (itemParaExcluir.datasVigentes ?? []).map(formatarDiaMes).join(", ") || "-"
               : "-",
           },
         ]}

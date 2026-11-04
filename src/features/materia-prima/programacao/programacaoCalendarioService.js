@@ -83,15 +83,21 @@ export async function buscarProgramacaoComCalendario() {
 
   const produtosPorCodigo = new Map(produtos.map((produto) => [String(produto.codigo), produto]));
 
-  const programacao = (Array.isArray(programacaoBruta) ? programacaoBruta : []).map((item) => {
-    const produto = produtosPorCodigo.get(String(item?.codigoProduto ?? ""));
+  /*
+   * Programações sem nenhum dia de hoje em diante já terminaram e saem
+   * da tela. Os dias continuam gravados para a Projeção.
+   */
+  const programacao = (Array.isArray(programacaoBruta) ? programacaoBruta : [])
+    .filter((item) => !item?.encerrada)
+    .map((item) => {
+      const produto = produtosPorCodigo.get(String(item?.codigoProduto ?? ""));
 
-    return {
-      ...item,
-      materialId: produto?.materialId ?? null,
-      materialNome: produto?.materialNome ?? "",
-    };
-  });
+      return {
+        ...item,
+        materialId: produto?.materialId ?? null,
+        materialNome: produto?.materialNome ?? "",
+      };
+    });
 
   return {
     programacao,
