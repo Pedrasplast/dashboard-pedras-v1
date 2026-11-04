@@ -23,6 +23,7 @@ import {
   formatarKg as formatarKgBase,
   formatarDataISOParaBR,
 } from "@/shared/lib/formatar";
+import Spinner from "@/shared/ui/Spinner";
 
 /* =========================================================
    UTILITÁRIOS
@@ -314,7 +315,7 @@ export default function Programacao() {
 
         {carregando && (
           <div className="programacao-pp-estado">
-            <span className="programacao-pp-loading" />
+            <Spinner />
 
             <strong>Carregando programação</strong>
 

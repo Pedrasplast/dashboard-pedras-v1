@@ -208,10 +208,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.financeiro-relatorio-girando {
-  animation: girar 0.8s linear infinite;
-}
-
 /* =========================================================
    GRUPOS RECEITAS / DESPESAS
 ========================================================= */

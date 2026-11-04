@@ -656,7 +656,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
 
           {atualizando && (
             <span className="entradas-compras-atualizando">
-              <FiRefreshCw className="entradas-compras-girando" />
+              <FiRefreshCw className="girando" />
               Atualizando dados...
             </span>
           )}
@@ -762,7 +762,7 @@ export default function EntradasComprasMateriaPrima({ relatorio }) {
 
           {carregando ? (
             <div className="relatorio-visualizacao-vazia">
-              <FiRefreshCw className="entradas-compras-girando" />
+              <FiRefreshCw className="girando" />
 
               <strong>Carregando relatório...</strong>
 

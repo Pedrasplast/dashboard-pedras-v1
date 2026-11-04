@@ -932,10 +932,6 @@
    ANIMAÇÃO
 ========================================================= */
 
-.dp-refresh-button__icon.is-spinning {
-  animation: girar 0.8s linear infinite;
-}
-
 /* =========================================================
    RESPONSIVIDADE — DESKTOP MENOR
 

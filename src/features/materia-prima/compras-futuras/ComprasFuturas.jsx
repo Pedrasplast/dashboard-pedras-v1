@@ -1,5 +1,7 @@
 import { useMemo } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Search, ShoppingCart } from "lucide-react";
+
+import EstadoTela from "@/shared/ui/EstadoTela";
 
 import CompraFuturaModal from "./CompraFuturaModal";
 import ConfirmarChegadaModal from "./ConfirmarChegadaModal";
@@ -13,12 +15,6 @@ import ComprasFuturasIndicadores from "./components/ComprasFuturasIndicadores";
 import ComprasFuturasFiltros from "./components/ComprasFuturasFiltros";
 import ComprasFuturasTabela from "./components/ComprasFuturasTabela";
 import ExclusaoCompraFutura from "./components/ExclusaoCompraFutura";
-import {
-  EstadoCarregando,
-  EstadoErro,
-  EstadoSemCompras,
-  EstadoSemResultado,
-} from "./components/ComprasFuturasEstado";
 
 import "./ComprasFuturas.css";
 
@@ -86,11 +82,19 @@ export default function ComprasFuturas({ isAdmin = false }) {
           <ComprasFuturasFiltros filtros={filtros} opcoes={opcoes} onChange={alterarFiltro} />
         </div>
 
-        {carregando && <EstadoCarregando />}
+        {carregando && <EstadoTela tipo="carregando" titulo="Carregando compras" />}
 
-        {!carregando && erro && <EstadoErro mensagem={erro} />}
+        {!carregando && erro && (
+          <EstadoTela tipo="erro" titulo="Erro ao carregar compras" texto={erro} />
+        )}
 
-        {semCompras && <EstadoSemCompras />}
+        {semCompras && (
+          <EstadoTela
+            icone={<ShoppingCart size={34} />}
+            titulo="Nenhuma compra cadastrada"
+            texto="Cadastre as compras de matéria-prima previstas para recebimento."
+          />
+        )}
 
         {exibirTabela && (
           <ComprasFuturasTabela
@@ -104,7 +108,13 @@ export default function ComprasFuturas({ isAdmin = false }) {
           />
         )}
 
-        {semResultado && <EstadoSemResultado />}
+        {semResultado && (
+          <EstadoTela
+            icone={<Search size={27} />}
+            titulo="Nenhuma compra encontrada"
+            texto="Altere os filtros para visualizar outras compras."
+          />
+        )}
       </div>
 
       <CompraFuturaModal

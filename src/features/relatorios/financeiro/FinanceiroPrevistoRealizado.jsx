@@ -362,7 +362,7 @@ export default function FinanceiroPrevistoRealizado({ relatorio }) {
           </Filtros>
           {atualizando && (
             <span className="financeiro-relatorio-atualizando">
-              <FiRefreshCw className="financeiro-relatorio-girando" />
+              <FiRefreshCw className="girando" />
               Atualizando dados...
             </span>
           )}

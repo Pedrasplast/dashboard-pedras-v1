@@ -146,10 +146,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.despesas-acima-previsto-girando {
-  animation: girar 0.8s linear infinite;
-}
-
 .despesas-acima-previsto-loading {
   min-height: 220px;
 }
