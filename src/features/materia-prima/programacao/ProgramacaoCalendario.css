@@ -1053,3 +1053,26 @@
     display: none;
   }
 }
+
+/* =========================================================
+   LIMPAR PROGRAMAÇÃO
+   Tira todos os dias de hoje em diante (com confirmação).
+========================================================= */
+
+.programacao-calendario-limpar-programacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-2) 14px;
+  border-bottom: 1px solid #edf1f5;
+  background: #fbfdff;
+}
+
+.programacao-calendario-limpar-programacao span {
+  margin-right: auto;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
+}

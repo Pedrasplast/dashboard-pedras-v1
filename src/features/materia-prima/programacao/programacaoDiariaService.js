@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { dataHojeLocal } from "@/shared/lib/datas";
 
 /* =========================================================
    UTILITÁRIOS
@@ -233,7 +234,14 @@ export async function buscarProgramacaoDiaria({
    AGRUPAR PARA A TELA DE PROGRAMAÇÃO
 ========================================================= */
 
-export function agruparProgramacaoDiaria(dias = []) {
+/*
+ * Os dias anteriores a hoje continuam gravados (a Projeção usa esse
+ * consumo para calcular o estoque a partir do saldo-base), mas não
+ * fazem mais parte da programação mostrada na tela: período, horas,
+ * peças e consumo contam só de hoje em diante. Uma programação sem
+ * nenhum dia de hoje em diante fica marcada como encerrada.
+ */
+export function agruparProgramacaoDiaria(dias = [], hojeISO = dataHojeLocal()) {
   const mapa = new Map();
 
   for (const dia of Array.isArray(dias) ? dias : []) {
@@ -312,40 +320,44 @@ export function agruparProgramacaoDiaria(dias = []) {
     .map((item) => {
       const diasOrdenados = [...item.diasProgramacao].sort((a, b) => a.data.localeCompare(b.data));
 
-      const minutosEfetivos = diasOrdenados.reduce(
+      const diasVigentes = diasOrdenados.filter((dia) => dia.data >= hojeISO);
+
+      const minutosEfetivos = diasVigentes.reduce(
         (total, dia) => total + numero(dia.minutosEfetivos),
         0,
       );
 
-      const ciclosCompletos = diasOrdenados.reduce(
+      const ciclosCompletos = diasVigentes.reduce(
         (total, dia) => total + numero(dia.ciclosCompletos),
         0,
       );
 
-      const pecasPrevistas = diasOrdenados.reduce(
+      const pecasPrevistas = diasVigentes.reduce(
         (total, dia) => total + numero(dia.pecasPrevistas),
         0,
       );
 
       const consumoPeriodoKg = arredondar(
-        diasOrdenados.reduce((total, dia) => total + numero(dia.consumoTotalKg), 0),
+        diasVigentes.reduce((total, dia) => total + numero(dia.consumoTotalKg), 0),
       );
 
-      const receitasUtilizadas = listarReceitasUtilizadas(diasOrdenados);
+      const receitasUtilizadas = listarReceitasUtilizadas(diasVigentes);
 
       const receitaConfigurada =
-        diasOrdenados.length > 0 && diasOrdenados.every((dia) => dia.receitaConfigurada === true);
+        diasVigentes.length > 0 && diasVigentes.every((dia) => dia.receitaConfigurada === true);
 
       return {
         ...item,
 
         diasProgramacao: diasOrdenados,
 
-        quantidadeDias: diasOrdenados.length,
+        encerrada: diasVigentes.length === 0,
 
-        dataInicio: diasOrdenados[0]?.data ?? null,
+        quantidadeDias: diasVigentes.length,
 
-        dataFim: diasOrdenados.at(-1)?.data ?? null,
+        dataInicio: diasVigentes[0]?.data ?? null,
+
+        dataFim: diasVigentes.at(-1)?.data ?? null,
 
         horaInicio: null,
 
@@ -385,7 +397,7 @@ export function agruparProgramacaoDiaria(dias = []) {
 
         receitaItens: [],
 
-        consumosFornecedores: agregarConsumosFornecedores(diasOrdenados),
+        consumosFornecedores: agregarConsumosFornecedores(diasVigentes),
 
         calculoLegado: false,
       };

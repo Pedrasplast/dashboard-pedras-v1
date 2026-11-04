@@ -410,6 +410,8 @@ export default function ProgramacaoModal({
 
   const [datasMarcadas, setDatasMarcadas] = useState([]);
 
+  const [confirmandoLimpeza, setConfirmandoLimpeza] = useState(false);
+
   const [horasOutroLote, setHorasOutroLote] = useState("8");
 
   const [receitaLoteId, setReceitaLoteId] = useState("");
@@ -445,6 +447,7 @@ export default function ProgramacaoModal({
 
     setErro("");
     setDatasMarcadas([]);
+    setConfirmandoLimpeza(false);
     setHorasOutroLote("8");
     setReceitaLoteId("");
 
@@ -757,6 +760,18 @@ export default function ProgramacaoModal({
     setErro("");
   }
 
+  /*
+   * Tira da programação todos os dias de hoje em diante, para remarcar
+   * do zero. Os dias anteriores a hoje não mudam: continuam gravados
+   * para a Projeção e não aparecem no resumo.
+   */
+  function limparProgramacao() {
+    setDiasSelecionados((atuais) => atuais.filter((dia) => dataEhPassada(dia.data)));
+    setDatasMarcadas([]);
+    setConfirmandoLimpeza(false);
+    setErro("");
+  }
+
   const algumMarcadoProgramado = useMemo(
     () => datasMarcadas.some((data) => programacaoPorData.has(data)),
     [datasMarcadas, programacaoPorData],
@@ -815,15 +830,30 @@ export default function ProgramacaoModal({
     [diasCalculados],
   );
 
+  /* Dias de hoje em diante: são os que contam no resumo. */
+  const diasVigentes = useMemo(
+    () => diasCalculados.filter((dia) => !dataEhPassada(dia.data)),
+    [diasCalculados],
+  );
+
   /* =======================================================
      CÁLCULO GERAL
   ======================================================= */
 
   const calculo = useMemo(() => {
-    const minutosEfetivos = diasCalculados.reduce(
-      (total, dia) => total + Number(dia.minutosEfetivos ?? 0),
-      0,
-    );
+    const somarMinutos = (dias) =>
+      dias.reduce((total, dia) => total + Number(dia.minutosEfetivos ?? 0), 0);
+
+    const minutosEfetivos = somarMinutos(diasVigentes);
+
+    /*
+     * Mesma regra do banco (listar_programacao_diaria_v3): os ciclos
+     * correm somando o tempo desde o primeiro dia da programação. As
+     * peças de hoje em diante são o total acumulado menos o que já
+     * tinha sido contado nos dias anteriores.
+     */
+    const segundosAnteriores =
+      somarMinutos(diasCalculados.filter((dia) => dataEhPassada(dia.data))) * 60;
 
     const ciclo = Number(produtoSelecionado?.cicloSegundos ?? 0);
 
@@ -836,7 +866,9 @@ export default function ProgramacaoModal({
     const valido =
       ciclo > 0 && Number.isInteger(cavidades) && cavidades > 0 && peso > 0 && segundos > 0;
 
-    const ciclosCompletos = valido ? Math.floor(segundos / ciclo) : 0;
+    const ciclosCompletos = valido
+      ? Math.floor((segundosAnteriores + segundos) / ciclo) - Math.floor(segundosAnteriores / ciclo)
+      : 0;
 
     const pecasPrevistas = ciclosCompletos * cavidades;
 
@@ -853,7 +885,7 @@ export default function ProgramacaoModal({
       consumoPeriodoKg,
       consumoPorHoraKg,
     };
-  }, [diasCalculados, produtoSelecionado]);
+  }, [diasCalculados, diasVigentes, produtoSelecionado]);
 
   /* =======================================================
      SALVAR
@@ -882,8 +914,8 @@ export default function ProgramacaoModal({
       return;
     }
 
-    if (diasCalculados.length === 0) {
-      setErro("Programe pelo menos um dia.");
+    if (diasVigentes.length === 0) {
+      setErro("Programe pelo menos um dia de hoje em diante.");
 
       return;
     }
@@ -1507,19 +1539,60 @@ export default function ProgramacaoModal({
                     </div>
 
                     <span className="programacao-calendario-resumo-situacao">
-                      {diasCalculados.length > 0
-                        ? `${diasCalculados.length} DIA${
-                            diasCalculados.length === 1 ? "" : "S"
-                          } PROGRAMADO${diasCalculados.length === 1 ? "" : "S"}`
+                      {diasVigentes.length > 0
+                        ? `${diasVigentes.length} DIA${
+                            diasVigentes.length === 1 ? "" : "S"
+                          } PROGRAMADO${diasVigentes.length === 1 ? "" : "S"}`
                         : "AGUARDANDO PROGRAMAÇÃO"}
                     </span>
                   </div>
+
+                  {diasVigentes.length > 0 && (
+                    <div className="programacao-calendario-limpar-programacao">
+                      {confirmandoLimpeza ? (
+                        <>
+                          <span>
+                            Tirar os {diasVigentes.length} dia
+                            {diasVigentes.length === 1 ? "" : "s"} de hoje em diante desta
+                            programação?
+                          </span>
+
+                          <button
+                            type="button"
+                            className="programacao-calendario-lote-limpar"
+                            onClick={() => setConfirmandoLimpeza(false)}
+                          >
+                            Cancelar
+                          </button>
+
+                          <button
+                            type="button"
+                            className="programacao-calendario-lote-remover"
+                            onClick={limparProgramacao}
+                          >
+                            <Trash2 size={14} />
+                            Limpar dias
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className="programacao-calendario-lote-limpar"
+                          onClick={() => setConfirmandoLimpeza(true)}
+                          disabled={salvando}
+                        >
+                          <Trash2 size={14} />
+                          Limpar programação
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   <div className="programacao-calendario-resumo">
                     <div className="dias">
                       <span>Dias programados</span>
 
-                      <strong>{diasCalculados.length}</strong>
+                      <strong>{diasVigentes.length}</strong>
 
                       <small>dias de produção</small>
                     </div>
