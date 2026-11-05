@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
+import { gravarCache, lerCache } from "@/lib/cacheIndexedDB";
+
 import { enriquecerPedido, ordenarPedidos } from "../utils/pedidosCompra.utils";
 
 const TAMANHO_PAGINA = 1000;
@@ -16,6 +18,31 @@ const TEMPO_CACHE_NOMES_OMIE = 15 * 60 * 1000;
 
 let cacheNomesOmie = null;
 let cacheNomesOmieEm = 0;
+
+/*
+ * ECONOMIA DE EGRESS (05/11/2026)
+ *
+ * A lista completa (documentos + itens) tem ~10 MB. Antes ela era
+ * baixada a cada 5 minutos com a tela aberta e a cada abertura,
+ * mesmo sem nenhuma mudança no Omie.
+ *
+ * Agora a tela pergunta primeiro a "versão" dos dados ao banco
+ * (RPC versao_compras_documentos, resposta de 32 caracteres) e só
+ * baixa a lista quando a versão mudou. A última lista fica guardada
+ * em memória e no IndexedDB do navegador, junto com a versão.
+ *
+ * Se a RPC falhar por qualquer motivo, a tela faz a carga completa
+ * exatamente como antes.
+ */
+const CHAVE_CACHE_LOCAL = "pedidos-compra:dados-brutos:v1";
+
+/*
+ * Os nomes de compradores vêm da Edge Function e não entram na versão.
+ * Mesmo sem mudança nos pedidos, eles são renovados após 6 horas.
+ */
+const TEMPO_RENOVAR_NOMES_SEM_MUDANCA = 6 * 60 * 60 * 1000;
+
+let dadosBrutosMemoria = null;
 
 async function buscarTodos(nomeTabela, colunas, configurarConsulta) {
   const registros = [];
@@ -63,6 +90,20 @@ async function buscarEstadoSincronizacao() {
   }
 
   return data ?? null;
+}
+
+async function buscarVersaoDados() {
+  try {
+    const { data, error } = await supabase.rpc("versao_compras_documentos");
+
+    if (error || typeof data !== "string" || !data) {
+      return null;
+    }
+
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 /*
@@ -165,15 +206,17 @@ async function buscarNomesOmie() {
   return resultado;
 }
 
-export async function buscarPedidosCompra() {
-  /*
-   * Todas as leituras independentes começam juntas.
-   * Antes o estado de sincronização precisava terminar para só
-   * então iniciar documentos, itens, fornecedores e nomes.
-   */
-  const [estado, documentos, itens, fornecedoresCache, nomesOmie] = await Promise.all([
-    buscarEstadoSincronizacao(),
+/*
+ * Para testes e para um eventual botão "recarregar tudo".
+ */
+export function limparCacheMemoriaPedidosCompra() {
+  dadosBrutosMemoria = null;
+  cacheNomesOmie = null;
+  cacheNomesOmieEm = 0;
+}
 
+async function baixarDadosCompletos(versao) {
+  const [documentos, itens, fornecedoresCache, nomesOmie] = await Promise.all([
     buscarDocumentosAtuais(),
 
     buscarItens(),
@@ -182,6 +225,70 @@ export async function buscarPedidosCompra() {
 
     buscarNomesOmie(),
   ]);
+
+  return {
+    versao,
+    documentos,
+    itens,
+    fornecedoresCache,
+    nomesOmie,
+    nomesOmieEm: Date.now(),
+  };
+}
+
+async function obterDadosBrutos(versao) {
+  /*
+   * Sem versão (RPC indisponível): comportamento antigo, carga completa.
+   */
+  if (!versao) {
+    return baixarDadosCompletos(null);
+  }
+
+  const emCache =
+    dadosBrutosMemoria?.versao === versao
+      ? dadosBrutosMemoria
+      : await lerCache(CHAVE_CACHE_LOCAL);
+
+  if (emCache?.versao === versao && Array.isArray(emCache.documentos)) {
+    let dados = emCache;
+
+    const nomesVelhos =
+      !emCache.nomesOmie ||
+      emCache.nomesOmie.consulta_omie_falhou ||
+      Date.now() - Number(emCache.nomesOmieEm ?? 0) > TEMPO_RENOVAR_NOMES_SEM_MUDANCA;
+
+    if (nomesVelhos) {
+      dados = {
+        ...emCache,
+        nomesOmie: await buscarNomesOmie(),
+        nomesOmieEm: Date.now(),
+      };
+
+      void gravarCache(CHAVE_CACHE_LOCAL, dados);
+    }
+
+    dadosBrutosMemoria = dados;
+
+    return dados;
+  }
+
+  const dados = await baixarDadosCompletos(versao);
+
+  dadosBrutosMemoria = dados;
+
+  void gravarCache(CHAVE_CACHE_LOCAL, dados);
+
+  return dados;
+}
+
+export async function buscarPedidosCompra() {
+  /*
+   * Estado da sincronização (1 linha) e versão dos dados (32 caracteres)
+   * são sempre lidos. A lista pesada só é baixada se a versão mudou.
+   */
+  const [estado, versao] = await Promise.all([buscarEstadoSincronizacao(), buscarVersaoDados()]);
+
+  const { documentos, itens, fornecedoresCache, nomesOmie } = await obterDadosBrutos(versao);
 
   const idsAtuais = new Set(documentos.map((documento) => String(documento.documento_id ?? "")));
 
