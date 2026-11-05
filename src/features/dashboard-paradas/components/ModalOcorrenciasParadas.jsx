@@ -184,7 +184,7 @@ function ModalOcorrenciasParadas({
         =============================================== */}
 
         <header className="dp-ocorrencias-header dp-ocorrencias-header--novo" data-modal-header="">
-          <div className="dp-ocorrencias-header-conteudo" data-modal-body="">
+          <div className="dp-ocorrencias-header-conteudo">
             <div className="dp-ocorrencias-header-icon" data-modal-icone="">
               <Icone size={20} strokeWidth={2} aria-hidden="true" />
             </div>
@@ -227,7 +227,7 @@ function ModalOcorrenciasParadas({
               <Activity size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
+            <div className="dp-ocorrencias-kpi__conteudo">
               <span>Total de ocorrências</span>
 
               <strong>{formatarNumero(resumo.total)}</strong>
@@ -241,7 +241,7 @@ function ModalOcorrenciasParadas({
               <Clock3 size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
+            <div className="dp-ocorrencias-kpi__conteudo">
               <span>Tempo total parado</span>
 
               <strong>{formatarDuracaoResumida(resumo.totalSegundos)}</strong>
@@ -255,7 +255,7 @@ function ModalOcorrenciasParadas({
               <Timer size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
+            <div className="dp-ocorrencias-kpi__conteudo">
               <span>Tempo médio</span>
 
               <strong>{formatarDuracaoResumida(resumo.mediaSegundos)}</strong>
@@ -269,7 +269,7 @@ function ModalOcorrenciasParadas({
               <Factory size={18} strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <div className="dp-ocorrencias-kpi__conteudo" data-modal-body="">
+            <div className="dp-ocorrencias-kpi__conteudo">
               <span>Injetoras afetadas</span>
 
               <strong>{resumo.injetoras}</strong>
