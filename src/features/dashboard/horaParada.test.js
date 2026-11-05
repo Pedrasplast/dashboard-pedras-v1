@@ -166,3 +166,45 @@ describe("regra única de hora parada", () => {
     expect(resultado).toContain(PRODUZINDO_11H30);
   });
 });
+
+describe("produção dividida entre turnos", () => {
+  const PRODUCAO_CRUZA_TURNO = {
+    status: "Produzindo",
+    tipo: "",
+    injetora: "INJ 02",
+    cod_prod: "P2",
+    lista_de_data: "2026-10-15",
+    // 4 h: 1 h no Turno I (13:48–14:48) e 3 h no Turno II (14:48–17:48)
+    inicio: "2026-10-15T13:48:00-03:00",
+    fim: "2026-10-15T17:48:00-03:00",
+    duracao: "04:00:00",
+    conforme: 400,
+    danificada: 8,
+  };
+
+  const filtrar = (turno) =>
+    filtrarRegistrosDashboard([PRODUCAO_CRUZA_TURNO], { ...FILTROS_BASE, turno }, {
+      ajustarParadasPorTurno: true,
+      tiposParada: [],
+    });
+
+  it("divide tempo e peças na mesma proporção", () => {
+    const [turnoI] = filtrar("TURNO I");
+    const [turnoII] = filtrar("TURNO II");
+
+    expect(turnoI.duracao).toBe("01:00:00");
+    expect(turnoI.conforme).toBe(100);
+    expect(turnoI.danificada).toBe(2);
+
+    expect(turnoII.duracao).toBe("03:00:00");
+    expect(turnoII.conforme).toBe(300);
+    expect(turnoII.danificada).toBe(6);
+
+    expect(filtrar("TURNO III")).toHaveLength(0);
+  });
+
+  it("em 'Todos' o registro não muda", () => {
+    const [todos] = filtrar("Todos");
+    expect(todos).toBe(PRODUCAO_CRUZA_TURNO);
+  });
+});

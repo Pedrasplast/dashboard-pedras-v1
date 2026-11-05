@@ -366,12 +366,26 @@ function calcularSegundosDentroDosTurnos(intervalo, turno = "Todos") {
   return Math.round(totalMilissegundos / 1000);
 }
 
-function ajustarParadaAoTurno(registro, turno) {
+/*
+ * Campos de quantidade que são divididos na mesma proporção do tempo
+ * quando um registro atravessa a troca de turno e o filtro é de um
+ * turno específico (para a soma dos turnos fechar com "Todos").
+ */
+const CAMPOS_PROPORCIONAIS_TURNO = Object.freeze(["conforme", "danificada"]);
+
+/**
+ * Recorta um registro (parada ou produção) pelo turno filtrado.
+ *
+ * - "Todos": o registro fica como está (os turnos cobrem o dia inteiro).
+ * - Turno específico: mantém só o tempo dentro do turno e divide
+ *   conforme/danificada na mesma proporção.
+ */
+function ajustarRegistroAoTurno(registro, turno) {
   const intervalo = obterIntervaloLocalRegistro(registro);
 
   /*
-   * Fallback seguro para registros antigos/incompletos sem início/fim.
-   * Mantém a regra anterior em vez de apagar o registro.
+   * Fallback seguro para registros antigos/incompletos sem início/fim:
+   * o registro inteiro vai para o turno em que começou.
    */
   if (!intervalo) {
     if (turno !== "Todos" && identificarTurnoRegistro(registro) !== turno) {
@@ -381,16 +395,44 @@ function ajustarParadaAoTurno(registro, turno) {
     return registro;
   }
 
+  if (turno === "Todos") {
+    return registro;
+  }
+
   const segundosConsiderados = calcularSegundosDentroDosTurnos(intervalo, turno);
 
   if (segundosConsiderados <= 0) {
     return null;
   }
 
-  return {
+  const segundosTotais = Math.round((intervalo.fim - intervalo.inicio) / 1000);
+
+  if (segundosConsiderados >= segundosTotais) {
+    return registro;
+  }
+
+  const fracao = segundosConsiderados / segundosTotais;
+
+  const ajustado = {
     ...registro,
     duracao: formatarSegundosComoDuracao(segundosConsiderados),
   };
+
+  for (const campo of CAMPOS_PROPORCIONAIS_TURNO) {
+    const valor = registro?.[campo];
+
+    if (valor === null || valor === undefined || valor === "") {
+      continue;
+    }
+
+    const numero = Number(valor);
+
+    if (Number.isFinite(numero)) {
+      ajustado[campo] = numero * fracao;
+    }
+  }
+
+  return ajustado;
 }
 
 /* =========================================================
@@ -505,9 +547,10 @@ export function identificarTurnoRegistro(registro) {
 /**
  * Filtro compartilhado do Dashboard de Produção e do Dashboard de Paradas.
  *
- * ajustarParadasPorTurno: recorta a duração das paradas pelos limites dos
- * turnos, para que uma parada que cruza dois turnos seja dividida e a soma
- * dos turnos seja igual ao total de "Todos".
+ * ajustarParadasPorTurno: recorta os registros (paradas e produção) pelos
+ * limites dos turnos. Um registro que cruza dois turnos é dividido: o tempo
+ * e as peças (conforme/danificada) vão proporcionalmente para cada turno,
+ * e a soma dos turnos fica igual ao total de "Todos".
  *
  * tiposParada: quando informado (array, mesmo vazio), aplica a regra única
  * de tipos de parada (ver normalizarTiposParadaSelecionados). Registros que
@@ -554,8 +597,8 @@ export function filtrarRegistrosDashboard(
       continue;
     }
 
-    if (ajustarParadasPorTurno && ehParada) {
-      const registroAjustado = ajustarParadaAoTurno(registro, filtros.turno || "Todos");
+    if (ajustarParadasPorTurno) {
+      const registroAjustado = ajustarRegistroAoTurno(registro, filtros.turno || "Todos");
 
       if (registroAjustado) {
         resultado.push(registroAjustado);

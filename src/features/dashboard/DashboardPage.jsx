@@ -123,7 +123,7 @@ export default function Dashboard() {
             Icone={CheckCircle2}
             classeIcone="kpi-icon-conforme"
             titulo="CONFORME"
-            valor={Number(metrics?.totalConforme || 0).toLocaleString("pt-BR")}
+            valor={Math.round(Number(metrics?.totalConforme || 0)).toLocaleString("pt-BR")}
           />
 
           <KpiSimples
@@ -131,7 +131,7 @@ export default function Dashboard() {
             Icone={XCircle}
             classeIcone="kpi-icon-danificadas"
             titulo="DANIFICADAS"
-            valor={Number(metrics?.totalDanificadas || 0).toLocaleString("pt-BR")}
+            valor={Math.round(Number(metrics?.totalDanificadas || 0)).toLocaleString("pt-BR")}
           />
 
           <KpiSimples
