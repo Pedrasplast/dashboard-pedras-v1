@@ -413,6 +413,24 @@
   overflow-y: auto;
 }
 
+/*
+ * Altura: o modal ocupa toda a área abaixo do menu, com uma margem
+ * pequena em cima e embaixo, para a tabela ter o máximo de linhas.
+ *
+ * O seletor duplo é necessário: no build de produção o Modal.css
+ * (height: auto) é carregado depois deste arquivo e anulava a altura,
+ * deixando o modal do tamanho do conteúdo.
+ */
+.sistema-modal-overlay.dp-ocorrencias-overlay-tela {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.sistema-modal.dp-ocorrencias-modal {
+  height: 100%;
+  max-height: 100%;
+}
+
 .dp-ocorrencias-tabela-wrap {
   flex: 1 0 auto;
   height: 0;
