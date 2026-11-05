@@ -8,6 +8,42 @@ import { logDesenvolvimento } from "./logger";
 
 const TAMANHO_PAGINA = 1000;
 
+/*
+ * Colunas usadas pelas telas (Dashboard de Produção, Paradas, Home e
+ * Relatórios). Antes era select("*").
+ *
+ * Ficam de fora 4 colunas que nenhuma tela lê: celula,
+ * qtde_perdida_devido_pausa, consumido e pecas (~3,5 MB de ~20,6 MB,
+ * cerca de 17% de cada carga completa). Se alguma tela passar a usar
+ * uma delas, basta incluí-la aqui.
+ */
+const COLUNAS_CARGA_MAQUINA = [
+  "id",
+  "criado_em",
+  "tipo",
+  "status",
+  "material",
+  "mp",
+  "injetora",
+  "no_injetora",
+  "op",
+  "cod_prod",
+  "cliente",
+  "operador",
+  "inicio",
+  "fim",
+  "inicio_dia",
+  "fim_dia",
+  "lista_de_data",
+  "duracao",
+  "tempo",
+  "motivo",
+  "justificativa",
+  "peso",
+  "conforme",
+  "danificada",
+].join(",");
+
 const DB_NAME = "dashboard-pedras-db";
 const DB_VERSION = 1;
 
@@ -307,7 +343,7 @@ async function buscarTodosOsRegistros() {
 
     const { data, error } = await supabase
       .from("carga_maquina")
-      .select("*")
+      .select(COLUNAS_CARGA_MAQUINA)
       .order("criado_em", {
         ascending: true,
       })
@@ -352,7 +388,7 @@ async function buscarNovosRegistros(ultimaAtualizacao) {
 
     let consulta = supabase
       .from("carga_maquina")
-      .select("*")
+      .select(COLUNAS_CARGA_MAQUINA)
       .order("criado_em", {
         ascending: true,
       })
