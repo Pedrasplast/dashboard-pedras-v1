@@ -27,10 +27,14 @@ async function esperar(ms: number) {
 
 /* =========================================================
    LISTAR SNAPSHOTS
+
+   Busca apenas os dois campos usados (fornecedor e comprador)
+   em vez do snapshot JSON completo de cada pedido.
+   Antes: ~11 MB por chamada. Agora: ~0,4 MB, mesmo resultado.
 ========================================================= */
 
 async function listarTodosSnapshots(db: ReturnType<typeof createClient>) {
-  const snapshots: Array<Record<string, unknown>> = [];
+  const snapshots: Array<{ fornecedor: unknown; comprador: unknown }> = [];
 
   const tamanhoPagina = 1000;
 
@@ -39,7 +43,8 @@ async function listarTodosSnapshots(db: ReturnType<typeof createClient>) {
   while (true) {
     const pagina = await db
       .from("pedidos_compra_omie")
-      .select("snapshot")
+      .select("fornecedor:snapshot->>fornecedor,comprador:snapshot->>comprador")
+      .order("cod_ped_compra", { ascending: true })
       .range(inicio, inicio + tamanhoPagina - 1);
 
     if (pagina.error) {
@@ -49,13 +54,10 @@ async function listarTodosSnapshots(db: ReturnType<typeof createClient>) {
     const registros = Array.isArray(pagina.data) ? pagina.data : [];
 
     for (const registro of registros) {
-      if (
-        registro?.snapshot &&
-        typeof registro.snapshot === "object" &&
-        !Array.isArray(registro.snapshot)
-      ) {
-        snapshots.push(registro.snapshot as Record<string, unknown>);
-      }
+      snapshots.push({
+        fornecedor: registro?.fornecedor ?? null,
+        comprador: registro?.comprador ?? null,
+      });
     }
 
     if (registros.length < tamanhoPagina) {
