@@ -7,6 +7,7 @@ import { Activity, CirclePause, Clock3, Factory, Search, Timer, X } from "lucide
 import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 
 import {
+  formatarDataInstante,
   formatarDataRegistro,
   formatarHorarioRegistro,
   obterDuracaoSegundos,
@@ -238,14 +239,15 @@ function ModalOcorrenciasParadas({
               <tr>
                 <th className="dp-ocorrencias-col-numero">#</th>
 
-                <th>Data</th>
+                <th>Data início</th>
+                <th>Data fim</th>
                 <th>Injetora</th>
                 <th>Motivo</th>
                 <th>Descrição / justificativa</th>
                 <th>OP</th>
                 <th>Operador</th>
-                <th>Início</th>
-                <th>Fim</th>
+                <th>Hora início</th>
+                <th>Hora fim</th>
                 <th>Duração</th>
               </tr>
             </thead>
@@ -253,7 +255,7 @@ function ModalOcorrenciasParadas({
             <tbody>
               {lista.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="dp-ocorrencias-vazio">
+                  <td colSpan={11} className="dp-ocorrencias-vazio">
                     <Search size={22} />
 
                     <strong>Nenhuma ocorrência encontrada</strong>
@@ -276,6 +278,8 @@ function ModalOcorrenciasParadas({
                       <td className="dp-ocorrencias-col-numero">{indice + 1}</td>
 
                       <td>{formatarDataRegistro(registro)}</td>
+
+                      <td>{formatarDataInstante(registro?.fim || registro?.fim_dia)}</td>
 
                       <td>
                         <span className="dp-ocorrencias-injetora">{injetora || "—"}</span>
