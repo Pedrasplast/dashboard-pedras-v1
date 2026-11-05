@@ -25,6 +25,8 @@ import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
 
 import { useCargaMaquina } from "@/lib/cargaMaquina";
 
+import { filtrarRegistrosDashboard } from "@/features/dashboard/dashboard.utils";
+
 import { useNavigate } from "@/lib/navegacao";
 
 import { supabase } from "@/lib/supabaseClient";
@@ -50,17 +52,22 @@ import { converterNumeroFlexivel } from "@/shared/lib/numeros";
 const INTERVALO_RESUMO_PEDIDOS = 15 * 60 * 1000;
 
 /*
- * A Home não seleciona Tipo 3.
- *
- * Portanto:
- *
- * Final de Semana
- * Feriado sem expediente
- * Turno Reduzido
- *
- * não entram em Hora Parada.
+ * A Home usa a mesma regra de "hora parada" dos dashboards
+ * (filtrarRegistrosDashboard): Tipos 1 e 2. O Tipo 3 (intervalos,
+ * alimentação, troca de turno, fim de semana, feriado, turno
+ * reduzido...) não entra.
  */
-const TIPOS_PRODUCAO_HOME = [];
+const TIPOS_PRODUCAO_HOME = ["1", "2"];
+
+const FILTROS_PRODUCAO_HOME = Object.freeze({
+  dataInicio: "",
+  dataFim: "",
+  injetora: "Todos",
+  turno: "Todos",
+  cod_prod: "Todos",
+  mp: "Todos",
+  tipo: TIPOS_PRODUCAO_HOME,
+});
 
 /* =========================================================
    USUÁRIO
@@ -262,7 +269,16 @@ function Home({ user, isAdmin }) {
      MÉTRICAS DE PRODUÇÃO
   ===================================================== */
 
-  const metricasProducao = useDashboardMetrics(dadosProducao, TIPOS_PRODUCAO_HOME);
+  const dadosProducaoConsiderados = useMemo(
+    () =>
+      filtrarRegistrosDashboard(dadosProducao, FILTROS_PRODUCAO_HOME, {
+        ajustarParadasPorTurno: true,
+        tiposParada: TIPOS_PRODUCAO_HOME,
+      }),
+    [dadosProducao],
+  );
+
+  const metricasProducao = useDashboardMetrics(dadosProducaoConsiderados, TIPOS_PRODUCAO_HOME);
 
   /* =====================================================
      FINANCEIRO

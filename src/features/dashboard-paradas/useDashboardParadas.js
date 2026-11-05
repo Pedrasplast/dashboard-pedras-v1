@@ -31,7 +31,8 @@ export const FILTROS_INICIAIS_PARADAS = Object.freeze({
   cod_prod: "Todos",
   mp: "Todos",
 
-  tipo: [],
+  // Padrão: Tipos 1 e 2. Tipo 3 só entra quando marcado.
+  tipo: ["1", "2"],
 
   motivo: "Todos",
 });
