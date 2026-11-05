@@ -158,6 +158,26 @@ describe("regra única de hora parada", () => {
     expect(turnoI).toContain(PRODUZINDO_11H30);
   });
 
+  it("parada sem tipo conta como Tipo 2", () => {
+    const semTipo = parada({
+      tipo: "",
+      motivo: "",
+      inicio: "2026-10-15T08:00:00-03:00",
+      fim: "2026-10-15T09:00:00-03:00",
+    });
+    const filtrar = (tipo) =>
+      filtrarRegistrosDashboard([semTipo], { ...FILTROS_BASE, tipo }, {
+        ajustarParadasPorTurno: true,
+        tiposParada: tipo,
+      });
+
+    expect(filtrar([])).toHaveLength(1);
+    expect(filtrar(["2"])).toHaveLength(1);
+    expect(filtrar(["1"])).toHaveLength(0);
+    expect(filtrar(["3"])).toHaveLength(0);
+    expect(filtrarParadas([semTipo], { ...FILTROS_BASE, tipo: [] })).toHaveLength(1);
+  });
+
   it("registros que não são parada não são afetados pelo filtro de tipo", () => {
     const resultado = filtrarRegistrosDashboard(TODOS, FILTROS_BASE, {
       ajustarParadasPorTurno: true,

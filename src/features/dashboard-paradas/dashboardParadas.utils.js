@@ -4,6 +4,7 @@ import {
   extrairDataISORegistro,
   extrairHorarioMinutosRegistro,
   filtrarRegistrosDashboard,
+  registroComTipoParada,
 } from "@/features/dashboard/dashboard.utils";
 
 import {
@@ -184,7 +185,8 @@ export function filtrarParadas(registros, filtros) {
 
   const chaveMotivoSelecionado = chaveTexto(motivoSelecionado);
 
-  return base.filter((registro) => {
+  // Parada sem tipo conta como Tipo 2 (mesma regra do Dashboard de Produção).
+  return base.map(registroComTipoParada).filter((registro) => {
     if (!ehRegistroParada(registro)) {
       return false;
     }

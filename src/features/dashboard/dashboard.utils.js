@@ -444,9 +444,12 @@ function ajustarRegistroAoTurno(registro, turno) {
    - Nenhum tipo marcado = Tipos 1 e 2.
    - Tipo 3 (intervalos, alimentação, troca de turno, fim de
      semana, feriado, turno reduzido...) só entra quando marcado.
+   - Parada sem tipo conta como Tipo 2 (não some dos indicadores
+     se uma importação trouxer apontamento sem tipo).
 ========================================================= */
 
 const TIPOS_PARADA_PADRAO = Object.freeze(["1", "2"]);
+const TIPO_PARADA_SEM_TIPO = "2";
 
 export function normalizarTiposParadaSelecionados(tipos) {
   const lista = (Array.isArray(tipos) ? tipos : [tipos])
@@ -461,9 +464,26 @@ export function normalizarTiposParadaSelecionados(tipos) {
 }
 
 function tipoParadaDoRegistro(registro) {
-  return String(registro?.tipo ?? "")
+  const tipo = String(registro?.tipo ?? "")
     .trim()
     .replace(/\s+/g, "");
+
+  return tipo || TIPO_PARADA_SEM_TIPO;
+}
+
+/*
+ * Devolve a parada com o tipo preenchido (sem tipo → Tipo 2), para que
+ * gráficos e listas que agrupam por tipo a enxerguem. Outros registros
+ * voltam sem mudança.
+ */
+export function registroComTipoParada(registro) {
+  if (normalizarTextoLocal(registro?.status) !== "indisponivel") {
+    return registro;
+  }
+
+  const tipo = tipoParadaDoRegistro(registro);
+
+  return registro.tipo === tipo ? registro : { ...registro, tipo };
 }
 
 export function extrairHorarioMinutosRegistro(registro) {
