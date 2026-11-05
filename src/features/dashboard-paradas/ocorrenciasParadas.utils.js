@@ -93,6 +93,28 @@ export function formatarDataRegistro(registro) {
   return "—";
 }
 
+/*
+ * Data (dd/mm/aaaa) de um instante, ex.: o fim do apontamento.
+ * Uma parada pode terminar em outro dia (fim de semana, feriado).
+ */
+export function formatarDataInstante(valor) {
+  if (!valor) {
+    return "—";
+  }
+
+  const data = new Date(valor);
+
+  if (Number.isNaN(data.getTime())) {
+    return "—";
+  }
+
+  return data.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 /* =========================================================
    HORÁRIO
 ========================================================= */
