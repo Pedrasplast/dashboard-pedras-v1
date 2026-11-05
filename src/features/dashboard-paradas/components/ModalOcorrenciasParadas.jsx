@@ -1,6 +1,6 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 import { Activity, CirclePause, Clock3, Factory, Search, Timer, X } from "lucide-react";
 
@@ -9,7 +9,6 @@ import { formatarDuracaoResumida } from "../dashboardParadas.utils";
 import {
   formatarDataRegistro,
   formatarHorarioRegistro,
-  normalizarTextoOcorrencia,
   obterDuracaoSegundos,
   obterInjetoraRegistro,
   obterMotivoRegistro,
@@ -57,8 +56,6 @@ function ModalOcorrenciasParadas({
   onFechar,
   icone,
 }) {
-  const [busca, setBusca] = useState("");
-
   const Icone = icone || CirclePause;
 
   /* =======================================================
@@ -70,23 +67,6 @@ function ModalOcorrenciasParadas({
       onFechar();
     }
   }, [onFechar]);
-
-  /* =======================================================
-     REINICIAR BUSCA
-  ======================================================= */
-
-  useEffect(() => {
-    if (aberto) {
-      setBusca("");
-    }
-  }, [aberto, titulo]);
-
-  /* =======================================================
-     MODAL ABERTO
-
-     - ESC fecha
-     - bloqueia scroll da página
-  ======================================================= */
 
   /* =======================================================
      BASE
@@ -123,37 +103,6 @@ function ModalOcorrenciasParadas({
       injetoras: injetoras.size,
     };
   }, [lista]);
-
-  /* =======================================================
-     PESQUISA
-
-     Preserva a ordem original dos registros.
-  ======================================================= */
-
-  const ocorrenciasPesquisadas = useMemo(() => {
-    const termo = normalizarTextoOcorrencia(busca);
-
-    if (!termo) {
-      return lista;
-    }
-
-    return lista.filter((registro) => {
-      const campos = [
-        registro?.injetora,
-        registro?.no_injetora,
-        registro?.motivo,
-        registro?.justificativa,
-        registro?.descricao,
-        registro?.op,
-        registro?.operador,
-        registro?.cod_prod,
-        registro?.material,
-        registro?.cliente,
-      ];
-
-      return campos.some((campo) => normalizarTextoOcorrencia(campo).includes(termo));
-    });
-  }, [lista, busca]);
 
   if (!aberto) {
     return null;
@@ -280,44 +229,6 @@ function ModalOcorrenciasParadas({
         </div>
 
         {/* ===============================================
-            BUSCA
-        =============================================== */}
-
-        <div className="dp-ocorrencias-toolbar dp-ocorrencias-toolbar--novo">
-          <label className="dp-ocorrencias-busca">
-            <Search size={16} />
-
-            <input
-              type="search"
-              value={busca}
-              onChange={(event) => setBusca(event.target.value)}
-              placeholder="Pesquisar injetora, justificativa, OP, operador ou produto..."
-            />
-
-            {busca && (
-              <button
-                type="button"
-                className="dp-ocorrencias-limpar-busca"
-                onClick={() => setBusca("")}
-                aria-label="Limpar busca"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </label>
-
-          <div className="dp-ocorrencias-toolbar-info">
-            <span className="dp-ocorrencias-toolbar-info__label">Registros exibidos</span>
-
-            <div className="dp-ocorrencias-total-encontrado">
-              <strong>{formatarNumero(ocorrenciasPesquisadas.length)}</strong>
-
-              <span>de {formatarNumero(resumo.total)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ===============================================
             TABELA COMPLETA COM ROLAGEM
         =============================================== */}
 
@@ -340,18 +251,18 @@ function ModalOcorrenciasParadas({
             </thead>
 
             <tbody>
-              {ocorrenciasPesquisadas.length === 0 ? (
+              {lista.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="dp-ocorrencias-vazio">
                     <Search size={22} />
 
-                    <strong>Nenhum registro encontrado</strong>
+                    <strong>Nenhuma ocorrência encontrada</strong>
 
-                    <span>Tente alterar o termo da pesquisa.</span>
+                    <span>Não há registros para os filtros atuais.</span>
                   </td>
                 </tr>
               ) : (
-                ocorrenciasPesquisadas.map((registro, indice) => {
+                lista.map((registro, indice) => {
                   const justificativa = String(
                     registro?.justificativa || registro?.descricao || "",
                   ).trim();

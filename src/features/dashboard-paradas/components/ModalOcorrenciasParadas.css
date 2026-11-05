@@ -66,7 +66,7 @@
 .dp-ocorrencias-header--novo {
   position: relative;
 
-  min-height: 104px;
+  min-height: 0;
 
   display: flex;
   align-items: center;
@@ -81,6 +81,13 @@
   background: linear-gradient(120deg, #102a4c 0%, #163b66 48%, var(--color-primary-hover) 135%);
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cabeçalho mais baixo que o padrão dos modais: sobra espaço para a tabela. */
+.sistema-modal .dp-ocorrencias-header--novo[data-modal-header] {
+  align-items: center;
+
+  padding: 16px 24px 14px;
 }
 
 .dp-ocorrencias-header--novo::after {
@@ -393,178 +400,11 @@
 }
 
 /* =========================================================
-   TOOLBAR / PESQUISA
-========================================================= */
-
-.dp-ocorrencias-toolbar--novo {
-  min-height: 62px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 18px;
-
-  padding: 11px 22px;
-
-  background: var(--color-surface);
-
-  border-bottom: 1px solid #dce5ef;
-}
-
-.dp-ocorrencias-busca {
-  width: min(680px, 100%);
-
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 9px;
-
-  padding: 0 11px;
-
-  color: var(--color-text-muted);
-
-  background: var(--color-surface-subtle);
-
-  border: 1px solid #d5dfeb;
-
-  border-radius: 9px;
-
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
-
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
-}
-
-.dp-ocorrencias-busca:focus-within {
-  background: var(--color-surface);
-
-  border-color: #3b82f6;
-
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
-}
-
-.dp-ocorrencias-busca input {
-  flex: 1;
-
-  min-width: 0;
-
-  padding: 0;
-
-  color: var(--color-text);
-
-  background: transparent;
-
-  border: 0;
-
-  outline: 0;
-
-  font-family: inherit;
-
-  font-size: 0.73rem;
-}
-
-.dp-ocorrencias-busca input::placeholder {
-  color: var(--color-text-light);
-}
-
-.dp-ocorrencias-limpar-busca {
-  width: 25px;
-  height: 25px;
-
-  flex: 0 0 auto;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 0;
-
-  color: var(--color-text-light);
-
-  background: transparent;
-
-  border: 0;
-
-  border-radius: var(--radius-sm);
-
-  cursor: pointer;
-}
-
-.dp-ocorrencias-limpar-busca:hover {
-  color: var(--color-text-strong);
-
-  background: var(--color-border);
-}
-
-.dp-ocorrencias-toolbar-info {
-  flex: 0 0 auto;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 9px;
-}
-
-.dp-ocorrencias-toolbar-info__label {
-  color: var(--color-text-light);
-
-  font-size: 0.62rem;
-
-  font-weight: var(--font-weight-bold);
-}
-
-.dp-ocorrencias-total-encontrado {
-  min-width: 88px;
-
-  display: inline-flex;
-
-  align-items: baseline;
-
-  justify-content: center;
-
-  gap: var(--space-1);
-
-  padding: 7px 10px;
-
-  color: var(--color-primary-hover);
-
-  background: var(--color-primary-soft);
-
-  border: 1px solid #dbeafe;
-
-  border-radius: var(--radius-md);
-}
-
-.dp-ocorrencias-total-encontrado strong {
-  font-size: 0.82rem;
-
-  font-weight: 850;
-}
-
-.dp-ocorrencias-total-encontrado span {
-  color: var(--color-text-muted);
-
-  font-size: 0.61rem;
-
-  font-weight: var(--font-weight-bold);
-}
-
-/* =========================================================
    TABELA EXECUTIVA
 ========================================================= */
 
 /*
- * Em telas baixas (ou com zoom), cabeçalho + indicadores + busca +
+ * Em telas baixas (ou com zoom), cabeçalho + indicadores +
  * altura mínima da tabela não cabem no modal. Nesse caso o modal
  * inteiro rola, em vez de cortar o fim da tabela.
  */
@@ -874,22 +714,6 @@
 
   .dp-ocorrencias-kpi__icon {
     display: none;
-  }
-
-  .dp-ocorrencias-toolbar--novo {
-    align-items: stretch;
-
-    flex-direction: column;
-
-    padding: 10px var(--space-3);
-  }
-
-  .dp-ocorrencias-busca {
-    width: 100%;
-  }
-
-  .dp-ocorrencias-toolbar-info {
-    justify-content: space-between;
   }
 
   .dp-ocorrencias-tabela-wrap {
