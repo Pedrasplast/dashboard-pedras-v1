@@ -563,10 +563,21 @@
    TABELA EXECUTIVA
 ========================================================= */
 
-.dp-ocorrencias-tabela-wrap {
-  flex: 1;
+/*
+ * Em telas baixas (ou com zoom), cabeçalho + indicadores + busca +
+ * altura mínima da tabela não cabem no modal. Nesse caso o modal
+ * inteiro rola, em vez de cortar o fim da tabela.
+ */
+.sistema-modal.dp-ocorrencias-modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
-  min-height: 240px;
+.dp-ocorrencias-tabela-wrap {
+  flex: 1 0 auto;
+  height: 0;
+
+  min-height: 220px;
 
   margin: 14px var(--space-4) var(--space-4);
 
