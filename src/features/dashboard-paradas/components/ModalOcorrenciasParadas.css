@@ -83,13 +83,6 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Cabeçalho mais baixo que o padrão dos modais: sobra espaço para a tabela. */
-.sistema-modal .dp-ocorrencias-header--novo[data-modal-header] {
-  align-items: center;
-
-  padding: 16px 24px 14px;
-}
-
 .dp-ocorrencias-header--novo::after {
   content: "";
 
@@ -402,34 +395,6 @@
 /* =========================================================
    TABELA EXECUTIVA
 ========================================================= */
-
-/*
- * Em telas baixas (ou com zoom), cabeçalho + indicadores +
- * altura mínima da tabela não cabem no modal. Nesse caso o modal
- * inteiro rola, em vez de cortar o fim da tabela.
- */
-.sistema-modal.dp-ocorrencias-modal {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/*
- * Altura: o modal ocupa toda a área abaixo do menu, com uma margem
- * pequena em cima e embaixo, para a tabela ter o máximo de linhas.
- *
- * O seletor duplo é necessário: no build de produção o Modal.css
- * (height: auto) é carregado depois deste arquivo e anulava a altura,
- * deixando o modal do tamanho do conteúdo.
- */
-.sistema-modal-overlay.dp-ocorrencias-overlay-tela {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.sistema-modal.dp-ocorrencias-modal {
-  height: 100%;
-  max-height: 100%;
-}
 
 .dp-ocorrencias-tabela-wrap {
   flex: 1 0 auto;
@@ -788,5 +753,45 @@
     background: #f0fdfa;
 
     border-color: #ccfbf1;
+  }
+}
+
+/* =========================================================
+   AJUSTES DO MODAL PADRÃO (camada componentes-padrao)
+
+   O Modal.css fica na camada "componentes-padrao", que vence a
+   camada "telas" (src/features) sem olhar especificidade nem ordem
+   (ver vite.config.ts). Por isso as regras que mudam o modal padrão
+   (.sistema-modal*) precisam ficar nesta mesma camada — igual ao
+   FinanceiroDetalhes.css. Dentro da camada, os seletores abaixo
+   são mais específicos que os do Modal.css.
+========================================================= */
+
+@layer componentes-padrao {
+  /*
+   * Altura: o modal ocupa toda a área abaixo do menu, com 10 px
+   * em cima e embaixo, para a tabela ter o máximo de linhas.
+   */
+  .sistema-modal-overlay.dp-ocorrencias-overlay-tela {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /*
+   * Em telas baixas (ou com zoom), se cabeçalho + indicadores +
+   * altura mínima da tabela não couberem, o modal inteiro rola
+   * em vez de cortar o fim da tabela.
+   */
+  .sistema-modal.dp-ocorrencias-modal {
+    height: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Cabeçalho mais baixo que o padrão dos modais. */
+  .sistema-modal .dp-ocorrencias-header--novo[data-modal-header] {
+    align-items: center;
+    padding: 16px 24px 14px;
   }
 }
