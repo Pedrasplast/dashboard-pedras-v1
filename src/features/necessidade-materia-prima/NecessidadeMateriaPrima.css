@@ -1,4 +1,3 @@
-
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA
    - Estrutura e navbar
@@ -18,8 +17,8 @@
 .necessidade-page {
   width: 100%;
   min-height: 100%;
-  padding: 88px 24px 24px;
-  background: #f8fafc;
+  padding: 88px var(--space-6) var(--space-6);
+  background: var(--color-surface-subtle);
   box-sizing: border-box;
 }
 
@@ -42,26 +41,26 @@
 
 .necessidade-estado,
 .necessidade-erro {
-  margin: 16px 0;
-  padding: 24px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #475569;
-  font-size: 14px;
+  margin: var(--space-4) 0;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
   text-align: center;
 }
 
 .necessidade-erro {
   border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .necessidade-observacao {
   margin: 14px 0;
-  color: #64748b;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
   line-height: 1.6;
 }
 
@@ -71,9 +70,9 @@
 
 .necessidade-atualizando {
   display: inline-block;
-  margin-top: 8px;
-  color: #64748b;
-  font-size: 12px;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
 }
 
 /* ============================================================
@@ -82,22 +81,22 @@
 
 .necessidade-pendencias {
   margin: 14px 0 18px;
-  padding: 14px 16px;
+  padding: 14px var(--space-4);
   border: 1px solid #fcd34d;
   border-radius: 11px;
-  background: #fffbeb;
+  background: var(--color-warning-soft);
   color: #92400e;
 }
 
 .necessidade-pendencias-cabecalho {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .necessidade-pendencias-cabecalho > svg {
   flex-shrink: 0;
-  color: #b45309;
+  color: var(--color-warning-hover);
 }
 
 .necessidade-pendencias-texto {
@@ -108,14 +107,14 @@
 .necessidade-pendencias-texto strong {
   display: block;
   color: #92400e;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
 }
 
 .necessidade-pendencias-texto p {
-  margin: 4px 0 0;
+  margin: var(--space-1) 0 0;
   color: #a16207;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   line-height: 1.5;
 }
 
@@ -126,14 +125,14 @@
   gap: 6px;
   flex-shrink: 0;
   min-height: 36px;
-  padding: 7px 12px;
+  padding: 7px var(--space-3);
   border: 1px solid #fbbf24;
-  border-radius: 8px;
-  background: #ffffff;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   color: #92400e;
   font: inherit;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
 }
 
@@ -147,7 +146,7 @@
 
 .necessidade-pendencias-conteudo .paginacao {
   margin-top: 0;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-top: 0;
   border-radius: 0 0 10px 10px;
 }
@@ -158,7 +157,7 @@
 
 .necessidade-tabela-pendencias th,
 .necessidade-tabela-pendencias td {
-  padding: 11px 12px;
+  padding: 11px var(--space-3);
 }
 
 .necessidade-tabela-pendencias tbody td:nth-child(2) {
@@ -184,8 +183,8 @@
   align-items: center;
   gap: 6px 10px;
   color: #92400e;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
 }
 
 .necessidade-motivo::before {
@@ -199,7 +198,7 @@
 
 .necessidade-motivo-peso_suspeito::before,
 .necessidade-motivo-peso_recusado::before {
-  background: #dc2626;
+  background: var(--color-danger);
 }
 
 .necessidade-motivo-acoes {
@@ -212,13 +211,13 @@
 .necessidade-btn-desfazer {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   min-height: 26px;
   padding: 3px 9px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font: inherit;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
 }
 
@@ -230,14 +229,14 @@
 
 .necessidade-btn-recusar {
   border: 1px solid #fca5a5;
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .necessidade-btn-desfazer {
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #475569;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
 }
 
 .necessidade-btn-aceitar:disabled,
@@ -249,26 +248,26 @@
 
 .necessidade-pendencias-erro {
   margin: 0 0 10px;
-  color: #b91c1c;
-  font-size: 12px;
-  font-weight: 700;
+  color: var(--color-danger-hover);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
 }
 
 .necessidade-pesos-aceitos {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  margin-top: var(--space-3);
+  padding: 10px var(--space-3);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: #ffffff;
-  color: #334155;
-  font-size: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+  font-size: var(--font-size-caption);
 }
 
 .necessidade-pesos-aceitos ul {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 8px 0 0;
+  margin: var(--space-2) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -278,7 +277,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 /* ============================================================
@@ -288,14 +287,14 @@
 .necessidade-alerta {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin: 12px 0;
-  padding: 13px 16px;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+  padding: 13px var(--space-4);
   border: 1px solid #fed7aa;
   border-radius: 10px;
   background: #fff7ed;
   color: #9a3412;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   line-height: 1.5;
 }
 
@@ -315,7 +314,7 @@
 
 .necessidade-alerta ul {
   margin: 6px 0 0;
-  padding-left: 20px;
+  padding-left: var(--space-5);
 }
 
 .necessidade-alerta li {
@@ -330,39 +329,39 @@
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
   margin: 18px 0 14px;
-  padding: 4px;
+  padding: var(--space-1);
 }
 
 .necessidade-aba {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-height: 42px;
-  padding: 10px 16px;
+  padding: 10px var(--space-4);
   border: 1px solid #dbe3ef;
   border-radius: 10px;
-  background: #ffffff;
-  color: #334155;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
   font: inherit;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
 }
 
 .necessidade-aba:hover {
-  background: #eff6ff;
+  background: var(--color-primary-soft);
   border-color: #93c5fd;
 }
 
 .necessidade-aba-ativa,
 .necessidade-aba[aria-selected="true"] {
-  background: #eff6ff;
-  border-color: #2563eb;
-  color: #1d4ed8;
-  box-shadow: inset 0 -2px 0 #2563eb;
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+  box-shadow: inset 0 -2px 0 var(--color-primary);
 }
 
 .necessidade-aba:focus-visible {
@@ -371,7 +370,7 @@
 }
 
 .necessidade-aba-alerta {
-  color: #d97706;
+  color: var(--color-warning);
 }
 
 #necessidade-painel-material {
@@ -392,7 +391,7 @@
   -webkit-overflow-scrolling: touch;
   border: 1px solid #dbe3ef;
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 .necessidade-tabela {
@@ -400,36 +399,36 @@
   min-width: 1100px;
   border-collapse: collapse;
   border-spacing: 0;
-  background: #ffffff;
-  color: #334155;
-  font-size: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+  font-size: var(--font-size-caption);
 }
 
 .necessidade-tabela thead {
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 }
 
 .necessidade-tabela thead th {
-  padding: 14px 12px;
+  padding: 14px var(--space-3);
   border-bottom: 1px solid #dbe3ef;
   color: #1e293b;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
   text-align: left;
   white-space: nowrap;
 }
 
 .necessidade-tabela tbody td,
 .necessidade-tabela tbody th {
-  padding: 12px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
 }
 
 .necessidade-tabela tbody th {
-  color: #0f172a;
-  font-weight: 700;
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
   text-align: left;
 }
 
@@ -439,11 +438,11 @@
 }
 
 .necessidade-tabela tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 .necessidade-coluna-numero {
-  text-align: right !important;
+  text-align: right;
 }
 
 /* ============================================================
@@ -479,20 +478,16 @@
 }
 
 .necessidade-linha-resumo th {
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 800;
 }
 
 .necessidade-linha-resumo td {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .necessidade-linha-resumo-destaque {
-  background: linear-gradient(
-    180deg,
-    #f8fbff 0%,
-    #eef6ff 100%
-  );
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
 }
 
 .necessidade-linha-resumo-destaque th,
@@ -506,11 +501,11 @@
   align-items: center;
   justify-content: center;
   min-height: 34px;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
   background: #dbeafe;
   color: #1e3a8a;
-  font-size: 13px;
+  font-size: var(--font-size-body);
   font-weight: 800;
   letter-spacing: 0.02em;
 }
@@ -529,33 +524,33 @@
   white-space: nowrap;
   min-height: 38px;
   min-width: 108px;
-  padding: 8px 10px;
+  padding: var(--space-2) 10px;
   border: 1px solid #dbeafe;
   border-radius: 10px;
-  background: #ffffff;
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 700;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
 }
 
 .necessidade-resumo-valor-secundario {
-  background: #eff6ff;
+  background: var(--color-primary-soft);
   border-color: #bfdbfe;
   color: #1e3a8a;
 }
 
 .necessidade-resumo-valor-negativo {
-  background: #fef2f2;
+  background: var(--color-danger-soft);
   border-color: #fecaca;
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .necessidade-resumo-valor-principal {
   min-width: 132px;
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  color: #ffffff;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-text-inverse);
   font-size: 15px;
   font-weight: 800;
   box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
@@ -566,7 +561,7 @@
   background: #ecfeff;
   border-color: #a5f3fc;
   color: #155e75;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 800;
 }
 
@@ -579,16 +574,16 @@
   min-height: 38px !important;
   border: 1.5px solid #93c5fd !important;
   border-radius: 10px !important;
-  background: #ffffff !important;
-  text-align: center !important;
+  background: var(--color-surface);
+  text-align: center;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
 
 .necessidade-resumo-input:focus {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 3px #dbeafe !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px #dbeafe;
 }
 
 .necessidade-resumo-celula-necessidade,
@@ -597,7 +592,7 @@
 }
 
 .necessidade-negativo {
-  color: #dc2626 !important;
+  color: var(--color-danger);
   font-weight: 800;
 }
 
@@ -610,19 +605,19 @@
   max-width: 100%;
   min-height: 36px;
   padding: 7px 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   outline: none;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
 .necessidade-tabela input[type="number"]:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px #dbeafe;
 }
 
@@ -640,21 +635,21 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .necessidade-detalhamento-cabecalho h3 {
   margin: 0;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 17px;
   font-weight: 800;
 }
 
 .necessidade-detalhamento-cabecalho p {
   margin: 5px 0 0;
-  color: #64748b;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
   line-height: 1.5;
 }
 
@@ -662,13 +657,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 7px 12px;
+  padding: 7px var(--space-3);
   border: 1px solid #dbeafe;
-  border-radius: 999px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  font-size: 12px;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
   white-space: nowrap;
 }
 
@@ -688,12 +683,12 @@
 .necessidade-tabela-produtos tbody td,
 .necessidade-tabela-produtos tbody th,
 .necessidade-tabela-produtos .necessidade-coluna-numero {
-  text-align: left !important;
+  text-align: left;
 }
 
 .necessidade-detalhamento-vazio {
-  padding: 28px 16px !important;
-  color: #64748b;
+  padding: 28px var(--space-4) !important;
+  color: var(--color-text-muted);
   text-align: center !important;
 }
 
@@ -703,7 +698,7 @@
 
 .necessidade-detalhamento > .paginacao {
   margin-top: 0;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-top: 0;
   border-radius: 0 0 10px 10px;
 }
@@ -718,30 +713,30 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 16px;
-  margin: 16px 0;
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
   border: 1px solid #dbe5f2;
-  border-radius: 12px;
-  background: #ffffff;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 
 .necessidade-periodo-titulo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
   color: #10254b;
 }
 
 .necessidade-periodo-titulo strong {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
 }
 
 .necessidade-periodo-titulo span,
 .necessidade-periodo-contagem {
-  color: #64748b;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
 }
 
 .necessidade-periodo-campos {
@@ -756,9 +751,9 @@
   flex-direction: column;
   gap: 5px;
   min-width: 0;
-  color: #334155;
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--color-text-strong);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
 }
 
 .necessidade-periodo-campos input[type="date"] {
@@ -766,17 +761,17 @@
   min-width: 145px;
   max-width: 100%;
   padding: 0 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   outline: none;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
 }
 
 .necessidade-periodo-campos input[type="date"]:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px #dbeafe;
 }
 
@@ -791,23 +786,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex: 0 0 auto;
   align-self: flex-end;
   min-height: 38px;
   white-space: nowrap;
 }
 
-.necessidade-page
-  .filtros-compartilhados-limpar.filtros-limpar-ativo:not(:disabled) {
-  color: #dc2626;
+.necessidade-page .filtros-compartilhados-limpar.filtros-limpar-ativo:not(:disabled) {
+  color: var(--color-danger);
   border-color: #fca5a5;
-  background: #fef2f2;
+  background: var(--color-danger-soft);
 }
 
-.necessidade-page
-  .filtros-compartilhados-limpar.filtros-limpar-ativo:hover:not(:disabled) {
-  color: #b91c1c;
+.necessidade-page .filtros-compartilhados-limpar.filtros-limpar-ativo:hover:not(:disabled) {
+  color: var(--color-danger-hover);
   border-color: #ef4444;
   background: #fee2e2;
 }
@@ -820,8 +813,8 @@
 .necessidade-periodo-erro {
   width: 100%;
   margin: 0;
-  color: #b91c1c;
-  font-size: 12px;
+  color: var(--color-danger-hover);
+  font-size: var(--font-size-caption);
   line-height: 1.5;
 }
 
@@ -830,26 +823,24 @@
   margin: 0;
 }
 
-
 /* Estoque negativo */
 .necessidade-page .necessidade-estoque-negativo {
-  color: #dc2626 !important;
-  font-weight: 800 !important;
+  color: var(--color-danger) !important;
+  font-weight: 800;
 }
 
 /* Destaque opcional do campo negativo */
 .necessidade-page .necessidade-estoque-negativo-destaque {
-  color: #dc2626 !important;
-  background-color: #fef2f2 !important;
+  color: var(--color-danger) !important;
+  background-color: var(--color-danger-soft) !important;
   border-color: #fecaca !important;
 }
-
 
 /* ============================================================
    RESPONSIVIDADE — NOTEBOOKS E TABLETS
 ============================================================ */
 
-@media (max-width: 1024px) {
+@media (--notebook) {
   .necessidade-page {
     padding: 78px 18px 18px;
   }
@@ -878,9 +869,9 @@
    RESPONSIVIDADE — TABLETS E CELULARES
 ============================================================ */
 
-@media (max-width: 768px) {
+@media (--tablet) {
   .necessidade-page {
-    padding: 76px 12px 12px;
+    padding: 76px var(--space-3) var(--space-3);
   }
 
   .necessidade-pendencias-cabecalho {
@@ -893,17 +884,17 @@
   }
 
   .necessidade-pendencias {
-    padding: 12px;
+    padding: var(--space-3);
   }
 
   .necessidade-alerta {
-    padding: 12px;
+    padding: var(--space-3);
   }
 
   .necessidade-aba {
     min-height: 40px;
-    padding: 9px 12px;
-    font-size: 12px;
+    padding: 9px var(--space-3);
+    font-size: var(--font-size-caption);
   }
 
   .necessidade-tabela-produtos {
@@ -922,34 +913,31 @@
     min-width: 1480px;
   }
 
-  .necessidade-resumo-container
-  .necessidade-tabela thead th {
-    padding: 12px 10px;
-    font-size: 11px;
+  .necessidade-resumo-container .necessidade-tabela thead th {
+    padding: var(--space-3) 10px;
+    font-size: var(--font-size-xs);
   }
 
-  .necessidade-resumo-container
-  .necessidade-tabela tbody td,
-  .necessidade-resumo-container
-  .necessidade-tabela tbody th {
-    padding: 12px 10px;
+  .necessidade-resumo-container .necessidade-tabela tbody td,
+  .necessidade-resumo-container .necessidade-tabela tbody th {
+    padding: var(--space-3) 10px;
   }
 
   .necessidade-resumo-material {
-    font-size: 12px;
+    font-size: var(--font-size-caption);
   }
 
   .necessidade-resumo-valor {
     min-width: 96px;
-    font-size: 12px;
+    font-size: var(--font-size-caption);
   }
 
   .necessidade-resumo-valor-principal {
-    font-size: 14px;
+    font-size: var(--font-size-md);
   }
 
   .necessidade-resumo-valor-destaque {
-    font-size: 13px;
+    font-size: var(--font-size-body);
   }
 
   .necessidade-resumo-input {
@@ -970,7 +958,7 @@
    RESPONSIVIDADE — CELULARES PEQUENOS
 ============================================================ */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .necessidade-page {
     padding: 72px 10px 10px;
   }
@@ -980,7 +968,7 @@
   }
 
   .necessidade-detalhamento-contador {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
 
   .necessidade-resumo-container .necessidade-tabela {
@@ -988,12 +976,12 @@
   }
 
   .necessidade-pendencias-cabecalho {
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .necessidade-periodo {
-    padding: 12px;
-    gap: 12px;
+    padding: var(--space-3);
+    gap: var(--space-3);
   }
 
   .necessidade-periodo-titulo {
@@ -1015,8 +1003,7 @@
     min-width: 0;
   }
 
-  .necessidade-periodo-campos
-  .filtros-compartilhados-limpar {
+  .necessidade-periodo-campos .filtros-compartilhados-limpar {
     align-self: flex-start;
   }
 }

@@ -32,56 +32,28 @@ export default function ComprasFuturasTabela({
   return (
     <div className="compras-futuras-tabela-container">
       <table className="compras-futuras-tabela">
-
         <thead>
           <tr>
-            {COLUNAS.map(
-              (
-                coluna,
-              ) => (
-                <th
-                  key={coluna}
-                >
-                  {coluna}
-                </th>
-              ),
-            )}
+            {COLUNAS.map((coluna) => (
+              <th key={coluna}>{coluna}</th>
+            ))}
           </tr>
         </thead>
 
         <tbody>
-          {compras.map(
-            (
-              compra,
-            ) => (
-              <CompraFuturaLinha
-                key={compra.id}
-                compra={compra}
-                processando={
-                  obterProcessando(
-                    compra.id,
-                  )
-                }
-                bloqueado={
-                  bloqueado
-                }
-                onConfirmarChegada={
-                  onConfirmarChegada
-                }
-                onEditar={
-                  onEditar
-                }
-                onExcluir={
-                  onExcluir
-                }
-                isAdmin={
-                  isAdmin
-                }
-              />
-            ),
-          )}
+          {compras.map((compra) => (
+            <CompraFuturaLinha
+              key={compra.id}
+              compra={compra}
+              processando={obterProcessando(compra.id)}
+              bloqueado={bloqueado}
+              onConfirmarChegada={onConfirmarChegada}
+              onEditar={onEditar}
+              onExcluir={onExcluir}
+              isAdmin={isAdmin}
+            />
+          ))}
         </tbody>
-
       </table>
     </div>
   );

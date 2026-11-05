@@ -7,8 +7,8 @@ export default function HistoricoRotina({ rotina, monitorada }) {
   if (!monitorada) {
     return (
       <p className="mon-historico__vazio">
-        Esta rotina roda direto no banco, sem chamar o Omie. O resultado da
-        última execução aparece acima.
+        Esta rotina roda direto no banco, sem chamar o Omie. O resultado da última execução aparece
+        acima.
       </p>
     );
   }
@@ -36,7 +36,8 @@ export default function HistoricoRotina({ rotina, monitorada }) {
         </thead>
         <tbody>
           {data.map((execucao) => {
-            const situacao = execucao.sucesso === null ? "rodando" : execucao.sucesso ? "ok" : "erro";
+            const situacao =
+              execucao.sucesso === null ? "rodando" : execucao.sucesso ? "ok" : "erro";
             return (
               <tr key={execucao.disparado_em} className={`mon-historico__linha--${situacao}`}>
                 <td>{formatarDataHora(execucao.disparado_em)}</td>
@@ -47,11 +48,13 @@ export default function HistoricoRotina({ rotina, monitorada }) {
                   </span>
                 </td>
                 <td className="mon-historico__detalhe">
-                  {execucao.erro
-                    ? <span className="mon-texto-erro">{execucao.erro}</span>
-                    : execucao.status_http
-                      ? `HTTP ${execucao.status_http}`
-                      : "—"}
+                  {execucao.erro ? (
+                    <span className="mon-texto-erro">{execucao.erro}</span>
+                  ) : execucao.status_http ? (
+                    `HTTP ${execucao.status_http}`
+                  ) : (
+                    "—"
+                  )}
                 </td>
               </tr>
             );

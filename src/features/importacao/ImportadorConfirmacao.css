@@ -7,7 +7,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================================
    FUNDO
 ========================================================= */
@@ -17,75 +16,42 @@
 
   inset: 0;
 
-  z-index: 20000;
+  z-index: var(--z-modal);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 24px;
+  padding: var(--space-6);
 
-  background:
-    rgba(
-      15,
-      23,
-      42,
-      0.58
-    );
+  background: rgba(15, 23, 42, 0.58);
 
-  backdrop-filter:
-    blur(4px);
+  backdrop-filter: blur(4px);
 
-  -webkit-backdrop-filter:
-    blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
-  animation:
-    importacao-confirmacao-fundo
-    0.16s
-    ease-out;
+  animation: aparecer 0.16s ease-out;
 }
-
 
 /* =========================================================
    MODAL
 ========================================================= */
 
 .importacao-confirmacao-modal {
-  width: min(
-    540px,
-    100%
-  );
+  width: min(540px, 100%);
 
   overflow: hidden;
 
-  border:
-    1px solid
-    rgba(
-      203,
-      213,
-      225,
-      0.95
-    );
+  border: 1px solid rgba(203, 213, 225, 0.95);
 
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  box-shadow:
-    0 30px 80px
-    rgba(
-      15,
-      23,
-      42,
-      0.28
-    );
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
 
-  animation:
-    importacao-confirmacao-entrada
-    0.18s
-    ease-out;
+  animation: subir-aparecer 0.18s ease-out;
 }
-
 
 /* =========================================================
    CABEÇALHO
@@ -103,23 +69,12 @@
 
   gap: 14px;
 
-  padding:
-    21px
-    22px
-    18px;
+  padding: 21px 22px 18px;
 
-  border-bottom:
-    1px solid
-    #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #fafcff 100%
-    );
+  background: linear-gradient(180deg, var(--color-surface) 0%, #fafcff 100%);
 }
-
 
 /* =========================================================
    ÍCONE PRINCIPAL
@@ -135,22 +90,16 @@
   align-items: center;
   justify-content: center;
 
-  border:
-    1px solid
-    #bfdbfe;
+  border: 1px solid #bfdbfe;
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  background:
-    #eff6ff;
+  background: var(--color-primary-soft);
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    22px;
+  font-size: 22px;
 }
-
 
 /* =========================================================
    TÍTULO
@@ -160,65 +109,45 @@
   min-width: 0;
 }
 
-
 .importacao-confirmacao-titulo > span {
   display: block;
 
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    0.63rem;
+  font-size: 0.63rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 
-  letter-spacing:
-    0.09em;
+  letter-spacing: 0.09em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
-
 
 .importacao-confirmacao-titulo h3 {
   margin: 0;
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    1.2rem;
+  font-size: 1.2rem;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  line-height:
-    1.2;
+  line-height: 1.2;
 
-  letter-spacing:
-    -0.02em;
+  letter-spacing: -0.02em;
 }
-
 
 .importacao-confirmacao-titulo p {
-  margin:
-    5px
-    0
-    0;
+  margin: 5px 0 0;
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    0.78rem;
+  font-size: 0.78rem;
 
-  line-height:
-    1.45;
+  line-height: 1.45;
 }
-
 
 /* =========================================================
    BOTÃO FECHAR
@@ -234,60 +163,39 @@
 
   padding: 0;
 
-  border:
-    1px solid
-    transparent;
+  border: 1px solid transparent;
 
-  border-radius:
-    8px;
+  border-radius: var(--radius-md);
 
-  background:
-    transparent;
+  background: transparent;
 
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    18px;
+  font-size: var(--font-size-xl);
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
-    background-color
-    0.15s
-    ease,
-    border-color
-    0.15s
-    ease,
-    color
-    0.15s
-    ease;
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
-
 
 .importacao-confirmacao-fechar:hover {
-  border-color:
-    #e2e8f0;
+  border-color: var(--color-border);
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 }
-
 
 /* =========================================================
    CONTEÚDO
 ========================================================= */
 
 .importacao-confirmacao-conteudo {
-  padding:
-    20px
-    22px;
+  padding: var(--space-5) 22px;
 }
-
 
 /* =========================================================
    ARQUIVO
@@ -297,23 +205,18 @@
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: var(--space-3);
 
   min-width: 0;
 
   padding: 14px;
 
-  border:
-    1px solid
-    #dbe4ee;
+  border: 1px solid #dbe4ee;
 
-  border-radius:
-    11px;
+  border-radius: 11px;
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 }
-
 
 .importacao-confirmacao-arquivo-icone {
   width: 38px;
@@ -325,23 +228,16 @@
   align-items: center;
   justify-content: center;
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    18px;
+  font-size: var(--font-size-xl);
 }
-
 
 .importacao-confirmacao-arquivo > div:last-child {
   min-width: 0;
@@ -352,24 +248,17 @@
   gap: 3px;
 }
 
-
 .importacao-confirmacao-arquivo span {
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    0.66rem;
+  font-size: 0.66rem;
 
-  font-weight:
-    700;
+  font-weight: var(--font-weight-bold);
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 
-  letter-spacing:
-    0.04em;
+  letter-spacing: 0.04em;
 }
-
 
 .importacao-confirmacao-arquivo strong {
   display: block;
@@ -378,22 +267,16 @@
 
   overflow: hidden;
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    0.84rem;
+  font-size: 0.84rem;
 
-  font-weight:
-    700;
+  font-weight: var(--font-weight-bold);
 
-  white-space:
-    nowrap;
+  white-space: nowrap;
 
-  text-overflow:
-    ellipsis;
+  text-overflow: ellipsis;
 }
-
 
 /* =========================================================
    DESTINO E ABA
@@ -402,74 +285,49 @@
 .importacao-confirmacao-detalhes {
   display: grid;
 
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(
-        0,
-        1fr
-      )
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 10px;
 
-  margin-top: 12px;
+  margin-top: var(--space-3);
 }
-
 
 .importacao-confirmacao-detalhes > div {
   display: flex;
   flex-direction: column;
 
-  gap: 4px;
+  gap: var(--space-1);
 
   min-width: 0;
 
-  padding:
-    12px
-    13px;
+  padding: var(--space-3) 13px;
 
-  border:
-    1px solid
-    #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  border-radius:
-    9px;
+  border-radius: 9px;
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 }
-
 
 .importacao-confirmacao-detalhes span {
-  color:
-    #64748b;
+  color: var(--color-text-muted);
 
-  font-size:
-    0.64rem;
+  font-size: 0.64rem;
 
-  font-weight:
-    700;
+  font-weight: var(--font-weight-bold);
 
-  letter-spacing:
-    0.04em;
+  letter-spacing: 0.04em;
 
-  text-transform:
-    uppercase;
+  text-transform: uppercase;
 }
-
 
 .importacao-confirmacao-detalhes strong {
-  color:
-    #0f172a;
+  color: var(--color-text);
 
-  font-size:
-    0.82rem;
+  font-size: 0.82rem;
 
-  font-weight:
-    750;
+  font-weight: 750;
 }
-
 
 /* =========================================================
    ALERTA
@@ -478,83 +336,60 @@
 .importacao-confirmacao-alerta {
   display: flex;
 
-  align-items:
-    flex-start;
+  align-items: flex-start;
 
   gap: 10px;
 
-  margin-top:
-    14px;
+  margin-top: 14px;
 
-  padding:
-    13px
-    14px;
+  padding: 13px 14px;
 
-  border:
-    1px solid
-    #fed7aa;
+  border: 1px solid #fed7aa;
 
-  border-radius:
-    10px;
+  border-radius: 10px;
 
-  background:
-    #fffaf3;
+  background: #fffaf3;
 
-  color:
-    #c2410c;
+  color: #c2410c;
 }
-
 
 .importacao-confirmacao-alerta > svg {
   flex-shrink: 0;
 
   margin-top: 1px;
 
-  font-size:
-    18px;
+  font-size: var(--font-size-xl);
 }
-
 
 .importacao-confirmacao-alerta > div {
   min-width: 0;
 }
-
 
 .importacao-confirmacao-alerta > div > strong {
   display: block;
 
   margin-bottom: 3px;
 
-  color:
-    #9a3412;
+  color: #9a3412;
 
-  font-size:
-    0.76rem;
+  font-size: 0.76rem;
 
-  font-weight:
-    800;
+  font-weight: 800;
 }
-
 
 .importacao-confirmacao-alerta p {
   margin: 0;
 
-  color:
-    #9a3412;
+  color: #9a3412;
 
-  font-size:
-    0.72rem;
+  font-size: 0.72rem;
 
-  line-height:
-    1.5;
+  line-height: 1.5;
 }
-
 
 .importacao-confirmacao-alerta p strong {
-  font-weight:
-    800;
+  font-weight: 800;
 }
-
 
 /* =========================================================
    AÇÕES
@@ -564,24 +399,16 @@
   display: flex;
 
   align-items: center;
-  justify-content:
-    flex-end;
+  justify-content: flex-end;
 
   gap: 9px;
 
-  padding:
-    15px
-    22px
-    18px;
+  padding: 15px 22px 18px;
 
-  border-top:
-    1px solid
-    #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 }
-
 
 /* =========================================================
    CANCELAR
@@ -590,59 +417,37 @@
 .importacao-confirmacao-cancelar {
   min-height: 40px;
 
-  padding:
-    0
-    16px;
+  padding: 0 var(--space-4);
 
-  border:
-    1px solid
-    #cbd5e1;
+  border: 1px solid var(--color-border-strong);
 
-  border-radius:
-    8px;
+  border-radius: var(--radius-md);
 
-  background:
-    #ffffff;
+  background: var(--color-surface);
 
-  color:
-    #475569;
+  color: var(--color-text-secondary);
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    0.78rem;
+  font-size: 0.78rem;
 
-  font-weight:
-    700;
+  font-weight: var(--font-weight-bold);
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
-    background-color
-    0.15s
-    ease,
-    border-color
-    0.15s
-    ease,
-    color
-    0.15s
-    ease;
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
-
 
 .importacao-confirmacao-cancelar:hover {
-  border-color:
-    #94a3b8;
+  border-color: var(--color-text-light);
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color:
-    #0f172a;
+  color: var(--color-text);
 }
-
 
 /* =========================================================
    CONFIRMAR IMPORTAÇÃO
@@ -651,96 +456,52 @@
 .importacao-confirmacao-importar {
   min-height: 40px;
 
-  display:
-    inline-flex;
+  display: inline-flex;
 
-  align-items:
-    center;
+  align-items: center;
 
-  justify-content:
-    center;
+  justify-content: center;
 
   gap: 7px;
 
-  padding:
-    0
-    17px;
+  padding: 0 17px;
 
-  border:
-    1px solid
-    #1d4ed8;
+  border: 1px solid var(--color-primary-hover);
 
-  border-radius:
-    8px;
+  border-radius: var(--radius-md);
 
-  background:
-    #2563eb;
+  background: var(--color-primary);
 
-  color:
-    #ffffff;
+  color: var(--color-text-inverse);
 
-  font-family:
-    inherit;
+  font-family: inherit;
 
-  font-size:
-    0.78rem;
+  font-size: 0.78rem;
 
-  font-weight:
-    750;
+  font-weight: 750;
 
-  cursor:
-    pointer;
+  cursor: pointer;
 
-  box-shadow:
-    0 2px 6px
-    rgba(
-      37,
-      99,
-      235,
-      0.18
-    );
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.18);
 
   transition:
-    background-color
-    0.15s
-    ease,
-    border-color
-    0.15s
-    ease,
-    transform
-    0.15s
-    ease,
-    box-shadow
-    0.15s
-    ease;
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
-
 
 .importacao-confirmacao-importar:hover {
-  border-color:
-    #1e40af;
+  border-color: var(--color-primary-active);
 
-  background:
-    #1d4ed8;
+  background: var(--color-primary-hover);
 
-  box-shadow:
-    0 4px 10px
-    rgba(
-      37,
-      99,
-      235,
-      0.22
-    );
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22);
 }
-
 
 .importacao-confirmacao-importar:active {
-  transform:
-    translateY(
-      1px
-    );
+  transform: translateY(1px);
 }
-
 
 /* =========================================================
    FOCO
@@ -749,128 +510,56 @@
 .importacao-confirmacao-fechar:focus-visible,
 .importacao-confirmacao-cancelar:focus-visible,
 .importacao-confirmacao-importar:focus-visible {
-  outline:
-    3px solid
-    rgba(
-      37,
-      99,
-      235,
-      0.18
-    );
+  outline: 3px solid rgba(37, 99, 235, 0.18);
 
-  outline-offset:
-    2px;
+  outline-offset: 2px;
 }
-
 
 /* =========================================================
    ANIMAÇÕES
 ========================================================= */
 
-@keyframes importacao-confirmacao-fundo {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-
-@keyframes importacao-confirmacao-entrada {
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(
-        8px
-      )
-      scale(
-        0.985
-      );
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(
-        0
-      )
-      scale(
-        1
-      );
-  }
-}
-
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media (
-  max-width:
-    600px
-) {
+@media (--celular-grande) {
   .importacao-confirmacao-overlay {
-    padding:
-      14px;
+    padding: 14px;
   }
-
 
   .importacao-confirmacao-header {
-    padding:
-      18px
-      17px
-      15px;
+    padding: 18px 17px 15px;
 
-    gap:
-      11px;
+    gap: 11px;
   }
-
 
   .importacao-confirmacao-icone {
-    width:
-      41px;
+    width: 41px;
 
-    height:
-      41px;
+    height: 41px;
   }
-
 
   .importacao-confirmacao-conteudo {
-    padding:
-      17px;
+    padding: 17px;
   }
-
 
   .importacao-confirmacao-detalhes {
-    grid-template-columns:
-      1fr;
+    grid-template-columns: 1fr;
   }
-
 
   .importacao-confirmacao-acoes {
-    padding:
-      14px
-      17px
-      17px;
+    padding: 14px 17px 17px;
 
-    flex-direction:
-      column-reverse;
+    flex-direction: column-reverse;
 
-    align-items:
-      stretch;
+    align-items: stretch;
   }
-
 
   .importacao-confirmacao-cancelar,
   .importacao-confirmacao-importar {
-    width:
-      100%;
+    width: 100%;
 
-    min-height:
-      43px;
+    min-height: 43px;
   }
 }

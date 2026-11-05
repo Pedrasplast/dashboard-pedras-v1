@@ -1,4 +1,5 @@
 import { numero } from "./calculosNecessidade";
+import { normalizarCodigo } from "@/shared/lib/texto";
 
 export function normalizarDataPrevisao(valor) {
   if (!valor) return null;
@@ -31,11 +32,7 @@ export function resumirConsumosDoPeriodo(pedidos) {
   }));
 }
 
-export function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
+export { normalizarCodigo };
 
 /* ============================================================
    DESCRIÇÃO DAS PENDÊNCIAS
@@ -51,11 +48,7 @@ export function descricaoPendencia(situacao) {
     PRODUTO_INATIVO: "Produto inativo",
   };
 
-  return (
-    descricoes[situacao] ??
-    String(situacao || "Cadastro incompleto")
-      .replaceAll("_", " ")
-  );
+  return descricoes[situacao] ?? String(situacao || "Cadastro incompleto").replaceAll("_", " ");
 }
 
 /* ============================================================
@@ -70,9 +63,7 @@ export function agruparPendencias(pedidos = []) {
       continue;
     }
 
-    const codigo = normalizarCodigo(
-      pedido.codigo_produto
-    );
+    const codigo = normalizarCodigo(pedido.codigo_produto);
 
     if (!codigo) {
       continue;
@@ -97,9 +88,7 @@ export function agruparPendencias(pedidos = []) {
   }
 
   return Array.from(mapa.values()).sort(
-    (a, b) =>
-      b.quantidade - a.quantidade ||
-      a.codigo.localeCompare(b.codigo, "pt-BR")
+    (a, b) => b.quantidade - a.quantidade || a.codigo.localeCompare(b.codigo, "pt-BR"),
   );
 }
 
@@ -122,9 +111,7 @@ export function agruparProdutosPorMaterial(pedidos = []) {
     }
 
     const materialId = String(pedido.material_id);
-    const codigo = normalizarCodigo(
-      pedido.codigo_produto
-    );
+    const codigo = normalizarCodigo(pedido.codigo_produto);
 
     const quantidade = Number(pedido.quantidade);
     const consumo = Number(pedido.consumo_kg);
@@ -168,17 +155,13 @@ export function agruparProdutosPorMaterial(pedidos = []) {
     resultado.set(
       id,
       Array.from(produtos.values()).sort(
-        (a, b) =>
-          b.consumo - a.consumo ||
-          a.codigo.localeCompare(b.codigo, "pt-BR")
-      )
+        (a, b) => b.consumo - a.consumo || a.codigo.localeCompare(b.codigo, "pt-BR"),
+      ),
     );
   }
 
   return resultado;
 }
-
-
 
 /* Produção: consolida pedidos por SKU ANTES de descontar estoque.
    Sem registro de estoque = não calcular consumo definitivo. */
@@ -225,19 +208,21 @@ export function agruparProducaoPorMaterial(pedidos = [], estoqueProdutos = []) {
   const produtos = agruparProdutosPorMaterial(pedidos);
   const resultado = new Map();
   for (const [materialId, linhas] of produtos) {
-    resultado.set(materialId, linhas.map((produto) => {
-      const plano = planejamento.get(normalizarCodigo(produto.codigo));
-      return {
-        ...produto,
-        quantidadePedidos: produto.quantidade,
-        estoqueAtual: plano?.estoqueAtual ?? null,
-        estoqueMinimo: plano?.estoqueMinimo ?? null,
-        quantidadeProduzir: plano?.quantidadeProduzir ?? null,
-        consumo: plano?.quantidadeProduzir == null
-          ? null
-          : plano.quantidadeProduzir * produto.pesoKgUn,
-      };
-    }));
+    resultado.set(
+      materialId,
+      linhas.map((produto) => {
+        const plano = planejamento.get(normalizarCodigo(produto.codigo));
+        return {
+          ...produto,
+          quantidadePedidos: produto.quantidade,
+          estoqueAtual: plano?.estoqueAtual ?? null,
+          estoqueMinimo: plano?.estoqueMinimo ?? null,
+          quantidadeProduzir: plano?.quantidadeProduzir ?? null,
+          consumo:
+            plano?.quantidadeProduzir == null ? null : plano.quantidadeProduzir * produto.pesoKgUn,
+        };
+      }),
+    );
   }
   return resultado;
 }
@@ -245,10 +230,10 @@ export function agruparProducaoPorMaterial(pedidos = [], estoqueProdutos = []) {
 export function resumirConsumoDaProducao(produtosPorMaterial) {
   const consumos = [];
   for (const [material_id, produtos] of produtosPorMaterial) {
-    const pendentes = produtos.some(p => p.consumo === null);
+    const pendentes = produtos.some((p) => p.consumo === null);
     consumos.push({
       material_id,
-      consumo_total_kg: produtos.reduce((t,p) => t + (p.consumo ?? 0), 0),
+      consumo_total_kg: produtos.reduce((t, p) => t + (p.consumo ?? 0), 0),
       pendenteEstoqueProduto: pendentes,
     });
   }

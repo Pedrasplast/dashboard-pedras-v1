@@ -33,7 +33,10 @@ function textoEmissao() {
  * Desenha o cabeçalho padrão na página atual e devolve o y onde
  * o conteúdo começa. `informacoes`: linhas curtas (filtros, período…).
  */
-export function desenharCabecalhoPdf(doc, { titulo, categoria, informacoes = [], margem = 12, y = 12 }) {
+export function desenharCabecalhoPdf(
+  doc,
+  { titulo, categoria, informacoes = [], margem = 12, y = 12 },
+) {
   const larguraPagina = doc.internal.pageSize.getWidth();
   const alturaLogo = 7;
   const larguraLogo = alturaLogo * LOGO_PROPORCAO;
@@ -105,6 +108,8 @@ export function desenharRodapePdf(doc, { titulo, margem = 12 }) {
     doc.setFontSize(7.5);
     doc.setTextColor(148, 163, 184);
     doc.text(`Pedrasplast · ${titulo || "Relatório"}`, margem, alturaPagina - 6);
-    doc.text(`Página ${pagina} de ${total}`, larguraPagina - margem, alturaPagina - 6, { align: "right" });
+    doc.text(`Página ${pagina} de ${total}`, larguraPagina - margem, alturaPagina - 6, {
+      align: "right",
+    });
   }
 }

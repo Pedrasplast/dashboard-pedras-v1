@@ -1,4 +1,3 @@
-
 /* =========================================================
    DASHBOARD DE PRODUÇÃO — ARQUIVO COMPLETO
    Layout independente da Navbar; indicadores compactos em
@@ -7,25 +6,18 @@
 ========================================================= */
 
 :root {
-  --logo-azul-escuro: #0b1f5e;
-  --logo-azul-medio: #1d3f91;
-  --logo-azul-claro: #2e5bba;
-  --logo-verde: #3dbb63;
-  --logo-verde-escuro: #1f8f4a;
   --dashboard-fundo-superior: #f8fbff;
   --dashboard-fundo-inferior: #eef4fb;
   --dashboard-sticky-top: var(--navbar-height, 76px);
   --dashboard-gap-painel: 12px;
-  --dashboard-painel-altura: calc(
-    100dvh - var(--navbar-height, 76px) - 24px
-  );
+  --dashboard-painel-altura: calc(100dvh - var(--navbar-height, 76px) - 24px);
 }
 
 /* =========================================================
    POSICIONAMENTO ABAIXO DA NAVBAR
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   html:has(.producao-page),
   body:has(.producao-page) {
     height: 100%;
@@ -36,9 +28,7 @@
     height: 100dvh;
     min-height: 0;
 
-    padding-top: calc(
-      var(--navbar-height, 76px) + 12px
-    );
+    padding-top: calc(var(--navbar-height, 76px) + var(--space-3));
 
     box-sizing: border-box;
   }
@@ -55,8 +45,7 @@
     flex-direction: column;
   }
 
-  body:has(.producao-page)
-  .app-layout > .main-content:has(> .producao-page) {
+  body:has(.producao-page) .app-layout > .main-content:has(> .producao-page) {
     display: block;
     flex: 1 1 auto;
 
@@ -80,11 +69,9 @@
 body:has(.producao-page) .dashboard-container.producao-page {
   display: grid;
 
-  grid-template-columns:
-    296px minmax(0, 1fr);
+  grid-template-columns: 296px minmax(0, 1fr);
 
-  grid-template-rows:
-    minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
 
   align-items: stretch;
 
@@ -96,8 +83,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding:
-    0 12px 10px 0;
+  padding: 0 var(--space-3) 10px 0;
 
   box-sizing: border-box;
 
@@ -125,8 +111,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding:
-    0 0 0 12px;
+  padding: 0 0 0 var(--space-3);
 
   box-sizing: border-box;
 
@@ -170,8 +155,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding:
-    0 10px 0 20px;
+  padding: 0 10px 0 var(--space-5);
 
   box-sizing: border-box;
 
@@ -196,28 +180,19 @@ body:has(.producao-page) .dashboard-container.producao-page {
   width: 100%;
   min-width: 0;
 
-  margin:
-    0 0 12px;
+  margin: 0 0 var(--space-3);
 
-  padding:
-    13px 16px;
+  padding: 13px var(--space-4);
 
   box-sizing: border-box;
 
-  background: linear-gradient(
-    112deg,
-    #f3fcf8,
-    #f7fbff 60%,
-    #f2f6ff
-  );
+  background: linear-gradient(112deg, #f3fcf8, #f7fbff 60%, #f2f6ff);
 
-  border:
-    1px solid #dfe7f1;
+  border: 1px solid #dfe7f1;
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 
-  box-shadow:
-    0 5px 16px rgba(15, 23, 42, 0.045);
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.045);
 }
 
 .producao-page .dashboard-header h1 {
@@ -248,17 +223,16 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin-bottom: 10px;
 
-  padding:
-    10px 12px;
+  padding: 10px var(--space-3);
 
-  color: #b91c1c;
-  background: #fef2f2;
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
 
   border: 1px solid #fecaca;
   border-radius: 10px;
 
   font-size: 0.83rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* =========================================================
@@ -273,10 +247,10 @@ body:has(.producao-page) .dashboard-container.producao-page {
   justify-content: center;
 
   color: var(--logo-azul-escuro);
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 /* =========================================================
@@ -288,12 +262,11 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   display: grid;
 
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
 .producao-page .kpi-card {
@@ -307,29 +280,21 @@ body:has(.producao-page) .dashboard-container.producao-page {
   align-items: center;
   justify-content: center;
 
-  gap: 4px;
+  gap: var(--space-1);
 
-  padding:
-    12px 14px;
+  padding: var(--space-3) 14px;
 
   box-sizing: border-box;
 
-  background: linear-gradient(
-    180deg,
-    #ffffff,
-    #fbfdff
-  );
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 
-  border:
-    1px solid #dfe7f1;
+  border: 1px solid #dfe7f1;
 
-  border-left:
-    4px solid #cbd5e1;
+  border-left: 4px solid var(--color-border-strong);
 
   border-radius: 14px;
 
-  box-shadow:
-    0 6px 18px rgba(11, 31, 94, 0.05);
+  box-shadow: 0 6px 18px rgba(11, 31, 94, 0.05);
 
   transition:
     transform 0.2s ease,
@@ -340,8 +305,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 .producao-page .kpi-card:hover {
   transform: translateY(-2px);
 
-  box-shadow:
-    0 12px 28px rgba(11, 31, 94, 0.1);
+  box-shadow: 0 12px 28px rgba(11, 31, 94, 0.1);
 }
 
 .producao-page .kpi-card.verde {
@@ -357,7 +321,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 }
 
 .producao-page .kpi-card span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.68rem;
   font-weight: 800;
@@ -373,11 +337,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   color: var(--logo-azul-escuro);
 
-  font-size: clamp(
-    1rem,
-    1.45vw,
-    1.38rem
-  );
+  font-size: clamp(1rem, 1.45vw, 1.38rem);
 
   font-weight: 800;
   line-height: 1.15;
@@ -408,7 +368,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 }
 
 .producao-page .kpi-icon-danificadas {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .producao-page .kpi-icon-qualidade {
@@ -420,7 +380,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 }
 
 .producao-page .kpi-icon-paradas {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 /* =========================================================
@@ -433,7 +393,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
   min-width: 0;
   min-height: 110px;
 
-  padding-top: 24px;
+  padding-top: var(--space-6);
   padding-bottom: 14px;
 }
 
@@ -447,18 +407,13 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin-top: 3px;
 
-  padding:
-    0 2px 0 94px;
+  padding: 0 2px 0 94px;
 
   box-sizing: border-box;
 
   color: var(--logo-azul-escuro);
 
-  font-size: clamp(
-    0.91rem,
-    1.25vw,
-    1.22rem
-  );
+  font-size: clamp(0.91rem, 1.25vw, 1.22rem);
 
   font-weight: 800;
   line-height: 1.2;
@@ -489,26 +444,23 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   gap: 2px;
 
-  padding:
-    5px 7px;
+  padding: 5px 7px;
 
   box-sizing: border-box;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  border:
-    1px solid #dbe5f0;
+  border: 1px solid #dbe5f0;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
-  box-shadow:
-    0 2px 5px rgba(11, 31, 94, 0.04);
+  box-shadow: 0 2px 5px rgba(11, 31, 94, 0.04);
 }
 
 .producao-page .dias-trabalhados-indicador small {
   margin: 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 0.54rem;
   font-weight: 800;
@@ -552,8 +504,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding:
-    4px 6px;
+  padding: var(--space-1) 6px;
 
   box-sizing: border-box;
 
@@ -568,20 +519,19 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   font-variant-numeric: tabular-nums;
 
-  box-shadow:
-    0 2px 6px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
 }
 
 .producao-page .percentual-horas-indicador-trabalhadas {
   color: #15803d;
-  background: #ecfdf5;
+  background: var(--color-success-soft);
 
   border: 1px solid #bbf7d0;
 }
 
 .producao-page .percentual-horas-indicador-paradas {
-  color: #b91c1c;
-  background: #fef2f2;
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
 
   border: 1px solid #fecaca;
 }
@@ -612,21 +562,16 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding: 16px;
+  padding: var(--space-4);
 
   box-sizing: border-box;
 
-  background: linear-gradient(
-    180deg,
-    #ffffff,
-    #fbfdff
-  );
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 
   border: 1px solid #dbe6f3;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
 
-  box-shadow:
-    0 10px 30px rgba(11, 31, 94, 0.06);
+  box-shadow: 0 10px 30px rgba(11, 31, 94, 0.06);
 
   overflow: hidden;
 }
@@ -638,8 +583,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   margin: 0;
 
-  padding:
-    0 0 12px 16px;
+  padding: 0 0 var(--space-3) var(--space-4);
 
   color: var(--logo-azul-escuro);
 
@@ -649,8 +593,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   text-transform: uppercase;
 
-  border-bottom:
-    1px solid #e8edf4;
+  border-bottom: 1px solid #e8edf4;
 }
 
 .producao-page .chart-container h3::before {
@@ -671,7 +614,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     var(--logo-verde)
   );
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 /* =========================================================
@@ -690,9 +633,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
   display: flex;
   flex-direction: column;
 
-  gap: 8px;
+  gap: var(--space-2);
 
-  margin-top: 12px;
+  margin-top: var(--space-3);
   padding-right: 6px;
 
   box-sizing: border-box;
@@ -705,8 +648,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   scrollbar-width: thin;
 
-  scrollbar-color:
-    var(--logo-azul-medio) #eef3f8;
+  scrollbar-color: var(--logo-azul-medio) #eef3f8;
 }
 
 .producao-page .motivos-list::-webkit-scrollbar {
@@ -715,7 +657,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
 .producao-page .motivos-list::-webkit-scrollbar-track {
   background: #eef3f8;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .producao-page .motivos-list::-webkit-scrollbar-thumb {
@@ -727,15 +669,11 @@ body:has(.producao-page) .dashboard-container.producao-page {
   );
 
   border: 2px solid #eef3f8;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .producao-page .motivos-list::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    var(--logo-azul-escuro),
-    var(--logo-verde-escuro)
-  );
+  background: linear-gradient(180deg, var(--logo-azul-escuro), var(--logo-verde-escuro));
 }
 
 /* =========================================================
@@ -756,18 +694,13 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   align-items: center;
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  padding:
-    9px 11px;
+  padding: 9px 11px;
 
   box-sizing: border-box;
 
-  background: linear-gradient(
-    180deg,
-    #f9fbfe,
-    #f5f8fc
-  );
+  background: linear-gradient(180deg, #f9fbfe, #f5f8fc);
 
   border: 1px solid #e8eef6;
   border-radius: 11px;
@@ -780,13 +713,12 @@ body:has(.producao-page) .dashboard-container.producao-page {
 }
 
 .producao-page .motivo-bar:hover {
-  background: #ffffff;
+  background: var(--color-surface);
   border-color: #c6d7ec;
 
   transform: translateY(-1px);
 
-  box-shadow:
-    0 8px 18px rgba(11, 31, 94, 0.08);
+  box-shadow: 0 8px 18px rgba(11, 31, 94, 0.08);
 }
 
 .producao-page .motivo-bar .label-row {
@@ -802,7 +734,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
   color: #25334a;
 
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1.35;
 
   overflow: hidden;
@@ -816,14 +748,13 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   min-width: 88px;
 
-  padding:
-    6px 9px;
+  padding: 6px 9px;
 
   color: var(--logo-azul-escuro);
-  background: #ffffff;
+  background: var(--color-surface);
 
   border: 1px solid #d7e2f0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   font-size: 0.75rem;
   font-weight: 800;
@@ -834,8 +765,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
   font-variant-numeric: tabular-nums;
 
-  box-shadow:
-    0 1px 3px rgba(11, 31, 94, 0.05);
+  box-shadow: 0 1px 3px rgba(11, 31, 94, 0.05);
 }
 
 /* =========================================================
@@ -851,18 +781,13 @@ body:has(.producao-page) .dashboard-container.producao-page {
   width: 100%;
   height: 10px;
 
-  background: linear-gradient(
-    90deg,
-    #e8eef6,
-    #edf3f8
-  );
+  background: linear-gradient(90deg, #e8eef6, #edf3f8);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   overflow: hidden;
 
-  box-shadow:
-    inset 0 1px 2px rgba(11, 31, 94, 0.07);
+  box-shadow: inset 0 1px 2px rgba(11, 31, 94, 0.07);
 }
 
 .producao-page .progress-indicador {
@@ -880,7 +805,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
   background: transparent;
 
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   overflow: hidden;
 }
@@ -888,13 +813,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
 /* Chrome, Edge e Safari */
 
 .producao-page .progress-indicador::-webkit-progress-bar {
-  background: linear-gradient(
-    90deg,
-    #e8eef6,
-    #edf3f8
-  );
+  background: linear-gradient(90deg, #e8eef6, #edf3f8);
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .producao-page .progress-indicador::-webkit-progress-value {
@@ -908,10 +829,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
     var(--logo-verde)
   );
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
-  box-shadow:
-    0 3px 10px rgba(11, 31, 94, 0.22);
+  box-shadow: 0 3px 10px rgba(11, 31, 94, 0.22);
 
   transition: width 0.4s ease;
 }
@@ -929,10 +849,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
     var(--logo-verde)
   );
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
-  box-shadow:
-    0 3px 10px rgba(11, 31, 94, 0.22);
+  box-shadow: 0 3px 10px rgba(11, 31, 94, 0.22);
 }
 
 /* =========================================================
@@ -942,17 +861,16 @@ body:has(.producao-page) .dashboard-container.producao-page {
 .producao-page .sem-dados {
   margin: 0;
 
-  padding:
-    22px 16px;
+  padding: 22px var(--space-4);
 
-  color: #64748b;
-  background: #f8fafc;
+  color: var(--color-text-muted);
+  background: var(--color-surface-subtle);
 
-  border: 1px dashed #cbd5e1;
-  border-radius: 12px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
 
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 
   text-align: center;
 }
@@ -961,10 +879,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — DESKTOP INTERMEDIÁRIO
 ========================================================= */
 
-@media (max-width: 1450px) and (min-width: 761px) {
+@media (--desktop) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
-    grid-template-columns:
-      268px minmax(0, 1fr);
+    grid-template-columns: 268px minmax(0, 1fr);
   }
 
   .dashboard-container.producao-page > .producao-sidebar-shell {
@@ -972,8 +889,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
   }
 
   .producao-page > .main-content {
-    padding:
-      0 8px 0 16px;
+    padding: 0 var(--space-2) 0 var(--space-4);
   }
 }
 
@@ -981,10 +897,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) and (min-width: 761px) {
+@media (--desktop-pequeno) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
-    grid-template-columns:
-      250px minmax(0, 1fr);
+    grid-template-columns: 250px minmax(0, 1fr);
   }
 
   .producao-page .kpi-grid {
@@ -995,16 +910,11 @@ body:has(.producao-page) .dashboard-container.producao-page {
   .producao-page .kpi-card {
     min-height: 88px;
 
-    padding:
-      9px 10px;
+    padding: 9px 10px;
   }
 
   .producao-page .kpi-card > strong {
-    font-size: clamp(
-      0.96rem,
-      1.3vw,
-      1.18rem
-    );
+    font-size: clamp(0.96rem, 1.3vw, 1.18rem);
   }
 
   .producao-page .kpi-horas-trabalhadas {
@@ -1018,11 +928,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     padding-left: 80px;
     padding-right: 0;
 
-    font-size: clamp(
-      0.82rem,
-      1.12vw,
-      1.05rem
-    );
+    font-size: clamp(0.82rem, 1.12vw, 1.05rem);
   }
 
   .producao-page .dias-trabalhados-indicador {
@@ -1032,7 +938,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     width: 72px;
     min-width: 72px;
 
-    padding: 4px 5px;
+    padding: var(--space-1) 5px;
   }
 
   .producao-page .dias-trabalhados-indicador strong {
@@ -1045,14 +951,13 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
     min-width: 48px;
 
-    padding:
-      3px 5px;
+    padding: 3px 5px;
 
     font-size: 0.9rem;
   }
 
   .producao-page .chart-container {
-    padding: 12px;
+    padding: var(--space-3);
   }
 }
 
@@ -1060,23 +965,19 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK ESTREITO
 ========================================================= */
 
-@media (max-width: 1120px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
-    grid-template-columns:
-      236px minmax(0, 1fr);
+    grid-template-columns: 236px minmax(0, 1fr);
   }
 
   .producao-page .kpi-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .producao-page .motivo-bar {
-    grid-template-columns:
-      minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
 
-    gap:
-      7px 10px;
+    gap: 7px 10px;
   }
 
   .producao-page .motivo-bar .label-row span:first-child {
@@ -1103,33 +1004,29 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 920px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
-    grid-template-columns:
-      218px minmax(0, 1fr);
+    grid-template-columns: 218px minmax(0, 1fr);
 
     padding-right: 7px;
   }
 
   .dashboard-container.producao-page > .producao-sidebar-shell {
-    padding-left: 8px;
+    padding-left: var(--space-2);
   }
 
   .producao-page > .main-content {
-    padding:
-      0 2px 0 10px;
+    padding: 0 2px 0 10px;
   }
 
   .producao-page > .main-content > .page-header.dashboard-header {
-    padding:
-      10px 12px;
+    padding: 10px var(--space-3);
 
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
   }
 
   .producao-page .kpi-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
@@ -1141,16 +1038,15 @@ body:has(.producao-page) .dashboard-container.producao-page {
    RESPONSIVIDADE — NOTEBOOK COM POUCA ALTURA
 ========================================================= */
 
-@media (max-height: 820px) and (min-width: 761px) {
+@media (max-height: 820px) and (--acima-tablet) {
   body:has(.producao-page) .dashboard-container.producao-page {
     padding-bottom: 6px;
   }
 
   .producao-page > .main-content > .page-header.dashboard-header {
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
 
-    padding:
-      8px 12px;
+    padding: var(--space-2) var(--space-3);
   }
 
   .producao-page .dashboard-header h1 {
@@ -1170,16 +1066,15 @@ body:has(.producao-page) .dashboard-container.producao-page {
   }
 
   .producao-page .kpi-grid {
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
   }
 
   .producao-page .kpi-card {
     min-height: 78px;
     gap: 2px;
 
-    padding:
-      7px 9px;
+    padding: 7px 9px;
   }
 
   .producao-page .kpi-card span {
@@ -1216,20 +1111,18 @@ body:has(.producao-page) .dashboard-container.producao-page {
   }
 
   .producao-page .chart-container {
-    padding:
-      10px 12px;
+    padding: 10px var(--space-3);
   }
 
   .producao-page .motivos-list {
     gap: 6px;
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
 
   .producao-page .motivo-bar {
     min-height: 44px;
 
-    padding:
-      6px 9px;
+    padding: 6px 9px;
   }
 
   .producao-page .motivo-bar .label-row span:first-child {
@@ -1243,7 +1136,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    Preserva a rolagem interna para não cortar dados.
 ========================================================= */
 
-@media (max-height: 570px) and (min-width: 761px) {
+@media (max-height: 570px) and (--acima-tablet) {
   .producao-page > .main-content {
     overflow-y: auto;
   }
@@ -1258,7 +1151,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR / TABLET VERTICAL
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   html:has(.producao-page),
   body:has(.producao-page) {
     height: auto;
@@ -1280,8 +1173,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     overflow: visible;
   }
 
-  body:has(.producao-page)
-  .app-layout > .main-content:has(> .producao-page) {
+  body:has(.producao-page) .app-layout > .main-content:has(> .producao-page) {
     display: block;
 
     height: auto;
@@ -1304,9 +1196,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
     width: 100%;
     height: auto;
 
-    min-height: calc(
-      100dvh - var(--navbar-height, 64px)
-    );
+    min-height: calc(100dvh - var(--navbar-height, 64px));
 
     margin: 0;
 
@@ -1373,10 +1263,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
     position: relative;
     top: auto;
 
-    margin:
-      0 0 10px;
+    margin: 0 0 10px;
 
-    padding: 12px;
+    padding: var(--space-3);
   }
 
   .producao-page .dashboard-header h1 {
@@ -1386,10 +1275,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
   /* KPIs */
 
   .producao-page .kpi-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 8px;
+    gap: var(--space-2);
 
     margin-bottom: 10px;
   }
@@ -1400,11 +1288,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
   }
 
   .producao-page .kpi-card > strong {
-    font-size: clamp(
-      0.98rem,
-      3vw,
-      1.2rem
-    );
+    font-size: clamp(0.98rem, 3vw, 1.2rem);
   }
 
   .producao-page .kpi-horas-trabalhadas {
@@ -1434,11 +1318,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
   }
 
   .producao-page .motivo-bar {
-    grid-template-columns:
-      minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
 
-    gap:
-      8px 10px;
+    gap: var(--space-2) 10px;
 
     padding: 9px;
   }
@@ -1467,9 +1349,9 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   body:has(.producao-page) .dashboard-container.producao-page {
-    padding: 8px;
+    padding: var(--space-2);
   }
 
   .producao-page .kpi-grid {
@@ -1498,7 +1380,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
    CELULAR MUITO ESTREITO
 ========================================================= */
 
-@media (max-width: 360px) {
+@media (--celular-pequeno) {
   .producao-page .dias-trabalhados-indicador {
     position: static;
 
@@ -1507,8 +1389,7 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
     align-self: flex-start;
 
-    margin:
-      0 0 6px;
+    margin: 0 0 6px;
   }
 
   .producao-page .kpi-horas-trabalhadas .valor-horas-trabalhadas {
@@ -1523,6 +1404,6 @@ body:has(.producao-page) .dashboard-container.producao-page {
 
     align-self: center;
 
-    margin-top: 4px;
+    margin-top: var(--space-1);
   }
 }

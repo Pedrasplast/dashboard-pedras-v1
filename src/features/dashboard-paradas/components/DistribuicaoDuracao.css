@@ -6,7 +6,6 @@
   min-width: 0;
 }
 
-
 /* =========================================================
    INSIGHT
 ========================================================= */
@@ -18,49 +17,38 @@
 
   flex-wrap: wrap;
 
-  gap:
-    4px
-    8px;
+  gap: var(--space-1) var(--space-2);
 
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 
-  padding:
-    8px
-    10px;
+  padding: var(--space-2) 10px;
 
-  background:
-    #f8fafc;
+  background: var(--color-surface-subtle);
 
-  border:
-    1px solid
-    #edf2f7;
+  border: 1px solid #edf2f7;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .dp-distribuicao__insight span {
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.61rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .dp-distribuicao__insight strong {
-  color:
-    var(--dp-primary-dark);
+  color: var(--dp-primary-dark);
 
   font-size: 0.76rem;
 }
 
 .dp-distribuicao__insight small {
-  color:
-    var(--dp-muted);
+  color: var(--dp-muted);
 
   font-size: 0.61rem;
 }
-
 
 /* =========================================================
    GRÁFICO
@@ -70,30 +58,21 @@
   height: 270px;
 }
 
-.dp-chart--duracao
-.recharts-bar-rectangle
-path {
-  fill:
-    #1d4ed8;
+.dp-chart--duracao .recharts-bar-rectangle path {
+  fill: var(--color-primary-hover);
 }
-
 
 /* =========================================================
    DRILL-DOWN
 ========================================================= */
 
-.dp-chart--duracao-clicavel
-.recharts-bar-rectangle
-path {
+.dp-chart--duracao-clicavel .recharts-bar-rectangle path {
   cursor: pointer;
 
-  transition:
-    opacity 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
-.dp-chart--duracao-clicavel
-.recharts-bar-rectangle
-path:hover {
+.dp-chart--duracao-clicavel .recharts-bar-rectangle path:hover {
   opacity: 0.82;
 }
 
@@ -102,33 +81,27 @@ path:hover {
 }
 
 .dp-distribuicao-tooltip-clique {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 
   padding-top: 7px;
 
-  border-top:
-    1px solid
-    #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    0.67rem;
+  font-size: 0.67rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .dp-distribuicao__clique {
   margin-top: 7px;
 
-  color:
-    #2563eb;
+  color: var(--color-primary);
 
-  font-size:
-    0.66rem;
+  font-size: 0.66rem;
 
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-align: right;
 }

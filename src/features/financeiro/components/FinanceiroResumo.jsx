@@ -85,8 +85,7 @@ function CardFinanceiro({ titulo, dados, tipo, exibirVariacao = true }) {
 
           <strong>{formatarMoeda(variacao)}</strong>
 
-          <span className="financeiro-card-percentual">{formatarPercentual(percentual)}
-          </span>
+          <span className="financeiro-card-percentual">{formatarPercentual(percentual)}</span>
         </div>
       )}
     </section>

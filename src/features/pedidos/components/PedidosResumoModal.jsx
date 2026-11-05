@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 
 import {
@@ -35,11 +34,7 @@ function obterChavePedido(pedido) {
 
 function obterNumeroPedido(pedido) {
   return (
-    pedido?.pedidoExibicao ??
-    pedido?.pedido ??
-    pedido?.numero_pedido ??
-    pedido?.numeroPedido ??
-    "-"
+    pedido?.pedidoExibicao ?? pedido?.pedido ?? pedido?.numero_pedido ?? pedido?.numeroPedido ?? "-"
   );
 }
 
@@ -50,11 +45,7 @@ function obterNumeroPedido(pedido) {
 function obterCodigoProduto(item) {
   return (
     String(
-      item?.codigoProduto ??
-        item?.codigo_produto ??
-        item?.cod_prod ??
-        item?.codigo ??
-        "",
+      item?.codigoProduto ?? item?.codigo_produto ?? item?.cod_prod ?? item?.codigo ?? "",
     ).trim() || "-"
   );
 }
@@ -62,11 +53,7 @@ function obterCodigoProduto(item) {
 function obterDescricaoProduto(item) {
   return (
     String(
-      item?.produto ??
-        item?.descricao_produto ??
-        item?.produto_pedido ??
-        item?.descricao ??
-        "",
+      item?.produto ?? item?.descricao_produto ?? item?.produto_pedido ?? item?.descricao ?? "",
     ).trim() || "-"
   );
 }
@@ -84,9 +71,7 @@ function obterQuantidade(item) {
     return 0;
   }
 
-  const normalizado = texto.includes(",")
-    ? texto.replace(/\./g, "").replace(",", ".")
-    : texto;
+  const normalizado = texto.includes(",") ? texto.replace(/\./g, "").replace(",", ".") : texto;
 
   const numero = Number(normalizado);
 
@@ -111,11 +96,7 @@ function converterData(valor) {
   const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
   if (iso) {
-    return new Date(
-      Number(iso[1]),
-      Number(iso[2]) - 1,
-      Number(iso[3]),
-    );
+    return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
   }
 
   const data = new Date(texto);
@@ -171,10 +152,7 @@ function prepararRegistros(pedidos, todosPedidos) {
       quantidade: obterQuantidade(linha),
     }));
 
-    const quantidade = itens.reduce(
-      (total, item) => total + item.quantidade,
-      0,
-    );
+    const quantidade = itens.reduce((total, item) => total + item.quantidade, 0);
 
     registros.push({
       chave: chave || `registro-${registros.length}`,
@@ -193,11 +171,7 @@ function prepararRegistros(pedidos, todosPedidos) {
    LINHAS DA TABELA
 ========================================================= */
 
-function LinhasPedido({
-  registro,
-  expandido,
-  onAlternar,
-}) {
+function LinhasPedido({ registro, expandido, onAlternar }) {
   const { itens } = registro;
 
   const primeiroItem = itens[0];
@@ -217,21 +191,13 @@ function LinhasPedido({
             : "pedidos-resumo-modal-linha-principal"
         }
       >
-        <td className="pedidos-resumo-modal-pedido">
-          {registro.numero}
-        </td>
+        <td className="pedidos-resumo-modal-pedido">{registro.numero}</td>
 
-        <td className="pedidos-resumo-modal-cliente">
-          {registro.cliente}
-        </td>
+        <td className="pedidos-resumo-modal-cliente">{registro.cliente}</td>
 
-        <td className="pedidos-resumo-modal-data">
-          {formatarData(registro.previsao)}
-        </td>
+        <td className="pedidos-resumo-modal-data">{formatarData(registro.previsao)}</td>
 
-        <td className="pedidos-resumo-modal-codigo">
-          {primeiroItem?.codigo ?? "-"}
-        </td>
+        <td className="pedidos-resumo-modal-codigo">{primeiroItem?.codigo ?? "-"}</td>
 
         <td className="pedidos-resumo-modal-descricao">
           <div className="pedidos-resumo-modal-produto-conteudo">
@@ -250,32 +216,19 @@ function LinhasPedido({
                     ? `Recolher itens do pedido ${registro.numero}`
                     : `Mostrar mais ${itensAdicionais.length} itens do pedido ${registro.numero}`
                 }
-                title={
-                  expandido
-                    ? "Recolher itens"
-                    : "Mostrar itens"
-                }
+                title={expandido ? "Recolher itens" : "Mostrar itens"}
               >
                 <span>
-                  +{itensAdicionais.length}{" "}
-                  {itensAdicionais.length === 1
-                    ? "item"
-                    : "itens"}
+                  +{itensAdicionais.length} {itensAdicionais.length === 1 ? "item" : "itens"}
                 </span>
 
-                {expandido ? (
-                  <ChevronUp size={13} />
-                ) : (
-                  <ChevronDown size={13} />
-                )}
+                {expandido ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
               </button>
             )}
           </div>
         </td>
 
-        <td className="pedidos-resumo-modal-quantidade">
-          {formatarNumero(registro.quantidade)}
-        </td>
+        <td className="pedidos-resumo-modal-quantidade">{formatarNumero(registro.quantidade)}</td>
       </tr>
 
       {/* ITENS ADICIONAIS EXPANDIDOS */}
@@ -283,10 +236,7 @@ function LinhasPedido({
       {temItensAdicionais &&
         expandido &&
         itensAdicionais.map((item) => (
-          <tr
-            key={item.id}
-            className="pedidos-resumo-modal-linha-item"
-          >
+          <tr key={item.id} className="pedidos-resumo-modal-linha-item">
             <td>
               <span className="pedidos-resumo-modal-item-marcador" />
             </td>
@@ -298,13 +248,9 @@ function LinhasPedido({
               {item.codigo}
             </td>
 
-            <td className="pedidos-resumo-modal-descricao">
-              {item.descricao}
-            </td>
+            <td className="pedidos-resumo-modal-descricao">{item.descricao}</td>
 
-            <td className="pedidos-resumo-modal-quantidade">
-              {formatarNumero(item.quantidade)}
-            </td>
+            <td className="pedidos-resumo-modal-quantidade">{formatarNumero(item.quantidade)}</td>
           </tr>
         ))}
     </>
@@ -323,9 +269,7 @@ export default function PedidosResumoModal({
   todosPedidos = [],
   onFechar,
 }) {
-  const [pedidosExpandidos, setPedidosExpandidos] = useState(
-    () => new Set(),
-  );
+  const [pedidosExpandidos, setPedidosExpandidos] = useState(() => new Set());
 
   const registros = useMemo(
     () => prepararRegistros(pedidos, todosPedidos),
@@ -333,11 +277,7 @@ export default function PedidosResumoModal({
   );
 
   const quantidadeTotal = useMemo(
-    () =>
-      registros.reduce(
-        (total, registro) => total + registro.quantidade,
-        0,
-      ),
+    () => registros.reduce((total, registro) => total + registro.quantidade, 0),
     [registros],
   );
 
@@ -360,23 +300,12 @@ export default function PedidosResumoModal({
   }
 
   return (
-    <Modal
-      aberto={aberto}
-      onFechar={onFechar}
-      tamanho="grande"
-      className="pedidos-resumo-modal"
-    >
+    <Modal aberto={aberto} onFechar={onFechar} tamanho="grande" className="pedidos-resumo-modal">
       {/* CABEÇALHO */}
 
-      <header
-        className="pedidos-resumo-modal-header"
-        data-modal-header=""
-      >
+      <header className="pedidos-resumo-modal-header" data-modal-header="">
         <div className="pedidos-resumo-modal-titulo">
-          <div
-            className="pedidos-resumo-modal-icone"
-            data-modal-icone=""
-          >
+          <div className="pedidos-resumo-modal-icone" data-modal-icone="">
             <CalendarClock size={21} />
           </div>
 
@@ -434,9 +363,7 @@ export default function PedidosResumoModal({
                 <th>Previsão faturamento</th>
                 <th>Código produto</th>
                 <th>Descrição do produto</th>
-                <th className="pedidos-resumo-modal-coluna-quantidade">
-                  Quantidade
-                </th>
+                <th className="pedidos-resumo-modal-coluna-quantidade">Quantidade</th>
               </tr>
             </thead>
 
@@ -445,12 +372,8 @@ export default function PedidosResumoModal({
                 <LinhasPedido
                   key={registro.chave}
                   registro={registro}
-                  expandido={pedidosExpandidos.has(
-                    registro.chave,
-                  )}
-                  onAlternar={() =>
-                    alternarPedido(registro.chave)
-                  }
+                  expandido={pedidosExpandidos.has(registro.chave)}
+                  onAlternar={() => alternarPedido(registro.chave)}
                 />
               ))}
             </tbody>
@@ -460,22 +383,14 @@ export default function PedidosResumoModal({
 
       {/* RODAPÉ */}
 
-      <footer
-        className="pedidos-resumo-modal-footer"
-        data-modal-footer=""
-      >
+      <footer className="pedidos-resumo-modal-footer" data-modal-footer="">
         <span>
           {registros.length === 1
             ? "1 pedido encontrado"
             : `${registros.length} pedidos encontrados`}
         </span>
 
-        <button
-          type="button"
-          onClick={onFechar}
-          data-modal-acao="primaria"
-          data-modal-fechar=""
-        >
+        <button type="button" onClick={onFechar} data-modal-acao="primaria" data-modal-fechar="">
           Fechar
         </button>
       </footer>

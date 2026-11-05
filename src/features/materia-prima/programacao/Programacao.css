@@ -6,7 +6,6 @@
   width: 100%;
 }
 
-
 /* =========================================================
    TOOLBAR
 ========================================================= */
@@ -20,54 +19,49 @@
 
   padding: 14px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
-
 
 .programacao-pp-indicadores {
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: var(--space-2);
 }
-
 
 .programacao-pp-indicadores > div {
   min-width: 95px;
 
-  padding: 8px 11px;
+  padding: var(--space-2) 11px;
 
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
-
 
 .programacao-pp-indicadores span {
   display: block;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-transform: uppercase;
 }
-
 
 .programacao-pp-indicadores strong {
   display: block;
 
   margin-top: 2px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
-
 
 /* =========================================================
    AÇÕES
@@ -79,64 +73,6 @@
 
   gap: 7px;
 }
-
-
-.programacao-pp-busca {
-  width: 280px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 7px;
-
-  padding: 0 10px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #64748b;
-}
-
-
-.programacao-pp-busca input {
-  width: 100%;
-
-  border: 0;
-  outline: 0;
-
-  background: transparent;
-
-  color: #0f172a;
-
-  font: inherit;
-  font-size: 11px;
-}
-
-
-.programacao-pp-busca:focus-within {
-  border-color: #2563eb;
-}
-
-
-.programacao-pp-data {
-  height: 38px;
-
-  padding: 0 9px;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #475569;
-
-  font: inherit;
-  font-size: 10px;
-}
-
 
 .programacao-pp-atualizar,
 .programacao-pp-novo {
@@ -150,35 +86,32 @@
 
   padding: 0 11px;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   font: inherit;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
 
   cursor: pointer;
 
   white-space: nowrap;
 }
 
-
 .programacao-pp-atualizar {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 }
-
 
 .programacao-pp-novo {
-  border: 1px solid #2563eb;
+  border: 1px solid var(--color-primary);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
-
 
 .programacao-pp-atualizar:disabled,
 .programacao-pp-novo:disabled {
@@ -186,24 +119,6 @@
 
   cursor: not-allowed;
 }
-
-
-.programacao-pp-atualizar
-.girando {
-  animation:
-    programacao-girando
-    0.8s
-    linear
-    infinite;
-}
-
-
-@keyframes programacao-girando {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 /* =========================================================
    TABELA
@@ -215,198 +130,155 @@
   overflow-x: auto;
 }
 
-
+/* Estilo planilha: cabeçalho escuro, linhas alternadas e números
+   alinhados para comparar uma programação com a outra. */
 .programacao-pp-tabela {
   width: 100%;
+  min-width: 1050px;
 
   border-collapse: collapse;
 
-  min-width: 1050px;
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
 }
 
-
 .programacao-pp-tabela th {
-  padding: 10px 12px;
+  padding: 9px var(--space-2);
 
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--logo-azul-escuro);
 
-  background: #f8fafc;
+  color: #dbe4ff;
 
-  color: #64748b;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
 
-  font-size: 9px;
-  font-weight: 750;
-
-  text-align: left;
-  text-transform: uppercase;
-
+  text-align: center;
   white-space: nowrap;
 }
 
-
 .programacao-pp-tabela td {
-  padding: 11px 12px;
+  padding: 7px var(--space-2);
 
-  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--color-border);
 
-  color: #334155;
-
-  font-size: 10px;
+  color: var(--color-text);
 
   vertical-align: middle;
 }
 
-
-.programacao-pp-tabela tbody tr:hover {
-  background: #f8fafc;
+.programacao-pp-tabela td:last-child {
+  border-right: 0;
 }
 
+.programacao-pp-tabela tbody tr:nth-child(even) td {
+  background: #f6f8fc;
+}
 
-.programacao-pp-data-coluna,
-.programacao-pp-codigo {
-  font-weight: 700;
+.programacao-pp-tabela tbody tr:hover td {
+  background: var(--color-primary-soft);
+}
 
+.programacao-pp-tabela .programacao-pp-texto {
+  min-width: 300px;
+
+  text-align: left;
+}
+
+.programacao-pp-centro {
+  text-align: center;
   white-space: nowrap;
 }
 
-
-.programacao-pp-produto {
-  min-width: 280px;
+.programacao-pp-numero {
+  text-align: right;
+  white-space: nowrap;
 }
 
-
-.programacao-pp-produto strong {
-  display: block;
-
-  color: #0f172a;
-
-  font-size: 10px;
+.programacao-pp-forte {
+  font-weight: var(--font-weight-bold);
 }
 
-
-.programacao-pp-produto small {
-  display: block;
-
-  margin-top: 4px;
-
-  color: #64748b;
-
-  font-size: 8px;
-  line-height: 1.4;
+.programacao-pp-codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-
 
 .programacao-pp-consumo {
-  color: #2563eb !important;
+  color: var(--color-primary-hover);
 
-  font-weight: 750;
-
-  white-space: nowrap;
+  font-weight: var(--font-weight-bold);
 }
 
-
-/* =========================================================
-   RECEITA
-========================================================= */
-
-.programacao-pp-receita {
+.programacao-pp-receita-pendente {
   display: inline-flex;
   align-items: center;
 
-  gap: 4px;
+  gap: var(--space-1);
 
-  padding: 4px 7px;
+  color: var(--color-warning-hover);
 
-  border-radius: 999px;
-
-  font-size: 9px;
-  font-weight: 700;
-
-  white-space: nowrap;
+  font-weight: var(--font-weight-bold);
 }
 
+/* Bolinha verde = ativa; cinza = inativa. */
+.programacao-pp-ativa {
+  display: inline-block;
 
-.programacao-pp-receita.ok {
-  background: #ecfdf5;
+  width: 9px;
+  height: 9px;
 
-  color: #047857;
+  border-radius: 50%;
+
+  background: var(--color-border-strong);
 }
 
-
-.programacao-pp-receita.pendente {
-  background: #fffbeb;
-
-  color: #b45309;
+.programacao-pp-ativa.sim {
+  background: var(--color-success);
 }
 
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.programacao-pp-status {
-  display: inline-flex;
-
-  padding: 4px 8px;
-
-  border-radius: 999px;
-
-  font-size: 9px;
-  font-weight: 700;
-}
-
-
-.programacao-pp-status.ativo {
-  background: #ecfdf5;
-
-  color: #047857;
-}
-
-
-.programacao-pp-status.inativo {
-  background: #f1f5f9;
-
-  color: #64748b;
-}
-
-
-/* =========================================================
-   EDITAR
-========================================================= */
-
-.programacao-pp-editar {
-  min-height: 31px;
-
+.programacao-pp-acoes-linha {
   display: inline-flex;
   align-items: center;
 
-  gap: 5px;
+  gap: var(--space-1);
+}
 
-  padding: 0 9px;
+.programacao-pp-icone {
+  display: inline-grid;
+  place-items: center;
 
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
+  width: 28px;
+  height: 28px;
 
-  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 
-  color: #475569;
+  background: var(--color-surface);
 
-  font: inherit;
-  font-size: 9px;
-  font-weight: 700;
+  color: var(--color-text-secondary);
 
   cursor: pointer;
 }
 
+.programacao-pp-icone:hover:not(:disabled) {
+  border-color: var(--color-primary);
 
-.programacao-pp-editar:hover:not(:disabled) {
-  border-color: #93c5fd;
-
-  background: #eff6ff;
-
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
+.programacao-pp-icone.perigo:hover:not(:disabled) {
+  border-color: var(--color-danger);
+
+  background: var(--color-danger-soft);
+
+  color: var(--color-danger);
+}
+
+.programacao-pp-icone:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
 
 /* =========================================================
    RODAPÉ
@@ -415,27 +287,24 @@
 .programacao-pp-rodape {
   padding: 10px 13px;
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
 }
 
-
 .programacao-pp-rodape strong {
-  color: #0f172a;
+  color: var(--color-text);
 }
-
 
 /* =========================================================
    ESTADOS
 ========================================================= */
 
-.programacao-pp-estado,
-.programacao-pp-sem-resultado {
+.programacao-pp-estado {
   min-height: 280px;
 
   display: flex;
@@ -446,60 +315,30 @@
 
   gap: 7px;
 
-  padding: 35px 20px;
+  padding: 35px var(--space-5);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   text-align: center;
 }
 
+.programacao-pp-estado strong {
+  color: var(--color-text);
 
-.programacao-pp-estado strong,
-.programacao-pp-sem-resultado strong {
-  color: #0f172a;
-
-  font-size: 13px;
+  font-size: var(--font-size-body);
 }
 
-
-.programacao-pp-estado p,
-.programacao-pp-sem-resultado p {
+.programacao-pp-estado p {
   max-width: 430px;
 
   margin: 0;
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 }
-
-
-.programacao-pp-loading {
-  width: 26px;
-  height: 26px;
-
-  border: 2px solid #e2e8f0;
-  border-top-color: #2563eb;
-
-  border-radius: 50%;
-
-  animation:
-    programacao-loading
-    0.75s
-    linear
-    infinite;
-}
-
-
-@keyframes programacao-loading {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 .programacao-pp-erro {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
-
 
 .programacao-pp-vazio-novo {
   min-height: 36px;
@@ -511,65 +350,48 @@
 
   margin-top: 7px;
 
-  padding: 0 12px;
+  padding: 0 var(--space-3);
 
-  border: 1px solid #2563eb;
-  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
 
-  background: #2563eb;
+  background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
   font: inherit;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
 
   cursor: pointer;
 }
-
 
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
-@media (
-  max-width: 1050px
-) {
+@media (--notebook) {
   .programacao-pp-toolbar {
     align-items: stretch;
 
     flex-direction: column;
   }
 
-
   .programacao-pp-acoes {
     width: 100%;
   }
-
-
-  .programacao-pp-busca {
-    flex: 1;
-
-    width: auto;
-  }
 }
 
-
-@media (
-  max-width: 650px
-) {
+@media (--celular-grande) {
   .programacao-pp-indicadores {
     display: grid;
 
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
 
   .programacao-pp-indicadores > div {
     min-width: 0;
   }
-
 
   .programacao-pp-acoes {
     align-items: stretch;
@@ -577,9 +399,6 @@
     flex-direction: column;
   }
 
-
-  .programacao-pp-busca,
-  .programacao-pp-data,
   .programacao-pp-atualizar,
   .programacao-pp-novo {
     width: 100%;

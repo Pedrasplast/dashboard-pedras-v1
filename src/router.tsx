@@ -1,22 +1,14 @@
-import {
-  QueryClient,
-} from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
-import {
-  createRouter,
-} from "@tanstack/react-router";
+import { createRouter } from "@tanstack/react-router";
 
-import {
-  routeTree,
-} from "./routeTree.gen";
-
+import { routeTree } from "./routeTree.gen";
 
 /*
  * Inicializa uma única vez o sistema
  * global de atualização automática.
  */
 import "./lib/atualizadorSistema";
-
 
 /* =========================================================
    QUERY CLIENT
@@ -31,53 +23,38 @@ import "./lib/atualizadorSistema";
  * No servidor continuamos criando uma instância isolada por
  * execução para não compartilhar cache entre requisições.
  */
-let queryClientBrowser:
-  QueryClient | undefined;
+let queryClientBrowser: QueryClient | undefined;
 
 function obterQueryClient() {
-  if (
-    typeof window ===
-    "undefined"
-  ) {
+  if (typeof window === "undefined") {
     return new QueryClient();
   }
 
-  if (
-    !queryClientBrowser
-  ) {
-    queryClientBrowser =
-      new QueryClient();
+  if (!queryClientBrowser) {
+    queryClientBrowser = new QueryClient();
   }
 
   return queryClientBrowser;
 }
 
-
 /* =========================================================
    ROUTER
 ========================================================= */
 
-export const getRouter =
-  () => {
-    const queryClient =
-      obterQueryClient();
+export const getRouter = () => {
+  const queryClient = obterQueryClient();
 
+  const router = createRouter({
+    routeTree,
 
-    const router =
-      createRouter({
-        routeTree,
+    context: {
+      queryClient,
+    },
 
-        context: {
-          queryClient,
-        },
+    scrollRestoration: true,
 
-        scrollRestoration:
-          true,
+    defaultPreloadStaleTime: 0,
+  });
 
-        defaultPreloadStaleTime:
-          0,
-      });
-
-
-    return router;
-  };
+  return router;
+};

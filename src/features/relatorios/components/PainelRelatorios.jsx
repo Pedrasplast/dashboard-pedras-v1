@@ -23,7 +23,7 @@ import "./PainelRelatorios.css";
 
 const CATEGORIAS = {
   Todos: { cor: "#0b1f5c", icone: FiGrid },
-  "Produção": { cor: "#2563eb", icone: FiSettings },
+  Produção: { cor: "#2563eb", icone: FiSettings },
   Paradas: { cor: "#ea580c", icone: FiClock },
   Pedidos: { cor: "#7c3aed", icone: FiFileText },
   Compras: { cor: "#0891b2", icone: FiShoppingCart },
@@ -201,7 +201,10 @@ export default function PainelRelatorios({
                         <strong>{relatorio.titulo}</strong>
                         {relatorio.descricao && <small>{relatorio.descricao}</small>}
                       </span>
-                      <span className="pr-item-categoria" style={{ color: cor, background: `${cor}14` }}>
+                      <span
+                        className="pr-item-categoria"
+                        style={{ color: cor, background: `${cor}14` }}
+                      >
                         {relatorio.categoria}
                       </span>
                       <span className="pr-item-abrir">

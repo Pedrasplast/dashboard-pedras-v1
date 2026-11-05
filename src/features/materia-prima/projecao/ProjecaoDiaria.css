@@ -1,8 +1,7 @@
 .projecao-diaria {
   width: 100%;
-  background: #ffffff;
+  background: var(--color-surface);
 }
-
 
 /* =========================================================
    FILTROS
@@ -14,10 +13,10 @@
     minmax(380px, 1.55fr)
     minmax(260px, 0.85fr);
   align-items: end;
-  gap: 12px;
-  padding: 16px 18px;
+  gap: var(--space-3);
+  padding: var(--space-4) 18px;
   border-bottom: 1px solid #dfe7f1;
-  background: linear-gradient(180deg, #fbfdff 0%, #f8fafc 100%);
+  background: linear-gradient(180deg, #fbfdff 0%, var(--color-surface-subtle) 100%);
 }
 
 .projecao-diaria-periodo {
@@ -29,8 +28,8 @@
   padding: 10px 11px;
   border: 1px solid #dbeafe;
   border-radius: 10px;
-  background: #ffffff;
-  color: #2563eb;
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 .projecao-diaria-periodo > svg {
@@ -48,7 +47,7 @@
 
 .projecao-diaria-periodo label > span,
 .projecao-diaria-material > span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -61,13 +60,13 @@
   width: 100%;
   height: 41px;
   padding: 0 11px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
   outline: 0;
-  background: #ffffff;
-  color: #334155;
+  background: var(--color-surface);
+  color: var(--color-text-strong);
   font: inherit;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 650;
   transition:
     border-color 0.15s ease,
@@ -83,7 +82,7 @@
 
 .projecao-diaria-material small {
   margin-top: 1px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   line-height: 1.35;
 }
@@ -94,11 +93,10 @@
   height: 7px;
   display: inline-block;
   margin-right: 6px;
-  border-radius: 999px;
-  background: #2563eb;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
   vertical-align: middle;
 }
-
 
 /* =========================================================
    INDICADORES GERAIS
@@ -108,19 +106,19 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
-  padding: 16px 18px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #ffffff;
+  padding: var(--space-4) 18px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .projecao-diaria-indicadores > div {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  padding: 13px 14px 12px 16px;
-  border: 1px solid #e2e8f0;
+  padding: 13px 14px var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 7px rgba(15, 23, 42, 0.035);
 }
 
@@ -131,11 +129,11 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: #2563eb;
+  background: var(--color-primary);
 }
 
 .projecao-diaria-indicadores > div:nth-child(2)::before {
-  background: #059669;
+  background: var(--color-success);
 }
 
 .projecao-diaria-indicadores > div:nth-child(3)::before {
@@ -143,12 +141,12 @@
 }
 
 .projecao-diaria-indicadores > div:nth-child(4)::before {
-  background: #d97706;
+  background: var(--color-warning);
 }
 
 .projecao-diaria-indicadores span {
   display: block;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.035em;
@@ -159,7 +157,7 @@
   display: block;
   margin-top: 5px;
   overflow: hidden;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 17px;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -168,9 +166,8 @@
 }
 
 .projecao-diaria-indicadores strong.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
-
 
 /* =========================================================
    ALERTAS
@@ -180,41 +177,39 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin: 12px 18px 0;
-  padding: 12px 14px;
+  margin: var(--space-3) 18px 0;
+  padding: var(--space-3) 14px;
   border: 1px solid #fde68a;
   border-radius: 11px;
-  background: #fffbeb;
+  background: var(--color-warning-soft);
   color: #92400e;
 }
 
 .projecao-diaria-alerta.negativo {
   border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-alerta strong {
   display: block;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 900;
 }
 
 .projecao-diaria-alerta p {
   margin: 3px 0 0;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   line-height: 1.45;
 }
-
 
 /* =========================================================
    BLOCO GERAL DE FORNECEDORES
 ========================================================= */
 
 .projecao-diaria-fornecedores {
-  padding: 12px 18px 18px;
+  padding: var(--space-3) 18px 18px;
 }
-
 
 /* =========================================================
    NAVEGADOR DE FORNECEDORES
@@ -224,7 +219,7 @@
   overflow: hidden;
   border: 1px solid #dbe3ec;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
 }
 
@@ -232,10 +227,10 @@
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
+  gap: var(--space-4);
+  padding: 14px var(--space-4);
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div {
@@ -249,7 +244,7 @@
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div > span {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -258,17 +253,62 @@
 
 .projecao-diaria-fornecedor-navegador-topo > div > strong {
   margin-top: 3px;
-  color: #0f172a;
-  font-size: 14px;
+  color: var(--color-text);
+  font-size: var(--font-size-md);
   font-weight: 900;
 }
 
 .projecao-diaria-fornecedor-navegador-topo > div > small {
   max-width: 720px;
-  margin-top: 4px;
-  color: #64748b;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
   font-size: 9px;
   line-height: 1.45;
+}
+
+/* Filtros (período e material) na barra de fornecedores,
+   ao lado de "Ir para fornecedor". Todos os campos ficam na
+   mesma linha de base: mesma altura e mesmo rótulo. */
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-filtros {
+  flex: 1 1 560px;
+  max-width: 780px;
+  grid-template-columns:
+    minmax(300px, 1.4fr)
+    minmax(190px, 0.8fr);
+  align-items: end;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo > svg {
+  align-self: end;
+  margin-bottom: 11px;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo label > span,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material > span,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select > span {
+  font-size: var(--font-size-micro);
+  letter-spacing: 0.04em;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo input,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material select,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select select {
+  height: 40px;
+}
+
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-periodo label,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-material,
+.projecao-diaria-fornecedor-navegador-topo .projecao-diaria-fornecedor-select {
+  gap: 5px;
 }
 
 .projecao-diaria-fornecedor-select {
@@ -279,7 +319,7 @@
 }
 
 .projecao-diaria-fornecedor-select > span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.05em;
@@ -290,13 +330,13 @@
   width: 100%;
   height: 42px;
   padding: 0 11px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
   outline: 0;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 750;
   transition:
     border-color 0.15s ease,
@@ -308,7 +348,6 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
-
 /* =========================================================
    ABAS/CARDS DOS FORNECEDORES
 ========================================================= */
@@ -317,8 +356,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
   gap: 10px;
-  padding: 12px;
-  background: #f8fafc;
+  padding: var(--space-3);
+  background: var(--color-surface-subtle);
 }
 
 .projecao-diaria-fornecedor-aba {
@@ -326,12 +365,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 11px 12px;
+  gap: var(--space-1);
+  padding: 11px var(--space-3);
   border: 1px solid #dbe3ec;
   border-radius: 11px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   text-align: left;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
@@ -350,7 +389,7 @@
 
 .projecao-diaria-fornecedor-aba.ativo {
   border-color: #60a5fa;
-  background: #eff6ff;
+  background: var(--color-primary-soft);
   box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
 }
 
@@ -361,29 +400,28 @@
 .projecao-diaria-fornecedor-aba > span {
   width: 100%;
   overflow: hidden;
-  color: #0f172a;
-  font-size: 10px;
+  color: var(--color-text);
+  font-size: var(--font-size-micro);
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .projecao-diaria-fornecedor-aba > strong {
-  color: #2563eb;
-  font-size: 11px;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
   font-weight: 900;
 }
 
 .projecao-diaria-fornecedor-aba.negativo > strong {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-fornecedor-aba > small {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
-
 
 /* =========================================================
    BLOCO DO FORNECEDOR SELECIONADO
@@ -394,7 +432,7 @@
   overflow: hidden;
   border: 1px solid #dbe3ec;
   border-radius: 14px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
 }
 
@@ -406,12 +444,12 @@
   display: grid;
   grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.75fr);
   border-bottom: 1px solid #edf1f5;
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  background: linear-gradient(180deg, var(--color-surface), #fbfdff);
 }
 
 .projecao-diaria-fornecedor-identificacao {
   min-width: 0;
-  padding: 14px 16px;
+  padding: 14px var(--space-4);
   border-right: 1px solid #edf1f5;
 }
 
@@ -422,7 +460,7 @@
 }
 
 .projecao-diaria-fornecedor-identificacao > span {
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.06em;
@@ -430,15 +468,15 @@
 }
 
 .projecao-diaria-fornecedor-identificacao > strong {
-  margin-top: 4px;
-  color: #0f172a;
-  font-size: 16px;
+  margin-top: var(--space-1);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
   font-weight: 950;
 }
 
 .projecao-diaria-fornecedor-identificacao > small {
-  margin-top: 4px;
-  color: #64748b;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
   font-size: 9px;
 }
 
@@ -463,7 +501,7 @@
 }
 
 .projecao-diaria-fornecedor-resumo span {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 850;
   letter-spacing: 0.04em;
@@ -471,16 +509,16 @@
 }
 
 .projecao-diaria-fornecedor-resumo strong {
-  margin-top: 4px;
+  margin-top: var(--space-1);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   font-weight: 900;
 }
 
 .projecao-diaria-fornecedor-resumo strong.entrada {
-  color: #047857;
+  color: var(--color-success-hover);
 }
 
 .projecao-diaria-fornecedor-resumo strong.futura {
@@ -488,15 +526,15 @@
 }
 
 .projecao-diaria-fornecedor-resumo strong.consumo {
-  color: #b45309;
+  color: var(--color-warning-hover);
 }
 
 .projecao-diaria-fornecedor-resumo .saldo-final strong {
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .projecao-diaria-fornecedor-resumo .saldo-final strong.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-fornecedor-sem-base {
@@ -508,9 +546,8 @@
   background: #fff7ed;
   color: #9a3412;
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
-
 
 /* =========================================================
    TABELA
@@ -532,10 +569,10 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  padding: 10px 12px;
+  padding: 10px var(--space-3);
   border-bottom: 1px solid #dbe3ec;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 850;
   letter-spacing: 0.04em;
@@ -549,11 +586,11 @@
 }
 
 .projecao-diaria-tabela td {
-  padding: 11px 12px;
+  padding: 11px var(--space-3);
   border-bottom: 1px solid #edf1f5;
-  color: #0f172a;
-  font-size: 10px;
-  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-bold);
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -576,20 +613,20 @@
 }
 
 .projecao-diaria-data strong {
-  color: #0f172a;
-  font-size: 10px;
+  color: var(--color-text);
+  font-size: var(--font-size-micro);
   font-weight: 850;
 }
 
 .projecao-diaria-data small {
   margin-top: 2px;
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 800;
 }
 
 .projecao-diaria-entrada {
-  color: #047857 !important;
+  color: var(--color-success-hover) !important;
 }
 
 .projecao-diaria-futura {
@@ -597,18 +634,17 @@
 }
 
 .projecao-diaria-consumo {
-  color: #b45309 !important;
+  color: var(--color-warning-hover) !important;
 }
 
 .projecao-diaria-saldo {
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 850;
 }
 
 .projecao-diaria-saldo.negativo {
-  color: #b91c1c;
+  color: var(--color-danger-hover);
 }
-
 
 /* =========================================================
    ESTADOS
@@ -618,56 +654,49 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin: 16px 18px 18px;
-  padding: 34px 20px;
-  border: 1px dashed #cbd5e1;
+  gap: var(--space-2);
+  margin: var(--space-4) 18px 18px;
+  padding: 34px var(--space-5);
+  border: 1px dashed var(--color-border-strong);
   border-radius: 11px;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
   text-align: center;
 }
 
 .projecao-diaria-estado strong {
-  color: #0f172a;
-  font-size: 13px;
+  color: var(--color-text);
+  font-size: var(--font-size-body);
   font-weight: 850;
 }
 
 .projecao-diaria-estado p {
   max-width: 450px;
   margin: 0;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   line-height: 1.5;
 }
 
 .projecao-diaria-erro {
   border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-hover);
 }
 
 .projecao-diaria-loading {
   width: 28px;
   height: 28px;
   border: 2px solid #dbe3ec;
-  border-top-color: #2563eb;
+  border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: projecao-diaria-loading 0.75s linear infinite;
+  animation: girar 0.75s linear infinite;
 }
-
-@keyframes projecao-diaria-loading {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1180px) {
+@media (--desktop-pequeno) {
   .projecao-diaria-filtros {
     grid-template-columns: 1fr;
   }
@@ -678,11 +707,11 @@
 
   .projecao-diaria-fornecedor-identificacao {
     border-right: 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--color-border);
   }
 }
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .projecao-diaria-fornecedor-navegador-topo {
     align-items: stretch;
     flex-direction: column;
@@ -692,9 +721,14 @@
     width: 100%;
     min-width: 0;
   }
+
+  .projecao-diaria-fornecedor-navegador-topo .projecao-diaria-filtros {
+    flex: 0 0 auto;
+    max-width: none;
+  }
 }
 
-@media (max-width: 820px) {
+@media (--tablet) {
   .projecao-diaria-periodo {
     grid-template-columns: auto 1fr 1fr;
   }
@@ -713,12 +747,12 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .projecao-diaria-filtros,
   .projecao-diaria-indicadores,
   .projecao-diaria-fornecedores {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
   }
 
   .projecao-diaria-periodo {
@@ -745,8 +779,8 @@
 
   .projecao-diaria-alerta,
   .projecao-diaria-estado {
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: var(--space-3);
+    margin-right: var(--space-3);
   }
 
   .projecao-diaria-fornecedor-aba {

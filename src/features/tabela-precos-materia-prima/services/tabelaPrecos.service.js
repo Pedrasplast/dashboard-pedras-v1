@@ -1,10 +1,7 @@
-
 import { supabase } from "@/lib/supabaseClient";
 
-import {
-  TABELA_PRECOS,
-  CAMPOS_TABELA_PRECOS,
-} from "../constants/tabelaPrecos.constants";
+import { TABELA_PRECOS, CAMPOS_TABELA_PRECOS } from "../constants/tabelaPrecos.constants";
+import { normalizarCodigo } from "@/shared/lib/texto";
 
 /* =========================================================
    TABELA DE PREÇOS — SERVIÇO
@@ -21,12 +18,6 @@ import {
 
 const TABELA_MATERIAIS = "materia_prima_materiais";
 
-function normalizarCodigo(valor) {
-  return String(valor ?? "")
-    .trim()
-    .toUpperCase();
-}
-
 /* =========================================================
    CONSULTAR MATERIAIS HABILITADOS
 ========================================================= */
@@ -41,15 +32,12 @@ async function buscarCodigosHabilitados() {
 
   if (error) {
     throw new Error(
-      "Erro ao consultar materiais habilitados " +
-      `para a Tabela de Preços: ${error.message}`
+      "Erro ao consultar materiais habilitados " + `para a Tabela de Preços: ${error.message}`,
     );
   }
 
   const codigos = (data ?? [])
-    .map((material) =>
-      normalizarCodigo(material.codigo_omie)
-    )
+    .map((material) => normalizarCodigo(material.codigo_omie))
     .filter(Boolean);
 
   return [...new Set(codigos)];
@@ -70,9 +58,7 @@ async function buscarPagina(inicio, fim, codigos) {
     .range(inicio, fim);
 
   if (error) {
-    throw new Error(
-      `Erro ao consultar a Tabela de Preços: ${error.message}`
-    );
+    throw new Error(`Erro ao consultar a Tabela de Preços: ${error.message}`);
   }
 
   return data ?? [];
@@ -94,20 +80,13 @@ export async function buscarTabelaPrecos() {
     return [];
   }
 
-  const tamanho = Math.max(
-    1,
-    Number(TABELA_PRECOS.REGISTROS_POR_PAGINA) || 500
-  );
+  const tamanho = Math.max(1, Number(TABELA_PRECOS.REGISTROS_POR_PAGINA) || 500);
 
   const registros = [];
   let inicio = 0;
 
   while (true) {
-    const pagina = await buscarPagina(
-      inicio,
-      inicio + tamanho - 1,
-      codigos
-    );
+    const pagina = await buscarPagina(inicio, inicio + tamanho - 1, codigos);
 
     registros.push(...pagina);
 
@@ -120,9 +99,5 @@ export async function buscarTabelaPrecos() {
 
   const permitidos = new Set(codigos);
 
-  return registros.filter((registro) =>
-    permitidos.has(
-      normalizarCodigo(registro.codigo_produto)
-    )
-  );
+  return registros.filter((registro) => permitidos.has(normalizarCodigo(registro.codigo_produto)));
 }

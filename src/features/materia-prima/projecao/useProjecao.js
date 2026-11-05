@@ -1,31 +1,15 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import {
-  buscarProjecao,
-} from "./projecaoService";
+import { buscarProjecao } from "./projecaoService";
 
-
-const EVENTO_ATUALIZAR_PROJECAO =
-  "materia-prima-projecao-atualizar";
-
+const EVENTO_ATUALIZAR_PROJECAO = "materia-prima-projecao-atualizar";
 
 /* =========================================================
    HOOK PROJEÇÃO
 ========================================================= */
 
-export default function useProjecao({
-  dataInicio,
-  dataFim,
-  materialId = "1",
-}) {
-  const [
-    dados,
-    setDados,
-  ] = useState({
+export default function useProjecao({ dataInicio, dataFim, materialId = "1" }) {
+  const [dados, setDados] = useState({
     linhas: [],
     materiais: [],
     fornecedores: [],
@@ -34,95 +18,53 @@ export default function useProjecao({
     consumoProgramadoDisponivel: true,
   });
 
-  const [
-    carregando,
-    setCarregando,
-  ] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
-  const [
-    carregado,
-    setCarregado,
-  ] = useState(false);
+  const [carregado, setCarregado] = useState(false);
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
-
+  const [erro, setErro] = useState("");
 
   /* =======================================================
      CARREGAR
   ======================================================= */
 
-  const carregar =
-    useCallback(
-      async () => {
-        if (
-          !dataInicio ||
-          !dataFim ||
-          !materialId
-        ) {
-          return;
-        }
+  const carregar = useCallback(async () => {
+    if (!dataInicio || !dataFim || !materialId) {
+      return;
+    }
 
+    setCarregando(true);
 
-        setCarregando(true);
+    setErro("");
 
-        setErro("");
-
-
-        try {
-          const resultado =
-            await buscarProjecao({
-              dataInicio,
-              dataFim,
-              materialId,
-            });
-
-
-          setDados(
-            resultado,
-          );
-
-          setCarregado(true);
-        } catch (error) {
-          console.error(
-            "Erro ao calcular projeção de matéria-prima:",
-            error,
-          );
-
-
-          setErro(
-            error?.message ||
-              "Não foi possível calcular a projeção.",
-          );
-
-          setCarregado(true);
-        } finally {
-          setCarregando(false);
-        }
-      },
-      [
+    try {
+      const resultado = await buscarProjecao({
         dataInicio,
         dataFim,
         materialId,
-      ],
-    );
+      });
 
+      setDados(resultado);
+
+      setCarregado(true);
+    } catch (error) {
+      console.error("Erro ao calcular projeção de matéria-prima:", error);
+
+      setErro(error?.message || "Não foi possível calcular a projeção.");
+
+      setCarregado(true);
+    } finally {
+      setCarregando(false);
+    }
+  }, [dataInicio, dataFim, materialId]);
 
   /* =======================================================
      AUTOMÁTICO
   ======================================================= */
 
-  useEffect(
-    () => {
-      void carregar();
-    },
-    [
-      carregar,
-    ],
-  );
-
+  useEffect(() => {
+    void carregar();
+  }, [carregar]);
 
   /* =======================================================
      ATUALIZAÇÃO CRUZADA
@@ -132,31 +74,17 @@ export default function useProjecao({
      troca de filtro, recarregamento da página ou botão.
   ======================================================= */
 
-  useEffect(
-    () => {
-      function atualizarProjecao() {
-        void carregar();
-      }
+  useEffect(() => {
+    function atualizarProjecao() {
+      void carregar();
+    }
 
+    window.addEventListener(EVENTO_ATUALIZAR_PROJECAO, atualizarProjecao);
 
-      window.addEventListener(
-        EVENTO_ATUALIZAR_PROJECAO,
-        atualizarProjecao,
-      );
-
-
-      return () => {
-        window.removeEventListener(
-          EVENTO_ATUALIZAR_PROJECAO,
-          atualizarProjecao,
-        );
-      };
-    },
-    [
-      carregar,
-    ],
-  );
-
+    return () => {
+      window.removeEventListener(EVENTO_ATUALIZAR_PROJECAO, atualizarProjecao);
+    };
+  }, [carregar]);
 
   return {
     ...dados,
@@ -167,7 +95,6 @@ export default function useProjecao({
 
     erro,
 
-    recarregar:
-      carregar,
+    recarregar: carregar,
   };
 }

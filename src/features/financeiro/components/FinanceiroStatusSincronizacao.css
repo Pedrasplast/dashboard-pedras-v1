@@ -17,19 +17,18 @@
   padding: 3px 5px;
 
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   background: transparent;
   box-shadow: none;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   line-height: 1.2;
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    ÍCONE
@@ -47,23 +46,22 @@
 
   border-radius: 50%;
 
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
 }
 
 .financeiro-sync-mini__icone svg {
   display: block;
 }
 
-
 /* =========================================================
    TEXTO
 ========================================================= */
 
 .financeiro-sync-mini__titulo {
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 650;
 
   letter-spacing: -0.005em;
@@ -77,74 +75,63 @@
 }
 
 .financeiro-sync-mini__data {
-  color: #94a3b8;
+  color: var(--color-text-light);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 450;
 
   font-variant-numeric: tabular-nums;
 }
 
-
 /* =========================================================
    SUCESSO
 ========================================================= */
 
-.financeiro-sync-mini--sucesso
-.financeiro-sync-mini__icone {
-  background: #ecfdf5;
-  color: #059669;
+.financeiro-sync-mini--sucesso .financeiro-sync-mini__icone {
+  background: var(--color-success-soft);
+  color: var(--color-success);
 }
-
 
 /* =========================================================
    AGUARDANDO
 ========================================================= */
 
-.financeiro-sync-mini--aguardando
-.financeiro-sync-mini__icone {
-  background: #fffbeb;
-  color: #d97706;
+.financeiro-sync-mini--aguardando .financeiro-sync-mini__icone {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
 }
 
-.financeiro-sync-mini--aguardando
-.financeiro-sync-mini__titulo {
+.financeiro-sync-mini--aguardando .financeiro-sync-mini__titulo {
   color: #92400e;
 }
-
 
 /* =========================================================
    ERRO / DESATUALIZADO
 ========================================================= */
 
-.financeiro-sync-mini--erro
-.financeiro-sync-mini__icone {
-  background: #fef2f2;
-  color: #dc2626;
+.financeiro-sync-mini--erro .financeiro-sync-mini__icone {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
-.financeiro-sync-mini--erro
-.financeiro-sync-mini__titulo {
-  color: #b91c1c;
+.financeiro-sync-mini--erro .financeiro-sync-mini__titulo {
+  color: var(--color-danger-hover);
 }
-
 
 /* =========================================================
    NEUTRO
 ========================================================= */
 
-.financeiro-sync-mini--neutro
-.financeiro-sync-mini__icone {
-  background: #f1f5f9;
-  color: #64748b;
+.financeiro-sync-mini--neutro .financeiro-sync-mini__icone {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
 }
-
 
 /* =========================================================
    CELULAR
 ========================================================= */
 
-@media (max-width: 768px) {
+@media (--tablet) {
   .financeiro-sync-mini {
     width: 100%;
 
@@ -172,12 +159,11 @@
   }
 }
 
-
 /* =========================================================
    CELULARES PEQUENOS
 ========================================================= */
 
-@media (max-width: 480px) {
+@media (--celular) {
   .financeiro-sync-mini__separador {
     display: none;
   }

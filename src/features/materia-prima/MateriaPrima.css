@@ -6,7 +6,7 @@
   width: 100%;
   min-height: 100%;
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
 
 /* =========================================================
@@ -20,7 +20,7 @@
 
   margin: 70px auto;
 
-  padding: 22px 24px 32px;
+  padding: 22px var(--space-6) var(--space-8);
 }
 
 /* =========================================================
@@ -30,11 +30,11 @@
 .materia-prima-conteudo {
   overflow: hidden;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
 
   border-radius: 14px;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
@@ -49,11 +49,11 @@
 
   gap: 13px;
 
-  padding: 16px 18px;
+  padding: var(--space-4) 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
 
 /* =========================================================
@@ -74,9 +74,9 @@
 
   border-radius: 11px;
 
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 /* =========================================================
@@ -92,9 +92,9 @@
 
   margin-bottom: 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 
   font-weight: 800;
 
@@ -106,9 +106,9 @@
 .materia-prima-conteudo-header h2 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  font-size: 18px;
+  font-size: var(--font-size-xl);
 
   font-weight: 800;
 
@@ -116,11 +116,11 @@
 }
 
 .materia-prima-conteudo-header p {
-  margin: 4px 0 0;
+  margin: var(--space-1) 0 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 
   line-height: 1.4;
 }
@@ -137,7 +137,7 @@
   align-items: center;
   justify-content: center;
 
-  padding: 32px;
+  padding: var(--space-8);
 
   text-align: center;
 }
@@ -154,17 +154,17 @@
 
   border-radius: 14px;
 
-  background: #f1f5f9;
+  background: var(--color-surface-muted);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .materia-prima-conteudo-vazio strong {
   margin-bottom: 6px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 .materia-prima-conteudo-vazio p {
@@ -172,20 +172,18 @@
 
   margin: 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 12px;
+  font-size: var(--font-size-caption);
 
   line-height: 1.5;
 }
-
-
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (max-width: 900px) {
+@media (--notebook) {
   .materia-prima-container {
     padding: 18px;
   }
@@ -195,13 +193,13 @@
    MOBILE
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (--celular-grande) {
   .materia-prima-container {
     padding: 14px;
   }
 
   .materia-prima-conteudo {
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
   }
 
   .materia-prima-conteudo-header {
@@ -216,6 +214,6 @@
   }
 
   .materia-prima-conteudo-header h2 {
-    font-size: 16px;
+    font-size: var(--font-size-lg);
   }
 }

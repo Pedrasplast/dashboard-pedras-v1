@@ -1,305 +1,82 @@
-export function numero(
-  valor,
-) {
-  const convertido =
-    Number(
-      valor,
-    );
+import { numeroOuNull } from "@/shared/lib/numeros";
+import { formatarDataISO } from "@/shared/lib/datas";
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarMoeda as formatarMoedaBase,
+  formatarKg as formatarKgBase,
+  formatarDataISOParaBR,
+} from "@/shared/lib/formatar";
 
-  return Number.isFinite(
-    convertido,
-  )
-    ? convertido
-    : 0;
+export function numero(valor) {
+  const convertido = Number(valor);
+
+  return Number.isFinite(convertido) ? convertido : 0;
 }
 
+export { numeroOuNull };
 
-export function numeroOuNull(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ""
-  ) {
-    return null;
-  }
-
-  const convertido =
-    Number(
-      valor,
-    );
-
-  return Number.isFinite(
-    convertido,
-  )
-    ? convertido
-    : null;
+export function formatarNumero(valor, casas = 0) {
+  return formatarNumeroBase(valor, { casas });
 }
 
-
-export function formatarNumero(
-  valor,
-  casas = 0,
-) {
-  return numero(
-    valor,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
-
-      maximumFractionDigits:
-        casas,
-    },
-  );
+export function formatarKg(valor, casas = 0) {
+  return formatarKgBase(valor, { casas, vazios: [null, undefined] });
 }
 
-
-export function formatarKg(
-  valor,
-  casas = 0,
-) {
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
-    return "-";
-  }
-
-  return `${formatarNumero(
-    valor,
-    casas,
-  )} kg`;
+export function formatarMoeda(valor, casas = 2) {
+  return formatarMoedaBase(valor, { casas, vazios: [null, undefined], invalido: "-" });
 }
 
+export function formatarMoedaKg(valor, casas = 3) {
+  const moeda = formatarMoeda(valor, casas);
 
-export function formatarMoeda(
-  valor,
-  casas = 2,
-) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    !Number.isFinite(
-      Number(
-        valor,
-      ),
-    )
-  ) {
-    return "-";
-  }
-
-  return Number(
-    valor,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      style:
-        "currency",
-
-      currency:
-        "BRL",
-
-      minimumFractionDigits:
-        casas,
-
-      maximumFractionDigits:
-        casas,
-    },
-  );
+  return moeda === "-" ? "-" : `${moeda}/kg`;
 }
 
-
-export function formatarMoedaKg(
-  valor,
-  casas = 3,
-) {
-  const moeda =
-    formatarMoeda(
-      valor,
-      casas,
-    );
-
-  return moeda ===
-    "-"
-      ? "-"
-      : `${moeda}/kg`;
+export function formatarData(valor) {
+  return formatarDataISOParaBR(valor);
 }
 
+export function formatarDataCurta(valor) {
+  const data = formatarData(valor);
 
-export function formatarData(
-  valor,
-) {
-  if (!valor) {
-    return "-";
-  }
-
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    String(
-      valor,
-    ).split(
-      "-",
-    );
-
-  if (
-    !ano ||
-    !mes ||
-    !dia
-  ) {
-    return String(
-      valor,
-    );
-  }
-
-  return `${dia}/${mes}/${ano}`;
+  return data === "-" ? "-" : data.slice(0, 5);
 }
-
-
-export function formatarDataCurta(
-  valor,
-) {
-  const data =
-    formatarData(
-      valor,
-    );
-
-  return data ===
-    "-"
-      ? "-"
-      : data.slice(
-          0,
-          5,
-        );
-}
-
 
 /* Período padrão do dashboard: do 1º ao último dia do mês atual. */
-export function periodoMesAtual(
-  hoje = new Date(),
-) {
+export function periodoMesAtual(hoje = new Date()) {
   return {
-    dataInicial:
-      formatarDataISO(
-        new Date(hoje.getFullYear(), hoje.getMonth(), 1),
-      ),
-    dataFinal:
-      formatarDataISO(
-        new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0),
-      ),
+    dataInicial: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
+    dataFinal: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)),
   };
 }
 
+export { formatarDataISO };
 
-export function formatarDataISO(
-  data,
-) {
-  const ano =
-    data.getFullYear();
+export function adicionarDias(dataISO, quantidade) {
+  const [ano, mes, dia] = String(dataISO).split("-").map(Number);
 
-  const mes =
-    String(
-      data.getMonth() +
-      1,
-    ).padStart(
-      2,
-      "0",
-    );
+  const data = new Date(ano, mes - 1, dia);
 
-  const dia =
-    String(
-      data.getDate(),
-    ).padStart(
-      2,
-      "0",
-    );
+  data.setDate(data.getDate() + Number(quantidade || 0));
 
-  return `${ano}-${mes}-${dia}`;
+  return formatarDataISO(data);
 }
-
-
-export function adicionarDias(
-  dataISO,
-  quantidade,
-) {
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    String(
-      dataISO,
-    )
-      .split(
-        "-",
-      )
-      .map(
-        Number,
-      );
-
-  const data =
-    new Date(
-      ano,
-      mes - 1,
-      dia,
-    );
-
-  data.setDate(
-    data.getDate() +
-    Number(
-      quantidade ||
-      0,
-    ),
-  );
-
-  return formatarDataISO(
-    data,
-  );
-}
-
 
 export function obterPeriodoInicial() {
-  const hoje =
-    new Date();
+  const hoje = new Date();
 
   return {
-    inicio:
-      formatarDataISO(
-        new Date(
-          hoje.getFullYear(),
-          hoje.getMonth(),
-          1,
-        ),
-      ),
+    inicio: formatarDataISO(new Date(hoje.getFullYear(), hoje.getMonth(), 1)),
 
-    fim:
-      formatarDataISO(
-        hoje,
-      ),
+    fim: formatarDataISO(hoje),
   };
 }
 
+export function statusCompraAberta(status) {
+  const valor = String(status ?? "")
+    .trim()
+    .toUpperCase();
 
-export function statusCompraAberta(
-  status,
-) {
-  const valor =
-    String(
-      status ??
-      "",
-    )
-      .trim()
-      .toUpperCase();
-
-  return (
-    valor ===
-      "PREVISTA" ||
-    valor ===
-      "CONFIRMADA"
-  );
+  return valor === "PREVISTA" || valor === "CONFIRMADA";
 }

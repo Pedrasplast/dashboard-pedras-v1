@@ -6,13 +6,12 @@
 .materia-prima-navegacao {
   width: 100%;
 
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 
   border-bottom: 1px solid #dfe7f1;
 
   background: transparent;
 }
-
 
 /* =========================================================
    CONTAINER
@@ -26,9 +25,8 @@
 
   min-height: 50px;
 
-  padding: 0 4px;
+  padding: 0 var(--space-1);
 }
-
 
 /* =========================================================
    ABA
@@ -48,17 +46,17 @@
   padding: 0 17px;
 
   border: 0;
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 
   outline: 0;
 
   background: transparent;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
 
   letter-spacing: -0.005em;
 
@@ -69,40 +67,31 @@
     background-color 0.16s ease;
 }
 
-
 /* =========================================================
    HOVER
 ========================================================= */
 
 .materia-prima-nav-item:hover:not(.ativo) {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(248, 250, 252, 0.2) 0%,
-      #f8fafc 100%
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0.2) 0%,
+    var(--color-surface-subtle) 100%
+  );
 
-  color: #334155;
+  color: var(--color-text-strong);
 }
-
 
 /* =========================================================
    ATIVO
 ========================================================= */
 
 .materia-prima-nav-item.ativo {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(239, 246, 255, 0) 0%,
-      rgba(239, 246, 255, 0.65) 100%
-    );
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0) 0%, rgba(239, 246, 255, 0.65) 100%);
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-weight: 800;
 }
-
 
 /* =========================================================
    ÍCONE
@@ -119,11 +108,11 @@
   padding: 6px;
 
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background: transparent;
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   transition:
     color 0.16s ease,
@@ -132,34 +121,23 @@
     box-shadow 0.16s ease;
 }
 
+.materia-prima-nav-item:hover:not(.ativo) .materia-prima-nav-icone {
+  border-color: var(--color-border);
 
-.materia-prima-nav-item:hover:not(.ativo)
-.materia-prima-nav-icone {
-  border-color: #e2e8f0;
+  background: var(--color-surface);
 
-  background: #ffffff;
-
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
-
-.materia-prima-nav-item.ativo
-.materia-prima-nav-icone {
+.materia-prima-nav-item.ativo .materia-prima-nav-icone {
   border-color: #bfdbfe;
 
-  background:
-    linear-gradient(
-      180deg,
-      #eff6ff 0%,
-      #dbeafe 100%
-    );
+  background: linear-gradient(180deg, var(--color-primary-soft) 0%, #dbeafe 100%);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
-  box-shadow:
-    0 2px 6px rgba(37, 99, 235, 0.10);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
 }
-
 
 /* =========================================================
    INDICADOR ATIVO
@@ -174,20 +152,12 @@
 
   height: 3px;
 
-  border-radius: 999px 999px 0 0;
+  border-radius: var(--radius-pill) var(--radius-pill) 0 0;
 
-  background:
-    linear-gradient(
-      90deg,
-      #2563eb 0%,
-      #3b82f6 55%,
-      #60a5fa 100%
-    );
+  background: linear-gradient(90deg, var(--color-primary) 0%, #3b82f6 55%, #60a5fa 100%);
 
-  box-shadow:
-    0 -1px 7px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 -1px 7px rgba(37, 99, 235, 0.18);
 }
-
 
 /* =========================================================
    EFEITO ATIVO
@@ -215,41 +185,36 @@
   pointer-events: none;
 }
 
-
 /* =========================================================
    FOCO
 ========================================================= */
 
 .materia-prima-nav-item:focus-visible {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  box-shadow:
-    inset 0 0 0 2px #bfdbfe;
+  box-shadow: inset 0 0 0 2px #bfdbfe;
 }
-
 
 /* =========================================================
    TABLET
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .materia-prima-navegacao-tabs {
     width: 100%;
 
     min-height: 48px;
   }
 
-
   .materia-prima-nav-item {
     flex: 1;
 
     height: 48px;
 
-    padding: 0 12px;
+    padding: 0 var(--space-3);
 
-    font-size: 11px;
+    font-size: var(--font-size-xs);
   }
-
 
   .materia-prima-nav-icone {
     width: 28px;
@@ -259,28 +224,22 @@
   }
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
-@media (max-width: 560px) {
+@media (--celular-grande) {
   .materia-prima-navegacao-tabs {
     width: 100%;
 
     display: grid;
 
-    grid-template-columns:
-      repeat(
-        3,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 0;
 
     padding: 0;
   }
-
 
   .materia-prima-nav-item {
     width: 100%;
@@ -291,9 +250,8 @@
 
     padding: 0 6px;
 
-    font-size: 10px;
+    font-size: var(--font-size-micro);
   }
-
 
   .materia-prima-nav-icone {
     width: 26px;
@@ -301,7 +259,6 @@
 
     padding: 5px;
   }
-
 
   .materia-prima-nav-indicador {
     left: 10px;
@@ -311,20 +268,18 @@
   }
 }
 
-
 /* =========================================================
    MOBILE MUITO PEQUENO
 ========================================================= */
 
-@media (max-width: 390px) {
+@media (--celular) {
   .materia-prima-nav-item {
-    gap: 4px;
+    gap: var(--space-1);
 
-    padding: 0 4px;
+    padding: 0 var(--space-1);
 
     font-size: 9px;
   }
-
 
   .materia-prima-nav-icone {
     width: 24px;

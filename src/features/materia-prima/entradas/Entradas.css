@@ -6,7 +6,6 @@
   width: 100%;
 }
 
-
 /* =========================================================
    TOOLBAR
 ========================================================= */
@@ -20,11 +19,10 @@
 
   padding: 14px 18px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
-
 
 /* =========================================================
    INDICADORES
@@ -34,48 +32,44 @@
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: var(--space-2);
 
   flex-wrap: wrap;
 }
 
-
 .entradas-pp-indicadores > div {
   min-width: 125px;
 
-  padding: 8px 11px;
+  padding: var(--space-2) 11px;
 
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
-
 
 .entradas-pp-indicadores span {
   display: block;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-transform: uppercase;
 }
-
 
 .entradas-pp-indicadores strong {
   display: block;
 
   margin-top: 2px;
 
-  color: #0f172a;
+  color: var(--color-text);
 
   font-size: 15px;
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    FILTROS PRINCIPAIS
@@ -86,39 +80,35 @@
   align-items: flex-end;
   justify-content: flex-end;
 
-  gap: 8px;
+  gap: var(--space-2);
 
   margin-left: auto;
 
   flex-wrap: wrap;
 }
 
-
 .entradas-pp-filtros label {
   min-width: 165px;
 }
 
-
 .entradas-pp-filtros .entradas-pp-filtro-tipo {
   min-width: 125px;
 }
-
 
 .entradas-pp-filtros label > span {
   display: block;
 
   margin: 0 0 5px 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-transform: uppercase;
 
   white-space: nowrap;
 }
-
 
 .entradas-pp-filtros select {
   width: 100%;
@@ -127,34 +117,25 @@
   padding: 0 30px 0 10px;
 
   border: 1px solid #dbe3ee;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font: inherit;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 
   cursor: pointer;
 }
 
-
 .entradas-pp-filtros select:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
-  box-shadow:
-    0 0 0 2px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    PERÍODO
@@ -170,15 +151,14 @@
 
   align-items: end;
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  padding: 10px 18px 12px;
+  padding: 10px 18px var(--space-3);
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #ffffff;
+  background: var(--color-surface);
 }
-
 
 /* =========================================================
    TIPO DO PERÍODO
@@ -188,19 +168,17 @@
   display: block;
 }
 
-
 .entradas-pp-periodo-tipo > span,
 .entradas-pp-periodo-datas label > span {
   display: block;
 
   margin: 0 0 5px 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
-
 
 .entradas-pp-periodo-tipo select {
   box-sizing: border-box;
@@ -211,21 +189,20 @@
   padding: 0 30px 0 10px;
 
   border: 1px solid #dbe3ee;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font: inherit;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: var(--font-size-micro);
+  font-weight: var(--font-weight-semibold);
 
   cursor: pointer;
 }
-
 
 /* =========================================================
    INFORMAÇÃO
@@ -241,16 +218,15 @@
 
   padding: 0 11px;
 
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 }
-
 
 /* =========================================================
    DATAS
@@ -260,14 +236,12 @@
   display: flex;
   align-items: flex-end;
 
-  gap: 8px;
+  gap: var(--space-2);
 }
-
 
 .entradas-pp-periodo-datas label {
   width: 145px;
 }
-
 
 .entradas-pp-periodo-datas input {
   box-sizing: border-box;
@@ -278,20 +252,19 @@
   padding: 0 9px;
 
   border: 1px solid #dbe3ee;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   outline: 0;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font: inherit;
-  font-size: 10px;
+  font-size: var(--font-size-micro);
 
   cursor: pointer;
 }
-
 
 /* =========================================================
    LIMPAR FILTROS
@@ -309,24 +282,17 @@
   padding: 0 15px;
 
   border: 1px solid #fb7185;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background: #fff1f2;
 
   color: #be123c;
 
-  box-shadow:
-    0 2px 5px
-    rgba(
-      190,
-      18,
-      60,
-      0.10
-    );
+  box-shadow: 0 2px 5px rgba(190, 18, 60, 0.1);
 
   font: inherit;
 
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   font-weight: 800;
 
   white-space: nowrap;
@@ -341,13 +307,11 @@
     transform 0.15s ease;
 }
 
-
 .entradas-pp-limpar svg {
   flex: 0 0 auto;
 
   stroke-width: 2.6;
 }
-
 
 .entradas-pp-limpar:hover:not(:disabled) {
   border-color: #e11d48;
@@ -356,30 +320,21 @@
 
   color: #9f1239;
 
-  box-shadow:
-    0 4px 10px
-    rgba(
-      190,
-      18,
-      60,
-      0.15
-    );
+  box-shadow: 0 4px 10px rgba(190, 18, 60, 0.15);
 
   transform: translateY(-1px);
 }
-
 
 .entradas-pp-limpar:active:not(:disabled) {
   transform: translateY(0);
 }
 
-
 .entradas-pp-limpar:disabled {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #94a3b8;
+  color: var(--color-text-light);
 
   box-shadow: none;
 
@@ -390,25 +345,16 @@
   transform: none;
 }
 
-
 /* =========================================================
    FOCO
 ========================================================= */
 
 .entradas-pp-periodo-tipo select:focus,
 .entradas-pp-periodo-datas input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
-  box-shadow:
-    0 0 0 2px
-    rgba(
-      37,
-      99,
-      235,
-      0.08
-    );
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
-
 
 /* =========================================================
    TABELA
@@ -420,7 +366,6 @@
   overflow-x: auto;
 }
 
-
 .entradas-pp-tabela {
   width: 100%;
   min-width: 1280px;
@@ -428,17 +373,16 @@
   border-collapse: collapse;
 }
 
-
 .entradas-pp-tabela th {
   padding: 9px 10px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
-  font-size: 10px;
+  font-size: var(--font-size-micro);
   font-weight: 750;
 
   text-align: left;
@@ -447,35 +391,31 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-tabela td {
   padding: 10px 10px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 
-  color: #334155;
+  color: var(--color-text-strong);
 
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 
   vertical-align: middle;
 }
 
-
 .entradas-pp-tabela tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-subtle);
 }
-
 
 /* =========================================================
    DATA
 ========================================================= */
 
 .entradas-pp-data {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    FORNECEDOR
@@ -485,26 +425,23 @@
   min-width: 160px;
 }
 
-
 .entradas-pp-fornecedor strong {
   display: block;
 
-  color: #0f172a;
+  color: var(--color-text);
 }
-
 
 /* =========================================================
    QUANTIDADE
 ========================================================= */
 
 .entradas-pp-quantidade {
-  color: #2563eb !important;
+  color: var(--color-primary) !important;
 
   font-weight: 750;
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    FINANCEIRO
@@ -514,11 +451,9 @@
   white-space: nowrap;
 }
 
-
 .entradas-pp-financeiro span {
   display: block;
 }
-
 
 .entradas-pp-financeiro small,
 .entradas-pp-tabela td small {
@@ -526,20 +461,18 @@
 
   margin-top: 2px;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 9px;
 }
 
-
 .entradas-pp-total {
-  color: #0f172a !important;
+  color: var(--color-text) !important;
 
   font-weight: 750;
 
   white-space: nowrap;
 }
-
 
 /* =========================================================
    OBSERVAÇÃO
@@ -555,87 +488,16 @@
   white-space: nowrap;
 }
 
-
-/* =========================================================
-   ESTADOS
-========================================================= */
-
-.entradas-pp-estado {
-  min-height: 270px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  padding: 24px;
-
-  color: #64748b;
-
-  text-align: center;
-}
-
-
-.entradas-pp-estado strong {
-  color: #0f172a;
-}
-
-
-.entradas-pp-estado p {
-  margin: 0;
-
-  font-size: 10px;
-}
-
-
-.entradas-pp-erro,
-.entradas-pp-erro strong {
-  color: #b91c1c;
-}
-
-
-/* =========================================================
-   LOADING
-========================================================= */
-
-.entradas-pp-loading {
-  width: 26px;
-  height: 26px;
-
-  border: 2px solid #e2e8f0;
-  border-top-color: #2563eb;
-
-  border-radius: 50%;
-
-  animation:
-    entradas-girando
-    0.75s
-    linear
-    infinite;
-}
-
-
-@keyframes entradas-girando {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
 /* =========================================================
    RESPONSIVO
 ========================================================= */
 
-@media (max-width: 1200px) {
-
+@media (--desktop-pequeno) {
   .entradas-pp-toolbar {
     align-items: stretch;
 
     flex-direction: column;
   }
-
 
   .entradas-pp-filtros {
     width: 100%;
@@ -645,11 +507,9 @@
     justify-content: flex-start;
   }
 
-
   .entradas-pp-filtros label {
     flex: 1;
   }
-
 
   .entradas-pp-periodo {
     grid-template-columns:
@@ -657,41 +517,31 @@
       1fr;
   }
 
-
   .entradas-pp-periodo-datas {
-    grid-column:
-      1 /
-      -1;
+    grid-column: 1 / -1;
   }
-
 }
 
-
-@media (max-width: 800px) {
-
+@media (--tablet) {
   .entradas-pp-indicadores {
     display: grid;
 
     grid-template-columns: 1fr;
   }
 
-
   .entradas-pp-indicadores > div {
     min-width: 0;
   }
 
-
   .entradas-pp-filtros {
     flex-direction: column;
   }
-
 
   .entradas-pp-filtros label,
   .entradas-pp-filtro-tipo {
     width: 100%;
     min-width: 0;
   }
-
 
   .entradas-pp-periodo {
     display: flex;
@@ -701,31 +551,24 @@
     align-items: stretch;
   }
 
-
   .entradas-pp-periodo-datas {
     width: 100%;
   }
-
 
   .entradas-pp-periodo-datas label {
     flex: 1;
 
     width: auto;
   }
-
 }
 
-
-@media (max-width: 600px) {
-
+@media (--celular-grande) {
   .entradas-pp-periodo-datas {
     flex-direction: column;
   }
-
 
   .entradas-pp-periodo-datas label,
   .entradas-pp-limpar {
     width: 100%;
   }
-
 }

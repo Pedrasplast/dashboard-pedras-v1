@@ -1,213 +1,50 @@
-import {
-  AlertTriangle,
-  CalendarDays,
-  CheckCircle2,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { AlertTriangle, CalendarDays, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 
-import ConfirmacaoExclusao
-  from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
+import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExclusao";
 
 import ProgramacaoModal from "./ProgramacaoModal";
 import useProgramacao from "./useProgramacao";
 
 import "./Programacao.css";
-
+import {
+  formatarNumero as formatarNumeroBase,
+  formatarKg as formatarKgBase,
+} from "@/shared/lib/formatar";
+import Spinner from "@/shared/ui/Spinner";
 
 /* =========================================================
    UTILITÁRIOS
 ========================================================= */
 
-function normalizarTexto(
-  valor,
-) {
-  return String(
-    valor ?? "",
-  )
-    .trim()
-    .toLowerCase()
-    .normalize(
-      "NFD",
-    )
-    .replace(
-      /[\u0300-\u036f]/g,
-      "",
-    );
+function formatarNumero(valor, casas = 0) {
+  return formatarNumeroBase(valor ?? 0, { casas });
 }
 
+/* "AAAA-MM-DD" → "DD/MM" */
+function formatarDiaMes(dataISO) {
+  const [, mes, dia] = String(dataISO ?? "").split("-");
 
-function formatarData(
-  valor,
-) {
-  if (!valor) {
-    return "-";
-  }
-
-
-  const [
-    ano,
-    mes,
-    dia,
-  ] =
-    String(
-      valor,
-    ).split(
-      "-",
-    );
-
-
-  if (
-    !ano ||
-    !mes ||
-    !dia
-  ) {
-    return valor;
-  }
-
-
-  return `${dia}/${mes}/${ano}`;
+  return dia && mes ? `${dia}/${mes}` : "";
 }
 
-
-function formatarHora(
-  valor,
-) {
-  if (!valor) {
-    return "";
-  }
-
-
-  return String(
-    valor,
-  ).slice(
-    0,
-    5,
-  );
+function formatarKg(valor) {
+  return formatarKgBase(valor ?? 0, { casas: 3 });
 }
-
-
-function formatarNumero(
-  valor,
-  casas = 0,
-) {
-  const numero =
-    Number(
-      valor ?? 0,
-    );
-
-
-  return numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        casas,
-      maximumFractionDigits:
-        casas,
-    },
-  );
-}
-
-
-function formatarHoras(
-  valor,
-) {
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
-    return "-";
-  }
-
-
-  const numero =
-    Number(
-      valor,
-    );
-
-
-  if (
-    !Number.isFinite(
-      numero,
-    )
-  ) {
-    return "-";
-  }
-
-
-  return `${numero.toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        0,
-      maximumFractionDigits:
-        2,
-    },
-  )} h`;
-}
-
-
-function formatarKg(
-  valor,
-) {
-  return `${Number(
-    valor ?? 0,
-  ).toLocaleString(
-    "pt-BR",
-    {
-      minimumFractionDigits:
-        3,
-
-      maximumFractionDigits:
-        3,
-    },
-  )} kg`;
-}
-
 
 /* =========================================================
    PROGRAMAÇÃO
 ========================================================= */
 
 export default function Programacao() {
-  const [
-    busca,
-    setBusca,
-  ] = useState("");
+  const [modalAberto, setModalAberto] = useState(false);
 
-  const [
-    filtroData,
-    setFiltroData,
-  ] = useState("");
+  const [itemEmEdicao, setItemEmEdicao] = useState(null);
 
-  const [
-    modalAberto,
-    setModalAberto,
-  ] = useState(false);
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
 
-  const [
-    itemEmEdicao,
-    setItemEmEdicao,
-  ] = useState(null);
-
-  const [
-    itemParaExcluir,
-    setItemParaExcluir,
-  ] = useState(null);
-
-  const [
-    erroExclusao,
-    setErroExclusao,
-  ] = useState("");
-
+  const [erroExclusao, setErroExclusao] = useState("");
 
   const {
     programacao,
@@ -223,176 +60,54 @@ export default function Programacao() {
     excluirProgramacao,
     itemEstaSalvando,
     itemEstaExcluindo,
-  } =
-    useProgramacao();
-
-
-  /* =======================================================
-     FILTRO
-  ======================================================= */
-
-  const programacaoFiltrada =
-    useMemo(
-      () => {
-        const termo =
-          normalizarTexto(
-            busca,
-          );
-
-
-        return programacao.filter(
-          (
-            item,
-          ) => {
-            const correspondeBusca =
-              !termo ||
-              normalizarTexto(
-                item.codigoProduto,
-              ).includes(
-                termo,
-              ) ||
-              normalizarTexto(
-                item.descricao,
-              ).includes(
-                termo,
-              ) ||
-              normalizarTexto(
-                item.injetora,
-              ).includes(
-                termo,
-              );
-
-
-            const correspondeData =
-              !filtroData ||
-              (
-                filtroData >=
-                  item.dataInicio &&
-                filtroData <=
-                  item.dataFim
-              );
-
-
-            return (
-              correspondeBusca &&
-              correspondeData
-            );
-          },
-        );
-      },
-      [
-        programacao,
-        busca,
-        filtroData,
-      ],
-    );
-
+  } = useProgramacao();
 
   /* =======================================================
      INDICADORES
   ======================================================= */
 
-  const indicadores =
-    useMemo(
-      () => {
-        const ativos =
-          programacaoFiltrada.filter(
-            (
-              item,
-            ) =>
-              item.ativo,
-          );
+  const indicadores = useMemo(() => {
+    const ativos = programacao.filter((item) => item.ativo);
 
+    return {
+      registros: ativos.length,
 
-        return {
-          registros:
-            ativos.length,
+      pecasPeriodo: ativos.reduce((total, item) => total + Number(item.pecasPrevistas ?? 0), 0),
 
-          pecasPeriodo:
-            ativos.reduce(
-              (
-                total,
-                item,
-              ) =>
-                total +
-                Number(
-                  item
-                    .pecasPrevistas ??
-                    0,
-                ),
-              0,
-            ),
-
-          consumoPeriodoKg:
-            ativos.reduce(
-              (
-                total,
-                item,
-              ) =>
-                total +
-                Number(
-                  item
-                    .consumoPeriodoKg ??
-                    0,
-                ),
-              0,
-            ),
-        };
-      },
-      [
-        programacaoFiltrada,
-      ],
-    );
-
+      consumoPeriodoKg: ativos.reduce(
+        (total, item) => total + Number(item.consumoPeriodoKg ?? 0),
+        0,
+      ),
+    };
+  }, [programacao]);
 
   /* =======================================================
      NOVO
   ======================================================= */
 
   function abrirNovo() {
-    if (
-      salvando ||
-      excluindo
-    ) {
+    if (salvando || excluindo) {
       return;
     }
 
+    setItemEmEdicao(null);
 
-    setItemEmEdicao(
-      null,
-    );
-
-    setModalAberto(
-      true,
-    );
+    setModalAberto(true);
   }
-
 
   /* =======================================================
      EDITAR
   ======================================================= */
 
-  function abrirEdicao(
-    item,
-  ) {
-    if (
-      !item ||
-      salvando ||
-      excluindo
-    ) {
+  function abrirEdicao(item) {
+    if (!item || salvando || excluindo) {
       return;
     }
 
+    setItemEmEdicao(item);
 
-    setItemEmEdicao(
-      item,
-    );
-
-    setModalAberto(
-      true,
-    );
+    setModalAberto(true);
   }
-
 
   /* =======================================================
      FECHAR MODAL
@@ -403,68 +118,38 @@ export default function Programacao() {
       return;
     }
 
+    setModalAberto(false);
 
-    setModalAberto(
-      false,
-    );
-
-    setItemEmEdicao(
-      null,
-    );
+    setItemEmEdicao(null);
   }
-
 
   /* =======================================================
      SALVAR
   ======================================================= */
 
-  async function salvar(
-    dados,
-  ) {
-    const resultado =
-      await salvarProgramacao(
-        dados,
-      );
+  async function salvar(dados) {
+    const resultado = await salvarProgramacao(dados);
 
+    setModalAberto(false);
 
-    setModalAberto(
-      false,
-    );
-
-    setItemEmEdicao(
-      null,
-    );
-
+    setItemEmEdicao(null);
 
     return resultado;
   }
-
 
   /* =======================================================
      SOLICITAR EXCLUSÃO
   ======================================================= */
 
-  function solicitarExclusao(
-    item,
-  ) {
-    if (
-      !item ||
-      salvando ||
-      excluindo
-    ) {
+  function solicitarExclusao(item) {
+    if (!item || salvando || excluindo) {
       return;
     }
 
+    setErroExclusao("");
 
-    setErroExclusao(
-      "",
-    );
-
-    setItemParaExcluir(
-      item,
-    );
+    setItemParaExcluir(item);
   }
-
 
   /* =======================================================
      CANCELAR EXCLUSÃO
@@ -475,54 +160,30 @@ export default function Programacao() {
       return;
     }
 
+    setErroExclusao("");
 
-    setErroExclusao(
-      "",
-    );
-
-    setItemParaExcluir(
-      null,
-    );
+    setItemParaExcluir(null);
   }
-
 
   /* =======================================================
      CONFIRMAR EXCLUSÃO
   ======================================================= */
 
   async function confirmarExclusao() {
-    if (
-      !itemParaExcluir ||
-      salvando ||
-      excluindo
-    ) {
+    if (!itemParaExcluir || salvando || excluindo) {
       return;
     }
 
-
-    setErroExclusao(
-      "",
-    );
-
+    setErroExclusao("");
 
     try {
-      await excluirProgramacao(
-        itemParaExcluir.id,
-      );
+      await excluirProgramacao(itemParaExcluir.id);
 
-
-      setItemParaExcluir(
-        null,
-      );
+      setItemParaExcluir(null);
     } catch (error) {
-      setErroExclusao(
-        error
-          ?.message ||
-          "Não foi possível excluir a programação.",
-      );
+      setErroExclusao(error?.message || "Não foi possível excluir a programação.");
     }
   }
-
 
   /* =======================================================
      RENDER
@@ -531,812 +192,271 @@ export default function Programacao() {
   return (
     <>
       <div className="programacao-pp">
-
         <div className="programacao-pp-toolbar">
-
           <div className="programacao-pp-indicadores">
-
             <div>
+              <span>Programações</span>
 
-              <span>
-                Programações
-              </span>
-
-              <strong>
-                {
-                  indicadores.registros
-                }
-              </strong>
-
+              <strong>{indicadores.registros}</strong>
             </div>
 
-
             <div>
+              <span>Peças previstas</span>
 
-              <span>
-                Peças período
-              </span>
-
-              <strong>
-                {
-                  formatarNumero(
-                    indicadores
-                      .pecasPeriodo,
-                  )
-                }
-              </strong>
-
+              <strong>{formatarNumero(indicadores.pecasPeriodo)}</strong>
             </div>
 
-
             <div>
+              <span>Consumo previsto</span>
 
-              <span>
-                Consumo período
-              </span>
-
-              <strong>
-                {
-                  formatarKg(
-                    indicadores
-                      .consumoPeriodoKg,
-                  )
-                }
-              </strong>
-
+              <strong>{formatarKg(indicadores.consumoPeriodoKg)}</strong>
             </div>
-
           </div>
 
-
           <div className="programacao-pp-acoes">
-
-            <label className="programacao-pp-busca">
-
-              <Search
-                size={16}
-                strokeWidth={2}
-              />
-
-              <input
-                type="search"
-                value={
-                  busca
-                }
-                onChange={
-                  (
-                    event,
-                  ) =>
-                    setBusca(
-                      event
-                        .target
-                        .value,
-                    )
-                }
-                placeholder="Buscar produto ou injetora..."
-              />
-
-            </label>
-
-
-            <input
-              type="date"
-              className="programacao-pp-data"
-              value={
-                filtroData
-              }
-              onChange={
-                (
-                  event,
-                ) =>
-                  setFiltroData(
-                    event
-                      .target
-                      .value,
-                  )
-              }
-              title="Mostrar programações ativas nesta data"
-            />
-
-
             <button
               type="button"
               className="programacao-pp-atualizar"
-              onClick={
-                recarregar
-              }
-              disabled={
-                carregando ||
-                salvando ||
-                excluindo
-              }
+              onClick={recarregar}
+              disabled={carregando || salvando || excluindo}
             >
-
-              <RefreshCw
-                size={16}
-                strokeWidth={2}
-                className={
-                  carregando
-                    ? "girando"
-                    : ""
-                }
-              />
-
+              <RefreshCw size={16} strokeWidth={2} className={carregando ? "girando" : ""} />
               Atualizar
-
             </button>
-
 
             <button
               type="button"
               className="programacao-pp-novo"
-              onClick={
-                abrirNovo
-              }
-              disabled={
-                salvando ||
-                excluindo ||
-                produtos.length ===
-                  0
-              }
+              onClick={abrirNovo}
+              disabled={salvando || excluindo || produtos.length === 0}
             >
-
-              <Plus
-                size={17}
-                strokeWidth={2}
-              />
-
+              <Plus size={17} strokeWidth={2} />
               Nova programação
-
             </button>
-
           </div>
-
         </div>
 
-
         {carregando && (
-
           <div className="programacao-pp-estado">
+            <Spinner />
 
-            <span className="programacao-pp-loading" />
+            <strong>Carregando programação</strong>
 
-            <strong>
-              Carregando programação
-            </strong>
-
-            <p>
-              Calculando período real,
-              ciclos, cavidades e consumo
-              previsto da produção.
-            </p>
-
+            <p>Calculando período real, ciclos, cavidades e consumo previsto da produção.</p>
           </div>
-
         )}
 
-
-        {!carregando &&
-          erro && (
-
+        {!carregando && erro && (
           <div className="programacao-pp-estado programacao-pp-erro">
+            <AlertTriangle size={30} />
 
-            <AlertTriangle
-              size={30}
-            />
+            <strong>Não foi possível carregar a programação</strong>
 
-            <strong>
-              Não foi possível carregar
-              a programação
-            </strong>
-
-            <p>
-              {erro}
-            </p>
-
+            <p>{erro}</p>
           </div>
-
         )}
 
-
-        {!carregando &&
-          !erro &&
-          carregado &&
-          programacao.length ===
-            0 && (
-
+        {!carregando && !erro && carregado && programacao.length === 0 && (
           <div className="programacao-pp-estado">
+            <CalendarDays size={34} strokeWidth={1.7} />
 
-            <CalendarDays
-              size={34}
-              strokeWidth={1.7}
-            />
+            <strong>Nenhuma produção programada</strong>
 
-            <strong>
-              Nenhuma produção programada
-            </strong>
+            <p>Cadastre o período real de produção para calcular o consumo previsto da produção.</p>
 
-            <p>
-              Cadastre o período real de
-              produção para calcular o
-              consumo previsto da produção.
-            </p>
-
-
-            {produtos.length >
-              0 && (
-
-              <button
-                type="button"
-                className="programacao-pp-vazio-novo"
-                onClick={
-                  abrirNovo
-                }
-              >
-
-                <Plus
-                  size={16}
-                />
-
+            {produtos.length > 0 && (
+              <button type="button" className="programacao-pp-vazio-novo" onClick={abrirNovo}>
+                <Plus size={16} />
                 Nova programação
-
               </button>
-
             )}
-
           </div>
-
         )}
 
-
-        {!carregando &&
-          !erro &&
-          programacao.length >
-            0 && (
-
+        {!carregando && !erro && programacao.length > 0 && (
           <>
-
             <div className="programacao-pp-tabela-container">
-
               <table className="programacao-pp-tabela">
-
                 <thead>
-
                   <tr>
-                    <th>Período</th>
-                    <th>Horas</th>
-                    <th>Injetora</th>
+                    <th>Inj.</th>
                     <th>Código</th>
-                    <th>Produto</th>
-                    <th>Material</th>
+                    <th className="programacao-pp-texto">Produto</th>
                     <th>Ciclo</th>
-                    <th>Cavidades</th>
-                    <th>Peças previstas</th>
-                    <th>Peso</th>
-                    <th>Consumo período</th>
+                    <th>Cav.</th>
+                    <th>Peso (kg)</th>
+                    <th>Dias</th>
+                    <th>Peças</th>
+                    <th>Consumo (kg)</th>
                     <th>Receita</th>
-                    <th>Status</th>
-                    <th>Ações</th>
+                    <th>Ativa</th>
+                    <th aria-label="Ações" />
                   </tr>
-
                 </thead>
 
-
                 <tbody>
+                  {programacao.map((item) => {
+                    const estaSalvando = itemEstaSalvando(item.id);
 
-                  {programacaoFiltrada.map(
-                    (
-                      item,
-                    ) => {
-                      const estaSalvando =
-                        itemEstaSalvando(
-                          item.id,
-                        );
+                    const estaExcluindo = itemEstaExcluindo(item.id);
 
-                      const estaExcluindo =
-                        itemEstaExcluindo(
-                          item.id,
-                        );
+                    const consumoPorFornecedor = (item.consumosFornecedores ?? [])
+                      .map(
+                        (fornecedor) =>
+                          `${fornecedor.fornecedorNome}: ${formatarKg(fornecedor.consumoPeriodoKg)}`,
+                      )
+                      .join("\n");
 
+                    return (
+                      <tr key={item.id}>
+                        <td className="programacao-pp-centro programacao-pp-forte">
+                          {item.injetora || "-"}
+                        </td>
 
-                      return (
-                        <tr
-                          key={
-                            item.id
-                          }
+                        <td className="programacao-pp-centro programacao-pp-codigo">
+                          {item.codigoProduto}
+                        </td>
+
+                        <td className="programacao-pp-texto">
+                          {item.descricao || "Sem descrição"}
+                        </td>
+
+                        <td className="programacao-pp-centro">
+                          {item.cicloSegundos ? `${formatarNumero(item.cicloSegundos)} s` : "-"}
+                        </td>
+
+                        <td className="programacao-pp-centro">
+                          {item.cavidadeMolde ? formatarNumero(item.cavidadeMolde) : "-"}
+                        </td>
+
+                        <td className="programacao-pp-numero">
+                          {item.pesoKg ? formatarNumero(item.pesoKg, 3) : "-"}
+                        </td>
+
+                        <td className="programacao-pp-centro programacao-pp-forte">
+                          {item.quantidadeDias}
+                        </td>
+
+                        <td className="programacao-pp-numero">
+                          {formatarNumero(item.pecasPrevistas)}
+                        </td>
+
+                        <td
+                          className="programacao-pp-numero programacao-pp-consumo"
+                          title={consumoPorFornecedor || undefined}
                         >
-
-                          <td className="programacao-pp-data-coluna">
-
-                            {
-                              formatarData(
-                                item.dataInicio,
-                              )
-                            }
-
-                            {item.horaInicio
-                              ? ` ${formatarHora(
-                                  item.horaInicio,
-                                )}`
-                              : ""}
-
-                            {" até "}
-
-                            {
-                              formatarData(
-                                item.dataFim,
-                              )
-                            }
-
-                            {item.horaFim
-                              ? ` ${formatarHora(
-                                  item.horaFim,
-                                )}`
-                              : ""}
-
-                          </td>
-
-
-                          <td>
-                            {
-                              formatarHoras(
-                                item.horasPeriodo,
-                              )
-                            }
-                          </td>
-
-
-                          <td>
-
-                            {item
-                              .injetora
-                              ? `Injetora ${item.injetora}`
-                              : "-"}
-
-                          </td>
-
-
-                          <td className="programacao-pp-codigo">
-
-                            {
-                              item.codigoProduto
-                            }
-
-                          </td>
-
-
-                          <td className="programacao-pp-produto">
-
-                            <strong>
-                              {item
-                                .descricao ||
-                                "Sem descrição"}
-                            </strong>
-
-
-                            {item
-                              .receitaConfigurada &&
-                              item
-                                .consumosFornecedores
-                                .length >
-                                0 && (
-
-                              <small>
-
-                                {item
-                                  .consumosFornecedores
-                                  .map(
-                                    (
-                                      fornecedor,
-                                    ) =>
-                                      `${fornecedor.fornecedorNome}: ${formatarKg(
-                                        fornecedor
-                                          .consumoPeriodoKg,
-                                      )}`,
-                                  )
-                                  .join(
-                                    " • ",
-                                  )}
-
-                              </small>
-
-                            )}
-
-                          </td>
-
-
-                          <td>
-
-                            {item.materialNome || "-"}
-
-                          </td>
-
-
-                          <td>
-
-                            {item.cicloSegundos
-                              ? `${formatarNumero(
-                                  item.cicloSegundos,
-                                )} s`
-                              : "-"}
-
-                          </td>
-
-
-                          <td>
-
-                            {item.cavidadeMolde
-                              ? formatarNumero(
-                                  item.cavidadeMolde,
-                                )
-                              : "-"}
-
-                          </td>
-
-
-                          <td>
-
-                            {
-                              formatarNumero(
-                                item.pecasPrevistas,
-                              )
-                            }
-
-                          </td>
-
-
-                          <td>
-
-                            {
-                              formatarKg(
-                                item.pesoKg,
-                              )
-                            }
-
-                          </td>
-
-
-                          <td className="programacao-pp-consumo">
-
-                            {
-                              formatarKg(
-                                item.consumoPeriodoKg,
-                              )
-                            }
-
-                          </td>
-
-
-                          <td>
-
-                            {item
-                              .receitaConfigurada ? (
-
-                              <span
-                                className="programacao-pp-receita ok"
-                                title={(item.receitaNomes ?? []).join(" • ")}
-                              >
-
-                                <CheckCircle2
-                                  size={13}
-                                />
-
-                                {(item.receitaNomes ?? []).length > 1
-                                  ? `${item.receitaNomes.length} receitas`
-                                  : item.receitaNomes?.[0] || "Receita definida"}
-
-                              </span>
-
-                            ) : (
-
-                              <span className="programacao-pp-receita pendente">
-
-                                <AlertTriangle
-                                  size={13}
-                                />
-
-                                Pendente
-
-                              </span>
-
-                            )}
-
-                          </td>
-
-
-                          <td>
-
-                            <span
-                              className={
-                                item.ativo
-                                  ? "programacao-pp-status ativo"
-                                  : "programacao-pp-status inativo"
-                              }
-                            >
-                              {item.ativo
-                                ? "Ativa"
-                                : "Inativa"}
+                          {formatarNumero(item.consumoPeriodoKg, 3)}
+                        </td>
+
+                        <td className="programacao-pp-centro">
+                          {item.receitaConfigurada ? (
+                            <span title={(item.receitaNomes ?? []).join(" • ")}>
+                              {(item.receitaNomes ?? []).length > 1
+                                ? `${item.receitaNomes.length} receitas`
+                                : item.receitaNomes?.[0] || "Definida"}
                             </span>
+                          ) : (
+                            <span className="programacao-pp-receita-pendente">
+                              <AlertTriangle size={13} />
+                              Pendente
+                            </span>
+                          )}
+                        </td>
 
-                          </td>
+                        <td className="programacao-pp-centro">
+                          <span
+                            className={`programacao-pp-ativa${item.ativo ? " sim" : ""}`}
+                            title={item.ativo ? "Ativa" : "Inativa"}
+                            aria-label={item.ativo ? "Ativa" : "Inativa"}
+                          />
+                        </td>
 
-
-                          <td>
-
-                            <div
-                              style={{
-                                display:
-                                  "flex",
-
-                                alignItems:
-                                  "center",
-
-                                gap:
-                                  "6px",
-                              }}
+                        <td className="programacao-pp-centro">
+                          <div className="programacao-pp-acoes-linha">
+                            <button
+                              type="button"
+                              className="programacao-pp-icone"
+                              onClick={() => abrirEdicao(item)}
+                              disabled={salvando || excluindo}
+                              title={estaSalvando ? "Salvando..." : "Editar"}
+                              aria-label="Editar programação"
                             >
+                              <Pencil size={14} />
+                            </button>
 
-                              <button
-                                type="button"
-                                className="programacao-pp-editar"
-                                onClick={
-                                  () =>
-                                    abrirEdicao(
-                                      item,
-                                    )
-                                }
-                                disabled={
-                                  salvando ||
-                                  excluindo
-                                }
-                              >
-
-                                <Pencil
-                                  size={14}
-                                />
-
-                                {estaSalvando
-                                  ? "Salvando..."
-                                  : "Editar"}
-
-                              </button>
-
-
-                              <button
-                                type="button"
-                                className="programacao-pp-editar"
-                                onClick={
-                                  () =>
-                                    solicitarExclusao(
-                                      item,
-                                    )
-                                }
-                                disabled={
-                                  salvando ||
-                                  excluindo
-                                }
-                                style={{
-                                  color:
-                                    "#dc2626",
-
-                                  borderColor:
-                                    "#fecaca",
-
-                                  background:
-                                    "#ffffff",
-                                }}
-                              >
-
-                                <Trash2
-                                  size={14}
-                                />
-
-                                {estaExcluindo
-                                  ? "Excluindo..."
-                                  : "Excluir"}
-
-                              </button>
-
-                            </div>
-
-                          </td>
-
-                        </tr>
-                      );
-                    },
-                  )}
-
+                            <button
+                              type="button"
+                              className="programacao-pp-icone perigo"
+                              onClick={() => solicitarExclusao(item)}
+                              disabled={salvando || excluindo}
+                              title={estaExcluindo ? "Excluindo..." : "Excluir"}
+                              aria-label="Excluir programação"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
-
               </table>
-
             </div>
-
 
             <div className="programacao-pp-rodape">
-
-              Exibindo{" "}
-
-              <strong>
-                {
-                  programacaoFiltrada.length
-                }
-              </strong>
-
-              {" "}de{" "}
-
-              <strong>
-                {
-                  programacao.length
-                }
-              </strong>
-
-              {" "}programações
-
+              <strong>{programacao.length}</strong>{" "}
+              {programacao.length === 1 ? "programação" : "programações"}
             </div>
-
           </>
-
         )}
-
-
-        {!carregando &&
-          !erro &&
-          programacao.length >
-            0 &&
-          programacaoFiltrada.length ===
-            0 && (
-
-          <div className="programacao-pp-sem-resultado">
-
-            <Search
-              size={27}
-            />
-
-            <strong>
-              Nenhuma programação encontrada
-            </strong>
-
-            <p>
-              Altere os filtros para
-              visualizar outros períodos.
-            </p>
-
-          </div>
-
-        )}
-
       </div>
 
-
       <ProgramacaoModal
-        aberto={
-          modalAberto
-        }
-        item={
-          itemEmEdicao
-        }
-        produtos={
-          produtos
-        }
-        receitas={
-          receitas
-        }
-        programacao={
-          programacao
-        }
-        salvando={
-          salvando
-        }
-        onCancelar={
-          fecharModal
-        }
-        onSalvar={
-          salvar
-        }
+        aberto={modalAberto}
+        item={itemEmEdicao}
+        produtos={produtos}
+        receitas={receitas}
+        programacao={programacao}
+        salvando={salvando}
+        onCancelar={fecharModal}
+        onSalvar={salvar}
       />
-
 
       <ConfirmacaoExclusao
-        aberto={
-          Boolean(
-            itemParaExcluir,
-          )
-        }
+        aberto={Boolean(itemParaExcluir)}
         titulo="Excluir programação?"
         descricao="Esta programação será removida definitivamente da projeção de matéria-prima."
-        itemTitulo={
-          itemParaExcluir
-            ?.descricao ??
-          ""
-        }
-        itemDescricao={
-          itemParaExcluir
-            ? `Código ${itemParaExcluir.codigoProduto}`
-            : ""
-        }
+        itemTitulo={itemParaExcluir?.descricao ?? ""}
+        itemDescricao={itemParaExcluir ? `Código ${itemParaExcluir.codigoProduto}` : ""}
         detalhes={[
           {
-            label:
-              "Injetora",
+            label: "Injetora",
 
-            valor:
-              itemParaExcluir
-                ?.injetora
-                ? `Injetora ${itemParaExcluir.injetora}`
-                : "Não informada",
+            valor: itemParaExcluir?.injetora
+              ? `Injetora ${itemParaExcluir.injetora}`
+              : "Não informada",
           },
 
           {
-            label:
-              "Peças previstas",
+            label: "Peças previstas",
 
-            valor:
-              itemParaExcluir
-                ? formatarNumero(
-                    itemParaExcluir
-                      .pecasPrevistas,
-                  )
-                : "-",
+            valor: itemParaExcluir ? formatarNumero(itemParaExcluir.pecasPrevistas) : "-",
           },
 
           {
-            label:
-              "Início",
+            label: "Dias programados",
 
-            valor:
-              itemParaExcluir
-                ? `${formatarData(
-                    itemParaExcluir
-                      .dataInicio,
-                  )}${
-                    itemParaExcluir
-                      .horaInicio
-                      ? ` ${formatarHora(
-                          itemParaExcluir
-                            .horaInicio,
-                        )}`
-                      : ""
-                  }`
-                : "-",
-          },
-
-          {
-            label:
-              "Fim",
-
-            valor:
-              itemParaExcluir
-                ? `${formatarData(
-                    itemParaExcluir
-                      .dataFim,
-                  )}${
-                    itemParaExcluir
-                      .horaFim
-                      ? ` ${formatarHora(
-                          itemParaExcluir
-                            .horaFim,
-                        )}`
-                      : ""
-                  }`
-                : "-",
+            valor: itemParaExcluir
+              ? (itemParaExcluir.datasVigentes ?? []).map(formatarDiaMes).join(", ") || "-"
+              : "-",
           },
         ]}
-        erro={
-          erroExclusao
-        }
-        processando={
-          excluindo
-        }
+        erro={erroExclusao}
+        processando={excluindo}
         textoConfirmar="Excluir programação"
-        onCancelar={
-          cancelarExclusao
-        }
-        onConfirmar={
-          confirmarExclusao
-        }
+        onCancelar={cancelarExclusao}
+        onConfirmar={confirmarExclusao}
       />
-
     </>
   );
 }

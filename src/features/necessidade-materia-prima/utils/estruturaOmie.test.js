@@ -20,16 +20,23 @@ const estrutura = {
 };
 const vinculos = [{ material_id: 1, codigo_produto: "PRD11295", ativo: true }];
 const estoqueProdutos = ["11234", "3924", "11.01.0035", "ZERO", "ERRO", "NOVO"].map((c) => ({
-  codigo_produto: c, fisico: 10, estoque_minimo: 100,
+  codigo_produto: c,
+  fisico: 10,
+  estoque_minimo: 100,
 }));
 estoqueProdutos.push({ codigo_produto: "11217", fisico: 375, estoque_minimo: 0 });
 
 const pedido = (c, q = 10) => ({ codigo_produto: c, produto: `Produto ${c}`, quantidade: q });
-const motivos = (r, c) => r.pendencias.find((p) => p.codigo === c)?.motivos.map((m) => m.tipo) ?? [];
+const motivos = (r, c) =>
+  r.pendencias.find((p) => p.codigo === c)?.motivos.map((m) => m.tipo) ?? [];
 
 describe("aplicarEstruturaOmie", () => {
   it("produto completo entra no consumo com o kg da estrutura", () => {
-    const r = aplicarEstruturaOmie([pedido("11234", 100)], { estrutura, vinculos, estoqueProdutos });
+    const r = aplicarEstruturaOmie([pedido("11234", 100)], {
+      estrutura,
+      vinculos,
+      estoqueProdutos,
+    });
     expect(r.pendencias).toEqual([]);
     expect(r.pedidos).toHaveLength(1);
     expect(r.pedidos[0]).toMatchObject({ material_id: "1", kg_un: 2.78, situacao_cadastro: "OK" });
@@ -37,8 +44,15 @@ describe("aplicarEstruturaOmie", () => {
   });
 
   it("perda da estrutura aumenta o kg/un", () => {
-    const e = { produtos: [{ codigo_produto: "P" }], itens: [{ codigo_produto: "P", codigo_mp: "PRD11295", quantidade: 2, percentual_perda: 10 }] };
-    const r = aplicarEstruturaOmie([pedido("P")], { estrutura: e, vinculos, estoqueProdutos: [{ codigo_produto: "P", fisico: 0, estoque_minimo: 1 }] });
+    const e = {
+      produtos: [{ codigo_produto: "P" }],
+      itens: [{ codigo_produto: "P", codigo_mp: "PRD11295", quantidade: 2, percentual_perda: 10 }],
+    };
+    const r = aplicarEstruturaOmie([pedido("P")], {
+      estrutura: e,
+      vinculos,
+      estoqueProdutos: [{ codigo_produto: "P", fisico: 0, estoque_minimo: 1 }],
+    });
     expect(r.pedidos[0].kg_un).toBeCloseTo(2.2);
   });
 
@@ -63,31 +77,50 @@ describe("aplicarEstruturaOmie", () => {
 
   it("peso suspeito aceito entra; recusado continua pendente", () => {
     const aceito = aplicarEstruturaOmie([pedido("3924")], {
-      estrutura, vinculos, estoqueProdutos,
-      decisoes: [{ codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: "1860", decisao: "ACEITO" }],
+      estrutura,
+      vinculos,
+      estoqueProdutos,
+      decisoes: [
+        { codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: "1860", decisao: "ACEITO" },
+      ],
     });
     expect(aceito.pendencias).toEqual([]);
     expect(aceito.pedidos[0].kg_un).toBe(1860);
     expect(aceito.pesosAceitos).toHaveLength(1);
 
     const recusado = aplicarEstruturaOmie([pedido("3924")], {
-      estrutura, vinculos, estoqueProdutos,
-      decisoes: [{ codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: 1860, decisao: "RECUSADO" }],
+      estrutura,
+      vinculos,
+      estoqueProdutos,
+      decisoes: [
+        { codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: 1860, decisao: "RECUSADO" },
+      ],
     });
     expect(motivos(recusado, "3924")).toEqual(["PESO_RECUSADO"]);
   });
 
   it("aceite de outro peso não vale (peso mudou no Omie)", () => {
     const r = aplicarEstruturaOmie([pedido("3924")], {
-      estrutura, vinculos, estoqueProdutos,
-      decisoes: [{ codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: 18.6, decisao: "ACEITO" }],
+      estrutura,
+      vinculos,
+      estoqueProdutos,
+      decisoes: [
+        { codigo_produto: "3924", codigo_mp: "PRD11295", quantidade: 18.6, decisao: "ACEITO" },
+      ],
     });
     expect(motivos(r, "3924")).toEqual(["PESO_SUSPEITO"]);
   });
 
   it("até 5 kg não é suspeito", () => {
-    const e = { produtos: [{ codigo_produto: "P" }], itens: [{ codigo_produto: "P", codigo_mp: "PRD11295", quantidade: 5 }] };
-    const r = aplicarEstruturaOmie([pedido("P")], { estrutura: e, vinculos, estoqueProdutos: [{ codigo_produto: "P", fisico: 0, estoque_minimo: 1 }] });
+    const e = {
+      produtos: [{ codigo_produto: "P" }],
+      itens: [{ codigo_produto: "P", codigo_mp: "PRD11295", quantidade: 5 }],
+    };
+    const r = aplicarEstruturaOmie([pedido("P")], {
+      estrutura: e,
+      vinculos,
+      estoqueProdutos: [{ codigo_produto: "P", fisico: 0, estoque_minimo: 1 }],
+    });
     expect(r.pendencias).toEqual([]);
   });
 });
@@ -95,7 +128,10 @@ describe("aplicarEstruturaOmie", () => {
 describe("apoio", () => {
   it("mapa de materiais usa vínculos ativos e o código do material", () => {
     const m = criarMapaMateriais({
-      vinculos: [{ material_id: 1, codigo_produto: "prd11295", ativo: true }, { material_id: 9, codigo_produto: "X", ativo: false }],
+      vinculos: [
+        { material_id: 1, codigo_produto: "prd11295", ativo: true },
+        { material_id: 9, codigo_produto: "X", ativo: false },
+      ],
       materiais: [{ id: 6, codigo_omie: "1394" }],
     });
     expect(m.get("PRD11295")).toBe("1");

@@ -4,18 +4,13 @@ import {
   IndicadoresPrincipaisMateriaPrima,
 } from "./IndicadoresMateriaPrima.jsx";
 
-import InsightsMateriaPrima
-  from "./InsightsMateriaPrima.jsx";
+import InsightsMateriaPrima from "./InsightsMateriaPrima.jsx";
 
-import GraficosMensaisMateriaPrima
-  from "./GraficosMensaisMateriaPrima.jsx";
+import GraficosMensaisMateriaPrima from "./GraficosMensaisMateriaPrima.jsx";
 
-import GraficosFornecedorMateriaPrima
-  from "./GraficosFornecedorMateriaPrima.jsx";
+import GraficosFornecedorMateriaPrima from "./GraficosFornecedorMateriaPrima.jsx";
 
-import TabelasMateriaPrima
-  from "./TabelasMateriaPrima.jsx";
-
+import TabelasMateriaPrima from "./TabelasMateriaPrima.jsx";
 
 export default function PainelFinanceiroMateriaPrima({
   resumo,
@@ -27,85 +22,31 @@ export default function PainelFinanceiroMateriaPrima({
   materialSelecionado,
   carregando,
 }) {
-  const misturaMateriais =
-    Number(
-      resumo?.materiaisDistintos ||
-      0,
-    ) > 1;
-
+  const misturaMateriais = Number(resumo?.materiaisDistintos || 0) > 1;
 
   return (
     <section className="dmp-financeiro">
-
-      <AvisosMateriaPrima
-        resumo={
-          resumo
-        }
-        materialSelecionado={
-          materialSelecionado
-        }
-      />
-
+      <AvisosMateriaPrima resumo={resumo} materialSelecionado={materialSelecionado} />
 
       <IndicadoresPrincipaisMateriaPrima
-        resumo={
-          resumo
-        }
-        misturaMateriais={
-          misturaMateriais
-        }
-        carregando={
-          carregando
-        }
+        resumo={resumo}
+        misturaMateriais={misturaMateriais}
+        carregando={carregando}
       />
 
+      <EficienciaEntregaMateriaPrima resumo={resumo} carregando={carregando} />
 
-      <EficienciaEntregaMateriaPrima
-        resumo={
-          resumo
-        }
-        carregando={
-          carregando
-        }
-      />
+      <InsightsMateriaPrima insights={insights} />
 
-
-      <InsightsMateriaPrima
-        insights={
-          insights
-        }
-      />
-
-
-      <GraficosMensaisMateriaPrima
-        mensal={
-          mensal
-        }
-      />
-
+      <GraficosMensaisMateriaPrima mensal={mensal} />
 
       <GraficosFornecedorMateriaPrima
-        porFornecedor={
-          porFornecedor
-        }
-        evolucao={
-          evolucao
-        }
-        misturaMateriais={
-          misturaMateriais
-        }
+        porFornecedor={porFornecedor}
+        evolucao={evolucao}
+        misturaMateriais={misturaMateriais}
       />
 
-
-      <TabelasMateriaPrima
-        porMaterial={
-          porMaterial
-        }
-        porFornecedor={
-          porFornecedor
-        }
-      />
-
+      <TabelasMateriaPrima porMaterial={porMaterial} porFornecedor={porFornecedor} />
     </section>
   );
 }

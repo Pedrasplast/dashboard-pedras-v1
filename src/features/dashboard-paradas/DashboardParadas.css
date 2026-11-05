@@ -1,4 +1,3 @@
-
 /* =========================================================
    DASHBOARD DE PARADAS
    Responsividade completa e isolada nesta página.
@@ -11,7 +10,7 @@
    ESTRUTURA EXTERNA — SOMENTE NA ROTA DE PARADAS
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   html:has(.dp-page),
   body:has(.dp-page) {
     height: 100%;
@@ -39,8 +38,7 @@
     overflow: hidden;
   }
 
-  body:has(.dp-page)
-  .app-layout > .main-content:has(> .dp-page) {
+  body:has(.dp-page) .app-layout > .main-content:has(> .dp-page) {
     display: block;
     flex: 1 1 auto;
     height: auto;
@@ -60,8 +58,8 @@
   --dp-bg-top: #f8fbff;
   --dp-bg-bottom: #eef4fb;
 
-  --dp-surface: #ffffff;
-  --dp-surface-soft: #f8fafc;
+  --dp-surface: var(--color-surface);
+  --dp-surface-soft: var(--color-surface-subtle);
 
   --dp-border: #dfe7f1;
   --dp-border-soft: #edf2f7;
@@ -71,32 +69,28 @@
   --dp-muted: #64748b;
   --dp-muted-light: #94a3b8;
 
-  --dp-primary: #1d4ed8;
+  --dp-primary: var(--color-primary-hover);
   --dp-primary-dark: #0b1f5e;
-  --dp-primary-soft: #eff6ff;
+  --dp-primary-soft: var(--color-primary-soft);
 
   --dp-success: #15803d;
   --dp-success-soft: #f0fdf4;
 
-  --dp-warning: #b45309;
-  --dp-warning-soft: #fffbeb;
+  --dp-warning: var(--color-warning-hover);
+  --dp-warning-soft: var(--color-warning-soft);
 
-  --dp-danger: #b91c1c;
-  --dp-danger-soft: #fef2f2;
+  --dp-danger: var(--color-danger-hover);
+  --dp-danger-soft: var(--color-danger-soft);
 
-  --dp-shadow:
-    0 8px 24px rgba(15, 23, 42, 0.055);
+  --dp-shadow: 0 8px 24px rgba(15, 23, 42, 0.055);
 
-  --dp-shadow-hover:
-    0 14px 34px rgba(15, 23, 42, 0.09);
+  --dp-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.09);
 
   display: grid;
 
-  grid-template-columns:
-    296px minmax(0, 1fr);
+  grid-template-columns: 296px minmax(0, 1fr);
 
-  grid-template-rows:
-    minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
 
   align-items: stretch;
 
@@ -108,18 +102,13 @@
 
   margin: 0;
 
-  padding:
-    12px 12px 12px 0;
+  padding: var(--space-3) var(--space-3) var(--space-3) 0;
 
   box-sizing: border-box;
 
   overflow: hidden;
 
-  background: linear-gradient(
-    180deg,
-    var(--dp-bg-top),
-    var(--dp-bg-bottom)
-  );
+  background: linear-gradient(180deg, var(--dp-bg-top), var(--dp-bg-bottom));
 }
 
 /* =========================================================
@@ -134,8 +123,7 @@
 
   margin: 0;
 
-  padding:
-    0 0 0 12px;
+  padding: 0 0 0 var(--space-3);
 
   box-sizing: border-box;
 
@@ -184,8 +172,7 @@
 
   margin: 0;
 
-  padding:
-    0 12px 0 20px;
+  padding: 0 var(--space-3) 0 var(--space-5);
 
   box-sizing: border-box;
 
@@ -205,11 +192,7 @@
 
   min-width: 0;
 
-  background: linear-gradient(
-    180deg,
-    rgba(248, 251, 255, 0.98),
-    rgba(248, 251, 255, 0.94)
-  );
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(248, 251, 255, 0.94));
 }
 
 .dp-page .dp-data-scroll {
@@ -221,8 +204,7 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  padding:
-    0 4px 32px 0;
+  padding: 0 var(--space-1) var(--space-8) 0;
 
   box-sizing: border-box;
 
@@ -234,11 +216,9 @@
 .dp-page .page-header.dp-header {
   min-width: 0;
 
-  margin:
-    0 0 12px;
+  margin: 0 0 var(--space-3);
 
-  padding:
-    16px 18px;
+  padding: var(--space-4) 18px;
 }
 
 .dp-page .page-header__main,
@@ -254,83 +234,63 @@
 .dp-page .dp-dashboard-actions {
   flex-wrap: wrap;
 
-  margin:
-    0 0 12px;
+  margin: 0 0 var(--space-3);
 }
 
 /* =========================================================
    FILTROS DA SIDEBAR — DESKTOP
 ========================================================= */
 
-@media (min-width: 761px) {
+@media (--acima-tablet) {
   .dp-sidebar-shell .filter-section {
-    gap: 8px;
+    gap: var(--space-2);
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .filter-header-row {
-    gap: 8px;
+  .dp-sidebar-shell .filter-section .filter-header-row {
+    gap: var(--space-2);
     margin-top: 0;
   }
 
-  .dp-sidebar-shell
-  .filter-section > label,
-  .dp-sidebar-shell
-  .filter-section
-  .filter-header-row > label {
-    margin:
-      14px 0 0;
+  .dp-sidebar-shell .filter-section > label,
+  .dp-sidebar-shell .filter-section .filter-header-row > label {
+    margin: 14px 0 0;
 
     font-size: 0.66rem;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .filter-header-row > label {
+  .dp-sidebar-shell .filter-section .filter-header-row > label {
     margin: 0;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .clear-date-btn {
-    padding:
-      3px 5px;
+  .dp-sidebar-shell .filter-section .clear-date-btn {
+    padding: 3px 5px;
 
     font-size: 0.62rem;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .date-inputs-container {
+  .dp-sidebar-shell .filter-section .date-inputs-container {
     gap: 6px;
   }
 
   .dp-sidebar-shell .calendar-trigger {
     min-height: 40px;
 
-    padding:
-      6px 10px;
+    padding: 6px 10px;
   }
 
-  .dp-sidebar-shell
-  .calendar-trigger strong {
+  .dp-sidebar-shell .calendar-trigger strong {
     font-size: 0.82rem;
   }
 
-  .dp-sidebar-shell
-  .filter-section select {
+  .dp-sidebar-shell .filter-section select {
     min-height: 42px;
 
-    padding:
-      7px 34px 7px 10px;
+    padding: 7px 34px 7px 10px;
 
     font-size: 0.79rem;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .checkbox-group {
+  .dp-sidebar-shell .filter-section .checkbox-group {
     max-height: none;
 
     gap: 2px;
@@ -342,49 +302,35 @@
     scrollbar-width: none;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .checkbox-group::-webkit-scrollbar {
+  .dp-sidebar-shell .filter-section .checkbox-group::-webkit-scrollbar {
     display: none;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-checkbox-label {
+  .dp-sidebar-shell .filter-section .tipo-checkbox-label {
     min-height: 32px;
 
     gap: 6px;
 
-    padding:
-      4px 5px;
+    padding: var(--space-1) 5px;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-checkbox-label
-  input[type="checkbox"] {
+  .dp-sidebar-shell .filter-section .tipo-checkbox-label input[type="checkbox"] {
     width: 15px;
     height: 15px;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-label-conteudo {
+  .dp-sidebar-shell .filter-section .tipo-label-conteudo {
     gap: 6px;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-label-numero {
+  .dp-sidebar-shell .filter-section .tipo-label-numero {
     width: 21px;
     height: 21px;
 
     font-size: 0.65rem;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-label-descricao {
+  .dp-sidebar-shell .filter-section .tipo-label-descricao {
     font-size: 0.65rem;
     line-height: 1.16;
   }
@@ -394,13 +340,12 @@
    FILTROS — NOTEBOOK COM POUCA ALTURA
 ========================================================= */
 
-@media (max-height: 760px) and (min-width: 761px) {
+@media (max-height: 760px) and (--acima-tablet) {
   .dp-sidebar-shell .filter-section {
     gap: 5px;
   }
 
-  .dp-sidebar-shell
-  .filter-section > label {
+  .dp-sidebar-shell .filter-section > label {
     margin-top: 9px;
   }
 
@@ -409,28 +354,21 @@
     padding: 5px 9px;
   }
 
-  .dp-sidebar-shell
-  .filter-section select {
+  .dp-sidebar-shell .filter-section select {
     min-height: 39px;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-checkbox-label {
+  .dp-sidebar-shell .filter-section .tipo-checkbox-label {
     min-height: 29px;
-    padding: 3px 4px;
+    padding: 3px var(--space-1);
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-label-numero {
+  .dp-sidebar-shell .filter-section .tipo-label-numero {
     width: 19px;
     height: 19px;
   }
 
-  .dp-sidebar-shell
-  .filter-section
-  .tipo-label-descricao {
+  .dp-sidebar-shell .filter-section .tipo-label-descricao {
     font-size: 0.62rem;
   }
 }
@@ -439,10 +377,6 @@
    CABEÇALHO
 ========================================================= */
 
-.dp-header {
-  margin-bottom: 18px;
-}
-
 /* =========================================================
    INDICADOR DE ATUALIZAÇÃO
 ========================================================= */
@@ -450,22 +384,19 @@
 .dp-updating {
   width: fit-content;
 
-  margin:
-    -6px 0 12px auto;
+  margin: -6px 0 var(--space-3) auto;
 
-  padding:
-    5px 9px;
+  padding: 5px 9px;
 
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--color-primary-hover);
+  background: var(--color-primary-soft);
 
-  border:
-    1px solid #dbeafe;
+  border: 1px solid #dbeafe;
 
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 /* =========================================================
@@ -475,10 +406,9 @@
 .dp-insights {
   display: grid;
 
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
-  gap: 12px;
+  gap: var(--space-3);
 
   margin-bottom: 18px;
 }
@@ -489,21 +419,17 @@
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  padding:
-    12px 14px;
+  padding: var(--space-3) 14px;
 
-  background:
-    rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.9);
 
-  border:
-    1px solid var(--dp-border);
+  border: 1px solid var(--dp-border);
 
   border-radius: 11px;
 
-  box-shadow:
-    0 3px 12px rgba(15, 23, 42, 0.035);
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
 }
 
 .dp-insight__icon {
@@ -518,8 +444,7 @@
 
   color: var(--dp-primary);
 
-  background:
-    var(--dp-primary-soft);
+  background: var(--dp-primary-soft);
 
   border-radius: 9px;
 }
@@ -576,12 +501,11 @@
 .dp-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  gap: 16px;
+  gap: var(--space-4);
 
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 
   align-items: stretch;
 }
@@ -589,8 +513,7 @@
 .dp-grid--principal,
 .dp-grid--analise,
 .dp-grid--operacional {
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .dp-grid > * {
@@ -613,24 +536,19 @@
    RECHARTS
 ========================================================= */
 
-.dp-page
-.recharts-cartesian-grid-horizontal line,
-.dp-page
-.recharts-cartesian-grid-vertical line {
+.dp-page .recharts-cartesian-grid-horizontal line,
+.dp-page .recharts-cartesian-grid-vertical line {
   stroke: #e8eef5;
 }
 
-.dp-page
-.recharts-cartesian-axis-line,
-.dp-page
-.recharts-cartesian-axis-tick-line {
+.dp-page .recharts-cartesian-axis-line,
+.dp-page .recharts-cartesian-axis-tick-line {
   stroke: #cbd5e1;
 }
 
-.dp-page
-.recharts-cartesian-axis-tick-value {
-  fill: #64748b;
-  font-weight: 600;
+.dp-page .recharts-cartesian-axis-tick-value {
+  fill: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* =========================================================
@@ -640,22 +558,17 @@
 .dp-chart-tooltip {
   min-width: 180px;
 
-  padding:
-    10px 12px;
+  padding: 10px var(--space-3);
 
-  color:
-    var(--dp-text-secondary);
+  color: var(--dp-text-secondary);
 
-  background:
-    rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.98);
 
-  border:
-    1px solid #dbe3ee;
+  border: 1px solid #dbe3ee;
 
   border-radius: 9px;
 
-  box-shadow:
-    0 14px 34px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
 
   font-size: 0.7rem;
 }
@@ -678,8 +591,7 @@
 
   gap: 18px;
 
-  padding:
-    3px 0;
+  padding: 3px 0;
 }
 
 .dp-chart-tooltip__linha span {
@@ -691,8 +603,7 @@
 
   font-size: 0.7rem;
 
-  font-variant-numeric:
-    tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 /* =========================================================
@@ -703,38 +614,35 @@
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  margin-top: 4px;
+  margin-top: var(--space-1);
 
-  padding:
-    22px 20px;
+  padding: 22px var(--space-5);
 
-  color: #64748b;
-  background: #ffffff;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
 
-  border:
-    1px dashed #cbd5e1;
+  border: 1px dashed var(--color-border-strong);
 
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 .dp-empty-page > svg {
   flex: 0 0 auto;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .dp-empty-page strong {
   display: block;
 
-  color: #334155;
+  color: var(--color-text-strong);
 
   font-size: 0.8rem;
 }
 
 .dp-empty-page p {
-  margin:
-    3px 0 0;
+  margin: 3px 0 0;
 
   font-size: 0.69rem;
   line-height: 1.4;
@@ -744,11 +652,7 @@
    AJUSTES VISUAIS — DESKTOP MENOR
 ========================================================= */
 
-@media (max-width: 1450px) {
-  .dp-header {
-    margin-bottom: 14px;
-  }
-
+@media (--desktop) {
   .dp-insights {
     gap: 10px;
     margin-bottom: 14px;
@@ -768,12 +672,11 @@
    AJUSTES VISUAIS — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) {
+@media (--desktop-pequeno) {
   .dp-insight {
     gap: 9px;
 
-    padding:
-      10px 11px;
+    padding: 10px 11px;
   }
 
   .dp-insight__icon {
@@ -794,7 +697,7 @@
    GRÁFICOS EM UMA COLUNA
 ========================================================= */
 
-@media (max-width: 1120px) {
+@media (--notebook) {
   .dp-grid--principal,
   .dp-grid--analise,
   .dp-grid--operacional {
@@ -814,14 +717,9 @@
    TABLET
 ========================================================= */
 
-@media (max-width: 920px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
+@media (--notebook) {
   .dp-dashboard-actions {
-    margin:
-      -2px 0 10px;
+    margin: -2px 0 10px;
   }
 
   .dp-chart {
@@ -833,15 +731,14 @@
    CELULAR — ELEMENTOS VISUAIS
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   .dp-dashboard-actions {
     align-items: stretch;
     flex-direction: column;
 
-    gap: 8px;
+    gap: var(--space-2);
 
-    margin:
-      0 0 12px;
+    margin: 0 0 var(--space-3);
   }
 
   .dp-refresh-button {
@@ -860,7 +757,7 @@
   .dp-grid--operacional {
     grid-template-columns: 1fr;
 
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   .dp-chart {
@@ -872,11 +769,7 @@
    CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
+@media (--celular) {
   .dp-insight {
     padding: 10px;
   }
@@ -888,8 +781,7 @@
   .dp-chart-tooltip {
     min-width: 150px;
 
-    padding:
-      8px 9px;
+    padding: var(--space-2) 9px;
   }
 }
 
@@ -897,20 +789,15 @@
    NOTEBOOK COM ALTURA REDUZIDA
 ========================================================= */
 
-@media (max-height: 820px) and (min-width: 761px) {
-  .dp-header {
-    margin-bottom: 10px;
-  }
-
+@media (max-height: 820px) and (--acima-tablet) {
   .dp-dashboard-actions {
     min-height: 32px;
 
-    margin:
-      -3px 0 9px;
+    margin: -3px 0 9px;
   }
 
   .dp-insights {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
 
   .dp-chart {
@@ -918,11 +805,7 @@
   }
 }
 
-@media (max-height: 680px) and (min-width: 761px) {
-  .dp-header {
-    margin-bottom: 7px;
-  }
-
+@media (max-height: 680px) and (--acima-tablet) {
   .dp-chart {
     height: 245px;
   }
@@ -933,26 +816,25 @@
 ========================================================= */
 
 .dp-drilldown-tooltip-clique {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 
   padding-top: 7px;
 
-  border-top:
-    1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.67rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .dp-drilldown__clique {
   margin-top: 7px;
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 
   text-align: right;
 }
@@ -968,10 +850,9 @@
   align-items: center;
   justify-content: space-between;
 
-  gap: 12px;
+  gap: var(--space-3);
 
-  margin:
-    -5px 0 14px;
+  margin: -5px 0 14px;
 }
 
 .dp-dashboard-actions__status {
@@ -995,17 +876,15 @@
 
   gap: 7px;
 
-  padding:
-    0 11px;
+  padding: 0 11px;
 
   color: var(--dp-primary);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border:
-    1px solid #bfdbfe;
+  border: 1px solid #bfdbfe;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   font-family: inherit;
 
@@ -1014,8 +893,7 @@
 
   cursor: pointer;
 
-  box-shadow:
-    0 2px 6px rgba(15, 23, 42, 0.035);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.035);
 
   transition:
     color 0.15s ease,
@@ -1026,24 +904,19 @@
 }
 
 .dp-refresh-button:hover:not(:disabled) {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 
-  background:
-    var(--dp-primary);
+  background: var(--dp-primary);
 
-  border-color:
-    var(--dp-primary);
+  border-color: var(--dp-primary);
 
-  box-shadow:
-    0 5px 12px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.18);
 
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
 
 .dp-refresh-button:active:not(:disabled) {
-  transform:
-    translateY(0);
+  transform: translateY(0);
 }
 
 .dp-refresh-button:disabled {
@@ -1059,31 +932,19 @@
    ANIMAÇÃO
 ========================================================= */
 
-.dp-refresh-button__icon.is-spinning {
-  animation:
-    dpRefreshSpin 0.8s linear infinite;
-}
-
-@keyframes dpRefreshSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* =========================================================
    RESPONSIVIDADE — DESKTOP MENOR
 
    Ajusta a largura da sidebar sem mudar a altura da Navbar.
 ========================================================= */
 
-@media (max-width: 1450px) and (min-width: 761px) {
+@media (--desktop) and (--acima-tablet) {
   .dashboard-container.dp-page {
-    grid-template-columns:
-      268px minmax(0, 1fr);
+    grid-template-columns: 268px minmax(0, 1fr);
   }
 
   .dp-page > .main-content.dp-main {
-    padding-left: 16px;
+    padding-left: var(--space-4);
     padding-right: 6px;
   }
 }
@@ -1092,15 +953,13 @@
    RESPONSIVIDADE — NOTEBOOK
 ========================================================= */
 
-@media (max-width: 1280px) and (min-width: 761px) {
+@media (--desktop-pequeno) and (--acima-tablet) {
   .dashboard-container.dp-page {
-    grid-template-columns:
-      250px minmax(0, 1fr);
+    grid-template-columns: 250px minmax(0, 1fr);
   }
 
   .dp-page .dp-kpis {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1108,23 +967,20 @@
    RESPONSIVIDADE — NOTEBOOK ESTREITO
 ========================================================= */
 
-@media (max-width: 1120px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   .dashboard-container.dp-page {
-    grid-template-columns:
-      236px minmax(0, 1fr);
+    grid-template-columns: 236px minmax(0, 1fr);
   }
 
   .dp-page .dp-grid,
   .dp-page .dp-grid--principal,
   .dp-page .dp-grid--analise,
   .dp-page .dp-grid--operacional {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dp-page .dp-insights {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1132,31 +988,27 @@
    RESPONSIVIDADE — TABLET HORIZONTAL
 ========================================================= */
 
-@media (max-width: 920px) and (min-width: 761px) {
+@media (--notebook) and (--acima-tablet) {
   .dashboard-container.dp-page {
-    grid-template-columns:
-      218px minmax(0, 1fr);
+    grid-template-columns: 218px minmax(0, 1fr);
 
-    padding:
-      8px 8px 8px 0;
+    padding: var(--space-2) var(--space-2) var(--space-2) 0;
   }
 
   .dp-page .dp-sidebar-shell {
-    padding-left: 8px;
+    padding-left: var(--space-2);
   }
 
   .dp-page > .main-content.dp-main {
-    padding:
-      0 2px 0 10px;
+    padding: 0 2px 0 10px;
   }
 
   .dp-page .page-header.dp-header {
-    padding: 12px;
+    padding: var(--space-3);
   }
 
   .dp-page .dp-kpis {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1164,21 +1016,20 @@
    RESPONSIVIDADE — TELA BAIXA
 ========================================================= */
 
-@media (max-height: 760px) and (min-width: 761px) {
+@media (max-height: 760px) and (--acima-tablet) {
   .dashboard-container.dp-page {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
   }
 
   .dp-page .page-header.dp-header {
-    padding:
-      10px 14px;
+    padding: 10px 14px;
 
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
   }
 
   .dp-page .dp-dashboard-actions {
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
   }
 }
 
@@ -1189,7 +1040,7 @@
    Sidebar primeiro; conteúdo em seguida.
 ========================================================= */
 
-@media (max-width: 760px) {
+@media (--tablet) {
   html:has(.dp-page),
   body:has(.dp-page) {
     height: auto;
@@ -1201,8 +1052,7 @@
   }
 
   body:has(.dp-page) {
-    padding-top:
-      var(--navbar-height, 64px);
+    padding-top: var(--navbar-height, 64px);
   }
 
   body:has(.dp-page) #root,
@@ -1214,8 +1064,7 @@
     overflow: visible;
   }
 
-  body:has(.dp-page)
-  .app-layout > .main-content:has(> .dp-page) {
+  body:has(.dp-page) .app-layout > .main-content:has(> .dp-page) {
     height: auto;
 
     min-height: 0;
@@ -1232,18 +1081,15 @@
     display: flex;
     flex-direction: column;
 
-    gap: 12px;
+    gap: var(--space-3);
 
     height: auto;
 
-    min-height:
-      calc(
-        100dvh - var(--navbar-height, 64px)
-      );
+    min-height: calc(100dvh - var(--navbar-height, 64px));
 
     margin: 0;
 
-    padding: 12px;
+    padding: var(--space-3);
 
     overflow: visible;
   }
@@ -1275,8 +1121,7 @@
 
     overflow: visible;
 
-    padding:
-      18px 16px;
+    padding: 18px var(--space-4);
   }
 
   .dp-page > .main-content.dp-main {
@@ -1306,13 +1151,11 @@
 
     overflow: visible;
 
-    padding:
-      0 0 24px;
+    padding: 0 0 var(--space-6);
   }
 
   .dp-page .page-header.dp-header {
-    margin:
-      0 0 12px;
+    margin: 0 0 var(--space-3);
 
     padding: 14px;
   }
@@ -1328,21 +1171,18 @@
   }
 
   .dp-page .dp-kpis {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .dp-page .dp-grid,
   .dp-page .dp-grid--principal,
   .dp-page .dp-grid--analise,
   .dp-page .dp-grid--operacional {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dp-page .dp-insights {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dp-page .dp-chart {
@@ -1355,17 +1195,16 @@
    RESPONSIVIDADE — CELULAR PEQUENO
 ========================================================= */
 
-@media (max-width: 520px) {
+@media (--celular) {
   .dashboard-container.dp-page {
-    padding: 8px;
+    padding: var(--space-2);
   }
 
   .dp-page .dp-kpis {
-    grid-template-columns:
-      minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dp-page .page-header.dp-header {
-    padding: 12px;
+    padding: var(--space-3);
   }
 }

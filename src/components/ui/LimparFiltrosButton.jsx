@@ -1,9 +1,6 @@
-import {
-  RotateCcw,
-} from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 import "./LimparFiltrosButton.css";
-
 
 export default function LimparFiltrosButton({
   ativo = false,
@@ -12,46 +9,22 @@ export default function LimparFiltrosButton({
   className = "",
   disabled = false,
 }) {
-  const desabilitado =
-    disabled ||
-    !ativo;
-
+  const desabilitado = disabled || !ativo;
 
   return (
     <button
       type="button"
-      className={
-        `limpar-filtros-button ${
-          ativo &&
-          !disabled
-            ? "is-active"
-            : "is-disabled"
-        } ${className}`
-      }
-      disabled={
-        desabilitado
-      }
-      aria-disabled={
-        desabilitado
-      }
-      title={
-        desabilitado
-          ? "Nenhum filtro aplicado"
-          : texto
-      }
-      onClick={
-        onClick
-      }
+      className={`limpar-filtros-button ${
+        ativo && !disabled ? "is-active" : "is-disabled"
+      } ${className}`}
+      disabled={desabilitado}
+      aria-disabled={desabilitado}
+      title={desabilitado ? "Nenhum filtro aplicado" : texto}
+      onClick={onClick}
     >
-      <RotateCcw
-        size={
-          16
-        }
-      />
+      <RotateCcw size={16} />
 
-      <span>
-        {texto}
-      </span>
+      <span>{texto}</span>
     </button>
   );
 }

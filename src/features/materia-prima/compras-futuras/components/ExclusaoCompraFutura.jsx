@@ -2,7 +2,13 @@ import ConfirmacaoExclusao from "@/components/ConfirmacaoExclusao/ConfirmacaoExc
 
 import { descricaoExclusao, detalhesExclusao } from "../utils/comprasFuturasUtils";
 
-export default function ExclusaoCompraFutura({ compra, erro, processando, onCancelar, onConfirmar }) {
+export default function ExclusaoCompraFutura({
+  compra,
+  erro,
+  processando,
+  onCancelar,
+  onConfirmar,
+}) {
   return (
     <ConfirmacaoExclusao
       aberto={Boolean(compra)}

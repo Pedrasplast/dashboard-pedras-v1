@@ -1,8 +1,6 @@
 import { memo } from "react";
 
-import {
-  AlertCircle,
-} from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import "./DashboardParadasCard.css";
 
@@ -38,14 +36,7 @@ function DashboardParadasCard({
   emptyMessage = "Não existem registros para os filtros selecionados.",
 }) {
   return (
-    <section
-      className={[
-        "dp-card",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
+    <section className={["dp-card", className].filter(Boolean).join(" ")}>
       {/* ===================================================
           CABEÇALHO
       =================================================== */}
@@ -54,63 +45,34 @@ function DashboardParadasCard({
         <div className="dp-card__heading">
           {Icon && (
             <span className="dp-card__header-icon">
-              <Icon
-                size={18}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <Icon size={18} strokeWidth={2} aria-hidden="true" />
             </span>
           )}
 
           <div className="dp-card__titles">
-            <h2>
-              {title}
-            </h2>
+            <h2>{title}</h2>
 
-            {subtitle && (
-              <p>
-                {subtitle}
-              </p>
-            )}
+            {subtitle && <p>{subtitle}</p>}
           </div>
         </div>
 
-        {actions && (
-          <div className="dp-card__actions">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="dp-card__actions">{actions}</div>}
       </header>
 
       {/* ===================================================
           CONTEÚDO
       =================================================== */}
 
-      <div
-        className={[
-          "dp-card__content",
-          contentClassName,
-        ]
-          .filter(Boolean)
-          .join(" ")}
-      >
+      <div className={["dp-card__content", contentClassName].filter(Boolean).join(" ")}>
         {empty ? (
           <div className="dp-card__empty">
             <span className="dp-card__empty-icon">
-              <AlertCircle
-                size={24}
-                strokeWidth={1.8}
-                aria-hidden="true"
-              />
+              <AlertCircle size={24} strokeWidth={1.8} aria-hidden="true" />
             </span>
 
-            <strong>
-              {emptyTitle}
-            </strong>
+            <strong>{emptyTitle}</strong>
 
-            <p>
-              {emptyMessage}
-            </p>
+            <p>{emptyMessage}</p>
           </div>
         ) : (
           children
@@ -120,6 +82,4 @@ function DashboardParadasCard({
   );
 }
 
-export default memo(
-  DashboardParadasCard,
-);
+export default memo(DashboardParadasCard);

@@ -11,10 +11,10 @@
  *   Fornecedor: nome como está no Omie.
  */
 
-export const ETAPA = '15';
-export const DEPARTAMENTO = '9069810185';
+export const ETAPA = "15";
+export const DEPARTAMENTO = "9069810185";
 
-const texto = (v) => String(v ?? '').trim();
+const texto = (v) => String(v ?? "").trim();
 
 export function numero(v, campo) {
   const n = Number(v ?? 0);
@@ -44,8 +44,11 @@ export function somarDias(iso, dias) {
 
 /** Hoje (aaaa-mm-dd) no fuso de São Paulo. */
 export function hojeSP(agora = new Date()) {
-  const br = new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric',
+  const br = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   }).format(agora);
   return dataISO(br);
 }
@@ -55,8 +58,9 @@ export function janela({ de, ate } = {}, agora = new Date(), dias = 60) {
   const hoje = hojeSP(agora);
   const fim = texto(ate) || hoje;
   const inicio = texto(de) || somarDias(fim, -dias);
-  const valida = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T12:00:00Z`));
-  if (!valida(inicio) || !valida(fim)) throw new Error('Período inválido (use aaaa-mm-dd)');
+  const valida = (d) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T12:00:00Z`));
+  if (!valida(inicio) || !valida(fim)) throw new Error("Período inválido (use aaaa-mm-dd)");
   if (fim < inicio) throw new Error('Período inválido: "ate" antes de "de"');
   return { de: inicio, ate: fim };
 }
@@ -65,14 +69,21 @@ export function janela({ de, ate } = {}, agora = new Date(), dias = 60) {
  * PesquisarPedCompra: todas as situações menos cancelado
  * (ou só cancelados, com `somenteCancelados`).
  */
-export function parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina = 50, apenasAlterados = false, somenteCancelados = false) {
-  const validos = somenteCancelados ? 'F' : 'T';
+export function parametrosPesquisa(
+  pagina,
+  dataInicial,
+  dataFinal,
+  porPagina = 50,
+  apenasAlterados = false,
+  somenteCancelados = false,
+) {
+  const validos = somenteCancelados ? "F" : "T";
   return {
     nPagina: pagina,
     nRegsPorPagina: porPagina,
-    lApenasImportadoApi: 'F',
+    lApenasImportadoApi: "F",
     // 'T': o período passa a valer pela inclusão/alteração (não pela previsão).
-    lApenasAlterados: apenasAlterados ? 'T' : 'F',
+    lApenasAlterados: apenasAlterados ? "T" : "F",
     dDataInicial: dataInicial,
     dDataFinal: dataFinal,
     lExibirPedidosPendentes: validos,
@@ -81,7 +92,7 @@ export function parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina = 5
     lExibirPedidosFaturados: validos,
     lExibirPedidosFatParciais: validos,
     lExibirPedidosEncerrados: validos,
-    lExibirPedidosCancelados: somenteCancelados ? 'T' : 'F',
+    lExibirPedidosCancelados: somenteCancelados ? "T" : "F",
   };
 }
 
@@ -89,8 +100,8 @@ export function parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina = 5
 export function parametrosEncerrados(pagina, dataInicial, dataFinal, porPagina = 100) {
   return {
     ...parametrosPesquisa(pagina, dataInicial, dataFinal, porPagina, true, true),
-    lExibirPedidosEncerrados: 'T',
-    lExibirPedidosCancelados: 'F',
+    lExibirPedidosEncerrados: "T",
+    lExibirPedidosCancelados: "F",
   };
 }
 
@@ -98,7 +109,7 @@ export function parametrosEncerrados(pagina, dataInicial, dataFinal, porPagina =
 export function codigosPedidos(pedidos) {
   const codigos = new Set();
   for (const p of pedidos ?? []) {
-    const cod = numero(p?.cabecalho_consulta?.nCodPed, 'nCodPed');
+    const cod = numero(p?.cabecalho_consulta?.nCodPed, "nCodPed");
     if (Number.isSafeInteger(cod) && cod > 0) codigos.add(cod);
   }
   return [...codigos];
@@ -116,27 +127,33 @@ export function extrairItensPedidos(pedidos, de = null, ate = null, nomesFornece
     const cab = pedido?.cabecalho_consulta ?? {};
     if (texto(cab.cEtapa) !== ETAPA) continue;
 
-    const deptos = Array.isArray(pedido?.departamentos_consulta) ? pedido.departamentos_consulta : [];
-    const depto = deptos.find((d) => texto(d?.cCodDepto) === DEPARTAMENTO && numero(d?.nPerc ?? 0, 'nPerc') > 0);
+    const deptos = Array.isArray(pedido?.departamentos_consulta)
+      ? pedido.departamentos_consulta
+      : [];
+    const depto = deptos.find(
+      (d) => texto(d?.cCodDepto) === DEPARTAMENTO && numero(d?.nPerc ?? 0, "nPerc") > 0,
+    );
     if (!depto) continue;
 
     const inclusao = dataISO(cab.dIncData);
     if (!inclusao) continue;
     if ((de && inclusao < de) || (ate && inclusao > ate)) continue;
 
-    const codPed = numero(cab.nCodPed, 'nCodPed');
-    if (!Number.isSafeInteger(codPed) || codPed <= 0) throw new Error('Pedido sem código válido no Omie');
-    const codFor = numero(cab.nCodFor, 'nCodFor');
+    const codPed = numero(cab.nCodPed, "nCodPed");
+    if (!Number.isSafeInteger(codPed) || codPed <= 0)
+      throw new Error("Pedido sem código válido no Omie");
+    const codFor = numero(cab.nCodFor, "nCodFor");
 
     for (const item of Array.isArray(pedido?.produtos_consulta) ? pedido.produtos_consulta : []) {
-      const quantidade = numero(item?.nQtde, 'nQtde');
+      const quantidade = numero(item?.nQtde, "nQtde");
       if (quantidade <= 0) continue;
-      const codItem = numero(item?.nCodItem, 'nCodItem');
-      if (!Number.isSafeInteger(codItem) || codItem <= 0) throw new Error(`Item sem código no pedido ${texto(cab.cNumero)}`);
+      const codItem = numero(item?.nCodItem, "nCodItem");
+      if (!Number.isSafeInteger(codItem) || codItem <= 0)
+        throw new Error(`Item sem código no pedido ${texto(cab.cNumero)}`);
       const chave = `${codPed}:${codItem}`;
       if (vistos.has(chave)) continue; // o Omie pode repetir o pedido entre páginas
       vistos.add(chave);
-      const codProd = numero(item?.nCodProd, 'nCodProd');
+      const codProd = numero(item?.nCodProd, "nCodProd");
       itens.push({
         cod_ped_compra: codPed,
         codigo_item: codItem,
@@ -152,15 +169,15 @@ export function extrairItensPedidos(pedidos, de = null, ate = null, nomesFornece
         descricao: texto(item?.cDescricao) || null,
         unidade: texto(item?.cUnidade) || null,
         quantidade,
-        quantidade_recebida: numero(item?.nQtdeRec, 'nQtdeRec'),
-        preco_unitario: numero(item?.nValUnit, 'nValUnit'),
-        valor_mercadoria: numero(item?.nValMerc, 'nValMerc'),
-        valor_ipi: numero(item?.nValorIpi, 'nValorIpi'),
-        valor_desconto: numero(item?.nDesconto, 'nDesconto'),
-        valor_frete: numero(item?.nFrete, 'nFrete'),
-        valor_outras_despesas: numero(item?.nDespesas, 'nDespesas'),
-        valor_total: numero(item?.nValTot, 'nValTot'),
-        percentual_departamento: numero(depto.nPerc, 'nPerc'),
+        quantidade_recebida: numero(item?.nQtdeRec, "nQtdeRec"),
+        preco_unitario: numero(item?.nValUnit, "nValUnit"),
+        valor_mercadoria: numero(item?.nValMerc, "nValMerc"),
+        valor_ipi: numero(item?.nValorIpi, "nValorIpi"),
+        valor_desconto: numero(item?.nDesconto, "nDesconto"),
+        valor_frete: numero(item?.nFrete, "nFrete"),
+        valor_outras_despesas: numero(item?.nDespesas, "nDespesas"),
+        valor_total: numero(item?.nValTot, "nValTot"),
+        percentual_departamento: numero(depto.nPerc, "nPerc"),
       });
     }
   }
@@ -171,8 +188,8 @@ export function extrairItensPedidos(pedidos, de = null, ate = null, nomesFornece
 export function notasCandidatas(recebimentos, fornecedores) {
   const ids = [];
   for (const r of recebimentos ?? []) {
-    const id = numero(r?.cabec?.nIdReceb, 'nIdReceb');
-    const fornecedor = String(numero(r?.cabec?.nIdFornecedor, 'nIdFornecedor'));
+    const id = numero(r?.cabec?.nIdReceb, "nIdReceb");
+    const fornecedor = String(numero(r?.cabec?.nIdFornecedor, "nIdFornecedor"));
     if (id > 0 && fornecedores.has(fornecedor)) ids.push(id);
   }
   return [...new Set(ids)];
@@ -185,35 +202,35 @@ export function notasCandidatas(recebimentos, fornecedores) {
  */
 export function extrairItensNota(nota, pedidos) {
   const info = nota?.infoCadastro ?? {};
-  if (texto(info.cCancelada) === 'S' || texto(info.cDevolvido) === 'S') return [];
+  if (texto(info.cCancelada) === "S" || texto(info.cDevolvido) === "S") return [];
   const cab = nota?.cabec ?? {};
   const emissao = dataISO(cab.dEmissaoNFe);
   if (!emissao) return [];
-  const recebimento = texto(info.cRecebido) === 'S' ? dataISO(info.dRec) : null;
-  const idReceb = numero(cab.nIdReceb, 'nIdReceb');
+  const recebimento = texto(info.cRecebido) === "S" ? dataISO(info.dRec) : null;
+  const idReceb = numero(cab.nIdReceb, "nIdReceb");
 
   const itens = [];
   for (const it of Array.isArray(nota?.itensRecebimento) ? nota.itensRecebimento : []) {
     const c = it?.itensCabec ?? {};
-    if (texto(c.cIgnorarItem) === 'S') continue;
-    const codPed = String(numero(c.nIdPedido, 'nIdPedido'));
+    if (texto(c.cIgnorarItem) === "S") continue;
+    const codPed = String(numero(c.nIdPedido, "nIdPedido"));
     if (!pedidos.has(codPed)) continue;
     const ajustes = it?.itensAjustes ?? {};
     const ipi = it?.itensIPI ?? {};
     itens.push({
       id_recebimento: idReceb,
       // nIdItem pode repetir o código do item do pedido; a sequência é única dentro da nota.
-      id_item_nota: numero(c.nSequencia, 'nSequencia') || numero(c.nIdItem, 'nIdItem'),
+      id_item_nota: numero(c.nSequencia, "nSequencia") || numero(c.nIdItem, "nIdItem"),
       cod_ped_compra: Number(codPed),
-      codigo_item: numero(c.nIdItPedido, 'nIdItPedido') || null,
+      codigo_item: numero(c.nIdItPedido, "nIdItPedido") || null,
       numero_pedido: pedidos.get(codPed) || texto(it?.itensInfoAdic?.nNumPedCompra) || null,
       numero_nf: texto(cab.cNumeroNFe) || null,
       data_emissao: emissao,
       data_recebimento: recebimento,
-      quantidade: numero(ajustes.nQtdeRecebida ?? c.nQtdeNFe, 'nQtdeRecebida'),
-      valor_total: numero(c.vTotalItem, 'vTotalItem'),
-      aliquota_ipi: numero(ipi.nAliqIPI, 'nAliqIPI'),
-      valor_ipi: numero(ipi.nValIPI, 'nValIPI'),
+      quantidade: numero(ajustes.nQtdeRecebida ?? c.nQtdeNFe, "nQtdeRecebida"),
+      valor_total: numero(c.vTotalItem, "vTotalItem"),
+      aliquota_ipi: numero(ipi.nAliqIPI, "nAliqIPI"),
+      valor_ipi: numero(ipi.nValIPI, "nValIPI"),
     });
   }
   return itens;

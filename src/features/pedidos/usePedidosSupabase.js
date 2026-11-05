@@ -12,8 +12,7 @@ export const CHAVE_PEDIDOS_SUPABASE = Object.freeze([
 ]);
 
 async function consultarPedidosSupabase() {
-  const { data: sessaoData, error: sessaoErro } =
-    await supabase.auth.getSession();
+  const { data: sessaoData, error: sessaoErro } = await supabase.auth.getSession();
 
   if (sessaoErro) {
     throw new Error("Não foi possível validar sua sessão.");
@@ -22,25 +21,18 @@ async function consultarPedidosSupabase() {
   const accessToken = sessaoData?.session?.access_token;
 
   if (!accessToken) {
-    throw new Error(
-      "Sua sessão expirou. Entre novamente no sistema.",
-    );
+    throw new Error("Sua sessão expirou. Entre novamente no sistema.");
   }
 
-  const [respostaPedidos, mapaNumeroPedidoExibicao] =
-    await Promise.all([
-      buscarPedidosOmie({
-        data: { accessToken },
-      }),
+  const [respostaPedidos, mapaNumeroPedidoExibicao] = await Promise.all([
+    buscarPedidosOmie({
+      data: { accessToken },
+    }),
 
-      carregarMapaNumeroPedidoExibicao(supabase),
-    ]);
+    carregarMapaNumeroPedidoExibicao(supabase),
+  ]);
 
-  const pedidosOriginais = Array.isArray(
-    respostaPedidos?.pedidos,
-  )
-    ? respostaPedidos.pedidos
-    : [];
+  const pedidosOriginais = Array.isArray(respostaPedidos?.pedidos) ? respostaPedidos.pedidos : [];
 
   const pedidos = pedidosOriginais.map((pedido) => {
     const codigoPedidoOmie = Number(
@@ -51,16 +43,11 @@ async function consultarPedidosSupabase() {
     );
 
     const numeroOriginal = String(
-      pedido?.pedidoOriginal ??
-        pedido?.pedido ??
-        pedido?.numero_pedido ??
-        "",
+      pedido?.pedidoOriginal ?? pedido?.pedido ?? pedido?.numero_pedido ?? "",
     ).trim();
 
     const numeroExibicao =
-      mapaNumeroPedidoExibicao.get(codigoPedidoOmie) ??
-      pedido?.pedidoExibicao ??
-      numeroOriginal;
+      mapaNumeroPedidoExibicao.get(codigoPedidoOmie) ?? pedido?.pedidoExibicao ?? numeroOriginal;
 
     return {
       ...pedido,
@@ -96,8 +83,6 @@ export function usePedidosSupabase(opcoes = {}) {
 
   return {
     ...consulta,
-    pedidos: Array.isArray(consulta.data?.pedidos)
-      ? consulta.data.pedidos
-      : PEDIDOS_VAZIOS,
+    pedidos: Array.isArray(consulta.data?.pedidos) ? consulta.data.pedidos : PEDIDOS_VAZIOS,
   };
 }

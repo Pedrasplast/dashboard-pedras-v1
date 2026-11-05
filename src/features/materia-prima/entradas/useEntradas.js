@@ -1,103 +1,47 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import {
-  buscarEntradas,
-} from "./entradasService";
-
+import { buscarEntradas } from "./entradasService";
 
 /* =========================================================
    HOOK ENTRADAS
 ========================================================= */
 
 export default function useEntradas() {
-  const [
-    entradas,
-    setEntradas,
-  ] = useState([]);
+  const [entradas, setEntradas] = useState([]);
 
-  const [
-    fornecedores,
-    setFornecedores,
-  ] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
 
-  const [
-    carregando,
-    setCarregando,
-  ] = useState(false);
+  const [carregando, setCarregando] = useState(false);
 
-  const [
-    carregado,
-    setCarregado,
-  ] = useState(false);
+  const [carregado, setCarregado] = useState(false);
 
-  const [
-    erro,
-    setErro,
-  ] = useState("");
+  const [erro, setErro] = useState("");
 
+  const carregarEntradas = useCallback(async () => {
+    setCarregando(true);
 
-  const carregarEntradas =
-    useCallback(
-      async () => {
-        setCarregando(
-          true,
-        );
+    setErro("");
 
-        setErro(
-          "",
-        );
+    try {
+      const resultado = await buscarEntradas();
 
+      setEntradas(resultado.entradas ?? []);
 
-        try {
-          const resultado =
-            await buscarEntradas();
+      setFornecedores(resultado.fornecedores ?? []);
 
+      setCarregado(true);
+    } catch (error) {
+      console.error("Erro ao carregar entradas:", error);
 
-          setEntradas(
-            resultado.entradas ??
-              [],
-          );
+      setErro("Não foi possível carregar as entradas.");
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
 
-          setFornecedores(
-            resultado.fornecedores ??
-              [],
-          );
-
-          setCarregado(
-            true,
-          );
-        } catch (error) {
-          console.error(
-            "Erro ao carregar entradas:",
-            error,
-          );
-
-          setErro(
-            "Não foi possível carregar as entradas.",
-          );
-        } finally {
-          setCarregando(
-            false,
-          );
-        }
-      },
-      [],
-    );
-
-
-  useEffect(
-    () => {
-      void carregarEntradas();
-    },
-    [
-      carregarEntradas,
-    ],
-  );
-
+  useEffect(() => {
+    void carregarEntradas();
+  }, [carregarEntradas]);
 
   return {
     entradas,
@@ -110,7 +54,6 @@ export default function useEntradas() {
 
     erro,
 
-    recarregar:
-      carregarEntradas,
+    recarregar: carregarEntradas,
   };
 }

@@ -7,7 +7,7 @@
   align-items: flex-start;
   gap: 11px;
 
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 
   padding: 13px 15px;
 
@@ -21,13 +21,11 @@
   color: var(--color-danger-hover);
 }
 
-
 .pedidos-consulta-cancelados > svg {
   flex: 0 0 auto;
 
   margin-top: 1px;
 }
-
 
 .pedidos-consulta-cancelados > div {
   display: flex;
@@ -35,18 +33,16 @@
   gap: 3px;
 }
 
-
 .pedidos-consulta-cancelados strong {
   color: #991b1b;
 
-  font-size: 12px;
+  font-size: var(--font-size-caption);
   font-weight: 800;
 }
-
 
 .pedidos-consulta-cancelados span {
   color: #b45353;
 
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   line-height: 1.45;
 }

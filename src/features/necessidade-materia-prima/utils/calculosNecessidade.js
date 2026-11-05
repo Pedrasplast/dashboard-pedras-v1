@@ -1,3 +1,6 @@
+import { normalizarCodigo } from "@/shared/lib/texto";
+import { numeroOuNull as numeroOpcional } from "@/shared/lib/numeros";
+
 /* ============================================================
    NECESSIDADE DE MATÉRIA-PRIMA — CÁLCULOS
    - Sem formatação: formatadoresNecessidade.js é separado.
@@ -13,16 +16,6 @@ export function numero(valor) {
   if (valor === null || valor === undefined || valor === "") return 0;
   const convertido = Number(valor);
   return Number.isFinite(convertido) ? convertido : 0;
-}
-
-function numeroOpcional(valor) {
-  if (valor === null || valor === undefined || valor === "") return null;
-  const convertido = Number(valor);
-  return Number.isFinite(convertido) ? convertido : null;
-}
-
-function normalizarCodigo(valor) {
-  return String(valor ?? "").trim().toUpperCase();
 }
 
 function normalizarId(valor) {
@@ -42,14 +35,7 @@ function obterAjusteNumerico(ajuste, campo) {
    NECESSIDADE = max(0, Estoque de segurança - Saldo projetado)
    VALOR ESTIMADO = Necessidade × Preço de referência da Tabela de Preços
 ============================================================ */
-export function calcularNecessidade({
-  consumo,
-  percentual,
-  estoque,
-  comprasFuturas,
-  teto,
-  preco,
-}) {
+export function calcularNecessidade({ consumo, percentual, estoque, comprasFuturas, teto, preco }) {
   const consumoConsiderado = numero(consumo) * (numero(percentual) / 100);
   const estoqueValido = numeroOpcional(estoque);
   const precoValido = numeroOpcional(preco);
@@ -70,9 +56,7 @@ export function calcularNecessidade({
     consumoConsiderado,
     saldoProjetado,
     necessidade,
-    valorEstimado: precoValido !== null && precoValido > 0
-      ? necessidade * precoValido
-      : null,
+    valorEstimado: precoValido !== null && precoValido > 0 ? necessidade * precoValido : null,
   };
 }
 
@@ -127,18 +111,13 @@ function criarMapaPrecos(precos = []) {
 
     const media = numeroOpcional(item.preco_medio_30d);
     const quantidadePeriodo = numero(item.quantidade_30d);
-    const precoMedio = quantidadePeriodo > 0 && media !== null && media > 0
-      ? media
-      : null;
+    const precoMedio = quantidadePeriodo > 0 && media !== null && media > 0 ? media : null;
 
     const ultimo = numeroOpcional(item.ultimo_preco);
     const ultimoPreco = ultimo !== null && ultimo > 0 ? ultimo : null;
     const precoReferencia = precoMedio ?? ultimoPreco;
-    const origemPreco = precoMedio !== null
-      ? "media_30d"
-      : ultimoPreco !== null
-        ? "ultima_compra"
-        : "sem_preco";
+    const origemPreco =
+      precoMedio !== null ? "media_30d" : ultimoPreco !== null ? "ultima_compra" : "sem_preco";
 
     const anterior = mapa.get(codigo);
     if (!anterior || quantidadePeriodo > anterior.quantidadePeriodo) {
@@ -174,7 +153,7 @@ export function consolidarNecessidade(dados, ajustes = {}) {
       const estoqueDisponivel = posicaoEstoque !== undefined;
       const estoqueApi = estoqueDisponivel ? posicaoEstoque.fisico : null;
 
-      const comprasFuturas = codigoOmie ? compras.get(codigoOmie) ?? 0 : 0;
+      const comprasFuturas = codigoOmie ? (compras.get(codigoOmie) ?? 0) : 0;
       const historicoPreco = codigoOmie ? precos.get(codigoOmie) : undefined;
       const precoMedio = historicoPreco?.precoMedio ?? null;
       // A mesma fonte da Tabela de Preços determina o preço exibido.

@@ -24,15 +24,9 @@ export function usePedidosViewModel({ pedidos, notificacoesPorPedido }) {
 
   const vendedores = useMemo(() => obterVendedores(pedidos), [pedidos]);
 
-  const statusDisponiveis = useMemo(
-    () => obterStatusDisponiveis(pedidos),
-    [pedidos],
-  );
+  const statusDisponiveis = useMemo(() => obterStatusDisponiveis(pedidos), [pedidos]);
 
-  const visualizandoCancelados = useMemo(
-    () => normalizarTexto(status) === "cancelado",
-    [status],
-  );
+  const visualizandoCancelados = useMemo(() => normalizarTexto(status) === "cancelado", [status]);
 
   const pedidosFiltrados = useMemo(
     () => filtrarPedidos(pedidos, { pesquisa, vendedor, status }),
@@ -54,10 +48,7 @@ export function usePedidosViewModel({ pedidos, notificacoesPorPedido }) {
     [pedidosOperacionaisFiltrados],
   );
 
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(pedidosUnicos.length / PEDIDOS_POR_PAGINA),
-  );
+  const totalPaginas = Math.max(1, Math.ceil(pedidosUnicos.length / PEDIDOS_POR_PAGINA));
 
   useEffect(() => {
     if (paginaAtual > totalPaginas) {
@@ -76,10 +67,7 @@ export function usePedidosViewModel({ pedidos, notificacoesPorPedido }) {
     [pedidosFiltrados, pedidosUnicosDaPagina],
   );
 
-  const pedidosAgrupados = useMemo(
-    () => agruparPedidos(pedidosPaginados),
-    [pedidosPaginados],
-  );
+  const pedidosAgrupados = useMemo(() => agruparPedidos(pedidosPaginados), [pedidosPaginados]);
 
   const quantidadeTotal = useMemo(
     () => somarQuantidade(pedidosOperacionaisFiltrados),
@@ -96,8 +84,7 @@ export function usePedidosViewModel({ pedidos, notificacoesPorPedido }) {
     [pedidosOperacionaisUnicos],
   );
 
-  const possuiFiltro =
-    Boolean(pesquisa) || vendedor !== "todos" || status !== "Pedido";
+  const possuiFiltro = Boolean(pesquisa) || vendedor !== "todos" || status !== "Pedido";
 
   const tituloLista = useMemo(() => {
     if (visualizandoCancelados) return "Pedidos cancelados";

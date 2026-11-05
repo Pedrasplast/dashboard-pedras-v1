@@ -14,8 +14,7 @@ export const Route = createFileRoute("/cadastro")({
       },
       {
         name: "description",
-        content:
-          "O cadastro de usuários é realizado exclusivamente pelo administrador.",
+        content: "O cadastro de usuários é realizado exclusivamente pelo administrador.",
       },
     ],
   }),

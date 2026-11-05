@@ -10,21 +10,13 @@ import {
   FiTrendingUp,
 } from "react-icons/fi";
 
-import {
-  agruparProducaoPorInjetora,
-} from "../producao/ProducaoPorInjetora";
+import { agruparProducaoPorInjetora } from "../producao/ProducaoPorInjetora";
 
-import {
-  agruparProducaoPorProduto,
-} from "../producao/ProducaoPorProduto";
+import { agruparProducaoPorProduto } from "../producao/ProducaoPorProduto";
 
-import {
-  impactoParadasPorMotivo,
-} from "../paradas/ImpactoPorMotivo";
+import { impactoParadasPorMotivo } from "../paradas/ImpactoPorMotivo";
 
-import {
-  agruparMotivoJustificativa,
-} from "../paradas/MotivoJustificativa";
+import { agruparMotivoJustificativa } from "../paradas/MotivoJustificativa";
 
 import {
   prepararPedidosDetalhados,
@@ -33,34 +25,23 @@ import {
   agruparPedidosPorDataProduto,
 } from "../pedidos/PedidosRelatorios";
 
-import PedidosAlteradosRelatorio
-  from "../pedidos-alterados/PedidosAlteradosRelatorio";
+import PedidosAlteradosRelatorio from "../pedidos-alterados/PedidosAlteradosRelatorio";
 
-import PedidosCompraAlteradosRelatorio
-  from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
-
+import PedidosCompraAlteradosRelatorio from "../pedidos-compra-alterados/PedidosCompraAlteradosRelatorio";
 
 /* =========================================================
    FINANCEIRO
 ========================================================= */
 
-import FinanceiroPrevistoRealizado
-  from "../financeiro/FinanceiroPrevistoRealizado";
+import FinanceiroPrevistoRealizado from "../financeiro/FinanceiroPrevistoRealizado";
 
-import DespesasAcimaPrevisto
-  from "../financeiro/despesas-acima-previsto/DespesasAcimaPrevisto";
-
+import DespesasAcimaPrevisto from "../financeiro/despesas-acima-previsto/DespesasAcimaPrevisto";
 
 /* =========================================================
    MATÉRIA-PRIMA
 ========================================================= */
 
-
-
-
-import EntradasComprasMateriaPrima
-  from "../materia-prima/entradas-compras/EntradasComprasMateriaPrima";
-
+import EntradasComprasMateriaPrima from "../materia-prima/entradas-compras/EntradasComprasMateriaPrima";
 
 /* =========================================================
    CADASTRO CENTRAL DOS RELATÓRIOS
@@ -72,7 +53,6 @@ import EntradasComprasMateriaPrima
 ========================================================= */
 
 export const RELATORIOS = [
-
   /* =====================================================
      PRODUÇÃO
   ===================================================== */
@@ -81,8 +61,7 @@ export const RELATORIOS = [
     id: "producao-injetora",
     categoria: "Produção",
     titulo: "Produção por Injetora",
-    descricao:
-      "Resumo consolidado da produção por injetora no período selecionado.",
+    descricao: "Resumo consolidado da produção por injetora no período selecionado.",
     icone: FiBarChart2,
     fonteDados: "producao",
 
@@ -98,25 +77,16 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      agruparProducaoPorInjetora,
+    transformarDados: agruparProducaoPorInjetora,
 
-    colunas: [
-      "injetora",
-      "conforme",
-      "danificada",
-      "total_produzido",
-      "qualidade",
-    ],
+    colunas: ["injetora", "conforme", "danificada", "total_produzido", "qualidade"],
   },
-
 
   {
     id: "producao-produto",
     categoria: "Produção",
     titulo: "Produção por Produto",
-    descricao:
-      "Resumo consolidado da produção por produto e injetora no período selecionado.",
+    descricao: "Resumo consolidado da produção por produto e injetora no período selecionado.",
     icone: FiBarChart2,
     fonteDados: "producao",
 
@@ -132,8 +102,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      agruparProducaoPorProduto,
+    transformarDados: agruparProducaoPorProduto,
 
     colunas: [
       "produto",
@@ -146,7 +115,6 @@ export const RELATORIOS = [
       "qualidade",
     ],
   },
-
 
   /* =====================================================
      PARADAS
@@ -173,18 +141,10 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      impactoParadasPorMotivo,
+    transformarDados: impactoParadasPorMotivo,
 
-    colunas: [
-      "motivo",
-      "ocorrencias",
-      "tempo_total",
-      "tempo_medio",
-      "percentual_impacto",
-    ],
+    colunas: ["motivo", "ocorrencias", "tempo_total", "tempo_medio", "percentual_impacto"],
   },
-
 
   {
     id: "paradas-motivo-justificativa",
@@ -207,8 +167,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      agruparMotivoJustificativa,
+    transformarDados: agruparMotivoJustificativa,
 
     colunas: [
       "motivo",
@@ -220,7 +179,6 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
      PEDIDOS DE VENDA
   ===================================================== */
@@ -229,8 +187,7 @@ export const RELATORIOS = [
     id: "pedidos-abertos",
     categoria: "Pedidos",
     titulo: "Pedidos em Aberto",
-    descricao:
-      "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
+    descricao: "Detalha os pedidos e seus itens utilizando a previsão de faturamento como período.",
     icone: FiShoppingCart,
     fonteDados: "pedidos",
 
@@ -246,8 +203,7 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados:
-      prepararPedidosDetalhados,
+    transformarDados: prepararPedidosDetalhados,
 
     colunas: [
       "pedido",
@@ -262,7 +218,6 @@ export const RELATORIOS = [
       "status",
     ],
   },
-
 
   {
     id: "pedidos-atrasados",
@@ -285,8 +240,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      prepararPedidosAtrasados,
+    transformarDados: prepararPedidosAtrasados,
 
     colunas: [
       "pedido",
@@ -301,7 +255,6 @@ export const RELATORIOS = [
     ],
   },
 
-
   /* =====================================================
      PEDIDOS DE VENDA ALTERADOS
   ===================================================== */
@@ -315,8 +268,7 @@ export const RELATORIOS = [
     icone: FiEdit3,
     fonteDados: "custom",
     tipoRelatorio: "custom",
-    componenteCustomizado:
-      PedidosAlteradosRelatorio,
+    componenteCustomizado: PedidosAlteradosRelatorio,
 
     filtros: {
       periodo: false,
@@ -330,20 +282,16 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
-    colunas:
-      [],
+    colunas: [],
   },
-
 
   {
     id: "pedidos-produto-codigo",
     categoria: "Pedidos",
     titulo: "Quantidade de Produtos por Código",
-    descricao:
-      "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
+    descricao: "Soma as quantidades dos pedidos agrupando todos os itens pelo código do produto.",
     icone: FiPackage,
     fonteDados: "pedidos",
 
@@ -359,18 +307,10 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados:
-      agruparPedidosPorCodigoProduto,
+    transformarDados: agruparPedidosPorCodigoProduto,
 
-    colunas: [
-      "codigo_produto",
-      "produto_pedido",
-      "unidade",
-      "quantidade",
-      "pedidos_atendidos",
-    ],
+    colunas: ["codigo_produto", "produto_pedido", "unidade", "quantidade", "pedidos_atendidos"],
   },
-
 
   {
     id: "pedidos-produto-data",
@@ -393,23 +333,14 @@ export const RELATORIOS = [
       status: true,
     },
 
-    transformarDados:
-      agruparPedidosPorDataProduto,
+    transformarDados: agruparPedidosPorDataProduto,
 
     exibicao: {
       mostrarContagem: false,
     },
 
-    colunas: [
-      "previsao",
-      "codigo_produto",
-      "produto_pedido",
-      "unidade",
-      "quantidade",
-      "pedidos",
-    ],
+    colunas: ["previsao", "codigo_produto", "produto_pedido", "unidade", "quantidade", "pedidos"],
   },
-
 
   /* =====================================================
      PEDIDOS DE COMPRA ALTERADOS
@@ -424,8 +355,7 @@ export const RELATORIOS = [
     icone: FiEdit3,
     fonteDados: "custom",
     tipoRelatorio: "custom",
-    componenteCustomizado:
-      PedidosCompraAlteradosRelatorio,
+    componenteCustomizado: PedidosCompraAlteradosRelatorio,
 
     filtros: {
       periodo: false,
@@ -439,13 +369,10 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
-    colunas:
-      [],
+    colunas: [],
   },
-
 
   /* =====================================================
      FINANCEIRO
@@ -460,8 +387,7 @@ export const RELATORIOS = [
     icone: FiDollarSign,
     fonteDados: "custom",
     tipoRelatorio: "custom",
-    componenteCustomizado:
-      FinanceiroPrevistoRealizado,
+    componenteCustomizado: FinanceiroPrevistoRealizado,
 
     filtros: {
       periodo: false,
@@ -475,8 +401,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
     colunas: [
       "codigo_categoria",
@@ -489,7 +414,6 @@ export const RELATORIOS = [
     ],
   },
 
-
   {
     id: "financeiro-despesas-acima-previsto",
     categoria: "Financeiro",
@@ -499,8 +423,7 @@ export const RELATORIOS = [
     icone: FiTrendingUp,
     fonteDados: "custom",
     tipoRelatorio: "custom",
-    componenteCustomizado:
-      DespesasAcimaPrevisto,
+    componenteCustomizado: DespesasAcimaPrevisto,
 
     filtros: {
       periodo: false,
@@ -514,8 +437,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
     colunas: [
       "codigo_categoria",
@@ -526,7 +448,6 @@ export const RELATORIOS = [
       "excesso_percentual",
     ],
   },
-
 
   /* =====================================================
      MATÉRIA-PRIMA
@@ -541,8 +462,7 @@ export const RELATORIOS = [
     icone: FiShoppingCart,
     fonteDados: "custom",
     tipoRelatorio: "custom",
-    componenteCustomizado:
-      EntradasComprasMateriaPrima,
+    componenteCustomizado: EntradasComprasMateriaPrima,
 
     filtros: {
       periodo: false,
@@ -556,8 +476,7 @@ export const RELATORIOS = [
       status: false,
     },
 
-    transformarDados:
-      null,
+    transformarDados: null,
 
     colunas: [
       "pedido",
@@ -572,5 +491,4 @@ export const RELATORIOS = [
       "total",
     ],
   },
-
 ];

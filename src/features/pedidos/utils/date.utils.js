@@ -1,3 +1,5 @@
+import { obterHoje } from "@/shared/lib/datas";
+
 function extrairPartesDataCalendario(valor) {
   if (!valor) {
     return null;
@@ -54,11 +56,7 @@ function criarDataLocal(partes) {
   const { ano, mes, dia } = partes;
   const data = new Date(ano, mes - 1, dia, 0, 0, 0, 0);
 
-  if (
-    data.getFullYear() !== ano ||
-    data.getMonth() !== mes - 1 ||
-    data.getDate() !== dia
-  ) {
+  if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
     return null;
   }
 
@@ -90,19 +88,7 @@ export function converterDataCalendario(valor) {
   return data;
 }
 
-export function obterHoje() {
-  const agora = new Date();
-
-  return new Date(
-    agora.getFullYear(),
-    agora.getMonth(),
-    agora.getDate(),
-    0,
-    0,
-    0,
-    0,
-  );
-}
+export { obterHoje };
 
 export function formatarData(valor) {
   if (!valor) {

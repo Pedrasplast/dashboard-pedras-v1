@@ -1,50 +1,33 @@
-import {
-  createFileRoute,
-} from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-import RotaProtegida
-  from "@/components/layout/RotaProtegida";
+import RotaProtegida from "@/components/layout/RotaProtegida";
 
-import ComprasMateriaPrimaPage
-  from "@/features/compras-materia-prima/ComprasMateriaPrimaPage";
+import ComprasMateriaPrimaPage from "@/features/compras-materia-prima/ComprasMateriaPrimaPage";
 
+export const Route = createFileRoute("/entradas-materia-prima")({
+  ssr: false,
 
-export const Route =
-  createFileRoute(
-    "/entradas-materia-prima",
-  )({
-    ssr: false,
+  head: () => ({
+    meta: [
+      {
+        title: "Entradas de Matéria-Prima | Pedrasplast",
+      },
 
-    head: () => ({
-      meta: [
-        {
-          title:
-            "Entradas de Matéria-Prima | Pedrasplast",
-        },
+      {
+        name: "description",
 
-        {
-          name:
-            "description",
+        content: "Registro dos recebimentos de matéria-prima da Pedrasplast.",
+      },
+    ],
+  }),
 
-          content:
-            "Registro dos recebimentos de matéria-prima da Pedrasplast.",
-        },
-      ],
-    }),
-
-    component:
-      EntradasMateriaPrimaRoute,
-  });
-
+  component: EntradasMateriaPrimaRoute,
+});
 
 function EntradasMateriaPrimaRoute() {
   return (
-    <RotaProtegida
-      permissao="entradas_materia_prima"
-    >
-      <ComprasMateriaPrimaPage
-        secao="entradas"
-      />
+    <RotaProtegida permissao="entradas_materia_prima">
+      <ComprasMateriaPrimaPage secao="entradas" />
     </RotaProtegida>
   );
 }

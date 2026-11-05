@@ -17,8 +17,11 @@ import { normalizarCamposMaiusculos } from "../lib/uppercase-fields";
 import Navbar from "../components/layout/Navbar";
 
 import "../styles/tokens.css";
+import "../styles/animacoes.css";
 import "../legacy-base.css";
 import "../app-layout.css";
+import "../styles/pagina-aviso.css";
+import "../styles/utilitarios.css";
 
 /* =========================================================
    PAGINA NAO ENCONTRADA
@@ -26,26 +29,17 @@ import "../app-layout.css";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">
-          404
-        </h1>
+    <div className="pagina-aviso">
+      <div className="pagina-aviso__conteudo">
+        <h1 className="pagina-aviso__codigo">404</h1>
 
-        <h2 className="mt-4 text-xl font-semibold text-foreground">
-          Page not found
-        </h2>
+        <h2 className="pagina-aviso__titulo">Página não encontrada</h2>
 
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <p className="pagina-aviso__texto">A página que você procura não existe ou foi movida.</p>
 
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
+        <div className="pagina-aviso__acoes">
+          <Link to="/" className="pagina-aviso__botao">
+            Voltar ao início
           </Link>
         </div>
       </div>
@@ -57,20 +51,13 @@ function NotFoundComponent() {
    ERRO GLOBAL
 ========================================================= */
 
-function ErrorComponent({
-  error,
-  reset,
-}: ErrorComponentProps) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
 
   const erroNormalizado =
     error instanceof Error
       ? error
-      : new Error(
-          typeof error === "string"
-            ? error
-            : "Erro desconhecido",
-        );
+      : new Error(typeof error === "string" ? error : "Erro desconhecido");
 
   useEffect(() => {
     console.error(error);
@@ -81,34 +68,28 @@ function ErrorComponent({
   }, [error, erroNormalizado]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+    <div className="pagina-aviso">
+      <div className="pagina-aviso__conteudo">
+        <h1 className="pagina-aviso__titulo">Esta página não carregou</h1>
 
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back
-          home.
+        <p className="pagina-aviso__texto">
+          Algo deu errado do nosso lado. Tente novamente ou volte ao início.
         </p>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="pagina-aviso__acoes">
           <button
             type="button"
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="pagina-aviso__botao"
           >
-            Try again
+            Tentar novamente
           </button>
 
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
+          <a href="/" className="pagina-aviso__botao pagina-aviso__botao--secundario">
+            Voltar ao início
           </a>
         </div>
       </div>
@@ -120,78 +101,71 @@ function ErrorComponent({
    ROOT ROUTE
 ========================================================= */
 
-export const Route =
-  createRootRouteWithContext<{
-    queryClient: QueryClient;
-  }>()({
-    head: () => ({
-      meta: [
-        {
-          charSet: "utf-8",
-        },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1",
-        },
-        {
-          title: "Painel de Produção Pedrasplast",
-        },
-        {
-          name: "description",
-          content:
-            "Painel de produção Pedrasplast: eficiência das injetoras, paradas e relatórios.",
-        },
-        {
-          name: "author",
-          content: "Pedrasplast",
-        },
-        {
-          property: "og:title",
-          content: "Painel de Produção Pedrasplast",
-        },
-        {
-          property: "og:description",
-          content:
-            "Eficiência das injetoras, paradas e relatórios de produção.",
-        },
-        {
-          property: "og:type",
-          content: "website",
-        },
-        {
-          name: "twitter:card",
-          content: "summary_large_image",
-        },
-        {
-          name: "twitter:site",
-          content: "@Lovable",
-        },
-      ],
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        title: "Painel de Produção Pedrasplast",
+      },
+      {
+        name: "description",
+        content: "Painel de produção Pedrasplast: eficiência das injetoras, paradas e relatórios.",
+      },
+      {
+        name: "author",
+        content: "Pedrasplast",
+      },
+      {
+        property: "og:title",
+        content: "Painel de Produção Pedrasplast",
+      },
+      {
+        property: "og:description",
+        content: "Eficiência das injetoras, paradas e relatórios de produção.",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:site",
+        content: "@Lovable",
+      },
+    ],
 
-      links: [
-        {
-          rel: "icon",
-          href: "/Logo_pedras.png",
-          type: "image/x-icon",
-        },
-      ],
-    }),
+    links: [
+      {
+        rel: "icon",
+        href: "/Logo_pedras.png",
+        type: "image/x-icon",
+      },
+    ],
+  }),
 
-    shellComponent: RootShell,
-    component: RootComponent,
-    notFoundComponent: NotFoundComponent,
-    errorComponent: ErrorComponent,
-  });
+  shellComponent: RootShell,
+  component: RootComponent,
+  notFoundComponent: NotFoundComponent,
+  errorComponent: ErrorComponent,
+});
 
 /* =========================================================
    HTML SHELL
 ========================================================= */
 
-function RootShell({
-  children,
-}: {
-  children: ReactNode;
-}) {
+function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <head>
@@ -212,20 +186,11 @@ function RootShell({
 ========================================================= */
 
 function LayoutAplicacao() {
-  const {
-    user,
-    isAdmin,
-  } = useAuthContext();
+  const { user, isAdmin } = useAuthContext();
 
   return (
-    <div
-      className="app-layout"
-      onChangeCapture={normalizarCamposMaiusculos}
-    >
-      <Navbar
-        user={user}
-        isAdmin={isAdmin}
-      />
+    <div className="app-layout" onChangeCapture={normalizarCamposMaiusculos}>
+      <Navbar user={user} isAdmin={isAdmin} />
 
       <main className="main-content">
         <Outlet />
@@ -239,14 +204,10 @@ function LayoutAplicacao() {
 ========================================================= */
 
 function RootComponent() {
-  const {
-    queryClient,
-  } = Route.useRouteContext();
+  const { queryClient } = Route.useRouteContext();
 
   const primeiroAcesso = useRouterState({
-    select: (state) =>
-      state.location.pathname.replace(/\/$/, "") ===
-      "/definir-senha",
+    select: (state) => state.location.pathname.replace(/\/$/, "") === "/definir-senha",
   });
 
   return (

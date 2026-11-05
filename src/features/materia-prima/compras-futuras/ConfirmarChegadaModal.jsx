@@ -1,41 +1,19 @@
 import Modal from "@/components/Modal/Modal";
 import ModalTitulo from "@/components/Modal/ModalTitulo";
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  CheckCircle2,
-  X,
-} from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 
 import "./CompraFuturaModal.css";
-
-function dataHojeLocal() {
-  const agora = new Date();
-  const ano = agora.getFullYear();
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-  const dia = String(agora.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
-}
+import { dataHojeLocal } from "@/shared/lib/datas";
+import { formatarKg as formatarKgBase, formatarDataISOParaBR } from "@/shared/lib/formatar";
 
 function formatarData(valor) {
-  if (!valor) return "-";
-
-  const [ano, mes, dia] = String(valor).split("-");
-
-  if (!ano || !mes || !dia) return String(valor);
-
-  return `${dia}/${mes}/${ano}`;
+  return formatarDataISOParaBR(valor);
 }
 
 function formatarKg(valor) {
-  return `${Number(valor ?? 0).toLocaleString("pt-BR", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })} kg`;
+  return formatarKgBase(valor ?? 0, { casas: 0 });
 }
 
 export default function ConfirmarChegadaModal({
@@ -54,8 +32,6 @@ export default function ConfirmarChegadaModal({
     setDataRecebimento(dataHojeLocal());
     setErro("");
   }, [aberto, item?.id]);
-
-
 
   async function enviar(event) {
     event.preventDefault();
@@ -87,10 +63,7 @@ export default function ConfirmarChegadaModal({
         dataRecebimento,
       });
     } catch (error) {
-      setErro(
-        error?.message ||
-          "Não foi possível confirmar a chegada da compra.",
-      );
+      setErro(error?.message || "Não foi possível confirmar a chegada da compra.");
     }
   }
 
@@ -105,10 +78,7 @@ export default function ConfirmarChegadaModal({
       tamanho="pequeno"
       fecharAoClicarFora={false}
     >
-      <div
-        className="compra-futura-modal"
-        style={{ maxWidth: "560px" }}
-      >
+      <div className="compra-futura-modal" style={{ maxWidth: "560px" }}>
         <div className="compra-futura-modal-header" data-modal-header="">
           <div
             className="compra-futura-modal-icone"
@@ -126,9 +96,7 @@ export default function ConfirmarChegadaModal({
             <ModalTitulo>
               <h3>Confirmar chegada</h3>
             </ModalTitulo>
-            <p>
-              Informe somente a data em que o material realmente chegou.
-            </p>
+            <p>Informe somente a data em que o material realmente chegou.</p>
           </div>
 
           <button
@@ -143,17 +111,11 @@ export default function ConfirmarChegadaModal({
           </button>
         </div>
 
-        <form
-          className="compra-futura-modal-form"
-          onSubmit={enviar}
-          data-modal-form=""
-        >
+        <form className="compra-futura-modal-form" onSubmit={enviar} data-modal-form="">
           <section className="compra-futura-modal-secao">
             <div className="compra-futura-modal-secao-titulo">
               <strong>Compra selecionada</strong>
-              <span>
-                Os dados abaixo são apenas para conferência e não serão alterados.
-              </span>
+              <span>Os dados abaixo são apenas para conferência e não serão alterados.</span>
             </div>
 
             <div className="compra-futura-modal-resumo">
@@ -200,11 +162,7 @@ export default function ConfirmarChegadaModal({
             </label>
           </section>
 
-          {erro && (
-            <div className="compra-futura-modal-erro">
-              {erro}
-            </div>
-          )}
+          {erro && <div className="compra-futura-modal-erro">{erro}</div>}
 
           <div className="compra-futura-modal-acoes" data-modal-footer="">
             <button

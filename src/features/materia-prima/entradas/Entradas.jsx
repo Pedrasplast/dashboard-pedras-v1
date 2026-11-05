@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { PackageCheck } from "lucide-react";
 
 import Paginacao from "@/components/paginacao/Paginacao";
+import EstadoTela from "@/shared/ui/EstadoTela";
 
 import useEntradas from "./useEntradas";
 import useFiltrosEntradas from "./hooks/useFiltrosEntradas";
@@ -11,7 +13,6 @@ import EntradasIndicadores from "./components/EntradasIndicadores";
 import EntradasFiltros from "./components/EntradasFiltros";
 import EntradasPeriodo from "./components/EntradasPeriodo";
 import EntradasTabela from "./components/EntradasTabela";
-import { EstadoCarregando, EstadoErro, EstadoVazio } from "./components/EntradasEstado";
 
 import "./Entradas.css";
 
@@ -58,19 +59,23 @@ export default function Entradas() {
         possuiFiltroAtivo={possuiFiltroAtivo}
       />
 
-      {carregando && <EstadoCarregando />}
+      {carregando && <EstadoTela tipo="carregando" titulo="Carregando recebimentos" />}
 
-      {!carregando && erro && <EstadoErro mensagem={erro} />}
+      {!carregando && erro && (
+        <EstadoTela tipo="erro" titulo="Erro ao carregar entradas" texto={erro} />
+      )}
 
       {semEntradas && (
-        <EstadoVazio
+        <EstadoTela
+          icone={<PackageCheck size={34} />}
           titulo="Nenhum material recebido"
           texto="Quando uma compra for alterada para Recebida, ela aparecerá automaticamente aqui."
         />
       )}
 
       {semResultado && (
-        <EstadoVazio
+        <EstadoTela
+          icone={<PackageCheck size={34} />}
           titulo="Nenhum recebimento encontrado"
           texto="Não há entradas para os filtros selecionados."
         />
