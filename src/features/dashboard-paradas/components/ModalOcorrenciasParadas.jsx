@@ -120,6 +120,7 @@ function ModalOcorrenciasParadas({
       onFechar={fechar}
       bloqueado={false}
       tamanho="amplo"
+      overlayClassName="dp-ocorrencias-overlay-tela"
       fecharAoClicarFora={true}
     >
       <section
