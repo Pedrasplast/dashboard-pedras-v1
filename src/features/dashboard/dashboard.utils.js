@@ -15,19 +15,23 @@ export const VALORES_PADRAO_FILTROS_PRODUCAO = Object.freeze({
   turno: "Todos",
   cod_prod: "Todos",
   mp: "Todos",
-  tipo: [],
+  // Padrão: Tipos 1 e 2. Tipo 3 só entra quando marcado.
+  tipo: ["1", "2"],
 });
 
 /* =========================================================
-   REGRA OFICIAL DE TURNOS DO DASHBOARD
+   REGRA OFICIAL DE TURNOS DO DASHBOARD (atualizada em 05/11/2026)
 
-   IMPORTANTE:
-   - 11:00–12:00 é intervalo e não entra nas horas de parada.
-   - 19:00–19:55 é intervalo e não entra nas horas de parada.
-   - 05:00–05:10 pertence ao TURNO I.
-   - Para o Dashboard, o TURNO III termina efetivamente às 05:00.
+   Turnos corridos, sem recorte de almoço/jantar:
+   - TURNO I:   05:00–14:48
+   - TURNO II:  14:48–23:55
+   - TURNO III: 23:55–05:00
 
-   Dessa forma não existe sobreposição entre os turnos e a soma
+   Almoço e jantar não são descontados pelo relógio: eles são
+   apontados como parada Tipo 3 (ex.: "Alimentação") e só entram
+   na hora parada quando o Tipo 3 está marcado no filtro.
+
+   Não existe sobreposição entre os turnos e a soma
    TURNO I + TURNO II + TURNO III fecha exatamente com "Todos".
 ========================================================= */
 
@@ -36,15 +40,9 @@ const MILISSEGUNDOS_MINUTO = 60_000;
 const MILISSEGUNDOS_DIA = 86_400_000;
 
 const PERIODOS_TURNOS_MINUTOS = Object.freeze({
-  "TURNO I": Object.freeze([
-    Object.freeze([5 * 60, 11 * 60]),
-    Object.freeze([12 * 60, 14 * 60 + 48]),
-  ]),
+  "TURNO I": Object.freeze([Object.freeze([5 * 60, 14 * 60 + 48])]),
 
-  "TURNO II": Object.freeze([
-    Object.freeze([14 * 60 + 48, 19 * 60]),
-    Object.freeze([19 * 60 + 55, 23 * 60 + 55]),
-  ]),
+  "TURNO II": Object.freeze([Object.freeze([14 * 60 + 48, 23 * 60 + 55])]),
 
   "TURNO III": Object.freeze([Object.freeze([0, 5 * 60]), Object.freeze([23 * 60 + 55, 24 * 60])]),
 });
@@ -330,8 +328,8 @@ function obterPeriodosParaTurno(turno) {
 /**
  * Calcula somente os segundos que realmente pertencem ao turno informado.
  *
- * Em "Todos", usa a união dos três turnos, portanto os intervalos
- * 11:00–12:00 e 19:00–19:55 são automaticamente descontados.
+ * Em "Todos", a união dos três turnos cobre o dia inteiro, então a
+ * duração fica igual à duração real da parada.
  */
 function calcularSegundosDentroDosTurnos(intervalo, turno = "Todos") {
   if (!intervalo || intervalo.fim <= intervalo.inicio) {
@@ -393,6 +391,37 @@ function ajustarParadaAoTurno(registro, turno) {
     ...registro,
     duracao: formatarSegundosComoDuracao(segundosConsiderados),
   };
+}
+
+/* =========================================================
+   TIPOS DE PARADA CONSIDERADOS
+
+   Regra única de "hora parada" do Dashboard de Produção e do
+   Dashboard de Paradas:
+   - Conta somente as paradas dos tipos marcados no filtro.
+   - Nenhum tipo marcado = Tipos 1 e 2.
+   - Tipo 3 (intervalos, alimentação, troca de turno, fim de
+     semana, feriado, turno reduzido...) só entra quando marcado.
+========================================================= */
+
+const TIPOS_PARADA_PADRAO = Object.freeze(["1", "2"]);
+
+export function normalizarTiposParadaSelecionados(tipos) {
+  const lista = (Array.isArray(tipos) ? tipos : [tipos])
+    .map((tipo) =>
+      String(tipo ?? "")
+        .trim()
+        .replace(/\s+/g, ""),
+    )
+    .filter(Boolean);
+
+  return new Set(lista.length > 0 ? lista : TIPOS_PARADA_PADRAO);
+}
+
+function tipoParadaDoRegistro(registro) {
+  return String(registro?.tipo ?? "")
+    .trim()
+    .replace(/\s+/g, "");
 }
 
 export function extrairHorarioMinutosRegistro(registro) {
@@ -459,45 +488,42 @@ export function identificarTurnoRegistro(registro) {
     return "SEM TURNO";
   }
 
-  // Turno I: 05:00–11:00 e 12:00–14:48.
-  if ((minutos >= 300 && minutos < 660) || (minutos >= 720 && minutos < 888)) {
+  // Turno I: 05:00–14:48.
+  if (minutos >= 300 && minutos < 888) {
     return "TURNO I";
   }
 
-  // Turno II: 14:48–19:00 e 19:55–23:55.
-  if ((minutos >= 888 && minutos < 1140) || (minutos >= 1195 && minutos < 1435)) {
+  // Turno II: 14:48–23:55.
+  if (minutos >= 888 && minutos < 1435) {
     return "TURNO II";
   }
 
-  // Turno III: 23:55–05:00. 05:00–05:10 pertence ao Turno I.
-  if (minutos >= 1435 || minutos < 300) {
-    return "TURNO III";
-  }
-
-  return "FORA DE PRODUÇÃO";
+  // Turno III: 23:55–05:00.
+  return "TURNO III";
 }
 
 /**
- * Filtro compartilhado do Dashboard.
+ * Filtro compartilhado do Dashboard de Produção e do Dashboard de Paradas.
  *
- * A opção ajustarParadasPorTurno é usada somente pela Home de Produção.
- * Ela recorta a duração das paradas pelos limites reais dos turnos para que:
+ * ajustarParadasPorTurno: recorta a duração das paradas pelos limites dos
+ * turnos, para que uma parada que cruza dois turnos seja dividida e a soma
+ * dos turnos seja igual ao total de "Todos".
  *
- * - intervalos não sejam contados como parada;
- * - uma parada que cruza dois turnos seja dividida corretamente;
- * - a soma dos turnos seja igual ao total de "Todos".
- *
- * Outras telas que já usam esta função continuam com o comportamento anterior
- * porque a opção é false por padrão.
+ * tiposParada: quando informado (array, mesmo vazio), aplica a regra única
+ * de tipos de parada (ver normalizarTiposParadaSelecionados). Registros que
+ * não são parada (ex.: Produzindo) não são afetados.
  */
 export function filtrarRegistrosDashboard(
   registros,
   filtros,
-  { ajustarParadasPorTurno = false } = {},
+  { ajustarParadasPorTurno = false, tiposParada } = {},
 ) {
   if (!Array.isArray(registros)) {
     return [];
   }
+
+  const tiposConsiderados =
+    tiposParada === undefined ? null : normalizarTiposParadaSelecionados(tiposParada);
 
   const resultado = [];
 
@@ -523,6 +549,10 @@ export function filtrarRegistrosDashboard(
     }
 
     const ehParada = normalizarTextoLocal(registro?.status) === "indisponivel";
+
+    if (ehParada && tiposConsiderados && !tiposConsiderados.has(tipoParadaDoRegistro(registro))) {
+      continue;
+    }
 
     if (ajustarParadasPorTurno && ehParada) {
       const registroAjustado = ajustarParadaAoTurno(registro, filtros.turno || "Todos");

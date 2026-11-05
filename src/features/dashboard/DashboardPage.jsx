@@ -26,7 +26,8 @@ const FILTROS_INICIAIS = Object.freeze({
   injetora: "Todos",
   cod_prod: "Todos",
   turno: "Todos",
-  tipo: [],
+  // Padrão: Tipos 1 e 2. Tipo 3 só entra quando marcado.
+  tipo: ["1", "2"],
   dataInicio: "",
   dataFim: "",
 });
@@ -58,6 +59,7 @@ export default function Dashboard() {
     () =>
       filtrarRegistrosDashboard(rawDados, filtros, {
         ajustarParadasPorTurno: true,
+        tiposParada: filtros.tipo,
       }),
     [
       rawDados,
@@ -66,10 +68,12 @@ export default function Dashboard() {
       filtros.turno,
       filtros.dataInicio,
       filtros.dataFim,
+      filtros.tipo,
     ],
   );
 
-  // O filtro TIPO permanece no hook para preservar a regra de cálculo atual.
+  // O filtro TIPO já é aplicado às paradas acima (regra única com o
+  // Dashboard de Paradas); o hook ainda o usa para o gráfico de motivos.
   const metrics = useDashboardMetrics(dadosFiltrados, filtros.tipo);
 
   const horasTotaisDec = Number(metrics?.horasTotaisDec || 0);

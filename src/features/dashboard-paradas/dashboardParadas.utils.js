@@ -166,19 +166,19 @@ export function ehRegistroParada(registro) {
 
 export function filtrarParadas(registros, filtros) {
   /*
-   * Aproveita primeiro o filtro que já existe
-   * no Dashboard de Produção.
+   * Usa o mesmo filtro e a mesma regra de "hora parada" do
+   * Dashboard de Produção (período, injetora, turno e tipos):
+   * - parada que cruza dois turnos é dividida pelo turno filtrado;
+   * - nenhum tipo marcado = Tipos 1 e 2;
+   * - Tipo 3 só entra quando marcado.
    *
-   * Assim não duplicamos regras de:
-   * - período
-   * - injetora
-   * - demais filtros compartilhados
+   * Assim os dois dashboards mostram a mesma hora parada
+   * para os mesmos filtros.
    */
-  const base = filtrarRegistrosDashboard(registros, filtros);
-
-  const tiposSelecionados = Array.isArray(filtros?.tipo)
-    ? filtros.tipo.map((tipo) => String(tipo).trim()).filter(Boolean)
-    : [];
+  const base = filtrarRegistrosDashboard(registros, filtros, {
+    ajustarParadasPorTurno: true,
+    tiposParada: Array.isArray(filtros?.tipo) ? filtros.tipo : [],
+  });
 
   const motivoSelecionado = String(filtros?.motivo || "Todos").trim();
 
@@ -186,12 +186,6 @@ export function filtrarParadas(registros, filtros) {
 
   return base.filter((registro) => {
     if (!ehRegistroParada(registro)) {
-      return false;
-    }
-
-    const tipo = String(registro.tipo ?? "").trim();
-
-    if (tiposSelecionados.length > 0 && !tiposSelecionados.includes(tipo)) {
       return false;
     }
 
