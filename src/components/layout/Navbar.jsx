@@ -114,12 +114,6 @@ const NAVIGATION_GROUPS = Object.freeze([
         permissao: "dashboard",
       },
       {
-        label: "Dashboard-Produtividade",
-        path: "/dashboard-produtividade",
-        icon: Gauge,
-        permissao: "dashboard_produtividade",
-      },
-      {
         label: "Dashboard-Paradas",
         path: "/dashboard-paradas",
         icon: CirclePause,
