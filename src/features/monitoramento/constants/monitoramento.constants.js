@@ -56,7 +56,11 @@ export const ROTINAS = Object.freeze({
     descricao: "Pedidos de compra pendentes dos materiais acompanhados.",
   },
   "atualizar-precos-compras-mp-omie": {
-    nome: "Preços médios de matéria-prima",
+    nome: "Preços médios de matéria-prima (06:00)",
+    descricao: "Busca no Omie as compras dos últimos 60 dias para as médias da Tabela de Preços.",
+  },
+  "atualizar-precos-compras-mp-omie-12h36": {
+    nome: "Preços médios de matéria-prima (12:36)",
     descricao: "Busca no Omie as compras dos últimos 60 dias para as médias da Tabela de Preços.",
   },
   "atualizar-dashboard-mp-omie-pedidos": {
