@@ -9,6 +9,7 @@ export const TEMPO_DADOS_FRESCOS = 2 * 60 * 1000;
 export const QUERY_KEY_ROTINAS = ["monitoramento", "rotinas"];
 export const QUERY_KEY_BANCO = ["monitoramento", "banco"];
 export const QUERY_KEY_RESUMO = ["monitoramento", "resumo"];
+export const QUERY_KEY_PAINEL = ["monitoramento", "painel-dia"];
 export const queryKeyHistorico = (rotina) => ["monitoramento", "historico", rotina];
 
 export const LIMITE_HISTORICO = 30;
@@ -87,6 +88,10 @@ export const ROTINAS = Object.freeze({
     nome: "Tamanho do banco de dados",
     descricao: "Registra o tamanho do banco uma vez por dia.",
   },
+  "monitor-retomar-pausas": {
+    nome: "Retomar pausas com horário",
+    descricao: "Volta a ligar as rotinas pausadas com \"pausar até\" quando o horário chega.",
+  },
 });
 
 /* Rotinas que rodam só no banco (não chamam funções nem o Omie). */
@@ -95,6 +100,7 @@ export const ROTINAS_SO_BANCO = Object.freeze(
     "limpar-historico-cron-14d",
     "limpar-sincronizacao-omie-historico-60d",
     "monitorar-tamanho-banco-diario",
+    "monitor-retomar-pausas",
   ]),
 );
 
@@ -110,7 +116,7 @@ export const ROTULO_SITUACAO = Object.freeze({
   [SITUACAO.ERRO]: "Com erro",
   [SITUACAO.RODANDO]: "Rodando",
   [SITUACAO.OK]: "OK",
-  [SITUACAO.DESATIVADA]: "Desativada",
+  [SITUACAO.DESATIVADA]: "Pausada",
   [SITUACAO.SEM_DADOS]: "Sem execução",
 });
 
@@ -132,3 +138,12 @@ export const ROTULO_NIVEL_BANCO = Object.freeze({
   ALERTA: "Alerta",
   CRITICO: "Crítico",
 });
+
+/* Opções do "pausar até". horas = null → até retomar à mão; "amanha6" → próximo 06:00. */
+export const OPCOES_PAUSA = Object.freeze([
+  { id: "manual", rotulo: "Até eu retomar" },
+  { id: "1h", rotulo: "Por 1 hora", horas: 1 },
+  { id: "2h", rotulo: "Por 2 horas", horas: 2 },
+  { id: "4h", rotulo: "Por 4 horas", horas: 4 },
+  { id: "amanha6", rotulo: "Até as 06:00 do próximo dia" },
+]);

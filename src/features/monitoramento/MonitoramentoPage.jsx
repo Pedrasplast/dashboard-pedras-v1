@@ -1,17 +1,20 @@
 import { useMemo, useState } from "react";
-import { Activity, ChevronDown, RefreshCw } from "lucide-react";
+import { Activity, RefreshCw } from "lucide-react";
 
 import PageHeader from "@/components/layout/PageHeader";
 
-import HistoricoRotina from "./components/HistoricoRotina";
-import { useBancoDados, useRotinas } from "./hooks/useMonitoramento";
+import MapaHorarios from "./components/MapaHorarios";
+import PainelSituacao from "./components/PainelSituacao";
+import RotinaItem from "./components/RotinaItem";
 import {
-  descreverAgenda,
-  formatarDataHora,
-  formatarMegabytes,
-  tempoDecorrido,
-} from "./utils/monitoramento.utils";
-import { ROTULO_NIVEL_BANCO, ROTULO_SITUACAO, SITUACAO } from "./constants/monitoramento.constants";
+  useBancoDados,
+  useDefinirRotinaAtiva,
+  usePainelDia,
+  useRodarAgora,
+  useRotinas,
+} from "./hooks/useMonitoramento";
+import { formatarDataHora, formatarMegabytes } from "./utils/monitoramento.utils";
+import { ROTULO_NIVEL_BANCO, SITUACAO } from "./constants/monitoramento.constants";
 
 import "./Monitoramento.css";
 
@@ -30,8 +33,15 @@ export default function MonitoramentoPage() {
     dataUpdatedAt,
   } = useRotinas();
   const { data: banco } = useBancoDados();
+  const { data: painel, isLoading: carregandoPainel, refetch: atualizarPainel } = usePainelDia();
+  const definirAtiva = useDefinirRotinaAtiva();
+  const rodarAgora = useRodarAgora();
   const [soProblemas, setSoProblemas] = useState(false);
   const [aberta, setAberta] = useState(null);
+
+  // "Próxima execução" é calculada a partir da hora da última consulta.
+  const agora = useMemo(() => new Date(dataUpdatedAt || Date.now()), [dataUpdatedAt]);
+  const rotinasOmie = useMemo(() => rotinas.filter((r) => r.monitorada), [rotinas]);
 
   const resumo = useMemo(
     () => ({
@@ -59,7 +69,10 @@ export default function MonitoramentoPage() {
             <button
               type="button"
               className="mon-botao"
-              onClick={() => refetch()}
+              onClick={() => {
+                refetch();
+                atualizarPainel();
+              }}
               disabled={isFetching}
             >
               <RefreshCw size={16} aria-hidden="true" className={isFetching ? "girando" : ""} />
@@ -67,6 +80,8 @@ export default function MonitoramentoPage() {
             </button>
           }
         />
+
+        <PainelSituacao painel={painel} carregando={carregandoPainel} />
 
         <section className="mon-resumo" aria-label="Resumo">
           <div
@@ -119,6 +134,12 @@ export default function MonitoramentoPage() {
               />
               Mostrar só rotinas com erro ou falhas em 24 h
             </label>
+            <span className="mon-legenda" aria-label="Legenda da linha do dia">
+              Hoje:
+              <span className="mon-linha-dia__marca mon-linha-dia__marca--o" /> ok
+              <span className="mon-linha-dia__marca mon-linha-dia__marca--l" /> lenta
+              <span className="mon-linha-dia__marca mon-linha-dia__marca--e" /> erro
+            </span>
             {dataUpdatedAt > 0 && (
               <span className="mon-card__atualizado">
                 Consultado às {formatarDataHora(dataUpdatedAt).slice(-5)}
@@ -128,73 +149,38 @@ export default function MonitoramentoPage() {
 
           {isLoading && <p className="mon-vazio">Carregando rotinas…</p>}
           {isError && <p className="mon-vazio mon-texto-erro">{error.message}</p>}
+          {definirAtiva.isError && (
+            <p className="mon-vazio mon-texto-erro" role="alert">
+              {definirAtiva.error.message}
+            </p>
+          )}
           {!isLoading && !isError && visiveis.length === 0 && (
             <p className="mon-vazio">Nenhuma rotina com problema. Tudo certo.</p>
           )}
 
           <ul className="mon-lista">
-            {visiveis.map((rotina) => {
-              const estaAberta = aberta === rotina.rotina;
-              const ultima = rotina.ultima_chamada ?? rotina.ultima_execucao;
-              return (
-                <li key={rotina.rotina} className={`mon-rotina mon-rotina--${rotina.situacao}`}>
-                  <button
-                    type="button"
-                    className="mon-rotina__cabecalho"
-                    aria-expanded={estaAberta}
-                    onClick={() => setAberta(estaAberta ? null : rotina.rotina)}
-                  >
-                    <span className={`mon-selo mon-selo--${rotina.situacao}`}>
-                      {ROTULO_SITUACAO[rotina.situacao]}
-                    </span>
-
-                    <span className="mon-rotina__nome">
-                      <strong>{rotina.nome}</strong>
-                      <small>{descreverAgenda(rotina.agenda)}</small>
-                    </span>
-
-                    <span className="mon-rotina__ultima">
-                      <small>Última execução</small>
-                      <strong>{ultima ? formatarDataHora(ultima) : "—"}</strong>
-                      <small>{tempoDecorrido(ultima)}</small>
-                    </span>
-
-                    <span className="mon-rotina__falhas">
-                      <small>Falhas 24 h</small>
-                      <strong className={Number(rotina.falhas_24h) > 0 ? "mon-texto-erro" : ""}>
-                        {rotina.monitorada ? `${rotina.falhas_24h} de ${rotina.chamadas_24h}` : "—"}
-                      </strong>
-                    </span>
-
-                    <ChevronDown size={18} aria-hidden="true" className="mon-rotina__seta" />
-                  </button>
-
-                  {rotina.mensagem_erro && (
-                    <p className="mon-rotina__erro">
-                      <strong>Erro:</strong> {rotina.mensagem_erro}
-                      {rotina.ultimo_sucesso_em && (
-                        <span>
-                          {" "}
-                          · último sucesso {formatarDataHora(rotina.ultimo_sucesso_em)} (
-                          {tempoDecorrido(rotina.ultimo_sucesso_em)})
-                        </span>
-                      )}
-                    </p>
-                  )}
-
-                  {estaAberta && (
-                    <div className="mon-rotina__detalhe">
-                      {rotina.descricao && (
-                        <p className="mon-rotina__descricao">{rotina.descricao}</p>
-                      )}
-                      <HistoricoRotina rotina={rotina.rotina} monitorada={rotina.monitorada} />
-                    </div>
-                  )}
-                </li>
-              );
-            })}
+            {visiveis.map((rotina) => (
+              <RotinaItem
+                key={rotina.rotina}
+                rotina={rotina}
+                aberta={aberta === rotina.rotina}
+                onAlternar={() => setAberta(aberta === rotina.rotina ? null : rotina.rotina)}
+                agora={agora}
+                execucoesHoje={painel?.linha?.[rotina.rotina]}
+                definirAtiva={definirAtiva}
+                rodarAgora={rodarAgora}
+              />
+            ))}
           </ul>
         </section>
+
+        <details className="mon-card mon-mapa-card">
+          <summary>
+            <strong>Mapa de horários</strong>
+            <span>Quais rotinas do Omie disparam em cada minuto, para achar horários livres.</span>
+          </summary>
+          <MapaHorarios rotinas={rotinasOmie} />
+        </details>
       </div>
     </div>
   );

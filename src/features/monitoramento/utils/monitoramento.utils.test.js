@@ -24,6 +24,8 @@ describe("descreverAgenda (agendas reais, UTC → Brasília)", () => {
     ["30 3 * * *", "todos os dias, às 00:30"],
     ["15 4 * * 0", "dom, às 01:15"],
     ["0 7 * * *", "todos os dias, às 04:00"],
+    ["11 9,15 * * 1-5", "seg a sex, às 06:11 e 12:11"],
+    ["*/5 * * * *", "todos os dias, o dia todo, a cada 5 min"],
   ])("%s", (agenda, esperado) => {
     expect(descreverAgenda(agenda)).toBe(esperado);
   });

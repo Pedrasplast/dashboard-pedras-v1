@@ -1,5 +1,18 @@
 import { useHistoricoRotina } from "../hooks/useMonitoramento";
+import { resumirResultado } from "../utils/diagnostico";
 import { formatarDataHora, formatarDuracao } from "../utils/monitoramento.utils";
+import ErroExplicado from "./ErroExplicado";
+
+/* Duração informada pela função; senão, o tempo entre disparo e resposta. */
+function duracaoDaExecucao(execucao) {
+  if (execucao.duracao_ms !== null && execucao.duracao_ms !== undefined) {
+    return formatarDuracao(execucao.duracao_ms);
+  }
+  if (Number.isFinite(execucao.segundos)) {
+    return formatarDuracao(execucao.segundos * 1000);
+  }
+  return "—";
+}
 
 export default function HistoricoRotina({ rotina, monitorada }) {
   const { data, isLoading, isError, error } = useHistoricoRotina(rotina, true);
@@ -38,10 +51,11 @@ export default function HistoricoRotina({ rotina, monitorada }) {
           {data.map((execucao) => {
             const situacao =
               execucao.sucesso === null ? "rodando" : execucao.sucesso ? "ok" : "erro";
+            const resultado = resumirResultado(execucao.resultado);
             return (
               <tr key={execucao.disparado_em} className={`mon-historico__linha--${situacao}`}>
                 <td>{formatarDataHora(execucao.disparado_em)}</td>
-                <td>{formatarDuracao(execucao.duracao_ms)}</td>
+                <td>{duracaoDaExecucao(execucao)}</td>
                 <td>
                   <span className={`mon-selo mon-selo--${situacao}`}>
                     {situacao === "ok" ? "OK" : situacao === "erro" ? "Erro" : "Rodando"}
@@ -49,11 +63,9 @@ export default function HistoricoRotina({ rotina, monitorada }) {
                 </td>
                 <td className="mon-historico__detalhe">
                   {execucao.erro ? (
-                    <span className="mon-texto-erro">{execucao.erro}</span>
-                  ) : execucao.status_http ? (
-                    `HTTP ${execucao.status_http}`
+                    <ErroExplicado texto={execucao.erro} statusHttp={execucao.status_http} />
                   ) : (
-                    "—"
+                    resultado ?? (execucao.status_http ? `HTTP ${execucao.status_http}` : "—")
                   )}
                 </td>
               </tr>

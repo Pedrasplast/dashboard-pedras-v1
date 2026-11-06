@@ -16,7 +16,7 @@ const FUSO_HORAS = -3;
 
 const DIAS_SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
-function expandirCampo(campo, minimo, maximo) {
+export function expandirCampo(campo, minimo, maximo) {
   const valores = new Set();
 
   for (const parte of String(campo).split(",")) {
@@ -97,6 +97,12 @@ export function descreverAgenda(agenda) {
   }
 
   const contiguas = horas.every((h, i) => i === 0 || h - horas[i - 1] === 1);
+
+  // Um minuto só, em horas soltas: "às 06:11 e 12:11".
+  if (minutos.length === 1 && !contiguas && horas.length <= 6) {
+    const horarios = horas.map((h) => `${dois(h)}:${dois(minutos[0])}`);
+    return `${dias}, às ${horarios.join(" e ")}`;
+  }
   const textoHoras =
     horas.length === 24
       ? "o dia todo"
@@ -107,6 +113,42 @@ export function descreverAgenda(agenda) {
   const textoMin = descreverMinutos(minutos) ?? `de hora em hora, no minuto ${dois(minutos[0])}`;
 
   return `${dias}, ${textoHoras}, ${textoMin}`;
+}
+
+/**
+ * Próxima execução da agenda do cron (UTC), a partir de "agora".
+ * Só agendas com dia do mês e mês "*" (as que o sistema usa).
+ * Devolve null se a agenda não for reconhecida.
+ */
+export function proximaExecucao(agenda, agora = new Date()) {
+  const partes = String(agenda ?? "")
+    .trim()
+    .split(/\s+/);
+  if (partes.length !== 5) return null;
+
+  const [campoMin, campoHora, diaMes, mes, campoDia] = partes;
+  if (diaMes !== "*" || mes !== "*") return null;
+
+  const minutos = expandirCampo(campoMin, 0, 59);
+  const horas = expandirCampo(campoHora, 0, 23);
+  const dias = expandirCampo(campoDia, 0, 7);
+  if (!minutos || !horas || !dias) return null;
+
+  const setMin = new Set(minutos);
+  const setHora = new Set(horas);
+  const setDia = new Set(dias.map((d) => d % 7));
+
+  const t = new Date(agora.getTime());
+  t.setUTCSeconds(0, 0);
+
+  // Até 8 dias à frente, minuto a minuto (no máximo ~11,5 mil voltas).
+  for (let i = 0; i < 8 * 24 * 60; i++) {
+    t.setUTCMinutes(t.getUTCMinutes() + 1);
+    if (setDia.has(t.getUTCDay()) && setHora.has(t.getUTCHours()) && setMin.has(t.getUTCMinutes())) {
+      return new Date(t.getTime());
+    }
+  }
+  return null;
 }
 
 /** Situação atual da rotina para o selo colorido. */

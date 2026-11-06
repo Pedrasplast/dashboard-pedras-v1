@@ -43,6 +43,99 @@
   cursor: default;
 }
 
+/* ---------- Situação agora (Omie e conferência) ---------- */
+
+.mon-painel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: var(--space-6);
+}
+
+.mon-painel__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border-strong);
+  border-radius: 14px;
+}
+
+.mon-painel__item > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.mon-painel__item strong {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+}
+
+.mon-painel__item span {
+  font-size: var(--font-size-body);
+  color: var(--color-text-muted);
+}
+
+.mon-painel__icone {
+  flex: none;
+  color: var(--color-text-light);
+}
+
+.mon-omie--normal {
+  border-left-color: var(--color-success);
+}
+.mon-omie--normal .mon-painel__icone,
+.mon-omie--normal strong {
+  color: var(--color-success-hover);
+}
+.mon-omie--lento {
+  border-left-color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+.mon-omie--lento .mon-painel__icone,
+.mon-omie--lento strong {
+  color: var(--color-warning);
+}
+.mon-omie--instavel {
+  border-left-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+.mon-omie--instavel .mon-painel__icone,
+.mon-omie--instavel strong {
+  color: var(--color-danger-hover);
+}
+
+.mon-conferencia {
+  border-left-color: var(--color-info);
+}
+.mon-conferencia--erro {
+  border-left-color: var(--color-danger);
+}
+
+.mon-conferencia__corpo {
+  flex: 1;
+}
+
+.mon-conferencia__barra {
+  display: block;
+  height: 6px;
+  margin-top: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+  overflow: hidden;
+}
+
+.mon-conferencia__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-info);
+}
+
 /* ---------- Resumo ---------- */
 
 .mon-resumo {
@@ -190,8 +283,71 @@
 .mon-rotina--rodando {
   border-left-color: var(--color-info);
 }
-.mon-rotina--desativada {
+/* Pausada: só a linha fica apagada; o botão "Retomar" continua nítido. */
+.mon-rotina--desativada .mon-rotina__cabecalho,
+.mon-rotina--desativada .mon-rotina__erro,
+.mon-rotina--desativada .mon-linha-dia,
+.mon-rotina--desativada .mon-rotina__resultado {
   opacity: 0.65;
+}
+
+.mon-rotina__linha {
+  display: flex;
+  align-items: center;
+}
+
+.mon-rotina__linha .mon-rotina__cabecalho {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Pausar / retomar ---------- */
+
+/* Largura fixa (e o mesmo espaço vazio nas rotinas sem botão) para as
+   colunas das linhas ficarem alinhadas. */
+.mon-rotina__pausa,
+.mon-rotina__pausa-espaco {
+  flex: none;
+  width: 112px;
+  margin-right: 14px;
+}
+
+.mon-rotina__pausa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+  font: inherit;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mon-rotina__pausa:hover:not(:disabled) {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.mon-rotina__pausa--retomar {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+  color: var(--color-success-hover);
+}
+
+.mon-rotina__pausa--retomar:hover:not(:disabled) {
+  border-color: var(--color-success-hover);
+  color: var(--color-success-hover);
+}
+
+.mon-rotina__pausa:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .mon-rotina__cabecalho {
@@ -247,16 +403,307 @@
   transform: rotate(180deg);
 }
 
-.mon-rotina__erro {
+.mon-rotina__erro,
+.mon-rotina__resultado,
+.mon-rotina__pausa-info {
   margin: 0;
-  padding: var(--space-2) 14px var(--space-3) 140px;
+  padding: var(--space-1) 14px var(--space-3) 140px;
   font-size: var(--font-size-body);
-  color: var(--color-danger-hover);
   word-break: break-word;
 }
 
-.mon-rotina__erro span {
+.mon-rotina__resultado {
   color: var(--color-text-muted);
+}
+
+.mon-rotina__pausa-info {
+  color: var(--color-warning);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ---------- Erro explicado ---------- */
+
+.mon-erro__texto {
+  margin: 0;
+  color: var(--color-danger-hover);
+}
+
+.mon-erro__complemento {
+  color: var(--color-text-muted);
+}
+
+.mon-erro__pedidos {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-strong);
+}
+
+.mon-erro__tecnico {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.mon-erro__tecnico summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.mon-erro__tecnico pre {
+  margin: var(--space-1) 0 0;
+  padding: var(--space-2);
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-caption);
+}
+
+/* ---------- Linha do dia ---------- */
+
+.mon-linha-dia {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 14px var(--space-2) 140px;
+}
+
+.mon-linha-dia__rotulo {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.mon-linha-dia__marcas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.mon-linha-dia__marca {
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--color-border-strong);
+}
+
+.mon-linha-dia__marca--o {
+  background: var(--color-success);
+}
+.mon-linha-dia__marca--l {
+  background: var(--color-warning);
+}
+.mon-linha-dia__marca--e {
+  background: var(--color-danger);
+}
+.mon-linha-dia__marca--r {
+  background: var(--color-info);
+}
+
+.mon-legenda {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.mon-legenda .mon-linha-dia__marca {
+  margin-left: var(--space-2);
+}
+
+/* ---------- Ações do detalhe ---------- */
+
+.mon-rotina__acoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 10px 0;
+}
+
+.mon-rotina__aviso {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Formulário da pausa ---------- */
+
+.mon-pausa-form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0 14px var(--space-3) 140px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-soft);
+}
+
+.mon-pausa-form__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+}
+
+.mon-pausa-form__campo input,
+.mon-pausa-form__campo select {
+  min-width: 220px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-body);
+}
+
+.mon-pausa-form__botoes {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.mon-botao--alerta {
+  border-color: var(--color-warning);
+  background: var(--color-warning);
+  color: #fff;
+}
+
+.mon-botao--alerta:hover:not(:disabled) {
+  border-color: var(--color-warning);
+  color: #fff;
+  filter: brightness(0.95);
+}
+
+/* ---------- Mapa de horários ---------- */
+
+.mon-mapa-card summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+}
+
+.mon-mapa-card summary span {
+  font-size: var(--font-size-body);
+  color: var(--color-text-muted);
+}
+
+.mon-mapa {
+  margin-top: var(--space-3);
+}
+
+.mon-mapa__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.mon-mapa__hora {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-body);
+  color: var(--color-text-strong);
+}
+
+.mon-mapa__hora select {
+  padding: 6px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+.mon-mapa__legenda {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+.mon-mapa__legenda .mon-mapa__cel {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: var(--space-2);
+  border-radius: 2px;
+}
+
+.mon-mapa__rolagem {
+  overflow-x: auto;
+}
+
+.mon-mapa__tabela {
+  border-collapse: separate;
+  border-spacing: 1px;
+  font-size: 10px;
+}
+
+.mon-mapa__tabela th[scope="row"] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  max-width: 220px;
+  padding-right: var(--space-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-strong);
+  background: var(--color-surface);
+}
+
+.mon-mapa__tabela thead th {
+  height: 16px;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+}
+
+.mon-mapa__tabela td {
+  width: 12px;
+  min-width: 12px;
+  height: 16px;
+  background: var(--color-surface-subtle);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.mon-mapa__cel--sim,
+.mon-mapa__tabela td.mon-mapa__cel--sim {
+  background: var(--color-info);
+}
+.mon-mapa__cel--cheio,
+.mon-mapa__tabela td.mon-mapa__cel--cheio {
+  background: var(--color-danger);
+}
+.mon-mapa__cel--pausada,
+.mon-mapa__tabela td.mon-mapa__cel--pausada {
+  background: var(--color-border-strong);
+}
+
+.mon-mapa__tabela .mon-mapa__col--cheio {
+  color: var(--color-danger-hover);
+  font-weight: var(--font-weight-bold);
+}
+
+.mon-mapa__total th,
+.mon-mapa__total td {
+  padding-top: var(--space-1);
+  background: transparent;
 }
 
 .mon-rotina__detalhe {
@@ -394,8 +841,29 @@
     grid-area: seta;
     justify-self: end;
   }
-  .mon-rotina__erro {
+  .mon-painel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mon-rotina__erro,
+  .mon-rotina__resultado,
+  .mon-rotina__pausa-info,
+  .mon-linha-dia {
     padding-left: 14px;
+  }
+  .mon-pausa-form {
+    margin-left: 14px;
+  }
+
+  /* Cabeçalho em várias linhas: botão alinhado ao selo, no topo. */
+  .mon-rotina__linha {
+    align-items: flex-start;
+  }
+  .mon-rotina__pausa {
+    margin-top: var(--space-3);
+  }
+  .mon-rotina__pausa-espaco {
+    display: none;
   }
 }
 
