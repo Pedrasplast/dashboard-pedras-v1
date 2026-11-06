@@ -365,30 +365,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
     [categorias, relatoriosDisponiveis.length, relatoriosPorCategoria],
   );
 
-  const relatoriosCatalogo = useMemo(() => {
-    const listaBase =
-      categoriaSelecionada === "Todos"
-        ? relatoriosDisponiveis
-        : relatoriosPorCategoria.get(categoriaSelecionada) || [];
-
-    const termo = normalizarTexto(buscaRelatorios).trim();
-
-    if (!termo) {
-      return listaBase;
-    }
-
-    return listaBase.filter((relatorio) => {
-      const conteudo = normalizarTexto(
-        [relatorio.categoria, relatorio.titulo, relatorio.descricao].join(" "),
-      );
-
-      return conteudo.includes(termo);
-    });
-  }, [buscaRelatorios, categoriaSelecionada, relatoriosDisponiveis, relatoriosPorCategoria]);
-
-  const tituloCatalogo =
-    categoriaSelecionada === "Todos" ? "Todos os relatórios" : categoriaSelecionada;
-
   useEffect(() => {
     if (categoriaSelecionada !== "Todos" && !categorias.includes(categoriaSelecionada)) {
       setCategoriaSelecionada("Todos");
@@ -1137,7 +1113,6 @@ function TelaRelatorios({ dadosBrutos: dadosExternos }) {
       {!relatorioSelecionado && relatoriosDisponiveis.length > 0 && (
         <PainelRelatorios
           relatoriosDisponiveis={relatoriosDisponiveis}
-          relatoriosCatalogo={relatoriosCatalogo}
           categoriasCatalogo={categoriasCatalogo}
           categoriaSelecionada={categoriaSelecionada}
           onCategoria={setCategoriaSelecionada}
