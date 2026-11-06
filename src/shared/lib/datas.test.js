@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { dataHojeLocal, formatarDataISO, obterAnoAtual, obterHoje } from "./datas";
+import { dataHojeLocal, diaSemanaCurto, formatarDataISO, obterAnoAtual, obterHoje } from "./datas";
 
 afterEach(() => {
   vi.useRealTimers();
@@ -31,5 +31,28 @@ describe("datas de hoje", () => {
     expect([hoje.getHours(), hoje.getMinutes(), hoje.getSeconds()]).toEqual([0, 0, 0]);
     expect(dataHojeLocal()).toBe("2026-03-09");
     expect(obterAnoAtual()).toBe(2026);
+  });
+});
+
+describe("diaSemanaCurto", () => {
+  it("devolve o dia da semana abreviado", () => {
+    expect(diaSemanaCurto("2026-11-06")).toBe("sex");
+    expect(diaSemanaCurto("2026-11-07")).toBe("sáb");
+    expect(diaSemanaCurto("2026-11-08")).toBe("dom");
+    expect(diaSemanaCurto("2026-11-09")).toBe("seg");
+    expect(diaSemanaCurto("2026-11-10")).toBe("ter");
+    expect(diaSemanaCurto("2026-11-11")).toBe("qua");
+    expect(diaSemanaCurto("2026-11-12")).toBe("qui");
+  });
+
+  it("aceita data com hora e ignora fuso", () => {
+    expect(diaSemanaCurto("2026-11-06T23:30:00-03:00")).toBe("sex");
+  });
+
+  it("vazio ou inválido = vazio", () => {
+    expect(diaSemanaCurto("")).toBe("");
+    expect(diaSemanaCurto(null)).toBe("");
+    expect(diaSemanaCurto("2026-02-30")).toBe("");
+    expect(diaSemanaCurto("06/11/2026")).toBe("");
   });
 });

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import useProjecao from "./useProjecao";
 
 import "./ProjecaoDiaria.css";
+import { diaSemanaCurto } from "@/shared/lib/datas";
 import { formatarKg as formatarKgBase, formatarDataISOParaBR } from "@/shared/lib/formatar";
 
 /* =========================================================
@@ -190,11 +191,12 @@ function FornecedorDetalhe({ grupo }) {
           <thead>
             <tr>
               <th>Data</th>
+              <th>Dia</th>
               <th>Saldo início</th>
-              <th>Recebido</th>
-              <th>Compra futura</th>
-              <th>Consumo</th>
               <th>Saldo final</th>
+              <th>Consumo</th>
+              <th>Compra futura</th>
+              <th>Recebido</th>
             </tr>
           </thead>
 
@@ -207,20 +209,19 @@ function FornecedorDetalhe({ grupo }) {
                   {linha.saldoBaseAplicado && <small>Nova base</small>}
                 </td>
 
+                <td
+                  className={[
+                    "projecao-diaria-dia-semana",
+                    ["sáb", "dom"].includes(diaSemanaCurto(linha.data)) ? "fim-de-semana" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  {diaSemanaCurto(linha.data)}
+                </td>
+
                 <td>
                   {linha.possuiSaldoBase ? formatarKg(linha.saldoInicioKg) : "Sem saldo-base"}
-                </td>
-
-                <td className="projecao-diaria-entrada">
-                  {linha.recebidoKg > 0 ? `+ ${formatarKg(linha.recebidoKg)}` : "-"}
-                </td>
-
-                <td className="projecao-diaria-futura">
-                  {linha.compraFuturaKg > 0 ? `+ ${formatarKg(linha.compraFuturaKg)}` : "-"}
-                </td>
-
-                <td className="projecao-diaria-consumo">
-                  {linha.consumoKg > 0 ? `- ${formatarKg(linha.consumoKg)}` : "-"}
                 </td>
 
                 <td
@@ -233,6 +234,18 @@ function FornecedorDetalhe({ grupo }) {
                     .join(" ")}
                 >
                   {linha.saldoFinalKg === null ? "-" : formatarKg(linha.saldoFinalKg)}
+                </td>
+
+                <td className="projecao-diaria-consumo">
+                  {linha.consumoKg > 0 ? `- ${formatarKg(linha.consumoKg)}` : "-"}
+                </td>
+
+                <td className="projecao-diaria-futura">
+                  {linha.compraFuturaKg > 0 ? `+ ${formatarKg(linha.compraFuturaKg)}` : "-"}
+                </td>
+
+                <td className="projecao-diaria-entrada">
+                  {linha.recebidoKg > 0 ? `+ ${formatarKg(linha.recebidoKg)}` : "-"}
                 </td>
               </tr>
             ))}

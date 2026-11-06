@@ -581,7 +581,7 @@
   white-space: nowrap;
 }
 
-.projecao-diaria-tabela th:nth-child(n + 2) {
+.projecao-diaria-tabela th:nth-child(n + 3) {
   text-align: right;
 }
 
@@ -595,7 +595,7 @@
   white-space: nowrap;
 }
 
-.projecao-diaria-tabela td:nth-child(n + 2) {
+.projecao-diaria-tabela td:nth-child(n + 3) {
   text-align: right;
 }
 
@@ -605,6 +605,25 @@
 
 .projecao-diaria-tabela tbody tr:hover td {
   background: #f8fbff;
+}
+
+/* Data e dia da semana juntos, à esquerda; sábado e domingo em cinza.
+   width: 1% deixa as duas colunas só com a largura do conteúdo. */
+.projecao-diaria-tabela th:nth-child(-n + 2),
+.projecao-diaria-tabela td:nth-child(-n + 2) {
+  width: 1%;
+  padding-right: var(--space-5);
+  text-align: left;
+}
+
+.projecao-diaria-dia-semana {
+  color: var(--color-text);
+  font-weight: 850;
+  text-transform: capitalize;
+}
+
+.projecao-diaria-dia-semana.fim-de-semana {
+  color: var(--color-text-muted);
 }
 
 .projecao-diaria-data strong,
